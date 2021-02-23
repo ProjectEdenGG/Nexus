@@ -66,7 +66,7 @@ public class ConvertShopCommand extends CustomCommand {
 		List<Block> signs = new ArrayList<>();
 		List<SignData> conversions = new ArrayList<>();
 		List<Throwable> exceptions = new ArrayList<>();
-		BlockUtils.getBlocksInRadius(player().getLocation(), radius).forEach(block -> {
+		BlockUtils.getBlocksInRadius(location(), radius).forEach(block -> {
 			if (!MaterialTag.SIGNS.isTagged(block.getType())) return;
 
 			Sign sign = (Sign) block.getState();

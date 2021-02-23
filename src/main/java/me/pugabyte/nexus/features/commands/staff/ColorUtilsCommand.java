@@ -82,7 +82,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	@Path("updateAllHOHNpcs")
 	void updateAllHOHNpcs() {
 		runCommand("hoh");
-		World safepvp = player().getWorld();
+		World safepvp = world();
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(safepvp);
 		ProtectedRegion region = worldGuardUtils.getProtectedRegion("hallofhistory");
 		List<NPC> npcs = safepvp.getEntities().stream()

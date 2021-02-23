@@ -35,13 +35,13 @@ public class SetHomeCommand extends CustomCommand {
 
 		String message;
 		if (home.isPresent()) {
-			home.get().setLocation(player().getLocation());
+			home.get().setLocation(location());
 			message = "Updated location of home \"&e" + homeName + "&3\"";
 		} else {
 			homeOwner.add(Home.builder()
 					.uuid(homeOwner.getUuid())
 					.name(homeName)
-					.location(player().getLocation())
+					.location(location())
 					.build());
 			message = "Home \"&e" + homeName + "&3\" set to current location. Return with &c/h" + (homeName.equalsIgnoreCase("home") ? "" : " " + homeName);
 		}
@@ -58,13 +58,13 @@ public class SetHomeCommand extends CustomCommand {
 		Optional<Home> home = homeOwner.getHome(homeName);
 		String message;
 		if (home.isPresent()) {
-			home.get().setLocation(player().getLocation());
+			home.get().setLocation(location());
 			message = "Updated location of home \"&e" + homeName + "&3\"";
 		} else {
 			homeOwner.add(Home.builder()
 					.uuid(homeOwner.getUuid())
 					.name(homeName)
-					.location(player().getLocation())
+					.location(location())
 					.build());
 			message = "Home \"&e" + homeName + "&3\" set to current location";
 		}

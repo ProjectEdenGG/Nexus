@@ -76,10 +76,10 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 			npc.setCorrect(correct);
 
 			if (correct) {
-				player().playSound(player().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
+				player().playSound(location(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
 				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&e " + RandomUtils.randomElement(SafeCracker.correctResponses));
 			} else {
-				player().playSound(player().getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 2F);
+				player().playSound(location(), Sound.ENTITY_VILLAGER_NO, 1F, 2F);
 				send("&3" + SafeCracker.playerClickedNPC.get(player()) + " >&c " + RandomUtils.randomElement(SafeCracker.wrongResponses));
 			}
 

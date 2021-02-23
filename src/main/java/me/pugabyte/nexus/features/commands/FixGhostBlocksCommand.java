@@ -32,7 +32,7 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 		if (radius > 15)
 			error("Max allowed radius is 15");
 
-		fixGhostBlocks(player(), player().getLocation(), radius);
+		fixGhostBlocks(player(), location(), radius);
 		send("&eAll ghost blocks within " + radius + " blocks updated");
 	}
 

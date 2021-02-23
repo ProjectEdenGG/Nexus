@@ -27,7 +27,7 @@ public class SnowLayersCommand extends CustomCommand {
 	void overlay(int radius, boolean topBlockOnly, @Arg(type = Material.class) List<Material> materials) {
 		int placed = 0;
 		main:
-		for (Block block : BlockUtils.getBlocksInRadius(player().getLocation(), radius)) {
+		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
 
 			if (!materials.contains(block.getType()))
 				continue;
@@ -51,7 +51,7 @@ public class SnowLayersCommand extends CustomCommand {
 	@Path("fixGrass [radius]")
 	void fixGrass(@Arg("10") int radius) {
 		int fixedDirt = 0, fixedGrass = 0;
-		for (Block block : BlockUtils.getBlocksInRadius(player().getLocation(), radius)) {
+		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
 			boolean grass = block.getType() == Material.GRASS_BLOCK;
 			boolean dirt = block.getType() == Material.DIRT;
 			if (!(dirt || grass))
@@ -82,7 +82,7 @@ public class SnowLayersCommand extends CustomCommand {
 	@Path("fixOverlay [radius]")
 	void fixOverlay(@Arg("10") int radius) {
 		int fixed = 0;
-		for (Block block : BlockUtils.getBlocksInRadius(player().getLocation(), radius)) {
+		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
 			if (block.getType() != Material.SNOW)
 				continue;
 
@@ -98,7 +98,7 @@ public class SnowLayersCommand extends CustomCommand {
 
 	@Path("set <layers>")
 	void layers(@Arg(min = 0, max = 8) int layers) {
-		Block block = player().getLocation().getBlock();
+		Block block = location().getBlock();
 		block.setType(Material.SNOW, false);
 		Snow snow = (Snow) block.getBlockData();
 		snow.setLayers(layers);

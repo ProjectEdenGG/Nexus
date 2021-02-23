@@ -94,7 +94,7 @@ public class KillEntityCommand extends CustomCommand {
 
 		Runnable kill = () -> {
 			Set<Entity> entities = new HashSet<>();
-			for (final Chunk chunk : player().getWorld().getLoadedChunks())
+			for (final Chunk chunk : world().getLoadedChunks())
 				for (final Entity entity : chunk.getEntities())
 					if (location().distanceSquared(entity.getLocation()) <= radius)
 						if (toKill.contains(entity.getType()))

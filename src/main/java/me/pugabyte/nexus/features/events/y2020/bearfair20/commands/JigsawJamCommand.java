@@ -88,20 +88,20 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@Path("paste")
 	@Permission("group.staff")
 	void paste() {
-		paste(player().getLocation());
+		paste(location());
 	}
 
 	@Path("clear")
 	@Permission("group.staff")
 	void clear() {
-		clear(player().getLocation());
+		clear(location());
 	}
 
 	@Path("reset")
 	@Permission("group.staff")
 	void reset(@Arg("self") OfflinePlayer player) {
-		paste(player().getLocation());
-		clear(player().getLocation());
+		paste(location());
+		clear(location());
 	}
 
 	@Async

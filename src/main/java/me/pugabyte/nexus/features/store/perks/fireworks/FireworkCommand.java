@@ -21,6 +21,6 @@ public class FireworkCommand extends CustomCommand {
 
 	@Path
 	void firework() {
-		FireworkLauncher.random(player().getLocation()).launch();
+		FireworkLauncher.random(location()).launch();
 	}
 }

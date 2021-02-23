@@ -16,8 +16,16 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.features.recipes.CustomRecipes;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.*;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
+import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
@@ -32,20 +40,41 @@ import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PacketUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.StringUtils.*;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
+import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -60,7 +89,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
@@ -68,7 +102,9 @@ import java.util.zip.ZipFile;
 import static me.pugabyte.nexus.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.StringUtils.*;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.paste;
+import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")
@@ -355,7 +391,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void movingSchematicTest(String schematic, int seconds, double velocity) {
 		List<FallingBlock> fallingBlocks = worldEditUtils.paster()
 				.file(schematic)
-				.at(player().getLocation().add(-10, 0, 0))
+				.at(location().add(-10, 0, 0))
 				.buildEntities();
 
 		Tasks.wait(Time.SECOND.x(5), () -> {
@@ -372,7 +408,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void schemBuildQueue(String schematic, int seconds) {
 		worldEditUtils.paster()
 				.file(schematic)
-				.at(player().getLocation().add(-10, 0, 0))
+				.at(location().add(-10, 0, 0))
 				.duration(Time.SECOND.x(seconds))
 				.buildQueue();
 	}
@@ -478,7 +514,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void schemSave(String name) {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		GameMode originalGameMode = player().getGameMode();
-		Location originalLocation = player().getLocation().clone();
+		Location originalLocation = location().clone();
 		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
 		player().setGameMode(GameMode.SPECTATOR);
 		player().teleport(location);
@@ -493,7 +529,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("schem paste <name>")
 	void schemPaste(String name) {
-		worldEditUtils.paster().file(name).at(player().getLocation()).pasteAsync();
+		worldEditUtils.paster().file(name).at(location()).pasteAsync();
 		send("Pasted schematic " + name);
 	}
 
@@ -510,19 +546,19 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if (!clipboards.containsKey(uuid()))
 			error("You have not copied anything");
 
-		worldEditUtils.paster().clipboard(clipboards.get(uuid())).at(player().getLocation()).pasteAsync();
+		worldEditUtils.paster().clipboard(clipboards.get(uuid())).at(location()).pasteAsync();
 		send("Pasted clipboard");
 	}
 
 	@Path("allowedRegionsTest")
 	void allowedRegionsTest() {
-		worldEditUtils.paster().file("allowedRegionsTest").at(player().getLocation()).regions("allowedRegionsTest").pasteAsync();
+		worldEditUtils.paster().file("allowedRegionsTest").at(location()).regions("allowedRegionsTest").pasteAsync();
 		send("Pasted schematic allowedRegionsTest");
 	}
 
 	@Path("copyTileEntityClientTest")
 	void copyTileEntityClient() {
-		PacketUtils.copyTileEntityClient(player(), player().getLocation().getBlock(), player().getLocation().add(1, 0, 0));
+		PacketUtils.copyTileEntityClient(player(), location().getBlock(), location().add(1, 0, 0));
 	}
 
 	@Path("removeTest")
@@ -615,7 +651,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("setPowered [boolean] [doPhysics]")
 	void setPowered(@Arg("true") boolean powered, @Arg("false") boolean doPhysics) {
 		line();
-		Block block = player().getLocation().getBlock();
+		Block block = location().getBlock();
 		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
 		send("Before: " + (rail.isPowered() ? "is" : "not") + " powered");
 		rail.setPowered(powered);
@@ -626,14 +662,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("getPowered")
 	void getPowered() {
-		Block block = player().getLocation().getBlock();
+		Block block = location().getBlock();
 		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
 		send((rail.isPowered() ? "is" : "not") + " powered");
 	}
 
 	@Path("clientSideBlock <material>")
 	void clientSideBlock(Material material) {
-		player().sendBlockChange(player().getLocation().add(0, -1, 0), Bukkit.createBlockData(material));
+		player().sendBlockChange(location().add(0, -1, 0), Bukkit.createBlockData(material));
 	}
 
 	private static String motd = null;
@@ -658,7 +694,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("radiusTest")
 	void radiusTest() {
-		Location origin = player().getLocation();
+		Location origin = location();
 		for (Block block : getBlocksInRadius(origin, 3)) {
 			double distance = block.getLocation().distance(origin);
 			if (distance < 1)

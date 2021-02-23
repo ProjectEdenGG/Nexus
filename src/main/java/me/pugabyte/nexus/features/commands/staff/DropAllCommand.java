@@ -19,7 +19,7 @@ public class DropAllCommand extends CustomCommand {
 	void run() {
 		for (Material material : Material.values())
 			if (material.isItem() && Material.AIR != material)
-				player().getWorld().dropItemNaturally(player().getLocation(), new ItemStack(material));
+				world().dropItemNaturally(location(), new ItemStack(material));
 	}
 
 }

@@ -23,8 +23,8 @@ public class NearestPlayerCommand extends CustomCommand {
 		Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 
 		for (Player player : players) {
-			if (player.getWorld() == player().getWorld() && player != player()) {
-				double tempDistance = player.getLocation().distance(player().getLocation());
+			if (player.getWorld() == world() && player != player()) {
+				double tempDistance = player.getLocation().distance(location());
 				if (tempDistance < minDistance) {
 					nearestPlayer = player;
 					minDistance = tempDistance;

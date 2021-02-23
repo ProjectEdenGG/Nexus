@@ -74,7 +74,7 @@ public class BFFishingCommand extends CustomCommand {
 		String timeSpan = StringUtils.timespanDiff(then);
 		timestamps.remove(player().getUniqueId());
 
-		String region = getIslandRegion(player().getLocation());
+		String region = getIslandRegion(location());
 
 		ItemStack[] contents = player().getInventory().getContents();
 		List<ItemStack> loot = getLoot(contents);

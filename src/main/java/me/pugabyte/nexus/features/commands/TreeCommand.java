@@ -23,7 +23,7 @@ public class TreeCommand extends CustomCommand {
 		if (location.getBlock().getType().isSolid())
 			error("Could not generate tree on " + camelCase(target.getType()));
 
-		if (player().getWorld().generateTree(target.getLocation(), treeType))
+		if (world().generateTree(target.getLocation(), treeType))
 			send(PREFIX + "Generated " + camelCase(treeType));
 		else
 			send(PREFIX + "Tree generation failed");

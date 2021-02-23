@@ -36,7 +36,7 @@ public class NearbyEntitiesCommand extends CustomCommand {
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
-		LinkedHashMap<EntityType, Long> nearbyEntities = getNearbyEntityTypes(player().getLocation(), radius);
+		LinkedHashMap<EntityType, Long> nearbyEntities = getNearbyEntityTypes(location(), radius);
 		nearbyEntities.forEach((entityType, count) -> send("&e" + StringUtils.camelCase(entityType.name()) + " &7- " + count));
 		send("");
 		send("&3Total: &e" + nearbyEntities.values().stream().mapToLong(i -> i).sum());
@@ -44,7 +44,7 @@ public class NearbyEntitiesCommand extends CustomCommand {
 
 	@Path("find <type> [radius]")
 	void find(EntityType type, @Arg("200") int radius) {
-		getNearbyEntities(player().getLocation(), radius).forEach((entity, count) -> {
+		getNearbyEntities(location(), radius).forEach((entity, count) -> {
 			if (entity.getType() != type)
 				return;
 

@@ -19,7 +19,7 @@ public class MeasureCommand extends CustomCommand {
 
 	@Path("1")
 	void one() {
-		playerMap.put(player().getUniqueId(), player().getLocation());
+		playerMap.put(player().getUniqueId(), location());
 		send(PREFIX + "First position set");
 	}
 
@@ -28,7 +28,7 @@ public class MeasureCommand extends CustomCommand {
 		if (!playerMap.containsKey(player().getUniqueId()))
 			error("You have not set your first position yet");
 
-		send("&3Distance: &e" + (int) playerMap.get(player().getUniqueId()).distance(player().getLocation()));
+		send("&3Distance: &e" + (int) playerMap.get(player().getUniqueId()).distance(location()));
 		playerMap.remove(player().getUniqueId());
 	}
 

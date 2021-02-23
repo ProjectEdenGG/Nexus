@@ -19,7 +19,7 @@ public class SmiteCommand extends CustomCommand {
 	@Path("[player]")
 	void run(Player player) {
 		if (player == null)
-			player().getWorld().strikeLightning(getTargetBlockRequired().getLocation());
+			world().strikeLightning(getTargetBlockRequired().getLocation());
 		else {
 			player.getWorld().strikeLightningEffect(player.getLocation());
 			send(PREFIX + "Smiting " + player.getName());

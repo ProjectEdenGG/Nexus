@@ -27,7 +27,7 @@ public class CheatsCommand extends CustomCommand {
 		if (enabled) {
 			if (player().hasPermission("essentials.gamemode.creative"))
 				player().setGameMode(GameMode.CREATIVE);
-			if (!player().getWorld().getEnvironment().equals(Environment.THE_END)) {
+			if (!world().getEnvironment().equals(Environment.THE_END)) {
 				player().setAllowFlight(true);
 				player().setFlying(true);
 			}
@@ -41,7 +41,7 @@ public class CheatsCommand extends CustomCommand {
 			godmode.setEnabled(false);
 			godmodeService.save(godmode);
 			if (WorldGroup.get(player()) != WorldGroup.CREATIVE) {
-				if (!player().getWorld().getEnvironment().equals(Environment.THE_END)) {
+				if (!world().getEnvironment().equals(Environment.THE_END)) {
 					player().setAllowFlight(false);
 					player().setFlying(false);
 				}

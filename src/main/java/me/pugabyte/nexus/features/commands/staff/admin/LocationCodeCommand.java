@@ -23,7 +23,7 @@ public class LocationCodeCommand extends CustomCommand {
 
 	@Path("current")
 	void current() {
-		send(asJava(player().getLocation()));
+		send(asJava(location()));
 	}
 
 	@Path("selection")

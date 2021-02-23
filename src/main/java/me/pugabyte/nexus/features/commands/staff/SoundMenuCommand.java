@@ -118,7 +118,7 @@ public class SoundMenuCommand extends CustomCommand {
 
 	@Path("play <sound>")
 	public void playSound(String string) {
-		Location loc = player().getLocation();
+		Location loc = location();
 		float pitch = (float) getPitchDouble(player());
 		Sound sound = getSound(string);
 

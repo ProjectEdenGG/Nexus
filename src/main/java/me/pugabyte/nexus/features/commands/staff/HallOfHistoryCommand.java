@@ -167,9 +167,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 	void expand() {
 		send(PREFIX + "Expanding HOH. &4&lDon't move!");
 		int wait = 40;
-		AtomicReference<Location> newLocation = new AtomicReference<>(player().getLocation());
+		AtomicReference<Location> newLocation = new AtomicReference<>(location());
 		Tasks.wait(wait, () -> runCommand("/warp hallofhistory"));
-		Tasks.wait(wait += 20, () -> newLocation.set(player().getLocation().add(16, 0, 0).clone()));
+		Tasks.wait(wait += 20, () -> newLocation.set(location().add(16, 0, 0).clone()));
 		Tasks.wait(wait += 3, () -> runCommand("/pos1"));
 		Tasks.wait(wait += 3, () -> runCommand("/pos2"));
 		Tasks.wait(wait += 3, () -> runCommand("/expand 7"));

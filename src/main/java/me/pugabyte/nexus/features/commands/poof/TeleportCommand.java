@@ -52,7 +52,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	@Path("getCoords")
 	void getCoords() {
-		Location location = player().getLocation();
+		Location location = location();
 		String message = "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() + " " + location.getWorld().getName();
 		send(json(message).suggest(message));
 	}
@@ -87,7 +87,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		}
 
 		if (isCoord(arg(1)) && isCoord(arg(2)) && isCoord(arg(3))) {
-			Location location = player().getLocation();
+			Location location = location();
 			Modify modifier = RelativeLocation.modify(location).x(arg(1)).y(arg(2)).z(arg(3));
 			if (arg(4) != null && arg(5) != null && isCoord(arg(4)) && isCoord(arg(5))) {
 				modifier.yaw(arg(4)).pitch(arg(5));

@@ -33,7 +33,7 @@ public class AnimalTeleportPensCommand extends _WarpCommand {
 			send(PREFIX + "You cannot be riding a mount while using an ATP");
 			player().leaveVehicle();
 		}
-		if (player().getWorld().getName().equalsIgnoreCase("world"))
+		if (world().getName().equalsIgnoreCase("world"))
 			new ATPMenu().open(player(), ATPGroup.LEGACY);
 		else
 			new ATPMenu().open(player(), ATPGroup.SURVIVAL);
@@ -41,7 +41,7 @@ public class AnimalTeleportPensCommand extends _WarpCommand {
 
 	public boolean isInATP() {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
-		for (ProtectedRegion region : WGUtils.getRegionsAt(player().getLocation())) {
+		for (ProtectedRegion region : WGUtils.getRegionsAt(location())) {
 			if (region.getId().contains("atp"))
 				return true;
 		}

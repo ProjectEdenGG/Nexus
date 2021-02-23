@@ -22,15 +22,15 @@ public class WhoDaresSummonMeCommand extends CustomCommand {
 	@Path
 	void run() {
 		runCommand("vanish off");
-		World world = player().getWorld();
-		world.strikeLightning(player().getLocation().clone().add(0, 5, 0));
-		world.strikeLightningEffect(player().getLocation().clone().add(5, 0, 0));
-		world.strikeLightningEffect(player().getLocation().clone().add(0, 0, 5));
-		world.strikeLightningEffect(player().getLocation().clone().subtract(5, 0, 0));
-		world.strikeLightningEffect(player().getLocation().clone().subtract(0, 0, 5));
+		World world = world();
+		world.strikeLightning(location().clone().add(0, 5, 0));
+		world.strikeLightningEffect(location().clone().add(5, 0, 0));
+		world.strikeLightningEffect(location().clone().add(0, 0, 5));
+		world.strikeLightningEffect(location().clone().subtract(5, 0, 0));
+		world.strikeLightningEffect(location().clone().subtract(0, 0, 5));
 		List<Bat> bats = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
-			bats.add(world.spawn(player().getLocation(), Bat.class));
+			bats.add(world.spawn(location(), Bat.class));
 		}
 		Tasks.wait(Time.SECOND.x(5), () -> bats.forEach(Bat::remove));
 	}

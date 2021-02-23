@@ -38,6 +38,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -168,6 +169,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (!(targetEntity instanceof Player))
 			error("You must be looking at a player");
 		return (Player) targetEntity;
+	}
+
+	protected World world() {
+		return world();
+	}
+
+	protected Location location() {
+		return location();
 	}
 
 	protected void send(CommandSender sender, String message) {
@@ -671,7 +680,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(World.class)
 	World convertToWorld(String value) {
 		if ("current".equalsIgnoreCase(value))
-			return player().getWorld();
+			return world();
 		World world = Bukkit.getWorld(value);
 		if (world == null)
 			throw new InvalidInputException("World from " + value + " not found");

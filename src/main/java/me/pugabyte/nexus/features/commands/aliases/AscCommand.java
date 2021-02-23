@@ -15,7 +15,7 @@ public class AscCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		if (WorldGroup.get(player().getWorld()).equals(WorldGroup.SKYBLOCK)) {
+		if (WorldGroup.get(world()).equals(WorldGroup.SKYBLOCK)) {
 			fallback();
 			return;
 		}

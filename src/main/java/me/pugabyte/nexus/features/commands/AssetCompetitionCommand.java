@@ -27,7 +27,7 @@ public class AssetCompetitionCommand extends CustomCommand {
 
 	@Path("submit")
 	void submit() {
-		assetCompetition.setLocation(player().getLocation());
+		assetCompetition.setLocation(location());
 		service.save(assetCompetition);
 		send(PREFIX + "You have submitted your build for the asset competition. The judges will be by soon! Thank you and good luck!");
 	}

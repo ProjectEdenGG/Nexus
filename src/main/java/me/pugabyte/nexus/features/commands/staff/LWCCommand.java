@@ -28,7 +28,7 @@ public class LWCCommand extends CustomCommand {
 			Tasks.wait(10, () -> {
 				runCommand("rg define lwcpurge");
 				Tasks.wait(10, () -> {
-					runCommand("cadmin purgeregion lwcpurge " + player().getWorld().getName());
+					runCommand("cadmin purgeregion lwcpurge " + world().getName());
 					runCommand("rg remove lwcpurge");
 					runCommand("/desel");
 				});

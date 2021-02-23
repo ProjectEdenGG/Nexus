@@ -240,7 +240,7 @@ public class RadioCommand extends CustomCommand {
 					.id(id)
 					.type(RadioType.RADIUS)
 					.radius(radius)
-					.location(player().getLocation())
+					.location(location())
 					.build());
 
 		} else if (type.equals(RadioType.SERVER)) {
@@ -297,7 +297,7 @@ public class RadioCommand extends CustomCommand {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only set location of a radius radio");
 
-		radio.setLocation(player().getLocation());
+		radio.setLocation(location());
 		if (radio.isEnabled())
 			radio.reload();
 

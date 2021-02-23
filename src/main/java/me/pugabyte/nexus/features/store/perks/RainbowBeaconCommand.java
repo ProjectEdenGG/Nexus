@@ -40,8 +40,8 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			error(formatWho(rainbowBeacon, WhoType.POSSESSIVE_UPPER) + " rainbow beacon is already activated");
 
 		if (rainbowBeacon.getLocation() == null)
-			if (player().getLocation().clone().subtract(0, 1, 0).getBlock().getType().equals(Material.BEACON)) {
-				rainbowBeacon.setLocation(player().getLocation().getBlock().getLocation());
+			if (location().clone().subtract(0, 1, 0).getBlock().getType().equals(Material.BEACON)) {
+				rainbowBeacon.setLocation(location().getBlock().getLocation());
 				service.save(rainbowBeacon);
 			} else
 				error("You must be standing on a beacon");

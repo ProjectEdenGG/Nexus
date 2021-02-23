@@ -53,7 +53,7 @@ public class FreezeCommand extends CustomCommand implements Listener {
 
 	@Path("cleanup")
 	void prune() {
-		send(PREFIX + "Removed &e" + cleanup(player().getWorld()) + " &3freeze stands.");
+		send(PREFIX + "Removed &e" + cleanup(world()) + " &3freeze stands.");
 	}
 
 	public static int cleanup(World world) {

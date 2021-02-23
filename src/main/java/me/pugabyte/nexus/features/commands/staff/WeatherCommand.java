@@ -21,7 +21,7 @@ public class WeatherCommand extends CustomCommand {
 
 	@Path("<type> [duration]")
 	void run(WeatherType weatherType, int duration) {
-		run(player().getWorld(), weatherType, duration);
+		run(world(), weatherType, duration);
 	}
 
 	@Path("<world> <type> [duration]")

@@ -20,7 +20,7 @@ public class TeleportHereCommand extends CustomCommand {
 		if (!player().hasPermission("essentials.tphere"))
 			runCommand("tpahere " + argsString());
 		else
-			player.teleportAsync(player().getLocation(), TeleportCause.COMMAND);
+			player.teleportAsync(location(), TeleportCause.COMMAND);
 	}
 
 }

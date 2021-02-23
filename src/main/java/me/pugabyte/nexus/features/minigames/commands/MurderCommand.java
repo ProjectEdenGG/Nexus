@@ -34,7 +34,7 @@ public class MurderCommand extends CustomCommand {
 	@Path("(scraps|scrapoints) add")
 	void addScraps() {
 		MurderArena murderArena = getMurderArena();
-		murderArena.getScrapPoints().add(player().getLocation().getBlock().getLocation());
+		murderArena.getScrapPoints().add(location().getBlock().getLocation());
 		ArenaManager.write(murderArena);
 		send(PREFIX + "Added scrappoint");
 	}
@@ -54,7 +54,7 @@ public class MurderCommand extends CustomCommand {
 	}
 
 	private MurderArena getMurderArena() {
-		Arena arena = ArenaManager.getFromLocation(player().getLocation());
+		Arena arena = ArenaManager.getFromLocation(location());
 		if (arena == null)
 			error("No arena found at your location");
 		if (!(arena.getMechanic() instanceof Murder))

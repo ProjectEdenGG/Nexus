@@ -307,13 +307,13 @@ public class MinigamesCommand extends CustomCommand {
 			if (teams.size() != 1)
 				error("There is more than one team in that arena, you must specify which one");
 
-			teams.get(0).getSpawnpoints().add(player().getLocation());
+			teams.get(0).getSpawnpoints().add(location());
 			arena.write();
 			send(PREFIX + "Spawnpoint added");
 			return;
 		}
 
-		team.getSpawnpoints().add(player().getLocation());
+		team.getSpawnpoints().add(location());
 		arena.write();
 		send(PREFIX + "Spawnpoint added");
 	}
@@ -343,7 +343,7 @@ public class MinigamesCommand extends CustomCommand {
 			permissionError();
 
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
-		if (!WGUtils.isInRegion(player().getLocation(), "minigamelobby"))
+		if (!WGUtils.isInRegion(location(), "minigamelobby"))
 			error("You must be in the Minigame Lobby to use this command");
 
 		Collection<Player> players = WGUtils.getPlayersInRegion("minigamelobby");
@@ -351,7 +351,7 @@ public class MinigamesCommand extends CustomCommand {
 		if (count == 0)
 			error("There is no one to invite!");
 
-		if (WGUtils.isInRegion(player().getLocation(), "screenshot")) {
+		if (WGUtils.isInRegion(location(), "screenshot")) {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
 		} else {
@@ -410,7 +410,7 @@ public class MinigamesCommand extends CustomCommand {
 		if (inviteCommand == null)
 			error("There is no pending game invite");
 
-		if (player().getWorld() != Minigames.getWorld()) {
+		if (world() != Minigames.getWorld()) {
 			new WarpService().get("minigames", WarpType.NORMAL).teleport(player());
 			Tasks.wait(5, this::acceptInvite);
 		} else

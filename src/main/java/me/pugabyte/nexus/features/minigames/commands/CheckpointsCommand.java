@@ -31,7 +31,7 @@ public class CheckpointsCommand extends CustomCommand {
 		super(event);
 		Arena found = null;
 		try {
-			found = ArenaManager.getFromLocation(player().getLocation());
+			found = ArenaManager.getFromLocation(location());
 		} catch (InvalidInputException ignore) {}
 
 		if (found == null) {
@@ -71,7 +71,7 @@ public class CheckpointsCommand extends CustomCommand {
 		wgUtils.getManager().addRegion(region);
 		wgUtils.getManager().saveChanges();
 
-		arena.setCheckpoint(number, player().getLocation());
+		arena.setCheckpoint(number, location());
 
 		send(PREFIX + "Created checkpoint &e#" + number + " &3in &e" + arena.getDisplayName());
 	}

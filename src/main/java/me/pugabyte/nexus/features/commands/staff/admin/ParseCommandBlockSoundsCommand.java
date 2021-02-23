@@ -37,7 +37,7 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 
 	@Path("parseCommandBlockSounds")
 	public void parseCommandBlockSounds() {
-		Block start = player().getLocation().add(0, -1, 0).getBlock();
+		Block start = location().add(0, -1, 0).getBlock();
 		look(start, null);
 		AtomicReference<String> all = new AtomicReference<>("");
 

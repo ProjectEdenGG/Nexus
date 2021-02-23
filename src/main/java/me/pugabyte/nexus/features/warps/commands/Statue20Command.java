@@ -86,17 +86,17 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	@Override
 	@Permission("group.staff")
 	public void teleportNearest() {
-		getNearestWarp(player().getLocation()).ifPresent(this::teleport);
+		getNearestWarp(location()).ifPresent(this::teleport);
 	}
 
 	@Path("nearest")
 	@Override
 	@Permission("group.staff")
 	public void nearest() {
-		Optional<Warp> warp = getNearestWarp(player().getLocation());
+		Optional<Warp> warp = getNearestWarp(location());
 		if (!warp.isPresent())
 			error("No nearest warp found");
-		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(player().getLocation()) + " &3blocks away)");
+		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(location()) + " &3blocks away)");
 	}
 
 	@Permission("group.staff")
