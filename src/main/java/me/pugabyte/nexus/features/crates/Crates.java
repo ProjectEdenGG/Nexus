@@ -7,7 +7,9 @@ import me.pugabyte.nexus.features.crates.menus.CrateEditMenu;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
+import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -29,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
+@Environments(Env.PROD)
 public class Crates extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Crates");

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.economy.commands;
 import dev.morphia.query.Sort;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -14,11 +15,11 @@ import me.pugabyte.nexus.utils.StringUtils;
 import java.util.List;
 import java.util.function.BiFunction;
 
-//@Aliases({"baltop", "moneytop"})
-public class NexusBalanceTopCommand extends CustomCommand {
+@Aliases({"baltop", "moneytop"})
+public class BalanceTopCommand extends CustomCommand {
 	private final BankerService service = new BankerService();
 
-	public NexusBalanceTopCommand(@NonNull CommandEvent event) {
+	public BalanceTopCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = StringUtils.getPrefix("Economy");
 	}

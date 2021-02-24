@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models;
 
 import com.google.common.base.Strings;
+import de.myzelyam.api.vanish.VanishAPI;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -312,7 +313,7 @@ public class Minigamer {
 		player.setFallDistance(0f);
 		player.setAllowFlight(mechanic.allowFly());
 		player.setFlying(mechanic.allowFly());
-		Nexus.getEssentials().getUser(player).setVanished(false);
+		VanishAPI.showPlayer(player);
 		SpeedCommand.resetSpeed(player);
 
 		if (mechanic.shouldClearInventory())

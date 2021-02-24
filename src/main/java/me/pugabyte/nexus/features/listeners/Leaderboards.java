@@ -5,6 +5,7 @@ import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.features.store.Package;
 import me.pugabyte.nexus.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -18,7 +19,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import net.ess3.api.events.UserBalanceUpdateEvent;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -170,7 +170,7 @@ public class Leaderboards implements Listener {
 	}
 
 	@EventHandler
-	public void onMoneyChange(UserBalanceUpdateEvent event) {
+	public void onBalanceChange(BalanceChangeEvent event) {
 		if (event.getNewBalance().doubleValue() >= 1000000)
 			Leaderboard.BALANCE.update();
 	}

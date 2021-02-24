@@ -375,23 +375,25 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSelf(PlayerOwnedObject object) {
-		return isPlayer() && isSelf(object.getOfflinePlayer());
+		return isSelf(object.getOfflinePlayer());
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {
-		return isPlayer() && isSelf(player(), player);
+		return isSelf(player(), player);
 	}
 
 	protected boolean isSelf(Player player) {
-		return isPlayer() && isSelf(player(), player);
+		return isSelf(player(), player);
 	}
 
 	protected boolean isSelf(OfflinePlayer self, OfflinePlayer player) {
+		if (!isPlayer())
+			return false;
 		return self.getUniqueId().equals(player.getUniqueId());
 	}
 
 	protected boolean isStaff() {
-		return isPlayer() && isStaff(player());
+		return !isPlayer() || isStaff(player());
 	}
 
 	protected boolean isStaff(Player player) {
@@ -399,11 +401,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isStaff(OfflinePlayer player) {
-		return isPlayer(player) && new Nerd(player).getRank().isStaff();
+		return isOfflinePlayer(player) && new Nerd(player).getRank().isStaff();
 	}
 
 	protected boolean isSeniorStaff() {
-		return isPlayer() && isSeniorStaff(player());
+		return !isPlayer() || isSeniorStaff(player());
 	}
 
 	protected boolean isSeniorStaff(Player player) {
@@ -411,11 +413,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSeniorStaff(OfflinePlayer player) {
-		return isPlayer(player) && new Nerd(player).getRank().isSeniorStaff();
+		return isOfflinePlayer(player) && new Nerd(player).getRank().isSeniorStaff();
 	}
 
 	protected boolean isAdmin() {
-		return isPlayer() && isAdmin(player());
+		return !isPlayer() || isAdmin(player());
 	}
 
 	protected boolean isAdmin(Player player) {
@@ -423,7 +425,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isAdmin(OfflinePlayer player) {
-		return isPlayer(player) && (new Nerd(player).getRank().equals(Rank.ADMIN) || new Nerd(player).getRank().equals(Rank.OWNER));
+		return isOfflinePlayer(player) && (new Nerd(player).getRank().equals(Rank.ADMIN) || new Nerd(player).getRank().equals(Rank.OWNER));
 	}
 
 	protected boolean isNullOrEmpty(String string) {
@@ -771,14 +773,14 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor(LivingEntity.class)
 	protected List<String> tabCompleteLivingEntity(String value) {
-		List<String> completions = new ArrayList<>();
-		for (EntityType entityType : EntityType.values()) {
-			Class<? extends Entity> entityClass = entityType.getEntityClass();
-			if (entityClass != null && entityClass.isAssignableFrom(LivingEntity.class))
-				completions.add(entityType.name().toLowerCase());
-		}
-
-		return completions;
+		return new ArrayList<String>() {{
+			for (EntityType entityType : EntityType.values()) {
+				Class<? extends Entity> entityClass = entityType.getEntityClass();
+				if (entityClass != null && LivingEntity.class.isAssignableFrom(entityClass))
+					if (entityType.name().toLowerCase().startsWith(value.toLowerCase()))
+						add(entityType.name().toLowerCase());
+			}
+		}};
 	}
 
 	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page) {

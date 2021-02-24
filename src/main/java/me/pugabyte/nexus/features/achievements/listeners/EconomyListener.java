@@ -1,9 +1,7 @@
 package me.pugabyte.nexus.features.achievements.listeners;
 
 import me.pugabyte.nexus.models.achievement.Achievement;
-import net.ess3.api.events.UserBalanceUpdateEvent;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class EconomyListener implements Listener {
@@ -15,13 +13,13 @@ public class EconomyListener implements Listener {
 		}
 	}
 
+/*
+// TODO New econ handlers
 	@EventHandler
 	public void onBalanceUpdated(UserBalanceUpdateEvent event) {
 		checkBalance(event.getPlayer());
 	}
 
-/*
-// TODO New econ handlers
 	@EventHandler
 	public void onEssSignInteract(EssSignInteractEvent event) {
 		checkBalance(event.getPlayer());

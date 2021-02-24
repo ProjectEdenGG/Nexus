@@ -15,11 +15,11 @@ import java.math.BigDecimal;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
-public class NexusPayCommand extends CustomCommand {
+public class PayCommand extends CustomCommand {
 	private final BankerService service = new BankerService();
 	private final Banker self;
 
-	public NexusPayCommand(@NonNull CommandEvent event) {
+	public PayCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = StringUtils.getPrefix("Economy");
 		self = service.get(player());

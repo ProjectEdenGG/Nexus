@@ -20,7 +20,7 @@ public class ItemNameCommand extends CustomCommand {
 	}
 
 	@Path("(null|none|reset)")
-	void name() {
+	void reset() {
 		name(null);
 	}
 

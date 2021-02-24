@@ -2,7 +2,6 @@ package me.pugabyte.nexus;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.earth2me.essentials.Essentials;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
@@ -10,6 +9,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.economy.NexusEconomy;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.listeners.LiteBans;
 import me.pugabyte.nexus.features.menus.SignMenuFactory;
@@ -23,8 +23,13 @@ import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.utils.Env;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time.Timer;
+import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
@@ -212,7 +217,7 @@ public class Nexus extends JavaPlugin {
 			new Timer(" Hooks", this::hooks);
 			new Timer(" Features", () -> {
 				features = new Features(this, "me.pugabyte.nexus.features");
-				features.register(Chat.class, Discord.class); // prioritize
+				features.register(Chat.class, Discord.class, NexusEconomy.class); // prioritize
 				features.registerAll();
 			});
 			new Timer(" Commands", () -> {
@@ -233,7 +238,7 @@ public class Nexus extends JavaPlugin {
 		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
-		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
+		try { features.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MongoDBPersistence.shutdown();							} catch (Throwable ex) { ex.printStackTrace(); }
@@ -281,13 +286,14 @@ public class Nexus extends JavaPlugin {
 	private static ProtocolManager protocolManager;
 	@Getter
 	private static MultiverseCore multiverseCore;
-	@Getter
-	private static Essentials essentials;
+//	@Getter
+//	private static Essentials essentials;
 	@Getter
 	private static Citizens citizens;
 	@Getter
 	private static BuycraftPluginBase buycraft;
 	@Getter
+	@Setter
 	private static Economy econ = null;
 	@Getter
 	private static Permission perms = null;
@@ -307,11 +313,9 @@ public class Nexus extends JavaPlugin {
 		signMenuFactory = new SignMenuFactory(this);
 		protocolManager = ProtocolLibrary.getProtocolManager();
 		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
-		essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		cron.start();
-		econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
@@ -197,15 +196,15 @@ public class ConvertShopCommand extends CustomCommand {
 	}
 
 	public Material essentialsAliases(String name) {
-		if (name.equalsIgnoreCase("steak"))
-			return Material.COOKED_BEEF;
-		try {
-			ItemStack item = Nexus.getEssentials().getItemDb().get(name);
-			return item.getType();
-		} catch (Exception e) {
-			error("Could not parse item from essentials aliases");
-			Nexus.warn("Could not convert the shop from player " + name());
-		}
+//		if (name.equalsIgnoreCase("steak"))
+//			return Material.COOKED_BEEF;
+//		try {
+//			ItemStack item = Nexus.getEssentials().getItemDb().get(name);
+//			return item.getType();
+//		} catch (Exception e) {
+//			error("Could not parse item from essentials aliases");
+//			Nexus.warn("Could not convert the shop from player " + name());
+//		}
 		return null;
 	}
 

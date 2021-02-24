@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.banker;
 
+import com.dieselpoint.norm.Transaction;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -17,6 +18,8 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
@@ -33,6 +36,7 @@ public class Banker extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private BigDecimal balance = BigDecimal.valueOf(500);
+	private List<Transaction> history = new ArrayList<>();
 
 	public String getBalanceFormatted() {
 		return prettyMoney(balance);

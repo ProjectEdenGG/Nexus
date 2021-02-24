@@ -3,7 +3,9 @@ package me.pugabyte.nexus.features.quests;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -37,6 +39,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
+@Environments(Env.PROD)
 public class MobHeads extends Feature implements Listener {
 	@Getter
 	private static final Map<EntityType, ItemStack> mobHeads = new HashMap<>();

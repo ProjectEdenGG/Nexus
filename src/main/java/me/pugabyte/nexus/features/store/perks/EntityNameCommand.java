@@ -34,7 +34,7 @@ public class EntityNameCommand extends CustomCommand {
 	}
 
 	@Path("(null|none|reset)")
-	void name() {
+	void reset() {
 		name(null);
 	}
 

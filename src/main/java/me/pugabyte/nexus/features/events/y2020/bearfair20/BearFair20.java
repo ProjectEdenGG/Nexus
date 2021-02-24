@@ -11,6 +11,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.EasterEggs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.godmode.Godmode;
+import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -204,7 +206,7 @@ public class BearFair20 implements Listener {
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";
-		if (Nexus.getEssentials().getUser(player.getUniqueId()).isGodModeEnabled()) return "godmode";
+		if (((Godmode) new GodmodeService().get(player)).isEnabled()) return "godemode";
 
 		return null;
 	}

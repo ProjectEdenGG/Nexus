@@ -1,9 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
-import com.earth2me.essentials.User;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -13,7 +11,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirec
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
@@ -28,7 +25,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
@@ -64,18 +60,6 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 		send(player, PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 		if (!isSelf(player))
 			send(PREFIX + "Godmode " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
-	}
-
-	@EventHandler
-	public void onJoin(final PlayerJoinEvent event) {
-		if (!PlayerUtils.isStaffGroup(event.getPlayer())) return;
-		User user = Nexus.getEssentials().getUser(event.getPlayer().getUniqueId());
-		boolean enabled = user.isGodModeEnabledRaw();
-		if (enabled) {
-			Godmode godmode = new GodmodeService().get(event.getPlayer());
-			godmode.setEnabled(true);
-			user.setGodModeEnabled(false);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
