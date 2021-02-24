@@ -6,7 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.OfflinePlayer;
 
-@Permission("group.admin")
+@Permission("group.staff")
 public class LWCCOCommand extends CustomCommand {
 
 	public LWCCOCommand(CommandEvent event) {
