@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.events.aeveonproject.sets.lobby.Lobby;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.sialia.Sialia;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.sialiaCrashing.SialiaCrashing;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -41,8 +42,8 @@ public class Effects implements Listener {
 		List<Location> shipRobotLocs = Arrays.asList(Lobby.shipRobot, Sialia.shipRobot, SialiaCrashing.shipRobot);
 		Tasks.repeat(0, 2, () -> {
 			for (Location shipRobot : shipRobotLocs) {
-				Player nearestPlayer = (Player) APUtils.getNearestEntityType(shipRobot, EntityType.PLAYER, 7);
-				ArmorStand armorStand = (ArmorStand) APUtils.getNearestEntityType(shipRobot, EntityType.ARMOR_STAND, 1);
+				Player nearestPlayer = (Player) EntityUtils.getNearestEntityType(shipRobot, EntityType.PLAYER, 7);
+				ArmorStand armorStand = (ArmorStand) EntityUtils.getNearestEntityType(shipRobot, EntityType.ARMOR_STAND, 1);
 				if (nearestPlayer != null && armorStand != null) {
 					APUtils.makeArmorStandLookAtPlayer(armorStand, nearestPlayer);
 				}

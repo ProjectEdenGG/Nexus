@@ -15,6 +15,8 @@ public class Events extends Feature {
 
 	@Override
 	public void onStart() {
+		new ArmorStandStalker();
+
 		new ScavHuntLegacy();
 
 		new AeveonProject();

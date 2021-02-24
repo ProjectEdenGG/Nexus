@@ -6,14 +6,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -120,23 +117,5 @@ public class APUtils {
 
 		EulerAngle ea = new EulerAngle(x, y, 0);
 		stand.setHeadPose(ea);
-	}
-
-	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
-		List<Entity> entities = location.getNearbyEntities(radius, radius, radius).stream()
-				.filter(_entity -> _entity.getType().equals(filter))
-				.collect(Collectors.toList());
-
-		double shortest = radius;
-		Entity result = null;
-		for (Entity entity : entities) {
-			double distance = entity.getLocation().distance(location);
-			if (distance < shortest) {
-				shortest = distance;
-				result = entity;
-			}
-		}
-
-		return result;
 	}
 }
