@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+//TODO: picking up multiple mob heads, only gives you 1
 @NoArgsConstructor
 @Environments(Env.PROD)
 public class MobHeads extends Feature implements Listener {
@@ -80,7 +81,7 @@ public class MobHeads extends Feature implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler // Fires twice if death by McMMO
 	public static void onKillEntity(EntityDamageByEntityEvent event) {
 		if (!(event.getEntity() instanceof LivingEntity))
 			return;
