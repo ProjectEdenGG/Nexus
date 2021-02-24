@@ -9,13 +9,19 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
+import me.pugabyte.nexus.models.afk.AFKSettings;
+import me.pugabyte.nexus.models.afk.AFKSettingsService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -42,6 +48,18 @@ public class AFKCommand extends CustomCommand implements Listener {
 				player.forceAfk(player::message);
 		else
 			player.forceAfk(player::afk);
+	}
+
+	@Path("mobTargeting [enable]")
+	void mobTargeting(Boolean enable) {
+		AFKSettingsService service = new AFKSettingsService();
+		AFKSettings afkSettings = service.get(player());
+		if (enable == null)
+			enable = !afkSettings.isMobTargeting();
+
+		afkSettings.setMobTargeting(enable);
+		service.save(afkSettings);
+		send(PREFIX + "Mobs " + (enable ? "&awill" : "&cwill not") + " &3target you while you are AFK");
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -87,6 +105,23 @@ public class AFKCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		AFK.remove(event.getPlayer());
+	}
+
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onEntityTarget(final EntityTargetLivingEntityEvent event) {
+		if (event.getEntity().getType() == EntityType.EXPERIENCE_ORB)
+			return;
+
+		if (event.getTarget() instanceof Player) {
+			Player player = (Player) event.getTarget();
+			AFKPlayer afkPlayer = AFK.get(player);
+			if (afkPlayer.isTimeAfk()) {
+				AFKSettingsService service = new AFKSettingsService();
+				AFKSettings afkSettings = service.get(player);
+				if (!afkSettings.isMobTargeting())
+					event.setCancelled(true);
+			}
+		}
 	}
 
 }

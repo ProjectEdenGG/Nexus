@@ -31,7 +31,7 @@ public class LagCommand extends CustomCommand {
 	void lag() {
 		LocalDateTime startTime = Utils.epochSecond(ManagementFactory.getRuntimeMXBean().getStartTime());
 		send(json("&3Uptime: &e" + StringUtils.timespanDiff(startTime)).hover("&3" + shortDateTimeFormat(startTime)));
-		send(ScoreboardLine.TPS.render(player()));
+		send(ScoreboardLine.TPS.render(null));
 		send("&3Max ram: &e" + Runtime.getRuntime().maxMemory() / 1024 / 1024);
 		send("&3Allocated ram: &e" + Runtime.getRuntime().totalMemory() / 1024 / 1024);
 		send("&3Free ram: &e" + Runtime.getRuntime().freeMemory() / 1024 / 1024);

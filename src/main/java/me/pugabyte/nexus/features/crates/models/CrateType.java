@@ -22,7 +22,7 @@ public enum CrateType {
 	ALL(null, null),
 	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8.00, 15.00, 11.00, .00F, .00F)),
 	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11.00, 15.00, 8.00, .00F, .00F)),
-	WEEKLY_WAKKA(new WeeklyWakkaCrate(), null);
+	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15.00, 15.00, -8.00, .00F, .00F));
 
 	Crate crateClass;
 	Location location;
@@ -31,7 +31,6 @@ public enum CrateType {
 		this.crateClass = crateClass;
 		this.location = location;
 	}
-
 
 	public Location getCenteredLocation() {
 		return LocationUtils.getCenteredLocation(this.location.clone());

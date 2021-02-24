@@ -128,9 +128,8 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 		if (event.getTarget() instanceof Player) {
 			Player player = (Player) event.getTarget();
 			Godmode godmode = new GodmodeService().get(player);
-			if (godmode.isEnabled()) {
+			if (godmode.isEnabled())
 				event.setCancelled(true);
-			}
 		}
 	}
 
