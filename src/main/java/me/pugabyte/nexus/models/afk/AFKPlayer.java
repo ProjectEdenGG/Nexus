@@ -31,6 +31,7 @@ public class AFKPlayer {
 	@DbSerializer(LocationSerializer.class)
 	private Location location;
 	private boolean forceAfk;
+	private boolean mobTargeting = false;
 
 	public AFKPlayer(Player player) {
 		this(player.getUniqueId());

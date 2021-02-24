@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
+import me.pugabyte.nexus.models.afk.AFKService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -46,6 +47,18 @@ public class AFKCommand extends CustomCommand implements Listener {
 				player.forceAfk(player::message);
 		else
 			player.forceAfk(player::afk);
+	}
+
+	@Path("mobTargeting [enable]")
+	void mobTargeting(Boolean enable) {
+		AFKPlayer player = AFK.get(player());
+		if (enable == null)
+			enable = !player.isMobTargeting();
+
+		player.setMobTargeting(enable);
+		new AFKService().save(player);
+		send(PREFIX + "Mobs will " + (enable ? "" : "not ") + "target you while you are AFK");
+
 	}
 
 	@EventHandler(ignoreCancelled = true)
