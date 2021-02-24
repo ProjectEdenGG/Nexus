@@ -313,7 +313,8 @@ public class Minigamer {
 		player.setFallDistance(0f);
 		player.setAllowFlight(mechanic.allowFly());
 		player.setFlying(mechanic.allowFly());
-		VanishAPI.showPlayer(player);
+		if (VanishAPI.isInvisible(player))
+			VanishAPI.showPlayer(player);
 		SpeedCommand.resetSpeed(player);
 
 		if (mechanic.shouldClearInventory())

@@ -129,6 +129,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
+		event.setJoinMessage(null);
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
 			Koda.replyIngame("&lWelcome to Bear Nation, " + new Nerd(player).getName() + "!");
@@ -141,6 +142,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
+		event.setQuitMessage(null);
 		Player player = event.getPlayer();
 		if (!vanished.contains(player))
 			quit(player, event.getReason());
