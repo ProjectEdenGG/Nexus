@@ -33,6 +33,36 @@ public class KillEntityCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("<entityType> <radius>")
+	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius) {
+		if (!isAdmin() && radius > 200)
+			error("Radius cannot be greater than 200");
+
+		List<EntityType> toKill = new ArrayList<>();
+		for (KillEntityArg arg : killEntityArg)
+			toKill.addAll(arg.getApplicableEntityTypes());
+		toKill.remove(EntityType.PLAYER);
+
+		Runnable kill = () -> {
+			Set<Entity> entities = new HashSet<>();
+			for (final Chunk chunk : world().getLoadedChunks())
+				for (final Entity entity : chunk.getEntities())
+					if (location().distanceSquared(entity.getLocation()) <= radius)
+						if (toKill.contains(entity.getType()))
+							entities.add(entity);
+
+			entities.forEach(Entity::remove);
+			send(PREFIX + "Killed " + entities.size() + " entities");
+		};
+
+		if (toKill.contains(EntityType.ARMOR_STAND) || toKill.contains(EntityType.ITEM_FRAME))
+			ConfirmationMenu.builder()
+				.onConfirm(e -> kill.run())
+				.open(player());
+		else
+			kill.run();
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum KillableEntityGroup {
@@ -82,38 +112,8 @@ public class KillEntityCommand extends CustomCommand {
 		}
 	}
 
-	@Path("<entityType> <radius>")
-	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius) {
-		if (!isAdmin() && radius > 200)
-			error("Radius cannot be greater than 200");
-
-		List<EntityType> toKill = new ArrayList<>();
-		for (KillEntityArg arg : killEntityArg)
-			toKill.addAll(arg.getApplicableEntityTypes());
-		toKill.remove(EntityType.PLAYER);
-
-		Runnable kill = () -> {
-			Set<Entity> entities = new HashSet<>();
-			for (final Chunk chunk : world().getLoadedChunks())
-				for (final Entity entity : chunk.getEntities())
-					if (location().distanceSquared(entity.getLocation()) <= radius)
-						if (toKill.contains(entity.getType()))
-							entities.add(entity);
-
-			entities.forEach(Entity::remove);
-			send(PREFIX + "Killed " + entities.size() + " entities");
-		};
-
-		if (toKill.contains(EntityType.ARMOR_STAND) || toKill.contains(EntityType.ITEM_FRAME))
-			ConfirmationMenu.builder()
-				.onConfirm(e -> kill.run())
-				.open(player());
-		else
-			kill.run();
-	}
-
 	@TabCompleterFor(KillEntityArg.class)
-	List<String> tabCompleteKillableEntity(String value) {
+	List<String> tabCompleteKillEntityArg(String value) {
 		return new ArrayList<String>() {{
 			addAll(tabCompleteLivingEntity(value));
 			addAll(tabCompleteEnum(value, KillableEntityGroup.class));
@@ -122,7 +122,7 @@ public class KillEntityCommand extends CustomCommand {
 	}
 
 	@ConverterFor(KillEntityArg.class)
-	KillEntityArg convertToKillableEntity(String value) {
+	KillEntityArg convertToKillEntityArg(String value) {
 		try {
 			return new KillEntityArg((EntityType) convertToEnum(value, EntityType.class));
 		} catch (InvalidInputException ex) {

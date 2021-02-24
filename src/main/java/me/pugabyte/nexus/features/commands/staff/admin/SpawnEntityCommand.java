@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -73,6 +74,11 @@ public class SpawnEntityCommand extends CustomCommand {
 
 			return entity;
 		}
+	}
+
+	@TabCompleterFor(EntitySpawnData.class)
+	List<String> tabCompleteEntitySpawnData(String value) {
+		return tabCompleteEnum(value, EntityType.class);
 	}
 
 	@ConverterFor(EntitySpawnData.class)
