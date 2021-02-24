@@ -1,7 +1,9 @@
-package me.pugabyte.nexus.features.commands.staff;
+package me.pugabyte.nexus.features.commands.staff.punishments;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -11,7 +13,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,13 +43,13 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		lockdown = true;
 		LockdownCommand.reason = reason;
 
-		// TODO: Announcer helpers
-		tellStaff(PREFIX + name() + " initiated lockdown: &c" + reason);
+		String message = name() + " initiated lockdown: &c" + reason;
+		broadcast(message);
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (!canBypass(player.getUniqueId())) {
 				player.kickPlayer(getLockdownReason());
-				tellStaff(PREFIX + "Removed " + player.getName() + " from server");
+				broadcast("Removed " + player.getName() + " from server");
 			}
 	}
 
@@ -60,7 +61,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		lockdown = false;
 		reason = null;
 
-		tellStaff(PREFIX + name() + " ended lockdown");
+		broadcast(name() + " ended lockdown");
 	}
 
 	@EventHandler
@@ -68,15 +69,14 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		if (lockdown && event.getLoginResult() == Result.ALLOWED)
 			if (!canBypass(event.getUniqueId())) {
 				event.disallow(Result.KICK_OTHER, getLockdownReason());
-				tellStaff(PREFIX + "Prevented " + event.getName() + " from joining the server");
+				broadcast("Prevented " + event.getName() + " from joining the server");
 			}
 	}
 
-	private void tellStaff(String message) {
-		Discord.send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
-		for (Player player : Bukkit.getOnlinePlayers())
-			if (PlayerUtils.isModeratorGroup(player))
-				send(player, message);
+	private void broadcast(String message) {
+		Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
+		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
+		Discord.send(DISCORD_PREFIX + message, Channel.STAFF_LOG);
 	}
 
 	public boolean canBypass(UUID player) {

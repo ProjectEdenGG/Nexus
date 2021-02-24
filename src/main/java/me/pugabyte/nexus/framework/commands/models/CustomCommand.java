@@ -89,6 +89,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@Getter
 	protected CommandEvent event;
 	public String PREFIX = StringUtils.getPrefix(getName());
+	public String DISCORD_PREFIX = StringUtils.getDiscordPrefix(getName());
 
 	public String getPrefix() {
 		return PREFIX;

@@ -68,6 +68,10 @@ public class StringUtils {
 		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
 
+	public static String getDiscordPrefix(String prefix) {
+		return "**[" + prefix + "]** ";
+	}
+
 	public static String colorize(String input) {
 		if (input == null)
 			return null;
