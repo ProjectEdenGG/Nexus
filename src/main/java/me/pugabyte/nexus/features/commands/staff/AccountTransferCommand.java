@@ -3,12 +3,15 @@ package me.pugabyte.nexus.features.commands.staff;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
+import com.griefcraft.cache.ProtectionCache;
+import com.griefcraft.model.Protection;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Sync;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.alerts.Alerts;
 import me.pugabyte.nexus.models.alerts.AlertsService;
@@ -20,12 +23,16 @@ import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.lwc.LWCProtection;
+import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.TrustService;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 @Permission("group.admin")
@@ -37,7 +44,20 @@ public class AccountTransferCommand extends CustomCommand {
 
 	@Path("<old> <new> <features...>")
 	void transfer(OfflinePlayer old, OfflinePlayer target, @Arg(type = Transferable.class) List<Transferable> features) {
-		features.forEach(feature -> feature.transfer(old, target));
+		features.forEach(feature -> {
+			try {
+				Runnable transfer = () -> feature.transfer(old, target);
+				Method method = feature.getClass().getMethod("transfer", OfflinePlayer.class, OfflinePlayer.class);
+				if (method.getAnnotation(Sync.class) != null) {
+					Tasks.async(transfer);
+				} else
+					transfer.run();
+
+				send("Transferred " + camelCase(feature) + " data");
+			} catch (Exception ex) {
+				rethrow(ex);
+			}
+		});
 	}
 
 	public enum Transferable {
@@ -98,7 +118,7 @@ public class AccountTransferCommand extends CustomCommand {
 				HomeOwner previous = service.get(old);
 				HomeOwner current = service.get(target);
 
-				previous.getHomes().forEach(home -> current.getHomes().add(home));
+				previous.getHomes().forEach(current::add);
 				previous.getHomes().clear();
 
 				current.setAutoLock(previous.isAutoLock());
@@ -186,9 +206,25 @@ public class AccountTransferCommand extends CustomCommand {
 				EventUser current = service.get(target);
 
 				current.setTokens(previous.getTokens());
-				previous.getTokensReceivedToday().forEach((string, map)
-						-> current.getTokensReceivedToday().put(string, map));
+				previous.getTokensReceivedToday().forEach((string, map) -> current.getTokensReceivedToday().put(string, map));
+				previous.getTokensReceivedToday().clear();
 
+				service.save(previous);
+				service.save(current);
+			}
+		},
+		LWC {
+			@Override
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
+				ProtectionCache protectionCache = com.griefcraft.lwc.LWC.getInstance().getProtectionCache();
+				LWCProtectionService service = new LWCProtectionService();
+				List<LWCProtection> oldProtections = service.getPlayerProtections(old.getUniqueId());
+
+				for (LWCProtection oldProtection : oldProtections) {
+					Protection protectionById = protectionCache.getProtectionById(oldProtection.getId());
+					protectionById.setOwner(target.getUniqueId().toString());
+					protectionById.save();
+				}
 			}
 		};
 

@@ -283,6 +283,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		player.sendMessage(StringUtils.colorize("&c" + error));
 	}
 
+	public void rethrow(Exception ex) {
+		throw new RuntimeException(ex);
+	}
+
 	public void permissionError() {
 		throw new NoPermissionException();
 	}
