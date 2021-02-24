@@ -27,8 +27,8 @@ import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboar
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.nexus.utils.Time;
@@ -427,7 +427,7 @@ public class Match {
 							broadcastTimeLeft();
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
-						match.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, TimespanFormatter.of(time).format(), 2, false));
+						match.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, Timespan.of(time).format(), 2, false));
 						MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
 						event.callEvent();
 					} else {
@@ -450,7 +450,7 @@ public class Match {
 		}
 
 		public void broadcastTimeLeft(int time) {
-			match.broadcast("&e" + TimespanFormatter.of(time).formatType(TimespanFormatType.LONG).format() + " &7left...");
+			match.broadcast("&e" + Timespan.of(time).formatType(TimespanFormatType.LONG).format() + " &7left...");
 		}
 
 		void stop() {

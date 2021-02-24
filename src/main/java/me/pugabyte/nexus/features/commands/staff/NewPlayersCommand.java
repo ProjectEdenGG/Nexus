@@ -9,7 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -53,7 +53,7 @@ public class NewPlayersCommand extends CustomCommand {
 						.next("&c&l[WHOTF]")
 						.command("/whotf " + player.getName())
 						.group()
-						.next(" &e" + player.getName() + " &7- " + TimespanFormatter.of(sorted.get(player)).format());
+						.next(" &e" + player.getName() + " &7- " + Timespan.of(sorted.get(player)).format());
 
 		paginate(new ArrayList<>(sorted.keySet()), formatter, "/newplayers", page);
 	}

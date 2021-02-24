@@ -7,7 +7,7 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 
@@ -51,7 +51,7 @@ public class MastermindMatchData extends IMastermindMatchData {
 		showAnswer(minigamer);
 		fireworks("fireworks");
 		guesses.put(minigamer, maxGuesses + 1);
-		minigamer.tell("You are the Mastermind! You cracked the code in " + TimespanFormatter.of(minigamer.getScore()).format());
+		minigamer.tell("You are the Mastermind! You cracked the code in " + Timespan.of(minigamer.getScore()).format());
 		Tasks.wait(Time.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
 	}
 

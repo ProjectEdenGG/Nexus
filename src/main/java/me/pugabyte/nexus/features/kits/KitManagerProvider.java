@@ -12,6 +12,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -102,14 +103,14 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 			}));
 
 			contents.set(0, 5, ClickableItem.from(new ItemBuilder(Material.CLOCK).name("&eDelay").lore("&e" + KitManager.get(id).getDelay())
-					.lore("&e(" + StringUtils.TimespanFormatter.of(KitManager.get(id).getDelay() / 20).format() + ")").build(), e -> {
+					.lore("&e(" + Timespan.of(KitManager.get(id).getDelay() / 20).format() + ")").build(), e -> {
 				Kit kit = KitManager.get(id);
 				openAnvilMenu(player, "" + kit.getDelay(), (player1, response) -> {
 					try {
 						kit.setDelay(Integer.parseInt(response));
 					} catch (Exception ex) {
 						PlayerUtils.send(player, "&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
-								" (" + StringUtils.TimespanFormatter.of(Integer.MAX_VALUE / 20).format() + ")");
+								" (" + Timespan.of(Integer.MAX_VALUE / 20).format() + ")");
 						return AnvilGUI.Response.close();
 					}
 					KitManager.getConfig().set(id + "", kit);

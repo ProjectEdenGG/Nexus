@@ -16,7 +16,7 @@ import me.pugabyte.nexus.models.purchase.PurchaseService;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.OfflinePlayer;
@@ -48,7 +48,7 @@ public class Leaderboards implements Listener {
 				return new HoursService().getPage().subList(0, 3).stream()
 						.collect(Collectors.toMap(
 								PageResult::getUuid,
-								hours -> TimespanFormatter.of(hours.getTotal()).format(),
+								hours -> Timespan.of(hours.getTotal()).format(),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}

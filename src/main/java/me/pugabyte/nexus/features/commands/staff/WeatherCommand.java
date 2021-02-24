@@ -6,7 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
 
@@ -30,7 +30,7 @@ public class WeatherCommand extends CustomCommand {
 		if (duration > 0)
 			world.setWeatherDuration(duration);
 
-		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + TimespanFormatter.of(duration).format() : ""));
+		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + Timespan.of(duration).format() : ""));
 	}
 
 }

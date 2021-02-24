@@ -30,7 +30,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -150,7 +150,7 @@ public class Battleship extends BalancedTeamMechanic {
 				lines.add("&cWinner: " + matchData.getWinnerTeam().getColoredName());
 			} else {
 				long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
-				String timeLeft = TimespanFormatter.of(arena.getTurnTime() - turnDuration).format();
+				String timeLeft = Timespan.of(arena.getTurnTime() - turnDuration).format();
 				if (team.equals(matchData.getTurnTeam()))
 					lines.add("&cTurn over in: &e" + timeLeft);
 				else

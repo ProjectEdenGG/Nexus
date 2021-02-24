@@ -16,7 +16,7 @@ import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -53,8 +53,8 @@ public class SuggestDiscordCommand extends Command {
 				Hours hours = new HoursService().get(nerd);
 
 				String firstJoin = nerd.getFirstJoin().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy"));
-				String hoursTotal = TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format();
-				String hoursMonthly = TimespanFormatter.of(hours.getMonthly()).noneDisplay(true).format();
+				String hoursTotal = Timespan.of(hours.getTotal()).noneDisplay(true).format();
+				String hoursMonthly = Timespan.of(hours.getMonthly()).noneDisplay(true).format();
 				String history = "None";
 				if (new LiteBansService().getHistory(nerd.getUuid()) > 0)
 					 history = "[View](https://bans.bnn.gg/history.php?uuid=" + nerd.getUuid() + ")";

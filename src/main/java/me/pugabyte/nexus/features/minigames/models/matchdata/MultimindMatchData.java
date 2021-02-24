@@ -11,7 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 
 import java.util.Set;
 
@@ -65,7 +65,7 @@ public class MultimindMatchData extends IMastermindMatchData {
 //		int number = getSectionNumber(minigamer);
 //		fireworks("fireworks_" + number);
 		guesses.put(minigamer, maxGuesses + 1);
-		minigamer.tell("You are the Mastermind! You cracked the code in " + TimespanFormatter.of(minigamer.getScore()).format());
+		minigamer.tell("You are the Mastermind! You cracked the code in " + Timespan.of(minigamer.getScore()).format());
 //		Tasks.wait(Time.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
 	}
 

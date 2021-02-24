@@ -14,7 +14,7 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -98,7 +98,7 @@ public class OnlineCommand extends CustomCommand {
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player);
 		double balance = Nexus.getEcon().getBalance(player);
-		String totalHours = TimespanFormatter.of(hours.getTotal()).format();
+		String totalHours = Timespan.of(hours.getTotal()).format();
 		String afk = "";
 
 		if (modifiers.contains("AFK")) {

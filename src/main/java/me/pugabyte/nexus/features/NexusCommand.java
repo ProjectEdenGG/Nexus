@@ -49,8 +49,8 @@ import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
 import me.pugabyte.nexus.utils.Time;
@@ -631,7 +631,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("timespanFormatter <seconds> <formatType>")
 	void timespanFormatter(int seconds, TimespanFormatType formatType) {
-		send(TimespanFormatter.of(seconds).formatType(formatType).format());
+		send(Timespan.of(seconds).formatType(formatType).format());
 	}
 
 	@Path("voidNpc")

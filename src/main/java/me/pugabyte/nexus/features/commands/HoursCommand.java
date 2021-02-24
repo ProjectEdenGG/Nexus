@@ -23,7 +23,7 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
@@ -58,15 +58,15 @@ public class HoursCommand extends CustomCommand {
 
 		send("");
 		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
-		send("&3Total: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());
-		send("&7- &3Today: &e" + TimespanFormatter.of(hours.getDaily()).noneDisplay(true).format());
-		send("&7- &3This month: &e" + TimespanFormatter.of(hours.getMonthly()).noneDisplay(true).format());
-		send("&7- &3This year: &e" + TimespanFormatter.of(hours.getYearly()).noneDisplay(true).format());
+		send("&3Total: &e" + Timespan.of(hours.getTotal()).noneDisplay(true).format());
+		send("&7- &3Today: &e" + Timespan.of(hours.getDaily()).noneDisplay(true).format());
+		send("&7- &3This month: &e" + Timespan.of(hours.getMonthly()).noneDisplay(true).format());
+		send("&7- &3This year: &e" + Timespan.of(hours.getYearly()).noneDisplay(true).format());
 
 		if (Rank.getHighestRank(player) == Rank.GUEST) {
 
 			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
-			String left = TimespanFormatter.of(DAY - hours.getTotal()).format();
+			String left = Timespan.of(DAY - hours.getTotal()).format();
 
 			line();
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
@@ -94,10 +94,10 @@ public class HoursCommand extends CustomCommand {
 			totalHours += result.getTotal();
 
 		send("");
-		send(PREFIX + "Total: " + TimespanFormatter.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
+		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
 		BiFunction<PageResult, Integer, JsonBuilder> formatter = (result, index) ->
-				json("&3" + (index + 1) + " &e" + result.getOfflinePlayer().getName() + " &7- " + TimespanFormatter.of(result.getTotal()).format());
+				json("&3" + (index + 1) + " &e" + result.getOfflinePlayer().getName() + " &7- " + Timespan.of(result.getTotal()).format());
 
 		paginate(results, formatter, "/hours top " + args.getInput(), page);
 	}

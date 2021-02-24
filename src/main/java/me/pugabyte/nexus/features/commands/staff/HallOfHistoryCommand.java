@@ -17,7 +17,7 @@ import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
@@ -251,7 +251,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 		send(PREFIX + "Staff times");
 		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
-			String time = TimespanFormatter.of(staffTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
+			String time = Timespan.of(staffTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
 			return json("&3" + (index + 1) + " &e" + time + " &7- " + new Nerd(uuid).getRankFormat());
 		};
 
@@ -282,7 +282,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 		send(PREFIX + "Promotion times  |  Average: " + StringUtils.getNf().format(average.orElse(0)) + " days");
 		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
-			String time = TimespanFormatter.of(promotionTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
+			String time = Timespan.of(promotionTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
 			return json("&3" + (index + 1) + " &e" + new Nerd(uuid).getName() + " &7- " + time);
 		};
 

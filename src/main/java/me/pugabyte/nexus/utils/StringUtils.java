@@ -448,7 +448,7 @@ public class StringUtils {
 	}
 
 	public static String timespanDiff(LocalDateTime from, LocalDateTime to) {
-		return TimespanFormatter.of(Long.valueOf(from.until(to, ChronoUnit.SECONDS)).intValue()).format();
+		return Timespan.of(Long.valueOf(from.until(to, ChronoUnit.SECONDS)).intValue()).format();
 	}
 
 	public enum TimespanFormatType {
@@ -479,14 +479,14 @@ public class StringUtils {
 		abstract String get(String label, int value);
 	}
 
-	public static class TimespanFormatter {
+	public static class Timespan {
 		private final int original;
 		private final boolean noneDisplay;
 		private final TimespanFormatType formatType;
 		private int years, days, hours, minutes, seconds;
 
 		@lombok.Builder(buildMethodName = "_build")
-		public TimespanFormatter(int seconds, boolean noneDisplay, TimespanFormatType formatType) {
+		public Timespan(int seconds, boolean noneDisplay, TimespanFormatType formatType) {
 			this.original = seconds;
 			this.seconds = seconds;
 			this.noneDisplay = noneDisplay;
@@ -494,22 +494,22 @@ public class StringUtils {
 			calculate();
 		}
 
-		public static TimespanFormatterBuilder of(long seconds) {
+		public static TimespanBuilder of(long seconds) {
 			return of(Long.valueOf(seconds).intValue());
 		}
 
-		public static TimespanFormatterBuilder of(int seconds) {
-			return TimespanFormatter.builder().seconds(seconds);
+		public static TimespanBuilder of(int seconds) {
+			return Timespan.builder().seconds(seconds);
 		}
 
-		public static class TimespanFormatterBuilder {
+		public static class TimespanBuilder {
 
 			public String format() {
 				return _build().format();
 			}
 
 			@Deprecated
-			public TimespanFormatter build() {
+			public Timespan build() {
 				throw new UnsupportedOperationException("Use format()");
 			}
 

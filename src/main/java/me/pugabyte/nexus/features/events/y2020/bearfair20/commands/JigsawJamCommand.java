@@ -26,7 +26,7 @@ import me.pugabyte.nexus.utils.LocationUtils.Axis;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.Utils.MapRotation;
@@ -133,7 +133,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (!jammer.isPlaying())
 			error("You have not started a game");
 
-		send(PREFIX + "Your current time: " + TimespanFormatter.of(jammer.getTime()).format());
+		send(PREFIX + "Your current time: " + Timespan.of(jammer.getTime()).format());
 	}
 
 	@Path("view")
@@ -246,7 +246,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private void end(JigsawJammer jammer) {
-		Discord.staffLog("**[JigsawJam]** " + jammer.getOfflinePlayer().getName() + " finished in " + TimespanFormatter.of(jammer.getTime() / 20).format());
+		Discord.staffLog("**[JigsawJam]** " + jammer.getOfflinePlayer().getName() + " finished in " + Timespan.of(jammer.getTime() / 20).format());
 		jammer.setPlaying(false);
 		jammer.setTime(0);
 		new JigsawJamService().save(jammer);
@@ -407,7 +407,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		}
 
 		if (correct == totalMaps) {
-			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + TimespanFormatter.of(jammer.getTime() / 20).format());
+			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
 
 			BearFairService bearFairService = new BearFairService();
 			BearFairUser user = bearFairService.get(player);

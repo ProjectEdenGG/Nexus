@@ -19,7 +19,7 @@ import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -83,7 +83,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate);
 
 		if (hours.getTotal() > 0)
-			json.newline().next("&3Hours: &e" + TimespanFormatter.of(hours.getTotal()).noneDisplay(true).format());
+			json.newline().next("&3Hours: &e" + Timespan.of(hours.getTotal()).noneDisplay(true).format());
 
 		if (history > 0)
 			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("&eClick to view history");

@@ -16,8 +16,8 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatter;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Time;
@@ -117,10 +117,10 @@ public class LightTheTree implements Listener {
 				.onStart(() -> {
 					PlayerUtils.setPlayerTime(player, "14000ticks");
 					user.setLightingTorches(true);
-					String format = TimespanFormatter.of(timerTicks / 20).formatType(TimespanFormatType.LONG).format();
+					String format = Timespan.of(timerTicks / 20).formatType(TimespanFormatType.LONG).format();
 					user.send(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
-				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + TimespanFormatter.of(i).format()))
+				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.of(i).format()))
 				.onComplete(() -> {
 					user.resetLightTheTree();
 					service.save(user);

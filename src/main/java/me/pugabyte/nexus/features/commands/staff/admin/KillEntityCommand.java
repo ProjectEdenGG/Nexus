@@ -47,7 +47,7 @@ public class KillEntityCommand extends CustomCommand {
 			Set<Entity> entities = new HashSet<>();
 			for (final Chunk chunk : world().getLoadedChunks())
 				for (final Entity entity : chunk.getEntities())
-					if (location().distanceSquared(entity.getLocation()) <= radius)
+					if (location().distance(entity.getLocation()) <= radius)
 						if (toKill.contains(entity.getType()))
 							entities.add(entity);
 
