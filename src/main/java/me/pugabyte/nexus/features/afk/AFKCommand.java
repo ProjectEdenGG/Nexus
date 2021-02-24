@@ -9,7 +9,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
-import me.pugabyte.nexus.models.afk.AFKService;
+import me.pugabyte.nexus.models.afk.AFKSettings;
+import me.pugabyte.nexus.models.afk.AFKSettingsService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -51,14 +52,14 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	@Path("mobTargeting [enable]")
 	void mobTargeting(Boolean enable) {
-		AFKPlayer player = AFK.get(player());
+		AFKSettingsService service = new AFKSettingsService();
+		AFKSettings afkSettings = service.get(player());
 		if (enable == null)
-			enable = !player.isMobTargeting();
+			enable = !afkSettings.isMobTargeting();
 
-		player.setMobTargeting(enable);
-		new AFKService().save(player);
-		send(PREFIX + "Mobs will " + (enable ? "" : "not ") + "target you while you are AFK");
-
+		afkSettings.setMobTargeting(enable);
+		service.save(afkSettings);
+		send(PREFIX + "Mobs " + (enable ? "&awill" : "&cwill not") + " &3target you while you are AFK");
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -114,8 +115,12 @@ public class AFKCommand extends CustomCommand implements Listener {
 		if (event.getTarget() instanceof Player) {
 			Player player = (Player) event.getTarget();
 			AFKPlayer afkPlayer = AFK.get(player);
-			if (afkPlayer.isTimeAfk())
-				event.setCancelled(true);
+			if (afkPlayer.isTimeAfk()) {
+				AFKSettingsService service = new AFKSettingsService();
+				AFKSettings afkSettings = service.get(player());
+				if (!afkSettings.isMobTargeting())
+					event.setCancelled(true);
+			}
 		}
 	}
 
