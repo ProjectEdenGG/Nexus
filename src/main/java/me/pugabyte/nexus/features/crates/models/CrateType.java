@@ -9,7 +9,12 @@ import me.pugabyte.nexus.features.crates.crates.WeeklyWakkaCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
 import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,7 +36,6 @@ public enum CrateType {
 		this.crateClass = crateClass;
 		this.location = location;
 	}
-
 
 	public Location getCenteredLocation() {
 		return LocationUtils.getCenteredLocation(this.location.clone());

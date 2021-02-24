@@ -81,18 +81,21 @@ public abstract class Crate implements Listener {
 	}
 
 	public void deleteHologram() {
-		for (Hologram hologram : crateHologram)
-			hologram.delete();
+		if (crateHologram != null)
+			for (Hologram hologram : crateHologram)
+				hologram.delete();
 	}
 
 	public void showHologram() {
-		for (Hologram hologram : crateHologram)
-			hologram.getVisibilityManager().setVisibleByDefault(true);
+		if (crateHologram != null)
+			for (Hologram hologram : crateHologram)
+				hologram.getVisibilityManager().setVisibleByDefault(true);
 	}
 
 	public void hideHologram() {
-		for (Hologram hologram : crateHologram)
-			hologram.getVisibilityManager().setVisibleByDefault(false);
+		if (crateHologram != null)
+			for (Hologram hologram : crateHologram)
+				hologram.getVisibilityManager().setVisibleByDefault(false);
 	}
 
 	public void openCrate(Location location, Player player) {

@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
 import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -25,7 +26,6 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,17 +61,20 @@ public class Crates extends Feature implements Listener {
 
 	@SneakyThrows
 	public void spawnAllHolograms() {
-		for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
+		for (CrateType crateType : EnumUtils.valuesExcept(CrateType.class, CrateType.ALL)) {
+			if (crateType.getLocation() == null)
+				continue;
 			try {
 				crateType.getCrateClass().spawnHologram();
 			} catch (Exception ex) {
 				Nexus.log("Could not setup crate: " + crateType.name());
 				ex.printStackTrace();
 			}
+		}
 	}
 
 	public void deleteAllHolograms() {
-		for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList())) {
+		for (CrateType crateType : EnumUtils.valuesExcept(CrateType.class, CrateType.ALL)) {
 			try {
 				crateType.getCrateClass().deleteHologram();
 			} catch (Exception ex) {
