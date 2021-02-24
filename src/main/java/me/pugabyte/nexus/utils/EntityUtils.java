@@ -33,6 +33,7 @@ public class EntityUtils {
 	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
 		List<Entity> entities = location.getNearbyEntities(radius, radius, radius).stream()
 				.filter(_entity -> _entity.getType().equals(filter))
+				.filter(_entity -> !(_entity instanceof Player) || !PlayerUtils.isVanished((Player) _entity))
 				.collect(Collectors.toList());
 
 		double shortest = radius;
