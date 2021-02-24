@@ -37,13 +37,13 @@ public class AccountTransferCommand extends CustomCommand {
 
 	@Path("<old> <new> <features...>")
 	void transfer(OfflinePlayer old, OfflinePlayer target, @Arg(type = Transferable.class) List<Transferable> features) {
-		features.forEach(feature -> feature.run(old, target));
+		features.forEach(feature -> feature.transfer(old, target));
 	}
 
 	public enum Transferable {
 		NERD {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				NerdService service = new NerdService();
 				Nerd previous = service.get(old);
 				Nerd current = service.get(target);
@@ -58,10 +58,10 @@ public class AccountTransferCommand extends CustomCommand {
 				current.setMeetMeVideo(previous.isMeetMeVideo());
 
 				previous.setPreferredName(null);
-				current.setBirthday(null);
-				current.setPromotionDate(null);
-				current.setAbout(null);
-				current.setMeetMeVideo(false);
+				previous.setBirthday(null);
+				previous.setPromotionDate(null);
+				previous.setAbout(null);
+				previous.setMeetMeVideo(false);
 
 				service.save(previous);
 				service.save(current);
@@ -69,7 +69,7 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		ALERTS {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				AlertsService service = new AlertsService();
 				Alerts previous = service.get(old);
 				Alerts current = service.get(target);
@@ -85,7 +85,7 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		BALANCE {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				double balance = Nexus.getEcon().getBalance(old);
 				Nexus.getEcon().withdrawPlayer(old, balance);
 				Nexus.getEcon().depositPlayer(target, balance);
@@ -93,7 +93,7 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		HOMES {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				HomeService service = new HomeService();
 				HomeOwner previous = service.get(old);
 				HomeOwner current = service.get(target);
@@ -111,12 +111,12 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		HOURS {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				HoursService service = new HoursService();
 				Hours previous = service.get(old);
 				Hours current = service.get(target);
 
-				previous.getTimes().forEach((date, seconds) -> current.getTimes().put(date, previous.getTimes().get(date) + seconds));
+				previous.getTimes().forEach((date, seconds) -> current.getTimes().put(date, seconds));
 				previous.getTimes().clear();
 
 				service.save(previous);
@@ -125,13 +125,15 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		DAILYREWARDS {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				DailyRewardService service = new DailyRewardService();
 				DailyReward previous = service.get(old);
 				DailyReward current = service.get(target);
 
 				current.setStreak(previous.getStreak());
 				current.setClaimed(previous.getClaimed());
+				if (!current.isEarnedToday())
+					current.setEarnedToday(previous.isEarnedToday());
 
 				previous.setActive(false);
 
@@ -141,7 +143,7 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		TRUSTS {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				TrustService service = new TrustService();
 				Trust previous = service.get(old);
 				Trust current = service.get(target);
@@ -158,7 +160,7 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		MCMMO {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				McMMOPlayer previous = UserManager.getPlayer(old.getName());
 				McMMOPlayer current = UserManager.getPlayer(target.getName());
 				for (PrimarySkillType skill : PrimarySkillType.values()) {
@@ -172,13 +174,13 @@ public class AccountTransferCommand extends CustomCommand {
 		},
 		HISTORY {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				// Which history?
 			}
 		},
 		EVENTUSER {
 			@Override
-			public void run(OfflinePlayer old, OfflinePlayer target) {
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				EventUserService service = new EventUserService();
 				EventUser previous = service.get(old);
 				EventUser current = service.get(target);
@@ -187,14 +189,10 @@ public class AccountTransferCommand extends CustomCommand {
 				previous.getTokensReceivedToday().forEach((string, map)
 						-> current.getTokensReceivedToday().put(string, map));
 
-				previous.getTokensReceivedToday().clear();
-
-				service.save(previous);
-				service.save(current);
 			}
 		};
 
-		public abstract void run(OfflinePlayer old, OfflinePlayer target);
+		public abstract void transfer(OfflinePlayer old, OfflinePlayer target);
 	}
 
 }
