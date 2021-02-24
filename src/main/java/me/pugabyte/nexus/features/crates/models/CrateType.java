@@ -9,12 +9,7 @@ import me.pugabyte.nexus.features.crates.crates.WeeklyWakkaCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
 import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +22,7 @@ public enum CrateType {
 	ALL(null, null),
 	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8.00, 15.00, 11.00, .00F, .00F)),
 	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11.00, 15.00, 8.00, .00F, .00F)),
-	WEEKLY_WAKKA(new WeeklyWakkaCrate(), null);
+	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15.00, 15.00, -8.00, .00F, .00F));
 
 	Crate crateClass;
 	Location location;

@@ -1,17 +1,21 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import com.gmail.nossr50.util.player.UserManager;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
+import me.pugabyte.nexus.features.mcmmo.menus.McMMOResetProvider;
+import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.coupon.CouponService;
 import me.pugabyte.nexus.models.coupon.Coupons;
@@ -19,10 +23,7 @@ import me.pugabyte.nexus.models.coupon.Coupons.Coupon;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.vote.Voter;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.*;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -69,8 +70,24 @@ public class CouponCommand extends CustomCommand implements Listener {
 		MCMMO(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				// TODO: McMMO Menu
-				PlayerUtils.send(event.getPlayer(), "&3Coming soon! &eContact an admin to redeem for now");
+				int amount = extractValue(event.getItem());
+				SmartInventory.builder()
+						.title("Select McMMO Skill")
+						.provider(new McMMOLevelCouponProvider(amount))
+						.size(6, 9)
+						.build().open(event.getPlayer());
+			}
+		},
+		EVENT_TOKENS(false) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				int amount = extractValue(event.getItem());
+				EventUserService eventUserService = new EventUserService();
+				EventUser user = eventUserService.get(event.getPlayer());
+				user.giveTokens(amount);
+				eventUserService.save(user);
+				ItemStack item = event.getItem();
+				item.setAmount(item.getAmount() - 1);
 			}
 		},
 		PUGMAS20_ADVENT_PAINTING(false) {
@@ -217,7 +234,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Giving coupon &e" + coupon.getId() + " &3(" + coupon.getUses() + " uses)");
 	}
 
-	@Path("get (eco|vps|mcmmo) <amount>")
+	@Path("get (eco|vps|mcmmo|event_tokens) <amount>")
 	void generic(Integer amount) {
 		String type = arg(2);
 		Coupon coupon = coupons.of(type);
@@ -260,6 +277,36 @@ public class CouponCommand extends CustomCommand implements Listener {
 		CouponEvent couponEvent = CouponEvent.of(coupon.getId());
 		if (couponEvent != null)
 			couponEvent.handle(event);
+	}
+
+	public static class McMMOLevelCouponProvider extends MenuUtils implements InventoryProvider {
+
+		int levels;
+
+		public McMMOLevelCouponProvider(int levels) {
+			this.levels = levels;
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			ItemStack coupon = player.getInventory().getItemInMainHand();
+			coupon.setAmount(1);
+			McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
+			for (McMMOResetProvider.ResetSkillType skill : McMMOResetProvider.ResetSkillType.values()) {
+				ItemStack item = new ItemBuilder(skill.getMaterial()).name("&e" + StringUtils.camelCase(skill.name()))
+						.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()))).build();
+				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, e -> {
+					PlayerUtils.runCommandAsConsole("addlevels " + player.getName() + " " + skill.name().toLowerCase() + " " + levels);
+					player.getInventory().removeItem(coupon);
+					player.closeInventory();
+				}));
+			}
+
+		}
+
+		@Override
+		public void update(Player player, InventoryContents inventoryContents) {
+		}
 	}
 
 }
