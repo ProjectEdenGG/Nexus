@@ -12,6 +12,6 @@ public class SitCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommand("chairs sit");
+		runCommand("gsit");
 	}
 }

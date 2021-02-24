@@ -19,7 +19,7 @@ import java.util.Map;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
-@Aliases({"clean", "clear", "ci", "clearinvent", "eclean", "eclear", "eci", "eclearinvent", "eclearinventory"})
+@Aliases("ci")
 public class ClearInventoryCommand extends CustomCommand implements Listener {
 	private ClearInventoryPlayer ciPlayer;
 	private static Map<Player, ClearInventoryPlayer> players = new HashMap<>();
