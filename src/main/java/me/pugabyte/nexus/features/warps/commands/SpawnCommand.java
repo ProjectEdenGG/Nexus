@@ -30,9 +30,10 @@ public class SpawnCommand extends CustomCommand {
 		warp.teleport(player());
 	}
 
-	@Path("[player]")
+	@Path("force [player]")
 	@Permission("group.staff")
 	void sudo(Player player) {
+		runCommand(player, "spawn");
 		runCommand(player, "spawn");
 	}
 
