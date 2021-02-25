@@ -8,10 +8,13 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class SpawnCommand extends CustomCommand {
-	private WarpService service = new WarpService();
+	private final WarpService service = new WarpService();
 
 	public SpawnCommand(CommandEvent event) {
 		super(event);
@@ -35,6 +38,18 @@ public class SpawnCommand extends CustomCommand {
 	void sudo(Player player) {
 		runCommand(player, "spawn");
 		runCommand(player, "spawn");
+	}
+
+	@EventHandler
+	public void onFirstJoin(PlayerJoinEvent event) {
+		if (event.getPlayer().hasPlayedBefore())
+			return;
+
+		Tasks.wait(1, () -> {
+			final WarpService service = new WarpService();
+			Warp warp = service.get("spawn", WarpType.NORMAL);
+			warp.teleport(player());
+		});
 	}
 
 }
