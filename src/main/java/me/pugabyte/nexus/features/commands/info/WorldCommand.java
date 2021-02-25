@@ -19,7 +19,7 @@ public class WorldCommand extends CustomCommand {
 	@Path("[player]")
 	void run(@Arg("self") Player player) {
 		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
-		send("&3" + (isSelf(player) ? "You are" : name() + " is") + " in world &e" + render + " &3in group &e" + WorldGroup.get(player));
+		send("&3" + (isSelf(player) ? "You are" : player.getName() + " is") + " in world &e" + render + " &3in group &e" + WorldGroup.get(player));
 	}
 
 }

@@ -37,7 +37,6 @@ public class ArmorStandStalker {
 		});
 	}
 
-
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
