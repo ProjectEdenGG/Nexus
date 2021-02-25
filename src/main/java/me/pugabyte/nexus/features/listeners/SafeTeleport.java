@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import org.bukkit.Location;
@@ -18,6 +19,7 @@ public class SafeTeleport implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onTeleport(PlayerTeleportEvent event) {
+		if (PlayerManager.get(event.getPlayer()).isPlaying()) return;
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.COMMAND && event.getCause() != PlayerTeleportEvent.TeleportCause.PLUGIN)
 			return;
 		if (event.getPlayer().isFlying()) return;
