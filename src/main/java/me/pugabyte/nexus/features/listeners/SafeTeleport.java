@@ -18,6 +18,8 @@ public class SafeTeleport implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onTeleport(PlayerTeleportEvent event) {
+		if (event.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND || event.getCause() == PlayerTeleportEvent.TeleportCause.PLUGIN)
+			return;
 		if (event.getPlayer().isFlying()) return;
 		if (isSafe(event.getTo())) return;
 		Location newLoc = getSafeLocation(event.getTo());
