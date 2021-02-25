@@ -6,8 +6,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.Time;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -19,6 +21,17 @@ public class BoopCommand extends CustomCommand {
 
 	public BoopCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Path("all [message...]")
+	@Description("boop all players anonymously")
+	@Permission("group.admin")
+	void boopAllAnon(String message) {
+		message = "-a " + message;
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (!isSelf(player))
+				boopPlayer(player, message);
+		}
 	}
 
 	@Path("<player> -a [message...]")

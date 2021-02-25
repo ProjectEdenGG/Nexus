@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -12,6 +13,7 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -81,12 +83,18 @@ public class MobHeads extends Feature implements Listener {
 		}
 	}
 
-	@EventHandler // Fires twice if death by McMMO
+	@EventHandler(priority = EventPriority.HIGHEST) // Fires twice if death by McMMO
 	public static void onKillEntity(EntityDamageByEntityEvent event) {
 		if (!(event.getEntity() instanceof LivingEntity))
 			return;
 
 		if (!(event.getDamager() instanceof Player))
+			return;
+
+		if (event.isCancelled())
+			return;
+
+		if (!new CooldownService().check(event.getEntity().getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2)))
 			return;
 
 		LivingEntity victim = (LivingEntity) event.getEntity();
