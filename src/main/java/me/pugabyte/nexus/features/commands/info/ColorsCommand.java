@@ -1,13 +1,21 @@
 package me.pugabyte.nexus.features.commands.info;
 
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.SignChangeEvent;
+
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import me.pugabyte.nexus.models.nerd.Rank;
 
 @Aliases({"colours", "color"})
-public class ColorsCommand extends CustomCommand {
+@NoArgsConstructor
+public class ColorsCommand extends CustomCommand implements Listener {
 
 	public ColorsCommand(CommandEvent event) {
 		super(event);
@@ -30,5 +38,15 @@ public class ColorsCommand extends CustomCommand {
 		line();
 		send("&eFormat &3codes may &enot &3be used in &eprefixes&3; only &ecolors&3.");
 		line();
+	}
+
+	@EventHandler
+	public void onSignEdit(SignChangeEvent event) {
+		if (!event.getPlayer().hasPermission("signs.colorsigns"))
+			for (int i = 0; i < event.getLines().length; i++)
+				event.setLine(i, stripColor(event.getLine(i)));
+		else
+			for (int i = 0; i < event.getLines().length; i++)
+				event.setLine(i, colorize(event.getLine(i)));
 	}
 }

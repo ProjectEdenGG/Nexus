@@ -41,6 +41,8 @@ public class PayCommand extends CustomCommand {
 		service.save(banker);
 
 		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName());
+		if (banker.isOnline())
+			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName());
 	}
 
 }

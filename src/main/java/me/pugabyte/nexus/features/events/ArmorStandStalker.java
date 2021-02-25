@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -31,10 +30,9 @@ public class ArmorStandStalker {
 					continue;
 
 				Player nearestPlayer = (Player) EntityUtils.getNearestEntityType(location, EntityType.PLAYER, stalker.getRadius());
-				if (nearestPlayer != null && !CitizensUtils.isNPC(nearestPlayer))
-					EntityUtils.makeArmorStandLookAtPlayer(
-							armorStand, nearestPlayer, stalker.getMinYaw(), stalker.getMaxYaw(), stalker.getMinPitch(), stalker.getMaxPitch()
-					);
+				if (nearestPlayer != null)
+					EntityUtils.makeArmorStandLookAtPlayer(armorStand, nearestPlayer, stalker.getMinYaw(),
+							stalker.getMaxYaw(), stalker.getMinPitch(), stalker.getMaxPitch());
 			}
 		});
 	}
