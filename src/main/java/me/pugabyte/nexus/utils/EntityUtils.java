@@ -31,9 +31,9 @@ public class EntityUtils {
 	}
 
 	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
-		List<Entity> entities = location.getNearbyEntities(radius, radius, radius).stream()
+		List<Entity> entities = getNearbyEntities(location, radius).keySet().stream()
 				.filter(_entity -> _entity.getType().equals(filter))
-				.filter(_entity -> !(_entity instanceof Player) || !PlayerUtils.isVanished((Player) _entity))
+				.filter(_entity -> !(_entity instanceof Player) || (!CitizensUtils.isNPC(_entity) && !PlayerUtils.isVanished((Player) _entity)))
 				.collect(Collectors.toList());
 
 		double shortest = radius;
@@ -49,8 +49,7 @@ public class EntityUtils {
 		return result;
 	}
 
-	public static void makeArmorStandLookAtPlayer(ArmorStand stand, Player player,
-												  Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
+	public static void makeArmorStandLookAtPlayer(ArmorStand stand, Player player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
 		Location origin = stand.getEyeLocation(); //our original location (Point A)
 		double initYaw = origin.getYaw();
 		Vector tgt = player.getEyeLocation().toVector(); //our target location (Point B)
