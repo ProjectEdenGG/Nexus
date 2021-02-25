@@ -3,15 +3,12 @@ package me.pugabyte.nexus.features.economy.events;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 
 @Getter
-public class BalanceChangeEvent extends Event implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+public class BalanceChangeEvent extends NexusEconomyEvent implements Cancellable {
 	private final OfflinePlayer player;
 	private final BigDecimal oldBalance;
 	private final BigDecimal newBalance;
@@ -23,15 +20,6 @@ public class BalanceChangeEvent extends Event implements Cancellable {
 		this.oldBalance = oldBalance;
 		this.newBalance = newBalance;
 		this.changeAmount = newBalance.subtract(oldBalance);
-	}
-
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	public static HandlerList getHandlerList() {
-		return handlers;
 	}
 
 	@Override
