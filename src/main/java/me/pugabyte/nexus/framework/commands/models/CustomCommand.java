@@ -35,6 +35,7 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldGroup;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -175,6 +176,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected World world() {
 		return player().getWorld();
+	}
+
+	protected WorldGroup worldGroup() {
+		return WorldGroup.get(player());
 	}
 
 	protected Location location() {

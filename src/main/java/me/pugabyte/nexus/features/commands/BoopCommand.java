@@ -62,7 +62,7 @@ public class BoopCommand extends CustomCommand {
 		if (message == null)
 			message = "";
 
-		if (booper.equals(booped))
+		if (isSelf(booped))
 			error("You cannot boop yourself!");
 
 		if (Minigames.isMinigameWorld(booper.getWorld()))

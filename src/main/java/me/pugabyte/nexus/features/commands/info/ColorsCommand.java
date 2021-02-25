@@ -4,6 +4,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 
 @Aliases({"colours", "color"})
 public class ColorsCommand extends CustomCommand {
@@ -15,7 +16,7 @@ public class ColorsCommand extends CustomCommand {
 	@Path
 	void colors() {
 		line();
-		send("&3You must be &eTrusted &3to use colors on signs, and &b&oModerator &3to use formats on signs.");
+		send("&3You must be &eTrusted &3to use colors on signs, and " + Rank.MODERATOR.getPrefix() + " &3to use formats on signs.");
 		send("&eMinecraft colors:");
 		line();
 		send(" &0 &&00  &1 &&11  &2 &&22  &3 &&33  &4 &&44  &5 &&55  &6 &&66  &7 &&77  ");
