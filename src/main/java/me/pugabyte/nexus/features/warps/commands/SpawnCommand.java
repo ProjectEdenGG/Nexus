@@ -48,7 +48,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 		if (event.getPlayer().hasPlayedBefore())
 			return;
 
-		Tasks.wait(1, () -> new WarpService().get("spawn", WarpType.NORMAL).teleport(player()));
+		Tasks.wait(1, () -> new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer()));
 	}
 
 }

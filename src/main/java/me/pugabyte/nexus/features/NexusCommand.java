@@ -699,6 +699,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		player.closeInventory();
 	}
 
+	@Path("sha1 <url>")
+	void sha1(String url) {
+		send(Utils.createSha1(url));
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return new NerdService().get(convertToOfflinePlayer(value));

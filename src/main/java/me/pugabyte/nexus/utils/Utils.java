@@ -1,9 +1,13 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.annotations.Environments;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.entity.EntityType;
@@ -17,6 +21,8 @@ import org.objenesis.ObjenesisStd;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -276,6 +283,28 @@ public class Utils {
 		} catch (Exception ignored) {}
 
 		return viewTitle;
+	}
+
+	@SneakyThrows
+	public static String createSha1(String url) {
+		OkHttpClient client = new OkHttpClient();
+		Request request = new Request.Builder().url(url).build();
+		Response response = client.newCall(request).execute();
+		if (response.body() != null)
+			return SHAsum(response.body().bytes());
+		return null;
+	}
+
+	public static String SHAsum(byte[] bytes) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA-1");
+		return byteArray2Hex(md.digest(bytes));
+	}
+
+	private static String byteArray2Hex(final byte[] hash) {
+		Formatter formatter = new Formatter();
+		for (byte b : hash)
+			formatter.format("%02x", b);
+		return formatter.toString();
 	}
 
 }
