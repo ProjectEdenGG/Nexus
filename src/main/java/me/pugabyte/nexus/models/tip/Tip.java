@@ -69,7 +69,8 @@ public class Tip extends PlayerOwnedObject {
 		CONCRETE(1, Time.HOUR, "group.nonstaff"),
 		LWC_CHEST(1, Time.MINUTE.x(15), "rank.guest"),
 		LWC_FURNACE(1, Time.MINUTE.x(15), "rank.guest"),
-		RESOURCE_WORLD_STORAGE(15);
+		RESOURCE_WORLD_STORAGE(15),
+		SPAM_ATTACK(50, Time.MINUTE.x(5));
 
 		@Getter
 		@NonNull

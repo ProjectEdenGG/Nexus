@@ -61,7 +61,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			Chat.broadcastIngame(colorize(message));
 
 			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-				Chat.broadcastDiscord(discordize(event.getDeathMessage()));
+				Chat.broadcastDiscord(discordize(message));
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			Chatter chatter = new ChatService().get(event.getEntity());
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))

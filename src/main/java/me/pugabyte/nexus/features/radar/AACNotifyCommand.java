@@ -47,7 +47,7 @@ public class AACNotifyCommand extends CustomCommand {
 			UUID uuid = player.getUniqueId();
 			totalCounts.put(uuid, totalCounts.getOrDefault(uuid, 0) + 1);
 			if (new CooldownService().check(player, "aac-notify-ingame", Time.SECOND.x(15))) {
-				if (ingameCounts.get(uuid) > 0)
+				if (ingameCounts.getOrDefault(uuid, 0) > 0)
 					message += " &c(" + ingameCounts.get(uuid) + " more...)";
 				Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
 				ingameCounts.remove(uuid);
@@ -55,7 +55,7 @@ public class AACNotifyCommand extends CustomCommand {
 				ingameCounts.put(uuid, ingameCounts.getOrDefault(uuid, 0) + 1);
 
 			if (new CooldownService().check(player, "aac-notify-discord", Time.MINUTE)) {
-				if (discordCounts.get(uuid) > 0)
+				if (discordCounts.getOrDefault(uuid, 0) > 0)
 					message += " (" + discordCounts.get(uuid) + " more...)";
 				Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
 				discordCounts.remove(uuid);
@@ -63,7 +63,7 @@ public class AACNotifyCommand extends CustomCommand {
 				discordCounts.put(uuid, discordCounts.getOrDefault(uuid, 0) + 1);
 
 			if (Rank.getOnlineMods().stream().anyMatch(nerd -> player.getPlayer() != null && !AFK.get(player.getPlayer()).isTimeAfk()))
-				if (totalCounts.get(uuid) > 20)
+				if (totalCounts.getOrDefault(uuid, 0) > 20)
 					runCommandAsConsole("ban " + player.getName() + " 1d You have been automatically banned " +
 							"by our anti cheat. Hacking is not allowed! (C: " + totalCounts.get(uuid) + ")");
 		}
