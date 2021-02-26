@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.listeners;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,9 +14,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SafeTeleport implements Listener {
+
+	private static final Set<Material> safeBlocks = MaterialTag.CARPETS.getValues();
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onTeleport(PlayerTeleportEvent event) {
@@ -32,7 +36,8 @@ public class SafeTeleport implements Listener {
 	public boolean isSafe(Location location) {
 		if (location.getBlock().getType() != Material.AIR) return false;
 		if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) return false;
-		return location.clone().subtract(0, 1, 0).getBlock().getType().isSolid();
+		Material material = location.clone().subtract(0, 1, 0).getBlock().getType();
+		return (safeBlocks.contains(material) || material.isSolid());
 	}
 
 	public Location getSafeLocation(Location location) {
