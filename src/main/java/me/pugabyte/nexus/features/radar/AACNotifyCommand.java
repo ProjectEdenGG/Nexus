@@ -1,16 +1,23 @@
 package me.pugabyte.nexus.features.radar;
 
+import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Permission("group.admin")
 public class AACNotifyCommand extends CustomCommand {
@@ -19,21 +26,46 @@ public class AACNotifyCommand extends CustomCommand {
 		super(event);
 	}
 
+	private final static Map<UUID, Integer> ingameCounts = new HashMap<>();
+	private final static Map<UUID, Integer> discordCounts = new HashMap<>();
+	private final static Map<UUID, Integer> totalCounts = new HashMap<>();
+
 	@Path("<player> <message...>")
 	void notify(Player player, String reason) {
 		String name = player.getName();
 
 		WorldGroup worldGroup = WorldGroup.get(player);
 		int ping = player.spigot().getPing();
-		double tps = Bukkit.getTPS()[0];
+		double tps = Bukkit.getTPS()[1];
 
-		if (ping < 200 && tps >= 18) {
+		if (ping < 300 && tps >= 15) {
 			String message = "&a" + name + " &f" + reason
 					.replace("{worldgroup}", camelCase(worldGroup))
 					.replace("{ping}", String.valueOf(ping))
 					.replace("{tps}", new DecimalFormat("0.00").format(tps));
-			Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
-			Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
+
+			UUID uuid = player.getUniqueId();
+			totalCounts.put(uuid, totalCounts.getOrDefault(uuid, 0) + 1);
+			if (new CooldownService().check(player, "aac-notify-ingame", Time.SECOND.x(15))) {
+				if (ingameCounts.get(uuid) > 0)
+					message += " &c(" + ingameCounts.get(uuid) + " more...)";
+				Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
+				ingameCounts.remove(uuid);
+			} else
+				ingameCounts.put(uuid, ingameCounts.getOrDefault(uuid, 0) + 1);
+
+			if (new CooldownService().check(player, "aac-notify-discord", Time.MINUTE)) {
+				if (discordCounts.get(uuid) > 0)
+					message += " (" + discordCounts.get(uuid) + " more...)";
+				Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
+				discordCounts.remove(uuid);
+			} else
+				discordCounts.put(uuid, discordCounts.getOrDefault(uuid, 0) + 1);
+
+			if (Rank.getOnlineMods().stream().anyMatch(nerd -> player.getPlayer() != null && !AFK.get(player.getPlayer()).isTimeAfk()))
+				if (totalCounts.get(uuid) > 20)
+					runCommandAsConsole("ban " + player.getName() + " 1d You have been automatically banned " +
+							"by our anti cheat. Hacking is not allowed! (C: " + totalCounts.get(uuid) + ")");
 		}
 	}
 
