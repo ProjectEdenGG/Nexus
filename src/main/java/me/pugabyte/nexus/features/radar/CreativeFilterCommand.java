@@ -36,11 +36,13 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 					MaterialTag.ARMOR,
 					MaterialTag.INVENTORY_BLOCKS,
 					MaterialTag.COMMAND_BLOCKS,
-					MaterialTag.MINECARTS
+					MaterialTag.MINECARTS,
+					MaterialTag.CAMPFIRES
 			)
 			.append(
 					Material.SPAWNER,
-					Material.FIREWORK_ROCKET
+					Material.FIREWORK_ROCKET,
+					Material.NAME_TAG
 			);
 
 	public CreativeFilterCommand(@NonNull CommandEvent event) {

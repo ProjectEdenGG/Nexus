@@ -139,6 +139,7 @@ public class MaterialTag implements Tag<Material> {
 			.append("_SHULKER_BOX", MatchMode.SUFFIX);
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
 	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
+	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, VINE, LILY_PAD, TURTLE_EGG,
 			REPEATER, COMPARATOR, ITEM_FRAME, BELL, SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER)
