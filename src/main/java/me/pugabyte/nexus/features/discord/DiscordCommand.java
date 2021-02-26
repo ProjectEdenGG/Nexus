@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,18 +45,71 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Async
+	@Path("account [player]")
+	void id(@Arg("self") OfflinePlayer player) {
+		DiscordUser self = service.get(player());
+		user = service.get(player);
+
+		if (isNullOrEmpty(user.getUserId()))
+			error(PREFIX + player.getName() + " has not linked their Discord account");
+
+		try {
+			String asMention = user.getMember().getAsMention();
+			String message = "Discord account for " + player.getName() + ": ";
+			send(json(PREFIX + message + user.getNameAndDiscrim()).hover("&eClick to copy").copy(user.getNameAndDiscrim()));
+			if (self.getUserId() != null) {
+				self.getMember().getUser().openPrivateChannel().complete()
+						.sendMessage(message + asMention).queue();
+				send(json(PREFIX + "Koda has sent your direct message on Discord with their username"));
+			}
+		} catch (ErrorResponseException ex) {
+			if (ex.getErrorCode() == 10007)
+				error("User has linked their Discord account but is not in the Discord server");
+			else
+				rethrow(ex);
+		}
+	}
+
+	@Async
 	@Path("link update roles")
 	@Permission("group.seniorstaff")
 	void updateRoles() {
+		int errors = 0;
 		Role verified = Discord.getGuild().getRoleById(DiscordId.Role.VERIFIED.getId());
-		new DiscordService().getAll().stream().filter(discordUser -> !isNullOrEmpty(discordUser.getUserId())).forEach(discordUser -> {
-			Member member = Discord.getGuild().retrieveMemberById(discordUser.getUserId()).complete();
-			if (member == null) return;
-			if (!member.getRoles().contains(verified))
-				Discord.addRole(discordUser.getUserId(), DiscordId.Role.VERIFIED);
-		});
+		for (DiscordUser discordUser : new DiscordService().getAll()) {
+			if (!isNullOrEmpty(discordUser.getUserId())) {
+				try {
+					Member member = discordUser.getMember();
+					if (member == null) continue;
+					if (!member.getRoles().contains(verified))
+						Discord.addRole(discordUser.getUserId(), DiscordId.Role.VERIFIED);
+				} catch (ErrorResponseException ex) {
+					if (ex.getErrorCode() != 10007) {
+						++errors;
+						ex.printStackTrace();
+					}
+				}
+			}
+		}
+
+		send(PREFIX + "Verified roles updated" + (errors > 0 ? " &c(" + errors + " errors)" : ""));
 	}
 
+	@Async
+	@Path("forceLink <player> <id>")
+	void forceLink(OfflinePlayer player, String id) {
+		DiscordService service = new DiscordService();
+		DiscordUser user = service.get(player);
+		user.setUserId(id);
+		if (user.getName() == null)
+			error("Could not find user from userId &e" + id);
+		service.save(user);
+		send("Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
+		Discord.addRole(id, DiscordId.Role.VERIFIED);
+		Discord.staffLog("**" + user.getIngameName() + "** Discord account force linked to **" + user.getNameAndDiscrim() +  "** by " + name());
+	}
+
+	@Async
 	@Path("link [code]")
 	void link(String code) {
 		if (isNullOrEmpty(code)) {
@@ -63,7 +117,7 @@ public class DiscordCommand extends CustomCommand {
 				User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
 				if (userById == null)
 					send(PREFIX + "Your minecraft account is linked to a Discord account, but I could not find that account. " +
-							"Are you in our discord server? &e" + BNSocialMediaSite.DISCORD.getUrl());
+							"Are you in our Discord server? &e" + BNSocialMediaSite.DISCORD.getUrl());
 				else
 					send(PREFIX + "Your minecraft account is linked to " + user.getName());
 				send(PREFIX + "You can unlink your account with &c/discord unlink");
@@ -81,22 +135,23 @@ public class DiscordCommand extends CustomCommand {
 				if (!uuid().toString().equals(newUser.getUuid()))
 					error("There is no pending confirmation with this account");
 
-				String name = newUser.getName();
-				String discrim = newUser.getDiscrim();
-				Bot.KODA.jda().retrieveUserById(newUser.getUserId()).complete().openPrivateChannel().complete().sendMessage("You have successfully linked your Discord account with the Minecraft account **" + name() + "**").queue();
-				send(PREFIX + "You have successfully linked your Minecraft account with the Discord account &e" + name + "#" + discrim);
-				Discord.addRole(newUser.getUserId(), DiscordId.Role.VERIFIED);
 				user.setUserId(newUser.getUserId());
 				service.save(user);
-				Discord.staffLog("**" + name() + "** has linked their discord account to **" + name + "#" + discrim + "**");
+				Bot.KODA.jda().retrieveUserById(newUser.getUserId()).complete()
+						.openPrivateChannel().complete().sendMessage("You have successfully linked your Discord account with the Minecraft account **" + name() + "**").queue();
+				send(PREFIX + "You have successfully linked your Minecraft account with the Discord account &e" + user.getNameAndDiscrim());
+				Discord.addRole(newUser.getUserId(), DiscordId.Role.VERIFIED);
+				Discord.staffLog("**" + name() + "** has linked their discord account to **" + user.getNameAndDiscrim() + "**");
 				Discord.getCodes().remove(code);
 			} else
 				error("Invalid confirmation code");
 		}
 	}
 
-	@Path("unlink")
-	void unlink() {
+	@Async
+	@Path("unlink [player]")
+	void unlink(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+		user = service.get(player);
 		if (isNullOrEmpty(user.getUserId()))
 			error("This account is not linked to any Discord account");
 
@@ -105,7 +160,8 @@ public class DiscordCommand extends CustomCommand {
 			String name = user.getName();
 			String discrim = user.getDiscrim();
 
-			userById.openPrivateChannel().complete().sendMessage("This Discord account has been unlinked from the Minecraft account **" + name() + "**").queue();
+			if (isSelf(player))
+				userById.openPrivateChannel().complete().sendMessage("This Discord account has been unlinked from the Minecraft account **" + name() + "**").queue();
 			send(PREFIX + "Successfully unlinked this Minecraft account from Discord account " + name);
 			Discord.staffLog("**" + name() + "** has unlinked their account from **" + name + "#" + discrim + "**");
 		} catch (ErrorResponseException ex) {
@@ -119,6 +175,7 @@ public class DiscordCommand extends CustomCommand {
 		service.save(user);
 	}
 
+	@Async
 	@Path("linkStatus [player]")
 	@Permission("group.staff")
 	void linkStatus(@Arg("self") DiscordUser discordUser) {
@@ -158,6 +215,7 @@ public class DiscordCommand extends CustomCommand {
 		((Discord) Features.get(Discord.class)).connect();
 	}
 
+	@Async
 	@Path("lockdown")
 	@Permission("group.staff")
 	void lockdown() {
@@ -208,12 +266,14 @@ public class DiscordCommand extends CustomCommand {
 		new DiscordCaptchaService().get();
 	}
 
+	@Async
 	@Path("captcha debug")
 	@Permission("group.staff")
 	void debug() {
 		send(new DiscordCaptchaService().get().toString());
 	}
 
+	@Async
 	@Path("captcha unconfirm <id>")
 	@Permission("group.staff")
 	void unconfirm(String id) {
@@ -239,6 +299,7 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	// TODO Restrospective confirmation checks
+	@Async
 	@Path("captcha info")
 	@Permission("group.staff")
 	void info() {
