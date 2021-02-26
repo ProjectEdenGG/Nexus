@@ -18,7 +18,7 @@ public class PurchaseService extends MySQLService {
 								"where price > 0 " +
 								"group by uuid " +
 						") as data " +
-				") order by timestamp " +
+				") order by timestamp desc" +
 				"limit " + count
 		).results(Purchase.class);
 	}
