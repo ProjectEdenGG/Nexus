@@ -50,6 +50,7 @@ public class ParticleOwner extends PlayerOwnedObject {
 		if (map != null && !map.isEmpty())
 			// Do some deserialization if necessary
 			new HashMap<>(map).forEach((key, value) -> {
+				if (value == null) return;
 				if (Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r")) {
 					Map<String, Integer> color = (Map<String, Integer>) value;
 					map.put(key, Color.fromRGB(color.get("r"), color.get("g"), color.get("b")));

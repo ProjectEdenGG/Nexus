@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
@@ -66,6 +67,11 @@ public class Tab implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		update(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onVanishToggle(PlayerVanishStateChangeEvent event) {
+		update();
 	}
 
 }

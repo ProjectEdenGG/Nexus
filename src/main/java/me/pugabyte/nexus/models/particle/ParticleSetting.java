@@ -352,10 +352,15 @@ public enum ParticleSetting {
 	}
 
 	public String getLore(Player player, ParticleType type) {
-		if (this.value == Boolean.class)
-			return (Boolean.parseBoolean(getter(player, type))) ? "&aEnabled" : "&cDisabled";
-		if (this.value == Color.class) {
+		if (this.value == Boolean.class) {
+			Boolean bool = get(new ParticleService().get(player), type);
+			if (bool == null)
+				return null;
+			return bool ? "&aEnabled" : "&cDisabled";
+		} if (this.value == Color.class) {
 			Color color = get(new ParticleService().get(player), type);
+			if (color == null)
+				return null;
 			return "||&cR: " + color.getRed() + "||&aG: " + color.getGreen() + "||&bB: " + color.getBlue();
 		}
 		Object min = 0.0;
@@ -390,7 +395,10 @@ public enum ParticleSetting {
 	}
 
 	String getter(Player player, ParticleType type) {
-		return get(new ParticleService().get(player), type).toString();
+		Object object = get(new ParticleService().get(player), type);
+		if (object != null)
+			return object.toString();
+		return "null";
 	}
 
 	void setter(Player player, ParticleType type, String text) {

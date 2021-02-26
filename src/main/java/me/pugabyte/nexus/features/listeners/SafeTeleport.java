@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.listeners;
 
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
+import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Location;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Disabled
 public class SafeTeleport implements Listener {
 
 	private static final Set<Material> safeBlocks = MaterialTag.CARPETS.getValues();
@@ -24,6 +27,7 @@ public class SafeTeleport implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onTeleport(PlayerTeleportEvent event) {
 		if (PlayerManager.get(event.getPlayer()).isPlaying()) return;
+		if (CitizensUtils.isNPC(event.getPlayer())) return;
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.COMMAND && event.getCause() != PlayerTeleportEvent.TeleportCause.PLUGIN)
 			return;
 		if (event.getPlayer().isFlying()) return;

@@ -699,6 +699,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		player.closeInventory();
 	}
 
+	@Async
 	@Path("sha1 <url>")
 	void sha1(String url) {
 		send(Utils.createSha1(url));
