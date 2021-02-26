@@ -22,6 +22,7 @@ import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -33,6 +34,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -41,8 +43,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -54,6 +58,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -89,6 +94,32 @@ public class Misc implements Listener {
 			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup) || WorldGroup.MINIGAMES.equals(worldGroup))
 				event.setCancelled(true);
 		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onRespawnAnchorInteract(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block))
+			return;
+
+		if (!block.getType().equals(Material.RESPAWN_ANCHOR))
+			return;
+
+		if (event.isCancelled())
+			return;
+
+		World.Environment environment = block.getWorld().getEnvironment();
+		if (environment.equals(World.Environment.NETHER))
+			return;
+
+		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+			return;
+
+		RespawnAnchor respawnAnchor = (RespawnAnchor) block.getBlockData();
+		ItemStack heldItem = event.getItem();
+		if ((respawnAnchor.getCharges() > 0 && (heldItem == null || heldItem.getType() != Material.GLOWSTONE))
+				|| respawnAnchor.getCharges() == respawnAnchor.getMaximumCharges())
+			event.setCancelled(true);
 	}
 
 	@EventHandler

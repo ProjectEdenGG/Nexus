@@ -83,7 +83,7 @@ public class MobHeads extends Feature implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST) // Fires twice if death by McMMO
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onKillEntity(EntityDamageByEntityEvent event) {
 		if (!(event.getEntity() instanceof LivingEntity))
 			return;
