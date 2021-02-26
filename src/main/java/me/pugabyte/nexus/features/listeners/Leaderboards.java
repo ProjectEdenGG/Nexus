@@ -134,14 +134,14 @@ public class Leaderboards implements Listener {
 
 		public void update() {
 			Tasks.async(() -> {
-				if (!new CooldownService().check(Nexus.getUUID0(), "leaderboards_" + name(), Time.MINUTE.x(5)))
-					return;
-
 				Map<UUID, String> top = getTop();
 				if (top.size() != 3) {
 					Nexus.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
 					return;
 				}
+
+				if (!new CooldownService().check(Nexus.getUUID0(), "leaderboards_" + name(), Time.MINUTE.x(5)))
+					return;
 
 				Tasks.sync(() -> {
 					AtomicInteger i = new AtomicInteger(0);

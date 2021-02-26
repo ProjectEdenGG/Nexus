@@ -17,6 +17,7 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Purchase {
+	private String id;
 	private String name;
 	private String uuid;
 	private String transactionId;

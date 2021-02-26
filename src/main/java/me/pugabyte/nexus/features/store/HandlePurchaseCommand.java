@@ -28,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.uuidFormat;
 
@@ -75,6 +76,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 		String[] args = data.split("\\|");
 		Purchase purchase = Purchase.builder()
+				.id(UUID.randomUUID().toString())
 				.name(args[0])
 				.uuid(uuidFormat(args[1]))
 				.transactionId(args[2])
