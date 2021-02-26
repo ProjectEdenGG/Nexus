@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import de.tr7zw.nbtapi.NBTEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -49,7 +50,8 @@ public class KillEntityCommand extends CustomCommand {
 				for (final Entity entity : chunk.getEntities())
 					if (location().distance(entity.getLocation()) <= radius)
 						if (toKill.contains(entity.getType()))
-							entities.add(entity);
+							if (canKill(entity))
+								entities.add(entity);
 
 			entities.forEach(Entity::remove);
 			send(PREFIX + "Killed " + entities.size() + " entities");
@@ -61,6 +63,16 @@ public class KillEntityCommand extends CustomCommand {
 				.open(player());
 		else
 			kill.run();
+	}
+
+	private boolean canKill(Entity entity) {
+		if (entity instanceof Monster) {
+			if (entity.getCustomName() != null)
+				return false;
+			if (new NBTEntity(entity).getBoolean("PersistenceRequired"))
+				return false;
+		}
+		return true;
 	}
 
 	@Getter
@@ -124,10 +136,10 @@ public class KillEntityCommand extends CustomCommand {
 	@ConverterFor(KillEntityArg.class)
 	KillEntityArg convertToKillEntityArg(String value) {
 		try {
-			return new KillEntityArg((EntityType) convertToEnum(value, EntityType.class));
+			return new KillEntityArg((KillableEntityGroup) convertToEnum(value, KillableEntityGroup.class));
 		} catch (InvalidInputException ex) {
 			try {
-				return new KillEntityArg((KillableEntityGroup) convertToEnum(value, KillableEntityGroup.class));
+				return new KillEntityArg((EntityType) convertToEnum(value, EntityType.class));
 			} catch (InvalidInputException ex2) {
 				throw new InvalidInputException("Could not convert " + value + " to a killable entity");
 			}

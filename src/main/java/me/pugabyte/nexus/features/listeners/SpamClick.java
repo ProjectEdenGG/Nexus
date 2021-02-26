@@ -47,7 +47,6 @@ public class SpamClick implements Listener {
 		Tip tip = new TipService().get(player);
 		if (tip.show(TipType.SPAM_ATTACK))
 			Koda.dm(player, "Slow down! Spam attacking entities causes very little damage. Use the cooldown indicator on your HUD to determine how to space out your attacks and deal maximum damage");
-
 	}
 
 }
