@@ -3,11 +3,15 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages;
+import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
@@ -26,16 +30,13 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("toggle [enable] [player]")
-	void toggle(Boolean enable, @Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	@Path("behavior <behavior> [player]")
+	void toggle(Behavior behavior, @Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		final DeathMessages deathMessages = service.get(player);
 
-		if (enable == null)
-			enable = !deathMessages.isShow();
-
-		deathMessages.setShow(enable);
+		deathMessages.setBehavior(behavior);
 		service.save(deathMessages);
-		send(PREFIX + (isSelf(deathMessages) ? "Your" : "&e" + player.getName() + "'s") + " &3death messages are now " + (enable ? "&ashown" : "&chidden"));
+		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
 	}
 
 	@EventHandler
@@ -43,18 +44,29 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		final DeathMessagesService service = new DeathMessagesService();
 		DeathMessages deathMessages = service.get(event.getEntity());
 
-		if (!deathMessages.isShow())
+		String message = "&c☠ " + event.getDeathMessage();
+		message = message.replaceFirst(event.getEntity().getName(), "&e" + event.getEntity().getName() + "&c");
+
+		if (deathMessages.getBehavior() == Behavior.HIDDEN)
 			event.setDeathMessage(null);
 
-		if (event.getDeathMessage() == null)
+		if (event.getDeathMessage() == null) {
+			deathMessages.send(message);
 			return;
+		}
 
-		event.setDeathMessage("&c☠ " + event.getDeathMessage());
-		event.setDeathMessage(event.getDeathMessage().replaceFirst(event.getEntity().getName(), "&e" + event.getEntity().getName() + "&c"));
-		event.setDeathMessage(colorize(event.getDeathMessage()));
+		event.setDeathMessage(null);
 
-		if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-			Chat.broadcastDiscord(discordize(event.getDeathMessage()));
+		if (deathMessages.getBehavior() == Behavior.SHOWN) {
+			Chat.broadcastIngame(colorize(message));
+
+			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
+				Chat.broadcastDiscord(discordize(event.getDeathMessage()));
+		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
+			Chatter chatter = new ChatService().get(event.getEntity());
+			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
+				recipient.send(message);
+		}
 	}
 
 }

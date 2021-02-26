@@ -26,6 +26,12 @@ public class DeathMessages extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private boolean show = true;
+	private Behavior behavior = Behavior.SHOWN;
+
+	public enum Behavior {
+		HIDDEN,
+		LOCAL,
+		SHOWN
+	}
 
 }
