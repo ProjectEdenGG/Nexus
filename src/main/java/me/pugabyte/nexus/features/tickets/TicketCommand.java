@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.tickets;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
@@ -52,20 +53,29 @@ public class TicketCommand extends CustomCommand {
 		if (StringUtils.right(description, 5).equalsIgnoreCase("close"))
 			error("Prevented accidental ticket (close)");
 
-		Ticket ticket = new Ticket(player(), stripColor(description));
-		service.saveSync(ticket);
+		Runnable run = () -> {
+			Ticket ticket = new Ticket(player(), stripColor(description));
+			service.saveSync(ticket);
 
-		send(PREFIX + "You have submitted a ticket. Staff have been alerted, please wait patiently for a response. &eThank you!");
-		send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
+			send(PREFIX + "You have submitted a ticket. Staff have been alerted, please wait patiently for a response. &eThank you!");
+			send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
 
-		List<Nerd> onlineMods = Rank.getOnlineMods();
-		Discord.staffLog("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription());
-		Discord.staffBridge("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription() + (onlineMods.size() == 0 ? " [ @here ]" : ""));
+			List<Nerd> onlineMods = Rank.getOnlineMods();
+			Discord.staffLog("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription());
+			Discord.staffBridge("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription() + (onlineMods.size() == 0 ? " [ @here ]" : ""));
 
-		onlineMods.forEach(mod -> Jingle.PING.play(mod.getPlayer()));
-		Chat.broadcastIngame("", StaticChannel.STAFF);
-		Chat.broadcastIngame(PREFIX + "&e" + name() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), StaticChannel.STAFF);
-		Chat.broadcastIngame(Tickets.getTicketButtons(ticket), StaticChannel.STAFF);
+			onlineMods.forEach(mod -> Jingle.PING.play(mod.getPlayer()));
+			Chat.broadcastIngame("", StaticChannel.STAFF);
+			Chat.broadcastIngame(PREFIX + "&e" + name() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), StaticChannel.STAFF);
+			Chat.broadcastIngame(Tickets.getTicketButtons(ticket), StaticChannel.STAFF);
+		};
+
+		if (isStaff())
+			ConfirmationMenu.builder()
+					.onConfirm(e -> run.run())
+					.open(player());
+		else
+			run.run();
 	}
 
 }
