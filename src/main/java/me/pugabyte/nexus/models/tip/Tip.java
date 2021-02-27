@@ -45,7 +45,7 @@ public class Tip extends PlayerOwnedObject {
 			return true;
 		}
 
-		if (!new CooldownService().check(getUuid(), "Tip." + tipType.name(), tipType.getCooldown()))
+		if (!new CooldownService().check(uuid, "Tip." + tipType.name(), tipType.getCooldown()))
 			return false;
 
 		if (tipType.getPermissions().length > 0) {

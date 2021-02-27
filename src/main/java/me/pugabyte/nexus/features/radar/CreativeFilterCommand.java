@@ -42,7 +42,8 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 			.append(
 					Material.SPAWNER,
 					Material.FIREWORK_ROCKET,
-					Material.NAME_TAG
+					Material.NAME_TAG,
+					Material.ARMOR_STAND
 			);
 
 	public CreativeFilterCommand(@NonNull CommandEvent event) {

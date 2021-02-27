@@ -10,9 +10,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 
 @Aliases("rp")
 @Permission("group.staff") // TODO: Remove Permission
@@ -25,25 +29,49 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	private void resourcePack(Player player) {
+		player.setResourcePack(url, hash);
+	}
+
 	@Path
 	void resourcePack() {
 		if (hash == null)
-			error("resource pack hash is null");
+			error("Resource pack hash is null");
 
-		player().setResourcePack(url, hash);
+		resourcePack(player());
 	}
 
 	@Async
 	@Path("update")
 	void update() {
-		hash = Utils.createSha1(url);
+		String newHash = Utils.createSha1(url);
+		if (hash != null && hash.equals(newHash))
+			error("No resource pack update found");
+
+		hash = newHash;
 
 		if (hash == null)
-			error("resource pack hash is null");
+			error("Resource pack hash is null");
+
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (!player.hasPermission("group.admin"))
+				continue;
+
+			if (player.getResourcePackStatus() == Status.ACCEPTED)
+				send(player, json("Click to update resource pack").command("/rp"));
+		}
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		if (!event.getPlayer().hasPermission("group.admin"))
+			return;
+
+		resourcePack(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onResourcePackEvent(PlayerResourcePackStatusEvent event) {
-		Nexus.debug("RP Status Update: " + event.getPlayer().getName() + " = " + event.getStatus());
+		Nexus.debug("Resource Pack Status Update: " + event.getPlayer().getName() + " = " + event.getStatus());
 	}
 }

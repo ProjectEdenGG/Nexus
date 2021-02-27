@@ -38,7 +38,7 @@ public class SpamClick implements Listener {
 		if (times == null)
 			times = new ArrayList<>();
 		times.add(now);
-		times.removeIf(localDateTime -> localDateTime.isBefore(now.minusMinutes(5)));
+		times.removeIf(localDateTime -> localDateTime.isBefore(now.minusSeconds(5)));
 		spamAttacks.put(uuid, times);
 
 		if (times.size() < 5)
