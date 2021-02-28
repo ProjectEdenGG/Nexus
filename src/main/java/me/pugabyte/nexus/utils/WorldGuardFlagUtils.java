@@ -2,7 +2,6 @@ package me.pugabyte.nexus.utils;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
-import com.sk89q.worldedit.world.entity.EntityType;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -10,10 +9,12 @@ import com.sk89q.worldguard.domains.Association;
 import com.sk89q.worldguard.protection.DelayedRegionOverlapAssociation;
 import com.sk89q.worldguard.protection.association.Associables;
 import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.IntegerFlag;
 import com.sk89q.worldguard.protection.flags.RegistryFlag;
 import com.sk89q.worldguard.protection.flags.SetFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
@@ -23,8 +24,6 @@ import me.pugabyte.nexus.Nexus;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import java.util.Set;
 
 public class WorldGuardFlagUtils {
 
@@ -38,7 +37,11 @@ public class WorldGuardFlagUtils {
 		MOB_AGGRESSION(registerFlag(new StateFlag("mob-aggression", false))),
 		TAMING(registerFlag(new StateFlag("taming", false))),
 		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false))),
-		MINIGAMES_WATER_DAMAGE(registerFlag(new StateFlag("minigames-water-damage", false)));
+		MINIGAMES_WATER_DAMAGE(registerFlag(new StateFlag("minigames-water-damage", false))),
+		GREETING_ACTIONBAR(registerFlag(new StringFlag("greeting-actionbar"))),
+		ACTIONBAR_TICKS(registerFlag(new IntegerFlag("actionbar-ticks"))),
+		FAREWELL_ACTIONBAR(registerFlag(new StringFlag("farewell-actionbar"))),
+		;
 
 		public final Flag<?> flag;
 
@@ -78,7 +81,6 @@ public class WorldGuardFlagUtils {
 		return flag;
 	}
 
-
 	public static boolean test(Player player, Flags flag) {
 		return test(player, (StateFlag) flag.get());
 	}
@@ -112,7 +114,6 @@ public class WorldGuardFlagUtils {
 	public static State query(Player player, StateFlag flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 
-		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 		Location loc = BukkitAdapter.adapt(player.getLocation());
 		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 		RegionQuery query = container.createQuery();
@@ -136,13 +137,38 @@ public class WorldGuardFlagUtils {
 		return query.queryState(loc, new DelayedRegionOverlapAssociation(query, loc), flag);
 	}
 
-	public static Set<EntityType> queryValue(org.bukkit.Location location, Flags flag) {
+	public static <T> T queryValue(org.bukkit.Location location, Flags flag) {
+		return queryValue(location, (Flag<T>) flag.get());
+	}
+
+	public static <T> T queryValue(org.bukkit.Location location, Flag<T> flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 
 		Location loc = BukkitAdapter.adapt(location);
 		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 		RegionQuery query = container.createQuery();
-		return query.queryValue(loc, Associables.constant(Association.NON_MEMBER), (SetFlag<EntityType>) Flags.ALLOW_SPAWN.get());
+		return query.queryValue(loc, Associables.constant(Association.NON_MEMBER), flag);
+	}
+
+//	public static String getStringValueFor(Player player, @NonNull StringFlag flag) {
+//		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+//		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
+//		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+//		return container.createQuery().queryValue(loc, localPlayer, flag);
+//	}
+//
+//	public static Integer getValueFor(Player player, @NonNull IntegerFlag flag) {
+//		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+//		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
+//		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+//		return container.createQuery().queryValue(loc, localPlayer, flag);
+//	}
+
+	public static <T> T getValueFor(Player player, Flag<T> flag) {
+		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
+		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		return container.createQuery().queryValue(loc, localPlayer, flag);
 	}
 
 }
