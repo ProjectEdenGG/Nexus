@@ -5,19 +5,30 @@ import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class ActionBarUtils {
 
+	private static final Map<UUID, Set<Integer>> playerTaskIds = new HashMap<>();
+
 	// Main
 
-	public static void sendActionBar(final Player player, final String message) {
+	private static void sendActionBarForReal(final Player player, final String message) {
 		player.sendActionBar(colorize(message));
 	}
 
 	// One player
+
+	public static void sendActionBar(final Player player, final String message) {
+		sendActionBar(player, colorize(message), -1);
+	}
 
 	public static void sendActionBar(final Player player, ActionBar actionBar) {
 		sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
@@ -28,13 +39,19 @@ public class ActionBarUtils {
 	}
 
 	public static void sendActionBar(final Player player, final String message, int duration, boolean fade) {
-		sendActionBar(player, message);
+		Set<Integer> taskIds = playerTaskIds.getOrDefault(player.getUniqueId(), new HashSet<>());
+		Tasks.cancel(taskIds);
+		taskIds.clear();
+
+		sendActionBarForReal(player, message);
 
 		if (!fade && duration >= 0)
-			Tasks.wait(duration + 1, () -> sendActionBar(player, ""));
+			taskIds.add(Tasks.wait(duration + 1, () -> sendActionBarForReal(player, "")));
 
 		while (duration > 40)
-			Tasks.wait(duration -= 40, () -> sendActionBar(player, message));
+			taskIds.add(Tasks.wait(duration -= 40, () -> sendActionBarForReal(player, message)));
+
+		playerTaskIds.put(player.getUniqueId(), taskIds);
 	}
 
 	// List of players

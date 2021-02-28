@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -92,6 +93,10 @@ public class Tasks {
 
 	public static void cancel(int taskId) {
 		scheduler.cancelTask(taskId);
+	}
+
+	public static void cancel(Collection<Integer> taskIds) {
+		taskIds.forEach(Tasks::cancel);
 	}
 
 	public static class Countdown {
