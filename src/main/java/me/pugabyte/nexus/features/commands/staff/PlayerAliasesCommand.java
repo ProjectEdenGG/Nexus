@@ -11,11 +11,11 @@ import me.pugabyte.nexus.models.nerd.NerdService;
 import org.bukkit.OfflinePlayer;
 
 @Permission("group.staff")
-public class NicknamesCommand extends CustomCommand {
+public class PlayerAliasesCommand extends CustomCommand {
 	private final NerdService service = new NerdService();
 	private Nerd nerd;
 
-	public NicknamesCommand(@NonNull CommandEvent event) {
+	public PlayerAliasesCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -27,17 +27,17 @@ public class NicknamesCommand extends CustomCommand {
 	@Path("list [player]")
 	void list(@Arg("self") OfflinePlayer player) {
 		nerd = service.get(player);
-		if (nerd.getNicknames().isEmpty())
+		if (nerd.getAliases().isEmpty())
 			error("No nicknames found");
-		send(PREFIX + String.join(", ", nerd.getNicknames()));
+		send(PREFIX + String.join(", ", nerd.getAliases()));
 	}
 
 	@Path("add <player> <nickname>")
 	void add(OfflinePlayer player, String nickname) {
 		nerd = service.get(player);
-		if (nerd.getNicknames().contains(nickname))
+		if (nerd.getAliases().contains(nickname))
 			error("Nickname &e" + nickname + " &calready exists for " + player.getName());
-		nerd.getNicknames().add(nickname);
+		nerd.getAliases().add(nickname);
 		service.save(nerd);
 		send(PREFIX + "Added nickname '&e" + nickname + "&3' to &e" + player.getName());
 	}
@@ -45,9 +45,9 @@ public class NicknamesCommand extends CustomCommand {
 	@Path("remove <player> <nickname>")
 	void remove(OfflinePlayer player, String nickname) {
 		nerd = service.get(player);
-		if (!nerd.getNicknames().contains(nickname))
+		if (!nerd.getAliases().contains(nickname))
 			error("Nickname &e" + nickname + " &cdoes not exist for " + player.getName());
-		nerd.getNicknames().remove(nickname);
+		nerd.getAliases().remove(nickname);
 		service.save(nerd);
 		send(PREFIX + "Removed nickname '&e" + nickname + "&3' from &e" + player.getName());
 	}

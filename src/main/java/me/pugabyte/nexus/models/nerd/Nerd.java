@@ -4,11 +4,13 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -41,6 +43,8 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
 public class Nerd extends PlayerOwnedObject {
+	@Id
+	@NonNull
 	private UUID uuid;
 	private String name;
 	private String nickname;
@@ -54,7 +58,7 @@ public class Nerd extends PlayerOwnedObject {
 	private LocalDate promotionDate;
 	private String about;
 	private boolean meetMeVideo;
-	private Set<String> nicknames = new HashSet<>();
+	private Set<String> aliases = new HashSet<>();
 	private Set<String> pastNames = new HashSet<>();
 
 	public Nerd(String name) {
@@ -70,20 +74,24 @@ public class Nerd extends PlayerOwnedObject {
 	}
 
 	public void fromPlayer(OfflinePlayer player) {
+		uuid = player.getUniqueId();
 		name = player.getName();
 		LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
 		if (firstJoin == null || newFirstJoin.isBefore(firstJoin))
 			firstJoin = newFirstJoin;
 	}
 
+	@ToString.Include
 	public Rank getRank() {
 		return Rank.getHighestRank(getOfflinePlayer());
 	}
 
+	@ToString.Include
 	public String getRankFormat() {
 		return getRank().getColor() + getName();
 	}
 
+	@ToString.Include
 	public String getChatFormat() {
 		if ("KodaBear".equals(name))
 			return Koda.getNameFormat();
@@ -102,7 +110,10 @@ public class Nerd extends PlayerOwnedObject {
 		return colorize((prefix.trim() + " " + (rank.getColor() + getName()).trim())).trim();
 	}
 
+	@ToString.Include
 	public boolean isVanished() {
+		if (!isOnline())
+			return false;
 		return PlayerUtils.isVanished(getPlayer());
 	}
 

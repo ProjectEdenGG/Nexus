@@ -1,10 +1,16 @@
 package me.pugabyte.nexus.models.nerd;
 
+import dev.morphia.query.Query;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,32 +32,28 @@ public class NerdService extends MongoService {
 	}
 
 	public List<Nerd> find(String partialName) {
-	/*
-		List<Nerd> nerds = database.sql(
-				"select nerd.* " +
-				"from name_history " +
-				"inner join nerd " +
-					"on name_history.uuid = nerd.uuid " +
-				"left join hours " +
-					"on hours.uuid = nerd.uuid " +
-				"where name_history.name like ? " +
-				"group by nerd.uuid " +
-				"order by hours.total desc, position(? in name_history.name) " +
-				"limit 50")
-				.args("%" + partialName.replaceAll("_", "\\\\_") + "%", partialName)
-				.results(Nerd.class);
-		for (Nerd nerd : nerds)
-			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
-	*/
-		return null;
+		Query<Nerd> query = database.createQuery(Nerd.class);
+		query.and(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)));
+		if (query.count() > 50)
+			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + query.count() + ")");
+
+		Map<Nerd, Integer> hoursMap = new HashMap<Nerd, Integer>() {{
+			HoursService service = new HoursService();
+			for (Nerd nerd : query.find().toList())
+				put(nerd, service.<Hours>get(nerd.getUuid()).getTotal());
+		}};
+
+		return new ArrayList<>(Utils.sortByValueReverse(hoursMap).keySet());
 	}
 
 	public List<Nerd> getNerdsWithBirthdays() {
-		return null;
+		Query<Nerd> query = database.createQuery(Nerd.class);
+		query.and(query.criteria("birthday").notEqual(null));
+		return query.find().toList();
 	}
 
-	public Nerd getFromNickname(String nickname) {
-		return null;
+	public Nerd getFromAlias(String alias) {
+		return database.createQuery(Nerd.class).filter("aliases", sanitize(alias)).find().tryNext();
 	}
 
 }

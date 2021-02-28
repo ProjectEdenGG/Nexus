@@ -156,7 +156,7 @@ public class PlayerUtils {
 
 		NerdService nerdService = new NerdService();
 
-		Nerd fromNickname = nerdService.getFromNickname(partialName);
+		Nerd fromNickname = nerdService.getFromAlias(partialName);
 		if (fromNickname != null)
 			return fromNickname.getOfflinePlayer();
 
