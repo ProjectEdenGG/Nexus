@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.OfflinePlayer;
 
-@Aliases("ec")
+@Aliases({"ec", "echest"})
 @Permission("group.staff")
 public class EnderChestCommand extends CustomCommand {
 

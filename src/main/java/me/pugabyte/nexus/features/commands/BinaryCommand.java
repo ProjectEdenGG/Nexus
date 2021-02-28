@@ -3,8 +3,10 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 
+@Permission("group.staff")
 public class BinaryCommand extends CustomCommand {
 
 	public BinaryCommand(@NonNull CommandEvent event) {
