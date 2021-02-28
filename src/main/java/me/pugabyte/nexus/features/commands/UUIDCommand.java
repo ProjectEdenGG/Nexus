@@ -16,7 +16,7 @@ public class UUIDCommand extends CustomCommand {
 	void uuid(@Arg("self") Nerd nerd) {
 		send(json("&e" + nerd.getUuid())
 				.hover("&3Shift+Click to insert into your chat")
-				.insert(nerd.getUuid()));
+				.insert(nerd.getUuid().toString()));
 	}
 
 }

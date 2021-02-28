@@ -1,31 +1,32 @@
 package me.pugabyte.nexus.models.nerd;
 
-import com.google.common.base.Strings;
-import me.pugabyte.nexus.models.MySQLService;
+import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import me.pugabyte.nexus.models.MongoService;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
-import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-public class NerdService extends MySQLService {
+@PlayerClass(Nerd.class)
+public class NerdService extends MongoService {
+	private final static Map<UUID, Nerd> cache = new HashMap<>();
+
+	public Map<UUID, Nerd> getCache() {
+		return cache;
+	}
+
 	@Override
-	public Nerd get(String uuid) {
-		Nerd nerd = database.where("uuid = ?", uuid).first(Nerd.class);
+	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
+		Nerd nerd = super.getNoCache(uuid);
 		nerd.fromPlayer(PlayerUtils.getPlayer(uuid));
-		return nerd;
+		return (T) nerd;
 	}
 
 	public List<Nerd> find(String partialName) {
-		return find(partialName, "name");
-	}
-
-	public List<Nerd> find(String partialName, String column) {
+	/*
 		List<Nerd> nerds = database.sql(
 				"select nerd.* " +
 				"from name_history " +
@@ -33,7 +34,7 @@ public class NerdService extends MySQLService {
 					"on name_history.uuid = nerd.uuid " +
 				"left join hours " +
 					"on hours.uuid = nerd.uuid " +
-				"where name_history." + sanitize(column) + " like ? " +
+				"where name_history.name like ? " +
 				"group by nerd.uuid " +
 				"order by hours.total desc, position(? in name_history.name) " +
 				"limit 50")
@@ -41,69 +42,16 @@ public class NerdService extends MySQLService {
 				.results(Nerd.class);
 		for (Nerd nerd : nerds)
 			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
-		return nerds;
-	}
-
-	public List<Nerd> getOnlineNerds() {
-		List<Nerd> nerds = database.where("uuid in ?", asList(PlayerUtils.getOnlineUuids())).results(Nerd.class);
-		for (Nerd nerd : nerds)
-			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
-		return nerds;
-	}
-
-	public List<Nerd> getOnlineNerdsWith(String permission) {
-		List<String> filtered = Bukkit.getOnlinePlayers().stream()
-				.filter(player -> player.hasPermission(permission))
-				.map(player -> player.getUniqueId().toString())
-				.collect(Collectors.toList());
-
-		List<Nerd> nerds = database.where("uuid in (" + asList(filtered) + ")").results(Nerd.class);
-		for (Nerd nerd : nerds)
-			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
-		return nerds;
-	}
-
-	public List<Nerd> getNerdsLastJoinedAfter(LocalDateTime date) {
-		List<Nerd> nerds = database.where("lastJoin >= ?").args(date).results(Nerd.class);
-		for (Nerd nerd : nerds)
-			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
-		return nerds;
-	}
-
-	public List<Nerd> getNerdsWithBirthdays() {
-		List<Nerd> nerds = database.where("birthday IS NOT NULL").results(Nerd.class);
-		for (Nerd nerd : nerds)
-			nerd.fromPlayer(PlayerUtils.getPlayer(nerd.getUuid()));
-		return nerds;
-	}
-
-	public OfflinePlayer getFromNickname(String nickname) {
-		String uuid = database.select("uuid").table("nickname").where("nickname = ?", nickname).first(String.class);
-		if (!Strings.isNullOrEmpty(uuid))
-			return PlayerUtils.getPlayer(uuid);
+	*/
 		return null;
 	}
 
-	public List<String> getNicknames(UUID uuid) {
-		return database.select("nickname").table("nickname").where("uuid = ?", uuid.toString()).results(String.class);
+	public List<Nerd> getNerdsWithBirthdays() {
+		return null;
 	}
 
-	public void addNickname(UUID uuid, String nickname) {
-		Tasks.async(() ->
-				database.sql("insert into nickname values (?, ?)", nickname, uuid.toString()).execute());
-	}
-
-	public void removeNickname(UUID uuid, String nickname) {
-		database.where("uuid = ?, nickname = ?", uuid.toString(), nickname).delete();
-	}
-
-	public void addPastName(Player player) {
-		Tasks.async(() ->
-				database.sql("insert ignore into name_history values (?, ?)").args(player.getName(), player.getUniqueId().toString()).execute());
-	}
-
-	public List<String> getPastNames(UUID uuid) {
-		return database.select("name").table("name_history").where("uuid = ?", uuid.toString()).results(String.class);
+	public Nerd getFromNickname(String nickname) {
+		return null;
 	}
 
 }

@@ -116,12 +116,6 @@ public class HoursService extends MongoService {
 		));
 	}
 
-//		return database.createAggregation(Hours2.class)
-//				.project(Projection.projection(_id, "_id"), Projection.projection("times", Projection.projection("$objectToArray", "$times")))
-//				.project(Projection.projection(_id, "_id"), Projection.projection("total", Projection.projection("$sum", "$times.v")))
-//				.sort(Sort.descending("total"))
-//				.aggregate(PageResult.class);
-
 	// TODO
 	private static final List<OfflinePlayer> activePlayers = new ArrayList<>();
 
