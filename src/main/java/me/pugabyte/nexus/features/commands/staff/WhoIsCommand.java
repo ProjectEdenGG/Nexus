@@ -17,7 +17,6 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.OfflinePlayer;
@@ -25,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Set;
 
 import static me.pugabyte.nexus.utils.StringUtils.getLocationString;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
@@ -70,9 +70,9 @@ public class WhoIsCommand extends CustomCommand {
 			lastJoinQuitDiff = timespanDiff(nerd.getLastJoin());
 		}
 
-		int history = liteBansService.getHistory(nerd.getUuid());
-		List<String> alts = liteBansService.getAlts(nerd.getUuid());
-		List<String> pastNames = new NerdService().getPastNames(offlinePlayer.getUniqueId());
+		int history = liteBansService.getHistory(nerd.getUuid().toString());
+		List<String> alts = liteBansService.getAlts(nerd.getUuid().toString());
+		Set<String> pastNames = nerd.getPastNames();
 		Godmode godmode = new GodmodeService().get(nerd);
 
 		JsonBuilder json = json()
@@ -88,10 +88,10 @@ public class WhoIsCommand extends CustomCommand {
 		if (history > 0)
 			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("&eClick to view history");
 
-		if (alts.size() > 0)
+		if (!alts.isEmpty())
 			json.newline().next("&3Alts: &e" + String.join(", ", alts));
 
-		if (pastNames.size() > 1)
+		if (!pastNames.isEmpty())
 			json.newline().next("&3Past Names: &e" + String.join("&3, &e", pastNames));
 
 		try {

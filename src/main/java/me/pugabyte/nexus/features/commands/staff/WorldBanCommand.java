@@ -1,13 +1,14 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.worldban.WorldBan;
 import me.pugabyte.nexus.models.worldban.WorldBanService;
 import me.pugabyte.nexus.utils.Tasks;
@@ -73,7 +74,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			service.save(worldBan);
 
 			String message = "&a" + name() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup.toString();
-			new NerdService().getOnlineNerdsWith("group.moderator").forEach(staff -> staff.send(message));
+			Chat.broadcast(message, StaticChannel.STAFF);
 			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
 
 			if (player.isOnline() && player.getPlayer() != null)

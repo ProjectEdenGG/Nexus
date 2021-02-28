@@ -56,7 +56,7 @@ public class SuggestDiscordCommand extends Command {
 				String hoursTotal = Timespan.of(hours.getTotal()).noneDisplay(true).format();
 				String hoursMonthly = Timespan.of(hours.getMonthly()).noneDisplay(true).format();
 				String history = "None";
-				if (new LiteBansService().getHistory(nerd.getUuid()) > 0)
+				if (new LiteBansService().getHistory(nerd.getUuid().toString()) > 0)
 					 history = "[View](https://bans.bnn.gg/history.php?uuid=" + nerd.getUuid() + ")";
 
 				EmbedBuilder embed = new EmbedBuilder()

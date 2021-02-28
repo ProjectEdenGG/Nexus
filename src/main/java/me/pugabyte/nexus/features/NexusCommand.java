@@ -82,6 +82,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 import org.reflections.Reflections;
 
 import java.io.File;
@@ -442,11 +443,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 			send(block.getType().name());
 	}
 
-	@Path("getOnlineNerdsWith <permission>")
-	void getOnlineNerdsWith(String permission) {
-		send(new NerdService().getOnlineNerdsWith(permission).stream().map(Nerd::getName).collect(Collectors.joining(", ")));
-	}
-
 	@Path("setTabListName <text...>")
 	void setTabListName(String text) {
 		player().setPlayerListName(colorize(text));
@@ -703,6 +699,16 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("sha1 <url>")
 	void sha1(String url) {
 		send(Utils.createSha1(url));
+	}
+
+	@Path("glow getColor <player>")
+	void getGlowColor(Player player) {
+		send(GlowAPI.getGlowColor(player, player()).name());
+	}
+
+	@Path("glow set <player> <color>")
+	void getGlowColor(Player player, GlowAPI.Color color) {
+		GlowAPI.setGlowing(player, color, player());
 	}
 
 	@ConverterFor(Nerd.class)

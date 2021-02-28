@@ -3,14 +3,12 @@ package me.pugabyte.nexus.models;
 import com.dieselpoint.norm.Database;
 import com.google.common.base.Strings;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.MySQLDatabase;
 import me.pugabyte.nexus.framework.persistence.MySQLPersistence;
 
 import javax.persistence.Table;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public abstract class MySQLService extends DatabaseService {
 	protected static Database database;
@@ -62,12 +60,6 @@ public abstract class MySQLService extends DatabaseService {
 
 	protected String asList(List<String> list) {
 		return "'" + String.join("','", list) + "'";
-	}
-
-	public String sanitize(String input) {
-		if (Pattern.compile("[\\w\\d\\s]+").matcher(input).matches())
-			return input;
-		throw new InvalidInputException("Unsafe argument");
 	}
 
 }

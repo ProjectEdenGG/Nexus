@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models;
 
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.Tasks;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public abstract class DatabaseService {
 
@@ -61,5 +63,11 @@ public abstract class DatabaseService {
 	}
 
 	abstract public void deleteAllSync();
+
+	public String sanitize(String input) {
+		if (Pattern.compile("[\\w\\d\\s]+").matcher(input).matches())
+			return input;
+		throw new InvalidInputException("Unsafe argument");
+	}
 
 }

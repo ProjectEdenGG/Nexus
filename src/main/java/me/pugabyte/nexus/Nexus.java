@@ -20,8 +20,8 @@ import me.pugabyte.nexus.framework.persistence.MySQLPersistence;
 import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
 import me.pugabyte.nexus.models.home.HomeService;
+import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.Env;
@@ -305,7 +305,7 @@ public class Nexus extends JavaPlugin {
 	private static Scheduler cron = new Scheduler();
 
 	private void databases() {
-		new Timer("  MySQL", NerdService::new);
+		new Timer("  MySQL", LWCProtectionService::new);
 		new Timer("  MongoDB", HomeService::new);
 	}
 

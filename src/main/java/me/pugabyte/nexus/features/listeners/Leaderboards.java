@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.commands.HoursCommand.HoursTopArguments;
 import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.features.store.Package;
 import me.pugabyte.nexus.features.votes.EndOfMonth.TopVoterData;
+import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -41,6 +42,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 
 @NoArgsConstructor
+@Environments(Env.PROD)
 public class Leaderboards implements Listener {
 
 	public enum Leaderboard {
