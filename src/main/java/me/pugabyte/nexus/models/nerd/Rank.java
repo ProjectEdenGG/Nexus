@@ -175,8 +175,12 @@ public enum Rank {
 		PLAYERS
 	}
 
-	public boolean includes(Rank rank) {
+	public boolean gte(Rank rank) {
 		return ordinal() >= rank.ordinal();
+	}
+
+	public boolean lt(Rank rank) {
+		return ordinal() < rank.ordinal();
 	}
 
 	public Rank next() {

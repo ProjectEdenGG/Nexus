@@ -69,7 +69,7 @@ public class Chatter extends PlayerOwnedObject {
 			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
 
 		if (channel.getRank() != null)
-			return new Nerd(getOfflinePlayer()).getRank().includes(channel.getRank()) && hasPerm;
+			return new Nerd(getOfflinePlayer()).getRank().gte(channel.getRank()) && hasPerm;
 		return hasPerm;
 	}
 

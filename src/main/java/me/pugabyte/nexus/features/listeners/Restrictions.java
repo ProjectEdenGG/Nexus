@@ -9,6 +9,9 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
+import org.bukkit.World.Environment;
+import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -17,11 +20,13 @@ import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.getAdvancement;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class Restrictions implements Listener {
@@ -36,7 +41,24 @@ public class Restrictions implements Listener {
 	@EventHandler
 	public void onWitherRoseEffect(EntityPotionEffectEvent event) {
 		if (event.getCause() == Cause.WITHER_ROSE)
+			if (event.getEntity() instanceof Player)
+				event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		if (event.getFrom().getWorld().getEnvironment() == Environment.THE_END || event.getTo().getWorld().getEnvironment() != Environment.THE_END)
+			return;
+
+		Nerd nerd = new Nerd(event.getPlayer());
+		if (nerd.getRank().gte(Rank.TRUSTED))
+			return;
+
+		AdvancementProgress progress = event.getPlayer().getAdvancementProgress(getAdvancement("story/follow_ender_eye"));
+		if (!progress.isDone()) {
 			event.setCancelled(true);
+			PlayerUtils.send(event.getPlayer(), "&cYou must enter an end portal before you can enter The End!");
+		}
 	}
 
 	@EventHandler

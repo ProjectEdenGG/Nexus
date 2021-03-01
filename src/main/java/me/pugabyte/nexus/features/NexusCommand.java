@@ -63,6 +63,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
@@ -89,8 +91,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,6 +108,7 @@ import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
+import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @NoArgsConstructor
@@ -709,6 +714,33 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("glow set <player> <color>")
 	void getGlowColor(Player player, GlowAPI.Color color) {
 		GlowAPI.setGlowing(player, color, player());
+	}
+
+	@Path("advancements [player] [page]")
+	void advancements(@Arg("self") Player player, @Arg("1") int page) {
+		BiFunction<Advancement, Integer, JsonBuilder> formatter = (advancement, index) -> {
+			JsonBuilder json = json(" ");
+			AdvancementProgress progress = player.getAdvancementProgress(advancement);
+			json.next((progress.isDone() ? "&e" : "&c") + advancement.getKey().getKey());
+
+			json.addHover("&eAwarded Criteria:");
+			for (String criteria : progress.getAwardedCriteria()) {
+				String text = "&7- &e" + criteria;
+				Date dateAwarded = progress.getDateAwarded(criteria);
+				if (dateAwarded != null)
+					text += " &7- " + shortDateFormat(dateAwarded.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+				json.addHover(text);
+			}
+
+			json.addHover(" ");
+			json.addHover("&cRemaining Criteria:");
+			for (String criteria : progress.getRemainingCriteria())
+				json.addHover("&7- &c" + criteria);
+
+			return json;
+		};
+
+		paginate(new ArrayList<>(PlayerUtils.getAdvancements().values()), formatter, "/nexus advancements " + player.getName(), page);
 	}
 
 	@ConverterFor(Nerd.class)

@@ -31,7 +31,7 @@ public class RedHandedCommand extends CustomCommand {
 		for (Player player : players) {
 			runCommand("freeze " + player.getName());
 
-			((Chatter) chatService.get(player)).setActiveChannel(local);
+			chatService.<Chatter>get(player).setActiveChannel(local);
 
 			Tasks.wait(1, () -> send(json("&c&lClick here to let them continue. Type a reason to warn them").suggest("/youmaycontinue " + player.getName() + " ")));
 		}
@@ -45,7 +45,7 @@ public class RedHandedCommand extends CustomCommand {
 		runCommand("vanish off");
 		player().setAllowFlight(true);
 		player().setFlying(true);
-		((Chatter) chatService.get(player())).setActiveChannel(local);
+		chatService.<Chatter>get(player()).setActiveChannel(local);
 
 		line();
 	}

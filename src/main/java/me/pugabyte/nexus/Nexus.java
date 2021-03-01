@@ -286,8 +286,6 @@ public class Nexus extends JavaPlugin {
 	private static ProtocolManager protocolManager;
 	@Getter
 	private static MultiverseCore multiverseCore;
-//	@Getter
-//	private static Essentials essentials;
 	@Getter
 	private static Citizens citizens;
 	@Getter
