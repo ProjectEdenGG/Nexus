@@ -49,7 +49,7 @@ public class DiscordListener extends ListenerAdapter {
 	public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
 		Tasks.async(() -> {
 			String name = Discord.getName(event.getMember());
-			String channel = event.getChannelJoined().getName();
+			String channel = event.getChannelLeft().getName();
 
 			Nexus.fileLog("discord", name + " left " + channel);
 		});

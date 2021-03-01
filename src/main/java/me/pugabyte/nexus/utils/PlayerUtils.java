@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.annotations.ReplaceWith;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +20,10 @@ import org.bukkit.metadata.MetadataValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -354,6 +359,27 @@ public class PlayerUtils {
 		public void to(Player player) {
 			player.showPlayer(Nexus.getInstance(), this.player);
 		}
+	}
+
+	@Getter
+	private static Map<String, Advancement> advancements = new LinkedHashMap<>();
+
+	static {
+		Map<String, Advancement> advancements = new LinkedHashMap<>();
+		Iterator<Advancement> it = Bukkit.getServer().advancementIterator();
+		while (it.hasNext()) {
+			Advancement advancement = it.next();
+			advancements.put(advancement.getKey().getKey().toLowerCase(), advancement);
+		}
+
+		PlayerUtils.advancements = Utils.sortByKey(advancements);
+	}
+
+	public static Advancement getAdvancement(String name) {
+		name = name.toLowerCase();
+		if (advancements.containsKey(name))
+			return advancements.get(name);
+		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
 	}
 
 }
