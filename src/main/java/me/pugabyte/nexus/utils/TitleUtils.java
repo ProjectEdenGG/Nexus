@@ -60,7 +60,6 @@ public class TitleUtils {
 	// Main
 
 	public static void sendTitle(final Player player, final String title, final String subtitle, int fadeIn, int stay, int fadeOut) {
-		player.sendMessage("Title: " + title + " | " + subtitle + " | " + fadeIn + " | " + stay + " | " + fadeOut);
 		player.sendTitle(colorize(title), colorize(subtitle), fadeIn, stay, fadeOut);
 
 	}
