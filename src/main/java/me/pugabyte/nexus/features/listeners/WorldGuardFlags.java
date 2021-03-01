@@ -14,7 +14,9 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Entity;
@@ -190,6 +192,10 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onExitRegion(RegionLeftEvent event) {
 		Player player = event.getPlayer();
+
+		World world = WorldGuardUtils.getWorld(event.getRegion());
+		if (world != null && !world.equals(player.getWorld()))
+			return;
 
 		String farewell_actionbar = (String) event.getRegion().getFlag(FAREWELL_ACTIONBAR.get());
 		if (!Strings.isNullOrEmpty(farewell_actionbar)) {

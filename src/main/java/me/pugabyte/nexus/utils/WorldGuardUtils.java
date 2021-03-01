@@ -68,6 +68,16 @@ public class WorldGuardUtils {
 		return region;
 	}
 
+	public static org.bukkit.World getWorld(ProtectedRegion protectedRegion) {
+		for (org.bukkit.World world : Bukkit.getWorlds()) {
+			try {
+				if (protectedRegion.equals(new WorldGuardUtils(world).getProtectedRegion(protectedRegion.getId())))
+					return world;
+			} catch (InvalidInputException ignore) {}
+		}
+		return null;
+	}
+
 	public Vector3 toVector3(Location location) {
 		return Vector3.at(location.getX(), location.getY(), location.getZ());
 	}
