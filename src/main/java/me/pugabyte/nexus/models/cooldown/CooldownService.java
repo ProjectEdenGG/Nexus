@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.cooldown;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.OfflinePlayer;
 
@@ -13,8 +14,13 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
+/*
+	Returns true, if cooldown has expired/is bypassed
+	Returns false, if cooldown is still in effect
+ */
 @PlayerClass(Cooldown.class)
 public class CooldownService extends MongoService {
+
 	private final static Map<UUID, Cooldown> cache = new HashMap<>();
 
 	public Map<UUID, Cooldown> getCache() {
@@ -31,6 +37,14 @@ public class CooldownService extends MongoService {
 
 	public boolean check(OfflinePlayer player, String type, double ticks) {
 		return check(player.getUniqueId(), type, ticks);
+	}
+
+	public boolean check(UUID uuid, String type, double ticks, String bypassPermission) {
+		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
+		if (player.isOnline() && player.getPlayer() != null && player.getPlayer().hasPermission(bypassPermission))
+			return true;
+
+		return check(uuid, type, ticks);
 	}
 
 	public boolean check(UUID uuid, String type, double ticks) {
