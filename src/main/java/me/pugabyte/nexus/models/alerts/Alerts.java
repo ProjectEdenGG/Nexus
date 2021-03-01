@@ -1,32 +1,39 @@
 package me.pugabyte.nexus.models.alerts;
 
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import org.bukkit.entity.Player;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Data
+@Builder
+@Entity("alerts")
 @NoArgsConstructor
-public class Alerts {
-	private String uuid;
-	private List<Highlight> highlights;
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Converters(UUIDConverter.class)
+public class Alerts extends PlayerOwnedObject {
+	@Id
+	@NonNull
+	private UUID uuid;
+	private List<Highlight> highlights = new ArrayList<>();
 	private boolean muted;
-
-	public Alerts(String uuid, List<Highlight> highlights) {
-		this.uuid = uuid;
-		this.highlights = highlights;
-		this.muted = false;
-	}
 
 	public boolean add(String highlight) {
 		return add(highlight, true);
@@ -34,7 +41,7 @@ public class Alerts {
 
 	public boolean add(String highlight, boolean partialMatching) {
 		if (!has(highlight)) {
-			highlights.add(new Highlight(uuid, highlight, partialMatching));
+			highlights.add(new Highlight(highlight, partialMatching));
 			sort();
 			return true;
 		}
@@ -55,9 +62,8 @@ public class Alerts {
 	}
 
 	public boolean has(String highlight) {
-		if (highlights == null) {
+		if (highlights == null)
 			highlights = new ArrayList<>();
-		}
 
 		return get(highlight).isPresent();
 	}
@@ -78,6 +84,11 @@ public class Alerts {
 		this.muted = muted;
 	}
 
+	public void playSound() {
+		if (!isMuted())
+			Jingle.PING.play(PlayerUtils.getPlayer(uuid).getPlayer());
+	}
+
 	public void tryAlerts(String message) {
 		Player player = (Player) PlayerUtils.getPlayer(uuid);
 
@@ -86,7 +97,7 @@ public class Alerts {
 			return;
 		}
 
-		for (Alerts.Highlight highlight : getHighlights()) {
+		for (Highlight highlight : getHighlights()) {
 			if (highlight.isPartialMatching()) {
 				if (message.toLowerCase().contains(highlight.getHighlight().toLowerCase())) {
 					playSound();
@@ -106,19 +117,10 @@ public class Alerts {
 		}
 	}
 
-	public void playSound() {
-		if (!isMuted())
-			Jingle.PING.play(PlayerUtils.getPlayer(uuid).getPlayer());
-	}
-
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	@Table(name = "alerts")
 	public static class Highlight implements Comparable<Highlight> {
-		@Id
-		@NonNull
-		private String uuid;
 		@NonNull
 		private String highlight;
 		@NonNull
@@ -128,7 +130,6 @@ public class Alerts {
 		public int compareTo(Highlight other) {
 			return highlight.compareTo(other.getHighlight());
 		}
-
 	}
 
 }
