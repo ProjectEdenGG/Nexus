@@ -38,9 +38,15 @@ public class WorldGuardFlagUtils {
 		TAMING(registerFlag(new StateFlag("taming", false))),
 		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false))),
 		MINIGAMES_WATER_DAMAGE(registerFlag(new StateFlag("minigames-water-damage", false))),
-		GREETING_ACTIONBAR(registerFlag(new StringFlag("greeting-actionbar"))),
-		ACTIONBAR_TICKS(registerFlag(new IntegerFlag("actionbar-ticks"))),
-		FAREWELL_ACTIONBAR(registerFlag(new StringFlag("farewell-actionbar"))),
+		GREETING_ACTIONBAR(registerFlag(new StringFlag("nexus-greeting-actionbar"))),
+		FAREWELL_ACTIONBAR(registerFlag(new StringFlag("nexus-farewell-actionbar"))),
+		ACTIONBAR_TICKS(registerFlag(new IntegerFlag("nexus-actionbar-ticks"))),
+		GREETING_TITLE(registerFlag(new StringFlag("nexus-greeting-title"))),
+		FAREWELL_TITLE(registerFlag(new StringFlag("nexus-farewell-title"))),
+		GREETING_SUBTITLE(registerFlag(new StringFlag("nexus-greeting-subtitle"))),
+		FAREWELL_SUBTITLE(registerFlag(new StringFlag("nexus-farewell-subtitle"))),
+		TITLE_TICKS(registerFlag(new IntegerFlag("nexus-title-ticks"))),
+		TITLE_FADE(registerFlag(new IntegerFlag("nexus-title-fade"))),
 		;
 
 		public final Flag<?> flag;
@@ -57,6 +63,8 @@ public class WorldGuardFlagUtils {
 	public static final SimpleFlagRegistry registry = (SimpleFlagRegistry) WorldGuard.getInstance().getFlagRegistry();
 
 	public static Flag<?> registerFlag(Flag<?> flag) {
+//		removeFlags();
+
 		if (WorldGuardUtils.plugin == null || registry == null) {
 			Nexus.warn("Could not find WorldGuard, aborting registry of flag " + flag.getName());
 			return null;
@@ -80,6 +88,27 @@ public class WorldGuardFlagUtils {
 
 		return flag;
 	}
+
+//	private static boolean removedFlags;
+//
+//	private static void removeFlags() {
+//		if (!removedFlags) {
+//			removeFlag("greeting-title");
+//			removeFlag("farewell-title");
+//			removedFlags = true;
+//		}
+//	}
+//
+//	public static void removeFlag(String name) {
+//		try {
+//			Field field = registry.getClass().getDeclaredField("flags");
+//			field.setAccessible(true);
+//			ConcurrentMap<String, Flag<?>> flags = (ConcurrentMap<String, Flag<?>>) field.get(registry);
+//			flags.remove(name);
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+//	}
 
 	public static boolean test(Player player, Flags flag) {
 		return test(player, (StateFlag) flag.get());
@@ -149,20 +178,6 @@ public class WorldGuardFlagUtils {
 		RegionQuery query = container.createQuery();
 		return query.queryValue(loc, Associables.constant(Association.NON_MEMBER), flag);
 	}
-
-//	public static String getStringValueFor(Player player, @NonNull StringFlag flag) {
-//		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-//		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
-//		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-//		return container.createQuery().queryValue(loc, localPlayer, flag);
-//	}
-//
-//	public static Integer getValueFor(Player player, @NonNull IntegerFlag flag) {
-//		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-//		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
-//		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-//		return container.createQuery().queryValue(loc, localPlayer, flag);
-//	}
 
 	public static <T> T getValueFor(Player player, Flag<T> flag) {
 		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);

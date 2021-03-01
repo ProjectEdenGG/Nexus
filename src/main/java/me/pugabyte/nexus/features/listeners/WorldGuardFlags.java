@@ -12,6 +12,7 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,17 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_ACTIONBAR;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.GRASS_DECAY;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_ACTIONBAR;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.HANGING_BREAK;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.HOSTILE_SPAWN;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.MINIGAMES_WATER_DAMAGE;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.MOB_AGGRESSION;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.TAMING;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOORS;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.*;
 
 public class WorldGuardFlags implements Listener {
 
@@ -155,38 +146,86 @@ public class WorldGuardFlags implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEnterRegion(RegionEnteredEvent event) {
 		Player player = event.getPlayer();
 
+		// Action Bar
 		String greeting_actionbar = (String) event.getRegion().getFlag(GREETING_ACTIONBAR.get());
-		if (Strings.isNullOrEmpty(greeting_actionbar))
-			return;
+		if (!Strings.isNullOrEmpty(greeting_actionbar)) {
+			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
+			if (actionbar_ticks == null)
+				actionbar_ticks = 60;
+			else if (actionbar_ticks < 1)
+				actionbar_ticks = 1;
 
-		Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
-		if (actionbar_ticks == null)
-			actionbar_ticks = 60;
-		else if (actionbar_ticks < 0)
-			actionbar_ticks = 0;
+			ActionBarUtils.sendActionBar(player, greeting_actionbar, actionbar_ticks);
+		}
 
-		ActionBarUtils.sendActionBar(player, greeting_actionbar, actionbar_ticks);
+		// Titles
+		String greeting_title = (String) event.getRegion().getFlag(GREETING_TITLE.get());
+		String greeting_subtitle = (String) event.getRegion().getFlag(GREETING_SUBTITLE.get());
+		if (!(Strings.isNullOrEmpty(greeting_title) && Strings.isNullOrEmpty(greeting_subtitle))) {
+			if (greeting_title == null)
+				greeting_title = "";
+			if (greeting_subtitle == null)
+				greeting_subtitle = "";
+
+			Integer title_ticks = (Integer) event.getRegion().getFlag(TITLE_TICKS.get());
+			if (title_ticks == null)
+				title_ticks = 200;
+			else if (title_ticks < 1)
+				title_ticks = 1;
+
+			Integer title_fade = (Integer) event.getRegion().getFlag(TITLE_FADE.get());
+			if (title_fade == null)
+				title_fade = 20;
+			else if (title_fade < 1)
+				title_fade = 1;
+
+			TitleUtils.sendTitle(player, greeting_title, greeting_subtitle, title_ticks, title_fade);
+		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onExitRegion(RegionLeftEvent event) {
 		Player player = event.getPlayer();
 
 		String farewell_actionbar = (String) event.getRegion().getFlag(FAREWELL_ACTIONBAR.get());
-		if (Strings.isNullOrEmpty(farewell_actionbar))
-			return;
+		if (!Strings.isNullOrEmpty(farewell_actionbar)) {
 
-		Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
-		if (actionbar_ticks == null)
-			actionbar_ticks = 60;
-		else if (actionbar_ticks < 0)
-			actionbar_ticks = 0;
+			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
+			if (actionbar_ticks == null)
+				actionbar_ticks = 60;
+			else if (actionbar_ticks < 1)
+				actionbar_ticks = 1;
 
-		ActionBarUtils.sendActionBar(player, farewell_actionbar, actionbar_ticks);
+			ActionBarUtils.sendActionBar(player, farewell_actionbar, actionbar_ticks);
+		}
+
+		// Titles
+		String farewell_title = (String) event.getRegion().getFlag(FAREWELL_TITLE.get());
+		String farewell_subtitle = (String) event.getRegion().getFlag(FAREWELL_SUBTITLE.get());
+		if (!(Strings.isNullOrEmpty(farewell_title) && Strings.isNullOrEmpty(farewell_subtitle))) {
+			if (Strings.isNullOrEmpty(farewell_title))
+				farewell_title = "";
+			if (Strings.isNullOrEmpty(farewell_subtitle))
+				farewell_subtitle = "";
+
+			Integer title_ticks = (Integer) event.getRegion().getFlag(TITLE_TICKS.get());
+			if (title_ticks == null)
+				title_ticks = 200;
+			else if (title_ticks < 1)
+				title_ticks = 1;
+
+			Integer title_fade = (Integer) event.getRegion().getFlag(TITLE_FADE.get());
+			if (title_fade == null)
+				title_fade = 20;
+			else if (title_fade < 1)
+				title_fade = 1;
+
+			TitleUtils.sendTitle(player, farewell_title, farewell_subtitle, title_ticks, title_fade);
+		}
 	}
 
 }
