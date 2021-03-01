@@ -9,13 +9,7 @@ import org.bukkit.Tag;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static me.pugabyte.nexus.utils.Utils.collect;
 import static org.bukkit.Material.*;
@@ -134,9 +128,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);
 	public static final MaterialTag PORTALS = new MaterialTag(END_PORTAL, NETHER_PORTAL);
 	public static final MaterialTag LIQUIDS = new MaterialTag(WATER, LAVA);
-	public static final MaterialTag CONTAINERS = new MaterialTag(FURNACE, DISPENSER, CHEST, BARREL,
-			ENDER_CHEST, Material.ANVIL, BREWING_STAND, TRAPPED_CHEST, HOPPER, DROPPER)
-			.append("_SHULKER_BOX", MatchMode.SUFFIX);
+	public static final MaterialTag CONTAINERS = new MaterialTag(ENDER_CHEST, Material.ANVIL, BREWING_STAND).append(INVENTORY_BLOCKS);
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
 	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
 	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);

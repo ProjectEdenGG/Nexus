@@ -10,29 +10,15 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import me.pugabyte.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -249,6 +235,10 @@ public abstract class Crate implements Listener {
 		loot = list.get(random2);
 	}
 
+	public Particle getParticleType() {
+		return Particle.REDSTONE;
+	}
+
 	public CompletableFuture<Location> playAnimation(Location location) {
 		final AtomicDouble radius = new AtomicDouble(.2);
 		final AtomicReference<Double> y = new AtomicReference<>(0d);
@@ -264,11 +254,13 @@ public abstract class Crate implements Listener {
 					double yPos = 0.5 * t.get();
 					double z = radius.get() * (2 * Math.PI - t.get()) * Math.sin(t.get() + y.get() + band * Math.PI);
 					locationReference.set(location.clone().add(x, yPos, z));
-					new ParticleBuilder(org.bukkit.Particle.REDSTONE)
-							.color(getBandColors()[band])
+					ParticleBuilder builder = new ParticleBuilder(getParticleType())
 							.count(1)
-							.location(locationReference.get())
-							.spawn();
+							.extra(0.01)
+							.location(locationReference.get());
+					if (getParticleType() == Particle.REDSTONE)
+						builder.color(getBandColors()[band]);
+					builder.spawn();
 				}
 				t.set(t.get() + .002);
 			}
