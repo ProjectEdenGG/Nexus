@@ -690,8 +690,8 @@ public abstract class CustomCommand extends ICustomCommand {
 			return online;
 
 		return new NerdService().find(filter).stream()
-				.filter(nerd -> nerd.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(Nerd::getName)
+				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 

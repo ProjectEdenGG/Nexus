@@ -10,6 +10,7 @@ import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
@@ -18,6 +19,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -40,7 +42,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
 
 			if (user != null && !isNullOrEmpty(user.getUuid()))
-				builder.next(new Nerd(user.getUuid()).getChatFormat());
+				builder.next(new NerdService().<Nerd>get(UUID.fromString(user.getUuid())).getChatFormat());
 			else
 				builder.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
 

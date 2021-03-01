@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.chat.alerts;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
 import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
+import me.pugabyte.nexus.models.alerts.Alerts;
 import me.pugabyte.nexus.models.alerts.AlertsService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
@@ -11,7 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,8 +41,8 @@ public class AlertsListener implements Listener {
 	}
 
 	public void tryAlerts(Set<Chatter> recipients, String message) {
-		List<String> uuids = recipients.stream().map(chatter -> chatter.getUuid().toString()).collect(Collectors.toList());
-		new AlertsService().getAll(uuids).forEach(alerts -> alerts.tryAlerts(message));
+		AlertsService service = new AlertsService();
+		recipients.forEach(chatter -> service.<Alerts>get(chatter.getUuid()).tryAlerts(message));
 	}
 
 }

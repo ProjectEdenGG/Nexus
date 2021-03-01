@@ -2,44 +2,55 @@ package me.pugabyte.nexus.models.nerd;
 
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.setting.Setting;
-import me.pugabyte.nexus.models.setting.SettingService;
-import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.StringUtils.CHECK;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
-@AllArgsConstructor
+@Entity("nerd")
 @NoArgsConstructor
-public class Nerd {
-	private String uuid;
+@AllArgsConstructor
+@Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
+public class Nerd extends PlayerOwnedObject {
+	@Id
+	@NonNull
+	private UUID uuid;
 	private String name;
+	private String nickname;
 	private String preferredName;
+	private String prefix;
+	private boolean checkmark;
 	private LocalDate birthday;
 	private LocalDateTime firstJoin;
 	private LocalDateTime lastJoin;
@@ -47,6 +58,8 @@ public class Nerd {
 	private LocalDate promotionDate;
 	private String about;
 	private boolean meetMeVideo;
+	private Set<String> aliases = new HashSet<>();
+	private Set<String> pastNames = new HashSet<>();
 
 	public Nerd(String name) {
 		this(PlayerUtils.getPlayer(name));
@@ -60,80 +73,47 @@ public class Nerd {
 		fromPlayer(player);
 	}
 
-	public String getName() {
-		if ("IMissedIt".equals(name))
-			return "ShadowSB";
-		return name;
-	}
-
-	public void send(String message) {
-		getPlayer().sendMessage(colorize(message));
-	}
-
-	public void send(int delay, String message) {
-		Tasks.wait(delay, () -> send(message));
-	}
-
-	protected void send(JsonBuilder builder) {
-		builder.send(getPlayer());
-	}
-
 	public void fromPlayer(OfflinePlayer player) {
-		uuid = player.getUniqueId().toString();
+		uuid = player.getUniqueId();
 		name = player.getName();
 		LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
 		if (firstJoin == null || newFirstJoin.isBefore(firstJoin))
 			firstJoin = newFirstJoin;
 	}
 
-	public OfflinePlayer getOfflinePlayer() {
-		return PlayerUtils.getPlayer(uuid);
-	}
-
-	public Player getPlayer() {
-		return PlayerUtils.getPlayer(uuid).getPlayer();
-	}
-
-	public long getTimeOffline(ChronoUnit unit) {
-		if (getLastQuit() == null || getOfflinePlayer().isOnline())
-			return 0;
-		return getLastQuit().until(LocalDateTime.now(), unit);
-	}
-
+	@ToString.Include
 	public Rank getRank() {
 		return Rank.getHighestRank(getOfflinePlayer());
 	}
 
+	@ToString.Include
 	public String getRankFormat() {
 		return getRank().getColor() + getName();
 	}
 
-	private static final String CHECKMARK = "&a✔";
-
+	@ToString.Include
 	public String getChatFormat() {
 		if ("KodaBear".equals(name))
 			return Koda.getNameFormat();
 
 		Rank rank = getRank();
-		String prefix = null;
-		Setting checkmarkSetting = new SettingService().get(getOfflinePlayer(), "checkmark");
-		Setting prefixSetting = new SettingService().get(getOfflinePlayer(), "prefix");
 
-		if (prefixSetting != null)
-			prefix = prefixSetting.getValue();
-
+		String prefix = this.prefix;
 		if (isNullOrEmpty(prefix))
 			prefix = rank.getPrefix();
 
 		if (!isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l]";
 
-		if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmarkSetting != null && checkmarkSetting.getBoolean())
-			prefix = CHECKMARK + " " + prefix;
+		if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmark)
+			prefix = CHECK + " " + prefix;
 		return colorize((prefix.trim() + " " + (rank.getColor() + getName()).trim())).trim();
 	}
 
+	@ToString.Include
 	public boolean isVanished() {
+		if (!isOnline())
+			return false;
 		return PlayerUtils.isVanished(getPlayer());
 	}
 

@@ -14,12 +14,14 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
 @Entity("hours")
@@ -43,6 +45,20 @@ public class Hours extends PlayerOwnedObject {
 	@ToString.Include
 	public int getTotal() {
 		return times.values().stream().reduce(0, Integer::sum);
+	}
+
+	public int getTotalAt(LocalDateTime time) {
+		return getTotalAt(time.toLocalDate());
+	}
+
+	public int getTotalAt(LocalDate time) {
+		AtomicInteger total = new AtomicInteger(0);
+		times.forEach((date, hours) -> {
+			if (date.isBefore(time))
+				total.getAndAdd(hours);
+		});
+
+		return total.get();
 	}
 
 	@ToString.Include

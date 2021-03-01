@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -38,6 +39,14 @@ public abstract class PlayerOwnedObject {
 	public void send(JsonBuilder message) {
 		if (isOnline())
 			getPlayer().sendMessage(message.build());
+	}
+
+	public void send(int delay, String message) {
+		Tasks.wait(delay, () -> send(message));
+	}
+
+	public void send(int delay, JsonBuilder message) {
+		Tasks.wait(delay, () -> send(message));
 	}
 
 	public String toPrettyString() {

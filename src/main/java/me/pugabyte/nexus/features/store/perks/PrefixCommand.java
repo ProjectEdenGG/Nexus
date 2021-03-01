@@ -6,8 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.setting.Setting;
-import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
@@ -21,38 +20,37 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.StringUtils.stripFormat;
 
 public class PrefixCommand extends CustomCommand {
-	private final SettingService service = new SettingService();
-	private Setting checkmark = null;
-	private Setting prefix = null;
+	private final NerdService service = new NerdService();
+	private Nerd nerd;
 
 	public PrefixCommand(CommandEvent event) {
 		super(event);
-		if (isPlayer()) {
-			checkmark = service.get(player(), "checkmark");
-			prefix = service.get(player(), "prefix");
-		}
+		if (isPlayer())
+			nerd = service.get(player());
 	}
 
 	@Path("checkmark")
 	@Permission("donated")
 	void checkmark() {
-		checkmark.setBoolean(!checkmark.getBoolean());
-		send(PREFIX + "Check mark " + (checkmark.getBoolean() ? "enabled" : "disabled"));
-		service.save(checkmark);
+		nerd.setCheckmark(!nerd.isCheckmark());
+		service.save(nerd);
+		send(PREFIX + "Check mark " + (nerd.isCheckmark() ? "enabled" : "disabled"));
 	}
 
 	@Path("reset")
 	@Permission("set.my.prefix")
 	void reset() {
-		service.delete(prefix);
+		nerd.setPrefix(null);
+		service.save(nerd);
 		send(PREFIX + "Reset prefix");
 	}
 
 	@Path("expire <player>")
 	void expire(OfflinePlayer player) {
 		console();
-		prefix = service.get(player, "prefix");
-		service.delete(prefix);
+		nerd = service.get(player);
+		nerd.setPrefix(null);
+		service.save(nerd);
 		send(PREFIX + "Reset prefix");
 	}
 
@@ -67,8 +65,8 @@ public class PrefixCommand extends CustomCommand {
 
 		input = stripFormat(input);
 
-		prefix.setValue(input);
-		service.save(prefix);
+		nerd.setPrefix(input);
+		service.save(nerd);
 		send(PREFIX + "Your prefix has been set to &8&l[&f" + input + "&8&l]");
 	}
 
@@ -86,7 +84,7 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("copy")
 	void copy() {
-		String prefix = this.prefix.getValue();
+		String prefix = nerd.getPrefix();
 
 		if (isNullOrEmpty(prefix))
 			prefix = new Nerd(player()).getRank().getPrefix();
