@@ -1,23 +1,17 @@
 package me.pugabyte.nexus.features.chat.alerts;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.alerts.Alerts;
 import me.pugabyte.nexus.models.alerts.AlertsService;
-import me.pugabyte.nexus.models.alertsmysql.AlertsMySQL;
-import me.pugabyte.nexus.models.alertsmysql.AlertsMySQL.Highlight;
-import me.pugabyte.nexus.models.alertsmysql.AlertsServiceMySQL;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public class AlertsCommand extends CustomCommand {
 	private AlertsService service = new AlertsService();
@@ -28,21 +22,6 @@ public class AlertsCommand extends CustomCommand {
 		if (sender() instanceof Player)
 			alerts = service.get(player());
 	}
-
-	@Async
-	@Path("convert")
-	void convert() {
-		AlertsServiceMySQL mysqlService = new AlertsServiceMySQL();
-		AlertsService mongoService = new AlertsService();
-
-		List<AlertsMySQL.Highlight> all = mysqlService.getAll();
-		all.forEach(highlight -> {
-			Alerts alerts = mongoService.get(UUID.fromString(highlight.getUuid()));
-			alerts.getHighlights().add(new Alerts.Highlight(highlight.getHighlight(), highlight.isPartialMatching()));
-			service.save(alerts);
-		});
-	}
-
 
 	@Path
 	void main() {
