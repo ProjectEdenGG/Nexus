@@ -1,8 +1,14 @@
 package me.pugabyte.nexus.features.commands;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.commands.AnnouncementsCommand.AnnouncementConfig.Announcement;
+import me.pugabyte.nexus.features.commands.AnnouncementsCommand.AnnouncementConfig.Announcement.AnnouncementCondition;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -13,26 +19,40 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.announcement.AnnouncementConfig;
-import me.pugabyte.nexus.models.announcement.AnnouncementConfig.Announcement;
-import me.pugabyte.nexus.models.announcement.AnnouncementConfig.Announcement.AnnouncementCondition;
-import me.pugabyte.nexus.models.announcement.AnnouncementConfigService;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
+import me.pugabyte.nexus.models.discord.DiscordService;
+import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.vote.VoteService;
+import me.pugabyte.nexus.models.vote.VoteSite;
+import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
@@ -42,25 +62,53 @@ import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 @Aliases("announcement")
 @Permission("group.seniorstaff")
 public class AnnouncementsCommand extends CustomCommand implements Listener {
-	private final AnnouncementConfigService service = new AnnouncementConfigService();
-	private final AnnouncementConfig config = service.get(Nexus.getUUID0());
+	static {
+		ConfigurationSerialization.registerClass(AnnouncementConfig.class, "AnnouncementConfig");
+		ConfigurationSerialization.registerClass(Announcement.class, "Announcement");
+	}
+
+	private static final File file = Nexus.getFile("announcements.yml");
+	private static YamlConfiguration yaml;
+	private static AnnouncementConfig config;
+
+	static {
+		load();
+	}
 
 	public AnnouncementsCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	private void save() {
-		service.save(config);
+		try {
+			yaml.set("config", config);
+			yaml.save(file);
+		} catch (Exception ex) {
+			Nexus.severe("An error occurred while trying to write announcements configuration file: " + ex.getMessage());
+			ex.printStackTrace();
+		}
 	}
 
 	private void saveAndEdit(Announcement announcement) {
-		service.save(config);
+		save();
 		edit(announcement);
+	}
+
+	@Path("reload")
+	void reload() {
+		load();
+		send(PREFIX + "Reload complete");
+	}
+
+	private static void load() {
+		yaml = YamlConfiguration.loadConfiguration(file);
+		config = (AnnouncementConfig) yaml.get("config", new AnnouncementConfig());
+		if (config == null) config = new AnnouncementConfig();
 	}
 
 	@Path("create <id> <text...>")
 	void create(String id, String text) {
-		config.add(new Announcement(id, text));
+		config.add(Announcement.builder().id(id).text(text).build());
 		save();
 		send(PREFIX + "Announcement &e" + id + " &3created");
 	}
@@ -110,11 +158,11 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 		line();
 	}
 
-	private void showPermissionsEdit(Announcement announcement, Set<String> hidePermissions, String command) {
-		if (hidePermissions.isEmpty())
+	private void showPermissionsEdit(Announcement announcement, Set<String> permissions, String command) {
+		if (permissions.isEmpty())
 			send("   &cNone");
 		else
-			for (String permission : hidePermissions)
+			for (String permission : permissions)
 				send(json("   &c[-]").hover("&cRemove permission").command("/announcements edit " + command + " remove " + announcement.getId() + " " + permission).group().next(" &e" + permission));
 	}
 
@@ -233,8 +281,6 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 	static {
 		Tasks.repeatAsync(interval, interval, () -> {
 			if (true) return;
-			AnnouncementConfigService service = new AnnouncementConfigService();
-			AnnouncementConfig config = service.get(Nexus.getUUID0());
 
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (!PlayerUtils.isPuga(player))
@@ -255,12 +301,186 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		AnnouncementConfigService service = new AnnouncementConfigService();
-		AnnouncementConfig config = service.get(Nexus.getUUID0());
-
 		for (Announcement motd : config.getMotds())
 			if (motd.test(event.getPlayer()))
 				motd.send(event.getPlayer());
+	}
+
+	@Data
+	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@SerializableAs("AnnouncementConfig")
+	public static class AnnouncementConfig implements ConfigurationSerializable {
+		private List<Announcement> announcements = new ArrayList<>();
+
+		public AnnouncementConfig(Map<String, Object> map) {
+			this.announcements = (List<Announcement>) map.getOrDefault("announcements", announcements);
+		}
+
+		@Override
+		public Map<String, Object> serialize() {
+			return new LinkedHashMap<String, Object>() {{
+				put("announcements", announcements);
+			}};
+		}
+
+		public Optional<Announcement> findRequestMatch(String id) {
+			return announcements.stream()
+					.filter(_request -> _request.getId().equalsIgnoreCase(id))
+					.findFirst();
+		}
+
+		public Announcement getRandomAnnouncement() {
+			return RandomUtils.randomElement(getAnnouncements());
+		}
+
+		public List<Announcement> getAllAnnouncements() {
+			return announcements;
+		}
+
+		public List<Announcement> getAnnouncements() {
+			return announcements.stream().filter(announcement -> !announcement.isMotd()).collect(Collectors.toList());
+		}
+
+		public List<Announcement> getMotds() {
+			return announcements.stream().filter(Announcement::isMotd).collect(Collectors.toList());
+		}
+
+		public void add(Announcement announcement) {
+			if (findRequestMatch(announcement.getId()).isPresent())
+				throw new InvalidInputException("An announcement with id &e" + announcement.getId() + " &calready exists");
+
+			announcements.add(announcement);
+		}
+
+		public void remove(String id) {
+			if (!findRequestMatch(id).isPresent())
+				throw new InvalidInputException("Announcement with id &e" + id + " &cnot found");
+
+			announcements.removeIf(announcement -> announcement.getId().equalsIgnoreCase(id));
+		}
+
+		@Data
+		@Builder
+		@NoArgsConstructor
+		@AllArgsConstructor
+		@SerializableAs("Announcement")
+		public static class Announcement implements ConfigurationSerializable {
+			private String id;
+			private String text;
+			private boolean enabled = true;
+			private boolean motd;
+			private Set<String> showPermissions = new HashSet<>();
+			private Set<String> hidePermissions = new HashSet<>();
+			private LocalDateTime startTime;
+			private LocalDateTime endTime;
+			private Announcement.AnnouncementCondition condition;
+
+			public Announcement(Map<String, Object> map) {
+				this.id = (String) map.getOrDefault("id", id);
+				this.text = (String) map.getOrDefault("text", text);
+				this.enabled = (boolean) map.getOrDefault("enabled", enabled);
+				this.motd = (boolean) map.getOrDefault("motd", motd);
+				this.showPermissions = map.get("showPermissions") != null ? new HashSet<>((List<String>) map.get("showPermissions")) : new HashSet<>();
+				this.hidePermissions = map.get("hidePermissions") != null ? new HashSet<>((List<String>) map.get("hidePermissions")) : new HashSet<>();
+				this.startTime = map.get("startTime") != null ? new LocalDateTimeConverter().decode(map.getOrDefault("startTime", startTime)) : null;
+				this.endTime = map.get("endTime") != null ? new LocalDateTimeConverter().decode(map.getOrDefault("endTime", endTime)) : null;
+				try {
+					this.condition = map.get("condition") != null ? AnnouncementCondition.valueOf((String) map.get("condition")) : null;
+				} catch (IllegalArgumentException ex) {
+					Nexus.log("Announcement Condition invalid for " + id + ": " + map.getOrDefault("condition", condition));
+				}
+			}
+
+			@Override
+			public Map<String, Object> serialize() {
+				return new LinkedHashMap<String, Object>() {{
+					put("id", id);
+					put("text", text);
+					put("enabled", enabled);
+					put("motd", motd);
+					put("showPermissions", new ArrayList<>(showPermissions));
+					put("hidePermissions", new ArrayList<>(hidePermissions));
+					put("startTime", new LocalDateTimeConverter().encode(startTime));
+					put("endTime", new LocalDateTimeConverter().encode(endTime));
+					put("condition", condition != null ? condition.name() : null);
+				}};
+			}
+
+			public void send(Player player) {
+				if (motd) {
+					PlayerUtils.send(player, text);
+				} else {
+					PlayerUtils.send(player, "");
+					PlayerUtils.send(player, "&8&l[&b⚡&8&l] &7" + text);
+					PlayerUtils.send(player, "");
+				}
+			}
+
+			public boolean test(Player player) {
+				if (!enabled)
+					return false;
+
+				if (!showPermissions.isEmpty()) {
+					boolean canSee = false;
+					for (String showPermission : showPermissions)
+						if (player.hasPermission(showPermission)) {
+							canSee = true;
+							break;
+						}
+
+					if (!canSee)
+						return false;
+				}
+
+				if (!hidePermissions.isEmpty()) {
+					boolean canHide = false;
+					for (String hidePermission : hidePermissions)
+						if (player.hasPermission(hidePermission)) {
+							canHide = true;
+							break;
+						}
+
+					if (canHide)
+						return false;
+				}
+
+				if (startTime != null && startTime.isAfter(LocalDateTime.now()))
+					return false;
+
+				if (endTime != null && endTime.isBefore(LocalDateTime.now()))
+					return false;
+
+				if (condition != null && !condition.test(player))
+					return false;
+
+				return true;
+			}
+
+			public enum AnnouncementCondition {
+				VOTE(player -> {
+					Voter voter = new VoteService().get(player);
+					return voter.getActiveVotes().size() < VoteSite.values().length - 2;
+				}),
+				DISCORD_LINK(player -> {
+					DiscordUser user = new DiscordService().get(player);
+					return user.getUserId() == null;
+				});
+
+				@Getter
+				private final Predicate<Player> condition;
+
+				AnnouncementCondition(Predicate<Player> condition) {
+					this.condition = condition;
+				}
+
+				public boolean test(Player player) {
+					return condition.test(player);
+				}
+			}
+		}
+
 	}
 
 }

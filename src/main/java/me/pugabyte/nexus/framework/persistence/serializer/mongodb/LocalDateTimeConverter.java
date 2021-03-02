@@ -4,10 +4,12 @@ import dev.morphia.converters.SimpleValueConverter;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@NoArgsConstructor
 public class LocalDateTimeConverter extends TypeConverter implements SimpleValueConverter {
 
 	public LocalDateTimeConverter(Mapper mapper) {
@@ -22,6 +24,10 @@ public class LocalDateTimeConverter extends TypeConverter implements SimpleValue
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
+		return decode(value);
+	}
+
+	public LocalDateTime decode(Object value) {
 		if (value == null) return null;
 		return LocalDateTime.parse((String) value);
 	}
