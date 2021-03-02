@@ -38,6 +38,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
 
 		if (!minigamer.isPlaying(this)) return;
+		if (minigamer.isPlaying(Siege.class)) return;
 
 		if ((ChatColor.GRAY + "Neutral").equalsIgnoreCase(sign.getLine(2))) {
 			if (matchData.getFlag() == null)
