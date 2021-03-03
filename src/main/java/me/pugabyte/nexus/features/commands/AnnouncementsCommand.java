@@ -506,6 +506,7 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 				return true;
 			}
 
+			@AllArgsConstructor
 			public enum AnnouncementCondition {
 				VOTE(player -> {
 					Voter voter = new VoteService().get(player);
@@ -518,10 +519,6 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 
 				@Getter
 				private final Predicate<Player> condition;
-
-				AnnouncementCondition(Predicate<Player> condition) {
-					this.condition = condition;
-				}
 
 				public boolean test(Player player) {
 					return condition.test(player);

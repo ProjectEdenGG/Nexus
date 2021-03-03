@@ -67,7 +67,7 @@ public class DiscordListener extends ListenerAdapter {
 				Tasks.waitAsync(5, () -> {
 					Discord.addRole(event.getUser().getId(), Role.NERD);
 					DiscordUser user = new DiscordService().getFromUserId(event.getUser().getId());
-					if (!Strings.isNullOrEmpty(user.getUuid())) {
+					if (user != null && !Strings.isNullOrEmpty(user.getUuid())) {
 						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
 
 						if (new Nerd(UUID.fromString(user.getUuid())).getRank() == Rank.VETERAN)
