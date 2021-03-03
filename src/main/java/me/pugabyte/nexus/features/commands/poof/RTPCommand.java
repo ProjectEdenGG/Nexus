@@ -40,6 +40,7 @@ public class RTPCommand extends CustomCommand {
 			error("You must be in the survival world to run this command");
 
 		if (!running) {
+			send(PREFIX + "Teleporting to random location");
 			running = true;
 		}
 		count.getAndIncrement();
