@@ -4,9 +4,10 @@ import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.lwc.LWCProtection;
 import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -33,12 +34,12 @@ public class RTPCommand extends CustomCommand {
 
 	@Path
 	@Async
+	@Cooldown(value = @Part(value = Time.SECOND, x = 30), bypass = "group.admin")
 	void rtp() {
 		if (!Arrays.asList("world", "survival", "resource").contains(world().getName()))
 			error("You must be in the survival world to run this command");
 
 		if (!running) {
-			send(PREFIX + "Teleporting to random location");
 			running = true;
 		}
 		count.getAndIncrement();
@@ -67,10 +68,6 @@ public class RTPCommand extends CustomCommand {
 				Tasks.async(this::rtp);
 				return;
 			}
-
-			String type = "command:" + getName();
-			if (!new CooldownService().check(uuid(), type, Time.SECOND.x(30), "group.admin"))
-				return;
 
 			player().teleportAsync(LocationUtils.getCenteredLocation(highestBlock.getLocation().add(0, 1, 0)), TeleportCause.COMMAND);
 		});
