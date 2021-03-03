@@ -222,7 +222,7 @@ public class ResourceWorld implements Listener {
 
 			String root = new File(".").getAbsolutePath().replace(".", "");
 			File worldFolder = Paths.get(root + worldName).toFile();
-			File newFolder = Paths.get(root + "old_ " + worldName).toFile();
+			File newFolder = Paths.get(root + "old_" + worldName).toFile();
 
 			World world = Bukkit.getWorld(worldName);
 			if (world == null) {
@@ -262,7 +262,7 @@ public class ResourceWorld implements Listener {
 				// TODO List of approved seeds
 				seed = "778704597681231";
 
-			Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.AMPLIFIED, true, null);
+			Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null);
 		}
 
 		String worldName = (test ? "test_" : "") + "resource";

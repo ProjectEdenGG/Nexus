@@ -212,6 +212,13 @@ public class Koda {
 						if (Nexus.getPerms().playerHas(null, event.getChatter().getOfflinePlayer(), "rank.guest"))
 							respond(event, "[player], griefing is not allowed. Please take a look at the /rules for more information.");
 				break;
+			case "lag":
+				int ping = event.getChatter().getPlayer().spigot().getPing();
+				double tps = Bukkit.getTPS()[1];
+
+				if (ping > 200 && tps > 16)
+					respond(event, "[player], you are lagging (" + ping + "ms), not the server. Try relogging or rebooting your router.");
+				break;
 		}
 	}
 

@@ -134,7 +134,6 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 			if (watchlisted.isActive()) {
 				JsonBuilder notification = watchlisted.getNotification();
 				Chat.broadcastIngame(json(PREFIX).next(notification), StaticChannel.STAFF);
-				Chat.broadcastDiscord("**" + PREFIX.trim() + "** " + notification, StaticChannel.STAFF);
 			}
 		});
 	}
