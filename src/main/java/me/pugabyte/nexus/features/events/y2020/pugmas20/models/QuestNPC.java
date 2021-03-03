@@ -19,6 +19,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -449,7 +450,7 @@ public enum QuestNPC {
 
 	public void sendScript(Player player) {
 		List<Script> scripts = getScript(player);
-		if (scripts == null || scripts.isEmpty()) return;
+		if (Utils.isNullOrEmpty(scripts)) return;
 
 		AtomicInteger wait = new AtomicInteger(0);
 

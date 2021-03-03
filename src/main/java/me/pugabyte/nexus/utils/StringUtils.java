@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import joptsimple.internal.Strings;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -214,7 +215,7 @@ public class StringUtils {
 	}
 
 	public static String camelCase(String text) {
-		if (text == null || text.isEmpty()) {
+		if (Strings.isNullOrEmpty(text)) {
 			return text;
 		}
 
@@ -224,7 +225,7 @@ public class StringUtils {
 	}
 
 	public static String camelCaseWithUnderscores(String text) {
-		if (text == null || text.isEmpty()) {
+		if (Strings.isNullOrEmpty(text)) {
 			return text;
 		}
 

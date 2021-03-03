@@ -57,7 +57,7 @@ public class RandomUtils {
 	}
 
 	public static <T> T randomElement(List<T> list) {
-		if (list == null || list.isEmpty()) return null;
+		if (Utils.isNullOrEmpty(list)) return null;
 		return list.get(random.nextInt(list.size()));
 	}
 

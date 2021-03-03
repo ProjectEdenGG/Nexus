@@ -274,7 +274,7 @@ public class WorldEditUtils {
 			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
 				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
 					Block blockAt = world.getBlockAt(x, y, z);
-					if (materials == null || materials.isEmpty() || materials.contains(blockAt.getType()))
+					if (Utils.isNullOrEmpty(materials) || materials.contains(blockAt.getType()))
 						blockList.add(blockAt);
 				}
 		return blockList;

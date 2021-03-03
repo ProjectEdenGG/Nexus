@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.quests.itemtags;
 import lombok.Getter;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -180,7 +181,7 @@ public enum Rarity {
 
 		ItemMeta meta = itemStack.getItemMeta();
 		List<String> lore = meta.getLore();
-		if (lore != null && !lore.isEmpty()) {
+		if (!Utils.isNullOrEmpty(lore)) {
 			for (String line : lore) {
 				String enchant = StringUtils.stripColor(line).replaceAll("[0-9]+", "").trim();
 				int val = ItemTags.getCustomEnchantVal(enchant);

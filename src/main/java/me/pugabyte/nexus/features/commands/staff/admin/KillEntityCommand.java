@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.EntityUtils;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -94,7 +95,7 @@ public class KillEntityCommand extends CustomCommand {
 				if (entityType.getEntityClass() != null && this.entityClass.isAssignableFrom(entityType.getEntityClass()))
 					applicable.add(entityType);
 
-			if (extraEntityTypes != null && !extraEntityTypes.isEmpty())
+			if (!Utils.isNullOrEmpty(extraEntityTypes))
 				applicable.addAll(extraEntityTypes);
 
 			return applicable;

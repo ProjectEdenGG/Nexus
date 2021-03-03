@@ -21,6 +21,7 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -94,7 +95,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 		PlayerInventory playerInventory = getPlayer().getInventory();
 		for (ItemStack item : playerInventory.getContents()) {
-			if (isNullOrAir(item) || item.getLore() == null || item.getLore().isEmpty())
+			if (isNullOrAir(item) || Utils.isNullOrEmpty(item.getLore()))
 				continue;
 
 			if (item.getLore().get(0).contains(colorize(Pugmas20.getQuestLore()))) {

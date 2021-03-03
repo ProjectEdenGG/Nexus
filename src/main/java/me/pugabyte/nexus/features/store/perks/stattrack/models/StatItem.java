@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.store.perks.stattrack.utils.HiddenLore;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -71,7 +72,7 @@ public class StatItem {
 
 	public boolean isEnabled() {
 		List<String> lore = item.getItemMeta().getLore();
-		if (lore != null && !lore.isEmpty()) {
+		if (!Utils.isNullOrEmpty(lore)) {
 			if (HiddenLore.isEncoded(lore.get(0))) {
 				String decoded = HiddenLore.decode(lore.get(0));
 				return !isNullOrEmpty(decoded) && decoded.matches(ID_PREFIX + StringUtils.UUID_REGEX);
