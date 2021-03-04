@@ -133,10 +133,24 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 		line();
 		send(json(" &3Text: &7" + announcement.getText()).hover("&3Click to edit").suggest("/announcements edit text " + announcement.getId() + " " + announcement.getText()));
 		line();
-		send(json(" &3Hover: &7" + announcement.getHover()).hover("&3Click to edit").suggest("/announcements edit hover " + announcement.getId() + " " + (announcement.getHover() == null ? "" : announcement.getHover())));
 		send(json(" &3Command: &7" + announcement.getCommand()).hover("&3Click to edit").suggest("/announcements edit command " + announcement.getId() + " " + (announcement.getCommand() == null ? "" : announcement.getCommand())));
 		send(json(" &3Suggest: &7" + announcement.getSuggest()).hover("&3Click to edit").suggest("/announcements edit suggest " + announcement.getId() + " " + (announcement.getSuggest() == null ? "" : announcement.getSuggest())));
 		send(json(" &3URL: &7" + announcement.getUrl()).hover("&3Click to edit").suggest("/announcements edit url " + announcement.getId() + " " + (announcement.getUrl() == null ? "" : announcement.getUrl())));
+		JsonBuilder hover = json(" &3Hover: ");
+		if (announcement.getHover().isEmpty())
+			hover.next("&7null").hover("&3Click to add line").suggest("/announcements edit hover add " + announcement.getId() + " ");
+		else {
+			for (int i = 1; i <= announcement.getHover().size(); i++) {
+				String line = announcement.getHover().get(i - 1);
+				hover.newline().next(" &f &f ").group()
+						.next("&c[-]").command("/announcements edit hover delete " + announcement.getId() + " " + i).hover("&cClick to delete").group()
+						.next(" ").group()
+						.next(line).suggest("/announcements edit hover set " + announcement.getId() + " " + i + " " + line).hover("&3Click to edit").group();
+			}
+		}
+
+		send(hover);
+
 		line();
 
 		if (announcement.isEnabled())
@@ -197,9 +211,21 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 		saveAndEdit(announcement);
 	}
 
-	@Path("edit hover <id> <text...>")
-	void editHover(Announcement announcement, String hover) {
-		announcement.setHover(hover);
+	@Path("edit hover add <id> <text...>")
+	void editHoverAdd(Announcement announcement, String hover) {
+		announcement.getHover().add(hover);
+		saveAndEdit(announcement);
+	}
+
+	@Path("edit hover set <id> <line> <text...>")
+	void editHoverSet(Announcement announcement, int line, String hover) {
+		announcement.getHover().set(line - 1, hover);
+		saveAndEdit(announcement);
+	}
+
+	@Path("edit hover delete <line> <id>")
+	void editHoverRemove(Announcement announcement, int line) {
+		announcement.getHover().remove(line - 1);
 		saveAndEdit(announcement);
 	}
 
@@ -283,6 +309,11 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 						.addHover("&7" + announcement.getText())
 						.command("/announcements edit " + announcement.getId());
 		paginate(config.getAllAnnouncements(), formatter, "/announcements list", page);
+	}
+
+	@Path("show <player> <announcement>")
+	void show(Player player, Announcement announcement) {
+		announcement.send(player);
 	}
 
 	@Path("test <player> <announcement>")
@@ -400,10 +431,11 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 		public static class Announcement implements ConfigurationSerializable {
 			private String id;
 			private String text;
-			private String hover;
 			private String command;
 			private String suggest;
 			private String url;
+			@Builder.Default
+			private List<String> hover = new ArrayList<>();
 			@Builder.Default
 			private boolean enabled = true;
 			private boolean motd;
@@ -421,10 +453,10 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 			public Announcement(Map<String, Object> map) {
 				this.id = (String) map.getOrDefault("id", id);
 				this.text = (String) map.getOrDefault("text", text);
-				this.hover = (String) map.getOrDefault("hover", hover);
 				this.command = (String) map.getOrDefault("command", command);
 				this.suggest = (String) map.getOrDefault("suggest", suggest);
 				this.url = (String) map.getOrDefault("url", url);
+				this.hover = map.get("hover") != null ? (List<String>) map.get("hover") : new ArrayList<>();
 				this.enabled = map.get("enabled") != null ? (boolean) map.get("enabled") : enabled;
 				this.motd = map.get("motd") != null ? (boolean) map.get("motd") : motd;
 				this.showPermissions = map.get("showPermissions") != null ? new HashSet<>((List<String>) map.get("showPermissions")) : new HashSet<>();
@@ -443,10 +475,10 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 				return new LinkedHashMap<String, Object>() {{
 					put("id", id);
 					put("text", text);
-					put("hover", hover);
 					put("command", command);
 					put("suggest", suggest);
 					put("url", url);
+					put("hover", hover);
 					put("enabled", enabled);
 					put("motd", motd);
 					put("showPermissions", new ArrayList<>(showPermissions));
@@ -470,9 +502,10 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 			@NotNull
 			private JsonBuilder getJson() {
 				JsonBuilder json = new JsonBuilder(PREFIX + text);
-				if (!Strings.isNullOrEmpty(hover)) json.hover(hover);
 				if (!Strings.isNullOrEmpty(command)) json.command(command);
 				if (!Strings.isNullOrEmpty(suggest)) json.suggest(suggest);
+				if (!Strings.isNullOrEmpty(url)) json.url(url);
+				if (!hover.isEmpty()) json.hover(hover);
 				return json;
 			}
 
