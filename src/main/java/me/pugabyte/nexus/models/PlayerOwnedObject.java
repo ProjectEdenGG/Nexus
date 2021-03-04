@@ -49,6 +49,14 @@ public abstract class PlayerOwnedObject {
 		Tasks.wait(delay, () -> send(message));
 	}
 
+	public JsonBuilder json() {
+		return json("");
+	}
+
+	public JsonBuilder json(String message) {
+		return new JsonBuilder(message);
+	}
+
 	public String toPrettyString() {
 		try {
 			return StringUtils.toPrettyString(this);
