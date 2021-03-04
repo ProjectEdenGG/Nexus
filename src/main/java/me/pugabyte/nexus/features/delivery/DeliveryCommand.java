@@ -1,47 +1,66 @@
 package me.pugabyte.nexus.features.delivery;
 
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.delivery.providers.OpenDeliveryMenuProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
+import me.pugabyte.nexus.models.delivery.DeliveryUser;
+import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 public class DeliveryCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Delivery");
 	private final DeliveryService service = new DeliveryService();
-	private Delivery delivery;
+	private DeliveryUser user;
 
 	public DeliveryCommand(CommandEvent event) {
 		super(event);
-		delivery = service.get(player());
+		user = service.get(player());
 	}
 
 	@Path
 	void main() {
-		WorldGroup worldGroup = WorldGroup.get(player());
-		if (!Delivery.getSupportedWorldGroups().contains(worldGroup))
-			error("You cannot do that in this world");
+		DeliveryMenu.open(user, worldGroup());
+	}
 
-		if (delivery.get(worldGroup).isEmpty())
-			error("You do not have any pending deliveries");
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onInvClose(InventoryCloseEvent event) {
+		Player player = (Player) event.getPlayer();
+		Optional<SmartInventory> inv = SmartInvsPlugin.manager().getInventory(player);
+		if (!inv.isPresent()) return;
+		if (!(inv.get().getProvider() instanceof OpenDeliveryMenuProvider)) return;
 
-		new DeliveryMenu(delivery, worldGroup).open(player());
+		OpenDeliveryMenuProvider openDeliveryMenuProvider = (OpenDeliveryMenuProvider) inv.get().getProvider();
+		List<ItemStack> items = openDeliveryMenuProvider.getDelivery().getItems(); // check against inv items and diff
+		List<ItemStack> contents = Arrays.asList(event.getInventory().getContents());
+
+		for (ItemStack item : items) {
+			if (contents.contains(item))
+				ItemUtils.giveItem(player, item);
+		}
 	}
 
 	@EventHandler
@@ -57,15 +76,16 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 	public void processEvent(PlayerEvent event) {
 		Player player = event.getPlayer();
 		WorldGroup worldGroup = WorldGroup.get(player);
-		Delivery delivery = service.get(player);
-		if (!delivery.getItems().containsKey(worldGroup)) return;
-		if (delivery.getItems().get(worldGroup) == null) return;
-		List<ItemStack> items = new ArrayList<>(delivery.getItems().get(worldGroup));
+		DeliveryUser user = service.get(player);
 
-		if (items.size() == 0) return;
+		if (!user.getDeliveries().containsKey(worldGroup)) return;
+		if (user.getDeliveries().get(worldGroup) == null) return;
+
+		List<Delivery> deliveries = new ArrayList<>(user.getDeliveries().get(worldGroup));
+		if (deliveries.size() == 0) return;
 		if (!new CooldownService().check(player, "deliveryReminder", Time.HOUR.x(1))) return;
 
-		send(player, PREFIX + "&3You have an unclaimed delivery, use &e/delivery &3to claim it!");
+		user.sendNotification();
 	}
 
 }

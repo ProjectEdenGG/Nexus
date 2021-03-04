@@ -88,7 +88,11 @@ public abstract class MenuUtils {
 	}
 
 	protected void addBackItem(InventoryContents contents, Consumer<ItemClickData> consumer) {
-		contents.set(0, 0, ClickableItem.from(backItem(), consumer));
+		addBackItem(contents, 0, 0, consumer);
+	}
+
+	protected void addBackItem(InventoryContents contents, int row, int col, Consumer<ItemClickData> consumer) {
+		contents.set(row, col, ClickableItem.from(backItem(), consumer));
 	}
 
 	protected void addCloseItem(InventoryContents contents) {

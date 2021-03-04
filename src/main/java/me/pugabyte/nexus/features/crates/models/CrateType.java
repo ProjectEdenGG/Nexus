@@ -8,9 +8,15 @@ import me.pugabyte.nexus.features.crates.crates.MysteryCrate;
 import me.pugabyte.nexus.features.crates.crates.VoteCrate;
 import me.pugabyte.nexus.features.crates.crates.WeeklyWakkaCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
-import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.models.delivery.DeliveryUser;
+import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -95,9 +101,11 @@ public enum CrateType {
 			player.getPlayer().getInventory().addItem(item);
 		else {
 			DeliveryService service = new DeliveryService();
-			Delivery delivery = service.get(player);
-			delivery.add(WorldGroup.SURVIVAL, item);
-			service.save(delivery);
+			DeliveryUser deliveryUser = service.get(player);
+
+			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.serverDelivery(item));
+
+			service.save(deliveryUser);
 			if (player.isOnline()) {
 				PlayerUtils.send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " +
 						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + "&3 but your inventory was full." +

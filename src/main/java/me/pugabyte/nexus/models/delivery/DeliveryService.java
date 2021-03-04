@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@PlayerClass(Delivery.class)
+@PlayerClass(DeliveryUser.class)
 public class DeliveryService extends MongoService {
-	private final static Map<UUID, Delivery> cache = new HashMap<>();
+	private final static Map<UUID, DeliveryUser> cache = new HashMap<>();
 
-	public Map<UUID, Delivery> getCache() {
+	public Map<UUID, DeliveryUser> getCache() {
 		return cache;
 	}
 }

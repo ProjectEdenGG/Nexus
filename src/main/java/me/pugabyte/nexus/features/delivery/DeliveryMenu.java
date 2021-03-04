@@ -1,72 +1,61 @@
 package me.pugabyte.nexus.features.delivery;
 
-import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import lombok.AllArgsConstructor;
-import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.models.delivery.Delivery;
-import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.features.delivery.providers.DeliveryMenuProvider;
+import me.pugabyte.nexus.features.delivery.providers.OpenDeliveryMenuProvider;
+import me.pugabyte.nexus.features.delivery.providers.SendDeliveryMenuProvider;
+import me.pugabyte.nexus.features.delivery.providers.ViewDeliveriesMenuProvider;
+import me.pugabyte.nexus.models.delivery.DeliveryUser;
+import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.utils.WorldGroup;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @AllArgsConstructor
-public class DeliveryMenu extends MenuUtils implements InventoryProvider {
-	private final DeliveryService service = new DeliveryService();
-	private final Delivery delivery;
-	private final WorldGroup worldGroup;
+public class DeliveryMenu {
 
-	public SmartInventory getInv() {
-		List<ItemStack> items = delivery.get(worldGroup);
-
-		int rows = (int) (Math.ceil(items.size() / 9.0) + 1);
-		rows = Math.min(Math.max(rows, 3), 6);
-
-		return SmartInventory.builder()
-				.provider(new DeliveryMenu(delivery, worldGroup))
-				.size(rows, 9)
-				.title(ChatColor.DARK_AQUA + "Deliveries")
-				.build();
+	public static void open(DeliveryUser user, WorldGroup worldGroup) {
+		SmartInventory.builder()
+				.provider(new DeliveryMenuProvider(user, worldGroup))
+				.size(3, 9)
+				.title(colorize("&3Deliveries"))
+				.build().open(user.getPlayer());
 	}
 
-	public void open(Player player) {
-		open(player, 0);
+	public static void sendDelivery(DeliveryUser user, WorldGroup worldGroup) {
+		sendDelivery(user, worldGroup, null, null, null);
 	}
 
-	@Override
-	public void open(Player viewer, int page) {
-		getInv().open(viewer, page);
+	public static void sendDelivery(DeliveryUser user, WorldGroup worldGroup, UUID sendTo, List<ItemStack> items, String message) {
+		SmartInventory.builder()
+				.provider(new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message))
+				.size(3, 9)
+				.title(colorize("&3Send A Delivery"))
+				.build().open(user.getPlayer());
 	}
 
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
-
-		List<ItemStack> items = delivery.get(worldGroup);
-		items.removeIf(ItemUtils::isNullOrAir);
-
-		List<ClickableItem> clickableItems = new ArrayList<>();
-		for (ItemStack itemStack : items)
-			clickableItems.add(ClickableItem.from(itemStack, e -> claimDelivery(itemStack)));
-
-		addPagination(player, contents, clickableItems);
+	public static void viewDeliveries(DeliveryUser user, WorldGroup worldGroup, int page) {
+		SmartInventory.builder()
+				.provider(new ViewDeliveriesMenuProvider(user, worldGroup))
+				.size(6, 9)
+				.title(colorize("&3Your Deliveries"))
+				.build().open(user.getPlayer(), page);
 	}
 
-	public void claimDelivery(ItemStack item) {
-		delivery.deliver(item, worldGroup);
-		service.save(delivery);
-
-		open(delivery.getPlayer());
+	public static void viewDeliveries(DeliveryUser user, WorldGroup worldGroup) {
+		viewDeliveries(user, worldGroup, 0);
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {
+	public static void openDelivery(DeliveryUser user, WorldGroup worldGroup, Delivery delivery) {
+		SmartInventory.builder()
+				.provider(new OpenDeliveryMenuProvider(user, worldGroup, delivery))
+				.size(4, 9)
+				.title(colorize("&3From: &e" + delivery.getFrom()))
+				.build().open(user.getPlayer());
 	}
 }

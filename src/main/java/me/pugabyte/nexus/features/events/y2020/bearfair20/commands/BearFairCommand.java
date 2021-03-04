@@ -26,8 +26,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.bearfair.BearFairService;
 import me.pugabyte.nexus.models.bearfair.BearFairUser;
 import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
-import me.pugabyte.nexus.models.delivery.Delivery;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
+import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
@@ -456,8 +456,8 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 						service.save(user);
 
 						BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
-						Delivery delivery = new DeliveryService().get(player);
-						delivery.setupDelivery(bearFairStoreMap.getSplatterMap());
+						DeliveryUser deliveryUser = new DeliveryService().get(player);
+						deliveryUser.setupDelivery(bearFairStoreMap.getSplatterMap());
 						send(player, PREFIX + "&3You bought &e" + title + " &3for &e" + price
 								+ ", &3You now have &e" + userPoints.get() + " BFP");
 						player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
