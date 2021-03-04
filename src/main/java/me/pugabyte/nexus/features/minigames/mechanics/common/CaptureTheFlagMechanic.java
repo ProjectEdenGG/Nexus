@@ -23,6 +23,16 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 
 	protected abstract void onEnterKillRegion(Minigamer minigamer);
 
+	protected boolean canPickupFlag(Minigamer minigamer, Sign sign) {
+		if (minigamer.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) {
+			if (sign.getLine(1).equalsIgnoreCase(ChatColor.GREEN + "Flag")) {
+				minigamer.send(ChatColor.RED + "You must be unarmed to interact with flags!");
+			}
+			return false;
+		}
+		return true;
+	}
+
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
@@ -33,8 +43,8 @@ public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 						event.getClickedBlock() != null &&
 						event.getHand() != null &&
 						event.getHand().equals(EquipmentSlot.HAND) &&
-						minigamer.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR &&
-						MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())
+						MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType()) &&
+						canPickupFlag(minigamer, (Sign) event.getClickedBlock().getState())
 		)) return;
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
