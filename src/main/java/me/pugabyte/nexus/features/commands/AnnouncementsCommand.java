@@ -136,6 +136,7 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 		send(json(" &3Hover: &7" + announcement.getHover()).hover("&3Click to edit").suggest("/announcements edit hover " + announcement.getId() + " " + (announcement.getHover() == null ? "" : announcement.getHover())));
 		send(json(" &3Command: &7" + announcement.getCommand()).hover("&3Click to edit").suggest("/announcements edit command " + announcement.getId() + " " + (announcement.getCommand() == null ? "" : announcement.getCommand())));
 		send(json(" &3Suggest: &7" + announcement.getSuggest()).hover("&3Click to edit").suggest("/announcements edit suggest " + announcement.getId() + " " + (announcement.getSuggest() == null ? "" : announcement.getSuggest())));
+		send(json(" &3URL: &7" + announcement.getUrl()).hover("&3Click to edit").suggest("/announcements edit url " + announcement.getId() + " " + (announcement.getUrl() == null ? "" : announcement.getUrl())));
 		line();
 
 		if (announcement.isEnabled())
@@ -211,6 +212,12 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 	@Path("edit suggest <id> <text...>")
 	void editSuggest(Announcement announcement, String suggest) {
 		announcement.setSuggest(suggest);
+		saveAndEdit(announcement);
+	}
+
+	@Path("edit url <id> <text...>")
+	void editUrl(Announcement announcement, String url) {
+		announcement.setUrl(url);
 		saveAndEdit(announcement);
 	}
 
@@ -396,6 +403,7 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 			private String hover;
 			private String command;
 			private String suggest;
+			private String url;
 			@Builder.Default
 			private boolean enabled = true;
 			private boolean motd;
@@ -416,6 +424,7 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 				this.hover = (String) map.getOrDefault("hover", hover);
 				this.command = (String) map.getOrDefault("command", command);
 				this.suggest = (String) map.getOrDefault("suggest", suggest);
+				this.url = (String) map.getOrDefault("url", url);
 				this.enabled = map.get("enabled") != null ? (boolean) map.get("enabled") : enabled;
 				this.motd = map.get("motd") != null ? (boolean) map.get("motd") : motd;
 				this.showPermissions = map.get("showPermissions") != null ? new HashSet<>((List<String>) map.get("showPermissions")) : new HashSet<>();
@@ -437,6 +446,7 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 					put("hover", hover);
 					put("command", command);
 					put("suggest", suggest);
+					put("url", url);
 					put("enabled", enabled);
 					put("motd", motd);
 					put("showPermissions", new ArrayList<>(showPermissions));
