@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -48,6 +49,10 @@ public enum WorldGroup {
 
 	public static WorldGroup get(Entity entity) {
 		return get(entity.getWorld());
+	}
+
+	public static WorldGroup get(Location location) {
+		return get(location.getWorld());
 	}
 
 	public static WorldGroup get(World world) {

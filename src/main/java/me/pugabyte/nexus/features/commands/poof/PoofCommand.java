@@ -7,8 +7,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.poof.Poof;
 import me.pugabyte.nexus.models.poof.PoofService;
+import me.pugabyte.nexus.models.trust.Trust;
+import me.pugabyte.nexus.models.trust.Trust.Type;
+import me.pugabyte.nexus.models.trust.TrustService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -43,18 +48,27 @@ public class PoofCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void player(Player target) {
+	void player(OfflinePlayer target) {
 		if (isSelf(target))
 			error("You cannot poof to yourself");
 
-		if (!isStaff() && WorldGroup.get(target).equals(WorldGroup.STAFF))
+		if (!isStaff() && WorldGroup.get(new Nerd(target).getLocation()).equals(WorldGroup.STAFF))
 			error("Cannot teleport to " + target.getName() + ", they are in a staff world");
 
-		Poof request = new Poof(player(), target, Poof.PoofType.POOF);
+		Trust trust = new TrustService().get(target);
+		if (trust.trusts(Type.TELEPORTS, player())) {
+			player().teleportAsync(new Nerd(target).getLocation(), TeleportCause.COMMAND);
+			send(PREFIX + "Poofing to &e" + target.getName() + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
+			return;
+		}
+
+		Player targetPlayer = convertToPlayer(target);
+
+		Poof request = new Poof(player(), targetPlayer, Poof.PoofType.POOF);
 		service.save(request);
-		send(json("&ePoof &3request sent to " + target.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
-		send(target, "  &e" + name() + " &3is asking to poof &eto you&3.");
-		send(target, json("&3  Click one  ||  &a&lAccept")
+		send(json("&ePoof &3request sent to " + targetPlayer.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
+		send(targetPlayer, "  &e" + name() + " &3is asking to poof &eto you&3.");
+		send(targetPlayer, json("&3  Click one  ||  &a&lAccept")
 				.command("/poof accept")
 				.hover("&eClick &3to accept")
 				.group()

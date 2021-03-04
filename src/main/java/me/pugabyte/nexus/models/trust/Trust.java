@@ -15,6 +15,8 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +37,7 @@ public class Trust extends PlayerOwnedObject {
 	private UUID uuid;
 	private List<UUID> locks = new ArrayList<>();
 	private List<UUID> homes = new ArrayList<>();
+	private List<UUID> teleports = new ArrayList<>();
 
 	public List<UUID> get(Type type) {
 		switch (type) {
@@ -42,6 +45,8 @@ public class Trust extends PlayerOwnedObject {
 				return homes;
 			case LOCKS:
 				return locks;
+			case TELEPORTS:
+				return teleports;
 			default:
 				throw new UnsupportedOperationException();
 		}
@@ -54,19 +59,27 @@ public class Trust extends PlayerOwnedObject {
 		}};
 	}
 
+	public boolean trusts(Type type, Player player) {
+		return trusts(type, player.getUniqueId());
+	}
+
+	public boolean trusts(Type type, OfflinePlayer player) {
+		return trusts(type, player.getUniqueId());
+	}
+
+	public boolean trusts(Type type, UUID uuid) {
+		return get(type).contains(uuid);
+	}
+
+	@Getter
+	@AllArgsConstructor
 	public enum Type implements IteratableEnum {
-		LOCKS(3, Material.CHEST),
-		HOMES(5, Material.CYAN_BED);
+		LOCKS(2, Material.CHEST),
+		HOMES(4, Material.CYAN_BED),
+		TELEPORTS(6, Material.COMPASS);
 
-		@Getter
-		private int column;
-		@Getter
-		private Material material;
-
-		Type(int column, Material material) {
-			this.column = column;
-			this.material = material;
-		}
+		private final int column;
+		private final Material material;
 
 		public String camelCase() {
 			return StringUtils.camelCase(name());

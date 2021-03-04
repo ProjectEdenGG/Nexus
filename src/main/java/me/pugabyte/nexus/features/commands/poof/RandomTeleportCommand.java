@@ -22,13 +22,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Aliases({"randomtp", "wild"})
-public class RTPCommand extends CustomCommand {
+@Aliases({"randomtp", "rtp", "wild"})
+public class RandomTeleportCommand extends CustomCommand {
 	LWCProtectionService service = new LWCProtectionService();
 	AtomicInteger count = new AtomicInteger(0);
 	boolean running = false;
 
-	public RTPCommand(CommandEvent event) {
+	public RandomTeleportCommand(CommandEvent event) {
 		super(event);
 	}
 

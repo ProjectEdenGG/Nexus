@@ -72,7 +72,7 @@ public class HomeOwner extends PlayerOwnedObject {
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
 		Trust trust = new TrustService().get(getOfflinePlayer());
-		return trust.get(Type.HOMES).contains(player.getUniqueId());
+		return trust.trusts(Type.HOMES, player.getUniqueId());
 	}
 
 	public void add(Home home) {

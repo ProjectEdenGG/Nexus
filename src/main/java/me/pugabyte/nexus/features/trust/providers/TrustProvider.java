@@ -72,14 +72,14 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 				.collect(Collectors.toList())
 				.forEach(_player -> {
 					if (filterType.get() != null)
-						if (!trust.get(filterType.get()).contains(_player.getUniqueId()))
+						if (!trust.trusts(filterType.get(), _player.getUniqueId()))
 							return;
 
 					ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
 							.skullOwner(_player)
 							.name("&e" + _player.getName());
 					for (Trust.Type type : Trust.Type.values())
-						if (trust.get(type).contains(_player.getUniqueId()))
+						if (trust.trusts(type, _player.getUniqueId()))
 							builder.lore("&a" + type.camelCase());
 						else
 							builder.lore("&c" + type.camelCase());

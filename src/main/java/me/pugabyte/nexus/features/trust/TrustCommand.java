@@ -54,13 +54,13 @@ public class TrustCommand extends CustomCommand {
 	}
 
 	@Description("Allow specified player(s) to a specific lock")
-	@Path("lock <players...>")
+	@Path("lock <players>")
 	void lock(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		runCommand("cmodify " + names(players, " "));
 	}
 
 	@Description("Allow specified player(s) to a specific home")
-	@Path("home <home> <players...>")
+	@Path("home <home> <players>")
 	void home(Home home, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		players.forEach(home::allow);
 		new HomeService().save(home.getOwner());
@@ -68,39 +68,52 @@ public class TrustCommand extends CustomCommand {
 	}
 
 	@Description("Allow specified player(s) to all locks")
-	@Path("locks <players...>")
+	@Path("locks <players>")
 	void locks(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(trust, players, Type.LOCKS);
 	}
 
 	@Description("Allow specified player(s) to all homes")
-	@Path("homes <players...>")
+	@Path("homes <players>")
 	void homes(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(trust, players, Type.HOMES);
 	}
 
+	@Description("Allow specified player(s) to teleport to you at any time")
+	@Path("teleports <players>")
+	void teleports(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		process(trust, players, Type.TELEPORTS);
+	}
+
 	@Description("Allow specified player(s) to everything")
-	@Path("all <players...>")
+	@Path("all <players>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(trust, players, Type.values());
 	}
 
 	@Permission("group.staff")
-	@Path("admin locks <owner> <players...>")
+	@Path("admin locks <owner> <players>")
 	void locks(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
 		process(trust, players, Type.LOCKS);
 	}
 
 	@Permission("group.staff")
-	@Path("admin homes <owner> <players...>")
+	@Path("admin homes <owner> <players>")
 	void homes(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
 		process(trust, players, Type.HOMES);
 	}
 
 	@Permission("group.staff")
-	@Path("admin all <owner> <players...>")
+	@Path("admin teleports <owner> <players>")
+	void teleports(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		send(PREFIX + "Modifying trusts of &e" + trust.getName());
+		process(trust, players, Type.TELEPORTS);
+	}
+
+	@Permission("group.staff")
+	@Path("admin all <owner> <players>")
 	void all(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
 		process(trust, players, Type.values());

@@ -33,35 +33,40 @@ public class UntrustCommand extends CustomCommand {
 		TrustProvider.openMenu(player());
 	}
 
-	@Path("lock <players...>")
+	@Path("lock <players>")
 	void lock(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		runCommand("cmodify -" + names(players, " -"));
 	}
 
-	@Path("home <home> <players...>")
+	@Path("home <home> <players>")
 	void home(Home home, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		players.forEach(home::remove);
 		new HomeService().save(home.getOwner());
 		send(PREFIX + "Untrusted &e" + names(players, "&3, &e") + " &3from home &e" + home.getName());
 	}
 
-	@Path("locks <players...>")
+	@Path("locks <players>")
 	void locks(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.LOCKS);
 	}
 
-	@Path("homes <players...>")
+	@Path("homes <players>")
 	void homes(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.HOMES);
 	}
 
-	@Path("all <players...>")
+	@Path("teleports <players>")
+	void teleports(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		process(players, Type.TELEPORTS);
+	}
+
+	@Path("all <players>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.values());
 	}
 
 	@Permission("group.staff")
-	@Path("admin locks <owner> <players...>")
+	@Path("admin locks <owner> <players>")
 	void locks(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + owner.getName());
@@ -69,7 +74,7 @@ public class UntrustCommand extends CustomCommand {
 	}
 
 	@Permission("group.staff")
-	@Path("admin homes <owner> <players...>")
+	@Path("admin homes <owner> <players>")
 	void homes(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + owner.getName());
@@ -77,7 +82,15 @@ public class UntrustCommand extends CustomCommand {
 	}
 
 	@Permission("group.staff")
-	@Path("admin all <owner> <players...>")
+	@Path("admin teleports <owner> <players>")
+	void teleports(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		trust = service.get(owner);
+		send(PREFIX + "Modifying trusts of &e" + owner.getName());
+		process(players, Type.TELEPORTS);
+	}
+
+	@Permission("group.staff")
+	@Path("admin all <owner> <players>")
 	void all(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + owner.getName());

@@ -666,7 +666,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(Player.class)
 	public Player convertToPlayer(String value) {
 		OfflinePlayer offlinePlayer = convertToOfflinePlayer(value);
-		if (!offlinePlayer.isOnline())
+		return convertToPlayer(offlinePlayer);
+	}
+
+	public Player convertToPlayer(OfflinePlayer offlinePlayer) {
+		if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
 			throw new PlayerNotOnlineException(offlinePlayer);
 		if (isPlayer() && !PlayerUtils.canSee(player(), offlinePlayer.getPlayer()))
 			throw new PlayerNotOnlineException(offlinePlayer);
