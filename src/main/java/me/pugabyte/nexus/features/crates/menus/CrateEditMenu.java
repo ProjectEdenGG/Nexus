@@ -205,7 +205,7 @@ public class CrateEditMenu {
 						}
 					}));
 				});
-				page.setItems(items.toArray(items.toArray(new ClickableItem[0])));
+				page.setItems(items.toArray(new ClickableItem[0]));
 				page.setItemsPerPage(36);
 				page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 

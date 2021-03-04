@@ -2,26 +2,20 @@ package me.pugabyte.nexus.features.votes;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.Async;
-import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.vote.Vote;
-import me.pugabyte.nexus.models.vote.VoteService;
-import me.pugabyte.nexus.models.vote.VoteSite;
-import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.models.vote.*;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
@@ -120,6 +114,30 @@ public class VoteCommand extends CustomCommand {
 	void write() {
 		Votes.write();
 		send(PREFIX + "Done");
+	}
+
+	@Path("calcFebKeys [amount]")
+	@Permission("group.admin")
+	void calcFebKeys(@Arg("50") int amount) {
+		Map<String, Integer> voteKey = new HashMap<>();
+		List<TopVoter> topVoters = new VoteService().getTopVoters(Month.FEBRUARY);
+		for (TopVoter topVoter : topVoters) {
+			if (topVoter.getCount() < amount) continue;
+			voteKey.put(topVoter.getUuid(), 1);
+		}
+		for (TopVoter topVoter : topVoters) {
+			if (topVoters.indexOf(topVoter) >= (((double) voteKey.size()) * .33)) continue;
+			voteKey.put(topVoter.getUuid(), 2);
+		}
+		for (TopVoter topVoter : topVoters) {
+			if (topVoters.indexOf(topVoter) >= (((double) voteKey.size()) * .1)) continue;
+			voteKey.put(topVoter.getUuid(), 3);
+		}
+		StringBuilder paste = new StringBuilder();
+		voteKey.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(e -> {
+			paste.append(PlayerUtils.getPlayer(e.getKey()).getName() + ": " + e.getValue() + "\n");
+		});
+		send(StringUtils.paste(paste.toString()));
 	}
 
 	@ConverterFor(Voter.class)

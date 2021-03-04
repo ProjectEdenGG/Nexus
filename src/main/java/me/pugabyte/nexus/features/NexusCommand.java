@@ -18,16 +18,8 @@ import me.pugabyte.nexus.features.warps.Warps.LegacySurvivalWarp;
 import me.pugabyte.nexus.features.warps.Warps.SurvivalWarp;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.Async;
-import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
-import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
-import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
+import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
-import me.pugabyte.nexus.framework.commands.models.annotations.Description;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
@@ -41,30 +33,13 @@ import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.ActionBarUtils;
-import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PacketUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.*;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
-import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.StringUtils.*;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
@@ -73,11 +48,7 @@ import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -94,13 +65,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
@@ -108,10 +73,7 @@ import java.util.zip.ZipFile;
 import static me.pugabyte.nexus.utils.BlockUtils.getBlocksInRadius;
 import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.paste;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.StringUtils.*;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")
@@ -162,8 +124,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (crateType.getCrateClass().isInUse())
 				error(json("Someone is opening a crate, cannot reload").next(retry));
 
-		if (player().equals(PlayerUtils.wakka()) || player().equals(PlayerUtils.blast()))
-			SoundUtils.playSound(player(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.equals(PlayerUtils.wakka()) || player.equals(PlayerUtils.blast()))
+				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
 		runCommand("plugman reload Nexus");
 	}

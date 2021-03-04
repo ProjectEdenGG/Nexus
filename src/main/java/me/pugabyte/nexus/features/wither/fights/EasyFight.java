@@ -24,7 +24,7 @@ public class EasyFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return (Math.random() * 100) < 12.5;
+		return (Math.random() * 101) < 12.5;
 	}
 
 	@Override

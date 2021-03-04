@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.wither;
 
-import com.destroystokyo.paper.Title;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.*;
 import org.bukkit.*;
@@ -58,16 +57,10 @@ public class BeginningCutscene implements Listener {
 			player.setGameMode(GameMode.SPECTATOR);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 1, true));
 			player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 77.00, -82.50, .00F, 20.00F));
-			player.sendTitle(Title.builder()
-					.fadeIn(15)
-					.fadeOut(15)
-					.stay(25)
-					.title(StringUtils.colorize("&8&k%%%% &4&lWither &8&k%%%%"))
-					.subtitle(WitherChallenge.currentFight.getDifficulty().getTitle())
-					.build());
+			player.sendTitle(StringUtils.colorize("&8&k%%%% &4&lWither &8&k%%%%"), WitherChallenge.currentFight.getDifficulty().getTitle(), 15, 25, 15);
 		}
 
-		Location cageLoc = new Location(Bukkit.getWorld("events"), -151.00, 76.00, -69.00, 180F, .00F);
+		Location cageLoc = WitherChallenge.cageLoc.clone();
 		final WitherSkeleton witherSkeleton = cageLoc.getWorld().spawn(cageLoc, WitherSkeleton.class);
 		witherSkeleton.setAI(false);
 
@@ -97,7 +90,7 @@ public class BeginningCutscene implements Listener {
 
 		Tasks.wait(Time.SECOND.x(waitSeconds += 2), () -> {
 			spawnFire(LIGHTNING_LOCATIONS[11]);
-			BlockUtils.getBlocksInRadius(cageLoc, 2).forEach(block -> {
+			BlockUtils.getBlocksInRadius(cageLoc, 3).forEach(block -> {
 				FallingBlock fallingBlock = block.getLocation().getWorld().spawnFallingBlock(block.getLocation(), block.getBlockData());
 				fallingBlock.setDropItem(false);
 				fallingBlock.setHurtEntities(false);
@@ -119,7 +112,7 @@ public class BeginningCutscene implements Listener {
 				cageLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cageLoc, 1, 1, 1, 1);
 		});
 
-		Tasks.wait(Time.SECOND.x(waitSeconds + 2), () -> {
+		Tasks.wait(Time.SECOND.x(waitSeconds += 2), () -> {
 			fallingBlocks.forEach(Entity::remove);
 			Nexus.unregisterListener(this);
 			showAllPlayers();
@@ -128,8 +121,9 @@ public class BeginningCutscene implements Listener {
 				player.setGameMode(GameMode.SURVIVAL);
 				player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -80.50, .00F, .00F));
 			}
-			completableFuture.complete(cageLoc);
+
 		});
+		Tasks.wait(Time.SECOND.x(waitSeconds) + 2, () -> completableFuture.complete(cageLoc));
 		return completableFuture;
 	}
 
@@ -161,8 +155,8 @@ public class BeginningCutscene implements Listener {
 		location.getBlock().setType(Material.SOUL_FIRE);
 		location.getWorld().strikeLightningEffect(location);
 		for (Player player : uuidToPlayers()) {
-			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 1, 1);
-			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
+			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER, 1, 1);
+			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
 		}
 	}
 
@@ -174,7 +168,7 @@ public class BeginningCutscene implements Listener {
 	 */
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (!WitherChallenge.currentFight.getAlivePlayers().contains(event.getPlayer())) return;
+		if (!WitherChallenge.currentFight.getParty().contains(event.getPlayer().getUniqueId())) return;
 		event.setCancelled(true);
 	}
 

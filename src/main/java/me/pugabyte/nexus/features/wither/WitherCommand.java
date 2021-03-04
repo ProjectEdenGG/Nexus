@@ -2,12 +2,14 @@ package me.pugabyte.nexus.features.wither;
 
 import fr.minuskube.inv.SmartInventory;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Material;
@@ -47,6 +49,8 @@ public class WitherCommand extends CustomCommand {
 			error("There is currently no challenging party. You can make one with /wither challenge");
 		if (WitherChallenge.currentFight.host != player())
 			error("You are not the host of the current party");
+		if (WitherChallenge.currentFight.isStarted())
+			error("You cannot invite players after the fight has started");
 		send(PREFIX + "You have invited &e" + player.getName() + " &3to fight the wither with you");
 		send(player, json(PREFIX + "&e" + player().getName() + " &3has invited you to challenge the wither in " +
 				WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode.")
@@ -59,6 +63,10 @@ public class WitherCommand extends CustomCommand {
 			error("There is currently no challenging party. You can make one with /wither challenge");
 		if (WitherChallenge.currentFight.getParty().contains(player().getUniqueId()))
 			error("You have already joined the current party! Please wait for the host to start the match.");
+		if (WitherChallenge.currentFight.getParty().size() == 4)
+			error("The current party is already full");
+		if (WitherChallenge.currentFight.isStarted())
+			error("The party has already begun the fight!");
 		WitherChallenge.currentFight.getParty().add(uuid());
 		WitherChallenge.currentFight.broadcastToParty("&e" + player().getName() + " &3has joined the party");
 	}
@@ -69,6 +77,8 @@ public class WitherCommand extends CustomCommand {
 			error("There is currently no challenging party. You can make one with /wither challenge");
 		if (WitherChallenge.currentFight.host != player())
 			error("You are not the host of the challenging party");
+		if (WitherChallenge.currentFight.isStarted())
+			error("You cannot abandon the fight once it has already begun!");
 		WitherChallenge.currentFight.broadcastToParty("The host has abandoned the fight and the party has been disbanded");
 		WitherChallenge.currentFight.getAlivePlayers().forEach(uuid -> {
 			OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
@@ -87,6 +97,14 @@ public class WitherCommand extends CustomCommand {
 		if (!hasItems())
 			error("You do not have the necessary items in your inventory to spawn the wither");
 		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
+		int partySize = WitherChallenge.currentFight.getParty().size();
+		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + WitherChallenge.currentFight.getHost().getName() +
+				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") : "") +
+				" &3are challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode");
+		Chat.broadcastDiscord("**[Wither]** " + WitherChallenge.currentFight.getHost().getName() +
+				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") : "") +
+				" are challenging the wither to a fight in " + StringUtils.camelCase(WitherChallenge.currentFight.getDifficulty().name()) + " mode");
+		WitherChallenge.currentFight.teleportPartyToArena();
 		Tasks.Countdown.builder()
 				.duration(Time.SECOND.x(10))
 				.onSecond(i -> {
@@ -101,6 +119,7 @@ public class WitherCommand extends CustomCommand {
 	@Path("reset")
 	void reset() {
 		WitherChallenge.reset();
+		send(PREFIX + "Arena successfully reset");
 	}
 
 
