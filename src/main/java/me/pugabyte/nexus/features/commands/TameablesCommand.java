@@ -13,6 +13,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.GlowTask;
 import me.pugabyte.nexus.utils.Time;
@@ -188,38 +190,42 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		Entity entity = event.getEntity();
 		String entityName = camelCase(entity.getType());
 
-		if (actions.containsKey(uuid)) {
-			event.setCancelled(true);
-			if (!TameableEntity.isTameable(event.getEntityType())) {
-				send(player, PREFIX + "&cThat animal is not tameable");
-				actions.remove(uuid);
-				return;
-			}
+		try {
+			if (actions.containsKey(uuid)) {
+				event.setCancelled(true);
+				if (!TameableEntity.isTameable(event.getEntityType())) {
+					send(player, PREFIX + "&cThat animal is not tameable");
+					actions.remove(uuid);
+					return;
+				}
 
-			PendingTameblesAction action = actions.get(uuid);
-			switch (action.getType()) {
-				case TRANSFER:
-					checkOwner(player, entity);
-					OfflinePlayer transfer = action.getPlayer();
-					updateOwner(entity, player, transfer);
-					send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName());
-					break;
-				case UNTAME:
-					checkOwner(player, entity);
-					updateOwner(entity, player, null);
-					send(player, PREFIX + "You have untamed your " + entityName);
-					break;
-				case MOVE:
-					checkOwner(player, entity);
-					moveQueue.put(player.getUniqueId(), event.getEntity());
-					send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
-					break;
-				case INFO:
-					String owner = getOwner(entity);
-					send(player, PREFIX + "That " + entityName + " is " + (isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
-					break;
+				PendingTameblesAction action = actions.get(uuid);
+				switch (action.getType()) {
+					case TRANSFER:
+						checkOwner(player, entity);
+						OfflinePlayer transfer = action.getPlayer();
+						updateOwner(entity, player, transfer);
+						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName());
+						break;
+					case UNTAME:
+						checkOwner(player, entity);
+						updateOwner(entity, player, null);
+						send(player, PREFIX + "You have untamed your " + entityName);
+						break;
+					case MOVE:
+						checkOwner(player, entity);
+						moveQueue.put(player.getUniqueId(), event.getEntity());
+						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
+						break;
+					case INFO:
+						String owner = getOwner(entity);
+						send(player, PREFIX + "That " + entityName + " is " + (isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
+						break;
+				}
+				actions.remove(uuid);
 			}
-			actions.remove(uuid);
+		} catch (InvalidInputException ex) {
+			send(player, new JsonBuilder(PREFIX).next(ex.getJson()));
 		}
 	}
 

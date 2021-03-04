@@ -81,7 +81,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 	void info(Watchlisted watchlisted) {
 		String playerName = watchlisted.getOfflinePlayer().getName();
 		String active = StringUtils.bool(watchlisted.isActive());
-		String date = StringUtils.shortDateTimeFormat(watchlisted.getWatchlistedOn());
+		String date = watchlisted.getWatchlistedOn() == null ? "null" : StringUtils.shortDateTimeFormat(watchlisted.getWatchlistedOn());
 		List<Note> notes = watchlisted.getNotes();
 
 		line();

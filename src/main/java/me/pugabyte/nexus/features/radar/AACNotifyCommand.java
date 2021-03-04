@@ -47,17 +47,19 @@ public class AACNotifyCommand extends CustomCommand {
 			UUID uuid = player.getUniqueId();
 			totalCounts.put(uuid, totalCounts.getOrDefault(uuid, 0) + 1);
 			if (new CooldownService().check(player, "aac-notify-ingame", Time.SECOND.x(15))) {
+				String ingame = message;
 				if (ingameCounts.getOrDefault(uuid, 0) > 0)
-					message += " &c(" + ingameCounts.get(uuid) + " more...)";
-				Chat.broadcastIngame("&7&l[&cRadar&7&l] " + message, StaticChannel.STAFF);
+					ingame += (" &c(" + ingameCounts.get(uuid) + " more...)");
+				Chat.broadcastIngame("&7&l[&cRadar&7&l] " + ingame, StaticChannel.STAFF);
 				ingameCounts.remove(uuid);
 			} else
 				ingameCounts.put(uuid, ingameCounts.getOrDefault(uuid, 0) + 1);
 
 			if (new CooldownService().check(player, "aac-notify-discord", Time.MINUTE)) {
+				String discord = message;
 				if (discordCounts.getOrDefault(uuid, 0) > 0)
-					message += " (" + discordCounts.get(uuid) + " more...)";
-				Chat.broadcastDiscord("**[Radar]** " + message, StaticChannel.STAFF);
+					discord += " (" + discordCounts.get(uuid) + " more...)";
+				Chat.broadcastDiscord("**[Radar]** " + discord, StaticChannel.STAFF);
 				discordCounts.remove(uuid);
 			} else
 				discordCounts.put(uuid, discordCounts.getOrDefault(uuid, 0) + 1);
