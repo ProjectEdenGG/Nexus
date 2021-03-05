@@ -26,6 +26,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -296,6 +298,23 @@ public class MatchListener implements Listener {
 		Player player = (Player) event.getEntity();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isIn(match))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onEntityRegainHealth(EntityRegainHealthEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+
+		RegainReason regainReason = event.getRegainReason();
+		if (regainReason != RegainReason.REGEN && regainReason != RegainReason.SATIATED)
+			return;
+
+		Minigamer minigamer = PlayerManager.get((Player) event.getEntity());
+		if (!minigamer.isPlaying()) return;
+		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
+		Mechanic mechanic = minigamer.getMatch().getMechanic();
+
+		if (mechanic.useAlternativeRegen())
 			event.setCancelled(true);
 	}
 }
