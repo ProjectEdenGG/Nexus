@@ -16,7 +16,11 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -50,7 +54,7 @@ public class Minigamer {
 	private int lastStruckTicks = 0;
 	private Location lastLocation = null;
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
-	private static final double HEALTH_PER_TICK = (1d/2d)/Time.SECOND.x(2);
+	private static final double HEALTH_PER_TICK = (1d/2d)/ Time.SECOND.x(2);
 	private static final int IMMOBILE_SECONDS = Time.SECOND.x(3);
 
 	public String getName() {
