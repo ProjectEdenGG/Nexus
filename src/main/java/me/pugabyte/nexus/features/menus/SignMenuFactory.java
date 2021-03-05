@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
@@ -81,6 +82,7 @@ public final class SignMenuFactory {
 					try {
 						menu.response.accept(input);
 					} catch (Exception ex) {
+						menu.onError.accept(input, ex);
 						MenuUtils.handleException(player, menu.prefix, ex);
 					}
 				});
@@ -94,6 +96,7 @@ public final class SignMenuFactory {
 	public static final class Menu {
 		private final List<String> lines;
 		private Consumer<String[]> response;
+		private BiConsumer<String[], Exception> onError;
 		private String prefix; // for error handler
 
 		Menu(List<String> lines) {
@@ -107,6 +110,11 @@ public final class SignMenuFactory {
 
 		public Menu response(Consumer<String[]> response) {
 			this.response = response;
+			return this;
+		}
+
+		public Menu onError(BiConsumer<String[], Exception> onError) {
+			this.onError = onError;
 			return this;
 		}
 

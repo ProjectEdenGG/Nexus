@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static me.pugabyte.nexus.features.delivery.DeliveryCommand.PREFIX;
+
 public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProvider {
 	private final DeliveryService service = new DeliveryService();
 	private final DeliveryUser user;
@@ -75,6 +77,7 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 
 		contents.set(1, 1, ClickableItem.from(playerName.build(), e ->
 				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name")
+						.prefix(PREFIX)
 						.response(lines -> {
 							if (lines[0].length() > 0) {
 								OfflinePlayer _player = PlayerUtils.getPlayer(lines[0]);
@@ -82,12 +85,19 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 							}
 							DeliveryMenu.sendDelivery(user, worldGroup, sendTo, items, message);
 						})
+						.onError((lines, ex) -> DeliveryMenu.sendDelivery(user, worldGroup, sendTo, items, message))
 						.open(player)));
 		contents.set(1, 3, ClickableItem.from(insertItems.build(), e -> new InsertItemsMenu(user, worldGroup, sendTo, items, message)));
 		// TODO: open a book menu where the player can type a message
 		// TODO: on opening a delivery: if has message, set it as a written book given to the player, unless it's from the server
 		contents.set(1, 4, ClickableItem.empty(typeMessage.build()));
-		contents.set(1, 7, ClickableItem.from(confirm, e -> sendDelivery(player)));
+		contents.set(1, 7, ClickableItem.from(confirm, e -> {
+			if (sendTo == null) {
+				PlayerUtils.send(player, PREFIX + "You did not specify a recipient");
+				return;
+			}
+			sendDelivery(player);
+		}));
 	}
 
 
