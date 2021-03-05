@@ -6,7 +6,12 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -101,11 +106,12 @@ public class GemCommand extends CustomCommand implements Listener {
 	}
 
 	public ItemStack makeGem(Enchantment enchantment, int level) {
-		ItemStack item = new ItemBuilder(Material.EMERALD).name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
-				.enchant(enchantment, level).lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment").build();
-		NBTItem nbtItem = new NBTItem(item);
-		nbtItem.setInteger("CustomModelData", 1);
-		return nbtItem.getItem();
+		return new ItemBuilder(Material.EMERALD)
+				.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
+				.enchant(enchantment, level)
+				.lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment")
+				.customModelData(1)
+				.build();
 	}
 
 	public void sendError(Player player) {

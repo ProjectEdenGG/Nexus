@@ -242,7 +242,7 @@ public class ItemBuilder implements Cloneable {
 
 	public ItemBuilder customModelData(int id) {
 		NBTItem nbtItem = new NBTItem(itemStack);
-		nbtItem.setInteger("CustomModelData", 1);
+		nbtItem.setInteger("CustomModelData", id);
 		itemStack = nbtItem.getItem();
 		return this;
 	}

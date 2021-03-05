@@ -16,6 +16,7 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 
 import java.util.ArrayList;
@@ -288,6 +289,17 @@ public class PlayerUtils {
 		}
 
 		return (slotsUsed <= (36 - slots));
+	}
+
+	public static boolean playerHas(Player player, ItemStack itemStack) {
+		PlayerInventory inventory = player.getInventory();
+		if (inventory.contains(itemStack))
+			return true;
+		if (Arrays.asList(inventory.getStorageContents()).contains(itemStack))
+			return true;
+		if (Arrays.asList(inventory.getArmorContents()).contains(itemStack))
+			return true;
+		return Arrays.asList(inventory.getExtraContents()).contains(itemStack);
 	}
 
 	@Deprecated
