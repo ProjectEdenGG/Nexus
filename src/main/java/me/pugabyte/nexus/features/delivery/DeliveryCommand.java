@@ -43,6 +43,10 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 
 	@Path
 	void main() {
+		WorldGroup worldGroup = WorldGroup.get(player());
+		if (!DeliveryUser.getSupportedWorldGroups().contains(worldGroup))
+			error("You cannot do that in this world");
+
 		DeliveryMenu.open(user, worldGroup());
 	}
 
