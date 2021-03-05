@@ -31,4 +31,8 @@ public final class FourTeamDeathmatch extends BalancedTeamMechanic {
 		super.onDeath(event);
 	}
 
+	@Override
+	public boolean useAlternativeRegen() {
+		return true;
+	}
 }

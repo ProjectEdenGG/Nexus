@@ -16,10 +16,7 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.WorldGroup;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -49,6 +46,12 @@ public class Minigamer {
 	private boolean respawning = false;
 	private boolean isAlive = true;
 	private int lives;
+	private int immobileTicks = 0;
+	private int lastStruckTicks = 0;
+	private Location lastLocation = null;
+	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
+	private static final double HEALTH_PER_TICK = (1d/2d)/Time.SECOND.x(2);
+	private static final int IMMOBILE_SECONDS = Time.SECOND.x(3);
 
 	public String getName() {
 		return player.getName();
@@ -229,6 +232,11 @@ public class Minigamer {
 
 	public void died() {
 		--lives;
+		lastStruckTicks = 0;
+	}
+
+	public void damaged() {
+		lastStruckTicks = 0;
 	}
 
 	public void spawn() {
@@ -245,7 +253,7 @@ public class Minigamer {
 			clearState();
 			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
 			hideAll();
-			match.getTasks().wait(match.getArena().getRespawnSeconds() * 20, () -> {
+			match.getTasks().wait(match.getArena().getRespawnSeconds() * 20L, () -> {
 				if (!match.isEnded()) {
 					unhideAll();
 					spawn();
@@ -253,6 +261,42 @@ public class Minigamer {
 				}
 			});
 		}
+	}
+
+	public void tick() {
+		regen();
+	}
+
+	public void regen() {
+		Location location = player.getLocation();
+		location.setYaw(0);
+		location.setPitch(0);
+
+		if (location.equals(lastLocation))
+			immobileTicks++;
+		else
+			immobileTicks = 0;
+
+		double multiplier = 1;
+		double sneakMultiplier = 1; // calculated independently as it is variable
+
+		if (player.isSneaking())
+			sneakMultiplier = 1.5d;
+
+		if (immobileTicks >= IMMOBILE_SECONDS) {
+			multiplier *= immobileTicks/(double)IMMOBILE_SECONDS;
+		}
+
+		multiplier *= sneakMultiplier;
+
+		if (lastStruckTicks <= Time.SECOND.x(2))
+			multiplier *= 1d/3d;
+
+		// this skips making the hearts do the little regeneration bobbing but idk how to fix that
+		player.setHealth(Math.min(player.getMaxHealth(), player.getHealth()+(HEALTH_PER_TICK * multiplier)));
+
+		lastLocation = location;
+		lastStruckTicks++;
 	}
 
 	// respawning

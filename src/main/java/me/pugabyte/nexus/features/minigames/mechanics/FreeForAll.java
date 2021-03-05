@@ -29,4 +29,8 @@ public final class FreeForAll extends TeamlessMechanic {
 		super.onDeath(event);
 	}
 
+	@Override
+	public boolean useAlternativeRegen() {
+		return true;
+	}
 }

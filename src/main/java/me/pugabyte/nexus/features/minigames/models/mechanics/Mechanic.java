@@ -6,12 +6,7 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBeginEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.*;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
@@ -24,15 +19,10 @@ import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
@@ -62,6 +52,10 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public boolean canDropItem(ItemStack item) {
+		return false;
+	}
+
+	public boolean useAlternativeRegen() {
 		return false;
 	}
 
@@ -111,6 +105,16 @@ public abstract class Mechanic implements Listener {
 			if (beginEvent.callEvent())
 				begin(beginEvent);
 		}
+
+		if (useAlternativeRegen()) {
+			int taskId = match.getTasks().repeat(0, 1, new BukkitRunnable() {
+				@Override
+				public void run() {
+					match.getMinigamers().forEach(Minigamer::tick);
+				}
+			});
+			match.getTasks().register(MatchTaskType.REGEN, taskId);
+		}
 	}
 
 	public void begin(Match match) {
@@ -147,7 +151,10 @@ public abstract class Mechanic implements Listener {
 			minigamer.getMatch().end();
 	}
 
-	public void onDamage(MinigamerDamageEvent event) {}
+	public void onDamage(MinigamerDamageEvent event) {
+		Minigamer minigamer = event.getMinigamer();
+		minigamer.damaged();
+	}
 
 	public void onDeath(MinigamerDeathEvent event) {
 		// TODO: Autobalancing

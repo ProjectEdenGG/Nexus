@@ -17,6 +17,11 @@ import org.bukkit.inventory.EquipmentSlot;
 
 public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
 
+	@Override
+	public boolean useAlternativeRegen() {
+		return true;
+	}
+
 	protected abstract void onFlagInteract(Minigamer minigamer, Sign sign);
 
 	protected abstract void doFlagParticles(Match match);
