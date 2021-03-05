@@ -137,6 +137,10 @@ public enum ScoreboardLine {
 			String world = player.getWorld().getName();
 			if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
 				world = world.replace("world", "legacy");
+			if (world.contains("oneblock"))
+				world = world.replace("oneblock_world", "one_block");
+			if (world.contains("bskyblock"))
+				world = world.replace("bskyblock_world", "skyblock");
 			return "&3World: &e" + camelCase(world);
 		}
 	},

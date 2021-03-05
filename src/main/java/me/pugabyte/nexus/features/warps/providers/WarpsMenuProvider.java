@@ -54,7 +54,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack survival = nameItem(Material.GRASS_BLOCK, "&3Survival");
 				ItemStack minigames = nameItem(Material.DIAMOND_SWORD, "&3Minigames");
 				ItemStack creative = nameItem(Material.QUARTZ, "&3Creative");
-				ItemStack skyblock = nameItem(Material.COBBLESTONE, "&3Skyblock", "&cCurrently Disabled");
+				ItemStack skyblock = nameItem(Material.COBBLESTONE, "&3One Block");
 				ItemStack other = nameItem(Material.EMERALD, "&3Other");
 
 				contents.set(1, 1, ClickableItem.from(survival, e -> {
@@ -65,7 +65,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				}));
 				contents.set(1, 3, ClickableItem.from(minigames, e -> WarpsMenu.open(player, WarpMenu.MINIGAMES)));
 				contents.set(1, 5, ClickableItem.from(creative, e -> warp(player, "creative")));
-				//contents.set(1, 7, ClickableItem.from(skyblock, e -> warp(player, "skyblock")));
+//				contents.set(1, 7, ClickableItem.from(skyblock, e -> command(player, "ob")));
 				contents.set(1, 7, ClickableItem.empty(skyblock));
 				contents.set(2, 4, ClickableItem.from(other, e -> WarpsMenu.open(player, WarpMenu.OTHER)));
 

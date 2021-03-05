@@ -9,7 +9,13 @@ import org.bukkit.Tag;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static me.pugabyte.nexus.utils.Utils.collect;
 import static org.bukkit.Material.*;
@@ -28,18 +34,27 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_STAINED_GLASS = new MaterialTag("STAINED_GLASS", MatchMode.CONTAINS);
 	public static final MaterialTag GLAZED_TERRACOTTAS = new MaterialTag("_GLAZED_TERRACOTTA", MatchMode.SUFFIX);
 	public static final MaterialTag COLORED_TERRACOTTAS = new MaterialTag("_TERRACOTTA", MatchMode.SUFFIX).exclude(GLAZED_TERRACOTTAS);
-	public static final MaterialTag ALL_TERRACOTTAS = new MaterialTag("_TERRACOTTA", MatchMode.SUFFIX);
+	public static final MaterialTag ALL_TERRACOTTAS = new MaterialTag("TERRACOTTA", MatchMode.CONTAINS);
 	public static final MaterialTag CONCRETES = new MaterialTag("_CONCRETE", MatchMode.SUFFIX);
 	public static final MaterialTag CONCRETE_POWDERS = new MaterialTag("_CONCRETE_POWDER", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_CONCRETES = new MaterialTag("CONCRETE", MatchMode.CONTAINS);
+	public static final MaterialTag SANDSTONES = new MaterialTag("SANDSTONE", MatchMode.CONTAINS);
+	public static final MaterialTag PRISMARINE = new MaterialTag("PRISMARINE", MatchMode.CONTAINS).exclude(PRISMARINE_CRYSTALS, PRISMARINE_SHARD);
+	public static final MaterialTag PURPURS = new MaterialTag("PURPUR", MatchMode.CONTAINS);
+	public static final MaterialTag END_STONES = new MaterialTag("END_STONE", MatchMode.CONTAINS);
 	public static final MaterialTag SHULKER_BOXES = new MaterialTag("_SHULKER_BOX", MatchMode.SUFFIX).append(SHULKER_BOX);
 	public static final MaterialTag BOOKS = new MaterialTag("BOOK", MatchMode.CONTAINS);
 
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, ALL_BANNERS,
 			ALL_STAINED_GLASS, ALL_TERRACOTTAS, ALL_CONCRETES, SHULKER_BOXES);
 
-	public static final MaterialTag TOOLS = new MaterialTag("_PICKAXE", MatchMode.SUFFIX)
-			.append("_AXE", MatchMode.SUFFIX).append("_SHOVEL", MatchMode.SUFFIX).append("_HOE", MatchMode.SUFFIX)
+	public static final MaterialTag SWORDS = new MaterialTag("_SWORD", MatchMode.SUFFIX);
+	public static final MaterialTag PICKAXES = new MaterialTag("_PICKAXE", MatchMode.SUFFIX);
+	public static final MaterialTag AXES = new MaterialTag("_AXE", MatchMode.SUFFIX);
+	public static final MaterialTag SHOVELS = new MaterialTag("_SHOVEL", MatchMode.SUFFIX);
+	public static final MaterialTag HOES = new MaterialTag("_HOE", MatchMode.SUFFIX);
+
+	public static final MaterialTag TOOLS = new MaterialTag(PICKAXES, AXES, SHOVELS, HOES)
 			.append(FISHING_ROD).append(LEAD).append(SHEARS).append(FLINT_AND_STEEL);
 
 	public static final MaterialTag WEAPONS = new MaterialTag("_SWORD", MatchMode.SUFFIX)
@@ -83,7 +98,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag REQUIRES_META = new MaterialTag(POTIONS).append(TIPPED_ARROW, WRITTEN_BOOK, ENCHANTED_BOOK);
 
-	public static final MaterialTag ALL_CORALS = new MaterialTag(Tag.CORAL_BLOCKS).append(Tag.CORAL_PLANTS, Tag.WALL_CORALS, Tag.CORALS);
+	public static final MaterialTag ALL_CORALS = new MaterialTag("CORAL", MatchMode.CONTAINS);
 	public static final MaterialTag CORAL_WALL_FANS = new MaterialTag("_WALL_FAN", MatchMode.SUFFIX);
 
 	public static final MaterialTag PLANTS = new MaterialTag(GRASS, FERN, TALL_GRASS, LARGE_FERN, DEAD_BUSH, SWEET_BERRY_BUSH,
@@ -102,7 +117,9 @@ public class MaterialTag implements Tag<Material> {
 		.append(new MaterialTag("DIORITE", MatchMode.CONTAINS))
 		.append(new MaterialTag("ANDESITE", MatchMode.CONTAINS));
 
-	public static final MaterialTag ALL_DIRT = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT, GRASS_PATH);
+	public static final MaterialTag ALL_ORES = new MaterialTag("_ORE", MatchMode.CONTAINS);
+
+	public static final MaterialTag ALL_DIRT = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT, GRASS_PATH, MYCELIUM);
 
 	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(BLAST_FURNACE, SMOKER,
 			CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,
@@ -119,7 +136,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag WOOD_STAIRS = new MaterialTag(OAK_STAIRS, SPRUCE_STAIRS, BIRCH_STAIRS, JUNGLE_STAIRS, ACACIA_STAIRS, DARK_OAK_STAIRS, WARPED_STAIRS, CRIMSON_STAIRS);
 	public static final MaterialTag WOOD_SLABS = new MaterialTag(OAK_SLAB, SPRUCE_SLAB, BIRCH_SLAB, JUNGLE_SLAB, ACACIA_SLAB, DARK_OAK_SLAB, PETRIFIED_OAK_SLAB, WARPED_SLAB, CRIMSON_SLAB);
 
-	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, WOOD_STAIRS, WOOD_SLABS);
+	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, PLANKS, WOOD_STAIRS, WOOD_SLABS);
 
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
@@ -137,12 +154,6 @@ public class MaterialTag implements Tag<Material> {
 			REPEATER, COMPARATOR, ITEM_FRAME, BELL, SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER)
 			.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
-
-	public static final MaterialTag SWORDS = new MaterialTag("_SWORD", MatchMode.SUFFIX);
-	public static final MaterialTag PICKAXES = new MaterialTag("_PICKAXE", MatchMode.SUFFIX);
-	public static final MaterialTag AXES = new MaterialTag("_AXE", MatchMode.SUFFIX);
-	public static final MaterialTag SHOVELS = new MaterialTag("_SHOVEL", MatchMode.SUFFIX);
-	public static final MaterialTag HOES = new MaterialTag("_HOE", MatchMode.SUFFIX);
 
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {

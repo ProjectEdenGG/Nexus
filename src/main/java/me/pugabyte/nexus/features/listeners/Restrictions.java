@@ -34,7 +34,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onPortalEvent(PlayerPortalEvent event) {
-		if (WorldGroup.get(event.getPlayer()).equals(WorldGroup.CREATIVE))
+		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.get(event.getPlayer())))
 			event.setCancelled(true);
 	}
 

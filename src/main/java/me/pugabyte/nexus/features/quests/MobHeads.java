@@ -15,6 +15,7 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -107,6 +108,8 @@ public class MobHeads extends Feature implements Listener {
 		if (!PlayerUtils.isWakka(killer))
 			return;
 		//
+		if (WorldGroup.get(killer) != WorldGroup.SURVIVAL)
+			return;
 
 		EntityType type = victim.getType();
 		ItemStack skull = mobHeads.get(type);
