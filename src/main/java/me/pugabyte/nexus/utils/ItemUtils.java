@@ -201,4 +201,10 @@ public class ItemUtils {
 		return applicable;
 	}
 
+	public static String getName(ItemStack result) {
+		if (result.getItemMeta().hasDisplayName())
+			return result.getItemMeta().getDisplayName();
+
+		return result.getType().name();
+	}
 }
