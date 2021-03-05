@@ -70,7 +70,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		if (!isFuzzyMatch(infiniteWaterBucket, waterBucket))
 			return;
 
-		Tasks.wait(1, () -> player.getInventory().setItemInMainHand(waterBucket));
+		Tasks.wait(1, () -> player.getInventory().setItem(event.getHand(), waterBucket));
 	}
 
 	@EventHandler

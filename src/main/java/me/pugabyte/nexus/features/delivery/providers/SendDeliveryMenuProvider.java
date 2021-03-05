@@ -74,9 +74,9 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 		if (sendTo != null && (!Utils.isNullOrEmpty(items) || !Strings.isNullOrEmpty(message)))
 			confirm.material(Material.LIME_STAINED_GLASS_PANE);
 		else if (sendTo == null)
-			confirm.lore("Recipient not specified");
+			confirm.lore("&cRecipient not specified");
 		else if (Utils.isNullOrEmpty(items) && Strings.isNullOrEmpty(message))
-			confirm.lore("Delivery is empty");
+			confirm.lore("&cDelivery is empty");
 
 		contents.set(1, 1, ClickableItem.from(playerName.build(), e ->
 				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name")

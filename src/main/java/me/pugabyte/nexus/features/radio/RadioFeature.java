@@ -67,6 +67,7 @@ public class RadioFeature extends Feature {
 				if (!radio.getType().equals(RadioType.RADIUS)) continue;
 				if (!radio.isEnabled()) continue;
 				if (!radio.isParticles()) continue;
+				if (radio.getLocation() == null) continue;
 				new ParticleBuilder(Particle.NOTE)
 						.count(7)
 						.offset(0.25, 0.25, 0.25)

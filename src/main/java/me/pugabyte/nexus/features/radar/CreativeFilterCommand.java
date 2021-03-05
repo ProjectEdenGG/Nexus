@@ -2,16 +2,10 @@ package me.pugabyte.nexus.features.radar;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.commands.staff.admin.MaterialTagCommand.MaterialTagMaterialsMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,33 +20,9 @@ import java.util.function.Supplier;
 
 @NoArgsConstructor
 public class CreativeFilterCommand extends CustomCommand implements Listener {
-	private static final MaterialTag NO_META_ALLOWED = new MaterialTag(new NamespacedKey(Nexus.getInstance(), "NO_META_ALLOWED"))
-			.append(
-					MaterialTag.BOOKS,
-					MaterialTag.POTIONS,
-					MaterialTag.SPAWN_EGGS,
-					MaterialTag.TOOLS,
-					MaterialTag.WEAPONS,
-					MaterialTag.ARMOR,
-					MaterialTag.INVENTORY_BLOCKS,
-					MaterialTag.COMMAND_BLOCKS,
-					MaterialTag.MINECARTS,
-					MaterialTag.CAMPFIRES
-			)
-			.append(
-					Material.SPAWNER,
-					Material.FIREWORK_ROCKET,
-					Material.NAME_TAG,
-					Material.ARMOR_STAND
-			);
 
 	public CreativeFilterCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	@Path("list")
-	void list() {
-		new MaterialTagMaterialsMenu(NO_META_ALLOWED).open(player());
 	}
 
 	private boolean shouldFilterItems(HumanEntity whoClicked) {
@@ -64,7 +34,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 			return;
 
 		ItemStack item = getter.get();
-		if (item != null && NO_META_ALLOWED.isTagged(item.getType()))
+		if (item != null)
 			setter.accept(new ItemStack(item.getType(), item.getAmount()));
 	}
 
