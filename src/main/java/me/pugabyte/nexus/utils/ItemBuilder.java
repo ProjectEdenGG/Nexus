@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
 import org.bukkit.Color;
@@ -34,8 +35,8 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class ItemBuilder implements Cloneable {
-	private final ItemStack itemStack;
-	private final ItemMeta itemMeta;
+	private ItemStack itemStack;
+	private ItemMeta itemMeta;
 	private List<String> lore = new ArrayList<>();
 	private boolean doLoreize = true;
 
@@ -236,6 +237,13 @@ public class ItemBuilder implements Cloneable {
 		for (ItemStack item : items)
 			box.getInventory().addItem(item);
 		blockStateMeta.setBlockState(box);
+		return this;
+	}
+
+	public ItemBuilder customModelData(int id) {
+		NBTItem nbtItem = new NBTItem(itemStack);
+		nbtItem.setInteger("CustomModelData", 1);
+		itemStack = nbtItem.getItem();
 		return this;
 	}
 

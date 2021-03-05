@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
+import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -310,6 +311,9 @@ public class Misc implements Listener {
 				}
 				break;
 		}
+
+		if (!PlayerUtils.isStaffGroup(player))
+			SpeedCommand.resetSpeed(player);
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
