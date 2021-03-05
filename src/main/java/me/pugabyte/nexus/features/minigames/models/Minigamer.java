@@ -297,10 +297,14 @@ public class Minigamer {
 			multiplier *= 1d/3d;
 
 		// this skips making the hearts do the little regeneration bobbing but idk how to fix that
-		player.setHealth(Math.min(player.getMaxHealth(), player.getHealth()+(HEALTH_PER_TICK * multiplier)));
+		heal(HEALTH_PER_TICK * multiplier);
 
 		lastLocation = location;
 		lastStruckTicks++;
+	}
+
+	public void heal(double amount) {
+		player.setHealth(Math.min(player.getMaxHealth(), player.getHealth()+amount));
 	}
 
 	// respawning
