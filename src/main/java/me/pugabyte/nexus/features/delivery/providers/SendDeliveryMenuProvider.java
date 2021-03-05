@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.delivery.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import joptsimple.internal.Strings;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.delivery.DeliveryMenu;
 import me.pugabyte.nexus.features.menus.MenuUtils;
@@ -47,16 +48,13 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 		addBackItem(contents, e -> DeliveryMenu.open(user, worldGroup));
 
 		ItemBuilder playerName = new ItemBuilder(Material.NAME_TAG).name("Insert Player Name");
-		ItemBuilder insertItems = new ItemBuilder(Material.CHEST).name("Items To Send");
-		ItemBuilder typeMessage = new ItemBuilder(Material.WRITABLE_BOOK).name("Type Message").lore("Temporarily Disabled");
-
 		if (sendTo != null)
 			playerName.name("Send To: " + PlayerUtils.getPlayer(sendTo).getName());
-
+		//
+		ItemBuilder insertItems = new ItemBuilder(Material.CHEST).name("Items To Send");
 		List<String> lore = new ArrayList<>();
 		if (message != null)
 			lore.add("&e1 &7Message");
-
 		if (!Utils.isNullOrEmpty(items)) {
 			int count = 1;
 			int size = items.size();
@@ -68,12 +66,17 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 				}
 			}
 		}
-
 		if (!lore.isEmpty())
 			insertItems.lore(lore);
-
-
-		ItemStack confirm = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("Send Delivery").build();
+		//
+		ItemBuilder typeMessage = new ItemBuilder(Material.WRITABLE_BOOK).name("Type Message").lore("Temporarily Disabled");
+		ItemBuilder confirm = new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Send Delivery");
+		if (sendTo != null && (!Utils.isNullOrEmpty(items) || !Strings.isNullOrEmpty(message)))
+			confirm.material(Material.LIME_STAINED_GLASS_PANE);
+		else if (sendTo == null)
+			confirm.lore("Recipient not specified");
+		else if (Utils.isNullOrEmpty(items) && Strings.isNullOrEmpty(message))
+			confirm.lore("Delivery is empty");
 
 		contents.set(1, 1, ClickableItem.from(playerName.build(), e ->
 				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name")
@@ -91,12 +94,9 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 		// TODO: open a book menu where the player can type a message
 		// TODO: on opening a delivery: if has message, set it as a written book given to the player, unless it's from the server
 		contents.set(1, 4, ClickableItem.empty(typeMessage.build()));
-		contents.set(1, 7, ClickableItem.from(confirm, e -> {
-			if (sendTo == null) {
-				PlayerUtils.send(player, PREFIX + "You did not specify a recipient");
-				return;
-			}
-			sendDelivery(player);
+		contents.set(1, 7, ClickableItem.from(confirm.build(), e -> {
+			if (sendTo != null && (!Utils.isNullOrEmpty(items) || !Strings.isNullOrEmpty(message)))
+				sendDelivery(player);
 		}));
 	}
 
