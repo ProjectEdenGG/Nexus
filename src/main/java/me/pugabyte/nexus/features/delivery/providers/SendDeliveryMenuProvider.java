@@ -84,7 +84,8 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 						.response(lines -> {
 							if (lines[0].length() > 0) {
 								OfflinePlayer _player = PlayerUtils.getPlayer(lines[0]);
-								sendTo = _player.getUniqueId();
+								if (!PlayerUtils.isSelf(player, _player))
+									sendTo = _player.getUniqueId();
 							}
 							DeliveryMenu.sendDelivery(user, worldGroup, sendTo, items, message);
 						})
