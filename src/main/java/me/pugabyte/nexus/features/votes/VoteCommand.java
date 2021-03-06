@@ -3,10 +3,20 @@ package me.pugabyte.nexus.features.votes;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.*;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.vote.*;
+import me.pugabyte.nexus.models.vote.TopVoter;
+import me.pugabyte.nexus.models.vote.Vote;
+import me.pugabyte.nexus.models.vote.VoteService;
+import me.pugabyte.nexus.models.vote.VoteSite;
+import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -16,7 +26,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static me.pugabyte.nexus.utils.StringUtils.progressBar;
@@ -46,7 +60,7 @@ public class VoteCommand extends CustomCommand {
 		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
 				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		line();
-		send(json("&3Server goal: " + progressBar(sum, 2000, NONE, 75) + " &e" + sum + "&3/&e2000")
+		send(json("&3Server goal: " + progressBar(sum, 4000, NONE, 75) + " &e" + sum + "&3/&e4000")
 				.hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
