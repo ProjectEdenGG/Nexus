@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.event.EventHandler;
@@ -40,7 +41,8 @@ public class VoteCrate extends Crate {
 	public void onItemSpawn(CrateSpawnItemEvent event) {
 		CrateLoot loot = event.getCrateLoot();
 		if (loot.getWeight() > .25) return;
-		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() + " &3has gotten " + loot.getTitle() + " &3from the &eVote Crate");
+		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() +
+				" &3has gotten " + loot.getTitle() + " &3from the &eVote Crate", MuteMenuItem.EVENT_ANNOUNCEMENTS);
 		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten " +
 				(loot.getItems().contains(CrateType.MYSTERY.getKey()) ? "a " : "") +
 				StringUtils.stripColor(loot.getTitle()) + " from the Vote Crate");

@@ -23,7 +23,7 @@ public class MuteMenuProvider extends MenuUtils implements InventoryProvider {
 		FIRSTJOIN("First Join Sounds", new ItemStack(Material.GOLD_BLOCK)),
 		JQSOUND("Join/Quit Sounds", new ItemStack(Material.NOTE_BLOCK)),
 		JQ("Join/Quit Messages", new ItemStack(Material.OAK_FENCE_GATE)),
-		EVENT_ANNOUNCEMENTS("Event Announcements", new ItemStack(Material.WITHER_SKELETON_SKULL)), // TODO
+		EVENT_ANNOUNCEMENTS("Event Announcements", new ItemStack(Material.WITHER_SKELETON_SKULL)),
 		MINIGAME_ANNOUNCEMENTS("Minigame Announcements", new ItemStack(Material.DIAMOND_SWORD)); // TODO
 
 		public String title;
