@@ -26,7 +26,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -123,6 +131,10 @@ public class PlayerUtils {
 
 	public static boolean isAdminGroup(Player player) {
 		return player.hasPermission("group.admin");
+	}
+
+	public static boolean isSelf(OfflinePlayer player1, OfflinePlayer player2) {
+		return player1.getUniqueId().equals(player2.getUniqueId());
 	}
 
 	public static boolean canSee(OfflinePlayer viewer, OfflinePlayer target) {
