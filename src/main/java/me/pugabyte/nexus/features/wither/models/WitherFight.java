@@ -41,6 +41,7 @@ public abstract class WitherFight implements Listener {
 	public List<Location> playerPlacedBlocks = new ArrayList<>();
 	public List<Blaze> blazes = new ArrayList<>();
 	public boolean shouldRegen = true;
+	public boolean gotStar = false;
 
 	public abstract WitherChallenge.Difficulty getDifficulty();
 
@@ -75,6 +76,7 @@ public abstract class WitherFight implements Listener {
 			if (getAlternateDrops() != null)
 				PlayerUtils.giveItemsAndDeliverExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
 		if (shouldGiveStar()) {
+			gotStar = true;
 			PlayerUtils.giveItemsAndDeliverExcess(itemReceiver, Collections.singleton(new ItemStack(Material.NETHER_STAR)), null, WorldGroup.SURVIVAL);
 			broadcastToParty("&3Congratulations! You have gotten a wither star for this fight!");
 		} else {
@@ -222,17 +224,17 @@ public abstract class WitherFight implements Listener {
 		Wither wither = (Wither) event.getEntity();
 		if (wither != this.wither) return;
 
+		giveItems();
+
 		int partySize = party.size();
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + host.getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" successfully beaten the Wither in " +
-				getDifficulty().getTitle() + " &3mode");
+				getDifficulty().getTitle() + " &3mode. " + (gotStar ? "They got the star for this fight." : "They did not get a star for this fight."));
 		Chat.broadcastDiscord("**[Wither]** " + host.getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
-				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode");
+				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "They got the star for this fight." : "They did not get a star for this fight."));
 
-
-		giveItems();
 		Tasks.wait(Time.SECOND.x(10), () -> {
 			WitherChallenge.currentFight.getAlivePlayers().forEach(uuid -> {
 				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
