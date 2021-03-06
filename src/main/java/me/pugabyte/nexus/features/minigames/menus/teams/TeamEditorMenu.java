@@ -100,11 +100,45 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				}
 			})));
 
+		contents.set(2, 2, ClickableItem.from(nameItem(
+				Material.SKELETON_SKULL,
+				"&eMinimum Players",
+				"&7Set to -1 to disable||&7minimum players.|| ||&3Current Value:||&e" + team.getMinPlayers()
+				),
+				e -> openAnvilMenu(player, arena, team, String.valueOf(team.getMinPlayers()), (p, text) -> {
+					if (Utils.isInt(text)) {
+						team.setMinPlayers(Integer.parseInt(text));
+						arena.write();
+						teamMenus.openTeamsEditorMenu(player, arena, team);
+						return AnvilGUI.Response.text(text);
+					} else {
+						PlayerUtils.send(player, Minigames.PREFIX + "The minimum players value must be an integer.");
+						return AnvilGUI.Response.close();
+					}
+				})));
+
 		contents.set(2, 4, ClickableItem.from(nameItem(
 					Material.CHEST,
 					"&eLoadout"
 				),
 				e -> teamMenus.openLoadoutMenu(player, arena, team)));
+
+		contents.set(2, 6, ClickableItem.from(nameItem(
+				Material.PLAYER_HEAD,
+				"&eMaximum Players",
+				"&7Set to -1 to disable||&7maximum players.|| ||&3Current Value:||&e" + team.getMaxPlayers()
+				),
+				e -> openAnvilMenu(player, arena, team, String.valueOf(team.getMaxPlayers()), (p, text) -> {
+					if (Utils.isInt(text)) {
+						team.setMaxPlayers(Integer.parseInt(text));
+						arena.write();
+						teamMenus.openTeamsEditorMenu(player, arena, team);
+						return AnvilGUI.Response.text(text);
+					} else {
+						PlayerUtils.send(player, Minigames.PREFIX + "The minimum players value must be an integer.");
+						return AnvilGUI.Response.close();
+					}
+				})));
 	}
 
 	@Override
