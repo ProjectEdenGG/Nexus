@@ -7,16 +7,41 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.wither.BeginningCutscene;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
-import me.pugabyte.nexus.utils.*;
-import org.bukkit.*;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Blaze;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.PiglinBrute;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -33,7 +58,7 @@ import java.util.UUID;
 @Data
 public abstract class WitherFight implements Listener {
 
-	public OfflinePlayer host;
+	public UUID host;
 	public List<UUID> party;
 	public List<UUID> alivePlayers;
 	public Wither wither;
@@ -57,6 +82,14 @@ public abstract class WitherFight implements Listener {
 		new BeginningCutscene().run().thenAccept(this::spawnWither);
 	}
 
+	public OfflinePlayer getHostOfflinePlayer() {
+		return PlayerUtils.getPlayer(host);
+	}
+
+	public Player getHostPlayer() {
+		return getHostOfflinePlayer().getPlayer();
+	}
+
 	public void broadcastToParty(String message) {
 		for (UUID player : party)
 			PlayerUtils.send(player, WitherChallenge.PREFIX + message);
@@ -64,14 +97,15 @@ public abstract class WitherFight implements Listener {
 
 	public void teleportPartyToArena() {
 		alivePlayers = party;
-		for (UUID player : party) {
-			if (PlayerUtils.getPlayer(player).getPlayer() != null)
-				PlayerUtils.getPlayer(player).getPlayer().teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
+		for (UUID uuid : party) {
+			Player player = PlayerUtils.getPlayer(uuid).getPlayer();
+			if (player != null)
+				player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
 		}
 	}
 
 	public void giveItems() {
-		Player itemReceiver = host.getPlayer();
+		OfflinePlayer itemReceiver = getHostOfflinePlayer();
 		if (getDifficulty() == WitherChallenge.Difficulty.CORRUPTED)
 			if (getAlternateDrops() != null)
 				PlayerUtils.giveItemsAndDeliverExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
@@ -207,10 +241,10 @@ public abstract class WitherFight implements Listener {
 		Warps.spawn(player);
 		if (alivePlayers.size() == 0) {
 			int partySize = party.size();
-			Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + host.getName() +
+			Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode");
-			Chat.broadcastDiscord("**[Wither]** " + host.getName() +
+			Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 					" lost to the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode");
 			WitherChallenge.reset();
@@ -227,11 +261,11 @@ public abstract class WitherFight implements Listener {
 		giveItems();
 
 		int partySize = party.size();
-		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + host.getName() +
+		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" successfully beaten the Wither in " +
 				getDifficulty().getTitle() + " &3mode. " + (gotStar ? "They got the star for this fight." : "They did not get a star for this fight."));
-		Chat.broadcastDiscord("**[Wither]** " + host.getName() +
+		Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "They got the star for this fight." : "They did not get a star for this fight."));
 
