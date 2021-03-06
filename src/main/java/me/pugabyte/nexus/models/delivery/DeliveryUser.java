@@ -18,6 +18,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,6 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.StringUtils.asOxfordList;
 
 @Data
 @Builder
@@ -43,12 +47,12 @@ public class DeliveryUser extends PlayerOwnedObject {
 	private Map<WorldGroup, List<Delivery>> deliveries = new HashMap<>();
 
 	@Getter
-	private static final List<WorldGroup> supportedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK);
+	private static final List<WorldGroup> supportedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
 
 	public void add(WorldGroup worldGroup, Delivery delivery) {
 		List<Delivery> deliveries = get(worldGroup);
 		deliveries.add(delivery);
-		getDeliveries().put(worldGroup, deliveries);
+		this.deliveries.put(worldGroup, deliveries);
 	}
 
 	public List<Delivery> get(WorldGroup worldGroup) {
@@ -62,11 +66,37 @@ public class DeliveryUser extends PlayerOwnedObject {
 	public void remove(WorldGroup worldGroup, Delivery delivery) {
 		List<Delivery> deliveries = get(worldGroup);
 		deliveries.remove(delivery);
-		getDeliveries().put(worldGroup, deliveries);
+		if (deliveries.isEmpty())
+			this.deliveries.remove(worldGroup);
+		else
+			this.deliveries.put(worldGroup, deliveries);
+	}
+
+	public Map<WorldGroup, List<Delivery>> getDeliveries() {
+		new HashMap<>(deliveries).forEach((worldGroup, deliveries) -> {
+			if (deliveries.isEmpty())
+				this.deliveries.remove(worldGroup);
+		});
+
+		return deliveries;
 	}
 
 	public void sendNotification() {
-		send(json(DeliveryCommand.PREFIX + "&3You have an unclaimed delivery, use &c/delivery &3to claim it!")
+		String message;
+		List<String> groups = getDeliveries().keySet().stream()
+				.map(StringUtils::camelCase)
+				.collect(Collectors.toList());
+
+		if (groups.isEmpty())
+			return;
+
+		if (groups.size() == 1)
+			message = "an unclaimed delivery in &e" + groups.get(0);
+		else {
+			message = "unclaimed deliveries in &e" + asOxfordList(groups, "&3, &e");
+		}
+
+		send(json(DeliveryCommand.PREFIX + "&3You have " + message + "&3, use &c/delivery &3to claim it!")
 				.command("/delivery")
 				.hover("&eClick to view deliveries"));
 	}

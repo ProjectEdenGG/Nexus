@@ -1,11 +1,9 @@
 package me.pugabyte.nexus.features.delivery.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.Pagination;
-import fr.minuskube.inv.content.SlotIterator;
-import me.pugabyte.nexus.features.delivery.DeliveryMenu;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
@@ -21,6 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+
 public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryProvider {
 	private final DeliveryService service = new DeliveryService();
 	private final DeliveryUser user;
@@ -32,8 +32,18 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 	}
 
 	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.provider(this)
+				.size(6, 9)
+				.title(colorize("&3Your Deliveries"))
+				.build()
+				.open(user.getPlayer(), page);
+	}
+
+	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> DeliveryMenu.open(user, worldGroup));
+		addBackItem(contents, e -> new DeliveryMenuProvider(user, worldGroup).open(player));
 
 		ItemStack info = new ItemBuilder(Material.BOOK).name("&3Info")
 				.lore("&eOpened deliveries cannot be closed",
@@ -44,9 +54,8 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 
 		contents.set(0, 8, ClickableItem.empty(info));
 
-		Pagination page = contents.pagination();
 		List<ClickableItem> items = new ArrayList<>();
-		List<Delivery> deliveries = user.getDeliveries().get(worldGroup);
+		List<Delivery> deliveries = user.get(worldGroup);
 		if (!Utils.isNullOrEmpty(deliveries)) {
 			for (Delivery delivery : deliveries) {
 				List<String> lore = new ArrayList<>();
@@ -69,22 +78,12 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 				items.add(ClickableItem.from(item, e -> {
 					user.remove(worldGroup, delivery);
 					service.save(user);
-					DeliveryMenu.openDelivery(user, worldGroup, delivery);
+					new OpenDeliveryMenuProvider(user, worldGroup, delivery).open(player);
 				}));
 			}
 		}
 
-		page.setItems(items.toArray(new ClickableItem[0]));
-		page.setItemsPerPage(36);
-		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-		// Arrows
-		if (!page.isFirst())
-			contents.set(5, 0, ClickableItem.from(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
-					DeliveryMenu.viewDeliveries(user, worldGroup, page.previous().getPage())));
-		if (!page.isLast())
-			contents.set(5, 8, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
-					DeliveryMenu.viewDeliveries(user, worldGroup, page.next().getPage())));
+		addPagination(player, contents, items);
 	}
 
 	@Override

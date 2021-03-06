@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.delivery;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.delivery.providers.DeliveryMenuProvider;
 import me.pugabyte.nexus.features.delivery.providers.OpenDeliveryMenuProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -13,7 +14,9 @@ import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +24,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,7 +49,7 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 		if (!DeliveryUser.getSupportedWorldGroups().contains(worldGroup))
 			error("You cannot do that in this world");
 
-		DeliveryMenu.open(user, worldGroup());
+		new DeliveryMenuProvider(user, worldGroup()).open(player());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -69,27 +71,26 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
-		processEvent(event);
-	}
-
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		processEvent(event);
-	}
-
-	public void processEvent(PlayerEvent event) {
 		Player player = event.getPlayer();
 		WorldGroup worldGroup = WorldGroup.get(player);
 		DeliveryUser user = service.get(player);
 
-		if (!user.getDeliveries().containsKey(worldGroup)) return;
-		if (user.getDeliveries().get(worldGroup) == null) return;
+		List<Delivery> deliveries = new ArrayList<>(user.get(worldGroup));
+		if (Utils.isNullOrEmpty(deliveries))
+			return;
 
-		List<Delivery> deliveries = new ArrayList<>(user.getDeliveries().get(worldGroup));
-		if (deliveries.size() == 0) return;
-		if (!new CooldownService().check(player, "deliveryReminder", Time.HOUR.x(1))) return;
+		if (!new CooldownService().check(player, "deliveryReminder", Time.MINUTE.x(5)))
+			return;
 
 		user.sendNotification();
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		DeliveryUser user = service.get(event.getPlayer());
+
+		if (!user.getDeliveries().isEmpty())
+			Tasks.wait(3, user::sendNotification);
 	}
 
 }

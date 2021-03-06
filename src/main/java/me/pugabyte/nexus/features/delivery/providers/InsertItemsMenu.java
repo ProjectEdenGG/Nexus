@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.delivery.providers;
 
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.delivery.DeliveryMenu;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -54,6 +53,6 @@ public class InsertItemsMenu implements Listener {
 
 		Nexus.unregisterListener(this);
 		event.getPlayer().closeInventory();
-		Tasks.wait(1, () -> DeliveryMenu.sendDelivery(user, worldGroup, sendTo, items, message));
+		Tasks.wait(1, () -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(user.getPlayer()));
 	}
 }

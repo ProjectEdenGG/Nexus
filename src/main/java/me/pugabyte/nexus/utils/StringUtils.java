@@ -234,6 +234,16 @@ public class StringUtils {
 				.collect(Collectors.joining("_"));
 	}
 
+	public static String asOxfordList(List<String> items, String separator) {
+		if (!separator.contains(", "))
+			throw new InvalidInputException("Separator must contain ', '");
+
+		String message = String.join(separator, items);
+		int commaIndex = message.lastIndexOf(", ");
+		message = new StringBuilder(message).replace(commaIndex, commaIndex + 2, (items.size() > 2 ? "," : "") + " and ").toString();
+		return message;
+	}
+
 	public static String listFirst(String string, String delimiter) {
 		return string.split(delimiter)[0];
 	}

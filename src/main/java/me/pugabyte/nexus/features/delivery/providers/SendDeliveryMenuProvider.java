@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.delivery.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import joptsimple.internal.Strings;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.delivery.DeliveryMenu;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
@@ -25,15 +25,19 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.features.delivery.DeliveryCommand.PREFIX;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProvider {
 	private final DeliveryService service = new DeliveryService();
 	private final DeliveryUser user;
 	private final WorldGroup worldGroup;
-	UUID sendTo;
-	List<ItemStack> items;
-	String message;
+	private UUID sendTo;
+	private List<ItemStack> items;
+	private String message;
 
+	public SendDeliveryMenuProvider(DeliveryUser user, WorldGroup worldGroup) {
+		this(user, worldGroup, null, null, null);
+	}
 
 	public SendDeliveryMenuProvider(DeliveryUser user, WorldGroup worldGroup, UUID sendTo, List<ItemStack> items, String message) {
 		this.user = user;
@@ -44,8 +48,18 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 	}
 
 	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.provider(this)
+				.size(3, 9)
+				.title(colorize("&3Send A Delivery"))
+				.build()
+				.open(user.getPlayer());
+	}
+
+	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> DeliveryMenu.open(user, worldGroup));
+		addBackItem(contents, e -> new DeliveryMenuProvider(user, worldGroup).open(player));
 
 		ItemBuilder playerName = new ItemBuilder(Material.NAME_TAG).name("Insert Player Name");
 		if (sendTo != null)
@@ -87,9 +101,9 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 								if (!PlayerUtils.isSelf(player, _player))
 									sendTo = _player.getUniqueId();
 							}
-							DeliveryMenu.sendDelivery(user, worldGroup, sendTo, items, message);
+							new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player);
 						})
-						.onError((lines, ex) -> DeliveryMenu.sendDelivery(user, worldGroup, sendTo, items, message))
+						.onError((lines, ex) -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player))
 						.open(player)));
 		contents.set(1, 3, ClickableItem.from(insertItems.build(), e -> new InsertItemsMenu(user, worldGroup, sendTo, items, message)));
 		// TODO: open a book menu where the player can type a message

@@ -18,7 +18,7 @@ public class DeliveryService extends MongoService {
 	@Override
 	public <T> void saveSync(T object) {
 		DeliveryUser user = (DeliveryUser) object;
-		if (user.getDeliveries().values().stream().anyMatch(list -> !list.isEmpty()))
+		if (!user.getDeliveries().isEmpty())
 			super.saveSync(object);
 		else
 			super.delete(object);
