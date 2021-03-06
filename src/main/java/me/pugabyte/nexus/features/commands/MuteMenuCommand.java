@@ -35,6 +35,8 @@ public class MuteMenuCommand extends CustomCommand {
 
 	public static class MuteMenuProvider extends MenuUtils implements InventoryProvider {
 
+		private final MuteMenuService service = new MuteMenuService();
+
 		@Getter
 		@AllArgsConstructor
 		@RequiredArgsConstructor
@@ -68,8 +70,6 @@ public class MuteMenuCommand extends CustomCommand {
 					.build()
 					.open(viewer);
 		}
-
-		MuteMenuService service = new MuteMenuService();
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
@@ -107,11 +107,13 @@ public class MuteMenuCommand extends CustomCommand {
 					PlayerUtils.runCommand(player, "ch join " + item.name().replace("CHANNEL_", "").toLowerCase());
 				else
 					PlayerUtils.runCommand(player, "ch leave " + item.name().replace("CHANNEL_", "").toLowerCase());
-			else
+			else {
 				if (user.hasMuted(item))
 					user.getMuted().remove(item);
 				else
 					user.getMuted().add(item);
+				service.save(user);
+			}
 		}
 
 		@Override
