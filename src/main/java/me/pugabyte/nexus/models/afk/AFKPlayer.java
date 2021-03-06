@@ -3,9 +3,11 @@ package me.pugabyte.nexus.models.afk;
 import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.afk.events.NowAFKEvent;
+import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -113,9 +115,10 @@ public class AFKPlayer {
 				return;
 			if (_player.getUniqueId() == getPlayer().getUniqueId())
 				return;
+			if (MuteMenuUser.hasMuted(_player, MuteMenuItem.AFK))
+				return;
 
-			// TODO: Mute menu
-			PlayerUtils.send(_player, (broadcast));
+			PlayerUtils.send(_player, broadcast);
 		});
 	}
 

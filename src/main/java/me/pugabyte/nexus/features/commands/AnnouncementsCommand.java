@@ -10,6 +10,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.AnnouncementsCommand.AnnouncementConfig.Announcement;
 import me.pugabyte.nexus.features.commands.AnnouncementsCommand.AnnouncementConfig.Announcement.AnnouncementCondition;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -23,6 +24,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
@@ -493,6 +495,9 @@ public class AnnouncementsCommand extends CustomCommand implements Listener {
 				if (motd) {
 					PlayerUtils.send(player, text);
 				} else {
+					if (MuteMenuUser.hasMuted(player, MuteMenuItem.AUTO))
+						return;
+
 					PlayerUtils.send(player, "");
 					PlayerUtils.send(player, getJson());
 					PlayerUtils.send(player, "");

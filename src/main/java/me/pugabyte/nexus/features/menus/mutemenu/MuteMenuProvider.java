@@ -5,27 +5,26 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.models.mutemenu.MuteMenu;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuService;
+import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-
 public class MuteMenuProvider extends MenuUtils implements InventoryProvider {
 
 	@Getter
 	public enum MuteMenuItem {
-		GLOBAL("Global and Discord", new ItemStack(Material.GREEN_WOOL)),
+		GLOBAL("Global and Discord Chat", new ItemStack(Material.GREEN_WOOL)),
 		LOCAL("Local Chat", new ItemStack(Material.YELLOW_WOOL)),
 		AUTO("Automatic Broadcasts", new ItemStack(Material.REPEATER)),
-		JQ("Join/Quit Messages", new ItemStack(Material.OAK_FENCE_GATE)),
+		AFK("AFK Announcements", new ItemStack(Material.REDSTONE_LAMP)),
 		FIRSTJOIN("First Join Sounds", new ItemStack(Material.GOLD_BLOCK)),
 		JQSOUND("Join/Quit Sounds", new ItemStack(Material.NOTE_BLOCK)),
-		AFK("AFK Announcements", new ItemStack(Material.REDSTONE_LAMP)),
-		MINIGAME_ANNOUNCEMENTS("Minigame Announcements", new ItemStack(Material.DIAMOND_SWORD));
+		JQ("Join/Quit Messages", new ItemStack(Material.OAK_FENCE_GATE)),
+		EVENT_ANNOUNCEMENTS("Event Announcements", new ItemStack(Material.WITHER_SKELETON_SKULL)), // TODO
+		MINIGAME_ANNOUNCEMENTS("Minigame Announcements", new ItemStack(Material.DIAMOND_SWORD)); // TODO
 
 		public String title;
 		public ItemStack itemStack;
@@ -39,15 +38,19 @@ public class MuteMenuProvider extends MenuUtils implements InventoryProvider {
 	MuteMenuService service = new MuteMenuService();
 
 	@Override
-	public void init(Player player, InventoryContents inventoryContents) {
-		MuteMenu settings = service.get(player.getUniqueId().toString());
-		int row = 2;
-		int column = 2;
+	public void init(Player player, InventoryContents contents) {
+		addCloseItem(contents);
+
+		MuteMenuUser user = service.get(player.getUniqueId());
+		int row = 1;
+		int column = 1;
 		for (MuteMenuItem item : MuteMenuItem.values()) {
 			ItemStack stack = nameItem(item.getItemStack(), "&e" + item.getTitle());
-			if (settings.getUuid() != null)
+			if (user.hasMuted(item))
 				addGlowing(stack);
-			inventoryContents.set(column, row, ClickableItem.empty(stack));
+
+			contents.set(column, row, ClickableItem.from(stack, e -> toggleMute(user, item)));
+
 			if (row == 8) {
 				row = 2;
 				column++;
@@ -56,15 +59,20 @@ public class MuteMenuProvider extends MenuUtils implements InventoryProvider {
 		}
 	}
 
-	public void mute(Player player, MuteMenuItem item) {
-		MuteMenu settings = service.get(player.getUniqueId().toString());
-		if (Arrays.asList("GLOBAL", "LOCAL").contains(item.name())) {
-			PlayerUtils.runCommand(player, "ch leave " + item.name().toLowerCase());
+	public void toggleMute(MuteMenuUser user, MuteMenuItem item) {
+		Player player = user.getPlayer();
+		switch (item) {
+			case GLOBAL:
+			case LOCAL:
+				if (user.hasMuted(item))
+					PlayerUtils.runCommand(player, "ch join " + item.name().toLowerCase());
+				else
+					PlayerUtils.runCommand(player, "ch leave " + item.name().toLowerCase());
+				break;
 		}
 	}
 
 	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
+	public void update(Player player, InventoryContents contents) {
 	}
 }

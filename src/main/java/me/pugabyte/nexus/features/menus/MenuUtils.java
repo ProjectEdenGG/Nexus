@@ -36,18 +36,27 @@ import static me.pugabyte.nexus.utils.StringUtils.loreize;
 
 public abstract class MenuUtils {
 
+	public static int getRows(int items) {
+		return getRows(items, 2, 9);
+	}
+
+	public static int getRows(int items, int extraRows) {
+		return getRows(items, extraRows, 9);
+	}
+
+	public static int getRows(int items, int extraRows, int itemsAcross) {
+		return (int) Math.min(6, Math.ceil(Integer.valueOf(items).doubleValue() / itemsAcross) + extraRows);
+	}
+
 	public void open(Player player) {
 		open(player, 0);
 	}
 
-	public void open(Player viewer, int page) {}
+	public void open(Player viewer, int page) {
+	}
 
 	protected ItemStack addGlowing(ItemStack itemStack) {
 		return ItemBuilder.glow(itemStack);
-	}
-
-	public int getRows(int items) {
-		return (int) Math.ceil((double) items / 9);
 	}
 
 	protected ItemStack nameItem(Material material, String name) {

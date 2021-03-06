@@ -47,7 +47,7 @@ public class MinigamesMenus extends MenuUtils {
 		SmartInventory INV = SmartInventory.builder()
 				.id("mechanicMenu")
 				.title("Game Mechanic Type")
-				.size(1 + getRows(MechanicType.values().length), 9)
+				.size(getRows(MechanicType.values().length, 1), 9)
 				.provider(new MechanicsMenu(arena))
 				.build();
 		INV.open(player);

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -110,6 +112,9 @@ public class SoundUtils {
 		FIRST_JOIN {
 			@Override
 			public void play(Player player) {
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.FIRSTJOIN))
+					return;
+
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, .3F, 0.561231F);
@@ -133,6 +138,9 @@ public class SoundUtils {
 		JOIN {
 			@Override
 			public void play(Player player) {
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JQ))
+					return;
+
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.5F));
 				Tasks.wait(wait += 2, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.667420F));
@@ -144,6 +152,9 @@ public class SoundUtils {
 		QUIT {
 			@Override
 			public void play(Player player) {
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JQ))
+					return;
+
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.707107F));
 				Tasks.wait(wait += 4, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.629961F));

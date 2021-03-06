@@ -8,10 +8,12 @@ import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.chat.bridge.RoleManager;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -68,9 +70,9 @@ public class JoinQuit extends Feature implements Listener {
 		if (player.isOnline()) {
 			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + new Nerd(player).getName() + "&5");
 
-			// TODO: mutemenu
 			Bukkit.getOnlinePlayers().forEach(_player -> {
-				PlayerUtils.send(_player, ingame);
+				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JQ))
+					PlayerUtils.send(_player, ingame);
 
 				if (!player.hasPlayedBefore())
 					Jingle.FIRST_JOIN.playAll();

@@ -1,16 +1,16 @@
 package me.pugabyte.nexus.models.mutemenu;
 
-import me.pugabyte.nexus.models.MySQLService;
+import me.pugabyte.nexus.models.MongoService;
 
-public class MuteMenuService extends MySQLService {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-	public MuteMenu get(String uuid) {
-		MuteMenu muteMenu = database.where("uuid = ?", uuid).first(MuteMenu.class);
-		if (muteMenu.getUuid() != null)
-			return muteMenu;
-		muteMenu = new MuteMenu(uuid);
-		save(muteMenu);
-		return muteMenu;
+public class MuteMenuService extends MongoService {
+	private final static Map<UUID, MuteMenuUser> cache = new HashMap<>();
+
+	@Override
+	public Map<UUID, MuteMenuUser> getCache() {
+		return cache;
 	}
-
 }
