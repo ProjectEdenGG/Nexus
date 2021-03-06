@@ -223,10 +223,14 @@ public abstract class Mechanic implements Listener {
 		return left(match.getArena().getName(), 16);
 	}
 
+	protected boolean renderTeamNames() {
+		return true;
+	}
+
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		Map<String, Integer> lines = new HashMap<>();
 
-		if (match.getMechanic() instanceof TeamMechanic)
+		if (renderTeamNames() && match.getMechanic() instanceof TeamMechanic)
 			for (Team team : match.getAliveTeams())
 				lines.put("- " + team.getColoredName(), team.getScore(match));
 
@@ -300,6 +304,12 @@ public abstract class Mechanic implements Listener {
 
 	public boolean isInRegion(Match match, Block block, String region) {
 		return match.getArena().isInRegion(block, region);
+	}
+
+	public void criticalErrorAbort(String message, Match match) {
+		Nexus.severe(message);
+		match.broadcast("&c" + message);
+		match.end();
 	}
 
 }

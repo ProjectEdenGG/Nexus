@@ -216,6 +216,11 @@ public class Minigamer {
 		}
 	}
 
+	public void setTeam(Team team) {
+		this.team = team;
+		this.match.getScoreboardTeams().update();
+	}
+
 	public void scored() {
 		scored(1);
 	}
