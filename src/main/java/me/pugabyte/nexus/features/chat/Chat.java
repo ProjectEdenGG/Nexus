@@ -5,8 +5,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.alerts.AlertsListener;
 import me.pugabyte.nexus.features.chat.bridge.IngameBridgeListener;
 import me.pugabyte.nexus.features.chat.translator.Translator;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
@@ -119,7 +119,7 @@ public class Chat extends Feature {
 		SKYBLOCK(PublicChannel.builder()
 				.name("Skyblock")
 				.nickname("B")
-				.color(ChatColor.AQUA)
+				.color(ChatColor.GOLD)
 				.local(false)
 				.crossWorld(false)
 				.build());

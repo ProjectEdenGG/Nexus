@@ -3,7 +3,7 @@ package me.pugabyte.nexus.models.afk;
 import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.afk.events.NowAFKEvent;

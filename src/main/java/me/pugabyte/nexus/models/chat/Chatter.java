@@ -32,6 +32,7 @@ public class Chatter extends PlayerOwnedObject {
 	private UUID uuid;
 	private Channel activeChannel;
 	private Set<PublicChannel> joinedChannels = new HashSet<>();
+	private Set<PublicChannel> leftChannels = new HashSet<>();
 	private PrivateChannel lastPrivateMessage;
 
 	public void playSound() {
@@ -76,23 +77,36 @@ public class Chatter extends PlayerOwnedObject {
 	public boolean hasJoined(PublicChannel channel) {
 		if (!canJoin(channel))
 			return false;
+		fixChannelSets();
+		if (leftChannels.contains(channel))
+			return false;
+		return joinedChannels.contains(channel);
+	}
+
+	public boolean hasLeft(PublicChannel channel) {
+		fixChannelSets();
+		return leftChannels.contains(channel);
+	}
+
+	private void fixChannelSets() {
 		if (joinedChannels == null)
 			joinedChannels = new HashSet<>();
-		return joinedChannels.contains(channel);
+		if (leftChannels == null)
+			leftChannels = new HashSet<>();
 	}
 
 	public void join(PublicChannel channel) {
 		if (!canJoin(channel))
 			throw new InvalidInputException("You do not have permission to join that channel");
-		if (joinedChannels == null)
-			joinedChannels = new HashSet<>();
+		fixChannelSets();
+		leftChannels.remove(channel);
 		joinedChannels.add(channel);
 	}
 
 	public void leave(PublicChannel channel) {
-		if (joinedChannels == null)
-			joinedChannels = new HashSet<>();
+		fixChannelSets();
 		joinedChannels.remove(channel);
+		leftChannels.add(channel);
 		if (activeChannel == channel && channel != ChatManager.getMainChannel())
 			setActiveChannel(ChatManager.getMainChannel());
 	}
@@ -111,7 +125,7 @@ public class Chatter extends PlayerOwnedObject {
 		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
 			ChatManager.getChannels().forEach(channel -> {
 				if (canJoin(channel)) {
-					if (!hasJoined(channel))
+					if (!hasJoined(channel) && !hasLeft(channel))
 						join(channel);
 				} else {
 					leave(channel);

@@ -2,11 +2,11 @@ package me.pugabyte.nexus.features.crates.crates;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -54,7 +54,7 @@ public class MysteryCrate extends Crate {
 		if (event.getCrateType() != getCrateType()) return;
 		if (!event.getCrateLoot().getItems().contains(new ItemStack(Material.BEACON))) return;
 		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() +
-				" &3has gotten a &eBeacon &3from the &eMystery Crate", MuteMenuItem.EVENT_ANNOUNCEMENTS);
+				" &3has gotten a &eBeacon &3from the &eMystery Crate", MuteMenuItem.EVENTS);
 		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten a Beacon from the Mystery Crate");
 	}
 

@@ -2,12 +2,12 @@ package me.pugabyte.nexus.features.crates.crates;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.event.EventHandler;
@@ -42,7 +42,7 @@ public class VoteCrate extends Crate {
 		CrateLoot loot = event.getCrateLoot();
 		if (loot.getWeight() > .25) return;
 		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() +
-				" &3has gotten " + loot.getTitle() + " &3from the &eVote Crate", MuteMenuItem.EVENT_ANNOUNCEMENTS);
+				" &3has gotten " + loot.getTitle() + " &3from the &eVote Crate", MuteMenuItem.EVENTS);
 		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten " +
 				(loot.getItems().contains(CrateType.MYSTERY.getKey()) ? "a " : "") +
 				StringUtils.stripColor(loot.getTitle()) + " from the Vote Crate");

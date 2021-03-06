@@ -6,9 +6,9 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.chat.bridge.RoleManager;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordService;
@@ -71,7 +71,7 @@ public class JoinQuit extends Feature implements Listener {
 			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + new Nerd(player).getName() + "&5");
 
 			Bukkit.getOnlinePlayers().forEach(_player -> {
-				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JQ))
+				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT))
 					PlayerUtils.send(_player, ingame);
 
 				if (!player.hasPlayedBefore())

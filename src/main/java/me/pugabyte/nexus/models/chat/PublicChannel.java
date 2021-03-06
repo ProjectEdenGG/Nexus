@@ -3,9 +3,9 @@ package me.pugabyte.nexus.models.chat;
 import lombok.Builder;
 import lombok.Data;
 import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
@@ -110,6 +110,10 @@ public class PublicChannel implements Channel {
 	public void broadcast(JsonBuilder message, MuteMenuItem muteMenuItem) {
 		broadcastIngame(message, muteMenuItem);
 		broadcastDiscord(message);
+	}
+
+	public void broadcastIngame(JsonBuilder builder) {
+		broadcastIngame(builder, null);
 	}
 
 	public void broadcastIngame(JsonBuilder builder, MuteMenuItem muteMenuItem) {

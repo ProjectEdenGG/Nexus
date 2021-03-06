@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.wither;
 import fr.minuskube.inv.SmartInventory;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -104,7 +104,7 @@ public class WitherCommand extends CustomCommand {
 		int partySize = WitherChallenge.currentFight.getParty().size();
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + WitherChallenge.currentFight.getHostPlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
-				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode", MuteMenuItem.EVENT_ANNOUNCEMENTS);
+				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode", MuteMenuItem.EVENTS);
 		Chat.broadcastDiscord("**[Wither]** " + WitherChallenge.currentFight.getHostPlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " are" : " is") +
 				" challenging the wither to a fight in " + StringUtils.camelCase(WitherChallenge.currentFight.getDifficulty().name()) + " mode");

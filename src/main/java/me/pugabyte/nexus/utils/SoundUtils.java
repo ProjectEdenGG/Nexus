@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -112,7 +112,7 @@ public class SoundUtils {
 		FIRST_JOIN {
 			@Override
 			public void play(Player player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.FIRSTJOIN))
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.FIRST_JOIN_SOUNDS))
 					return;
 
 				int wait = 0;
@@ -138,7 +138,7 @@ public class SoundUtils {
 		JOIN {
 			@Override
 			public void play(Player player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JQ))
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JOIN_QUIT))
 					return;
 
 				int wait = 0;
@@ -152,7 +152,7 @@ public class SoundUtils {
 		QUIT {
 			@Override
 			public void play(Player player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JQ))
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JOIN_QUIT))
 					return;
 
 				int wait = 0;
