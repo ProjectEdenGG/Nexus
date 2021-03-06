@@ -476,7 +476,7 @@ public class PlayerUtils {
 		if (player.isOnline())
 			excess = giveItemsGetExcess(player.getPlayer(), finalItems);
 		else
-			excess = (List<ItemStack>) items;
+			excess = new ArrayList<>(items);
 		if (Utils.isNullOrEmpty(excess)) return;
 		DeliveryService service = new DeliveryService();
 		DeliveryUser user = service.get(player);

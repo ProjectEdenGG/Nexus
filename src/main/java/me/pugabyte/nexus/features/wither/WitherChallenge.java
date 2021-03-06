@@ -10,7 +10,12 @@ import me.pugabyte.nexus.features.wither.fights.HardFight;
 import me.pugabyte.nexus.features.wither.fights.MediumFight;
 import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldEditUtils;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -59,9 +64,19 @@ public class WitherChallenge extends Feature implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		if (!new WorldGuardUtils(event.getPlayer().getWorld()).isInRegion(event.getPlayer().getLocation(), "witherarena"))
 			return;
-		if (currentFight == null) Warps.spawn(event.getPlayer());
-		if (currentFight.party == null) Warps.spawn(event.getPlayer());
-		if (currentFight.party.contains(event.getPlayer().getUniqueId())) return;
+
+		if (currentFight == null) {
+			Warps.spawn(event.getPlayer());
+			return;
+		}
+
+		if (currentFight.party == null) {
+			Warps.spawn(event.getPlayer());
+			return;
+		}
+
+		if (currentFight.party.contains(event.getPlayer().getUniqueId()))
+			return;
 		Warps.spawn(event.getPlayer());
 	}
 
@@ -84,9 +99,18 @@ public class WitherChallenge extends Feature implements Listener {
 	public void onTeleportIntoArena(PlayerTeleportEvent event) {
 		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena")) return;
 		if (PlayerUtils.isStaffGroup(event.getPlayer())) return;
-		if (currentFight == null) cancelTeleport(event);
-		if (currentFight.alivePlayers == null) cancelTeleport(event);
-		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId())) cancelTeleport(event);
+		if (currentFight == null) {
+			cancelTeleport(event);
+			return;
+		}
+
+		if (currentFight.alivePlayers == null) {
+			cancelTeleport(event);
+			return;
+		}
+
+		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId()))
+			cancelTeleport(event);
 	}
 
 	@EventHandler
