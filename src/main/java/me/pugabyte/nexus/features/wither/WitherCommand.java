@@ -7,7 +7,7 @@ import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.Redirects;
+import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -18,7 +18,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@Redirects.Redirect(from = "/wchat", to = "/wither chat")
+@Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
 
 	public WitherCommand(CommandEvent event) {

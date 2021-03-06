@@ -25,7 +25,7 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-public class DiamondTotemOfDying extends FunctionalRecipe {
+public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Getter
 	private static final ItemStack diamondTotemOfUndying = new ItemBuilder(Material.TOTEM_OF_UNDYING)

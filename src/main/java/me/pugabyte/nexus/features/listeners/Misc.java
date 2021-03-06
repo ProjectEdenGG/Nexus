@@ -295,27 +295,19 @@ public class Misc implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 
-		switch (WorldGroup.get(player)) {
-			case MINIGAMES:
-				Tasks.wait(5, () -> joinMinigames(player));
-				break;
-			case CREATIVE:
-				Tasks.wait(5, () -> joinCreative(player));
-				break;
-			case SKYBLOCK:
-			case SURVIVAL:
-				Tasks.wait(10, player::resetPlayerTime);
-				if (WorldGroup.get(event.getFrom()).equals(WorldGroup.CREATIVE) || WorldGroup.get(event.getFrom()).equals(WorldGroup.EVENT)) {
-					if (!player.hasPermission("essentials.speed"))
-						PlayerUtils.runCommandAsOp(player, "flyspeed 1");
-					if (!player.hasPermission("essentials.fly"))
-						player.setFlying(false);
-				}
-				break;
-		}
+		WorldGroup worldGroup = WorldGroup.get(player);
+		if (worldGroup == WorldGroup.MINIGAMES)
+			Tasks.wait(5, () -> joinMinigames(player));
+		else if (worldGroup == WorldGroup.CREATIVE)
+			Tasks.wait(5, () -> joinCreative(player));
 
-		if (!PlayerUtils.isStaffGroup(player))
+		Tasks.wait(10, player::resetPlayerTime);
+
+		if (!PlayerUtils.isStaffGroup(player)) {
 			SpeedCommand.resetSpeed(player);
+			player.setAllowFlight(false);
+			player.setFlying(false);
+		}
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
