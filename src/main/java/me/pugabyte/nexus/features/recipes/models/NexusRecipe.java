@@ -8,6 +8,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.CustomRecipes;
 import me.pugabyte.nexus.features.recipes.RecipeUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
@@ -55,7 +56,7 @@ public class NexusRecipe {
 		NexusRecipe recipe = new NexusRecipe(result);
 		recipe.getIngredients().add(new ItemStack(material));
 
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + ItemUtils.getName(result).toLowerCase()));
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + getItemName(result)));
 		ShapelessRecipe bukkitRecipe = new ShapelessRecipe(key, result);
 		bukkitRecipe.addIngredient(material);
 		bukkitRecipe.addIngredient(ingredients);
@@ -70,7 +71,7 @@ public class NexusRecipe {
 		NexusRecipe recipe = new NexusRecipe(result);
 		Arrays.asList(ingredients).forEach(mat -> recipe.getIngredients().add(new ItemStack(mat)));
 
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + ItemUtils.getName(result).toLowerCase()));
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + getItemName(result)));
 		ShapelessRecipe bukkitRecipe = new ShapelessRecipe(key, result);
 		for (Material material : ingredients)
 			bukkitRecipe.addIngredient(material);
@@ -85,7 +86,7 @@ public class NexusRecipe {
 		recipe.setPattern(pattern);
 		Arrays.asList(ingredients).forEach(mat -> recipe.getIngredients().add(new ItemStack(mat)));
 
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + ItemUtils.getName(result).toLowerCase());
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + getItemName(result));
 		recipe.setRecipe(shapedRecipe(key, result, pattern, ingredients));
 
 		CustomRecipes.recipes.add(recipe);
@@ -123,7 +124,7 @@ public class NexusRecipe {
 		recipe.setMaterialChoice(surround);
 		recipe.getIngredients().add(center);
 
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + ItemUtils.getName(result).toLowerCase());
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + getItemName(result));
 		recipe.setRecipe(surroundRecipe(key, result, center, surround));
 
 		CustomRecipes.recipes.add(recipe);
@@ -157,5 +158,9 @@ public class NexusRecipe {
 			Nexus.log("Error while adding custom recipe " + ((Keyed) getRecipe()).getKey());
 			ex.printStackTrace();
 		}
+	}
+
+	private static String getItemName(ItemStack result) {
+		return StringUtils.stripColor(ItemUtils.getName(result).replaceAll(" ", "_").trim().toLowerCase());
 	}
 }

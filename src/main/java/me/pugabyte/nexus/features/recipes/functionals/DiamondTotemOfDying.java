@@ -29,6 +29,7 @@ public class DiamondTotemOfDying extends FunctionalRecipe {
 	@Getter
 	private static final ItemStack diamondTotemOfUndying = new ItemBuilder(Material.TOTEM_OF_UNDYING)
 			.name("&bDiamond Totem Of Undying")
+			.lore("&7Activates from anywhere", "&7in your inventory")
 			.customModelData(1)
 			.build();
 
@@ -85,7 +86,6 @@ public class DiamondTotemOfDying extends FunctionalRecipe {
 		// Move item from offhand
 		ItemStack offHand = inv.getItemInOffHand();
 		if (!ItemUtils.isNullOrAir(offHand)) {
-			PlayerUtils.giveItem(player, inv.getItemInOffHand());
 			Tasks.wait(1, () -> inv.setItemInOffHand(offHand));
 		}
 

@@ -8,12 +8,16 @@ import me.pugabyte.nexus.features.recipes.models.RecipeType;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.potion.PotionEffectType;
 import org.reflections.Reflections;
@@ -47,13 +51,30 @@ public class CustomRecipes extends Feature implements Listener {
 		});
 	}
 
+	public NexusRecipe getCraftByRecipe(Recipe result) {
+		return recipes.stream().filter(nexusRecipe ->
+				((Keyed) nexusRecipe.getRecipe()).getKey().equals(((Keyed) result).getKey())).findFirst().orElse(null);
+	}
+
 	public NexusRecipe getCraftByResult(ItemStack result) {
 		return recipes.stream().filter(nexusRecipe -> nexusRecipe.getResult().equals(result)).findFirst().orElse(null);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPreCraft(PrepareItemCraftEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player)) return;
+		if (event.getRecipe() == null) return;
+		NexusRecipe recipe = getCraftByRecipe(event.getRecipe());
+		if (recipe == null) return;
+		if (recipe.getPermission() != null && !event.getView().getPlayer().hasPermission(recipe.getPermission()))
+			event.getInventory().setResult(null);
+		else if (recipe.getResult().hasItemMeta())
+			event.getInventory().setResult(recipe.getResult());
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onCraft(CraftItemEvent event) {
-		NexusRecipe recipe = getCraftByResult(event.getRecipe().getResult());
+		NexusRecipe recipe = getCraftByRecipe(event.getRecipe());
 		if (recipe == null) return;
 		if (recipe.getPermission() == null) return;
 		if (!event.getWhoClicked().hasPermission(recipe.getPermission()))
