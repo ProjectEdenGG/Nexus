@@ -10,9 +10,12 @@ import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.nexus.utils.ColorType;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public interface MinigameScoreboard {
 
@@ -87,6 +90,11 @@ public interface MinigameScoreboard {
 
 		@Override
 		public void update() {
+			scoreboardTeams.forEach(((team, scoreboardTeam) -> {
+				Set<String> players = new HashSet<>(scoreboardTeam.getPlayers());
+				players.forEach(scoreboardTeam::removePlayer);
+			}));
+
 			match.getMinigamers().forEach(minigamer -> {
 				if (minigamer.getTeam() != null)
 					getScoreboardTeam(minigamer.getTeam());
