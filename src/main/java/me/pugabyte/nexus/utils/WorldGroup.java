@@ -15,13 +15,12 @@ public enum WorldGroup {
 			"legacy", "legacy_nether", "legacy_the_end",
 			"resource", "resource_nether", "resource_the_end",
 			"staff_world", "staff_world_nether", "staff_world_the_end",
-			"safepvp", "wither"),
+			"safepvp", "events"),
 	CREATIVE("creative", "buildcontest"),
 	MINIGAMES("gameworld", "blockball", "deathswap"),
 	SKYBLOCK("bskyblock_world", "bskyblock_world_nether", "bskyblock_world_the_end"),
 	ONEBLOCK("oneblock_world", "oneblock_world_nether"),
 	ADVENTURE("stranded", "aeveon_project"),
-	EVENT("2y", "events"),
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 

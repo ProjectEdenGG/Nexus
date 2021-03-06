@@ -56,10 +56,6 @@ public class CustomRecipes extends Feature implements Listener {
 				((Keyed) nexusRecipe.getRecipe()).getKey().equals(((Keyed) result).getKey())).findFirst().orElse(null);
 	}
 
-	public NexusRecipe getCraftByResult(ItemStack result) {
-		return recipes.stream().filter(nexusRecipe -> nexusRecipe.getResult().equals(result)).findFirst().orElse(null);
-	}
-
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreCraft(PrepareItemCraftEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player)) return;

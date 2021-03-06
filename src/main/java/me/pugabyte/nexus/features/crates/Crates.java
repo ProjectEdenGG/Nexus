@@ -9,12 +9,7 @@ import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
 import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.utils.EnumUtils;
-import me.pugabyte.nexus.utils.Env;
-import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -129,7 +124,14 @@ public class Crates extends Feature implements Listener {
 
 		CrateType keyType = CrateType.fromKey(event.getItem());
 		if (locationType != keyType && locationType != CrateType.ALL)
-			locationType.previewDrops(null).open(event.getPlayer());
+			try {
+				if (Crates.getLootByType(locationType).stream().filter(CrateLoot::isActive).toArray().length == 0)
+					throw new CrateOpeningException("&3Coming soon...");
+				else
+					locationType.previewDrops(null).open(event.getPlayer());
+			} catch (CrateOpeningException ex) {
+				PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
+			}
 		else if (keyType != null)
 			try {
 				if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)

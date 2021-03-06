@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.wither.fights;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
 import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.utils.EnumUtils;
@@ -14,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -45,7 +47,11 @@ public class CorruptedFight extends WitherFight {
 
 	@Override
 	public List<ItemStack> getAlternateDrops() {
-		return null;
+		return new ArrayList<ItemStack>() {{
+			ItemStack key = CrateType.BOSS.getKey();
+			key.setAmount(2);
+			add(key);
+		}};
 	}
 
 	@EventHandler

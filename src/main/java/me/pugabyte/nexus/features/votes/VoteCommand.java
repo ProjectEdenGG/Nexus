@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.votes;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -9,14 +10,13 @@ import me.pugabyte.nexus.models.vote.*;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static me.pugabyte.nexus.utils.StringUtils.progressBar;
@@ -116,13 +116,13 @@ public class VoteCommand extends CustomCommand {
 		send(PREFIX + "Done");
 	}
 
-	@Path("calcFebKeys [amount]")
+	@Path("calcFebKeys")
 	@Permission("group.admin")
-	void calcFebKeys(@Arg("50") int amount) {
+	void calcFebKeys() {
 		Map<String, Integer> voteKey = new HashMap<>();
 		List<TopVoter> topVoters = new VoteService().getTopVoters(Month.FEBRUARY);
 		for (TopVoter topVoter : topVoters) {
-			if (topVoter.getCount() < amount) continue;
+			if (topVoter.getCount() < 50) continue;
 			voteKey.put(topVoter.getUuid(), 1);
 		}
 		for (TopVoter topVoter : topVoters) {
@@ -137,7 +137,15 @@ public class VoteCommand extends CustomCommand {
 		voteKey.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(e -> {
 			paste.append(PlayerUtils.getPlayer(e.getKey()).getName() + ": " + e.getValue() + "\n");
 		});
-		send(StringUtils.paste(paste.toString()));
+		for (String name : voteKey.keySet()) {
+			OfflinePlayer player = PlayerUtils.getPlayer(name);
+			ItemStack key = CrateType.FEB_VOTE_REWARD.getKey();
+			key.setAmount(voteKey.get(name));
+			PlayerUtils.giveItemsAndDeliverExcess(player, Collections.singleton(key), null, WorldGroup.SURVIVAL);
+			if (player.getPlayer() != null)
+				send(player.getPlayer(), PREFIX + "You have been given &e" + voteKey.get(name) + " February Vote Keys &3for the server monthly reward");
+		}
+		send(json(PREFIX + "February Vote Keys were given. &eClick here to view the amounts.").url(StringUtils.paste(paste.toString())).hover("&eOpens paste link"));
 	}
 
 	@ConverterFor(Voter.class)

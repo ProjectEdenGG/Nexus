@@ -6,9 +6,12 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
+import me.pugabyte.nexus.models.delivery.DeliveryService;
+import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import net.dv8tion.jda.annotations.ReplaceWith;
@@ -23,15 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -460,6 +455,25 @@ public class PlayerUtils {
 				excess.addAll(player.getInventory().addItem(item).values());
 
 		return excess;
+	}
+
+	public static void giveItemsAndDeliverExcess(OfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
+		List<ItemStack> finalItems = new ArrayList<>(items);
+		finalItems.removeIf(ItemUtils::isNullOrAir);
+		List<ItemStack> excess;
+		if (player.isOnline())
+			excess = giveItemsGetExcess(player.getPlayer(), finalItems);
+		else
+			excess = (List<ItemStack>) items;
+		if (Utils.isNullOrEmpty(excess)) return;
+		DeliveryService service = new DeliveryService();
+		DeliveryUser user = service.get(player);
+		DeliveryUser.Delivery delivery = DeliveryUser.Delivery.serverDelivery(excess);
+		if (!Strings.isNullOrEmpty(message))
+			delivery.setMessage(message);
+		user.add(worldGroup, delivery);
+		service.save(user);
+		user.send(user.json(DeliveryCommand.PREFIX + "Your inventory was full. Excess items were given to you as a &c/delivery").command("/delivery").hover("&eClick to view deliveries"));
 	}
 
 	public static void dropExcessItems(Player player, List<ItemStack> excess) {

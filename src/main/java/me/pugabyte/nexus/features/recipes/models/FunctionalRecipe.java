@@ -33,7 +33,15 @@ public abstract class FunctionalRecipe extends NexusRecipe implements Listener {
 	 * Return a string array of length 3 with the pattern of the recipe. If shapeless, return null
 	 * Use spaces for air
 	 * Use # for Material Choice
+	 * Use Numbers in order that they appear in the matrix
+	 * IE:
+	 * ddd -> 111
+	 * dtd -> 121
+	 * ddd -> 111
 	 */
+	// ddd 111
+	// dtd 121
+	// ddd 111
 	@Override
 	public abstract String[] getPattern();
 

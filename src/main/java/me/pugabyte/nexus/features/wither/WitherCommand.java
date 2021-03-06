@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Redirects;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -17,7 +18,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@Permission("group.staff")
+@Redirects.Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
 
 	public WitherCommand(CommandEvent event) {
@@ -116,7 +117,17 @@ public class WitherCommand extends CustomCommand {
 				.start();
 	}
 
+	@Path("chat <message...>")
+	void chat(String message) {
+		if (WitherChallenge.currentFight == null)
+			error("There is currently no challenging party. You can make one with /wither challenge");
+		if (!WitherChallenge.currentFight.getParty().contains(player().getUniqueId()))
+			error("You are not in the challenging party.");
+		WitherChallenge.currentFight.broadcastToParty("&e" + name() + " &3> &e" + message);
+	}
+
 	@Path("reset")
+	@Permission("group.seniorstaff")
 	void reset() {
 		WitherChallenge.reset();
 		send(PREFIX + "Arena successfully reset");

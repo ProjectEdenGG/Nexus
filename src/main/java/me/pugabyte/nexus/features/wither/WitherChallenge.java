@@ -19,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,11 @@ public class WitherChallenge extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
 	public static final Location cageLoc = new Location(Bukkit.getWorld("events"), -151.00, 76.00, -69.00, 180F, .00F);
 	public static WitherFight currentFight;
+
+	@Override
+	public void onStart() {
+		Tasks.wait(5, WitherChallenge::reset);
+	}
 
 	public static void reset() {
 		if (currentFight != null) {
@@ -69,6 +75,21 @@ public class WitherChallenge extends Feature implements Listener {
 				currentFight.alivePlayers.remove(event.getPlayer().getUniqueId());
 			currentFight.broadcastToParty("&e" + event.getPlayer().getName() + " &ehas been removed from the party.");
 		});
+	}
+
+	@EventHandler
+	public void onTeleportIntoArena(PlayerTeleportEvent event) {
+		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena")) return;
+		if (PlayerUtils.isStaffGroup(event.getPlayer())) return;
+		if (currentFight == null) cancelTeleport(event);
+		if (currentFight.alivePlayers == null) cancelTeleport(event);
+		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId())) cancelTeleport(event);
+	}
+
+	public void cancelTeleport(PlayerTeleportEvent event) {
+		if (event.isCancelled()) return;
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&cYou cannot teleport into the wither arena if you are not an alive member of the current party");
 	}
 
 	public enum Difficulty {

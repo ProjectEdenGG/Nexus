@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.wither.fights;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
 import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.utils.EnumUtils;
@@ -15,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -52,7 +54,11 @@ public class HardFight extends WitherFight {
 
 	@Override
 	public List<ItemStack> getAlternateDrops() {
-		return null;
+		return new ArrayList<ItemStack>() {{
+			ItemStack key = CrateType.BOSS.getKey();
+			key.setAmount(3);
+			add(key);
+		}};
 	}
 
 	@EventHandler
