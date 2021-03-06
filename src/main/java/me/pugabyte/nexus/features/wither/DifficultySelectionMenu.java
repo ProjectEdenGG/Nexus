@@ -24,13 +24,14 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 		for (WitherChallenge.Difficulty difficulty : WitherChallenge.Difficulty.values()) {
 			ItemStack item = new ItemBuilder(difficulty.menuMaterial).name(difficulty.getTitle()).lore(difficulty.description).build();
 			contents.set(row, column, ClickableItem.from(item, e -> {
-				WitherFight fight = null;
+				WitherFight fight;
 				try {
 					fight = difficulty.witherFightClass.newInstance();
 				} catch (InstantiationException | IllegalAccessException ex) {
 					ex.printStackTrace();
+					return;
 				}
-				fight.setHost(player);
+				fight.setHost(player.getUniqueId());
 				fight.setParty(new ArrayList<UUID>() {{
 					add(player.getUniqueId());
 				}});

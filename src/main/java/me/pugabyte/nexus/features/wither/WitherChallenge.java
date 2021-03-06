@@ -24,7 +24,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -38,6 +38,7 @@ public class WitherChallenge extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
 	public static final Location cageLoc = new Location(Bukkit.getWorld("events"), -151.00, 76.00, -69.00, 180F, .00F);
 	public static WitherFight currentFight;
+	public static boolean maintenance;
 
 	@Override
 	public void onStart() {
@@ -123,9 +124,9 @@ public class WitherChallenge extends Feature implements Listener {
 	}
 
 	@EventHandler
-	public void onStarSpawn(ItemSpawnEvent event) {
-		if (!event.getEntity().getItemStack().getType().equals(Material.NETHER_STAR)) return;
-		event.setCancelled(true);
+	public void onWitherDeath(EntityDeathEvent event) {
+		if (event.getEntityType() == EntityType.WITHER)
+			event.getDrops().clear();
 	}
 
 	public void cancelTeleport(PlayerTeleportEvent event) {

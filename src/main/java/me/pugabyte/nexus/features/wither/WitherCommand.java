@@ -28,6 +28,8 @@ public class WitherCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
+		if (WitherChallenge.maintenance)
+			error("The wither arena is currently under maintenance, please wait");
 		if (WitherChallenge.currentFight != null)
 			error("The wither is currently being fought. Please wait!");
 		if (!hasItems())
@@ -48,7 +50,7 @@ public class WitherCommand extends CustomCommand {
 	void invite(Player player) {
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with /wither challenge");
-		if (WitherChallenge.currentFight.host != player())
+		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the current party");
 		if (WitherChallenge.currentFight.isStarted())
 			error("You cannot invite players after the fight has started");
@@ -76,7 +78,7 @@ public class WitherCommand extends CustomCommand {
 	void abandon() {
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with /wither challenge");
-		if (WitherChallenge.currentFight.host != player())
+		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 		if (WitherChallenge.currentFight.isStarted())
 			error("You cannot abandon the fight once it has already begun!");
@@ -93,16 +95,16 @@ public class WitherCommand extends CustomCommand {
 	void start() {
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with /wither challenge");
-		if (WitherChallenge.currentFight.host != player())
+		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 		if (!hasItems())
 			error("You do not have the necessary items in your inventory to spawn the wither");
 		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
 		int partySize = WitherChallenge.currentFight.getParty().size();
-		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + WitherChallenge.currentFight.getHost().getName() +
+		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + WitherChallenge.currentFight.getHostPlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
 				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode");
-		Chat.broadcastDiscord("**[Wither]** " + WitherChallenge.currentFight.getHost().getName() +
+		Chat.broadcastDiscord("**[Wither]** " + WitherChallenge.currentFight.getHostPlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " are" : " is") +
 				" challenging the wither to a fight in " + StringUtils.camelCase(WitherChallenge.currentFight.getDifficulty().name()) + " mode");
 		WitherChallenge.currentFight.teleportPartyToArena();
@@ -131,6 +133,13 @@ public class WitherCommand extends CustomCommand {
 	void reset() {
 		WitherChallenge.reset();
 		send(PREFIX + "Arena successfully reset");
+	}
+
+	@Path("maintenance")
+	@Permission("group.seniorstaff")
+	void maintenance() {
+		WitherChallenge.maintenance = !WitherChallenge.maintenance;
+		send(PREFIX + "Wither arena maintenance mode " + (WitherChallenge.maintenance ? "&aenabled" : "&cdisabled"));
 	}
 
 
