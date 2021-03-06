@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.chat.alerts.AlertsListener;
 import me.pugabyte.nexus.features.chat.bridge.IngameBridgeListener;
 import me.pugabyte.nexus.features.chat.translator.Translator;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
@@ -114,6 +115,13 @@ public class Chat extends Feature {
 				.color(ChatColor.AQUA)
 				.local(false)
 				.crossWorld(false)
+				.build()),
+		SKYBLOCK(PublicChannel.builder()
+				.name("Skyblock")
+				.nickname("B")
+				.color(ChatColor.AQUA)
+				.local(false)
+				.crossWorld(false)
 				.build());
 
 		@Getter
@@ -134,8 +142,16 @@ public class Chat extends Feature {
 		broadcast(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcast(String message, MuteMenuItem muteMenuItem) {
+		broadcast(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
 	public static void broadcast(String message, StaticChannel channel) {
 		broadcast(message, ChatManager.getChannel(channel.name()));
+	}
+
+	public static void broadcast(String message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(message, ChatManager.getChannel(channel.name()), muteMenuItem);
 	}
 
 	public static void broadcast(String message, String channel) {
@@ -143,15 +159,27 @@ public class Chat extends Feature {
 	}
 
 	public static void broadcast(String message, PublicChannel channel) {
-		channel.broadcast(message);
+		broadcast(message, channel, null);
+	}
+
+	public static void broadcast(String message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		channel.broadcast(message, muteMenuItem);
 	}
 
 	public static void broadcast(JsonBuilder message) {
 		broadcast(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcast(JsonBuilder message, MuteMenuItem muteMenuItem) {
+		broadcast(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
 	public static void broadcast(JsonBuilder message, StaticChannel channel) {
 		broadcast(message, ChatManager.getChannel(channel.name()));
+	}
+
+	public static void broadcast(JsonBuilder message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(message, ChatManager.getChannel(channel.name()), muteMenuItem);
 	}
 
 	public static void broadcast(JsonBuilder message, String channel) {
@@ -159,15 +187,27 @@ public class Chat extends Feature {
 	}
 
 	public static void broadcast(JsonBuilder message, PublicChannel channel) {
-		channel.broadcast(message);
+		broadcast(message, channel, null);
+	}
+
+	public static void broadcast(JsonBuilder message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		channel.broadcast(message, muteMenuItem);
 	}
 
 	public static void broadcastIngame(String message) {
 		broadcastIngame(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcastIngame(String message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
 	public static void broadcastIngame(String message, StaticChannel channel) {
 		broadcastIngame(message, ChatManager.getChannel(channel.name()));
+	}
+
+	public static void broadcastIngame(String message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, ChatManager.getChannel(channel.name()), muteMenuItem);
 	}
 
 	public static void broadcastIngame(String message, String channel) {
@@ -175,15 +215,27 @@ public class Chat extends Feature {
 	}
 
 	public static void broadcastIngame(String message, PublicChannel channel) {
-		channel.broadcastIngame(message);
+		broadcastIngame(message, channel, null);
+	}
+
+	public static void broadcastIngame(String message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		channel.broadcastIngame(message, muteMenuItem);
 	}
 
 	public static void broadcastIngame(JsonBuilder message) {
 		broadcastIngame(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcastIngame(JsonBuilder message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
 	public static void broadcastIngame(JsonBuilder message, StaticChannel channel) {
 		broadcastIngame(message, ChatManager.getChannel(channel.name()));
+	}
+
+	public static void broadcastIngame(JsonBuilder message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, ChatManager.getChannel(channel.name()), muteMenuItem);
 	}
 
 	public static void broadcastIngame(JsonBuilder message, String channel) {
@@ -191,7 +243,11 @@ public class Chat extends Feature {
 	}
 
 	public static void broadcastIngame(JsonBuilder message, PublicChannel channel) {
-		channel.broadcastIngame(message);
+		broadcastIngame(message, channel, null);
+	}
+
+	public static void broadcastIngame(JsonBuilder message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		channel.broadcastIngame(message, muteMenuItem);
 	}
 
 	public static void broadcastDiscord(String message) {

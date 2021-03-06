@@ -5,6 +5,8 @@ import lombok.Data;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -78,11 +80,20 @@ public class PublicChannel implements Channel {
 		broadcastDiscord(message);
 	}
 
+	public void broadcast(String message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, muteMenuItem);
+		broadcastDiscord(message);
+	}
+
 	public void broadcastIngame(String message) {
+		broadcastIngame(message, null);
+	}
+
+	public void broadcastIngame(String message, MuteMenuItem muteMenuItem) {
 		Bukkit.getConsoleSender().sendMessage(stripColor(message));
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> (Chatter) new ChatService().get(player))
-				.filter(chatter -> chatter.hasJoined(this))
+				.filter(chatter -> chatter.hasJoined(this) && !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), muteMenuItem))
 				.forEach(chatter -> chatter.send(message));
 	}
 
@@ -92,15 +103,20 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcast(JsonBuilder builder) {
-		broadcastIngame(builder);
+		broadcastIngame(builder, null);
 		broadcastDiscord(builder);
 	}
 
-	public void broadcastIngame(JsonBuilder builder) {
+	public void broadcast(JsonBuilder message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, muteMenuItem);
+		broadcastDiscord(message);
+	}
+
+	public void broadcastIngame(JsonBuilder builder, MuteMenuItem muteMenuItem) {
 		Bukkit.getConsoleSender().spigot().sendMessage(builder.build());
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> (Chatter) new ChatService().get(player))
-				.filter(chatter -> chatter.hasJoined(this))
+				.filter(chatter -> chatter.hasJoined(this) && !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), muteMenuItem))
 				.forEach(chatter -> chatter.send(builder));
 	}
 

@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import lombok.Data;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.menus.mutemenu.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.wither.BeginningCutscene;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
@@ -243,7 +244,7 @@ public abstract class WitherFight implements Listener {
 			int partySize = party.size();
 			Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode");
+					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode", MuteMenuItem.EVENT_ANNOUNCEMENTS);
 			Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 					" lost to the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode");
@@ -264,7 +265,7 @@ public abstract class WitherFight implements Listener {
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" successfully beaten the Wither in " +
-				getDifficulty().getTitle() + " &3mode. " + (gotStar ? "They got the star for this fight." : "They did not get a star for this fight."));
+				getDifficulty().getTitle() + " &3mode. " + (gotStar ? "They got the star for this fight." : "They did not get a star for this fight."), MuteMenuItem.EVENT_ANNOUNCEMENTS);
 		Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "They got the star for this fight." : "They did not get a star for this fight."));
