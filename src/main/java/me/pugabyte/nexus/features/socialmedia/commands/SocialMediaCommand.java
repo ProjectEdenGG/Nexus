@@ -9,7 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.socialmedia.SocialMediaService;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 
 public class SocialMediaCommand extends CustomCommand {
 	private final SocialMediaService service = new SocialMediaService();
@@ -35,7 +35,7 @@ public class SocialMediaCommand extends CustomCommand {
 	@Path("getItem <site>")
 	@Permission("group.admin")
 	void getItem(SocialMediaSite site) {
-		ItemUtils.giveItem(player(), site.getHead());
+		PlayerUtils.giveItem(player(), site.getHead());
 	}
 
 }

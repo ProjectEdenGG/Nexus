@@ -6,7 +6,6 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Time;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -51,7 +50,7 @@ public class Pride20Listener implements Listener {
 		}
 
 		player.playSound(player.getLocation(), Sound.ENTITY_CAT_PURREOW, 5f, .08f);
-		ItemUtils.giveItem(player, new ItemBuilder(Material.ORANGE_BANNER)
+		PlayerUtils.giveItem(player, new ItemBuilder(Material.ORANGE_BANNER)
 				.pattern(DyeColor.RED, PatternType.STRIPE_TOP)
 				.pattern(DyeColor.YELLOW, PatternType.STRIPE_MIDDLE)
 				.pattern(DyeColor.LIME, PatternType.HALF_HORIZONTAL_MIRROR)

@@ -13,8 +13,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.SymbolBanner;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
@@ -46,7 +46,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 			for (SymbolBanner.Symbol symbol : SymbolBanner.Symbol.values()) {
 				ItemBuilder banner = symbol.get(baseBanner.clone(), baseColor, patternColor);
 				if (banner != null)
-					ItemUtils.giveItem(player(), banner.build());
+					PlayerUtils.giveItem(player(), banner.build());
 			}
 		} else {
 			// Input Banners
@@ -57,7 +57,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 				if (symbol == null) continue;
 				ItemBuilder banner = symbol.get(baseBanner.clone(), baseColor, patternColor);
 				if (banner != null)
-					ItemUtils.giveItem(player(), banner.build());
+					PlayerUtils.giveItem(player(), banner.build());
 			}
 		}
 	}
@@ -113,7 +113,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 						return;
 					}
 
-					ItemUtils.giveItems(event.getPlayer(), banner.getDrops());
+					PlayerUtils.giveItems(event.getPlayer(), banner.getDrops());
 					send(event.getPlayer(), StringUtils.getPrefix("VPS") + colorize("You purchased banner &e" + id + " &3for &e5 vote points"));
 				}).open(event.getPlayer());
 	}

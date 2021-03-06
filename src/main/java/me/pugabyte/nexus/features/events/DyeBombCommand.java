@@ -10,7 +10,7 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -53,7 +53,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	public static void giveDyeBomb(Player player, int amount) {
 		ItemStack item = dyeBomb.clone();
 		item.setAmount(amount);
-		ItemUtils.giveItem(player, item);
+		PlayerUtils.giveItem(player, item);
 	}
 
 	@EventHandler

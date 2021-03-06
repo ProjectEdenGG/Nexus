@@ -11,7 +11,7 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -63,7 +63,7 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 
 		for (ItemStack item : items) {
 			if (contents.contains(item))
-				ItemUtils.giveItem(player, item);
+				PlayerUtils.giveItem(player, item);
 		}
 	}
 

@@ -14,7 +14,7 @@ import me.pugabyte.nexus.models.bearfair.BearFairService;
 import me.pugabyte.nexus.models.bearfair.BearFairUser;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -167,7 +167,7 @@ public class HalloweenIsland implements Listener, Island {
 
 		List<ItemStack> drops = new ArrayList<>(basketLoc.getBlock().getDrops());
 		ItemStack basket = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Basket of Halloween Candy").build();
-		ItemUtils.giveItem(player, basket);
+		PlayerUtils.giveItem(player, basket);
 		chime(player);
 
 	}
@@ -257,7 +257,7 @@ public class HalloweenIsland implements Listener, Island {
 		user.setQuest_Halloween_Key(true);
 		service.save(user);
 
-		ItemUtils.giveItem(player, atticKey);
+		PlayerUtils.giveItem(player, atticKey);
 		chime(player);
 	}
 

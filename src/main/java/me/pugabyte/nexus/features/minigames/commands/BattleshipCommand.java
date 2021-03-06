@@ -23,8 +23,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
+import me.pugabyte.nexus.utils.PlayerUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -119,7 +119,7 @@ public class BattleshipCommand extends CustomCommand {
 	@Path("kit")
 	@Permission("minigames.manage")
 	void kit() {
-		Arrays.asList(ShipType.values()).forEach(shipType -> ItemUtils.giveItem(player(), shipType.getItem()));
+		Arrays.asList(ShipType.values()).forEach(shipType -> PlayerUtils.giveItem(player(), shipType.getItem()));
 	}
 
 	@Path("hideShips")

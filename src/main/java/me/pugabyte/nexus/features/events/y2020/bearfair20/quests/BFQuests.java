@@ -17,6 +17,7 @@ import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
 import net.citizensnpcs.api.CitizensAPI;
@@ -178,7 +179,7 @@ public class BFQuests implements Listener {
 		if (tool != null && tool.getType().equals(Material.BUCKET)) {
 			tool.setAmount(tool.getAmount() - 1);
 			ItemStack milkBucket = new ItemBuilder(Material.MILK_BUCKET).lore(itemLore).amount(1).build();
-			ItemUtils.giveItem(player, milkBucket);
+			PlayerUtils.giveItem(player, milkBucket);
 		}
 
 	}
@@ -204,7 +205,7 @@ public class BFQuests implements Listener {
 		event.setCancelled(true);
 		event.getItem().setAmount(event.getItem().getAmount() - 1);
 		ItemStack honeyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(itemLore).amount(1).build();
-		ItemUtils.giveItem(player, honeyBottle);
+		PlayerUtils.giveItem(player, honeyBottle);
 	}
 
 	@EventHandler
@@ -235,7 +236,7 @@ public class BFQuests implements Listener {
 		else
 			event.getItem().setItemMeta(meta);
 		ItemStack honeyComb = new ItemBuilder(Material.HONEYCOMB).lore(itemLore).amount(3).build();
-		ItemUtils.giveItem(player, honeyComb);
+		PlayerUtils.giveItem(player, honeyComb);
 	}
 
 	@EventHandler

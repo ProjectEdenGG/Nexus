@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 
 @Aliases("i")
@@ -20,7 +20,7 @@ public class ItemCommand extends CustomCommand {
 
 	@Path("<type> [amount] [nbt...]")
 	void run(Material material, @Arg(value = "64", min = 1) int amount, @Arg(permission = "group.staff") String nbt) {
-		ItemUtils.giveItem(player(), material, amount, nbt);
+		PlayerUtils.giveItem(player(), material, amount, nbt);
 	}
 
 }

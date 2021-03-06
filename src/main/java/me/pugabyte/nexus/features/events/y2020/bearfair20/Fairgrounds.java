@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.PugDunk;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.Reflection;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time.Timer;
 import org.bukkit.Material;
@@ -47,7 +48,7 @@ public class Fairgrounds implements Listener {
 
 	public static void giveKit(BearFairKit kit, Player player) {
 		if (slotsTaken(player) <= (36 - kit.items.size())) {
-			ItemUtils.giveItems(player, kit.items);
+			PlayerUtils.giveItems(player, kit.items);
 		}
 	}
 

@@ -12,7 +12,6 @@ import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.dailyreward.Reward;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
@@ -138,17 +137,17 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			for (ItemStack item : items) {
 				if (Reward.RequiredSubmenu.COLOR.contains(item.getType())) {
 					MenuUtils.colorSelectMenu(player, item.getType(), itemClickData -> {
-						ItemUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), item.getAmount()));
+						PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), item.getAmount()));
 						saveAndReturn(contents, day, initialDay);
 						player.closeInventory();
 					});
 				} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
 					Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name").prefix(PREFIX).response(lines -> {
-						ItemUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
+						PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
 						saveAndReturn(contents, day, initialDay);
 					}).open(player);
 				} else {
-					ItemUtils.giveItem(player, item);
+					PlayerUtils.giveItem(player, item);
 					saveAndReturn(contents, day, initialDay);
 				}
 			}

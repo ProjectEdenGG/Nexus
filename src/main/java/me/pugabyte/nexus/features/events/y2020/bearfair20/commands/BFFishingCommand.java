@@ -11,6 +11,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,7 +61,7 @@ public class BFFishingCommand extends CustomCommand {
 			error("You're already fishing!");
 		timestamps.put(uuid, LocalDateTime.now());
 
-		ItemUtils.giveItem(player(), unbreakable(fishingRod));
+		PlayerUtils.giveItem(player(), unbreakable(fishingRod));
 		send("Start fishing!");
 	}
 
@@ -272,7 +273,7 @@ public class BFFishingCommand extends CustomCommand {
 	private void giveAllLoot(Player player) {
 		List<ItemStack> items = new ArrayList<>();
 		weightedList.forEach(weightedLoot -> items.add(weightedLoot.getItemStack()));
-		ItemUtils.giveItems(player, items);
+		PlayerUtils.giveItems(player, items);
 	}
 
 }

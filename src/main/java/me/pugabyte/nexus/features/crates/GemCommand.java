@@ -37,14 +37,14 @@ public class GemCommand extends CustomCommand implements Listener {
 
 	@Path("<enchantment> <level>")
 	void get(Enchantment enchantment, Integer level) {
-		ItemUtils.giveItem(player(), makeGem(enchantment, level));
+		PlayerUtils.giveItem(player(), makeGem(enchantment, level));
 	}
 
 	@Path("all")
 	void all() {
 		for (Enchantment enchantment : Arrays.stream(Enchantment.values()).filter(enchantment ->
 				!enchantment.equals(Enchantment.BINDING_CURSE) && !enchantment.equals(Enchantment.VANISHING_CURSE)).collect(Collectors.toList()))
-			ItemUtils.giveItem(player(), makeGem(enchantment, 1));
+			PlayerUtils.giveItem(player(), makeGem(enchantment, 1));
 	}
 
 	@EventHandler

@@ -14,7 +14,6 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.mcmmo.McMMOPrestige;
 import me.pugabyte.nexus.models.mcmmo.McMMOService;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
@@ -38,7 +37,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Any helmet of your choice that gives you night vision for deep mining expeditions") {
 				@Override
 				void onClick(Player player) {
-					ItemUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for Glowing Enchant").build());
+					PlayerUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for Glowing Enchant").build());
 					PlayerUtils.send(player, "&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own.");
 				}
 		},
@@ -60,7 +59,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"The boots of Demeter give you the power to increase agricultural rates around you.") {
 			@Override
 			void onClick(Player player) {
-				ItemUtils.giveItem(player, new ItemBuilder(Material.GOLDEN_BOOTS).lore("&bBonemeal Boots").build());
+				PlayerUtils.giveItem(player, new ItemBuilder(Material.GOLDEN_BOOTS).lore("&bBonemeal Boots").build());
 			}
 		},
 		FISHING(3, 1, Material.FISHING_ROD,
@@ -82,7 +81,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						"a chance to add that enchantment to one item of your choice!") {
 				@Override
 				void onClick(Player player) {
-					ItemUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for AutoRepair").build());
+					PlayerUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for AutoRepair").build());
 					PlayerUtils.send(player, "&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own.");
 				}
 		},

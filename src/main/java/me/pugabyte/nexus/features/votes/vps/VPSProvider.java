@@ -10,7 +10,6 @@ import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -70,7 +69,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 				if (item.getCommand() != null && item.getCommand().length() > 0)
 					PlayerUtils.runCommand(player, item.getCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getItems() != null && item.getItems().size() > 0)
-					ItemUtils.giveItems(player, item.getItems());
+					PlayerUtils.giveItems(player, item.getItems());
 
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());

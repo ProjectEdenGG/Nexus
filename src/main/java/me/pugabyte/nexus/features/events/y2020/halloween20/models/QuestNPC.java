@@ -5,7 +5,6 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.Halloween20;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -54,7 +53,7 @@ public enum QuestNPC {
 						builder.name("&5Pumpkin Pouch");
 						for (Pumpkin pumpkin : Pumpkin.values())
 							builder.shulkerBox(pumpkin.getOriginal().getBlock().getDrops().toArray(new ItemStack[0]));
-						ItemUtils.giveItem(player, builder.build());
+						PlayerUtils.giveItem(player, builder.build());
 						Nexus.getEcon().depositPlayer(player, 5000);
 						PlayerUtils.send(player, "&a$5,000 has been added to your account.");
 					});

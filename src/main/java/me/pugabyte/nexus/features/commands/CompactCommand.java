@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -81,7 +82,7 @@ public class CompactCommand extends CustomCommand {
 			ItemStack craftedItem = new ItemStack(compactable.getResult(), crafted);
 			ItemStack leftOverItem = item.clone();
 			leftOverItem.setAmount(leftOver);
-			ItemUtils.giveItem(player(), craftedItem);
+			PlayerUtils.giveItem(player(), craftedItem);
 		}
 	}
 

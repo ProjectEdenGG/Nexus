@@ -12,7 +12,6 @@ import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -87,7 +86,7 @@ public class LightTheTree implements Listener {
 		if (player.getInventory().contains(lighter_broken))
 			return;
 
-		ItemUtils.giveItem(player, lighter_broken);
+		PlayerUtils.giveItem(player, lighter_broken);
 		Quests.sound_obtainItem(player);
 		user.send(PREFIX + "You have found the &3&l" + stripColor(lighter_broken.getItemMeta().getDisplayName()));
 
@@ -332,12 +331,12 @@ public class LightTheTree implements Listener {
 
 		boolean gavePickaxe = false, gaveSieve = false;
 		if (!player.getInventory().contains(TheMines.getMinersPickaxe())) {
-			ItemUtils.giveItem(player, TheMines.getMinersPickaxe());
+			PlayerUtils.giveItem(player, TheMines.getMinersPickaxe());
 			gavePickaxe = true;
 		}
 
 		if (!player.getInventory().contains(TheMines.getMinersSieve())) {
-			ItemUtils.giveItem(player, TheMines.getMinersSieve());
+			PlayerUtils.giveItem(player, TheMines.getMinersSieve());
 			gaveSieve = true;
 		}
 

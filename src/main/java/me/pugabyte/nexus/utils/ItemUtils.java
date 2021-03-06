@@ -1,8 +1,5 @@
 package me.pugabyte.nexus.utils;
 
-import com.google.common.base.Strings;
-import de.tr7zw.nbtapi.NBTContainer;
-import de.tr7zw.nbtapi.NBTItem;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -17,8 +14,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -39,73 +34,6 @@ public class ItemUtils {
 			return false;
 
 		return true;
-	}
-
-	public static void giveItem(Player player, Material material) {
-		giveItem(player, material, 1);
-	}
-
-	public static void giveItem(Player player, Material material, String nbt) {
-		giveItem(player, material, 1, nbt);
-	}
-
-	public static void giveItem(Player player, Material material, int amount) {
-		giveItem(player, material, amount, null);
-	}
-
-	public static void giveItem(Player player, Material material, int amount, String nbt) {
-		if (material == Material.AIR)
-			throw new InvalidInputException("Cannot spawn air");
-
-		if (amount > 64) {
-			for (int i = 0; i < (amount / 64); i++)
-				giveItem(player, new ItemStack(material, 64), nbt);
-			giveItem(player, new ItemStack(material, amount % 64), nbt);
-		} else {
-			giveItem(player, new ItemStack(material, amount), nbt);
-		}
-	}
-
-	public static void giveItem(Player player, ItemStack item) {
-		giveItems(player, Collections.singletonList(item));
-	}
-
-	public static void giveItem(Player player, ItemStack item, String nbt) {
-		giveItems(player, Collections.singletonList(item), nbt);
-	}
-
-	public static void giveItems(Player player, Collection<ItemStack> items) {
-		giveItems(player, items, null);
-	}
-
-	public static void giveItems(Player player, Collection<ItemStack> items, String nbt) {
-		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
-		if (!Strings.isNullOrEmpty(nbt)) {
-			finalItems.clear();
-			NBTContainer nbtContainer = new NBTContainer(nbt);
-			for (ItemStack item : new ArrayList<>(items)) {
-				NBTItem nbtItem = new NBTItem(item);
-				nbtItem.mergeCompound(nbtContainer);
-				finalItems.add(nbtItem.getItem());
-			}
-		}
-
-		dropExcessItems(player, giveItemsGetExcess(player, finalItems));
-	}
-
-	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> finalItems) {
-		List<ItemStack> excess = new ArrayList<>();
-		for (ItemStack item : finalItems)
-			if (!isNullOrAir(item))
-				excess.addAll(player.getInventory().addItem(item).values());
-
-		return excess;
-	}
-
-	public static void dropExcessItems(Player player, List<ItemStack> excess) {
-		if (!excess.isEmpty())
-			excess.forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
 	}
 
 	public static ItemStack getTool(Player player) {

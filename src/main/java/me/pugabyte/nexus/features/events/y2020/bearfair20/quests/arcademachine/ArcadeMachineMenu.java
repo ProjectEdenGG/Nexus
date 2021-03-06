@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -57,7 +58,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 		contents.set(40, ClickableItem.from(closeItem(), e -> {
 			for (int i : openSlots) {
 				if (!contents.get(i).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))
-					ItemUtils.giveItem(player, contents.get(i).get().getItem());
+					PlayerUtils.giveItem(player, contents.get(i).get().getItem());
 			}
 			close(player, items);
 		}));

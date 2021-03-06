@@ -7,6 +7,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.MerchantBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -106,7 +107,7 @@ public class SellCrates implements Listener {
 
 		// Give items back if no trades found
 		if (tradeBuilders == null || tradeBuilders.size() == 0) {
-			ItemUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
+			PlayerUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
 			return;
 		}
 
@@ -152,12 +153,12 @@ public class SellCrates implements Listener {
 			// If trade was not found for itemstack, give item back
 			// If there were leftovers, give the edited item back
 			if (!foundTrade || leftovers)
-				ItemUtils.giveItem((Player) event.getPlayer(), item);
+				PlayerUtils.giveItem((Player) event.getPlayer(), item);
 		}
 
 		if (profit.size() == 0) return;
 
 		for (ItemStack itemStack : profit)
-			ItemUtils.giveItem((Player) event.getPlayer(), itemStack);
+			PlayerUtils.giveItem((Player) event.getPlayer(), itemStack);
 	}
 }

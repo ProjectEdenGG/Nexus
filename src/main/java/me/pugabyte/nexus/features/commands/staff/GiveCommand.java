@@ -5,7 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -23,7 +23,7 @@ public class GiveCommand extends CustomCommand {
 			else if (!isSelf(player))
 				error("You cannot give items to other players, only yourself");
 
-		ItemUtils.giveItem(player, material, amount, nbt);
+		PlayerUtils.giveItem(player, material, amount, nbt);
 	}
 
 }

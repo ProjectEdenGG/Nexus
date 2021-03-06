@@ -6,7 +6,11 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -40,7 +44,7 @@ public class MysteryCrate extends Crate {
 			ItemStack shulker = new ItemBuilder(material).name(loot.getTitle())
 					.shulkerBox(loot.getItems().toArray(new ItemStack[0]))
 					.build();
-			ItemUtils.giveItem(player, shulker);
+			PlayerUtils.giveItem(player, shulker);
 		} else super.giveItems();
 	}
 

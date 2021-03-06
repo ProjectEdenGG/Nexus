@@ -66,7 +66,7 @@ public class GiftGiver implements Listener {
 
 	public static void giveGift(Player player) {
 		if (gift_locked == null || gift_unlocked == null) return;
-		ItemUtils.giveItem(player, gift_locked);
+		PlayerUtils.giveItem(player, gift_locked);
 		Quests.sound_obtainItem(player);
 	}
 
@@ -82,7 +82,7 @@ public class GiftGiver implements Listener {
 		Quests.sound_obtainItem(from);
 
 		PlayerUtils.send(to, Pugmas20.PREFIX + from.getName() + " gave you a gift!");
-		ItemUtils.giveItem(to, gift_unlocked);
+		PlayerUtils.giveItem(to, gift_unlocked);
 		Quests.sound_obtainItem(to);
 	}
 
@@ -123,7 +123,7 @@ public class GiftGiver implements Listener {
 			return;
 
 		PlayerUtils.send(player, Quests.leftoverItems);
-		ItemUtils.giveItems(player, leftover);
+		PlayerUtils.giveItems(player, leftover);
 	}
 
 	@EventHandler

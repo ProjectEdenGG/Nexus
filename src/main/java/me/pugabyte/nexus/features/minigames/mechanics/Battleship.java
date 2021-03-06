@@ -26,9 +26,9 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.BattleshipMatchData
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
@@ -379,7 +379,7 @@ public class Battleship extends BalancedTeamMechanic {
 		if (inventory.getItemInMainHand().getType() == Material.AIR)
 			inventory.setItemInMainHand(shipType.getItem());
 		else
-			ItemUtils.giveItem(minigamer.getPlayer(), shipType.getItem());
+			PlayerUtils.giveItem(minigamer.getPlayer(), shipType.getItem());
 	}
 
 	private void deleteKit(Location location) {

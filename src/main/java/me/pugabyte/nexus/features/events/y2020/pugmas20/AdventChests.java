@@ -263,7 +263,7 @@ public class AdventChests implements Listener {
 			return;
 
 		PlayerUtils.send(player, Quests.leftoverItems);
-		ItemUtils.giveItems(player, leftover);
+		PlayerUtils.giveItems(player, leftover);
 	}
 
 	@EventHandler

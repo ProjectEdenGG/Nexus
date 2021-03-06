@@ -16,7 +16,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.dumpster.Dumpster;
 import me.pugabyte.nexus.models.dumpster.DumpsterService;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -104,7 +104,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 							contents.set(e.getSlot(), ClickableItem.NONE);
 							dumpster.getItems().remove(item);
 							service.save(dumpster);
-							ItemUtils.giveItem(player, item);
+							PlayerUtils.giveItem(player, item);
 						} catch (Exception ex) {
 							handleException(player, PREFIX, ex);
 						}

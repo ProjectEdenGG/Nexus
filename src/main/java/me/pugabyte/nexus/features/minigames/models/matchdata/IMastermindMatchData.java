@@ -13,9 +13,9 @@ import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.FireworkLauncher;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -101,7 +101,7 @@ public abstract class IMastermindMatchData extends MatchData {
 	public void giveLoadout(Minigamer minigamer) {
 		minigamer.getPlayer().getInventory().clear();
 		for (Material material : getMaterials(minigamer))
-			ItemUtils.giveItem(minigamer.getPlayer(), new ItemStack(material, 64));
+			PlayerUtils.giveItem(minigamer.getPlayer(), new ItemStack(material, 64));
 	}
 
 	public void createAnswer() {

@@ -14,6 +14,7 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -182,7 +183,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 					player.getInventory().remove(greatNortherns);
 					Tasks.wait(Time.SECOND.x(7), () -> {
 						chime(player);
-						ItemUtils.giveItem(player, peanuts);
+						PlayerUtils.giveItem(player, peanuts);
 					});
 					nextStep(player); // 4
 					return endQuest;
@@ -219,7 +220,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				nextStep(player); // 5
 				Tasks.wait(Time.SECOND.x(6), () -> {
-					ItemUtils.giveItem(player, goldenSyrup);
+					PlayerUtils.giveItem(player, goldenSyrup);
 					chime(player);
 				});
 				return startQuest;
@@ -278,7 +279,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 						finalGold.setAmount(finalGold.getAmount() - 1);
 						removeAnzacIngredients(player);
 						Tasks.wait(Time.SECOND.x(5), () -> {
-							ItemUtils.giveItem(player, anzacBiscuit);
+							PlayerUtils.giveItem(player, anzacBiscuit);
 							chime(player);
 						});
 					});
@@ -349,7 +350,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 				nextStep(player); // 8
 				Tasks.wait(Time.SECOND.x(5), () -> {
-					ItemUtils.giveItem(player, sifter);
+					PlayerUtils.giveItem(player, sifter);
 					chime(player);
 				});
 				return startQuest;
@@ -492,7 +493,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 		int step = user.getQuest_SDU_Step();
 
 		if (step == 3 && !player.getInventory().contains(greatNortherns)) {
-			ItemUtils.giveItem(player, greatNortherns);
+			PlayerUtils.giveItem(player, greatNortherns);
 			player.playSound(clicked.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 2);
 		}
 		event.setCancelled(true);
@@ -542,9 +543,9 @@ public class SummerDownUnderIsland implements Listener, Island {
 
 			if (RandomUtils.chanceOf(10)) {
 				if (RandomUtils.chanceOf(75))
-					ItemUtils.giveItem(player, foolsGold);
+					PlayerUtils.giveItem(player, foolsGold);
 				else
-					ItemUtils.giveItem(player, goldNugget);
+					PlayerUtils.giveItem(player, goldNugget);
 			}
 		});
 	}

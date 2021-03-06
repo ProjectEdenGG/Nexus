@@ -172,7 +172,7 @@ public enum QuestNPC {
 					}
 
 					player.getInventory().removeItem(lighter, steelIngot, flint);
-					ItemUtils.giveItem(player, LightTheTree.lighter);
+					PlayerUtils.giveItem(player, LightTheTree.lighter);
 
 					user.setLightTreeStage(QuestStage.STEPS_DONE);
 					service.save(user);

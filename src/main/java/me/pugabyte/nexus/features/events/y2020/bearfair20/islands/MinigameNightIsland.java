@@ -16,6 +16,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -134,7 +135,7 @@ public class MinigameNightIsland implements Listener, Island {
 					if (!user.isQuest_MGN_Finish()) {
 						user.setQuest_MGN_Finish(true);
 						service.save(user);
-						ItemUtils.giveItem(player, arcadeToken);
+						PlayerUtils.giveItem(player, arcadeToken);
 						chime(player);
 					}
 					return Collections.singletonList("Yo, thanks again for fixing the Arcade Cabinet! Next tourney is gonna be awesome!");
@@ -269,7 +270,7 @@ public class MinigameNightIsland implements Listener, Island {
 		if (getFoundPieces(player).contains(arcadePiece)) return;
 
 		foundPiece(player, arcadePiece);
-		ItemUtils.giveItem(player, piece);
+		PlayerUtils.giveItem(player, piece);
 		chime(player);
 
 	}
@@ -414,7 +415,7 @@ public class MinigameNightIsland implements Listener, Island {
 		//
 		Tasks.wait(Time.SECOND.x(5), () -> {
 			armorStand.getEquipment().setItemInMainHand(air);
-			ItemUtils.giveItem(player, getArcadePiece(piece));
+			PlayerUtils.giveItem(player, getArcadePiece(piece));
 			Tasks.wait(10, () -> activeSolder = false);
 			world.playSound(finalLoc, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
 		});

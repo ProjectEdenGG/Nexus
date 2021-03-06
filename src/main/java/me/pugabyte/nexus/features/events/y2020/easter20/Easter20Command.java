@@ -11,8 +11,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -82,7 +82,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 		} else if (clicked % 3 == 0) {
 			ItemStack headPaper = new ItemBuilder(Material.PAPER).name("&3Coupon for 1 HDB head").lore("&eThis coupon is valid for one head from the head database. " +
 					"Claim it with a staff member").build();
-			ItemUtils.giveItem(player, headPaper);
+			PlayerUtils.giveItem(player, headPaper);
 			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &eone head database coupon");
 		} else {
 			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &e$500");

@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.serializetest.SerializeTest;
 import me.pugabyte.nexus.models.serializetest.SerializeTestService;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
@@ -51,14 +52,14 @@ public class SerializeCommand extends CustomCommand {
 		if (!input.startsWith("{"))
 			input = StringUtils.getPaste(input);
 
-		ItemUtils.giveItem(player(), JSON.deserializeItemStack(input));
+		PlayerUtils.giveItem(player(), JSON.deserializeItemStack(input));
 	}
 
 	@Path("item database")
 	void itemStackDatabase() {
 		test.setItemStack(getToolRequired());
 		reload();
-		ItemUtils.giveItem(player(), test.getItemStack());
+		PlayerUtils.giveItem(player(), test.getItemStack());
 	}
 
 	@Path("inventory database")

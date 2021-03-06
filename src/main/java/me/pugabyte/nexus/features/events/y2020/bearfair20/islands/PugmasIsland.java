@@ -12,9 +12,9 @@ import me.pugabyte.nexus.models.bearfair.BearFairService;
 import me.pugabyte.nexus.models.bearfair.BearFairUser;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
@@ -341,7 +341,7 @@ public class PugmasIsland implements Listener, Island {
 		List<ItemStack> drops = new ArrayList<>(clicked.getDrops());
 		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
 
-		ItemUtils.giveItem(player, present);
+		PlayerUtils.giveItem(player, present);
 		chime(player);
 		event.setCancelled(true);
 	}
@@ -444,7 +444,7 @@ public class PugmasIsland implements Listener, Island {
 
 		Tasks.wait(Time.SECOND.x(9), () -> {
 			chime(player);
-			ItemUtils.giveItem(player, presentItem);
+			PlayerUtils.giveItem(player, presentItem);
 		});
 
 		return thanks;

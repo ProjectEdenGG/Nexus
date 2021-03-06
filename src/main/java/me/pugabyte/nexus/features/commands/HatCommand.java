@@ -5,7 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -64,7 +64,7 @@ public class HatCommand extends CustomCommand {
 		if (isNullOrAir(hand))
 			inv.setItemInMainHand(hat);
 		else
-			ItemUtils.giveItem(player(), hat);
+			PlayerUtils.giveItem(player(), hat);
 		send(PREFIX + "Hat removed");
 	}
 

@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -44,11 +45,11 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 		for (ItemStack item : event.getInventory().getContents()) {
 			if (ItemUtils.isNullOrAir(item)) continue;
 			if (!MaterialTag.CONCRETE_POWDERS.isTagged(item.getType())) {
-				ItemUtils.giveItem((Player) event.getPlayer(), item);
+				PlayerUtils.giveItem((Player) event.getPlayer(), item);
 				continue;
 			}
 			item.setType(Material.valueOf(item.getType().name().replace("_POWDER", "")));
-			ItemUtils.giveItem((Player) event.getPlayer(), item);
+			PlayerUtils.giveItem((Player) event.getPlayer(), item);
 		}
 	}
 

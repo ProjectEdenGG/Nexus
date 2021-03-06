@@ -7,16 +7,40 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.wither.BeginningCutscene;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
-import me.pugabyte.nexus.utils.*;
-import org.bukkit.*;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Blaze;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.PiglinBrute;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -72,14 +96,14 @@ public abstract class WitherFight implements Listener {
 		Player itemReceiver = host.getPlayer();
 		if (getDifficulty() == WitherChallenge.Difficulty.CORRUPTED)
 			if (getAlternateDrops() != null)
-				ItemUtils.giveItems(itemReceiver, getAlternateDrops());
+				PlayerUtils.giveItems(itemReceiver, getAlternateDrops());
 		if (shouldGiveStar()) {
-			ItemUtils.giveItem(itemReceiver, new ItemStack(Material.NETHER_STAR));
+			PlayerUtils.giveItem(itemReceiver, new ItemStack(Material.NETHER_STAR));
 			broadcastToParty("&3Congratulations! You have gotten a wither star for this fight!");
 		} else {
 			broadcastToParty("&cUnfortunately, you did not get a star this time. You can try a harder difficulty for a higher chance");
 			if (getAlternateDrops() != null)
-				ItemUtils.giveItems(itemReceiver, getAlternateDrops());
+				PlayerUtils.giveItems(itemReceiver, getAlternateDrops());
 		}
 	}
 

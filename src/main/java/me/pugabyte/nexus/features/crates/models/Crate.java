@@ -10,15 +10,30 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.utils.*;
-import org.bukkit.*;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -373,7 +388,7 @@ public abstract class Crate implements Listener {
 	}
 
 	public void giveItems() {
-		ItemUtils.giveItems(player, loot.getItems());
+		PlayerUtils.giveItems(player, loot.getItems());
 	}
 
 	public void takeKey() {

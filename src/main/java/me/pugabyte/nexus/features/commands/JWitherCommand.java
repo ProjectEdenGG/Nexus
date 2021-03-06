@@ -11,9 +11,9 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.MaterialTag.MatchMode;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -64,7 +64,7 @@ public class JWitherCommand extends CustomCommand implements Listener {
 	void claim() {
 		if (!playerWhoWonStars.contains(player()))
 			error("You have not won any stars");
-		ItemUtils.giveItem(player(), new ItemStack(Material.NETHER_STAR));
+		PlayerUtils.giveItem(player(), new ItemStack(Material.NETHER_STAR));
 		Nexus.getEcon().withdrawPlayer(player(), 50000);
 		playerWhoWonStars.remove(player());
 		send(PREFIX + "You have received your nether star. If you do not have room in your inventory, it may be dropped at your feet.");

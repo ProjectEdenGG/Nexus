@@ -6,7 +6,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.skullhunt.SkullHuntService;
 import me.pugabyte.nexus.models.skullhunt.SkullHunter;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -224,7 +223,7 @@ public abstract class SkullHuntEvent implements Listener {
 
 	private void givePrize(Player player, List<ItemBuilder> prizes) {
 		for (ItemBuilder prize : prizes) {
-			ItemUtils.giveItem(player, prize.build());
+			PlayerUtils.giveItem(player, prize.build());
 		}
 
 	}

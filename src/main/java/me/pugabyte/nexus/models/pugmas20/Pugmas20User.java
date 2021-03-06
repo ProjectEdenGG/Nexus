@@ -18,8 +18,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Or
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.inventory.ItemStack;
@@ -112,7 +112,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 		ArrayList<ItemStack> inventory = new ArrayList<>(this.inventory);
 		this.inventory.clear();
-		this.inventory.addAll(ItemUtils.giveItemsGetExcess(getPlayer(), inventory));
+		this.inventory.addAll(PlayerUtils.giveItemsGetExcess(getPlayer(), inventory));
 
 		if (this.inventory.isEmpty())
 			send(Pugmas20.PREFIX + "Inventory applied");

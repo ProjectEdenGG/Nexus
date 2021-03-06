@@ -11,6 +11,7 @@ import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class OpenDeliveryMenuProvider extends MenuUtils implements InventoryProv
 		addBackItem(contents, e -> {
 			for (ItemStack item : player.getOpenInventory().getTopInventory().getContents()) {
 				if (delivery.getItems().contains(item))
-					ItemUtils.giveItem(player, item);
+					PlayerUtils.giveItem(player, item);
 			}
 			DeliveryMenu.viewDeliveries(user, worldGroup);
 		});

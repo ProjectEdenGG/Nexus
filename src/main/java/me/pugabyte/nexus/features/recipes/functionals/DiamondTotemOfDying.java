@@ -85,7 +85,7 @@ public class DiamondTotemOfDying extends FunctionalRecipe {
 		// Move item from offhand
 		ItemStack offHand = inv.getItemInOffHand();
 		if (!ItemUtils.isNullOrAir(offHand)) {
-			ItemUtils.giveItem(player, inv.getItemInOffHand());
+			PlayerUtils.giveItem(player, inv.getItemInOffHand());
 			Tasks.wait(1, () -> inv.setItemInOffHand(offHand));
 		}
 

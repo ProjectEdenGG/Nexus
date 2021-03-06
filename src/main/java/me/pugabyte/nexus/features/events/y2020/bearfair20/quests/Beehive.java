@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import me.pugabyte.nexus.models.bearfair.BearFairService;
 import me.pugabyte.nexus.models.bearfair.BearFairUser;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -107,7 +108,7 @@ public class Beehive implements Listener {
 				service.save(user);
 
 				Tasks.wait(60, () -> {
-					ItemUtils.giveItem(player, MainIsland.blessedHoneyBottle.clone());
+					PlayerUtils.giveItem(player, MainIsland.blessedHoneyBottle.clone());
 					chime(player);
 				});
 			}

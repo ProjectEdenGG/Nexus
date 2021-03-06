@@ -34,9 +34,9 @@ import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
@@ -457,55 +457,55 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("kit the_mines pickaxe")
 	void kitMinersPickaxe() {
-		ItemUtils.giveItem(player(), TheMines.getMinersPickaxe());
+		PlayerUtils.giveItem(player(), TheMines.getMinersPickaxe());
 	}
 
 	@Permission("group.admin")
 	@Path("kit the_mines sieve")
 	void kitMinersSieve() {
-		ItemUtils.giveItem(player(), TheMines.getMinersSieve());
+		PlayerUtils.giveItem(player(), TheMines.getMinersSieve());
 	}
 
 	@Permission("group.admin")
 	@Path("kit the_mines ores")
 	void kitMinersOres() {
 		for (OreType oreType : OreType.values())
-			ItemUtils.giveItem(player(), oreType.getOre());
+			PlayerUtils.giveItem(player(), oreType.getOre());
 	}
 
 	@Permission("group.admin")
 	@Path("kit the_mines ingots")
 	void kitMinersIngot() {
 		for (OreType oreType : OreType.values())
-			ItemUtils.giveItem(player(), oreType.getIngot());
+			PlayerUtils.giveItem(player(), oreType.getIngot());
 	}
 
 	@Permission("group.admin")
 	@Path("kit ornament_vendor ornaments")
 	void kitOrnamentVendorOrnaments() {
 		for (Ornament ornament : Ornament.values())
-			ItemUtils.giveItem(player(), ornament.getSkull());
+			PlayerUtils.giveItem(player(), ornament.getSkull());
 	}
 
 	@Permission("group.admin")
 	@Path("kit ornament_vendor axe")
 	void kitOrnamentVendorAxe() {
-		ItemUtils.giveItem(player(), OrnamentVendor.getLumberjacksAxe());
+		PlayerUtils.giveItem(player(), OrnamentVendor.getLumberjacksAxe());
 	}
 
 	@Permission("group.admin")
 	@Path("kit ornament_vendor logs")
 	void kitOrnamentVendorLogs() {
 		for (Ornament ornament : Ornament.values())
-			ItemUtils.giveItem(player(), ornament.getTreeType().getLog(64));
+			PlayerUtils.giveItem(player(), ornament.getTreeType().getLog(64));
 	}
 
 	@Permission("group.admin")
 	@Path("kit light_the_tree")
 	void kitLightTheTree() {
-		ItemUtils.giveItem(player(), LightTheTree.lighter);
-		ItemUtils.giveItem(player(), LightTheTree.lighter_broken);
-		ItemUtils.giveItem(player(), LightTheTree.steel_ingot);
+		PlayerUtils.giveItem(player(), LightTheTree.lighter);
+		PlayerUtils.giveItem(player(), LightTheTree.lighter_broken);
+		PlayerUtils.giveItem(player(), LightTheTree.steel_ingot);
 	}
 
 	@Permission("group.admin")

@@ -18,6 +18,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.MerchantBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.Tasks;
@@ -129,7 +130,7 @@ public class TheMines implements Listener {
 		List<MerchantBuilder.TradeBuilder> tradeBuilders = MerchantNPC.THEMINES_SELLCRATE.getTrades(null);
 
 		if (tradeBuilders == null || tradeBuilders.size() == 0) {
-			ItemUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
+			PlayerUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
 			return;
 		}
 
@@ -187,7 +188,7 @@ public class TheMines implements Listener {
 			}
 
 			if (!foundTrade || leftovers || item.getAmount() > 0)
-				ItemUtils.giveItem(player, item);
+				PlayerUtils.giveItem(player, item);
 		}
 
 		EventUserService service = new EventUserService();
@@ -230,7 +231,7 @@ public class TheMines implements Listener {
 
 		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
 		ItemStack itemStack = oreType == OreType.COAL ? oreType.getIngot(RandomUtils.randomElement(1, 1, 2, 2, 2, 3)) : oreType.getOre();
-		ItemUtils.giveItem(player, itemStack);
+		PlayerUtils.giveItem(player, itemStack);
 
 		scheduleRegen(block);
 		block.setType(Material.STONE);
@@ -265,7 +266,7 @@ public class TheMines implements Listener {
 		});
 
 		if (RandomUtils.chanceOf(20))
-			ItemUtils.giveItem(event.getPlayer(), flint);
+			PlayerUtils.giveItem(event.getPlayer(), flint);
 
 		scheduleRegen(block);
 		block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);

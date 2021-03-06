@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -145,7 +146,7 @@ public class OrnamentVendor implements Listener {
 
 		if (!player.getInventory().contains(getLumberjacksAxe())) {
 			if (Quests.hasRoomFor(player, getLumberjacksAxe())) {
-				ItemUtils.giveItem(player, getLumberjacksAxe());
+				PlayerUtils.giveItem(player, getLumberjacksAxe());
 				Quests.sound_obtainItem(player);
 				user.send(Pugmas20.PREFIX + " You have obtained a &3&l" + stripColor(lumberjacksAxe.getItemMeta().getDisplayName()));
 			} else {
@@ -349,7 +350,7 @@ public class OrnamentVendor implements Listener {
 						.duration(randomInt(8, 12) * 4)
 						.onTick(i -> {
 							if (i % 4 == 0)
-								ItemUtils.giveItem(player, getLog());
+								PlayerUtils.giveItem(player, getLog());
 						})
 						.start();
 

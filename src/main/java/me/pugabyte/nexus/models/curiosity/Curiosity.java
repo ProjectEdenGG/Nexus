@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -44,7 +43,7 @@ public class Curiosity extends PlayerOwnedObject {
 	public void give(CuriosityReward reward) {
 		earned.add(reward);
 		if (isOnline()) {
-			ItemUtils.giveItem(getPlayer(), reward.getItem());
+			PlayerUtils.giveItem(getPlayer(), reward.getItem());
 			PlayerUtils.send(getPlayer(), "");
 			PlayerUtils.send(getPlayer(), "&3You earned &e" + pretty(reward.getItem()) + " &3for learning!");
 		}

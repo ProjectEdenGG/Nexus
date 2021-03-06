@@ -33,7 +33,6 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -120,15 +119,15 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("quests giveAllQuestItem")
 	void giveQuestItems() {
 		// MAIN
-		ItemUtils.giveItems(player(), Arrays.asList(honeyStroopWafel, stroofWafel, blessedHoneyBottle, relic, ancientPickaxe, rareFlower, specialPrize));
+		PlayerUtils.giveItems(player(), Arrays.asList(honeyStroopWafel, stroofWafel, blessedHoneyBottle, relic, ancientPickaxe, rareFlower, specialPrize));
 		// SDU
-		ItemUtils.giveItems(player(), Arrays.asList(anzacBiscuit, goldenSyrup, peanuts));
+		PlayerUtils.giveItems(player(), Arrays.asList(anzacBiscuit, goldenSyrup, peanuts));
 		// PUGMAS
-		ItemUtils.giveItem(player(), presentItem);
+		PlayerUtils.giveItem(player(), presentItem);
 		// MGN
-		arcadePieces.forEach(piece -> ItemUtils.giveItem(player(), piece.build()));
+		arcadePieces.forEach(piece -> PlayerUtils.giveItem(player(), piece.build()));
 		// HALLOWEEN
-		ItemUtils.giveItems(player(), Arrays.asList(atticKey, basketItem));
+		PlayerUtils.giveItems(player(), Arrays.asList(atticKey, basketItem));
 	}
 
 	@Path("quests npc <text>")
@@ -437,7 +436,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 		if (disableDelivery) {
 			if (PlayerUtils.isAdminGroup(player)) {
 				BearFairStoreMap bearFairStoreMap = convertToBearFairStoreMap(title);
-				ItemUtils.giveItem(player, bearFairStoreMap.getSplatterMap());
+				PlayerUtils.giveItem(player, bearFairStoreMap.getSplatterMap());
 			} else {
 				send(player, PREFIX + "Couldn't get this feature to work ): include the title of this painting in your discord order");
 			}
@@ -486,7 +485,7 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	@Path("store maps get <map...>")
 	@Permission("group.admin")
 	void storeGetMap(BearFairStoreMap map) {
-		ItemUtils.giveItem(player(), map.getSplatterMap());
+		PlayerUtils.giveItem(player(), map.getSplatterMap());
 	}
 
 	@ConverterFor(BearFairStoreMap.class)

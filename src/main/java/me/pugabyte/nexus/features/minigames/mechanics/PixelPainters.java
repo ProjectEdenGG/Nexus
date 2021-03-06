@@ -15,8 +15,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.utils.ActionBarUtils;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
@@ -501,7 +501,7 @@ public class PixelPainters extends TeamlessMechanic {
 			items.add(new ItemStack(block.getType(), 1));
 
 		List<Minigamer> minigamers = match.getMinigamers();
-		minigamers.forEach(minigamer -> ItemUtils.giveItems(minigamer.getPlayer(), items));
+		minigamers.forEach(minigamer -> PlayerUtils.giveItems(minigamer.getPlayer(), items));
 	}
 
 	public void pasteLogo(Match match) {
