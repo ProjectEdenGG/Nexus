@@ -14,9 +14,12 @@ import me.pugabyte.nexus.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -84,6 +87,21 @@ public class WitherChallenge extends Feature implements Listener {
 		if (currentFight == null) cancelTeleport(event);
 		if (currentFight.alivePlayers == null) cancelTeleport(event);
 		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId())) cancelTeleport(event);
+	}
+
+	@EventHandler
+	public void onSpawn(CreatureSpawnEvent event) {
+		if (!event.getEntity().getType().equals(EntityType.WITHER)) return;
+		World world = event.getLocation().getWorld();
+		if (world.getName().equalsIgnoreCase("events") || world.getName().contains("resource")) return;
+		if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) return;
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onStarSpawn(ItemSpawnEvent event) {
+		if (!event.getEntity().getItemStack().getType().equals(Material.NETHER_STAR)) return;
+		event.setCancelled(true);
 	}
 
 	public void cancelTeleport(PlayerTeleportEvent event) {
