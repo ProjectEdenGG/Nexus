@@ -22,7 +22,6 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import java.util.Arrays;
 
 @Aliases("rp")
-@Permission("group.staff") // TODO: Remove Permission
 @NoArgsConstructor
 public class ResourcePackCommand extends CustomCommand implements Listener {
 	private static final String URL = "http://cdn.bnn.gg/BearNationResourcePack.zip";
@@ -44,6 +43,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		resourcePack(player());
 	}
 
+	@Permission("group.staff")
 	@Path("getStatus [player]")
 	void getStatus(@Arg("self") Player player) {
 		send(PREFIX + "Resource pack status for " + player.getName() + ": &e" + (player.getResourcePackStatus() == null ? "null" : camelCase(player.getResourcePackStatus())));
@@ -51,6 +51,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("update")
+	@Permission("group.admim")
 	void update() {
 		String newHash = Utils.createSha1(URL);
 		if (hash != null && hash.equals(newHash))
