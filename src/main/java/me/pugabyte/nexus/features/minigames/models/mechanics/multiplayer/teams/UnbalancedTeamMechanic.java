@@ -13,9 +13,28 @@ import java.util.List;
 
 public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 
+	public boolean basicBalanceCheck(List<Minigamer> minigamers) {
+		if (minigamers.size() == 0)
+			return false;
+
+		Match match = minigamers.get(0).getMatch();
+		Arena arena = match.getArena();
+		List<Team> teams = new ArrayList<>(arena.getTeams());
+
+		int required = 0;
+		for (Team team : teams) required += team.getMinPlayers();
+
+		if (minigamers.size() < required) {
+			criticalErrorAbort("Not enough players to meet team requirements!", match);
+			return false;
+		}
+
+		return true;
+	}
+
 	@Override
 	public void balance(List<Minigamer> minigamers) {
-		if (minigamers.size() == 0)
+		if (!basicBalanceCheck(minigamers))
 			return;
 
 		Match match = minigamers.get(0).getMatch();
@@ -33,17 +52,6 @@ public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 
 		Collections.shuffle(minigamers);
 
-		int required = 0;
-		for (Team team : teams) required += team.getMinPlayers();
-
-		if (minigamers.size() < required) {
-			String message = "Not enough players to meet team requirements!";
-			Nexus.severe(message);
-			match.broadcast("&c" + message);
-			match.end();
-			return;
-		}
-
 		for (Team team : teams)
 			while (team.getMinigamers(match).size() < team.getMinPlayers()) {
 				Minigamer minigamer = RandomUtils.randomElement(match.getUnassignedPlayers());
@@ -52,7 +60,7 @@ public abstract class UnbalancedTeamMechanic extends TeamMechanic {
 			}
 
 		playerLoop:
-		for (Minigamer minigamer : minigamers) {
+		for (Minigamer minigamer : new ArrayList<>(minigamers)) {
 			int SAFETY = 0;
 			while (minigamer.getTeam() == null && ++SAFETY < 50) {
 				Collections.shuffle(teams);
