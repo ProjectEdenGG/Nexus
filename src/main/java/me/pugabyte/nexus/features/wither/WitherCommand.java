@@ -100,11 +100,11 @@ public class WitherCommand extends CustomCommand {
 		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
 		int partySize = WitherChallenge.currentFight.getParty().size();
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + WitherChallenge.currentFight.getHost().getName() +
-				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") : "") +
-				" &3are challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode");
+				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
+				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode");
 		Chat.broadcastDiscord("**[Wither]** " + WitherChallenge.currentFight.getHost().getName() +
-				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") : "") +
-				" are challenging the wither to a fight in " + StringUtils.camelCase(WitherChallenge.currentFight.getDifficulty().name()) + " mode");
+				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " are" : " is") +
+				" challenging the wither to a fight in " + StringUtils.camelCase(WitherChallenge.currentFight.getDifficulty().name()) + " mode");
 		WitherChallenge.currentFight.teleportPartyToArena();
 		Tasks.Countdown.builder()
 				.duration(Time.SECOND.x(10))

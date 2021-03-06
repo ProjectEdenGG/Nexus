@@ -51,7 +51,6 @@ public abstract class WitherFight implements Listener {
 	public abstract List<ItemStack> getAlternateDrops();
 
 	public void start() {
-		alivePlayers = party;
 		started = true;
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(this::spawnWither);
@@ -63,6 +62,7 @@ public abstract class WitherFight implements Listener {
 	}
 
 	public void teleportPartyToArena() {
+		alivePlayers = party;
 		for (UUID player : party) {
 			if (PlayerUtils.getPlayer(player).getPlayer() != null)
 				PlayerUtils.getPlayer(player).getPlayer().teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
@@ -400,10 +400,14 @@ public abstract class WitherFight implements Listener {
 				Wither wither1 = witherLoc.getWorld().spawn(witherLoc.clone().add(3, 0, 0), Wither.class);
 				wither1.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(1);
 				wither1.setHealth(1);
+				wither1.setCustomName("Minion");
+				wither1.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(uuids)).getPlayer());
 
 				Wither wither2 = witherLoc.getWorld().spawn(witherLoc.clone().add(-3, 0, 0), Wither.class);
 				wither2.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(1);
 				wither2.setHealth(1);
+				wither2.setCustomName("Minion");
+				wither2.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(uuids)).getPlayer());
 			}
 		},
 		TNT {
