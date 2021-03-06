@@ -64,7 +64,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (Arrays.asList(Status.ACCEPTED, Status.SUCCESSFULLY_LOADED).contains(player.getResourcePackStatus()))
-				send(player, json("Click to update resource pack").command("/rp"));
+				send(player, json(PREFIX + "Click to update resource pack").command("/rp"));
 	}
 
 	@EventHandler
