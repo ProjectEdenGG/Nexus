@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -71,6 +72,8 @@ public class DiamondTotemOfDying extends FunctionalRecipe {
 		if (player.getHealth() - event.getFinalDamage() > 0.0)
 			return;
 
+		if (event.getCause().equals(DamageCause.VOID))
+			return;
 
 		PlayerInventory inv = player.getInventory();
 		if (inv.getItemInMainHand().getType().equals(Material.TOTEM_OF_UNDYING) || inv.getItemInOffHand().getType().equals(Material.TOTEM_OF_UNDYING)) {
