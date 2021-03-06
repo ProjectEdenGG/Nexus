@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.utils;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
 import org.bukkit.Color;

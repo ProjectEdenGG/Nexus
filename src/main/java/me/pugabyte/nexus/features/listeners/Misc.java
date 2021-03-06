@@ -34,6 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.AbstractHorse;
@@ -146,7 +147,8 @@ public class Misc implements Listener {
 		Player player = (Player) event.getEntity();
 
 		if (event.getCause() == DamageCause.VOID)
-			if (!WorldGroup.get(player).equals(WorldGroup.SKYBLOCK) && (!player.getWorld().getName().contains("the_end"))) {
+			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.get(player))
+					|| player.getWorld().getEnvironment() == Environment.THE_END)) {
 				if (PlayerManager.get(player).getMatch() != null)
 					Warps.spawn((Player) event.getEntity());
 			}

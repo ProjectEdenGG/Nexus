@@ -222,8 +222,10 @@ public class AccountTransferCommand extends CustomCommand {
 
 				for (LWCProtection oldProtection : oldProtections) {
 					Protection protectionById = protectionCache.getProtectionById(oldProtection.getId());
-					protectionById.setOwner(target.getUniqueId().toString());
-					protectionById.save();
+					if (protectionById != null) {
+						protectionById.setOwner(target.getUniqueId().toString());
+						protectionById.save();
+					}
 				}
 			}
 		};
