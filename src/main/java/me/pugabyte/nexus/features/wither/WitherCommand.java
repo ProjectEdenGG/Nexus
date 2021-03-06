@@ -29,10 +29,10 @@ public class WitherCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
-		if (WitherChallenge.maintenance)
-			error("The wither arena is currently under maintenance, please wait");
 		if (WitherChallenge.currentFight != null)
 			error("The wither is currently being fought. Please wait!");
+		if (WitherChallenge.maintenance)
+			error("The wither arena is currently under maintenance, please wait");
 		if (!hasItems())
 			error("You do not have the necessary items in your inventory to spawn the wither");
 		SmartInventory.builder()

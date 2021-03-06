@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.PlayerUtils.getAdvancement;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -43,6 +44,18 @@ public class Restrictions implements Listener {
 		if (event.getCause() == Cause.WITHER_ROSE)
 			if (event.getEntity() instanceof Player)
 				event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onOneBlockFallingCommand(PlayerCommandPreprocessEvent event) {
+		Player player = event.getPlayer();
+		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))
+			return;
+
+		if (isNullOrAir(BlockUtils.getBlockStandingOn(player)) && !player.isFlying()) {
+			event.setCancelled(true);
+			PlayerUtils.send(player, "&cYou cannot run commands while in the air (try moving onto a solid block)");
+		}
 	}
 
 	@EventHandler
@@ -66,7 +79,7 @@ public class Restrictions implements Listener {
 		if (ItemUtils.isNullOrAir(event.getItem())) return;
 		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
-		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
+		if (isNullOrAir(event.getClickedBlock())) return;
 		if (!event.getClickedBlock().getType().equals(Material.SPAWNER)) return;
 
 		if (!PlayerUtils.isSeniorStaffGroup(event.getPlayer()))

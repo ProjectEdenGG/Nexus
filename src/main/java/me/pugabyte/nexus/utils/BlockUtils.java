@@ -125,6 +125,28 @@ public class BlockUtils {
 		return blocks;
 	}
 
+	/*
+	Doesnt work:
+
+	fences
+	gates
+	walls
+	sea pickles
+	pot
+	hanging on all vines
+	in a cobweb
+	on a ladder (and on top)
+	end rods
+	trapdoors (uses the block underneath)
+	carpet (uses the block underneath)
+	scaffolding
+	lily pads
+	composter (inside)
+	skulls (on floor & wall)
+	in water & lava
+	snow layers (all levels, layers=1 & 2, uses the block underneath)
+	 */
+
 	public static Block getBlockStandingOn(Player player) {
 		Location below = player.getLocation().add(0, -.25, 0);
 		Block block = below.getBlock();
