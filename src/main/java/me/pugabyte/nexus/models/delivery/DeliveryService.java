@@ -14,4 +14,14 @@ public class DeliveryService extends MongoService {
 	public Map<UUID, DeliveryUser> getCache() {
 		return cache;
 	}
+
+	@Override
+	public <T> void saveSync(T object) {
+		DeliveryUser user = (DeliveryUser) object;
+		if (user.getDeliveries().values().stream().anyMatch(list -> !list.isEmpty()))
+			super.saveSync(object);
+		else
+			super.delete(object);
+	}
+
 }

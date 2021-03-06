@@ -469,11 +469,19 @@ public class PlayerUtils {
 		return excess;
 	}
 
+	public static void giveItemAndDeliverExcess(OfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
+		giveItemsAndDeliverExcess(player, Collections.singleton(items), null, worldGroup);
+	}
+
+	public static void giveItemAndDeliverExcess(OfflinePlayer player, ItemStack items, String message, WorldGroup worldGroup) {
+		giveItemsAndDeliverExcess(player, Collections.singleton(items), message, worldGroup);
+	}
+
 	public static void giveItemsAndDeliverExcess(OfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 		List<ItemStack> excess;
-		if (player.isOnline())
+		if (player.isOnline() && player.getPlayer() != null && WorldGroup.get(player.getPlayer()) == worldGroup)
 			excess = giveItemsGetExcess(player.getPlayer(), finalItems);
 		else
 			excess = new ArrayList<>(items);

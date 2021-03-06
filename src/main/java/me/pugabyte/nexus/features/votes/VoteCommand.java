@@ -17,20 +17,22 @@ import me.pugabyte.nexus.models.vote.Vote;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static me.pugabyte.nexus.utils.StringUtils.progressBar;
@@ -130,35 +132,45 @@ public class VoteCommand extends CustomCommand {
 		send(PREFIX + "Done");
 	}
 
-	@Path("calcFebKeys")
+	@Path("calcFebKeys [dryRun]")
 	@Permission("group.admin")
-	void calcFebKeys() {
-		Map<String, Integer> voteKey = new HashMap<>();
+	void calcFebKeys(@Arg("true") boolean dryRun) {
+		Map<UUID, Integer> voteKey = new HashMap<>();
 		List<TopVoter> topVoters = new VoteService().getTopVoters(Month.FEBRUARY);
 		for (TopVoter topVoter : topVoters) {
 			if (topVoter.getCount() < 50) continue;
-			voteKey.put(topVoter.getUuid(), 1);
+			voteKey.put(UUID.fromString(topVoter.getUuid()), 0);
 		}
 		for (TopVoter topVoter : topVoters) {
 			if (topVoters.indexOf(topVoter) >= (((double) voteKey.size()) * .33)) continue;
-			voteKey.put(topVoter.getUuid(), 2);
+			voteKey.put(UUID.fromString(topVoter.getUuid()), 1);
 		}
 		for (TopVoter topVoter : topVoters) {
 			if (topVoters.indexOf(topVoter) >= (((double) voteKey.size()) * .1)) continue;
-			voteKey.put(topVoter.getUuid(), 3);
+			voteKey.put(UUID.fromString(topVoter.getUuid()), 2);
 		}
+
 		StringBuilder paste = new StringBuilder();
-		voteKey.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(e -> {
-			paste.append(PlayerUtils.getPlayer(e.getKey()).getName() + ": " + e.getValue() + "\n");
-		});
-		for (String name : voteKey.keySet()) {
-			OfflinePlayer player = PlayerUtils.getPlayer(name);
+
+		Utils.sortByValue(voteKey).forEach((uuid, amount) -> {
+			if (amount < 1)
+				return;
+
+			OfflinePlayer player = PlayerUtils.getPlayer(uuid);
+			paste.append(player.getName()).append(": ").append(amount).append(System.lineSeparator());
+
 			ItemStack key = CrateType.FEB_VOTE_REWARD.getKey();
-			key.setAmount(voteKey.get(name));
-			PlayerUtils.giveItemsAndDeliverExcess(player, Collections.singleton(key), null, WorldGroup.SURVIVAL);
-			if (player.getPlayer() != null)
-				send(player.getPlayer(), PREFIX + "You have been given &e" + voteKey.get(name) + " February Vote Keys &3for the server monthly reward");
-		}
+			key.setAmount(amount);
+			if (!dryRun) {
+				PlayerUtils.giveItemAndDeliverExcess(player, key, WorldGroup.SURVIVAL);
+				if (player.getPlayer() != null)
+					send(player.getPlayer(), PREFIX + "You have been given &e" + amount + " February Vote Keys &3for the server monthly reward");
+			} else {
+				ItemBuilder.addLore(key, player.getName() + "'s keys");
+				PlayerUtils.giveItem(player(), key);
+			}
+		});
+
 		send(json(PREFIX + "February Vote Keys were given. &eClick here to view the amounts.").url(StringUtils.paste(paste.toString())).hover("&eOpens paste link"));
 	}
 

@@ -3,12 +3,21 @@ package me.pugabyte.nexus.features.crates.models;
 import fr.minuskube.inv.SmartInventory;
 import lombok.Getter;
 import me.pugabyte.nexus.features.crates.Crates;
-import me.pugabyte.nexus.features.crates.crates.*;
+import me.pugabyte.nexus.features.crates.crates.BossCrate;
+import me.pugabyte.nexus.features.crates.crates.FebVoteRewardCrate;
+import me.pugabyte.nexus.features.crates.crates.MysteryCrate;
+import me.pugabyte.nexus.features.crates.crates.VoteCrate;
+import me.pugabyte.nexus.features.crates.crates.WeeklyWakkaCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,9 +47,13 @@ public enum CrateType {
 	}
 
 	@Getter
-	ItemStack key = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key").glow()
+	private final ItemStack key = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key").glow()
 			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))
 			.lore("&7Use me on the Crate at").lore("&7spawn to receive a reward").build();
+
+	public ItemStack getKey() {
+		return key.clone();
+	}
 
 	public static CrateType fromLocation(Location location) {
 		for (CrateType type : values())
