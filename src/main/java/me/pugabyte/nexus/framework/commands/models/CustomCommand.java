@@ -331,7 +331,10 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected String name() {
-		return new Nerd(player()).getName();
+		if (!isPlayer())
+			return sender().getName();
+		else
+			return new Nerd(player()).getName();
 	}
 
 	protected ConsoleCommandSender console() {

@@ -40,7 +40,7 @@ public class OnlineCommand extends CustomCommand {
 
 		long vanished = Bukkit.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
 		long online = Bukkit.getOnlinePlayers().size() - vanished;
-		boolean canSeeVanished = player().hasPermission("pv.see");
+		boolean canSeeVanished = !isPlayer() || player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");
 
 		line();
