@@ -29,7 +29,7 @@ public class BoopCommand extends CustomCommand {
 	void boopAllAnon(String message) {
 		message = "-a " + message;
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (!isSelf(player))
+			if (!isSelf(player) && !Minigames.isMinigameWorld(player.getWorld()))
 				boopPlayer(player, message);
 		}
 	}
