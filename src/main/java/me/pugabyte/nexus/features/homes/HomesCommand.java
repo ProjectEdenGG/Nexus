@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.homes;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -64,6 +65,25 @@ public class HomesCommand extends CustomCommand {
 			send(PREFIX + "You can set &e" + left + " &3more");
 		else
 			send(PREFIX + "&cYou have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
+	}
+
+	@Path("nearest [player]")
+	void nearest(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+		Home nearest = null;
+		double distance = Double.MAX_VALUE;
+		for (Home home : service.<HomeOwner>get(player).getHomes()) {
+			if (!world().equals(home.getLocation().getWorld())) continue;
+			double _distance = location().distance(home.getLocation());
+			if (_distance < distance) {
+				distance = _distance;
+				nearest = home;
+			}
+		}
+
+		if (nearest == null)
+			error("No homes found in this world");
+
+		send(PREFIX + "Nearest home is &e" + nearest.getName() + " &3(&e" + (int) distance + " &3blocks away)");
 	}
 
 	@Path("reload")
