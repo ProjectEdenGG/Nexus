@@ -95,6 +95,7 @@ public class Juggernaut extends UnbalancedTeamMechanic {
 		}
 
 		victim.getMatch().broadcast(attacker.getColoredName() + "&e has become the Juggernaut!");
+		victim.scored();
 	}
 
 	@Override
