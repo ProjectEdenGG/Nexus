@@ -229,18 +229,34 @@ public abstract class Mechanic implements Listener {
 
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		Map<String, Integer> lines = new HashMap<>();
+		int lineCount = 0;
 
-		if (renderTeamNames() && match.getMechanic() instanceof TeamMechanic)
-			for (Team team : match.getAliveTeams())
+		if (renderTeamNames() && match.getMechanic() instanceof TeamMechanic) {
+			for (Team team : match.getAliveTeams()) {
 				lines.put("- " + team.getColoredName(), team.getScore(match));
 
-		// TODO: Max number of lines is 15, only show max/min scores
-		for (Minigamer minigamer : match.getMinigamers())
-			if (minigamer.isAlive())
+				lineCount++;
+				if (lineCount == 15) return lines;
+			}
+		}
+
+		List<Minigamer> minigamers = new ArrayList<>(match.getMinigamers());
+		minigamers.sort((minigamer, t1) -> t1.getScore() - minigamer.getScore()); // sorts by descending (i think lol)
+		int minigamerCount = 0;
+
+		for (Minigamer minigamer : minigamers) {
+			if (lineCount == 14)
+				lines.put(String.format("&o+%d more players...", minigamers.size()-minigamerCount), -1);
+			else if (minigamer.isAlive())
 				lines.put(minigamer.getColoredName(), minigamer.getScore());
 			else
 				// &r to force last
 				lines.put("&r&c&m" + minigamer.getName(), minigamer.getScore());
+
+			minigamerCount++;
+			lineCount++;
+			if (lineCount == 15) return lines;
+		}
 
 		return lines;
 	}

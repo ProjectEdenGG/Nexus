@@ -99,4 +99,8 @@ public class Infection extends UnbalancedTeamMechanic {
 
 	}
 
+	@Override
+	protected boolean renderTeamNames() {
+		return false;
+	}
 }
