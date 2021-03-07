@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -85,25 +85,18 @@ public class MobHeads extends Feature implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public static void onKillEntity(EntityDamageByEntityEvent event) {
-		if (!(event.getEntity() instanceof LivingEntity))
-			return;
-
-		if (!(event.getDamager() instanceof Player))
-			return;
-
+	public static void onKillEntity(EntityDeathEvent event) {
 		if (event.isCancelled())
 			return;
 
-		if (!new CooldownService().check(event.getEntity().getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2)))
+		LivingEntity victim = event.getEntity();
+		Player killer = victim.getKiller();
+		if (killer == null)
 			return;
 
-		LivingEntity victim = (LivingEntity) event.getEntity();
-		double newHealth = victim.getHealth() - event.getFinalDamage();
-		if (newHealth > 0)
+		if (!new CooldownService().check(victim.getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2)))
 			return;
 
-		Player killer = (Player) event.getDamager();
 		// TODO: Remove when done
 		if (!PlayerUtils.isWakka(killer))
 			return;
@@ -146,6 +139,7 @@ public class MobHeads extends Feature implements Listener {
 				UUID mobOwner = ItemUtils.getSkullOwner(mobHead);
 				if (mobOwner != null && mobOwner.equals(skullOwner)) {
 					item.setItemStack(mobHead.clone());
+					item.getItemStack().setAmount(itemStack.getAmount());
 					break;
 				}
 			}
@@ -163,6 +157,7 @@ public class MobHeads extends Feature implements Listener {
 					.collect(Collectors.toList())
 					.get(0);
 			item.setItemStack(skull);
+			item.getItemStack().setAmount(itemStack.getAmount());
 		}
 	}
 
