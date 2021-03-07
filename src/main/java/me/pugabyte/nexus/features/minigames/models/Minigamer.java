@@ -218,7 +218,8 @@ public class Minigamer {
 
 	public void setTeam(Team team) {
 		this.team = team;
-		this.match.getScoreboardTeams().update();
+		if (this.getMatch().getScoreboardTeams() != null)
+			this.match.getScoreboardTeams().update();
 	}
 
 	public void scored() {
@@ -373,6 +374,7 @@ public class Minigamer {
 		if (VanishAPI.isInvisible(player))
 			VanishAPI.showPlayer(player);
 		SpeedCommand.resetSpeed(player);
+		player.setOp(false);
 
 		if (mechanic.shouldClearInventory())
 			player.getInventory().clear();

@@ -157,7 +157,6 @@ public class Shops extends Feature {
 			addBuyItem(ShopGroup.SURVIVAL, Material.SKELETON_SKULL, 1, 1000);
 			addBuyItem(ShopGroup.SURVIVAL, Material.WITHER_SKELETON_SKULL, 1, 1500);
 			addBuyItem(ShopGroup.SURVIVAL, Material.ZOMBIE_HEAD, 1, 1000);
-			addBuyItem(ShopGroup.SURVIVAL, Material.BEACON, 1, 50000);
 			addBuyItem(ShopGroup.SURVIVAL, Material.ELYTRA, 1, 1000);
 			addBuyItem(ShopGroup.SURVIVAL, Material.GLASS, 32, 25);
 			addBuyItem(ShopGroup.SURVIVAL, Material.WHITE_WOOL, 32, 60);

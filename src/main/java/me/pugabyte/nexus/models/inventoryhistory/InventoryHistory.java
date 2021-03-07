@@ -59,7 +59,10 @@ public class InventoryHistory extends PlayerOwnedObject {
 	}
 
 	public InventorySnapshot takeSnapshot(SnapshotReason reason) {
-		InventorySnapshot snapshot = new InventorySnapshot(getPlayer(), reason);
+		return takeSnapshot(new InventorySnapshot(getPlayer(), reason));
+	}
+
+	public InventorySnapshot takeSnapshot(InventorySnapshot snapshot) {
 		snapshots.add(0, snapshot);
 		return snapshot;
 	}

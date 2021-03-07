@@ -28,6 +28,8 @@ import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.models.wallsofgrace.WallsOfGrace;
+import me.pugabyte.nexus.models.wallsofgrace.WallsOfGraceService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -319,7 +321,12 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("test <player> <reminder>")
-	void testCriteria(Player player, Reminder reminder) {
+	void test(Player player, Reminder reminder) {
+		send(PREFIX + player.getName() + " &ewould" + (reminder.test(player) ? "" : " not") + " &3receive the &e" + reminder.getId() + " &3reminder");
+	}
+
+	@Path("testCondition <player> <reminder>")
+	void testCondition(Player player, Reminder reminder) {
 		if (reminder.getCondition() == null)
 			error("Reminder &e" + reminder.getId() + " &cdoes not have a condition so players will always receive it");
 
@@ -340,12 +347,19 @@ public class RemindersCommand extends CustomCommand implements Listener {
 				.collect(Collectors.toList());
 	}
 
-	private static final int interval = Time.SECOND.x(30);
+	@Path("setInterval <seconds>")
+	void setInterval(int seconds) {
+		interval = Time.SECOND.x(seconds);
+		startTask();
+		send(PREFIX + "Interval set to " + seconds + " seconds (will reset when plugin reloads)");
+	}
 
-	static {
-		Tasks.repeatAsync(interval, interval, () -> {
-			if (true) return;
+	private static int interval = Time.MINUTE.x(5);
+	private static int taskId = -1;
 
+	public static void startTask() {
+		Tasks.cancel(taskId);
+		taskId = Tasks.repeatAsync(interval, interval, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (!PlayerUtils.isPuga(player))
 					continue;
@@ -404,7 +418,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		}
 
 		public List<Reminder> getReminders() {
-			return reminders.stream().filter(reminder -> !reminder.isMotd()).collect(Collectors.toList());
+			return reminders.stream().filter(Reminder::isReminder).collect(Collectors.toList());
 		}
 
 		public List<Reminder> getMotds() {
@@ -554,8 +568,13 @@ public class RemindersCommand extends CustomCommand implements Listener {
 				return true;
 			}
 
+			public boolean isReminder() {
+				return !motd;
+			}
+
 			@AllArgsConstructor
 			public enum ReminderCondition {
+				// Return true if you want to show the announcement
 				VOTE(player -> {
 					Voter voter = new VoteService().get(player);
 					return voter.getActiveVotes().size() < VoteSite.values().length - 2;
@@ -563,6 +582,10 @@ public class RemindersCommand extends CustomCommand implements Listener {
 				DISCORD_LINK(player -> {
 					DiscordUser user = new DiscordService().get(player);
 					return user.getUserId() == null;
+				}),
+				WALLS_OF_GRACE(player -> {
+					WallsOfGrace wallsOfGrace = new WallsOfGraceService().get(player);
+					return wallsOfGrace.get(1) == null && wallsOfGrace.get(2) == null;
 				});
 
 				@Getter

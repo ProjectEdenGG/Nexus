@@ -24,13 +24,14 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -98,15 +99,19 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	}
 
 	@EventHandler
-	public void onWorldChange(PlayerChangedWorldEvent event) {
-		takeSnapshot(event.getPlayer(), SnapshotReason.WORLD_CHANGE);
+	public void onWorldChange(PlayerTeleportEvent event) {
+		if (!event.getFrom().getWorld().equals(event.getTo().getWorld()))
+			takeSnapshot(event.getPlayer(), SnapshotReason.WORLD_CHANGE);
 	}
 
 	public void takeSnapshot(Player player, SnapshotReason reason) {
-		InventoryHistoryService service = new InventoryHistoryService();
-		InventoryHistory history = service.get(player);
-		history.takeSnapshot(reason);
-		service.save(history);
+		InventorySnapshot snapshot = new InventorySnapshot(player, reason);
+		Tasks.async(() -> {
+			InventoryHistoryService service = new InventoryHistoryService();
+			InventoryHistory history = service.get(player);
+			history.takeSnapshot(snapshot);
+			service.save(history);
+		});
 	}
 
 	public static class InventorySnapshotMenu extends MenuUtils implements InventoryProvider {
