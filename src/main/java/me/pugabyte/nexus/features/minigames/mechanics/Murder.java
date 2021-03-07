@@ -127,6 +127,8 @@ public class Murder extends UnbalancedTeamMechanic {
 						// Set compass location to nearest player
 						minigamer.getPlayer().setCompassTarget(target.getLocation());
 				});
+			else
+				minigamer.getPlayer().setFoodLevel(3);
 		}
 	}
 
