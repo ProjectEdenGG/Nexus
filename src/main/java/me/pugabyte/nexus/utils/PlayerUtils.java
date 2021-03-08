@@ -460,9 +460,13 @@ public class PlayerUtils {
 		dropExcessItems(player, giveItemsGetExcess(player, finalItems));
 	}
 
-	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> finalItems) {
+	public static List<ItemStack> giveItemsGetExcess(Player player, ItemStack items) {
+		return giveItemsGetExcess(player, Collections.singletonList(items));
+	}
+
+	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> items) {
 		List<ItemStack> excess = new ArrayList<>();
-		for (ItemStack item : finalItems)
+		for (ItemStack item : items)
 			if (!ItemUtils.isNullOrAir(item))
 				excess.addAll(player.getInventory().addItem(item).values());
 

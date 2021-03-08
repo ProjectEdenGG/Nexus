@@ -38,7 +38,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static me.pugabyte.nexus.features.shops.ShopUtils.giveItem;
+import static me.pugabyte.nexus.features.shops.ShopUtils.giveItems;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
@@ -267,7 +267,7 @@ public class Shop extends PlayerOwnedObject {
 			Nexus.getEcon().withdrawPlayer(customer, price);
 			if (!isMarket(product))
 				Nexus.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
-			giveItem(customer, product.getItem());
+			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
 		}
@@ -323,7 +323,7 @@ public class Shop extends PlayerOwnedObject {
 			customer.getInventory().removeItem(price);
 			if (!isMarket(product))
 				product.getShop().getHolding().add(price);
-			giveItem(customer, product.getItem());
+			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price));
 		}

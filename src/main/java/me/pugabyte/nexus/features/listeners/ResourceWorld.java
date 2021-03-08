@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.listeners;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.homes.HomesFeature;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.models.tip.Tip;
@@ -53,8 +54,10 @@ public class ResourceWorld implements Listener {
 
 		if (event.getFrom().getWorld().getName().startsWith("resource")) return;
 
+		if (Rank.of(player).isStaff()) return;
+
 		if (event.getTo().getWorld().getName().startsWith("resource")) {
-			if (!WorldGroup.get(event.getFrom().getWorld()).equals(WorldGroup.SURVIVAL) || event.getFrom().getWorld().getName().startsWith("staff")) {
+			if (!WorldGroup.get(event.getFrom()).equals(WorldGroup.SURVIVAL) || event.getFrom().getWorld().getName().startsWith("staff")) {
 				if (!PlayerUtils.isAdminGroup(player)) {
 					PlayerUtils.send(player, "&eYou can only enter the resource world from the Survival world");
 					event.setCancelled(true);
@@ -76,20 +79,18 @@ public class ResourceWorld implements Listener {
 			ArrayList<Material> rejectedMaterials = new ArrayList<>();
 			boolean appendMessage = false;
 
-			for (Material material : materials) {
+			for (Material material : materials)
 				if (player.getInventory().contains(material)) {
 					rejectedMaterials.add(material);
 					event.setCancelled(true);
 					appendMessage = true;
 				}
-			}
 
 			if (rejectedMaterials.size() != 0) {
 				PlayerUtils.send(player, "&cYou can not go to the resource world with the below items, " +
 						"please remove them from your inventory before continuing:");
-				for (Material material : rejectedMaterials) {
+				for (Material material : rejectedMaterials)
 					PlayerUtils.send(player, "&e- " + camelCase(material.name()));
-				}
 			}
 
 			rejectedMaterials.clear();
@@ -111,24 +112,20 @@ public class ResourceWorld implements Listener {
 				}
 			}
 
-			if (rejectedMaterials.size() != 0) {
+			if (rejectedMaterials.size() != 0)
 				if (appendMessage) {
-					for (Material material : rejectedMaterials) {
+					for (Material material : rejectedMaterials)
 						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
-					}
 				} else {
 					PlayerUtils.send(player, "&cYou can not go to the resource world with the below items, " +
 							"please remove them from your shulkerbox before continuing:");
-					for (Material material : rejectedMaterials) {
+					for (Material material : rejectedMaterials)
 						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
-					}
 				}
-			}
 
-			if (!event.isCancelled()) {
+			if (!event.isCancelled())
 				PlayerUtils.send(player, " &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
 						"&c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
-			}
 		}
 	}
 

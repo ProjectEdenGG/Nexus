@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.shops.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.shops.ShopUtils;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.ShopService;
@@ -50,7 +51,7 @@ public class EditProductProvider extends _ShopProvider {
 						.onConfirm(e2 -> {
 							Shop shop = service.get(player);
 							shop.getProducts().remove(product);
-							shop.getHolding().addAll(PlayerUtils.giveItemsGetExcess(player, product.getItemStacks()));
+							ShopUtils.giveItems(player, product.getItemStacks());
 							service.save(shop);
 							previousMenu.open(player);
 						})
