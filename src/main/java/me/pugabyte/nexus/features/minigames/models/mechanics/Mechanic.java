@@ -24,7 +24,6 @@ import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -117,12 +116,7 @@ public abstract class Mechanic implements Listener {
 				begin(beginEvent);
 		}
 
-		int taskId = match.getTasks().repeat(0, 1, new BukkitRunnable() {
-			@Override
-			public void run() {
-				match.getMinigamers().forEach(Minigamer::tick);
-			}
-		});
+		int taskId = match.getTasks().repeat(0, 1, () -> match.getMinigamers().forEach(Minigamer::tick));
 		match.getTasks().register(MatchTaskType.TICK, taskId);
 	}
 
