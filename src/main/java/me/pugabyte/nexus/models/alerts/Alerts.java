@@ -97,24 +97,11 @@ public class Alerts extends PlayerOwnedObject {
 			return;
 		}
 
-		for (Highlight highlight : getHighlights()) {
-			if (highlight.isPartialMatching()) {
-				if (message.toLowerCase().contains(highlight.getHighlight().toLowerCase())) {
-					playSound();
-					break;
-				}
-			} else {
-				String _message = message;
-				if (highlight.getHighlight().replaceAll("[a-zA-Z0-9 ]+", "").length() == 0) {
-					_message = message.replaceAll("[^a-zA-Z0-9 ]+", " ");
-				}
-
-				if ((" " + _message + " ").toLowerCase().contains(" " + highlight.getHighlight().toLowerCase() + " ")) {
-					playSound();
-					break;
-				}
+		for (Highlight highlight : getHighlights())
+			if (highlight.test(message)) {
+				playSound();
+				break;
 			}
-		}
 	}
 
 	@Data
@@ -129,6 +116,19 @@ public class Alerts extends PlayerOwnedObject {
 		@Override
 		public int compareTo(Highlight other) {
 			return highlight.compareTo(other.getHighlight());
+		}
+
+		public boolean test(String message) {
+			if (partialMatching) {
+				return message.toLowerCase().contains(highlight.toLowerCase());
+			} else {
+				String _message = message;
+				// Allow partial matching to work with special chars (ie quotes)
+				if (highlight.replaceAll("[a-zA-Z0-9 ]+", "").length() == 0)
+					_message = message.replaceAll("[^a-zA-Z0-9 ]+", " ");
+
+				return (" " + _message + " ").toLowerCase().contains(" " + highlight.toLowerCase() + " ");
+			}
 		}
 	}
 
