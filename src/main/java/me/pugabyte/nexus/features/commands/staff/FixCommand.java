@@ -24,14 +24,27 @@ public class FixCommand extends CustomCommand {
 			error(item.getType().name() + " is not damageable");
 
 		Damageable damage = (Damageable) item.getItemMeta();
-
 		if (!damage.hasDamage())
 			error(item.getType().name() + " is not damaged");
+
+		fix(item);
+		send(PREFIX + "Item repaired");
+	}
+
+	@Path("all")
+	void all() {
+		for (ItemStack content : player().getInventory().getContents())
+			fix(content);
+		send(PREFIX + "All items repaired");
+	}
+
+	private void fix(ItemStack item) {
+		if (!(item.getItemMeta() instanceof Damageable))
+			return;
 
 		ItemMeta meta = item.getItemMeta();
 		((Damageable) meta).setDamage(0);
 		item.setItemMeta(meta);
-		send(PREFIX + "Item repaired");
 	}
 
 }

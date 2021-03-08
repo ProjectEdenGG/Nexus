@@ -23,17 +23,12 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
@@ -133,18 +128,6 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onEntitySpawn(CreatureSpawnEvent event) {
-		if (Arrays.asList(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG, SpawnReason.NETHER_PORTAL).contains(event.getSpawnReason()))
-			event.getEntity().setMetadata("killermoney-spawner", new FixedMetadataValue(Nexus.getInstance(), true));
-	}
-
-	@EventHandler
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof LivingEntity)) return;
-		event.getEntity().setMetadata("killermoney-lastDamageCause", new FixedMetadataValue(Nexus.getInstance(), event.getCause().name()));
-	}
-
-	@EventHandler
 	public void onEntityKill(EntityDeathEvent event) {
 		KillerMoneyService kmService = new KillerMoneyService();
 		Player player = event.getEntity().getKiller();
@@ -155,11 +138,10 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		if (!player.getGameMode().equals(GameMode.SURVIVAL))
 			return;
 
-		for (MetadataValue meta : event.getEntity().getMetadata("killermoney-spawner"))
-			if (meta.asBoolean())
-				return;
-		for (MetadataValue meta : event.getEntity().getMetadata("killermoney-lastDamageCause"))
-			if (Arrays.asList(DamageCause.CRAMMING.name(), DamageCause.SUFFOCATION.name()).contains(meta.asString()))
+		if (Arrays.asList(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG, SpawnReason.NETHER_PORTAL).contains(event.getEntity().getEntitySpawnReason()))
+			return;
+		if (event.getEntity().getLastDamageCause() != null)
+			if (Arrays.asList(DamageCause.CRAMMING, DamageCause.SUFFOCATION).contains(event.getEntity().getLastDamageCause().getCause()))
 				return;
 
 		MobMoney mob;
