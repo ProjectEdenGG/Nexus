@@ -1,7 +1,11 @@
 package me.pugabyte.nexus.features.shops;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
+import me.pugabyte.nexus.features.shops.providers.BrowseItemsProvider;
 import me.pugabyte.nexus.features.shops.providers.MainMenuProvider;
+import me.pugabyte.nexus.features.shops.providers.PlayerShopProvider;
+import me.pugabyte.nexus.features.shops.providers.YourShopProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -21,7 +25,8 @@ import org.bukkit.inventory.ItemStack;
 
 @Aliases("shops")
 public class ShopCommand extends CustomCommand {
-	private ShopService service = new ShopService();
+	private final ShopService service = new ShopService();
+	private final ShopGroup shopGroup = ShopGroup.get(world());
 
 	public ShopCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -29,10 +34,32 @@ public class ShopCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		if (isSeniorStaff())
+		if (shopGroup == ShopGroup.RESOURCE)
+			error("You cannot use player shops while in the resource world");
+
+		if (isStaff())
 			new MainMenuProvider(null).open(player());
 		else
 			send("&cComing soon!");
+	}
+
+	@Path("edit")
+	void edit() {
+		new YourShopProvider(null).open(player());
+	}
+
+	@Path("<player>")
+	void player(Shop shop) {
+		if (shop.getProducts(shopGroup).isEmpty())
+			error("No items in " + shop.getName() + "'s " + camelCase(shopGroup) + " shop");
+		new PlayerShopProvider(null, shop).open(player());
+	}
+
+	@Path("search <text>")
+	void search(@Arg(tabCompleter = Material.class) String text) {
+		BrowseItemsProvider provider = new BrowseItemsProvider(null);
+		provider.getFilters().add(FilterSearchType.SEARCH.of(text, product -> product.getItem().getType().name().toLowerCase().contains(text.toLowerCase())));
+		provider.open(player());
 	}
 
 	@Permission("group.admin")

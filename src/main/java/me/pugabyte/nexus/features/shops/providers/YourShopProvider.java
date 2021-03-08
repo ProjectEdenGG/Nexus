@@ -10,7 +10,6 @@ import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -35,14 +34,14 @@ public class YourShopProvider extends _ShopProvider {
 		Shop shop = new ShopService().get(player);
 
 		contents.set(0, 1, ClickableItem.from(nameItem(Material.ENDER_EYE, "&6Preview your shop"), e -> new PlayerShopProvider(this, shop).open(player)));
-		contents.set(0, 2, ClickableItem.from(nameItem(Material.OAK_SIGN, "&6Set shop description"), e ->
+		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.OAK_SIGN).name("&6Set shop description").lore("").lore(shop.getDescription()).build(), e ->
 				Nexus.getSignMenuFactory().lines(shop.getDescriptionArray()).prefix(Shops.PREFIX).response(lines -> {
 					shop.setDescription(Arrays.asList(lines));
 					service.save(shop);
 					open(player);
 				}).open(player)));
 
-		contents.set(0, 4, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add item"), e -> new AddProductProvider(this).open(player)));
+		contents.set(0, 4, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add item"), e -> new ExchangeConfigProvider(this).open(player)));
 
 		// TODO
 		contents.set(0, 6, ClickableItem.from(nameItem(Material.WRITABLE_BOOK, "&6Shop history"), e -> {}));
@@ -53,11 +52,7 @@ public class YourShopProvider extends _ShopProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		shop.getProducts(ShopGroup.get(player)).forEach(product -> {
-			ItemStack item = new ItemBuilder(product.getItem().clone())
-					.lore(product.getExchange().getOwnLore(product))
-					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
-					.build();
-
+			ItemStack item = product.getOwnLore();
 			items.add(ClickableItem.from(item, e -> new EditProductProvider(this, product).open(player)));
 		});
 

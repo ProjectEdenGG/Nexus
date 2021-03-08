@@ -18,11 +18,14 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,10 +37,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.features.shops.ShopUtils.giveItem;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Builder
@@ -62,14 +67,27 @@ public class Shop extends PlayerOwnedObject {
 		return products.stream().filter(product -> product.getShopGroup().equals(shopGroup)).collect(Collectors.toList());
 	}
 
+	public List<String> getDescription() {
+		return description.stream().filter(line -> !isNullOrEmpty(line)).collect(Collectors.toList());
+	}
+
+	public void setDescription(List<String> description) {
+		this.description = new ArrayList<String>() {{
+			for (String line : description)
+				if (!isNullOrEmpty(stripColor(line).replace(StringUtils.getColorChar(), "")))
+					add("&f" + line);
+		}};
+	}
+
 	public String[] getDescriptionArray() {
-		return description.isEmpty() ? new String[]{"", "", "", ""} : description.toArray(new String[0]);
+		return description.isEmpty() ? new String[]{"", "", "", ""} : description.stream().map(StringUtils::decolorize).toArray(String[]::new);
 	}
 
 	public enum ShopGroup {
 		SURVIVAL,
 		RESOURCE,
-		SKYBLOCK;
+		SKYBLOCK,
+		ONEBLOCK;
 
 		public static ShopGroup get(org.bukkit.entity.Entity entity) {
 			return get(entity.getWorld());
@@ -82,8 +100,10 @@ public class Shop extends PlayerOwnedObject {
 		public static ShopGroup get(String world) {
 			if (world.toLowerCase().startsWith("resource"))
 				return RESOURCE;
-			else if (world.toLowerCase().startsWith("skyblock"))
+			else if (WorldGroup.get(world) == WorldGroup.SKYBLOCK)
 				return SKYBLOCK;
+			else if (WorldGroup.get(world) == WorldGroup.ONEBLOCK)
+				return ONEBLOCK;
 			else if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
 				return SURVIVAL;
 
@@ -94,9 +114,12 @@ public class Shop extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@RequiredArgsConstructor
 	@Converters({UUIDConverter.class, ItemStackConverter.class})
 	public static class Product {
+		@NonNull
 		private UUID uuid;
+		@NonNull
 		private ShopGroup shopGroup;
 		@Embedded
 		private ItemStack item;
@@ -152,6 +175,47 @@ public class Shop extends PlayerOwnedObject {
 		public Exchange getExchange() {
 			return exchangeType.init(price);
 		}
+
+		public ItemStack getOwnLore() {
+			return new ItemBuilder(item.clone())
+					.lore(getExchange().getOwnLore(this))
+					.lore("", "&7Click to edit")
+					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+					.build();
+		}
+
+		public void addStock(int amount) {
+			stock += amount;
+		}
+
+		public void removeStock(int amount) {
+			stock -= amount;
+		}
+
+		public List<ItemStack> getItemStacks() {
+			return getItemStacks(-1);
+		}
+
+		public List<ItemStack> getItemStacks(int maxStacks) {
+			List<ItemStack> items = new ArrayList<>();
+
+			ItemStack item = this.item.clone();
+			double stock = this.stock;
+			int maxStackSize = item.getMaxStackSize();
+
+			while (stock > 0) {
+				if (maxStacks > 0 && items.size() > maxStacks)
+					break;
+
+				ItemStack next = new ItemStack(item.clone());
+				next.setAmount((int) Math.min(maxStackSize, stock));
+				stock -= next.getAmount();
+				items.add(next);
+			}
+
+			return items;
+		}
+
 	}
 
 	// Dumb enum due to morphia refusing to deserialize interfaces properly
@@ -231,9 +295,7 @@ public class Shop extends PlayerOwnedObject {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
 					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-					"",
-					"&7Click to edit"
+					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
 			);
 		}
 	}
@@ -288,9 +350,7 @@ public class Shop extends PlayerOwnedObject {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
 					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + pretty(price),
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-					"",
-					"&7Click to edit"
+					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
 			);
 		}
 	}
@@ -348,9 +408,7 @@ public class Shop extends PlayerOwnedObject {
 		public List<String> getOwnLore(Product product) {
 			return Arrays.asList(
 					"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
-					"&7Stock: &e" + prettyMoney(product.getStock()),
-					"",
-					"&7Click to edit"
+					"&7Stock: &e" + prettyMoney(product.getStock())
 			);
 		}
 	}

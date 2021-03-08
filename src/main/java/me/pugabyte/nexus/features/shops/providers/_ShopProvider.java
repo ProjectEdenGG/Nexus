@@ -16,11 +16,14 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
-	protected ShopService service = new ShopService();
+	protected final ShopService service = new ShopService();
 	@Getter
 	protected _ShopProvider previousMenu;
 	@Getter
 	protected int page = 0;
+
+	protected int rows = 6;
+	protected int columns = 9;
 
 	public void open(Player viewer) {
 		open(viewer, page);
@@ -33,7 +36,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 		SmartInventory.builder()
 				.provider(provider)
 				.title(colorize(title))
-				.size(6, 9)
+				.size(rows, columns)
 				.build()
 				.open(viewer, page);
 	}

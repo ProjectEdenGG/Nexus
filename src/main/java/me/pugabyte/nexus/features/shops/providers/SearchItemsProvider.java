@@ -26,13 +26,19 @@ public class SearchItemsProvider extends _ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
+		BrowseItemsProvider browseItemsMenu;
+		if (previousMenu instanceof BrowseItemsProvider)
+			browseItemsMenu = (BrowseItemsProvider) previousMenu;
+		else
+			browseItemsMenu = new BrowseItemsProvider(this);
+
 		contents.set(1, 1, ClickableItem.from(nameItem(Material.NAME_TAG, "&6Search by item name"),
 				e -> Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
 					try {
 						if (lines[0].length() > 0) {
-							((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH.of(lines[0], product ->
+							browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(lines[0], product ->
 									product.getItem().getType().name().toLowerCase().contains(lines[0].toLowerCase())));
-							previousMenu.open(player);
+							browseItemsMenu.open(player);
 						} else
 							open(player);
 					} catch (Exception ex) {
@@ -42,13 +48,13 @@ public class SearchItemsProvider extends _ShopProvider {
 				}).open(player)));
 
 		contents.set(1, 3, ClickableItem.from(nameItem(Material.APPLE, "&6Search for food"), e -> {
-			((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH
 					.of("Food", product -> product.getItem().getType().isEdible()));
-			previousMenu.open(player);
+			browseItemsMenu.open(player);
 		}));
 
 		contents.set(1, 5, ClickableItem.from(nameItem(Material.ENCHANTED_BOOK, "&6Search for enchanted items"), e -> {
-			((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH.of("Enchanted items", product -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Enchanted items", product -> {
 				if (product.getItem().getType().equals(Material.ENCHANTED_BOOK)) {
 					EnchantmentStorageMeta book = (EnchantmentStorageMeta) product.getItem().getItemMeta();
 					return book != null && !book.getStoredEnchants().isEmpty();
@@ -56,13 +62,13 @@ public class SearchItemsProvider extends _ShopProvider {
 					return !product.getItem().getEnchantments().isEmpty();
 				}
 			}));
-			previousMenu.open(player);
+			browseItemsMenu.open(player);
 		}));
 
 		contents.set(1, 7, ClickableItem.from(nameItem(Material.DIAMOND_SWORD, "&6Search for tools,", "&6weapons and armor"), e -> {
-			((BrowseItemsProvider) previousMenu).getFilters().add(FilterSearchType.SEARCH.of("Tools, weapons and armor", product ->
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Tools, weapons and armor", product ->
 					MaterialTag.TOOLS_WEAPONS_ARMOR.isTagged(product.getItem().getType())));
-			previousMenu.open(player);
+			browseItemsMenu.open(player);
 		}));
 	}
 

@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.shops.providers;
 
-import com.google.common.base.Strings;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
@@ -39,8 +38,8 @@ public class BrowseShopsProvider extends _ShopProvider {
 
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop.getOfflinePlayer())
-					.name("&e" + shop.getOfflinePlayer().getName());
-			shop.getDescription().stream().filter(line -> !Strings.isNullOrEmpty(line)).forEach(head::lore);
+					.name("&e" + shop.getOfflinePlayer().getName())
+					.lore(shop.getDescription());
 
 			items.add(ClickableItem.from(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
 		});
