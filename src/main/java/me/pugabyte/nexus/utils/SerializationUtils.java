@@ -65,11 +65,23 @@ public class SerializationUtils {
 			return gson.toJson(gson.toJsonTree(map, Map.class));
 		}
 
+		public static String toString(Map<String, Object>[] map) {
+			Gson gson = new Gson();
+			return gson.toJson(gson.toJsonTree(map, Map.class));
+		}
+
 		public static Map<String, Object> fromString(String value) {
 			return new Gson().fromJson(value, Map.class);
 		}
 
 		/** Bukkit ConfigurationSerializable */
+
+		public static Map<String, Object>[] serialize(ConfigurationSerializable[] values) {
+			Map<String, Object>[] hashMapArray = (HashMap<String, Object>[]) new HashMap[values.length];
+			for (int i = 0; i < values.length; i++)
+				hashMapArray[i] = serialize(values[i]);
+			return hashMapArray;
+		}
 
 		public static Map<String, Object> serialize(ConfigurationSerializable value) {
 			Map<String, Object> serialized = serializeRecursive(value.serialize());
