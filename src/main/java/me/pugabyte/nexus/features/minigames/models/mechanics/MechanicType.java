@@ -13,6 +13,7 @@ public enum MechanicType {
 	FREE_FOR_ALL(new FreeForAll()),
 	GOLD_RUSH(new GoldRush()),
 	GRAB_A_JUMBUCK(new GrabAJumbuck()),
+	HIDE_AND_SEEK(new HideAndSeek()),
 	HOLE_IN_THE_WALL(new HoleInTheWall()),
 	HOLI_SPLEGG(new HoliSplegg()),
 	INFECTION(new Infection()),

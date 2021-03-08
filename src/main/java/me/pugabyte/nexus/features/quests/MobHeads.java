@@ -41,7 +41,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-//TODO: picking up multiple mob heads, only gives you 1
+import static me.pugabyte.nexus.utils.PlayerUtils.wakka;
+
 @NoArgsConstructor
 @Environments(Env.PROD)
 public class MobHeads extends Feature implements Listener {
@@ -86,6 +87,21 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onKillEntity(EntityDeathEvent event) {
+		if (wakka().equals(event.getEntity().getKiller())) {
+			wakka("-=- Entity Death Event -=-");
+			wakka("Is Cancelled: " + event.isCancelled());
+			wakka("");
+			wakka("Type: " + event.getEntityType().name());
+			LivingEntity entity = event.getEntity();
+			wakka("Killer: " + entity.getKiller());
+			if (entity.getLastDamageCause() != null)
+				wakka("Last Damage Cause: " + entity.getLastDamageCause().getCause());
+			wakka("Spawn Reason: " + entity.getEntitySpawnReason());
+			wakka("Custom Name: " + entity.getCustomName());
+			wakka("Will Despawn: " + entity.getRemoveWhenFarAway());
+			wakka(" -=- ");
+		}
+
 		if (event.isCancelled())
 			return;
 

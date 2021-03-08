@@ -17,7 +17,7 @@ import java.util.Collection;
 
 @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
 public class SoundUtils {
-	private static final float volume = 0.5F;
+	private static final float defaultVolume = 0.5F;
 
 	public static void playSoundAll(Sound sound, float volume, float pitch) {
 		Bukkit.getOnlinePlayers().forEach(player -> playSound(player, sound, volume, pitch));
@@ -28,7 +28,7 @@ public class SoundUtils {
 	}
 
 	public static void playSound(Player player, Sound sound, SoundCategory category) {
-		playSound(player, sound, category, volume, 1);
+		playSound(player, sound, category, defaultVolume, 1);
 	}
 
 	public static void playSound(Player player, Sound sound, float volume, float pitch) {
@@ -44,7 +44,7 @@ public class SoundUtils {
 	}
 
 	public static void playSound(Location location, Sound sound, SoundCategory category) {
-		playSound(location, sound, category, volume, 1);
+		playSound(location, sound, category, defaultVolume, 1);
 	}
 
 	public static void playSound(Location location, Sound sound, float volume, float pitch) {
@@ -74,6 +74,11 @@ public class SoundUtils {
 		PING {
 			@Override
 			public void play(Player player) {
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.ALERTS))
+					return;
+
+				float volume = getMuteMenuVolume(player, MuteMenuItem.ALERTS, defaultVolume);
+
 				playSound(player, Sound.ENTITY_ARROW_HIT_PLAYER, volume, 1);
 			}
 		},
@@ -81,6 +86,11 @@ public class SoundUtils {
 		RANKUP {
 			@Override
 			public void play(Player player) {
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.RANK_UP))
+					return;
+
+				float volume = getMuteMenuVolume(player, MuteMenuItem.RANK_UP, defaultVolume);
+
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.749154F);
@@ -112,25 +122,27 @@ public class SoundUtils {
 		FIRST_JOIN {
 			@Override
 			public void play(Player player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.FIRST_JOIN_SOUNDS))
+				if (MuteMenuUser.hasMuted(player, MuteMenuItem.FIRST_JOIN_SOUND))
 					return;
+
+				float volume = getMuteMenuVolume(player, MuteMenuItem.FIRST_JOIN_SOUND, defaultVolume);
 
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, .3F, 0.561231F);
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, .3F, 0.561231F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, volume, 0.561231F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, volume, 0.561231F);
 				});
 				Tasks.wait(wait += 2, () -> {
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, .3F, 0.629961F);
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, .3F, 0.629961F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, volume, 0.629961F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, volume, 0.629961F);
 				});
 				Tasks.wait(wait += 2, () -> {
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, .3F, 0.561231F);
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, .3F, 0.561231F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, volume, 0.561231F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, volume, 0.561231F);
 				});
 				Tasks.wait(wait += 2, () -> {
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, .3F, 0.840896F);
-					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, .3F, 0.840896F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, SoundCategory.RECORDS, volume, 0.840896F);
+					playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, SoundCategory.RECORDS, volume, 0.840896F);
 				});
 			}
 		},
@@ -141,11 +153,13 @@ public class SoundUtils {
 				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JOIN_QUIT))
 					return;
 
+				float volume = getMuteMenuVolume(player, MuteMenuItem.JOIN_QUIT_SOUNDS, defaultVolume);
+
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.5F));
-				Tasks.wait(wait += 2, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.667420F));
-				Tasks.wait(wait += 2, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.749154F));
-				Tasks.wait(wait += 2, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 1F));
+				Tasks.wait(wait += 0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.5F));
+				Tasks.wait(wait += 2, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.667420F));
+				Tasks.wait(wait += 2, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.749154F));
+				Tasks.wait(wait += 2, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 1F));
 			}
 		},
 
@@ -155,11 +169,13 @@ public class SoundUtils {
 				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JOIN_QUIT))
 					return;
 
+				float volume = getMuteMenuVolume(player, MuteMenuItem.JOIN_QUIT_SOUNDS, defaultVolume);
+
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.707107F));
-				Tasks.wait(wait += 4, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.629961F));
-				Tasks.wait(wait += 4, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.707107F));
-				Tasks.wait(wait += 4, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, .5F, 0.529732F));
+				Tasks.wait(wait += 0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.707107F));
+				Tasks.wait(wait += 4, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.629961F));
+				Tasks.wait(wait += 4, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.707107F));
+				Tasks.wait(wait += 4, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, SoundCategory.RECORDS, volume, 0.529732F));
 			}
 		},
 
@@ -167,8 +183,8 @@ public class SoundUtils {
 			@Override
 			public void play(Player player) {
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> playSound(player, Sound.UI_TOAST_IN, volume, 1));
-				Tasks.wait(wait += 9, () -> playSound(player, Sound.ENTITY_GENERIC_SPLASH, volume, 1));
+				Tasks.wait(wait += 0, () -> playSound(player, Sound.UI_TOAST_IN, defaultVolume, 1));
+				Tasks.wait(wait += 9, () -> playSound(player, Sound.ENTITY_GENERIC_SPLASH, defaultVolume, 1));
 			}
 		},
 
@@ -176,9 +192,9 @@ public class SoundUtils {
 			@Override
 			public void play(Player player) {
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> playSound(player, Sound.UI_TOAST_IN, volume, 1));
-				Tasks.wait(wait += 9, () -> playSound(player, Sound.ENTITY_GENERIC_EXPLODE, volume, 1));
-				Tasks.wait(wait += 8, () -> playSound(player, Sound.BLOCK_FIRE_AMBIENT, volume, 0.1F));
+				Tasks.wait(wait += 0, () -> playSound(player, Sound.UI_TOAST_IN, defaultVolume, 1));
+				Tasks.wait(wait += 9, () -> playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1));
+				Tasks.wait(wait += 8, () -> playSound(player, Sound.BLOCK_FIRE_AMBIENT, defaultVolume, 0.1F));
 			}
 		},
 
@@ -187,20 +203,20 @@ public class SoundUtils {
 			public void play(Player player){
 				int wait = 0;
 				Tasks.wait(wait, () -> {
-					playSound(player, Sound.ENTITY_GENERIC_EXPLODE, volume, 1);
-					playSound(player, Sound.ENTITY_GENERIC_SPLASH, volume, 1);
+					playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1);
+					playSound(player, Sound.ENTITY_GENERIC_SPLASH, defaultVolume, 1);
 				});
 				Tasks.wait(wait += RandomUtils.randomInt(2, 5), () -> {
-					playSound(player, Sound.ENTITY_GENERIC_EXPLODE, volume, 1);
-					playSound(player, Sound.BLOCK_FIRE_AMBIENT, volume, 0.1F);
+					playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1);
+					playSound(player, Sound.BLOCK_FIRE_AMBIENT, defaultVolume, 0.1F);
 				});
 				Tasks.wait(wait += RandomUtils.randomInt(2, 5), () -> {
-					playSound(player, Sound.ENTITY_GENERIC_EXPLODE, volume, 1);
-					playSound(player, Sound.ENTITY_GENERIC_SPLASH, volume, 1);
+					playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1);
+					playSound(player, Sound.ENTITY_GENERIC_SPLASH, defaultVolume, 1);
 				});
-				Tasks.wait(wait += RandomUtils.randomInt(2, 5), () -> playSound(player, Sound.ENTITY_GENERIC_EXPLODE, volume, 1));
-				Tasks.wait(wait += RandomUtils.randomInt(1, 3), () -> playSound(player, Sound.ENTITY_GENERIC_EXPLODE, volume, 1));
-				Tasks.wait(wait += RandomUtils.randomInt(1, 4), () -> playSound(player, Sound.ENTITY_GENERIC_SPLASH, volume, 1));
+				Tasks.wait(wait += RandomUtils.randomInt(2, 5), () -> playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1));
+				Tasks.wait(wait += RandomUtils.randomInt(1, 3), () -> playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1));
+				Tasks.wait(wait += RandomUtils.randomInt(1, 4), () -> playSound(player, Sound.ENTITY_GENERIC_SPLASH, defaultVolume, 1));
 			}
 		},
 
@@ -208,28 +224,28 @@ public class SoundUtils {
 			@Override
 			public void play(Player player) {
 				Tasks.wait(0, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, randomPitch());
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, randomPitch());
 				});
 				Tasks.wait(1, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, randomPitch());
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, randomPitch());
 				});
 				Tasks.wait(2, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, randomPitch());
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, randomPitch());
 				});
 				Tasks.wait(3, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, randomPitch());
-					playSound(player, Sound.BLOCK_CROP_BREAK, volume, 0.1F);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, randomPitch());
+					playSound(player, Sound.BLOCK_CROP_BREAK, defaultVolume, 0.1F);
 				});
 				Tasks.wait(4, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, randomPitch());
-					playSound(player, Sound.BLOCK_SHROOMLIGHT_STEP, volume, 0.1F);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, randomPitch());
+					playSound(player, Sound.BLOCK_SHROOMLIGHT_STEP, defaultVolume, 0.1F);
 				});
 				Tasks.wait(5, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, randomPitch());
-					playSound(player, Sound.ENTITY_HORSE_SADDLE, volume, 0.1F);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, randomPitch());
+					playSound(player, Sound.ENTITY_HORSE_SADDLE, defaultVolume, 0.1F);
 				});
 				Tasks.wait(6, () -> {
-					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, volume, 2);
+					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, 2);
 				});
 			}
 		},
@@ -243,40 +259,40 @@ public class SoundUtils {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
 				});
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(3)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(6)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(3)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(5)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(6)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(7)));
 				Tasks.wait(wait += 3, () -> {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(5));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(12));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
 				});
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(5)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(8)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(5)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(7)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(8)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(9)));
 				Tasks.wait(wait += 3, () -> {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(7));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(10));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(14));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
 				});
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(7)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(10)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(7)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(9)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(10)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(11)));
 				Tasks.wait(wait += 3, () -> {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(9));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(13));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(16));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_SNARE, .5F, getPitch(24));
 				});
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(9)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(11)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(12)));
-				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, volume, getPitch(13)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(9)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(11)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(12)));
+				Tasks.wait(wait += 3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, defaultVolume, getPitch(13)));
 				Tasks.wait(wait += 3, () -> {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(13));
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(17));
@@ -306,8 +322,16 @@ public class SoundUtils {
 		}
 
 		void play(Player player, Sound intrument, float pitch) {
-			playSound(player, intrument, SoundCategory.RECORDS, volume, pitch);
+			playSound(player, intrument, SoundCategory.RECORDS, defaultVolume, pitch);
 		}
+	}
+
+	private static float getMuteMenuVolume(Player player, MuteMenuItem item, float defaultVolume) {
+		float volume = defaultVolume;
+		Integer customVolume = MuteMenuUser.getVolume(player, item);
+		if (customVolume != null)
+			volume = customVolume / 50.0F;
+		return volume;
 	}
 
 	public static float randomPitch() {

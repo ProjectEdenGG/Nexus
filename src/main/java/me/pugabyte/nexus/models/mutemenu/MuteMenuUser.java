@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.chat.ChatService;
 import org.bukkit.OfflinePlayer;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,12 +33,32 @@ public class MuteMenuUser extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Set<MuteMenuItem> muted = new HashSet<>();
+	private HashMap<MuteMenuItem, Integer> volumes = new HashMap<>();
 
 	public boolean hasMuted(MuteMenuItem item) {
+		if (volumes.containsKey(item))
+			return getVolume(item) == 0.0;
+
 		if (item.name().startsWith("CHANNEL_"))
 			return !new ChatService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());
 		else
 			return muted.contains(item);
+	}
+
+	public void setVolume(MuteMenuItem item, int volume) {
+		volumes.put(item, volume);
+	}
+
+	public int getVolume(MuteMenuItem item) {
+		return volumes.getOrDefault(item, item.getDefaultVolume());
+	}
+
+	public void unMute(MuteMenuItem item) {
+		muted.remove(item);
+	}
+
+	public void mute(MuteMenuItem item) {
+		muted.add(item);
 	}
 
 	public static boolean hasMuted(OfflinePlayer player, MuteMenuItem item) {
@@ -45,5 +66,12 @@ public class MuteMenuUser extends PlayerOwnedObject {
 		MuteMenuService service = new MuteMenuService();
 		MuteMenuUser user = service.get(player);
 		return user.hasMuted(item);
+	}
+
+	public static Integer getVolume(OfflinePlayer player, MuteMenuItem item) {
+		if (item == null) return null;
+		MuteMenuService service = new MuteMenuService();
+		MuteMenuUser user = service.get(player);
+		return user.getVolume(item);
 	}
 }

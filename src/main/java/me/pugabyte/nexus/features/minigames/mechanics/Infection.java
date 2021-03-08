@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
+import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
@@ -12,7 +13,9 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Infection extends UnbalancedTeamMechanic {
@@ -37,12 +40,38 @@ public class Infection extends UnbalancedTeamMechanic {
 		return item.getType() == Material.ARROW;
 	}
 
+	public Team getZombieTeam(Arena arena) {
+		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getColor() == ChatColor.RED).findFirst();
+		return teamOptional.orElse(null);
+	}
+
+	public Team getHumanTeam(Arena arena) {
+		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getColor() != ChatColor.RED).findFirst();
+		return teamOptional.orElse(null);
+	}
+
+	public Team getZombieTeam(Match match) {
+		return getZombieTeam(match.getArena());
+	}
+
+	public Team getHumanTeam(Match match) {
+		return getHumanTeam(match.getArena());
+	}
+
 	public List<Minigamer> getZombies(Match match) {
 		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() == ChatColor.RED).collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getHumans(Match match) {
 		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() != ChatColor.RED).collect(Collectors.toList());
+	}
+
+	public boolean isZombie(Minigamer minigamer) {
+		return minigamer.getTeam().getColor() == ChatColor.RED;
+	}
+
+	public boolean isHuman(Minigamer minigamer) {
+		return !isZombie(minigamer);
 	}
 
 	@Override
@@ -55,14 +84,14 @@ public class Infection extends UnbalancedTeamMechanic {
 	public void announceWinners(Match match) {
 		boolean humansAlive = getHumans(match).size() > 0;
 
-		String broadcast = "";
+		String broadcast;
 		if (!humansAlive)
-			broadcast = "The &czombies &3have won";
+			broadcast = String.format("The %s &3have won", getZombieTeam(match).getColoredName());
 		else
 			if (match.getTimer().getTime() != 0)
-				broadcast = "The &czombies &3has won";
+				broadcast = String.format("The %s &3have won", getZombieTeam(match).getColoredName());
 			else
-				broadcast = "The &9humans &3have won";
+				broadcast = String.format("The %s &3have won", getHumanTeam(match).getColoredName());
 
 		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
 	}
@@ -75,10 +104,7 @@ public class Infection extends UnbalancedTeamMechanic {
 		Minigamer attacker = event.getAttacker();
 
 		Match match = victim.getMatch();
-		Team zombies = match.getArena().getTeams().stream()
-				.filter(team -> team.getColor() == ChatColor.RED)
-				.findFirst()
-				.orElse(null);
+		Team zombies = getZombieTeam(match);
 
 		if (zombies == null) {
 			Nexus.severe("Could not find zombie team on infection map, team color must be light red");
