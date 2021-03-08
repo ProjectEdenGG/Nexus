@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.matchdata;
 
 import lombok.Data;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.pugabyte.nexus.features.minigames.mechanics.HideAndSeek;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.MatchData;
@@ -21,10 +22,11 @@ import java.util.UUID;
 @Data
 @MatchDataFor(HideAndSeek.class)
 public class HideAndSeekMatchData extends MatchData {
-	private Map<UUID, Material> blockChoices = new HashMap<>();
-	private List<Material> mapMaterials = new ArrayList<>(arena.getBlockList());
-	private Map<UUID, FallingBlock> solidBlocks = new HashMap<>();
-	private Map<Minigamer, Location> solidPlayers = new HashMap<>();
+	private final Map<UUID, Disguise> disguises = new HashMap<>();
+	private final Map<UUID, Material> blockChoices = new HashMap<>();
+	private final List<Material> mapMaterials = new ArrayList<>(arena.getBlockList());
+	private final Map<UUID, FallingBlock> solidBlocks = new HashMap<>();
+	private final Map<Minigamer, Location> solidPlayers = new HashMap<>();
 	private final Random random = new Random();
 
 	public HideAndSeekMatchData(Match match) {

@@ -125,6 +125,7 @@ public class HideAndSeek extends Infection {
 			MiscDisguise disguise = new MiscDisguise(DisguiseType.FALLING_BLOCK, matchData.getBlockChoice(minigamer));
 			disguise.setEntity(minigamer.getPlayer());
 			disguise.startDisguise();
+			matchData.getDisguises().put(minigamer.getPlayer().getUniqueId(), disguise);
 			DisguiseAPI.setActionBarShown(minigamer.getPlayer(), false);
 		}
 
@@ -145,6 +146,7 @@ public class HideAndSeek extends Infection {
 					if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 						player.removePotionEffect(PotionEffectType.INVISIBILITY);
 					matchData.getSolidBlocks().remove(minigamer.getPlayer().getUniqueId()).remove();
+					matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).startDisguise();
 				}
 
 				// check how long they've been still
@@ -159,7 +161,9 @@ public class HideAndSeek extends Infection {
 					if (!solidPlayers.containsKey(minigamer)) {
 						Location location = minigamer.getPlayerLocation();
 						if (immobileTicks == SOLIDIFY_PLAYER_AT && MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) {
+							// save fake block location
 							solidPlayers.put(minigamer, location);
+							// create a falling block to render on the hider's client
 							FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockChoice.createBlockData());
 							fallingBlock.setGravity(false);
 							fallingBlock.setHurtEntities(false);
@@ -167,19 +171,27 @@ public class HideAndSeek extends Infection {
 							matchData.getSolidBlocks().put(minigamer.getPlayer().getUniqueId(), fallingBlock);
 							// add invisibility to hide their falling block disguise
 							player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 1, true, false, false));
-							player.sendBlockChange(location, Material.AIR.createBlockData());
+							// stop their disguise (fixes a client-side bug)
+							matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).stopDisguise();
+							// run usual ticking
+							disguisedBlockTick(minigamer);
 						} else
 							sendActionBar(player, "&cYou cannot fully disguise inside non-air blocks!");
 					} else {
-						matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
-						blockChange(minigamer, solidPlayers.get(minigamer), blockChoice);
-						player.sendBlockChange(solidPlayers.get(minigamer), Material.AIR.createBlockData());
-						sendActionBar(player, "&aYou are currently fully disguised as a " + blockName);
+						disguisedBlockTick(minigamer);
 					}
 				}
 			}
 		});
 		match.getTasks().register(taskId);
+	}
+
+	private void disguisedBlockTick(Minigamer minigamer) {
+		HideAndSeekMatchData matchData = minigamer.getMatch().getMatchData();
+		Material blockChoice = matchData.getBlockChoice(minigamer);
+		matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
+		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
+		sendActionBar(minigamer.getPlayer(), "&aYou are currently fully disguised as a " + camelCase(blockChoice));
 	}
 
 	protected void blockChange(Minigamer origin, Location location, Material block) {
