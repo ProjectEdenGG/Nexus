@@ -114,6 +114,11 @@ public class HideAndSeek extends Infection {
 			criticalErrorAbort("Arena has no blocks whitelisted!", match);
 			return;
 		}
+		// the block menu probably accounts for this already but, just to be safe? :P
+		if (matchData.getMapMaterials().stream().anyMatch(material -> !material.isBlock())) {
+			criticalErrorAbort("Map contains non-blocks in its whitelist!", match);
+			return;
+		}
 
 		for (Minigamer minigamer : match.getMinigamers()) {
 			if (isZombie(minigamer)) {
@@ -145,7 +150,9 @@ public class HideAndSeek extends Infection {
 					blockChange(minigamer, solidPlayers.remove(minigamer), Material.AIR);
 					if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 						player.removePotionEffect(PotionEffectType.INVISIBILITY);
-					matchData.getSolidBlocks().remove(minigamer.getPlayer().getUniqueId()).remove();
+					FallingBlock fallingBlock = matchData.getSolidBlocks().remove(minigamer.getPlayer().getUniqueId());
+					if (fallingBlock != null)
+						fallingBlock.remove();
 					matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).startDisguise();
 				}
 
@@ -164,15 +171,17 @@ public class HideAndSeek extends Infection {
 							// save fake block location
 							solidPlayers.put(minigamer, location);
 							// create a falling block to render on the hider's client
-							FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockChoice.createBlockData());
-							fallingBlock.setGravity(false);
-							fallingBlock.setHurtEntities(false);
-							fallingBlock.setDropItem(false);
-							matchData.getSolidBlocks().put(minigamer.getPlayer().getUniqueId(), fallingBlock);
-							// add invisibility to hide their falling block disguise
+							if (blockChoice.isSolid() && blockChoice.isOccluding()) {
+								FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockChoice.createBlockData());
+								fallingBlock.setGravity(false);
+								fallingBlock.setHurtEntities(false);
+								fallingBlock.setDropItem(false);
+								matchData.getSolidBlocks().put(minigamer.getPlayer().getUniqueId(), fallingBlock);
+								// stop their disguise (as otherwise the hider sees 2 of their block)
+								matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).stopDisguise();
+							}
+							// add invisibility to hide them/their falling block disguise
 							player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 1, true, false, false));
-							// stop their disguise (fixes a client-side bug)
-							matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).stopDisguise();
 							// run usual ticking
 							disguisedBlockTick(minigamer);
 						} else
@@ -189,7 +198,10 @@ public class HideAndSeek extends Infection {
 	private void disguisedBlockTick(Minigamer minigamer) {
 		HideAndSeekMatchData matchData = minigamer.getMatch().getMatchData();
 		Material blockChoice = matchData.getBlockChoice(minigamer);
-		matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
+
+		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId()))
+			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
+
 		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
 		sendActionBar(minigamer.getPlayer(), "&aYou are currently fully disguised as a " + camelCase(blockChoice));
 	}
