@@ -169,6 +169,13 @@ public class Utils {
 		return collection == null || collection.isEmpty();
 	}
 
+	public static <T> List<T> combine(List<T>... lists) {
+		return new ArrayList<T>() {{
+			for (List<T> list : lists)
+				addAll(list);
+		}};
+	}
+
 	public static int getFirstIndexOf(Collection<?> collection, Object object) {
 		Iterator<?> iterator = collection.iterator();
 		int index = 0;

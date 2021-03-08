@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
 import de.tr7zw.nbtapi.NBTEntity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -14,11 +13,12 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.EntityUtils;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
 
 import java.util.ArrayList;
@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static me.pugabyte.nexus.utils.Utils.combine;
 
 @Permission("group.seniorstaff")
 @Aliases({"killall", "mobkill", "butcher", "killentities"})
@@ -77,26 +79,29 @@ public class KillEntityCommand extends CustomCommand {
 	}
 
 	@Getter
-	@AllArgsConstructor
 	public enum KillableEntityGroup {
-		LIVING(LivingEntity.class),
-		HOSTILE(Monster.class, EntityUtils.getExtraHostileMobs());
+		ALL(extending(Entity.class), combine(extending(Hanging.class), Collections.singletonList(EntityType.ARMOR_STAND))),
+		LIVING(extending(LivingEntity.class)),
+		HOSTILE(combine(extending(Monster.class), EntityUtils.getExtraHostileMobs())),
+		MINECART(extending(Minecart.class));
 
-		private final Class<? extends Entity> entityClass;
-		private final List<EntityType> extraEntityTypes;
+		private final List<EntityType> entityTypes;
 
-		KillableEntityGroup(Class<? extends Entity> entityClass) {
-			this(entityClass, null);
+		KillableEntityGroup(List<EntityType> include) {
+			this(include, null);
 		}
 
-		public List<EntityType> getApplicableEntityTypes() {
+		KillableEntityGroup(List<EntityType> include, List<EntityType> exclude) {
+			this.entityTypes = new ArrayList<>(include);
+			if (exclude != null)
+				this.entityTypes.removeAll(exclude);
+		}
+
+		private static List<EntityType> extending(Class<? extends Entity> entityClass) {
 			List<EntityType> applicable = new ArrayList<>();
 			for (EntityType entityType : EntityType.values())
-				if (entityType.getEntityClass() != null && this.entityClass.isAssignableFrom(entityType.getEntityClass()))
+				if (entityType.getEntityClass() != null && entityClass.isAssignableFrom(entityType.getEntityClass()))
 					applicable.add(entityType);
-
-			if (!Utils.isNullOrEmpty(extraEntityTypes))
-				applicable.addAll(extraEntityTypes);
 
 			return applicable;
 		}
@@ -119,7 +124,7 @@ public class KillEntityCommand extends CustomCommand {
 			if (entityType != null)
 				return Collections.singletonList(entityType);
 			else if (group != null)
-				return group.getApplicableEntityTypes();
+				return group.getEntityTypes();
 			else
 				return new ArrayList<>();
 		}
@@ -130,7 +135,9 @@ public class KillEntityCommand extends CustomCommand {
 		return new ArrayList<String>() {{
 			addAll(tabCompleteLivingEntity(value));
 			addAll(tabCompleteEnum(value, KillableEntityGroup.class));
-			remove(EntityType.PLAYER.name());
+			add(EntityType.DROPPED_ITEM.name().toLowerCase());
+			add(EntityType.EXPERIENCE_ORB.name().toLowerCase());
+			remove(EntityType.PLAYER.name().toLowerCase());
 		}};
 	}
 
