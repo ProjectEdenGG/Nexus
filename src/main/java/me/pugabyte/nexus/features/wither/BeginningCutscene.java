@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.wither;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.*;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -95,9 +96,12 @@ public class BeginningCutscene implements Listener {
 				fallingBlock.setDropItem(false);
 				fallingBlock.setHurtEntities(false);
 				fallingBlocks.add(fallingBlock);
-				int x = (int) (block.getX() - cageLoc.getX());
-				int z = (int) (block.getZ() - cageLoc.getZ());
+				double x = (int) (block.getX() - cageLoc.getX()) * (RandomUtils.randomDouble(.2) + 1);
+				double z = (int) (block.getZ() - cageLoc.getZ()) * (RandomUtils.randomDouble(.2) + 1);
 				fallingBlock.setVelocity(new Vector(x, 1.25, z).multiply(1.25));
+				for (Block face : BlockUtils.getAdjacentBlocks(block))
+					if (MaterialTag.NEEDS_SUPPORT.isTagged(face.getType()))
+						face.setType(Material.AIR);
 				block.setType(Material.AIR);
 			});
 			for (Player player : uuidToPlayers())

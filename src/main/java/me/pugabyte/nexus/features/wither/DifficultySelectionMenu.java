@@ -37,6 +37,7 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 				}});
 				WitherChallenge.currentFight = fight;
 				player.closeInventory();
+				WitherChallenge.queue.remove(player.getUniqueId());
 				JsonBuilder builder = new JsonBuilder(WitherChallenge.PREFIX + "You have challenge the wither in " + difficulty.getTitle() + " &3mode. ");
 				builder.next("&3You can invite players to fight the Wither with you with &c/wither invite <player>&3.").suggest("/wither invite ").group();
 				builder.next(" &3Once you are ready, ").next("&e&lClick Here to Start").command("/wither start").hover("&eThis will teleport you\n&eto the wither arena.");

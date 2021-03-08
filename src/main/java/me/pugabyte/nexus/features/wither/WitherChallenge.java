@@ -10,16 +10,8 @@ import me.pugabyte.nexus.features.wither.fights.HardFight;
 import me.pugabyte.nexus.features.wither.fights.MediumFight;
 import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.WorldEditUtils;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import me.pugabyte.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,8 +21,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 public class WitherChallenge extends Feature implements Listener {
@@ -38,7 +32,8 @@ public class WitherChallenge extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
 	public static final Location cageLoc = new Location(Bukkit.getWorld("events"), -151.00, 76.00, -69.00, 180F, .00F);
 	public static WitherFight currentFight;
-	public static boolean maintenance;
+	public static List<UUID> queue = new ArrayList<>();
+	public static boolean maintenance = true;
 
 	@Override
 	public void onStart() {
@@ -46,6 +41,10 @@ public class WitherChallenge extends Feature implements Listener {
 	}
 
 	public static void reset() {
+		reset(true);
+	}
+
+	public static void reset(boolean processQueue) {
 		if (currentFight != null) {
 			Nexus.unregisterListener(currentFight);
 			if (currentFight.wither != null)
@@ -59,6 +58,21 @@ public class WitherChallenge extends Feature implements Listener {
 				e.remove();
 		});
 		new WorldEditUtils("events").paster().file("wither_arena").at(region.getMinimumPoint()).pasteAsync();
+		if (!maintenance && processQueue)
+			processQueue();
+	}
+
+	public static void processQueue() {
+		if (queue.size() == 0) return;
+		UUID nextPlayer = queue.get(0);
+		if (PlayerUtils.getPlayer(nextPlayer).getPlayer() == null) {
+			queue.remove(nextPlayer);
+			processQueue();
+		}
+		PlayerUtils.send(PlayerUtils.getPlayer(nextPlayer).getPlayer(),
+				new JsonBuilder(PREFIX + "It is now your time to fight the wither! &e&lClick here to select the difficulty")
+						.command("/wither challenge")
+						.hover("&eThis will open the difficulty selection menu"));
 	}
 
 	@EventHandler
@@ -112,6 +126,24 @@ public class WitherChallenge extends Feature implements Listener {
 
 		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId()))
 			cancelTeleport(event);
+	}
+
+	@EventHandler
+	public void onTeleportOutOfArena(PlayerTeleportEvent event) {
+		if (!new WorldGuardUtils("events").isInRegion(event.getFrom(), "witherarena")) return;
+		if (new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena")) return;
+		if (currentFight == null) return;
+		if (currentFight.getSpectators().contains(event.getPlayer().getUniqueId())) {
+			currentFight.getSpectators().remove(event.getPlayer().getUniqueId());
+			event.getPlayer().setGameMode(GameMode.SURVIVAL);
+			return;
+		}
+		if (currentFight.alivePlayers == null) return;
+		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId())) return;
+		if (!currentFight.isStarted()) return;
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&cYou cannot teleport out of the wither arena during the fight. " +
+				"Use &c/wither quit &3to resign from the fight");
 	}
 
 	@EventHandler

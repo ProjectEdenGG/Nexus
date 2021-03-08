@@ -5,20 +5,20 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.warps.Warps;
+import me.pugabyte.nexus.features.wither.fights.CorruptedFight;
+import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.WorldGroup;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import me.pugabyte.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -38,11 +38,20 @@ public class WitherCommand extends CustomCommand {
 			error("The wither arena is currently under maintenance, please wait");
 		if (!hasItems())
 			error("You do not have the necessary items in your inventory to spawn the wither");
-		SmartInventory.builder()
-				.size(3, 9)
-				.provider(new DifficultySelectionMenu())
-				.title("Select Difficulty")
-				.build().open(player());
+		if (!WitherChallenge.queue.contains(uuid()))
+			WitherChallenge.queue.add(uuid());
+		else if (WitherChallenge.queue.indexOf(uuid()) > 0)
+			error("You are already in the queue. You are spot #" + (WitherChallenge.queue.indexOf(uuid()) + 1));
+		if (WitherChallenge.queue.indexOf(uuid()) == 0) {
+			SmartInventory.builder()
+					.size(3, 9)
+					.provider(new DifficultySelectionMenu())
+					.title("Select Difficulty")
+					.build().open(player());
+			return;
+		} else
+			send(PREFIX + "You have been added to the queue. You are #" + WitherChallenge.queue.size() + " in line. " +
+					"You will be prompted when it is your time to challenge the wither. Please keep the necessary items on you to spawn the Wither");
 	}
 
 	public boolean hasItems() {
@@ -53,7 +62,7 @@ public class WitherCommand extends CustomCommand {
 	@Path("invite <player>")
 	void invite(Player player) {
 		if (WitherChallenge.currentFight == null)
-			error("There is currently no challenging party. You can make one with /wither challenge");
+			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the current party");
 		if (WitherChallenge.currentFight.isStarted())
@@ -67,7 +76,7 @@ public class WitherCommand extends CustomCommand {
 	@Path("join")
 	void join() {
 		if (WitherChallenge.currentFight == null)
-			error("There is currently no challenging party. You can make one with /wither challenge");
+			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (WitherChallenge.currentFight.getParty().contains(player().getUniqueId()))
 			error("You have already joined the current party! Please wait for the host to start the match.");
 		if (WitherChallenge.currentFight.getParty().size() == 4)
@@ -81,11 +90,11 @@ public class WitherCommand extends CustomCommand {
 	@Path("abandon")
 	void abandon() {
 		if (WitherChallenge.currentFight == null)
-			error("There is currently no challenging party. You can make one with /wither challenge");
+			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 		if (WitherChallenge.currentFight.isStarted())
-			error("You cannot abandon the fight once it has already begun!");
+			error("You cannot abandon the fight once it has already begun! Use &c/wither quit &3to resign");
 		WitherChallenge.currentFight.broadcastToParty("The host has abandoned the fight and the party has been disbanded");
 		WitherChallenge.currentFight.getAlivePlayers().forEach(uuid -> {
 			OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
@@ -95,10 +104,28 @@ public class WitherCommand extends CustomCommand {
 		WitherChallenge.reset();
 	}
 
+	@Path("quit")
+	void quit() {
+		if (WitherChallenge.currentFight == null)
+			error("There is currently no challenging party. You can make one with &c/wither challenge");
+		if (!WitherChallenge.currentFight.getParty().contains(uuid()))
+			error("You are not in the current party.");
+		if (WitherChallenge.currentFight.isStarted()) {
+			WitherChallenge.currentFight.getAlivePlayers().remove(uuid());
+			WitherChallenge.currentFight.processPlayerQuit(player(), "quit");
+		} else if (WitherChallenge.currentFight.getParty().size() == 1) {
+			WitherChallenge.reset();
+			send(PREFIX + "You have forfeited the fight. You will keep your items");
+		} else {
+			WitherChallenge.currentFight.broadcastToParty("&e" + name() + " &3has left the party");
+			WitherChallenge.currentFight.getParty().remove(uuid());
+		}
+	}
+
 	@Path("start")
 	void start() {
 		if (WitherChallenge.currentFight == null)
-			error("There is currently no challenging party. You can make one with /wither challenge");
+			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 		if (!hasItems())
@@ -126,25 +153,59 @@ public class WitherCommand extends CustomCommand {
 	@Path("chat <message...>")
 	void chat(String message) {
 		if (WitherChallenge.currentFight == null)
-			error("There is currently no challenging party. You can make one with /wither challenge");
+			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (!WitherChallenge.currentFight.getParty().contains(player().getUniqueId()))
 			error("You are not in the challenging party.");
 		WitherChallenge.currentFight.broadcastToParty("&e" + name() + " &3> &e" + message);
 	}
 
+	@Path("spectate")
+	void spectate() {
+		if (WitherChallenge.currentFight == null)
+			error("There is currently no challenging party. You can make one with &c/wither challenge");
+		if (WitherChallenge.currentFight.isStarted())
+			error("The current fight has not started yet. Please wait for it to start");
+		if (WitherChallenge.currentFight.getSpectators().contains(uuid()))
+			error("You are already spectating the current fight");
+		player().teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
+		player().setGameMode(GameMode.SPECTATOR);
+	}
+
 	@Path("reset")
-	@Permission("group.seniorstaff")
+	@Permission("group.staff")
 	void reset() {
-		WitherChallenge.reset();
+		WitherChallenge.reset(false);
 		send(PREFIX + "Arena successfully reset");
+		if (WitherChallenge.queue.size() > 0)
+			send(json(PREFIX + "&eThere are players queued to fight the wither. Click here to process the queue.").command("/wither processQueue"));
+	}
+
+	@Path("processQueue")
+	@Permission("group.staff")
+	void processQueue() {
+		WitherChallenge.processQueue();
+		send(PREFIX + "Sent queue notification to the next player");
 	}
 
 	@Path("maintenance")
-	@Permission("group.seniorstaff")
+	@Permission("group.staff")
 	void maintenance() {
 		WitherChallenge.maintenance = !WitherChallenge.maintenance;
 		send(PREFIX + "Wither arena maintenance mode " + (WitherChallenge.maintenance ? "&aenabled" : "&cdisabled"));
 	}
 
+	@Path("testCounter <counter>")
+	void testCounter(WitherFight.CounterAttack attack) {
+		attack.execute(new ArrayList<UUID>() {{
+			add(uuid());
+		}});
+	}
+
+	@Path("testCorruptedCounter <counter>")
+	void testCounter(CorruptedFight.CorruptedCounterAttacks attack) {
+		attack.execute(new ArrayList<UUID>() {{
+			add(uuid());
+		}});
+	}
 
 }
