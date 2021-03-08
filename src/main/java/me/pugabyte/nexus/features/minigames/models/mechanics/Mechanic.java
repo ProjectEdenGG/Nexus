@@ -117,15 +117,13 @@ public abstract class Mechanic implements Listener {
 				begin(beginEvent);
 		}
 
-		if (useAlternativeRegen()) {
-			int taskId = match.getTasks().repeat(0, 1, new BukkitRunnable() {
-				@Override
-				public void run() {
-					match.getMinigamers().forEach(Minigamer::tick);
-				}
-			});
-			match.getTasks().register(MatchTaskType.REGEN, taskId);
-		}
+		int taskId = match.getTasks().repeat(0, 1, new BukkitRunnable() {
+			@Override
+			public void run() {
+				match.getMinigamers().forEach(Minigamer::tick);
+			}
+		});
+		match.getTasks().register(MatchTaskType.TICK, taskId);
 	}
 
 	public void begin(Match match) {
