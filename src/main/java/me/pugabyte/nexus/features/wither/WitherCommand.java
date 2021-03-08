@@ -14,6 +14,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -29,6 +30,8 @@ public class WitherCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
+		if (worldGroup() != WorldGroup.SURVIVAL)
+			error("You cannot fight the wither in " + camelCase(worldGroup()));
 		if (WitherChallenge.currentFight != null)
 			error("The wither is currently being fought. Please wait!");
 		if (WitherChallenge.maintenance)
