@@ -58,7 +58,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		if (hash == null)
 			error("Resource pack hash is null");
 
-//		TODO: Figure out a solution that actually works
+//		TODO: Figure out a solution that actually works, this just disables the active resource pack for all players who click it
 //		for (Player player : Bukkit.getOnlinePlayers())
 //			if (Arrays.asList(Status.ACCEPTED, Status.SUCCESSFULLY_LOADED).contains(player.getResourcePackStatus()))
 //				send(player, json(PREFIX + "There's an update to the resource pack available, click to update.").command("/rp"));
