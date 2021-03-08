@@ -57,7 +57,7 @@ public class JBridgeCommand extends CustomCommand {
 			if (user.getRoleId() == null || user.getUuid() == null)
 				continue;
 
-			Rank playerRank = Rank.getHighestRank(user.getOfflinePlayer());
+			Rank playerRank = Rank.of(user.getOfflinePlayer());
 			if (playerRank != rank)
 				continue;
 

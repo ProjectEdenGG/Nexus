@@ -63,7 +63,7 @@ public class HoursCommand extends CustomCommand {
 		send("&7- &3This month: &e" + Timespan.of(hours.getMonthly()).noneDisplay(true).format());
 		send("&7- &3This year: &e" + Timespan.of(hours.getYearly()).noneDisplay(true).format());
 
-		if (Rank.getHighestRank(player) == Rank.GUEST) {
+		if (Rank.of(player) == Rank.GUEST) {
 
 			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
 			String left = Timespan.of(DAY - hours.getTotal()).format();
@@ -259,7 +259,7 @@ public class HoursCommand extends CustomCommand {
 					hours.increment(INTERVAL);
 					service.update(hours);
 
-					if (Rank.getHighestRank(player) == Rank.GUEST) {
+					if (Rank.of(player) == Rank.GUEST) {
 						if (player.hasPermission("set.my.rank"))
 							continue;
 

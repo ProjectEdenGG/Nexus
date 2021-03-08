@@ -40,7 +40,7 @@ public class RanksCommand extends CustomCommand {
 			if (!rank.isActive()) return;
 			JsonBuilder builder = new JsonBuilder("&3- " + rank.withColor());
 			builder.command("/" + rank.name().toLowerCase());
-			if (Rank.getHighestRank(player()) == rank)
+			if (Rank.of(player()) == rank)
 				builder.next("  &e&o<-- You are here!");
 
 			send(builder);
@@ -76,7 +76,7 @@ public class RanksCommand extends CustomCommand {
 
 			jsonBuilder.get().next("&3[+] " + formattedRank);
 			jsonBuilder.get().command("/" + rank.name().toLowerCase());
-			if (Rank.getHighestRank(player()) == rank)
+			if (Rank.of(player()) == rank)
 				jsonBuilder.get().next("  &0&o<-- You");
 			jsonBuilder.get().newline().group();
 		});

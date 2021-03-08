@@ -132,11 +132,11 @@ public enum Rank {
 				.collect(Collectors.toList());
 	}
 
-	public static Rank getHighestRank(Player player) {
-		return getHighestRank(Bukkit.getOfflinePlayer(player.getUniqueId()));
+	public static Rank of(Player player) {
+		return of(Bukkit.getOfflinePlayer(player.getUniqueId()));
 	}
 
-	public static Rank getHighestRank(OfflinePlayer player) {
+	public static Rank of(OfflinePlayer player) {
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 

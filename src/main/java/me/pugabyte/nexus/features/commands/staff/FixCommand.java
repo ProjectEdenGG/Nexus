@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+
 @Permission("group.seniorstaff")
 public class FixCommand extends CustomCommand {
 
@@ -33,8 +35,9 @@ public class FixCommand extends CustomCommand {
 
 	@Path("all")
 	void all() {
-		for (ItemStack content : player().getInventory().getContents())
-			fix(content);
+		for (ItemStack item : player().getInventory().getContents())
+			if (!isNullOrAir(item))
+				fix(item);
 		send(PREFIX + "All items repaired");
 	}
 

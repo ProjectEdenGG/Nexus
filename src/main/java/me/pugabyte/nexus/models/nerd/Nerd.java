@@ -83,7 +83,7 @@ public class Nerd extends PlayerOwnedObject {
 
 	@ToString.Include
 	public Rank getRank() {
-		return Rank.getHighestRank(getOfflinePlayer());
+		return Rank.of(getOfflinePlayer());
 	}
 
 	@ToString.Include

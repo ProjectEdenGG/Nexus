@@ -82,7 +82,7 @@ public class NewRankColorsCommand extends CustomCommand {
 					.hover("Click to copy hex code " + hex)
 					.copy(hex);
 
-			if (Rank.getHighestRank(player()) == rank)
+			if (Rank.of(player()) == rank)
 				builder.next("  &e&o<-- You are here!");
 
 			send(builder);
