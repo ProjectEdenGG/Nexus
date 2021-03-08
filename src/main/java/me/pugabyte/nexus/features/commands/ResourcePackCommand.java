@@ -11,15 +11,11 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
-
-import java.util.Arrays;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -62,9 +58,10 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		if (hash == null)
 			error("Resource pack hash is null");
 
-		for (Player player : Bukkit.getOnlinePlayers())
-			if (Arrays.asList(Status.ACCEPTED, Status.SUCCESSFULLY_LOADED).contains(player.getResourcePackStatus()))
-				send(player, json(PREFIX + "Click to update resource pack").command("/rp"));
+//		TODO: Figure out a solution that actually works
+//		for (Player player : Bukkit.getOnlinePlayers())
+//			if (Arrays.asList(Status.ACCEPTED, Status.SUCCESSFULLY_LOADED).contains(player.getResourcePackStatus()))
+//				send(player, json(PREFIX + "There's an update to the resource pack available, click to update.").command("/rp"));
 	}
 
 	@EventHandler
