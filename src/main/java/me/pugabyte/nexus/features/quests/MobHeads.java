@@ -87,7 +87,7 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onKillEntity(EntityDeathEvent event) {
-		if (wakka().equals(event.getEntity().getKiller())) {
+		if (wakka() != null && wakka().equals(event.getEntity().getKiller())) {
 			wakka("-=- Entity Death Event -=-");
 			wakka("Is Cancelled: " + event.isCancelled());
 			wakka("");
