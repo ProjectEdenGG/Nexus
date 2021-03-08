@@ -74,6 +74,10 @@ public class SerializationUtils {
 			return new Gson().fromJson(value, Map.class);
 		}
 
+		public static Map<String, Object>[] fromStringToArray(String value) {
+			return (Map<String, Object>[]) new Gson().fromJson(value, List.class).toArray(new HashMap[0]);
+		}
+
 		/** Bukkit ConfigurationSerializable */
 
 		public static Map<String, Object>[] serialize(ConfigurationSerializable[] values) {
@@ -95,6 +99,10 @@ public class SerializationUtils {
 			for (int i = 0; i < values.length; i++)
 				deserialized[i] = deserializeRecursive(values[i]);
 			return deserialized;
+		}
+
+		public static ItemStack[] deserializeItemStacks(String value) {
+			return deserializeItemStacks(fromStringToArray(value));
 		}
 
 		public static ItemStack[] deserializeItemStacks(Map<String, Object>[] values) {
