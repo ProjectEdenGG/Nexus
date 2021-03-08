@@ -32,6 +32,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
+import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
 import static me.pugabyte.nexus.utils.PlayerUtils.hidePlayer;
 import static me.pugabyte.nexus.utils.PlayerUtils.showPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -273,20 +274,30 @@ public class Minigamer {
 		}
 	}
 
-	public void tick() {
-		regen();
-	}
-
-	public void regen() {
+	/**
+	 * Calculates the current player's location without yaw or pitch
+	 * @return player's {@link org.bukkit.Location} without yaw or pitch
+	 */
+	public Location getPlayerLocation() {
 		Location location = player.getLocation();
 		location.setYaw(0);
 		location.setPitch(0);
+		return location;
+	}
 
-		if (location.equals(lastLocation))
-			immobileTicks++;
-		else
+	public void tick() {
+		Location playerLocation = getPlayerLocation();
+		if (lastLocation == null || !blockLocationsEqual(playerLocation, lastLocation))
 			immobileTicks = 0;
+		else
+			immobileTicks++;
+		lastLocation = playerLocation;
 
+		if (getMatch().getMechanic().useAlternativeRegen())
+			regen();
+	}
+
+	public void regen() {
 		double multiplier = 1;
 		double sneakMultiplier = 1; // calculated independently as it is variable
 
@@ -305,7 +316,6 @@ public class Minigamer {
 		// this skips making the hearts do the little regeneration bobbing but idk how to fix that
 		heal(HEALTH_PER_TICK * multiplier);
 
-		lastLocation = location;
 		lastStruckTicks++;
 	}
 

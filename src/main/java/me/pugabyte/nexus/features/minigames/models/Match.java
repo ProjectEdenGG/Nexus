@@ -545,7 +545,7 @@ public class Match {
 			SCOREBOARD,
 			TURN,
 			TURN_TIMER,
-			REGEN
+			TICK
 		}
 	}
 
