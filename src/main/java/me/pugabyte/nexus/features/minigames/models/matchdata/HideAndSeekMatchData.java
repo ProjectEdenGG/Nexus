@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class HideAndSeekMatchData extends MatchData {
 	private Map<UUID, Material> blockChoices = new HashMap<>();
 	private List<Material> mapMaterials = new ArrayList<>(arena.getBlockList());
+	private Map<UUID, FallingBlock> solidBlocks = new HashMap<>();
 	private Map<Minigamer, Location> solidPlayers = new HashMap<>();
 	private final Random random = new Random();
 

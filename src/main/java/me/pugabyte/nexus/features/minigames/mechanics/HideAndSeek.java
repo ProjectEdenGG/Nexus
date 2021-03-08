@@ -30,6 +30,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -48,12 +49,13 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
+import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
-	private static final int solidifyPlayerAt = Time.SECOND.x(5);
+	private static final int SOLIDIFY_PLAYER_AT = Time.SECOND.x(5);
 
 	@Override
 	public String getName() {
@@ -138,31 +140,38 @@ public class HideAndSeek extends Infection {
 				String blockName = camelCase(blockChoice);
 
 				// if player just moved, break their disguise
-				if (immobileTicks == 0 && solidPlayers.containsKey(minigamer)) {
+				if (immobileTicks < SOLIDIFY_PLAYER_AT && solidPlayers.containsKey(minigamer)) {
 					blockChange(minigamer, solidPlayers.remove(minigamer), Material.AIR);
 					if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 						player.removePotionEffect(PotionEffectType.INVISIBILITY);
+					matchData.getSolidBlocks().remove(minigamer.getPlayer().getUniqueId()).remove();
 				}
 
 				// check how long they've been still
 				if (immobileTicks < Time.SECOND.x(2)) {
 					sendActionBar(player, "&bYou are currently partially disguised as a " + blockName);
-				} else if (immobileTicks < solidifyPlayerAt) {
+				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification
-					int seconds = (int) Math.ceil((solidifyPlayerAt - immobileTicks) / 20d);
+					int seconds = (int) Math.ceil((SOLIDIFY_PLAYER_AT - immobileTicks) / 20d);
 					String display = String.format(plural("&dFully disguising in %d second", seconds) + "...", seconds);
 					sendActionBar(player, display);
 				} else {
 					if (!solidPlayers.containsKey(minigamer)) {
 						Location location = minigamer.getPlayerLocation();
-						if (immobileTicks == solidifyPlayerAt && MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) {
+						if (immobileTicks == SOLIDIFY_PLAYER_AT && MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) {
 							solidPlayers.put(minigamer, location);
+							FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockChoice.createBlockData());
+							fallingBlock.setGravity(false);
+							fallingBlock.setHurtEntities(false);
+							fallingBlock.setDropItem(false);
+							matchData.getSolidBlocks().put(minigamer.getPlayer().getUniqueId(), fallingBlock);
 							// add invisibility to hide their falling block disguise
 							player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 1, true, false, false));
 							player.sendBlockChange(location, Material.AIR.createBlockData());
 						} else
 							sendActionBar(player, "&cYou cannot fully disguise inside non-air blocks!");
 					} else {
+						matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
 						blockChange(minigamer, solidPlayers.get(minigamer), blockChoice);
 						player.sendBlockChange(solidPlayers.get(minigamer), Material.AIR.createBlockData());
 						sendActionBar(player, "&aYou are currently fully disguised as a " + blockName);
@@ -180,25 +189,31 @@ public class HideAndSeek extends Infection {
 		});
 	}
 
+	public void cleanup(Minigamer minigamer) {
+		DisguiseAPI.undisguiseToAll(minigamer.getPlayer());
+	}
+
+	public void cleanup(Match match) {
+		match.getMinigamers().forEach(this::cleanup);
+		((HideAndSeekMatchData) match.getMatchData()).getSolidBlocks().forEach(($, fallingBlock) -> fallingBlock.remove());
+	}
+
 	@Override
 	public void onQuit(MatchQuitEvent event) {
 		super.onQuit(event);
-		DisguiseAPI.undisguiseToAll(event.getMinigamer().getPlayer());
+		cleanup(event.getMinigamer());
 	}
 
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
-		event.getMatch().getMinigamers().forEach(minigamer -> DisguiseAPI.undisguiseToAll(minigamer.getPlayer()));
+		cleanup(event.getMatch());
 	}
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		// TODO: sometimes this isn't called when player died, i think it's because of LibsDisguises manually applying
-		//  damage but i have no idea how to fix it
-
 		super.onDeath(event);
-		DisguiseAPI.undisguiseToAll(event.getMinigamer().getPlayer());
+		cleanup(event.getMinigamer());
 	}
 
 	@EventHandler
