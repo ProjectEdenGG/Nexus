@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serializeItemStack;
+import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serialize;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -104,7 +104,7 @@ public class ItemInfoCommand extends CustomCommand {
 	void serializeJson(Material material, @Arg("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
-		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(JSON.toString(serializeItemStack(tool))));
+		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(JSON.toString(serialize(tool))));
 	}
 
 	@Nullable

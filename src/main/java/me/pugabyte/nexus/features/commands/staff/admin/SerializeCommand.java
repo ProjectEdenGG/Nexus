@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serializeItemStack;
+import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serialize;
 
 @Permission("group.admin")
 public class SerializeCommand extends CustomCommand {
@@ -43,7 +43,7 @@ public class SerializeCommand extends CustomCommand {
 
 	@Path("item toJson")
 	void itemStackToJson() {
-		String serialized = JSON.toString(serializeItemStack(getToolRequired()));
+		String serialized = JSON.toString(serialize(getToolRequired()));
 		send(json(serialized).copy(serialized).hover("Click to copy"));
 	}
 

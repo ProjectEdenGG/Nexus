@@ -86,13 +86,22 @@ public class SerializationUtils {
 		public static Map<String, Object> serialize(ConfigurationSerializable value) {
 			Map<String, Object> serialized = serializeRecursive(value.serialize());
 			serialized.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias(value.getClass()));
+			addExtraValues(serialized, value);
 			return serialized;
 		}
 
-		public static Map<String, Object> serializeItemStack(ItemStack item) {
-			Map<String, Object> serialized = serializeRecursive(item.serialize());
-			serialized.computeIfAbsent("amount", $ -> item.getAmount());
-			return serialized;
+		public static Object[] deserialize(Map<String, Object>[] values) {
+			Object[] deserialized = new ConfigurationSerializable[values.length];
+			for (int i = 0; i < values.length; i++)
+				deserialized[i] = deserializeRecursive(values[i]);
+			return deserialized;
+		}
+
+		public static ItemStack[] deserializeItemStacks(Map<String, Object>[] values) {
+			ItemStack[] itemStacks = new ItemStack[values.length];
+			for (int i = 0; i < values.length; i++)
+				itemStacks[i] = deserializeItemStack(values[i]);
+			return itemStacks;
 		}
 
 		public static ItemStack deserializeItemStack(String value) {
@@ -102,7 +111,7 @@ public class SerializationUtils {
 		public static ItemStack deserializeItemStack(Map<String, Object> value) {
 			value.computeIfPresent("meta", ($, meta) -> {
 				Map<String, Object> metaMap = meta instanceof String ? fromString((String) meta) : (Map<String, Object>) meta;
-				fixMetaClasses(metaMap);
+				fixItemMetaClasses(metaMap);
 				return deserializeRecursive(metaMap);
 			});
 
@@ -112,7 +121,7 @@ public class SerializationUtils {
 			return deserialize;
 		}
 
-		public static Map<String, Object> serializeRecursive(Map<String, Object> serialized) {
+		private static Map<String, Object> serializeRecursive(Map<String, Object> serialized) {
 			Map<String, Object> fixed = new HashMap<>(serialized);
 			serialized.forEach((key, value) -> fixed.put(key, serializeRecursive(value)));
 			return fixed;
@@ -138,9 +147,9 @@ public class SerializationUtils {
 			return value;
 		}
 
-		private static Object deserializeRecursive(Map<String, Object> meta) {
-			Map<String, Object> fixed = new HashMap<>(meta);
-			meta.forEach(((key, value) -> {
+		private static Object deserializeRecursive(Map<String, Object> values) {
+			Map<String, Object> fixed = new HashMap<>(values);
+			values.forEach(((key, value) -> {
 				if (Collection.class.isAssignableFrom(value.getClass())) {
 					fixed.put(key, new ArrayList<Object>() {{
 						for (Object next : (Collection<?>) value) {
@@ -164,8 +173,13 @@ public class SerializationUtils {
 			return fixed;
 		}
 
+		private static void addExtraValues(Map<String, Object> serialized, ConfigurationSerializable value) {
+			if (value instanceof ItemStack)
+				serialized.computeIfAbsent("amount", $ -> ((ItemStack) value).getAmount());
+		}
+
 		// MongoDB deserializes some properties as the wrong class, do conversion
-		private static void fixMetaClasses(Map<String, Object> deserialized) {
+		private static void fixItemMetaClasses(Map<String, Object> deserialized) {
 			Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "effect", "custom-model-data").forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
 						if (metaValue instanceof Number)

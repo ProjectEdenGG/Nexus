@@ -9,7 +9,7 @@ import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serializeItemStack;
+import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serialize;
 
 public class ItemStackConverter extends TypeConverter implements SimpleValueConverter {
 
@@ -21,7 +21,7 @@ public class ItemStackConverter extends TypeConverter implements SimpleValueConv
 	public Object encode(Object value, MappedField optionalExtraInfo) {
 		if (value == null) return null;
 
-		return BasicDBObject.parse(JSON.toString(serializeItemStack((ItemStack) value)));
+		return BasicDBObject.parse(JSON.toString(serialize((ItemStack) value)));
 	}
 
 	@Override
