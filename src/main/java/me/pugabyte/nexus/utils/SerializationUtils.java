@@ -65,26 +65,26 @@ public class SerializationUtils {
 			return gson.toJson(gson.toJsonTree(map, Map.class));
 		}
 
-		public static String toString(Map<String, Object>[] map) {
+		public static String toString(List<Map<String, Object>> list) {
 			Gson gson = new Gson();
-			return gson.toJson(gson.toJsonTree(map, Map.class));
+			return gson.toJson(gson.toJsonTree(list, List.class));
 		}
 
 		public static Map<String, Object> fromString(String value) {
 			return new Gson().fromJson(value, Map.class);
 		}
 
-		public static Map<String, Object>[] fromStringToArray(String value) {
-			return (Map<String, Object>[]) new Gson().fromJson(value, List.class).toArray(new HashMap[0]);
+		public static List<Map<String, Object>> fromStringToList(String value) {
+			return new Gson().fromJson(value, List.class);
 		}
 
 		/** Bukkit ConfigurationSerializable */
 
-		public static Map<String, Object>[] serialize(ConfigurationSerializable[] values) {
-			Map<String, Object>[] hashMapArray = (HashMap<String, Object>[]) new HashMap[values.length];
-			for (int i = 0; i < values.length; i++)
-				hashMapArray[i] = serialize(values[i]);
-			return hashMapArray;
+		public static List<Map<String, Object>> serialize(List<ConfigurationSerializable> values) {
+			return new ArrayList<Map<String, Object>>() {{
+				for (ConfigurationSerializable value : values)
+					add(serialize(value));
+			}};
 		}
 
 		public static Map<String, Object> serialize(ConfigurationSerializable value) {
@@ -94,22 +94,22 @@ public class SerializationUtils {
 			return serialized;
 		}
 
-		public static Object[] deserialize(Map<String, Object>[] values) {
-			Object[] deserialized = new ConfigurationSerializable[values.length];
-			for (int i = 0; i < values.length; i++)
-				deserialized[i] = deserializeRecursive(values[i]);
-			return deserialized;
+		public static List<Object> deserialize(List<Map<String, Object>> values) {
+			return new ArrayList<Object>() {{
+				for (Map<String, Object> value : values)
+					add(deserializeRecursive(value));
+			}};
 		}
 
-		public static ItemStack[] deserializeItemStacks(String value) {
-			return deserializeItemStacks(fromStringToArray(value));
+		public static List<ItemStack> deserializeItemStacks(String value) {
+			return deserializeItemStacks(fromStringToList(value));
 		}
 
-		public static ItemStack[] deserializeItemStacks(Map<String, Object>[] values) {
-			ItemStack[] itemStacks = new ItemStack[values.length];
-			for (int i = 0; i < values.length; i++)
-				itemStacks[i] = deserializeItemStack(values[i]);
-			return itemStacks;
+		public static List<ItemStack> deserializeItemStacks(List<Map<String, Object>> values) {
+			return new ArrayList<ItemStack>() {{
+				for (Map<String, Object> value : values)
+					add(deserializeItemStack(value));
+			}};
 		}
 
 		public static ItemStack deserializeItemStack(String value) {
