@@ -143,6 +143,9 @@ public class Shop extends PlayerOwnedObject {
 
 		@SneakyThrows
 		public void process(Player customer) {
+			if (uuid.equals(customer.getUniqueId()))
+				throw new InvalidInputException("You cannot buy items from yourself");
+
 			getExchange().process(this, customer);
 			log(customer);
 		}
