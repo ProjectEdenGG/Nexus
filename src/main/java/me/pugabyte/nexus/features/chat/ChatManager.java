@@ -68,6 +68,9 @@ public class ChatManager {
 
 		Set<Chatter> recipients = channel.getRecipients(chatter);
 		if (channel instanceof PublicChannel) {
+			if (!chatter.canJoin((PublicChannel) channel))
+				throw new InvalidInputException("You do not have permission to speak in that channel");
+
 			PublicChatEvent event = new PublicChatEvent(chatter, (PublicChannel) channel, message, recipients);
 			if (event.callEvent())
 				process(event);
