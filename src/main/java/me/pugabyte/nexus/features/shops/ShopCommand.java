@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.models.shop.Shop;
@@ -42,11 +43,13 @@ public class ShopCommand extends CustomCommand {
 	}
 
 	@Path("edit")
+	@Permission("group.staff")
 	void edit() {
 		new YourShopProvider(null).open(player());
 	}
 
 	@Path("<player>")
+	@Permission("group.staff")
 	void player(Shop shop) {
 		if (shop.getProducts(shopGroup).isEmpty())
 			error("No items in " + shop.getName() + "'s " + camelCase(shopGroup) + " shop");
@@ -54,6 +57,7 @@ public class ShopCommand extends CustomCommand {
 	}
 
 	@Path("search <text>")
+	@Permission("group.staff")
 	void search(@Arg(tabCompleter = Material.class) String text) {
 		BrowseItemsProvider provider = new BrowseItemsProvider(null);
 		provider.getFilters().add(FilterSearchType.SEARCH.of(stripColor(text), product -> product.getItem().getType().name().toLowerCase().contains(stripColor(text).toLowerCase())));

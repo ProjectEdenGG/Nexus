@@ -11,13 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SerializationUtils {
@@ -88,6 +82,7 @@ public class SerializationUtils {
 		}
 
 		public static Map<String, Object> serialize(ConfigurationSerializable value) {
+			if (value == null) return null;
 			Map<String, Object> serialized = serializeRecursive(value.serialize());
 			serialized.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias(value.getClass()));
 			addExtraValues(serialized, value);
@@ -117,6 +112,7 @@ public class SerializationUtils {
 		}
 
 		public static ItemStack deserializeItemStack(Map<String, Object> value) {
+			if (value == null) return null;
 			value.computeIfPresent("meta", ($, meta) -> {
 				Map<String, Object> metaMap = meta instanceof String ? fromString((String) meta) : (Map<String, Object>) meta;
 				fixItemMetaClasses(metaMap);
