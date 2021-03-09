@@ -1,17 +1,9 @@
 package me.pugabyte.nexus.features.listeners;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.utils.CitizensUtils;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.WorldGroup;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import me.pugabyte.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -59,6 +51,8 @@ public class EasterEggs implements Listener {
 			case "warrior_tark":
 				tark(clicker, heldItem, clicked);
 				break;
+			case "blast":
+				blast(clicker, heldItem, clicked);
 		}
 	}
 
@@ -101,6 +95,18 @@ public class EasterEggs implements Listener {
 			case ROTTEN_FLESH:
 				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_WOLF_GROWL, 0.5F, 1F);
 				break;
+		}
+	}
+
+	private void blast(Player player, ItemStack heldItem, Player clicked) {
+		if (heldItem.getType().equals(Material.TNT)) {
+			heldItem.setAmount(heldItem.getAmount() - 1);
+			new ParticleBuilder(Particle.EXPLOSION_HUGE)
+					.count(10)
+					.offset(.5, .5, .5)
+					.location(clicked.getLocation())
+					.spawn();
+			player.getLocation().getWorld().playSound(clicked.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
 		}
 	}
 

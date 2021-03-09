@@ -10,6 +10,8 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.models.vote.VoteService;
+import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -34,6 +36,19 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 		contents.fillBorders(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
 
 		Pagination page = contents.pagination();
+
+		if (type == CrateType.VOTE)
+			contents.set(0, 4, ClickableItem.from(
+					new ItemBuilder(Material.TRIPWIRE_HOOK).glow().name("&eBuy 1 Key for 2 Vote Points")
+							.lore("&3Your Points: &e" + ((Voter) new VoteService().get(player)).getPoints()).build(),
+					e -> {
+						Voter voter = new VoteService().get(player);
+						if (voter.getPoints() < 2) return;
+						voter.takePoints(2);
+						type.giveVPS(player, 1);
+						type.previewDrops(null).open(player, page.getPage());
+					}
+			));
 
 		List<ClickableItem> items = new ArrayList<>();
 		if (loot == null) {
