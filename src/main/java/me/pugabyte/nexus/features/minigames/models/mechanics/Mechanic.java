@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
@@ -318,6 +319,10 @@ public abstract class Mechanic implements Listener {
 		Nexus.severe(message);
 		match.broadcast("&c" + message);
 		match.end();
+	}
+
+	public void sendBarWithTimer(Minigamer minigamer, String message) {
+		sendActionBar(minigamer.getPlayer(), message + "&r (" + StringUtils.Timespan.of(minigamer.getMatch().getTimer().getTime()).format()+")");
 	}
 
 }

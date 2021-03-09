@@ -22,7 +22,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.GameMode;
@@ -49,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
@@ -107,10 +105,6 @@ public class HideAndSeek extends Infection {
 		new HideAndSeekMenu(match).open(player);
 	}
 
-	public void sendHiderActionBar(Minigamer minigamer, String message) {
-		sendActionBar(minigamer.getPlayer(), message + "&r (" + StringUtils.Timespan.of(minigamer.getMatch().getTimer().getTime()).format()+")");
-	}
-
 	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
@@ -162,12 +156,12 @@ public class HideAndSeek extends Infection {
 
 				// check how long they've been still
 				if (immobileTicks < Time.SECOND.x(2)) {
-					sendHiderActionBar(minigamer, "&bYou are currently partially disguised as a " + blockName);
+					sendBarWithTimer(minigamer, "&bYou are currently partially disguised as a " + blockName);
 				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification
 					int seconds = (int) Math.ceil((SOLIDIFY_PLAYER_AT - immobileTicks) / 20d);
 					String display = String.format(plural("&dFully disguising in %d second", seconds) + "...", seconds);
-					sendHiderActionBar(minigamer, display);
+					sendBarWithTimer(minigamer, display);
 				} else {
 					if (!solidPlayers.containsKey(minigamer)) {
 						Location location = minigamer.getPlayerLocation();
@@ -189,7 +183,7 @@ public class HideAndSeek extends Infection {
 							// run usual ticking
 							disguisedBlockTick(minigamer);
 						} else
-							sendHiderActionBar(minigamer, "&cYou cannot fully disguise inside non-air blocks!");
+							sendBarWithTimer(minigamer, "&cYou cannot fully disguise inside non-air blocks!");
 					} else {
 						disguisedBlockTick(minigamer);
 					}
@@ -207,7 +201,7 @@ public class HideAndSeek extends Infection {
 			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
 
 		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
-		sendHiderActionBar(minigamer, "&aYou are currently fully disguised as a " + camelCase(blockChoice));
+		sendBarWithTimer(minigamer, "&aYou are currently fully disguised as a " + camelCase(blockChoice));
 	}
 
 	protected void blockChange(Minigamer origin, Location location, Material block) {

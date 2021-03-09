@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.annotations.Railgun;
 import me.pugabyte.nexus.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.nexus.features.minigames.models.arenas.MurderArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
@@ -127,8 +128,10 @@ public class Murder extends UnbalancedTeamMechanic {
 						// Set compass location to nearest player
 						minigamer.getPlayer().setCompassTarget(target.getLocation());
 				});
-			else
+			else {
 				minigamer.getPlayer().setFoodLevel(3);
+				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 1000000, 255, true, false, false));
+			}
 		}
 	}
 
@@ -537,6 +540,25 @@ public class Murder extends UnbalancedTeamMechanic {
 				return minigamer;
 
 		return null;
+	}
+
+	@EventHandler
+	public void onTimeTick(MatchTimerTickEvent event) {
+		event.getMatch().getMinigamers().forEach(minigamer -> {
+			String teamName;
+			if (isMurderer(minigamer))
+				teamName = "the &cMurderer";
+			else if (isGunner(minigamer))
+				teamName = "a &6Gunner";
+			else if (isDrunk(minigamer))
+				teamName = "a &#ad7a13Drunkard";
+			else
+				teamName = "an &9Innocent";
+			sendBarWithTimer(minigamer, "&3You are "+teamName);
+
+			if (!isMurderer(minigamer))
+				minigamer.getPlayer().setFoodLevel(3);
+		});
 	}
 
 	@Getter
