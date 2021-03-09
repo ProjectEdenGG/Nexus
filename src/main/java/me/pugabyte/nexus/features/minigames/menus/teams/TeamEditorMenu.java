@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
+import me.pugabyte.nexus.features.particles.MathUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -91,7 +92,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			),
 			e -> openAnvilMenu(player, arena, team, String.valueOf(team.getBalancePercentage()), (p, text) -> {
 				if (Utils.isInt(text)) {
-					team.setBalancePercentage(Integer.parseInt(text));
+					team.setBalancePercentage(MathUtils.clamp(Integer.parseInt(text), -1, 100));
 					arena.write();
 					teamMenus.openTeamsEditorMenu(player, arena, team);
 					return AnvilGUI.Response.text(text);
@@ -108,7 +109,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				),
 				e -> openAnvilMenu(player, arena, team, String.valueOf(team.getLives()), (p, text) -> {
 					if (Utils.isInt(text)) {
-						team.setLives(Integer.parseInt(text));
+						team.setLives(Math.max(Integer.parseInt(text), 0));
 						arena.write();
 						teamMenus.openTeamsEditorMenu(player, arena, team);
 						return AnvilGUI.Response.text(text);
@@ -121,11 +122,11 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 		contents.set(2, 2, ClickableItem.from(nameItem(
 				Material.SKELETON_SKULL,
 				"&eMinimum Players",
-				"&7Set to -1 to disable||&7minimum players.|| ||&3Current Value:||&e" + team.getMinPlayers()
+				"&7Set to 0 to disable||&7minimum players.|| ||&3Current Value:||&e" + team.getMinPlayers()
 				),
 				e -> openAnvilMenu(player, arena, team, String.valueOf(team.getMinPlayers()), (p, text) -> {
 					if (Utils.isInt(text)) {
-						team.setMinPlayers(Integer.parseInt(text));
+						team.setMinPlayers(Math.max(Integer.parseInt(text), 0));
 						arena.write();
 						teamMenus.openTeamsEditorMenu(player, arena, team);
 						return AnvilGUI.Response.text(text);
@@ -148,7 +149,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				),
 				e -> openAnvilMenu(player, arena, team, String.valueOf(team.getMaxPlayers()), (p, text) -> {
 					if (Utils.isInt(text)) {
-						team.setMaxPlayers(Integer.parseInt(text));
+						team.setMaxPlayers(Math.max(Integer.parseInt(text), -1));
 						arena.write();
 						teamMenus.openTeamsEditorMenu(player, arena, team);
 						return AnvilGUI.Response.text(text);
