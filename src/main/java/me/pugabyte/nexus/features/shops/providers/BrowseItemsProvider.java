@@ -171,7 +171,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 						product.process(player);
 						open(player, page.getPage());
 					} catch (Exception ex) {
-						PlayerUtils.send(player, PREFIX + ex.getMessage());
+						PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
 					}
 				}));
 			} catch (Exception ex) {

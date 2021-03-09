@@ -135,6 +135,17 @@ public class Shop extends PlayerOwnedObject {
 		private ExchangeType exchangeType;
 		private Object price;
 
+		private transient boolean editing;
+
+		public Product(@NonNull UUID uuid, @NonNull ShopGroup shopGroup, ItemStack item, double stock, ExchangeType exchangeType, Object price) {
+			this.uuid = uuid;
+			this.shopGroup = shopGroup;
+			this.item = item;
+			this.stock = stock;
+			this.exchangeType = exchangeType;
+			this.price = price;
+		}
+
 		@PostLoad
 		void fix(DBObject dbObject) {
 			if (!(price instanceof Number))
@@ -149,6 +160,14 @@ public class Shop extends PlayerOwnedObject {
 			return item.clone();
 		}
 
+		public void addStock(int amount) {
+			setStock(stock + amount);
+		}
+
+		public void removeStock(int amount) {
+			setStock(stock - amount);
+		}
+
 		public void setStock(double stock) {
 			if (this.stock == -1)
 				return;
@@ -159,6 +178,9 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Player customer) {
 			if (uuid.equals(customer.getUniqueId()))
 				throw new InvalidInputException("You cannot buy items from yourself");
+
+			if (editing)
+				throw new InvalidInputException("You cannot buy this item right now, it is being edited by the shop owner");
 
 			getExchange().process(this, customer);
 			log(customer);
@@ -205,14 +227,6 @@ public class Shop extends PlayerOwnedObject {
 			return getShop().isMarket();
 		}
 
-		public void addStock(int amount) {
-			stock += amount;
-		}
-
-		public void removeStock(int amount) {
-			stock -= amount;
-		}
-
 		public List<ItemStack> getItemStacks() {
 			return getItemStacks(-1);
 		}
@@ -246,7 +260,7 @@ public class Shop extends PlayerOwnedObject {
 		BUY(BuyExchange.class);
 
 		@Getter
-		private Class<? extends Exchange> clazz;
+		private final Class<? extends Exchange> clazz;
 
 		ExchangeType(Class<? extends Exchange> clazz) {
 			this.clazz = clazz;
@@ -279,8 +293,10 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Product product, Player customer) {
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (product.getStock() == 0)
+			if (product.getStock() <= 0)
 				throw new InvalidInputException("This item is out of stock");
+			if (product.getStock() < product.getItem().getAmount())
+				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
 			if (!Nexus.getEcon().has(customer, price))
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
@@ -338,7 +354,7 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Product product, Player customer) {
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (product.getStock() == 0)
+			if (product.getStock() <= 0)
 				throw new InvalidInputException("This item is out of stock");
 			if (product.getStock() < product.getItem().getAmount())
 				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
@@ -394,7 +410,7 @@ public class Shop extends PlayerOwnedObject {
 			OfflinePlayer shopOwner = product.getShop().getOfflinePlayer();
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (product.getStock() == 0)
+			if (product.getStock() <= 0)
 				throw new InvalidInputException("This item is out of stock");
 			if (product.getStock() > 0 && product.getStock() < price)
 				throw new InvalidInputException("There is not enough stock to fulfill your purchase");

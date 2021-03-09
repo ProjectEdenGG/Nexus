@@ -73,6 +73,8 @@ public class EditProductProvider extends _ShopProvider {
 
 		public void open(Player player) {
 			this.player = player;
+			product.setEditing(true);
+
 			Inventory inv = Bukkit.createInventory(null, 54, TITLE);
 			Nexus.registerListener(this);
 			player.openInventory(inv);
@@ -96,6 +98,7 @@ public class EditProductProvider extends _ShopProvider {
 			}
 
 			new ShopService().save(product.getShop());
+			product.setEditing(false);
 
 			Nexus.unregisterListener(this);
 			event.getPlayer().closeInventory();
@@ -117,6 +120,7 @@ public class EditProductProvider extends _ShopProvider {
 
 		public void open(Player player) {
 			this.player = player;
+			product.setEditing(true);
 
 			final int size = 54;
 			Inventory inv = Bukkit.createInventory(null, size, TITLE);
@@ -153,6 +157,7 @@ public class EditProductProvider extends _ShopProvider {
 
 			product.removeStock(itemsAdded - itemsLeft);
 			new ShopService().save(product.getShop());
+			product.setEditing(false);
 
 			Nexus.unregisterListener(this);
 			event.getPlayer().closeInventory();
