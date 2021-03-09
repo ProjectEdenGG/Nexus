@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.delivery.providers.DeliveryMenuProvider;
 import me.pugabyte.nexus.features.delivery.providers.OpenDeliveryMenuProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 @NoArgsConstructor
+@Aliases("mail")
 public class DeliveryCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Delivery");
 	private final DeliveryService service = new DeliveryService();
