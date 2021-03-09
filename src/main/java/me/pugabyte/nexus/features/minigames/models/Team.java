@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
 import net.md_5.bungee.api.ChatColor;
@@ -13,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +47,7 @@ public class Team implements ConfigurationSerializable {
 	private int minPlayers = 1;
 	private int maxPlayers = -1;
 	private int balancePercentage = -1;
+	private NameTagVisibility nameTagVisibility = NameTagVisibility.ALWAYS;
 
 	public Team() {
 		this(new HashMap<>());
@@ -64,9 +67,11 @@ public class Team implements ConfigurationSerializable {
 		this.minPlayers = (Integer) map.getOrDefault("minPlayers", minPlayers);
 		this.maxPlayers = (Integer) map.getOrDefault("maxPlayers", maxPlayers);
 		this.balancePercentage = (Integer) map.getOrDefault("balancePercentage", balancePercentage);
+		this.nameTagVisibility = NameTagVisibility.valueOf((String) map.getOrDefault("nameTagVisibility", nameTagVisibility.name()));
 	}
 
 	@Override
+	@NotNull
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<String, Object>() {{
 			put("name", stripColor(getName()));
@@ -78,6 +83,7 @@ public class Team implements ConfigurationSerializable {
 			put("minPlayers", getMinPlayers());
 			put("maxPlayers", getMaxPlayers());
 			put("balancePercentage", getBalancePercentage());
+			put("nameTagVisibility", getNameTagVisibility().name());
 		}};
 	}
 

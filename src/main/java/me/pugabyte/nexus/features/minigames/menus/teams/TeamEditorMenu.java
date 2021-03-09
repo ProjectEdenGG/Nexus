@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import java.util.function.BiFunction;
 
 import static me.pugabyte.nexus.features.minigames.Minigames.menus;
+import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 	Arena arena;
@@ -100,6 +101,23 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				}
 			})));
 
+		contents.set(2, 0, ClickableItem.from(nameItem(
+				Material.RED_TULIP,
+				"&eLives",
+				"&7Set to 0 to disable||&7lives.|| ||&3Current Value:||&e" + team.getLives()
+				),
+				e -> openAnvilMenu(player, arena, team, String.valueOf(team.getLives()), (p, text) -> {
+					if (Utils.isInt(text)) {
+						team.setLives(Integer.parseInt(text));
+						arena.write();
+						teamMenus.openTeamsEditorMenu(player, arena, team);
+						return AnvilGUI.Response.text(text);
+					} else {
+						PlayerUtils.send(player, Minigames.PREFIX + "The lives value must be an integer.");
+						return AnvilGUI.Response.close();
+					}
+				})));
+
 		contents.set(2, 2, ClickableItem.from(nameItem(
 				Material.SKELETON_SKULL,
 				"&eMinimum Players",
@@ -139,6 +157,13 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 						return AnvilGUI.Response.close();
 					}
 				})));
+
+		contents.set(2, 8, ClickableItem.from(nameItem(
+				Material.GLASS,
+				"&eVisibility",
+				"&7Sets the visibility of||&7the team's name tags|| ||&3Current Value:||&e" + camelCase(team.getNameTagVisibility())
+				),
+				e -> teamMenus.openTeamsVisibilityMenu(player, arena, team)));
 	}
 
 	@Override

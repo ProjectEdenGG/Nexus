@@ -102,4 +102,14 @@ public class TeamMenus {
 		return INV;
 	}
 
+	public void openTeamsVisibilityMenu(Player player, Arena arena, Team team) {
+		SmartInventory INV = SmartInventory.builder()
+				.id("teamVisibilityMenu")
+				.title("Team Visibility Menu")
+				.provider(new TeamVisibilityMenu(arena, team))
+				.size(2, 9)
+				.build();
+		INV.open(player);
+	}
+
 }

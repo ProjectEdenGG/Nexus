@@ -10,7 +10,6 @@ import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.nexus.utils.ColorType;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,6 +81,7 @@ public interface MinigameScoreboard {
 				ScoreboardTeam scoreboardTeam = Minigames.getScoreboard().createTeam(match.getArena().getName() + "-" + team.getColoredName(), false);
 				scoreboardTeam.setColor(ColorType.toBukkit(team.getColor()));
 				scoreboardTeam.setPrefix(team.getColor().toString());
+				scoreboardTeam.setNameTagVisibility(team.getNameTagVisibility());
 				return scoreboardTeam;
 			});
 
