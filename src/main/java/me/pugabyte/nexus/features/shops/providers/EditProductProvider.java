@@ -43,7 +43,7 @@ public class EditProductProvider extends _ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		contents.set(0, 4, ClickableItem.from(product.getOwnLore(), e -> new ExchangeConfigProvider(this, product).open(player)));
+		contents.set(0, 4, ClickableItem.from(product.getItemWithOwnLore(), e -> new ExchangeConfigProvider(this, product).open(player)));
 		contents.set(1, 3, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add Stock"), e -> new AddStockProvider(this, product).open(player)));
 		contents.set(1, 5, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
 		contents.set(3, 4, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->

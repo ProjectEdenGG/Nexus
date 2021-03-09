@@ -31,6 +31,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -224,8 +225,18 @@ public class Shop extends PlayerOwnedObject {
 			return exchangeType.init(price);
 		}
 
-		public ItemStack getOwnLore() {
-			return new ItemBuilder(item.clone())
+		public ItemStack getItemWithLore() {
+			ItemBuilder builder  = new ItemBuilder(item);
+
+			ItemMeta meta = item.getItemMeta();
+			if (meta.hasLore() || meta.hasEnchants() || meta.hasAttributeModifiers())
+				builder.lore("&f");
+
+			return builder.build();
+		}
+
+		public ItemStack getItemWithOwnLore() {
+			return new ItemBuilder(getItemWithLore())
 					.lore(getExchange().getOwnLore(this))
 					.lore("", "&7Click to edit")
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
@@ -302,10 +313,12 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Product product, Player customer) {
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (product.getStock() <= 0)
-				throw new InvalidInputException("This item is out of stock");
-			if (product.getStock() < product.getItem().getAmount())
-				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
+			if (!product.isMarket()) {
+				if (product.getStock() <= 0)
+					throw new InvalidInputException("This item is out of stock");
+				if (product.getStock() < product.getItem().getAmount())
+					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
+			}
 			if (!Nexus.getEcon().has(customer, price))
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
@@ -363,10 +376,12 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Product product, Player customer) {
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (product.getStock() <= 0)
-				throw new InvalidInputException("This item is out of stock");
-			if (product.getStock() < product.getItem().getAmount())
-				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
+			if (!product.isMarket()) {
+				if (product.getStock() <= 0)
+					throw new InvalidInputException("This item is out of stock");
+				if (product.getStock() < product.getItem().getAmount())
+					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
+			}
 			if (!customer.getInventory().containsAtLeast(price, price.getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(price) + " to purchase this item");
 
@@ -419,12 +434,14 @@ public class Shop extends PlayerOwnedObject {
 			OfflinePlayer shopOwner = product.getShop().getOfflinePlayer();
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (product.getStock() <= 0)
-				throw new InvalidInputException("This item is out of stock");
-			if (product.getStock() > 0 && product.getStock() < price)
-				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
-			if (!product.isMarket() && !Nexus.getEcon().has(shopOwner, price))
-				throw new InvalidInputException(shopOwner.getName() + " does not have enough money to purchase this item from you");
+			if (!product.isMarket()) {
+				if (product.getStock() <= 0)
+					throw new InvalidInputException("This item is out of stock");
+				if (product.getStock() > 0 && product.getStock() < price)
+					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
+				if (!Nexus.getEcon().has(shopOwner, price))
+					throw new InvalidInputException(shopOwner.getName() + " does not have enough money to purchase this item from you");
+			}
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 

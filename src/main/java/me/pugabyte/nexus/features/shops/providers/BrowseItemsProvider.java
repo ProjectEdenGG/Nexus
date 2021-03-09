@@ -21,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -154,19 +153,12 @@ public class BrowseItemsProvider extends _ShopProvider {
 				if (isFiltered(product))
 					return;
 
-				ItemBuilder builder  = new ItemBuilder(product.getItem());
-
-				ItemMeta meta = product.getItem().getItemMeta();
-				if (meta.hasLore())
-					builder.lore(product.getItem().getLore());
-				if (meta.hasLore() || meta.hasEnchants())
-					builder.lore("&f");
-
-				builder.lore(product.getExchange().getLore(product))
+				ItemStack item  = new ItemBuilder(product.getItemWithLore())
+						.lore(product.getExchange().getLore(product))
 						.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 						.build();
 
-				items.add(ClickableItem.from(builder.build(), e -> {
+				items.add(ClickableItem.from(item, e -> {
 					try {
 						product.process(player);
 						open(player, page.getPage());

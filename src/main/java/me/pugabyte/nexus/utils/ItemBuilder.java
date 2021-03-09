@@ -51,6 +51,8 @@ public class ItemBuilder implements Cloneable {
 	public ItemBuilder(ItemStack itemStack) {
 		this.itemStack = itemStack.clone();
 		this.itemMeta = itemStack.getItemMeta();
+		if (itemMeta.getLore() != null)
+			this.lore.addAll(itemMeta.getLore());
 	}
 
 	public ItemBuilder material(Material material) {
@@ -111,11 +113,10 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	public ItemBuilder enchant(Enchantment enchantment, int level, boolean ignoreLevelRestriction) {
-		if (itemStack.getType() == Material.ENCHANTED_BOOK) {
+		if (itemStack.getType() == Material.ENCHANTED_BOOK)
 			((EnchantmentStorageMeta) itemMeta).addStoredEnchant(enchantment, level, ignoreLevelRestriction);
-		} else {
+		else
 			itemMeta.addEnchant(enchantment, level, ignoreLevelRestriction);
-		}
 
 		return this;
 	}

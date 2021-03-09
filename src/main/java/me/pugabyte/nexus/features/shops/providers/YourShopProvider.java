@@ -62,7 +62,7 @@ public class YourShopProvider extends _ShopProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		shop.getProducts(ShopGroup.get(player)).forEach(product -> {
-			ItemStack item = product.getOwnLore();
+			ItemStack item = product.getItemWithOwnLore();
 			items.add(ClickableItem.from(item, e -> new EditProductProvider(this, product).open(player)));
 		});
 
