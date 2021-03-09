@@ -22,7 +22,7 @@ public class ShopUtils {
 		if (player.isOnline())
 			PlayerUtils.giveItemsGetExcess(player.getPlayer(), items);
 		else
-			shop.getHolding().addAll(items);
+			shop.addHolding(items);
 	}
 
 	public static String prettyMoney(Number number) {

@@ -151,6 +151,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if (invCount > 0)
 			error(json("There are " + invCount + " SmartInvs menus open, cannot reload").next(retry));
 
+		if (Nexus.getTempListenerCount() > 0)
+			error(json("There are " + Nexus.getTempListenerCount() + " temporary listeners registered, cannot reload").next(retry));
+
 		List<Pugmas20User> all = new Pugmas20Service().getAll();
 		long torchCount = all.stream().filter(pugmas20User -> pugmas20User.isOnline() && pugmas20User.isLightingTorches() && pugmas20User.getTorchTimerTaskId() > 0).count();
 		if (torchCount > 0)
@@ -214,6 +217,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Features: " + Features.getFeatures().size());
 		send("Commands: " + Commands.getCommands().size());
 		send("Listeners: " + Nexus.getListenerCount());
+		send("Temp Listeners: " + Nexus.getTempListenerCount());
 		send("EventHandlers: " + Nexus.getEventHandlers().size());
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);

@@ -121,7 +121,19 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static int listenerCount = 0;
 	@Getter
+	private static int tempListenerCount = 0;
+	@Getter
 	private static final List<Class<? extends Event>> eventHandlers = new ArrayList<>();
+
+	public static void registerTempListener(Listener listener) {
+		registerListener(listener);
+		++tempListenerCount;
+	}
+
+	public static void unregisterTempListener(Listener listener) {
+		unregisterListener(listener);
+		--tempListenerCount;
+	}
 
 	public static void registerListener(Listener listener) {
 		if (getInstance().isEnabled()) {
@@ -136,6 +148,7 @@ public class Nexus extends JavaPlugin {
 	public static void unregisterListener(Listener listener) {
 		try {
 			HandlerList.unregisterAll(listener);
+			--listenerCount;
 		} catch (Exception ex) {
 			log("Could not unregister listener " + listener.toString() + "!");
 			ex.printStackTrace();

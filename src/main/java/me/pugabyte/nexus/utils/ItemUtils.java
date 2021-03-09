@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ItemUtils {
@@ -34,6 +35,25 @@ public class ItemUtils {
 			return false;
 
 		return true;
+	}
+
+	public static void combine(List<ItemStack> itemStacks, ItemStack newItemStack) {
+		Optional<ItemStack> matching = itemStacks.stream()
+				.filter(existing -> existing.isSimilar(newItemStack) && existing.getAmount() < existing.getType().getMaxStackSize())
+				.findFirst();
+
+		if (matching.isPresent()) {
+			ItemStack match = matching.get();
+			itemStacks.remove(match);
+			int amountICanAdd = Math.min(newItemStack.getAmount(), match.getType().getMaxStackSize() - match.getAmount());
+			match.setAmount(match.getAmount() + amountICanAdd);
+			itemStacks.add(new ItemStack(match));
+
+			newItemStack.setAmount(newItemStack.getAmount() - amountICanAdd);
+		}
+
+		if (newItemStack.getAmount() > 0)
+			itemStacks.add(new ItemStack(newItemStack));
 	}
 
 	public static ItemStack getTool(Player player) {

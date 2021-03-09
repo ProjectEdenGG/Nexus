@@ -21,6 +21,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -89,6 +90,14 @@ public class Shop extends PlayerOwnedObject {
 
 	public String[] getDescriptionArray() {
 		return description.isEmpty() ? new String[]{"", "", "", ""} : description.stream().map(StringUtils::decolorize).toArray(String[]::new);
+	}
+
+	public void addHolding(List<ItemStack> itemStacks) {
+		itemStacks.forEach(this::addHolding);
+	}
+
+	public void addHolding(ItemStack itemStack) {
+		ItemUtils.combine(holding, itemStack.clone());
 	}
 
 	public enum ShopGroup {
@@ -364,7 +373,7 @@ public class Shop extends PlayerOwnedObject {
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
 			if (!product.isMarket())
-				product.getShop().getHolding().add(price);
+				product.getShop().addHolding(price);
 			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price));
@@ -427,7 +436,7 @@ public class Shop extends PlayerOwnedObject {
 			}
 			customer.getInventory().removeItem(product.getItem());
 			if (!product.isMarket())
-				product.getShop().getHolding().add(product.getItem());
+				product.getShop().addHolding(product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for " + prettyMoney(price));
 		}

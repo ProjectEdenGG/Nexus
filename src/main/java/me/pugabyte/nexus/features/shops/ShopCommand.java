@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.shops.providers.BrowseItemsProvider;
 import me.pugabyte.nexus.features.shops.providers.MainMenuProvider;
 import me.pugabyte.nexus.features.shops.providers.PlayerShopProvider;
 import me.pugabyte.nexus.features.shops.providers.YourShopProvider;
+import me.pugabyte.nexus.features.shops.providers.YourShopProvider.CollectItemsProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -56,12 +57,17 @@ public class ShopCommand extends CustomCommand {
 		new PlayerShopProvider(null, shop).open(player());
 	}
 
-	@Path("search <text>")
+	@Path("search <item>")
 	@Permission("group.staff")
 	void search(@Arg(tabCompleter = Material.class) String text) {
-		BrowseItemsProvider provider = new BrowseItemsProvider(null);
-		provider.getFilters().add(FilterSearchType.SEARCH.of(stripColor(text), product -> product.getItem().getType().name().toLowerCase().contains(stripColor(text).toLowerCase())));
+		BrowseItemsProvider provider = new BrowseItemsProvider(null, FilterSearchType.SEARCH.of(stripColor(text), product ->
+				product.getItem().getType().name().toLowerCase().contains(stripColor(text).toLowerCase())));
 		provider.open(player());
+	}
+
+	@Path("collect")
+	void collect() {
+		new CollectItemsProvider(null).open(player());
 	}
 
 }

@@ -16,8 +16,11 @@ public class CombineCommand extends CustomCommand {
 	@Path
 	void run() {
 		for (int slot = 0; slot < inventory().getContents().length; slot++) {
-			if (inventory().getContents()[slot] == null) continue;
-			if (!inventory().getContents()[slot].getType().name().contains("POTION")) continue;
+			if (inventory().getContents()[slot] == null)
+				continue;
+			if (!inventory().getContents()[slot].getType().name().contains("POTION"))
+				continue;
+
 			ItemStack potion = inventory().getContents()[slot].clone();
 			int potionNumber = potion.getAmount();
 			for (int i = 0; i < inventory().getContents().length; i++) {

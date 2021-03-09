@@ -60,7 +60,7 @@ public class EditProductProvider extends _ShopProvider {
 
 	}
 
-	public static class AddStockProvider implements Listener {
+	public static class AddStockProvider extends _ShopProvider implements Listener {
 		private final static String TITLE = colorize("&0Add Stock");
 		private Player player;
 		private final _ShopProvider previousMenu;
@@ -71,12 +71,12 @@ public class EditProductProvider extends _ShopProvider {
 			this.product = product;
 		}
 
-		public void open(Player player) {
+		public void open(Player player, int page) {
 			this.player = player;
 			product.setEditing(true);
 
 			Inventory inv = Bukkit.createInventory(null, 54, TITLE);
-			Nexus.registerListener(this);
+			Nexus.registerTempListener(this);
 			player.openInventory(inv);
 		}
 
@@ -100,13 +100,13 @@ public class EditProductProvider extends _ShopProvider {
 			new ShopService().save(product.getShop());
 			product.setEditing(false);
 
-			Nexus.unregisterListener(this);
+			Nexus.unregisterTempListener(this);
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}
 	}
 
-	public static class RemoveStockProvider implements Listener {
+	public static class RemoveStockProvider extends _ShopProvider implements Listener {
 		private final static String TITLE = colorize("&0Remove Stock");
 		private Player player;
 		private final _ShopProvider previousMenu;
@@ -118,7 +118,7 @@ public class EditProductProvider extends _ShopProvider {
 			this.product = product;
 		}
 
-		public void open(Player player) {
+		public void open(Player player, int page) {
 			this.player = player;
 			product.setEditing(true);
 
@@ -131,7 +131,7 @@ public class EditProductProvider extends _ShopProvider {
 				itemsAdded += item.getAmount();
 
 			inv.setContents(items.toArray(new ItemStack[0]));
-			Nexus.registerListener(this);
+			Nexus.registerTempListener(this);
 			player.openInventory(inv);
 		}
 
@@ -159,7 +159,7 @@ public class EditProductProvider extends _ShopProvider {
 			new ShopService().save(product.getShop());
 			product.setEditing(false);
 
-			Nexus.unregisterListener(this);
+			Nexus.unregisterTempListener(this);
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}

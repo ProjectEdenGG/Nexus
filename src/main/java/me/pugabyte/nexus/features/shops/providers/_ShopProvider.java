@@ -27,7 +27,11 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 	protected int columns = 9;
 
 	public void open(Player viewer) {
-		open(viewer, page);
+		try {
+			open(viewer, page);
+		} catch (Exception ex) {
+			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
+		}
 	}
 
 	abstract public void open(Player viewer, int page);

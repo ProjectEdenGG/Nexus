@@ -38,7 +38,7 @@ public class InsertItemsMenu implements Listener {
 		if (!Utils.isNullOrEmpty(items))
 			inv.setContents(items.toArray(new ItemStack[0]));
 
-		Nexus.registerListener(this);
+		Nexus.registerTempListener(this);
 		user.getPlayer().openInventory(inv);
 	}
 
@@ -51,7 +51,7 @@ public class InsertItemsMenu implements Listener {
 		items = Arrays.stream(event.getInventory().getContents())
 				.filter(item -> !ItemUtils.isNullOrAir(item)).collect(Collectors.toList());
 
-		Nexus.unregisterListener(this);
+		Nexus.unregisterTempListener(this);
 		event.getPlayer().closeInventory();
 		Tasks.wait(1, () -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(user.getPlayer()));
 	}
