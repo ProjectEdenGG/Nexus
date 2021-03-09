@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,8 +23,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
-
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public final class SignMenuFactory {
 	private static final int ACTION_INDEX = 9;
@@ -98,6 +97,7 @@ public final class SignMenuFactory {
 		private Consumer<String[]> response;
 		private BiConsumer<String[], Exception> onError;
 		private String prefix; // for error handler
+		private boolean colorize = true;
 
 		Menu(List<String> lines) {
 			this.lines = lines;
@@ -118,6 +118,11 @@ public final class SignMenuFactory {
 			return this;
 		}
 
+		public Menu colorize(boolean colorize) {
+			this.colorize = colorize;
+			return this;
+		}
+
 		public void open(Player player) {
 			Location location = player.getLocation();
 			BlockPosition blockPosition = new BlockPosition(location.getBlockX(), Math.max(location.getBlockY() - 5, 0), location.getBlockZ());
@@ -132,7 +137,8 @@ public final class SignMenuFactory {
 			NbtCompound signNBT = (NbtCompound) signData.getNbtModifier().read(0);
 
 			// DO NOT REMOVE "WW"
-			IntStream.range(0, SIGN_LINES).forEach(line -> signNBT.put("Text" + (line + 1), lines.size() > line ? String.format(NBT_FORMAT, colorize(lines.get(line))) : "WW"));
+			IntStream.range(0, SIGN_LINES).forEach(line ->
+					signNBT.put("Text" + (line + 1), lines.size() > line ? String.format(NBT_FORMAT, (colorize ? StringUtils.colorize(lines.get(line)) : lines.get(line))) : "WW"));
 
 			signNBT.put("x", blockPosition.getX());
 			signNBT.put("y", blockPosition.getY());

@@ -306,7 +306,7 @@ public class StringUtils {
 	public static String toPrettyString(Object object) {
 		try {
 			return getPrettyPrinter().toJson(object);
-		} catch (Exception ignored) {
+		} catch (Exception | StackOverflowError ignored) {
 			return object.toString();
 		}
 	}

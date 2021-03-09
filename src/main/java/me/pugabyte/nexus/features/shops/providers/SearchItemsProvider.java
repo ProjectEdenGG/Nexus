@@ -11,6 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+
 public class SearchItemsProvider extends _ShopProvider {
 
 	public SearchItemsProvider(_ShopProvider previousMenu) {
@@ -35,9 +37,10 @@ public class SearchItemsProvider extends _ShopProvider {
 		contents.set(1, 1, ClickableItem.from(nameItem(Material.NAME_TAG, "&6Search by item name"),
 				e -> Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
 					try {
-						if (lines[0].length() > 0) {
-							browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(lines[0], product ->
-									product.getItem().getType().name().toLowerCase().contains(lines[0].toLowerCase())));
+						String input = stripColor(lines[0]);
+						if (input.length() > 0) {
+							browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input, product ->
+									product.getItem().getType().name().toLowerCase().contains(input.toLowerCase())));
 							browseItemsMenu.open(player);
 						} else
 							open(player);

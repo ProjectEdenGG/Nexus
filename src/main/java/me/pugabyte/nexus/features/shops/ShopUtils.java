@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collections;
 import java.util.List;
 
+import static me.pugabyte.nexus.utils.StringUtils.pretty;
+
 public class ShopUtils {
 
 	public static void giveItems(OfflinePlayer player, ItemStack item) {
@@ -21,6 +23,12 @@ public class ShopUtils {
 			PlayerUtils.giveItemsGetExcess(player.getPlayer(), items);
 		else
 			shop.getHolding().addAll(items);
+	}
+
+	public static String prettyMoney(Number number) {
+		if (number.doubleValue() == 0)
+			return "free";
+		return "$" + pretty(number);
 	}
 
 }

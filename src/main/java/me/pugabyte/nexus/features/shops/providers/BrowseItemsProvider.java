@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import lombok.Getter;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.Filter;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterEmptyStock;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterExchangeType;
@@ -15,10 +16,12 @@ import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,22 +150,34 @@ public class BrowseItemsProvider extends _ShopProvider {
 		Pagination page = contents.pagination();
 
 		shops.forEach(shop -> shop.getProducts(ShopGroup.get(player)).forEach(product -> {
-			if (isFiltered(product))
-				return;
+			try {
+				if (isFiltered(product))
+					return;
 
-			ItemStack item  = new ItemBuilder(product.getItem())
-					.lore(product.getExchange().getLore(product))
-					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
-					.build();
+				ItemBuilder builder  = new ItemBuilder(product.getItem());
 
-			items.add(ClickableItem.from(item, e -> {
-				try {
-					product.process(player);
-					open(player, page.getPage());
-				} catch (Exception ex) {
-					PlayerUtils.send(player, PREFIX + ex.getMessage());
-				}
-			}));
+				ItemMeta meta = product.getItem().getItemMeta();
+				if (meta.hasLore())
+					builder.lore(product.getItem().getLore());
+				if (meta.hasLore() || meta.hasEnchants())
+					builder.lore("&f");
+
+				builder.lore(product.getExchange().getLore(product))
+						.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+						.build();
+
+				items.add(ClickableItem.from(builder.build(), e -> {
+					try {
+						product.process(player);
+						open(player, page.getPage());
+					} catch (Exception ex) {
+						PlayerUtils.send(player, PREFIX + ex.getMessage());
+					}
+				}));
+			} catch (Exception ex) {
+				Nexus.severe("Error formatting product in BrowseItemsProvider: " + StringUtils.toPrettyString(product));
+				ex.printStackTrace();
+			}
 		}));
 
 		addPagination(player, contents, items);

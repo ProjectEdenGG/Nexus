@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.shop.Shop;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,6 +36,7 @@ public class BrowseShopsProvider extends _ShopProvider {
 
 		service.getShops().forEach(shop -> {
 			if (shop.getUuid().equals(Nexus.getUUID0())) return;
+			if (shop.getProducts(ShopGroup.get(player)).isEmpty()) return;
 
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop.getOfflinePlayer())

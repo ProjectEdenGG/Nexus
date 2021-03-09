@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.shops;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
@@ -66,7 +65,7 @@ public class ShopMenuFunctions {
 
 	public enum FilterMarketItems implements FilterType {
 		SHOWN,
-		HIDDEN(product -> product.getShop().getUuid() != Nexus.getUUID0());
+		HIDDEN(product -> !product.isMarket());
 
 		@Getter
 		private Predicate<Product> filter;

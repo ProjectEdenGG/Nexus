@@ -7,13 +7,14 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
 	protected final ShopService service = new ShopService();
@@ -33,12 +34,16 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 
 	public void open(Player viewer, int page, _ShopProvider provider, String title) {
 		this.page = page;
-		SmartInventory.builder()
-				.provider(provider)
-				.title(colorize(title))
-				.size(rows, columns)
-				.build()
-				.open(viewer, page);
+		try {
+			SmartInventory.builder()
+					.provider(provider)
+					.title(colorize(title))
+					.size(rows, columns)
+					.build()
+					.open(viewer, page);
+		} catch (Exception ex) {
+			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
+		}
 	}
 
 	@Override

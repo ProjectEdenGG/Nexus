@@ -19,19 +19,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
-import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 public class ExchangeConfigProvider extends _ShopProvider {
 	private Product product;
 	private final AtomicReference<ItemStack> item = new AtomicReference<>();
 	private final AtomicReference<ItemStack> priceItem = new AtomicReference<>();
-	private double price;
+	private double price = -1;
 	private ExchangeType exchangeType = ExchangeType.SELL;
 	private double stock;
 	private boolean allowEditItem = true;
@@ -98,7 +100,7 @@ public class ExchangeConfigProvider extends _ShopProvider {
 					}
 				}
 			} else
-				if (price > 0) {
+				if (price >= 0) {
 					if (exchangeType == ExchangeType.BUY)
 						confirm.name("&3Buy &e" + pretty(item.get()) + " &3from").lore("&3customers for &e" + prettyMoney(price));
 					else if (exchangeType == ExchangeType.SELL)
@@ -119,7 +121,10 @@ public class ExchangeConfigProvider extends _ShopProvider {
 					if (allowEditItem)
 						shop.getProducts().add(product);
 					service.save(shop);
-					new EditProductProvider(previousMenu, product).open(player);
+					if (previousMenu instanceof EditProductProvider)
+						previousMenu.open(player);
+					else
+						new EditProductProvider(previousMenu, product).open(player);
 				}));
 		}
 	}
@@ -127,10 +132,10 @@ public class ExchangeConfigProvider extends _ShopProvider {
 	private void addMoneyEditor(Player player, InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.GOLD_INGOT);
 
-		if (price <= 0)
+		if (price < 0)
 			item.name("&eClick to specify a dollar amount");
 		else
-			item.name("&e" + prettyMoney(price));
+			item.name("&e" + camelCase(prettyMoney(price)));
 
 		contents.set(3, 4, ClickableItem.from(item.build(), e ->
 				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount").prefix(Shops.PREFIX).response(lines -> {
@@ -139,9 +144,9 @@ public class ExchangeConfigProvider extends _ShopProvider {
 							String input = lines[0].replaceAll("[^0-9.]+", "");
 							if (!Utils.isDouble(input))
 								throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
-							double price = Double.parseDouble(input);
-							if (price <= 0)
-								throw new InvalidInputException("Dollar amount must be greater than $0");
+							double price = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
+							if (price < 0)
+								throw new InvalidInputException("Dollar amount must be $0 or greater");
 							this.price = price;
 						}
 						open(player);

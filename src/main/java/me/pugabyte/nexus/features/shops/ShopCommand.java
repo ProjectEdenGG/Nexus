@@ -10,18 +10,14 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.models.shop.Shop;
-import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
-import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.shop.ShopService;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
+
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Aliases("shops")
 public class ShopCommand extends CustomCommand {
@@ -30,17 +26,19 @@ public class ShopCommand extends CustomCommand {
 
 	public ShopCommand(@NonNull CommandEvent event) {
 		super(event);
+		if (!(event instanceof TabEvent)) {
+			if (!hasPermission("shops.use"))
+				error("&cComing soon!");
+			if (shopGroup == null)
+				error("Shops are not enabled in this world");
+			if (shopGroup == ShopGroup.RESOURCE)
+				error("You cannot use player shops while in the resource world");
+		}
 	}
 
 	@Path
 	void run() {
-		if (shopGroup == ShopGroup.RESOURCE)
-			error("You cannot use player shops while in the resource world");
-
-		if (isStaff())
-			new MainMenuProvider(null).open(player());
-		else
-			send("&cComing soon!");
+		new MainMenuProvider(null).open(player());
 	}
 
 	@Path("edit")
@@ -58,47 +56,8 @@ public class ShopCommand extends CustomCommand {
 	@Path("search <text>")
 	void search(@Arg(tabCompleter = Material.class) String text) {
 		BrowseItemsProvider provider = new BrowseItemsProvider(null);
-		provider.getFilters().add(FilterSearchType.SEARCH.of(text, product -> product.getItem().getType().name().toLowerCase().contains(text.toLowerCase())));
+		provider.getFilters().add(FilterSearchType.SEARCH.of(stripColor(text), product -> product.getItem().getType().name().toLowerCase().contains(stripColor(text).toLowerCase())));
 		provider.open(player());
-	}
-
-	@Permission("group.admin")
-	@Path("addItems1 [player]")
-	void addItems1(@Arg("self") OfflinePlayer player) {
-		Shop shop = service.get(player);
-		shop.getProducts().clear();
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.COBBLESTONE).amount(32).build(), 512, ExchangeType.SELL, 8.5D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.DIAMOND_SWORD).build(), 16, ExchangeType.SELL, 50D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.IRON_ORE).amount(10).build(), 100, ExchangeType.TRADE, new ItemStack(Material.GOLD_ORE, 3)));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.DIAMOND).amount(10).build(), 500, ExchangeType.BUY, 100D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.PUMPKIN_PIE).amount(2).build(), 32, ExchangeType.SELL, 30D));
-		service.save(shop);
-	}
-
-	@Permission("group.admin")
-	@Path("addItems2 [player]")
-	void addItems2(@Arg("self") OfflinePlayer player) {
-		Shop shop = service.get(player);
-		shop.getProducts().clear();
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.SPRUCE_LOG).amount(32).build(), 100, ExchangeType.SELL, 16D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.IRON_AXE).amount(1).build(), 16, ExchangeType.SELL, 30D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.GOLD_INGOT).amount(10).build(), 100, ExchangeType.TRADE, new ItemStack(Material.GOLDEN_APPLE)));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.DIAMOND).amount(10).build(), -1, ExchangeType.BUY, 90D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.CROSSBOW).enchant(Enchantment.QUICK_CHARGE, 3).enchant(Enchantment.PIERCING, 4).build(), 5, ExchangeType.SELL, 1000D));
-		service.save(shop);
-	}
-
-	@Permission("group.admin")
-	@Path("addItems3 [player]")
-	void addItems3(@Arg("self") OfflinePlayer player) {
-		Shop shop = service.get(player);
-		shop.getProducts().clear();
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.SAND).amount(32).build(), 2000, ExchangeType.SELL, 8.5D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.BOW).enchant(Enchantment.ARROW_INFINITE).build(), 1, ExchangeType.SELL, 1000D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.COOKED_BEEF).amount(10).build(), 100, ExchangeType.TRADE, new ItemStack(Material.BEEF, 10)));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.PURPLE_WOOL).amount(10).build(), 10000, ExchangeType.BUY, 3D));
-		shop.getProducts().add(new Product(shop.getUuid(), ShopGroup.SURVIVAL, new ItemBuilder(Material.APPLE).amount(8).build(), 32, ExchangeType.SELL, 16D));
-		service.save(shop);
 	}
 
 }

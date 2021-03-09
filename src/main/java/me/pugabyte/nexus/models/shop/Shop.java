@@ -1,9 +1,11 @@
 package me.pugabyte.nexus.models.shop;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PostLoad;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +22,7 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
@@ -34,14 +37,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.features.shops.ShopUtils.giveItems;
+import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
-import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
@@ -75,8 +79,12 @@ public class Shop extends PlayerOwnedObject {
 		this.description = new ArrayList<String>() {{
 			for (String line : description)
 				if (!isNullOrEmpty(stripColor(line).replace(StringUtils.getColorChar(), "")))
-					add("&f" + line);
+					add(line.startsWith("&") ? line : "&f" + line);
 		}};
+	}
+
+	public boolean isMarket() {
+		return uuid.equals(Nexus.getUUID0());
 	}
 
 	public String[] getDescriptionArray() {
@@ -126,6 +134,12 @@ public class Shop extends PlayerOwnedObject {
 		private double stock;
 		private ExchangeType exchangeType;
 		private Object price;
+
+		@PostLoad
+		void fix(DBObject dbObject) {
+			if (!(price instanceof Number))
+				price = JSON.deserializeItemStack((Map<String, Object>) dbObject.get("price"));
+		}
 
 		public Shop getShop() {
 			return new ShopService().get(uuid);
@@ -185,6 +199,10 @@ public class Shop extends PlayerOwnedObject {
 					.lore("", "&7Click to edit")
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 					.build();
+		}
+
+		public boolean isMarket() {
+			return getShop().isMarket();
 		}
 
 		public void addStock(int amount) {
@@ -267,9 +285,11 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
-			Nexus.getEcon().withdrawPlayer(customer, price);
-			if (!isMarket(product))
-				Nexus.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
+			if (price > 0) {
+				Nexus.getEcon().withdrawPlayer(customer, price);
+				if (!product.isMarket())
+					Nexus.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
+			}
 			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
@@ -305,11 +325,14 @@ public class Shop extends PlayerOwnedObject {
 
 	@Data
 	@Builder
-	@AllArgsConstructor
 	// Customer buying an item from the shop owner for other items
 	public static class TradeExchange implements Exchange {
 		@NonNull
 		private ItemStack price;
+
+		public TradeExchange(@NonNull Object price) {
+			this.price = (ItemStack) price;
+		}
 
 		@Override
 		public void process(Product product, Player customer) {
@@ -324,7 +347,7 @@ public class Shop extends PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
-			if (!isMarket(product))
+			if (!product.isMarket())
 				product.getShop().getHolding().add(price);
 			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
@@ -375,17 +398,19 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("This item is out of stock");
 			if (product.getStock() > 0 && product.getStock() < price)
 				throw new InvalidInputException("There is not enough stock to fulfill your purchase");
-			if (!isMarket(product) && !Nexus.getEcon().has(shopOwner, price))
+			if (!product.isMarket() && !Nexus.getEcon().has(shopOwner, price))
 				throw new InvalidInputException(shopOwner.getName() + " does not have enough money to purchase this item from you");
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 
 			product.setStock(product.getStock() - price);
-			if (!isMarket(product))
-				Nexus.getEcon().withdrawPlayer(shopOwner, price);
-			Nexus.getEcon().depositPlayer(customer, price);
+			if (price > 0) {
+				if (!product.isMarket())
+					Nexus.getEcon().withdrawPlayer(shopOwner, price);
+				Nexus.getEcon().depositPlayer(customer, price);
+			}
 			customer.getInventory().removeItem(product.getItem());
-			if (!isMarket(product))
+			if (!product.isMarket())
 				product.getShop().getHolding().add(product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for " + prettyMoney(price));
@@ -414,10 +439,6 @@ public class Shop extends PlayerOwnedObject {
 					"&7Stock: &e" + prettyMoney(product.getStock())
 			);
 		}
-	}
-
-	public static boolean isMarket(Product product) {
-		return product.getUuid().equals(Nexus.getUUID0());
 	}
 
 }
