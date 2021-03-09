@@ -168,7 +168,7 @@ public class Arena implements ConfigurationSerializable {
 		String regex = getRegionTypeRegex(type);
 
 		getWGUtils().getRegionsLike(regex).forEach(region -> {
-			String file = getSchematicName(region.getId().replaceFirst(name + "_", ""));
+			String file = getSchematicName(region.getId().replaceFirst((name + "_" + getName() + "_").toLowerCase(), ""));
 			getWEUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
