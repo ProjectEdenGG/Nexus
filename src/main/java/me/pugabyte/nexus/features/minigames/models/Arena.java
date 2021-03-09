@@ -182,11 +182,11 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public String getSchematicBaseName() {
-		return (getMechanicName() + "/" + getId()).toLowerCase() + "/";
+		return ("minigames/" + getMechanicName() + "/" + getName()).toLowerCase() + "_";
 	}
 
 	public String getRegionBaseName() {
-		return (getMechanicName() + "_" + getId()).toLowerCase();
+		return (getMechanicName() + "_" + getName()).toLowerCase();
 	}
 
 	private static final String NUMBER_MODIFIER = "(_[0-9]+)?";
