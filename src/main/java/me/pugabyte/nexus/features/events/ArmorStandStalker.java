@@ -25,6 +25,8 @@ public class ArmorStandStalker {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(2), () -> {
 			for (Stalker stalker : stalkers) {
 				Location location = stalker.getLocation();
+				if (location == null)
+					continue;
 				ArmorStand armorStand = (ArmorStand) EntityUtils.getNearestEntityType(location, EntityType.ARMOR_STAND, 1.5);
 				if (armorStand == null)
 					continue;
