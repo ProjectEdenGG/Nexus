@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -229,7 +230,7 @@ public class Shop extends PlayerOwnedObject {
 			ItemBuilder builder  = new ItemBuilder(item);
 
 			ItemMeta meta = item.getItemMeta();
-			if (meta.hasLore() || meta.hasEnchants() || meta.hasAttributeModifiers())
+			if (meta.hasLore() || meta.hasEnchants() || meta.hasAttributeModifiers() || (meta instanceof PotionMeta && ((PotionMeta) meta).hasCustomEffects()))
 				builder.lore("&f");
 
 			return builder.build();

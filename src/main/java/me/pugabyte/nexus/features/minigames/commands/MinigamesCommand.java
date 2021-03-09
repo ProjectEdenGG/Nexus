@@ -35,8 +35,10 @@ import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
@@ -300,6 +302,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("addSpawnpoint <arena> [team]")
+	@Permission("manage")
 	void addSpawnpoint(Arena arena, @Arg(context = 1) Team team) {
 		List<Team> teams = arena.getTeams();
 
@@ -316,6 +319,32 @@ public class MinigamesCommand extends CustomCommand {
 		team.getSpawnpoints().add(location());
 		arena.write();
 		send(PREFIX + "Spawnpoint added");
+	}
+
+	@Path("schem save <arena> <name>")
+	@Permission("manage")
+	void schemSave(Arena arena, String name) {
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+		GameMode originalGameMode = player().getGameMode();
+		Location originalLocation = location().clone();
+		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
+		player().setGameMode(GameMode.SPECTATOR);
+		player().teleport(location);
+		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + (arena.getSchematicBaseName() + name) + " -f");
+		Tasks.wait(20, () -> {
+			player().teleport(originalLocation);
+			player().setGameMode(originalGameMode);
+		});
+
+		send(PREFIX + "Saved schematic " + name);
+	}
+
+	@Path("schem paste <arena> <name>")
+	@Permission("manage")
+	void schemPaste(Arena arena, String name) {
+		String schematicName = arena.getSchematicName(name);
+		new WorldEditUtils(world()).paster().file(schematicName).at(location()).pasteAsync();
+		send(PREFIX + "Pasted schematic " + schematicName);
 	}
 
 	private static String inviteCommand;

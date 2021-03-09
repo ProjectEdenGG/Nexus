@@ -164,17 +164,29 @@ public class Arena implements ConfigurationSerializable {
 	}
 
 	public void regenerate(String type) {
-		String name = getRegionBaseName().split("_")[0];
+		String name = getMechanicName();
 		String regex = getRegionTypeRegex(type);
 
 		getWGUtils().getRegionsLike(regex).forEach(region -> {
-			String file = "minigames/" + name + "/" + region.getId().replaceFirst(name + "_", "");
+			String file = getSchematicName(region.getId().replaceFirst(name + "_", ""));
 			getWEUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
+	public String getSchematicName(String name) {
+		return (getSchematicBaseName() + name).toLowerCase();
+	}
+
+	private String getMechanicName() {
+		return getMechanic().getClass().getSimpleName().toLowerCase();
+	}
+
+	public String getSchematicBaseName() {
+		return (getMechanicName() + "/" + getId()).toLowerCase() + "/";
+	}
+
 	public String getRegionBaseName() {
-		return (getMechanic().getClass().getSimpleName() + "_" + getName()).toLowerCase();
+		return (getMechanicName() + "_" + getId()).toLowerCase();
 	}
 
 	private static final String NUMBER_MODIFIER = "(_[0-9]+)?";

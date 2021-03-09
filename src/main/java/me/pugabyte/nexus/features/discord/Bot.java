@@ -90,6 +90,7 @@ public enum Bot {
 	protected CommandClientBuilder getCommands() {
 		CommandClientBuilder commands = new CommandClientBuilder()
 				.setPrefix("/")
+				.setAlternativePrefix("!")
 				.setOwnerId(User.PUGABYTE.getId())
 				.setActivity(Activity.playing("Minecraft"));
 
