@@ -131,8 +131,6 @@ public class HideAndSeek extends Infection {
 				continue;
 			}
 
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 1000000, 255, true, false, false));
-
 			MiscDisguise disguise = new MiscDisguise(DisguiseType.FALLING_BLOCK, matchData.getBlockChoice(minigamer));
 			disguise.setEntity(minigamer.getPlayer());
 			disguise.startDisguise();
@@ -235,9 +233,9 @@ public class HideAndSeek extends Infection {
 		Map<Material, Integer> blockCounts = new HashMap<>();
 		humans.forEach(minigamer -> {
 			Material blockChoice = matchData.getBlockChoice(minigamer);
-			blockCounts.compute(blockChoice, ($, integer) -> integer == null ? 1 : integer++);
+			blockCounts.compute(blockChoice, ($, integer) -> integer == null ? 1 : integer+1);
 		});
-		blockCounts.forEach(((material, integer) -> lines.put(camelCase(material), integer)));
+		blockCounts.forEach((material, integer) -> lines.put(camelCase(material), integer));
 		return lines;
 	}
 
