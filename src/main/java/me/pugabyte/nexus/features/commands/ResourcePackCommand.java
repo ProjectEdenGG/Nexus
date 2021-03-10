@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -35,6 +36,9 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	void resourcePack() {
 		if (hash == null)
 			error("Resource pack hash is null");
+
+		if (Status.DECLINED.equals(player().getResourcePackStatus()))
+			error("You declined the original prompt for the resource pack. In order to use the resource pack, you must edit the server in your server list and change the \"Server Resource Packs\" option to either \"enabled\" or \"prompt\"");
 
 		resourcePack(player());
 	}
