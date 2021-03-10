@@ -25,6 +25,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -41,10 +42,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.PlayerUtils.wakka;
-
 @NoArgsConstructor
 @Environments(Env.PROD)
+// Supports these mob types: https://paste.bnn.gg/zekog.txt
 public class MobHeads extends Feature implements Listener {
 	@Getter
 	private static final Map<EntityType, ItemStack> mobHeads = new HashMap<>();
@@ -87,38 +87,20 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onKillEntity(EntityDeathEvent event) {
-		if (wakka() != null && wakka().equals(event.getEntity().getKiller())) {
-			wakka("-=- Entity Death Event -=-");
-			wakka("Is Cancelled: " + event.isCancelled());
-			wakka("");
-			wakka("Type: " + event.getEntityType().name());
-			LivingEntity entity = event.getEntity();
-			wakka("Killer: " + entity.getKiller());
-			if (entity.getLastDamageCause() != null)
-				wakka("Last Damage Cause: " + entity.getLastDamageCause().getCause());
-			wakka("Spawn Reason: " + entity.getEntitySpawnReason());
-			wakka("Custom Name: " + entity.getCustomName());
-			wakka("Will Despawn: " + entity.getRemoveWhenFarAway());
-			wakka(" -=- ");
-		}
-
 		if (event.isCancelled())
 			return;
 
 		LivingEntity victim = event.getEntity();
 		Player killer = victim.getKiller();
-		if (killer == null)
-			return;
-
-		if (!new CooldownService().check(victim.getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2)))
-			return;
+		if (killer == null) return;
+		if (WorldGroup.get(killer) != WorldGroup.SURVIVAL) return;
+		if (!isUnnaturalSpawn(victim)) return;
+		if (isBaby(victim)) return;
+		if (!new CooldownService().check(victim.getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2))) return;
 
 		// TODO: Remove when done
-		if (!PlayerUtils.isWakka(killer))
-			return;
+		if (!PlayerUtils.isWakka(killer)) return;
 		//
-		if (WorldGroup.get(killer) != WorldGroup.SURVIVAL)
-			return;
 
 		EntityType type = victim.getType();
 		ItemStack skull = mobHeads.get(type);
@@ -128,6 +110,25 @@ public class MobHeads extends Feature implements Listener {
 
 		if (skull != null && RandomUtils.chanceOf(mobChance.get(type)))
 			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
+	}
+
+	private static boolean isBaby(LivingEntity entity) {
+		if (entity instanceof Ageable) {
+			Ageable ageable = (Ageable) entity;
+			return !ageable.isAdult();
+		}
+		return false;
+	}
+
+	private static boolean isUnnaturalSpawn(LivingEntity entity) {
+		switch (entity.getEntitySpawnReason()) {
+			case SPAWNER_EGG:
+			case SPAWNER:
+			case CUSTOM:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
