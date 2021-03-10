@@ -72,7 +72,7 @@ public abstract class MenuUtils {
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name, String lore) {
-		return nameItem(item, name, Arrays.asList(loreize(colorize(lore)).split("\\|\\|")));
+		return nameItem(item, name, lore == null ? null : Arrays.asList(loreize(colorize(lore)).split("\\|\\|")));
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name, List<String> lore) {

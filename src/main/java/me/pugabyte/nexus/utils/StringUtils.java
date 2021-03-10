@@ -128,6 +128,8 @@ public class StringUtils {
 
 	// TODO This will break with hex
 	public static String loreize(String string) {
+		if (string == null) return null;
+
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;
 		string = colorize(string);
