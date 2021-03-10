@@ -49,16 +49,16 @@ public class EditProductProvider extends _ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		contents.set(0, 5, ClickableItem.from(product.getItemWithOwnLore(), e -> new ExchangeConfigProvider(this, product).open(player)));
+		contents.set(0, 4, ClickableItem.from(product.getItemWithOwnLore(), e -> new ExchangeConfigProvider(this, product).open(player)));
 		if (product.getExchangeType() == ExchangeType.BUY) {
 			ItemBuilder builder = new ItemBuilder(Material.GOLD_INGOT)
 					.name("&6Edit Stock")
-					.lore("&fEnter the dollar amount you are")
-					.lore("&fwilling to spend on this item, or")
-					.lore("&fenter -1 to allow unlimited purchases")
+					.lore("&7Enter the dollar amount you are")
+					.lore("&7willing to spend on this item, or")
+					.lore("&7enter -1 to allow unlimited purchases")
 					.loreize(false);
 
-			contents.set(1, 3, ClickableItem.from(builder.build(), e ->
+			contents.set(1, 4, ClickableItem.from(builder.build(), e ->
 					Nexus.getSignMenuFactory().lines("", ARROWS, "Enter an amount", "or -1 for no limit").prefix(Shops.PREFIX).response(lines -> {
 						if (lines[0].length() > 0) {
 							String input = lines[0].replaceAll("[^0-9.-]+", "");
