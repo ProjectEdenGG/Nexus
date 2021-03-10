@@ -61,8 +61,12 @@ public class YourShopProvider extends _ShopProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		shop.getProducts(shopGroup).forEach(product -> {
-			ItemStack item = product.getItemWithOwnLore();
-			items.add(ClickableItem.from(item, e -> new EditProductProvider(this, product).open(player)));
+			ItemStack item = product.getItemWithOwnLore().build();
+			items.add(ClickableItem.from(item, e -> {
+				if (handleRightClick(product, e))
+					return;
+				new EditProductProvider(this, product).open(player);
+			}));
 		});
 
 		addPagination(player, contents, items);

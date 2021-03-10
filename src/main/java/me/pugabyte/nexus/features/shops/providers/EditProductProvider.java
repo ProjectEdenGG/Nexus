@@ -49,7 +49,7 @@ public class EditProductProvider extends _ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		contents.set(0, 4, ClickableItem.from(product.getItemWithOwnLore(), e -> new ExchangeConfigProvider(this, product).open(player)));
+		contents.set(0, 4, ClickableItem.from(product.getItemWithOwnLore().build(), e -> new ExchangeConfigProvider(this, product).open(player)));
 		if (product.getExchangeType() == ExchangeType.BUY) {
 			ItemBuilder builder = new ItemBuilder(Material.GOLD_INGOT)
 					.name("&6Edit Stock")

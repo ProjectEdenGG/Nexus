@@ -88,7 +88,7 @@ public class StringUtils {
 		return ChatColor.translateAlternateColorCodes(altColorChar.charAt(0), input);
 	}
 
-	@Deprecated
+	// Replaces § with & and unformats hex, does NOT strip colors
 	public static String decolorize(String input) {
 		if (input == null)
 			return null;

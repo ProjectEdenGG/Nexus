@@ -27,7 +27,6 @@ import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -47,6 +46,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.features.shops.ShopUtils.giveItems;
 import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
+import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -91,6 +91,14 @@ public class Shop extends PlayerOwnedObject {
 
 	public String[] getDescriptionArray() {
 		return description.isEmpty() ? new String[]{"", "", "", ""} : description.stream().map(StringUtils::decolorize).toArray(String[]::new);
+	}
+
+	public List<Product> getInStock(ShopGroup shopGroup) {
+		return getProducts(shopGroup).stream().filter(product -> product.getExchange().canFulfillPurchase()).collect(Collectors.toList());
+	}
+
+	public List<Product> getOutOfStock(ShopGroup shopGroup) {
+		return getProducts(shopGroup).stream().filter(product -> !product.getExchange().canFulfillPurchase()).collect(Collectors.toList());
 	}
 
 	public void addHolding(List<ItemStack> itemStacks) {
@@ -188,6 +196,13 @@ public class Shop extends PlayerOwnedObject {
 				this.stock = Math.max(stock, 0);
 		}
 
+		public double getCalculatedStock() {
+			if (exchangeType == ExchangeType.BUY && stock == -1)
+				return Nexus.getEcon().getBalance(getShop().getOfflinePlayer());
+			else
+				return stock;
+		}
+
 		@SneakyThrows
 		public void process(Player customer) {
 			if (uuid.equals(customer.getUniqueId()))
@@ -196,7 +211,7 @@ public class Shop extends PlayerOwnedObject {
 			if (editing)
 				throw new InvalidInputException("You cannot buy this item right now, it is being edited by the shop owner");
 
-			getExchange().process(this, customer);
+			getExchange().process(customer);
 			log(customer);
 		}
 
@@ -226,22 +241,29 @@ public class Shop extends PlayerOwnedObject {
 
 		@NotNull
 		public Exchange getExchange() {
-			return exchangeType.init(price);
+			return exchangeType.init(this);
 		}
 
-		public ItemStack getItemWithLore() {
+		public ItemBuilder getItemWithLore() {
 			ItemBuilder builder = new ItemBuilder(item).lore("&f");
+
 			if (item.getType() != Material.ENCHANTED_BOOK)
 				builder.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
-			return builder.build();
+			if (!getShulkerContents(item).isEmpty())
+				builder.lore("&7Right click to view contents").lore("&f");
+
+			return builder;
 		}
 
-		public ItemStack getItemWithOwnLore() {
-			return new ItemBuilder(getItemWithLore())
-					.lore(getExchange().getOwnLore(this))
-					.lore("", "&7Click to edit")
-					.build();
+		public ItemBuilder getItemWithCustomerLore() {
+			return getItemWithLore().lore(getExchange().getLore());
+		}
+
+		public ItemBuilder getItemWithOwnLore() {
+			return getItemWithLore()
+					.lore(getExchange().getOwnLore())
+					.lore("", "&7Click to edit");
 		}
 
 		public boolean isMarket() {
@@ -288,38 +310,47 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@SneakyThrows
-		public Exchange init(Object price) {
-			return (Exchange) clazz.getDeclaredConstructors()[0].newInstance(price);
+		public Exchange init(Product product) {
+			return (Exchange) clazz.getDeclaredConstructors()[0].newInstance(product);
 		}
 	}
 
 	public interface Exchange {
 
-		void process(Product product, Player customer);
+		Product getProduct();
 
-		List<String> getLore(Product product);
-		List<String> getOwnLore(Product product);
+		void process(Player customer);
+		boolean canFulfillPurchase();
 
+		List<String> getLore();
+		List<String> getOwnLore();
+
+		default void checkStock() {
+			if (!getProduct().isMarket()) {
+				if (getProduct().getCalculatedStock() <= 0)
+					throw new InvalidInputException("This item is out of stock");
+				if (!canFulfillPurchase())
+					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
+			}
+		}
 	}
 
 	@Data
-	@Builder
-	@AllArgsConstructor
 	// Customer buying an item from the shop owner for money
 	public static class SellExchange implements Exchange {
 		@NonNull
-		private Double price;
+		private final Product product;
+		private final double price;
+
+		public SellExchange(@NonNull Product product) {
+			this.product = product;
+			this.price = (double) product.getPrice();
+		}
 
 		@Override
-		public void process(Product product, Player customer) {
-			if (customer.getUniqueId() == product.getShop().getUuid())
-				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (!product.isMarket()) {
-				if (product.getStock() <= 0)
-					throw new InvalidInputException("This item is out of stock");
-				if (product.getStock() < product.getItem().getAmount())
-					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
-			}
+		public void process(Player customer) {
+			checkStock();
+
 			if (!Nexus.getEcon().has(customer, price))
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
@@ -334,8 +365,12 @@ public class Shop extends PlayerOwnedObject {
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
 		}
 
+		public boolean canFulfillPurchase() {
+			return product.getCalculatedStock() >= product.getItem().getAmount();
+		}
+
 		@Override
-		public List<String> getLore(Product product) {
+		public List<String> getLore() {
 			int stock = (int) product.getStock();
 			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price);
 
@@ -353,7 +388,7 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
-		public List<String> getOwnLore(Product product) {
+		public List<String> getOwnLore() {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
 					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
@@ -363,26 +398,21 @@ public class Shop extends PlayerOwnedObject {
 	}
 
 	@Data
-	@Builder
 	// Customer buying an item from the shop owner for other items
 	public static class TradeExchange implements Exchange {
 		@NonNull
-		private ItemStack price;
+		private Product product;
+		private final ItemStack price;
 
-		public TradeExchange(@NonNull Object price) {
-			this.price = (ItemStack) price;
+		public TradeExchange(@NonNull Product product) {
+			this.product = product;
+			this.price = (ItemStack) product.getPrice();
 		}
 
 		@Override
-		public void process(Product product, Player customer) {
-			if (customer.getUniqueId() == product.getShop().getUuid())
-				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (!product.isMarket()) {
-				if (product.getStock() <= 0)
-					throw new InvalidInputException("This item is out of stock");
-				if (product.getStock() < product.getItem().getAmount())
-					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
-			}
+		public void process(Player customer) {
+			checkStock();
+
 			if (!customer.getInventory().containsAtLeast(price, price.getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(price) + " to purchase this item");
 
@@ -396,7 +426,12 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
-		public List<String> getLore(Product product) {
+		public boolean canFulfillPurchase() {
+			return product.getCalculatedStock() >= product.getItem().getAmount();
+		}
+
+		@Override
+		public List<String> getLore() {
 			int stock = (int) product.getStock();
 			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + pretty(price);
 			if (product.getUuid().equals(Nexus.getUUID0()))
@@ -413,7 +448,7 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
-		public List<String> getOwnLore(Product product) {
+		public List<String> getOwnLore() {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
 					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + pretty(price),
@@ -423,31 +458,28 @@ public class Shop extends PlayerOwnedObject {
 	}
 
 	@Data
-	@Builder
-	@AllArgsConstructor
 	// Customer selling an item to the shop owner for money
 	public static class BuyExchange implements Exchange {
 		@NonNull
-		private Double price;
+		private final Product product;
+		private final Double price;
+
+		public BuyExchange(@NonNull Product product) {
+			this.product = product;
+			this.price = (Double) product.getPrice();
+		}
 
 		@Override
-		public void process(Product product, Player customer) {
-			OfflinePlayer shopOwner = product.getShop().getOfflinePlayer();
-			if (customer.getUniqueId() == product.getShop().getUuid())
-				throw new InvalidInputException("You cannot purchase from your own shop");
-			if (!product.isMarket()) {
-				if (getStock(product) <= 0)
-					throw new InvalidInputException("This item is out of stock");
-				if (getStock(product) < price)
-					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
-			}
+		public void process(Player customer) {
+			checkStock();
+
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 
 			product.setStock(product.getStock() - price);
 			if (price > 0) {
 				if (!product.isMarket())
-					Nexus.getEcon().withdrawPlayer(shopOwner, price);
+					Nexus.getEcon().withdrawPlayer(product.getShop().getOfflinePlayer(), price);
 				Nexus.getEcon().depositPlayer(customer, price);
 			}
 			customer.getInventory().removeItem(product.getItem());
@@ -458,7 +490,12 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
-		public List<String> getLore(Product product) {
+		public boolean canFulfillPurchase() {
+			return product.getCalculatedStock() >= price;
+		}
+
+		@Override
+		public List<String> getLore() {
 			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price);
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
@@ -468,24 +505,17 @@ public class Shop extends PlayerOwnedObject {
 			else
 				return Arrays.asList(
 						desc,
-						"&7Stock: &e" + prettyMoney(getStock(product), false),
+						"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false),
 						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
 				);
 		}
 
 		@Override
-		public List<String> getOwnLore(Product product) {
+		public List<String> getOwnLore() {
 			return Arrays.asList(
 					"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
-					"&7Stock: &e" + prettyMoney(getStock(product), false)
+					"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false)
 			);
-		}
-
-		private double getStock(Product product) {
-			if (product.getStock() == -1)
-				return Nexus.getEcon().getBalance(product.getShop().getOfflinePlayer());
-			else
-				return product.getStock();
 		}
 
 	}

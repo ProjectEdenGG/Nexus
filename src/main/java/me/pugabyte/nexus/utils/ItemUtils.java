@@ -2,11 +2,13 @@ package me.pugabyte.nexus.utils;
 
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -14,10 +16,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ItemUtils {
 
@@ -54,6 +58,32 @@ public class ItemUtils {
 
 		if (newItemStack.getAmount() > 0)
 			itemStacks.add(new ItemStack(newItemStack));
+	}
+
+	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
+		return getRawShulkerContents(itemStack).stream().filter(content -> !ItemUtils.isNullOrAir(content)).collect(Collectors.toList());
+	}
+
+	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
+		List<ItemStack> contents = new ArrayList<>();
+
+		if (ItemUtils.isNullOrAir(itemStack))
+			return contents;
+
+		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
+			return contents;
+		
+		if (!(itemStack.getItemMeta() instanceof BlockStateMeta))
+			return contents;
+
+		BlockStateMeta meta = (BlockStateMeta) itemStack.getItemMeta();
+		if (!(meta.getBlockState() instanceof ShulkerBox))
+			return contents;
+
+		ShulkerBox shulkerBox = (ShulkerBox) meta.getBlockState();
+		contents.addAll(Arrays.asList(shulkerBox.getInventory().getContents()));
+
+		return contents;
 	}
 
 	public static ItemStack getTool(Player player) {

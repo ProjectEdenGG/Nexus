@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
+import static me.pugabyte.nexus.utils.ItemUtils.getRawShulkerContents;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class BrowseItemsProvider extends _ShopProvider {
@@ -151,12 +152,12 @@ public class BrowseItemsProvider extends _ShopProvider {
 				if (isFiltered(product))
 					return;
 
-				ItemStack item  = new ItemBuilder(product.getItemWithLore())
-						.lore(product.getExchange().getLore(product))
-						.build();
+				ItemBuilder builder = new ItemBuilder(product.getItemWithCustomerLore().build());
 
-				items.add(ClickableItem.from(item, e -> {
+				items.add(ClickableItem.from(builder.build(), e -> {
 					try {
+						if (handleRightClick(product, e))
+							return;
 						product.process(player);
 						open(player, page.getPage());
 					} catch (Exception ex) {
@@ -195,6 +196,40 @@ public class BrowseItemsProvider extends _ShopProvider {
 				if (filter.getType().getClass() == type)
 					return filter;
 		return null;
+	}
+
+	public static class ShulkerContentsProvider extends  _ShopProvider {
+		private final Product product;
+
+		public ShulkerContentsProvider(_ShopProvider previousMenu, Product product) {
+			this.previousMenu = previousMenu;
+			this.product = product;
+			this.rows = 4;
+		}
+
+		@Override
+		public void open(Player viewer, int page) {
+			open(viewer, page, this, "&0Shulker Contents");
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			super.init(player, contents);
+
+			contents.set(0, 4, ClickableItem.empty(product.getItemWithCustomerLore().build()));
+
+			int row = 1;
+			int column = 0;
+			for (ItemStack itemStack : getRawShulkerContents(product.getItem())) {
+				contents.set(row, column, ClickableItem.empty(itemStack));
+
+				if (column == 8) {
+					column = 0;
+					row++;
+				} else
+					column++;
+			}
+		}
 	}
 
 }

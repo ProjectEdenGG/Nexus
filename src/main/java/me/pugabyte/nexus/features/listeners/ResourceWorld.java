@@ -11,7 +11,6 @@ import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -24,7 +23,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldType;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,7 +32,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -43,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -96,21 +94,12 @@ public class ResourceWorld implements Listener {
 			rejectedMaterials.clear();
 
 			ItemStack[] items = player.getInventory().getContents();
-			for (ItemStack item : items) {
-				if (item == null || ItemUtils.isNullOrAir(item.getType())) continue;
-				if (!MaterialTag.SHULKER_BOXES.isTagged(item.getType())) continue;
-				if (!(item.getItemMeta() instanceof BlockStateMeta)) continue;
-
-				ShulkerBox shulkerBox = (ShulkerBox) ((BlockStateMeta) item.getItemMeta()).getBlockState();
-				ItemStack[] contents = shulkerBox.getInventory().getContents();
-				for (ItemStack content : contents) {
-					if (content == null || ItemUtils.isNullOrAir(content.getType())) continue;
+			for (ItemStack item : items)
+				for (ItemStack content : getShulkerContents(item))
 					if (materials.contains(content.getType())) {
 						rejectedMaterials.add(content.getType());
 						event.setCancelled(true);
 					}
-				}
-			}
 
 			if (rejectedMaterials.size() != 0)
 				if (appendMessage) {

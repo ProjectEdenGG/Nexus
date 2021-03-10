@@ -79,7 +79,7 @@ public class ShopMenuFunctions {
 
 	public enum FilterEmptyStock implements FilterType {
 		SHOWN,
-		HIDDEN(product -> product.getStock() != 0); // TODO check balance?
+		HIDDEN(product -> product.getExchange().canFulfillPurchase());
 
 		@Getter
 		private Predicate<Product> filter;
