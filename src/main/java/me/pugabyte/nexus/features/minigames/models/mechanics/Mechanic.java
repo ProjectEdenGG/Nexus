@@ -315,7 +315,7 @@ public abstract class Mechanic implements Listener {
 		return match.getArena().isInRegion(block, region);
 	}
 
-	public void criticalErrorAbort(String message, Match match) {
+	public static void criticalErrorAbort(String message, Match match) {
 		Nexus.severe(message);
 		match.broadcast("&c" + message);
 		match.end();

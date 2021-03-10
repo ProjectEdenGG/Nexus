@@ -24,6 +24,7 @@ import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -104,7 +105,7 @@ public class Murder extends UnbalancedTeamMechanic {
 					// Find the closest player by looping all minigame
 					// players and saving the shortest distance
 					for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
-						if (_minigamer != minigamer)
+						if (_minigamer != minigamer && _minigamer.isAlive())
 							if (minigamer.getPlayer().getLocation().distance(_minigamer.getPlayer().getLocation()) < dist) {
 								// New shortest distance, save data
 								dist = minigamer.getPlayer().getLocation().distance(_minigamer.getPlayer().getLocation());
@@ -533,7 +534,9 @@ public class Murder extends UnbalancedTeamMechanic {
 	public void onTimeTick(MatchTimerTickEvent event) {
 		event.getMatch().getMinigamers().forEach(minigamer -> {
 			String teamName;
-			if (isMurderer(minigamer))
+			if (!minigamer.isAlive())
+				teamName = "&cdead";
+			else if (isMurderer(minigamer))
 				teamName = "the &cMurderer";
 			else if (isGunner(minigamer))
 				teamName = "a &6Gunner";
@@ -548,9 +551,11 @@ public class Murder extends UnbalancedTeamMechanic {
 		});
 
 		// spawns 1 scrap every second on average at the start of the game, increasing in quantity as the round progresses
-		// f(t)=(t/60)*(s/200)+1, where f(t) is scrap per second, t is time in seconds, and s is the number of scrap points
-		// dividing this formula (except the +1, that becomes +.01) by s gives p(t)=t/12000+.01, where p(t) is the
-		//  chance of each scrap point to spawn a scrap each second. p(t)=spawnChancePerPoint
+		// f(t)=(t/60)*(s/200)*(p/3)+1, where f(t) is scrap per second, t is time in seconds, s is the number of scrap points,
+		//  and p is the number of players
+		// dividing this formula by s gives x(t)=tp/36000, where x(t) is the chance of each scrap point to spawn a scrap each second.
+		// we also add 1 in (# of scrap points) to this formula to ensure that there is atleast .1 scrap spawning on average
+		// also there's some other weird things i did and probably forgot to write down
 		int arenaDuration = event.getMatch().getArena().getSeconds();
 		// get elapsed time
 		int seconds;
@@ -559,9 +564,10 @@ public class Murder extends UnbalancedTeamMechanic {
 		else
 			seconds = event.getTime();
 		// calculate formula
-		double spawnChancePerPoint = .01d + (seconds/12000d);
+		List<Location> scrapPoints = ((MurderArena) event.getMatch().getArena()).getScrapPoints();
+		double spawnChancePerPoint = ((1d/3d)/scrapPoints.size()) + ((seconds*event.getMatch().getMinigamers().size())/36000d);
 		// drop scraps
-		((MurderArena) event.getMatch().getArena()).getScrapPoints().forEach(location -> {
+		scrapPoints.forEach(location -> {
 			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)
 				location.getWorld().dropItemNaturally(location, scrap);
 		});

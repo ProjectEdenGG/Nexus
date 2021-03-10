@@ -216,7 +216,11 @@ public class Match {
 		clearEntities();
 		clearStates();
 		toGamelobby();
-		arena.getMechanic().onEnd(event);
+		try {
+			arena.getMechanic().onEnd(event);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		minigamers.clear();
 
 		if (scoreboard != null) scoreboard.handleEnd();
@@ -308,7 +312,11 @@ public class Match {
 	}
 
 	private void teleportIn() {
-		arena.getTeams().forEach(team -> team.spawn(this));
+		arena.getTeams().forEach(team -> {
+			if (team.getSpawnpoints().isEmpty())
+				Mechanic.criticalErrorAbort("Team "+team.getName()+" has no spawnpoints!", this);
+			team.spawn(this);
+		});
 	}
 
 	public void teleportIn(Minigamer minigamer) {
