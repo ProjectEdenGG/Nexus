@@ -14,10 +14,8 @@ import me.pugabyte.nexus.features.minigames.mechanics.Murder;
 import me.pugabyte.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.arenas.MurderArena;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import static me.pugabyte.nexus.features.minigames.Minigames.PREFIX;
 import static me.pugabyte.nexus.features.minigames.Minigames.menus;
 
 @CustomMechanicSettings(Murder.class)
@@ -58,20 +55,8 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> Minigames.menus.openArenaMenu(player, arena));
 
-		contents.set(1, 3, ClickableItem.from(nameItem(new ItemStack(Material.IRON_INGOT), "&eScrap Points"),
+		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.IRON_INGOT), "&eScrap Points"),
 				e -> openScrapPointsMenu(arena).open(player)));
-
-		contents.set(1, 5, ClickableItem.from(nameItem(Material.CLOCK, "&eSpawn Chance", "&3Current value:||&e" + arena.getSpawnChance()),
-				e -> openAnvilMenu(player, arena, arena.getSpawnChance() + "", (Player p, String text) -> {
-					if (!Utils.isInt(text)) {
-						AnvilGUI.Response.close();
-						throw new InvalidInputException(PREFIX + "You must use an integer for spawn chance.");
-					}
-					arena.setSpawnChance(Integer.parseInt(text));
-					ArenaManager.write(arena);
-					menus.openCustomSettingsMenu(player, arena);
-					return AnvilGUI.Response.text(text);
-				})));
 	}
 
 	@Override

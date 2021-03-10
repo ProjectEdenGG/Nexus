@@ -16,19 +16,16 @@ import java.util.Map;
 @SerializableAs("MurderArena")
 public class MurderArena extends Arena {
 	private List<Location> scrapPoints = new ArrayList<>();
-	private int spawnChance;
 
 	public MurderArena(Map<String, Object> map) {
 		super(map);
-		scrapPoints = (List<Location>) map.getOrDefault("scrapPoints", new ArrayList<Location>());
-		spawnChance = (int) map.getOrDefault("spawnChance", 0);
+		scrapPoints = (List<Location>) map.getOrDefault("scrapPoints", scrapPoints);
 	}
 
 	@Override
 	public Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
 		map.put("scrapPoints", scrapPoints);
-		map.put("spawnChance", spawnChance);
 		return map;
 	}
 
