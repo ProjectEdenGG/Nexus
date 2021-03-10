@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 
 @Aliases("bs")
@@ -62,7 +63,7 @@ public class BattleshipCommand extends CustomCommand {
 			error("You must be playing Battleship to use this command");
 	}
 
-	private static final String[] aimMenuLines = {"", "^ ^ ^ ^ ^ ^", "Enter a", "coordinate (A0)"};
+	private static final String[] aimMenuLines = {"", ARROWS, "Enter a", "coordinate (A0)"};
 
 	@Path("aim [coordinate]")
 	void aim(@Arg(permission = "minigames.manage") Coordinate coordinate) {

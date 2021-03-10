@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
@@ -186,7 +187,7 @@ public class ExchangeConfigProvider extends _ShopProvider {
 					player.setItemOnCursor(null);
 					open(player);
 				} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {
-					Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
+					Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
 						try {
 							if (lines[0].length() > 0) {
 								Function<Material, Boolean> filter = material -> material.name().toLowerCase().contains(lines[0].toLowerCase());

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.features.delivery.DeliveryCommand.PREFIX;
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProvider {
@@ -93,7 +94,7 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 			confirm.lore("&cDelivery is empty");
 
 		contents.set(1, 1, ClickableItem.from(playerName.build(), e ->
-				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name")
+				Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name")
 						.prefix(PREFIX)
 						.response(lines -> {
 							if (lines[0].length() > 0) {

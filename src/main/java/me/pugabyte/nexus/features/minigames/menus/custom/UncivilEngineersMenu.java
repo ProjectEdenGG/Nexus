@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.features.minigames.Minigames.menus;
 
 @CustomMechanicSettings(UncivilEngineers.class)
@@ -214,7 +215,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 						AtomicInteger originID = new AtomicInteger(0);
 						player.closeInventory();
 						Nexus.getSignMenuFactory()
-								.lines("", "^ ^ ^ ^ ^ ^", "UE Line", "Number")
+								.lines("", ARROWS, "UE Line", "Number")
 								.prefix(MechanicType.UNCIVIL_ENGINEERS.get().getPrefix())
 								.response(lines -> {
 									try {

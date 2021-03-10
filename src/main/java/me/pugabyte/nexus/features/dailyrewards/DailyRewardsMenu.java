@@ -20,6 +20,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
+
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private final DailyRewardService service = new DailyRewardService();
 	private final DailyReward dailyReward;
@@ -142,7 +144,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 						player.closeInventory();
 					});
 				} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
-					Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name").prefix(PREFIX).response(lines -> {
+					Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name").prefix(PREFIX).response(lines -> {
 						PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
 						saveAndReturn(contents, day, initialDay);
 					}).open(player);

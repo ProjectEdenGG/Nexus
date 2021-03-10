@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
+
 public class TrustProvider extends MenuUtils implements InventoryProvider {
 	private final Trust trust;
 	private final Runnable back;
@@ -93,7 +95,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.from(add.build(), e ->
-				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "player's name")
+				Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name")
 						.prefix(Features.get(TrustFeature.class).getPrefix())
 						.response(lines -> {
 							if (lines[0].length() > 0) {

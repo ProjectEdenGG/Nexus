@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.loreize;
 
 public class HomesMenu {
@@ -62,7 +63,7 @@ public class HomesMenu {
 				.open(homeOwner.getPlayer());
 	}
 
-	private static final String[] playerNameLines = {"", "^ ^ ^ ^ ^ ^", "Enter a", "player's name"};
+	private static final String[] playerNameLines = {"", ARROWS, "Enter a", "player's name"};
 
 	public static void allow(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
@@ -132,7 +133,7 @@ public class HomesMenu {
 	}
 
 	public static void rename(Home home, Consumer<String[]> onResponse) {
-		signMenuFactory.lines("", "^ ^ ^ ^ ^ ^", "Enter the home's", "new name")
+		signMenuFactory.lines("", ARROWS, "Enter the home's", "new name")
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
@@ -149,7 +150,7 @@ public class HomesMenu {
 	}
 
 	public static void create(HomeOwner homeOwner, Consumer<String[]> onResponse) {
-		signMenuFactory.lines("", "^ ^ ^ ^ ^ ^", "Enter your new", "home's name")
+		signMenuFactory.lines("", ARROWS, "Enter your new", "home's name")
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {

@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -32,9 +33,11 @@ public final class SignMenuFactory {
 	private static final String NBT_BLOCK_ID = "minecraft:sign";
 
 	private static final List<String> BLANK = Arrays.asList("", "", "", "");
+	public static final String ARROWS = "^ ^ ^ ^ ^ ^ ^ ^";
 
 	private final Plugin plugin;
 
+	@Getter
 	private final Map<Player, Menu> inputReceivers;
 	private final Map<Player, BlockPosition> signLocations;
 

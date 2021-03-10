@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
+
 @Getter
 public enum ParticleSetting {
 	COLOR(2, 2, Material.LEATHER_CHESTPLATE, Color.class, ParticleType.valuesExcept(ParticleType.DISCO, ParticleType.DOUBLE_CHAOS, ParticleType.NYAN_CAT, ParticleType.BANDS, ParticleType.WINGS)) {
@@ -373,7 +375,7 @@ public enum ParticleSetting {
 
 	public void onClick(Player player, ParticleType type) {
 		if (value == Double.class || value == Integer.class)
-			Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter new value for", getTitle())
+			Nexus.getSignMenuFactory().lines("", ARROWS, "Enter new value for", getTitle())
 					.prefix(Features.get(Particles.class).getPrefix())
 					.response(lines -> {
 						setter(player, type, lines[0]);

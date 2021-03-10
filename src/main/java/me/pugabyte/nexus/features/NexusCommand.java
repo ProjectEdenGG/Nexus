@@ -154,6 +154,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if (Nexus.getTempListenerCount() > 0)
 			error(json("There are " + Nexus.getTempListenerCount() + " temporary listeners registered, cannot reload").next(retry));
 
+		if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
+			error(json("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open, cannot reload").next(retry));
+
 		List<Pugmas20User> all = new Pugmas20Service().getAll();
 		long torchCount = all.stream().filter(pugmas20User -> pugmas20User.isOnline() && pugmas20User.isLightingTorches() && pugmas20User.getTorchTimerTaskId() > 0).count();
 		if (torchCount > 0)
