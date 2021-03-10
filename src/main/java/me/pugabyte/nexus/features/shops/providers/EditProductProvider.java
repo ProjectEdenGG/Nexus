@@ -4,7 +4,10 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.ShopUtils;
+import me.pugabyte.nexus.features.shops.Shops;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
+import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -21,8 +24,11 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class EditProductProvider extends _ShopProvider {
@@ -44,8 +50,33 @@ public class EditProductProvider extends _ShopProvider {
 		super.init(player, contents);
 
 		contents.set(0, 4, ClickableItem.from(product.getItemWithOwnLore(), e -> new ExchangeConfigProvider(this, product).open(player)));
-		contents.set(1, 3, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add Stock"), e -> new AddStockProvider(this, product).open(player)));
-		contents.set(1, 5, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
+		if (product.getExchangeType() == ExchangeType.BUY) {
+			ItemBuilder builder = new ItemBuilder(Material.GOLD_INGOT)
+					.name("&6Edit Stock")
+					.lore("&fEnter the dollar amount you are")
+					.lore("&fwilling to spend on this item, or")
+					.lore("&fenter -1 to allow unlimited purchases")
+					.loreize(false);
+
+			contents.set(1, 3, ClickableItem.from(builder.build(), e ->
+					Nexus.getSignMenuFactory().lines("", ARROWS, "Enter an amount", "or -1 for no limit").prefix(Shops.PREFIX).response(lines -> {
+						if (lines[0].length() > 0) {
+							String input = lines[0].replaceAll("[^0-9.-]+", "");
+							if (!Utils.isDouble(input))
+								throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
+							double stock = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
+							if (!(stock == -1 || stock >= 0))
+								throw new InvalidInputException("Stock must be -1 (unlimited), or $0 or greater");
+							product.setStock(stock);
+							service.save(product.getShop());
+						}
+						open(player);
+					}).open(player)
+			));
+		} else {
+			contents.set(1, 3, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add Stock"), e -> new AddStockProvider(this, product).open(player)));
+			contents.set(1, 5, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
+		}
 		contents.set(3, 4, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
 				ConfirmationMenu.builder()
 						.onConfirm(e2 -> {

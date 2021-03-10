@@ -60,7 +60,7 @@ public abstract class MenuUtils {
 	}
 
 	protected ItemStack nameItem(Material material, String name) {
-		return nameItem(new ItemStack(material), name, null);
+		return nameItem(new ItemStack(material), name, (List<String>) null);
 	}
 
 	protected ItemStack nameItem(Material material, String name, String lore) {
@@ -68,15 +68,19 @@ public abstract class MenuUtils {
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name) {
-		return nameItem(item, name, null);
+		return nameItem(item, name, (List<String>) null);
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name, String lore) {
+		return nameItem(item, name, Arrays.asList(loreize(colorize(lore)).split("\\|\\|")));
+	}
+
+	protected ItemStack nameItem(ItemStack item, String name, List<String> lore) {
 		ItemMeta meta = item.getItemMeta();
 		if (name != null)
 			meta.setDisplayName(colorize(name));
 		if (lore != null)
-			meta.setLore(Arrays.asList(loreize(colorize(lore)).split("\\|\\|")));
+			meta.setLore(lore);
 
 		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		item.setItemMeta(meta);

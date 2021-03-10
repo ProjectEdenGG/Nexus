@@ -26,7 +26,11 @@ public class ShopUtils {
 	}
 
 	public static String prettyMoney(Number number) {
-		if (number.doubleValue() == 0)
+		return prettyMoney(number, true);
+	}
+
+	public static String prettyMoney(Number number, boolean free) {
+		if (free && number.doubleValue() == 0)
 			return "free";
 		return "$" + pretty(number);
 	}

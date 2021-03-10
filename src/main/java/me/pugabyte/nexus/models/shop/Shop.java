@@ -180,9 +180,10 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		public void setStock(double stock) {
-			if (this.stock == -1)
-				return;
-			this.stock = Math.max(stock, 0);
+			if (exchangeType == ExchangeType.BUY && stock < 0)
+				this.stock = -1;
+			else
+				this.stock = Math.max(stock, 0);
 		}
 
 		@SneakyThrows
@@ -436,12 +437,10 @@ public class Shop extends PlayerOwnedObject {
 			if (customer.getUniqueId() == product.getShop().getUuid())
 				throw new InvalidInputException("You cannot purchase from your own shop");
 			if (!product.isMarket()) {
-				if (product.getStock() <= 0)
+				if (getStock(product) <= 0)
 					throw new InvalidInputException("This item is out of stock");
-				if (product.getStock() > 0 && product.getStock() < price)
+				if (getStock(product) < price)
 					throw new InvalidInputException("There is not enough stock to fulfill your purchase");
-				if (!Nexus.getEcon().has(shopOwner, price))
-					throw new InvalidInputException(shopOwner.getName() + " does not have enough money to purchase this item from you");
 			}
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
@@ -470,7 +469,7 @@ public class Shop extends PlayerOwnedObject {
 			else
 				return Arrays.asList(
 						desc,
-						"&7Stock: &e" + prettyMoney(product.getStock()),
+						"&7Stock: &e" + prettyMoney(getStock(product), false),
 						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
 				);
 		}
@@ -479,9 +478,19 @@ public class Shop extends PlayerOwnedObject {
 		public List<String> getOwnLore(Product product) {
 			return Arrays.asList(
 					"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
-					"&7Stock: &e" + prettyMoney(product.getStock())
+					"&7Stock: &e" + prettyMoney(getStock(product), false)
 			);
 		}
+
+		private double getStock(Product product) {
+			if (product.getStock() == -1)
+				return Nexus.getEcon().getBalance(product.getShop().getOfflinePlayer());
+			else if (product.getStock() == 0)
+				return 0;
+			else
+				return product.getStock();
+		}
+
 	}
 
 }
