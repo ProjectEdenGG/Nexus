@@ -21,11 +21,9 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -87,17 +85,6 @@ public class Murder extends UnbalancedTeamMechanic {
 	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
-
-		MurderArena arena = event.getMatch().getArena();
-
-		event.getMatch().getTasks().repeat(Time.SECOND.x(10), Time.SECOND.x(3), () -> {
-			for (Location loc : arena.getScrapPoints()) {
-				if (arena.getSpawnChance() != 0)
-					if (RandomUtils.randomInt(1, arena.getSpawnChance()) != 1)
-						continue;
-				loc.getWorld().dropItemNaturally(loc, scrap);
-			}
-		});
 
 		List<Minigamer> list = event.getMatch().getAliveMinigamers();
 
@@ -558,6 +545,25 @@ public class Murder extends UnbalancedTeamMechanic {
 
 			if (!isMurderer(minigamer))
 				minigamer.getPlayer().setFoodLevel(3);
+		});
+
+		// spawns 1 scrap every second on average at the start of the game, increasing in quantity as the round progresses
+		// f(t)=(t/60)*(s/200)+1, where f(t) is scrap per second, t is time in seconds, and s is the number of scrap points
+		// dividing this formula (except the +1, that becomes +.01) by s gives p(t)=t/12000+.01, where p(t) is the
+		//  chance of each scrap point to spawn a scrap each second. p(t)=spawnChancePerPoint
+		int arenaDuration = event.getMatch().getArena().getSeconds();
+		// get elapsed time
+		int seconds;
+		if (arenaDuration > 0)
+			seconds = arenaDuration - event.getTime();
+		else
+			seconds = event.getTime();
+		// calculate formula
+		double spawnChancePerPoint = .01d + (seconds/12000d);
+		// drop scraps
+		((MurderArena) event.getMatch().getArena()).getScrapPoints().forEach(location -> {
+			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)
+				location.getWorld().dropItemNaturally(location, scrap);
 		});
 	}
 
