@@ -94,7 +94,7 @@ public class MobHeads extends Feature implements Listener {
 		Player killer = victim.getKiller();
 		if (killer == null) return;
 		if (WorldGroup.get(killer) != WorldGroup.SURVIVAL) return;
-		if (!isUnnaturalSpawn(victim)) return;
+		if (isUnnaturalSpawn(victim)) return;
 		if (isBaby(victim)) return;
 		if (!new CooldownService().check(victim.getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2))) return;
 
