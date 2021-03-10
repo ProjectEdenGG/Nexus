@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.shops;
 
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -14,14 +15,26 @@ import static me.pugabyte.nexus.utils.StringUtils.pretty;
 public class ShopUtils {
 
 	public static void giveItems(OfflinePlayer player, ItemStack item) {
+		giveItems(player, item, false);
+	}
+
+	public static void giveItems(OfflinePlayer player, ItemStack item, boolean explainExcess) {
 		giveItems(player, Collections.singletonList(item));
 	}
 
 	public static void giveItems(OfflinePlayer player, List<ItemStack> items) {
+		giveItems(player, items, false);
+	}
+
+	public static void giveItems(OfflinePlayer player, List<ItemStack> items, boolean explainExcess) {
 		Shop shop = new ShopService().get(player);
-		if (player.isOnline())
-			PlayerUtils.giveItemsGetExcess(player.getPlayer(), items);
-		else
+		if (player.isOnline()) {
+			List<ItemStack> excess = PlayerUtils.giveItemsGetExcess(player.getPlayer(), items);
+			shop.addHolding(excess);
+			if (explainExcess && !excess.isEmpty())
+				if (player.isOnline() && player.getPlayer() != null)
+					PlayerUtils.send(player.getPlayer(), new JsonBuilder(Shops.PREFIX + "Excess items added to item collection menu, click to view").command("/shops collect"));
+		} else
 			shop.addHolding(items);
 	}
 
