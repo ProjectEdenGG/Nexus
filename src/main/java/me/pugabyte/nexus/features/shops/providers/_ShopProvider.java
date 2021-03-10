@@ -8,6 +8,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.shops.Shops;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -18,6 +19,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
 	protected final ShopService service = new ShopService();
+	protected ShopGroup shopGroup;
 	@Getter
 	protected _ShopProvider previousMenu;
 	@Getter
@@ -38,6 +40,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 
 	public void open(Player viewer, int page, _ShopProvider provider, String title) {
 		this.page = page;
+		this.shopGroup = ShopGroup.get(viewer);
 		try {
 			SmartInventory.builder()
 					.provider(provider)

@@ -13,7 +13,6 @@ import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterType;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
-import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -147,7 +146,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 
 		Pagination page = contents.pagination();
 
-		shops.forEach(shop -> shop.getProducts(ShopGroup.get(player)).forEach(product -> {
+		shops.forEach(shop -> shop.getProducts(shopGroup).forEach(product -> {
 			try {
 				if (isFiltered(product))
 					return;

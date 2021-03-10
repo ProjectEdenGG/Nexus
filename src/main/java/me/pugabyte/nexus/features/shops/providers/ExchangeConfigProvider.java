@@ -9,7 +9,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
-import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -92,7 +91,7 @@ public class ExchangeConfigProvider extends _ShopProvider {
 				if (priceItem.get() != null) {
 					confirm.name("&3Trade &e" + pretty(item.get())).lore("&3for &e" + pretty(priceItem.get()));
 					if (product == null)
-						product = new Product(player.getUniqueId(), ShopGroup.get(player), item.get(), stock, exchangeType, priceItem.get());
+						product = new Product(player.getUniqueId(), shopGroup, item.get(), stock, exchangeType, priceItem.get());
 					else {
 						product.setItem(item.get());
 						product.setStock(stock);
@@ -107,7 +106,7 @@ public class ExchangeConfigProvider extends _ShopProvider {
 					else if (exchangeType == ExchangeType.SELL)
 						confirm.name("&3Sell &e" + pretty(item.get()) + " &3to").lore("&3customers for &e" + prettyMoney(price));
 					if (product == null)
-						product = new Product(player.getUniqueId(), ShopGroup.get(player), item.get(), stock, exchangeType, price);
+						product = new Product(player.getUniqueId(), shopGroup, item.get(), stock, exchangeType, price);
 					else {
 						product.setItem(item.get());
 						product.setStock(stock);

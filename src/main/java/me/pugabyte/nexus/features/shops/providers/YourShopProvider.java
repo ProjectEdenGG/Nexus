@@ -6,7 +6,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
-import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -61,7 +60,7 @@ public class YourShopProvider extends _ShopProvider {
 		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();
 
-		shop.getProducts(ShopGroup.get(player)).forEach(product -> {
+		shop.getProducts(shopGroup).forEach(product -> {
 			ItemStack item = product.getItemWithOwnLore();
 			items.add(ClickableItem.from(item, e -> new EditProductProvider(this, product).open(player)));
 		});

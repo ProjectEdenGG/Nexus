@@ -16,8 +16,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ItemSearchProvider extends _ShopProvider {
-	Function<Material, Boolean> filter;
-	Consumer<ItemClickData> onChoose;
+	private final Function<Material, Boolean> filter;
+	private final Consumer<ItemClickData> onChoose;
 
 	public ItemSearchProvider(_ShopProvider previousMenu, Function<Material, Boolean> filter, Consumer<ItemClickData> onChoose) {
 		this.previousMenu = previousMenu;
