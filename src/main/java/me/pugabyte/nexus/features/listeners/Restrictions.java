@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.listeners;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -22,7 +21,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,17 +67,14 @@ public class Restrictions implements Listener {
 	}
 
 	@EventHandler
-	public void onOneBlockFallingTeleport(PlayerTeleportEvent event) {
-		if (!Arrays.asList(TeleportCause.COMMAND, TeleportCause.PLUGIN).contains(event.getCause()))
-			return;
-
+	public void onOneBlockFallingCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))
 			return;
 
-		if (isNullOrAir(BlockUtils.getBlockStandingOn(player)) && !player.isFlying()) {
+		if (player.getFallDistance() > 5 && !player.isFlying()) {
 			event.setCancelled(true);
-			PlayerUtils.send(player, "&cYou cannot teleport while in the air (try moving onto a solid block)");
+			PlayerUtils.send(player, "&cYou cannot run commands while falling (try moving onto a solid block)");
 		}
 	}
 
