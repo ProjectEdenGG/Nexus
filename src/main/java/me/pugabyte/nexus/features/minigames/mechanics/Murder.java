@@ -546,8 +546,8 @@ public class Murder extends UnbalancedTeamMechanic {
 				teamName = "an &9Innocent";
 			sendBarWithTimer(minigamer, "&3You are "+teamName);
 
-			if (!isMurderer(minigamer))
-				minigamer.getPlayer().setFoodLevel(3);
+			int foodLevel = (!minigamer.isAlive() || isMurderer(minigamer)) ? 18 : 3;
+			minigamer.getPlayer().setFoodLevel(foodLevel);
 		});
 
 		// spawns 1 scrap every second on average at the start of the game, increasing in quantity as the round progresses
