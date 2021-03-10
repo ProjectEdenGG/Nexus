@@ -179,6 +179,9 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		public void setStock(double stock) {
+			if (isMarket())
+				return;
+
 			if (exchangeType == ExchangeType.BUY && stock < 0)
 				this.stock = -1;
 			else
