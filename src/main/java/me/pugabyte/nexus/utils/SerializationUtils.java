@@ -11,7 +11,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SerializationUtils {
@@ -171,8 +177,10 @@ public class SerializationUtils {
 					fixed.put(key, deserializeRecursive((Map<String, Object>) value));
 			}));
 
-			if (fixed.containsKey("=="))
+			if (fixed.containsKey("==")) {
+				try { fixItemMetaClasses(fixed); } catch (ClassCastException ignore) {}
 				return ConfigurationSerialization.deserializeObject(fixed);
+			}
 
 			return fixed;
 		}
@@ -184,7 +192,7 @@ public class SerializationUtils {
 
 		// MongoDB deserializes some properties as the wrong class, do conversion
 		private static void fixItemMetaClasses(Map<String, Object> deserialized) {
-			Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "effect", "custom-model-data").forEach(key ->
+			Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "custom-model-data", "effect", "duration", "amplifier").forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
 						if (metaValue instanceof Number)
 							return ((Number) metaValue).intValue();
