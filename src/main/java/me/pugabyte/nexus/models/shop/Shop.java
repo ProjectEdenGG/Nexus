@@ -485,8 +485,6 @@ public class Shop extends PlayerOwnedObject {
 		private double getStock(Product product) {
 			if (product.getStock() == -1)
 				return Nexus.getEcon().getBalance(product.getShop().getOfflinePlayer());
-			else if (product.getStock() == 0)
-				return 0;
 			else
 				return product.getStock();
 		}
