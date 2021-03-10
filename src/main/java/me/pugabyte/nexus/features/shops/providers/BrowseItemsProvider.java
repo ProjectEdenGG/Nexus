@@ -19,7 +19,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -155,7 +154,6 @@ public class BrowseItemsProvider extends _ShopProvider {
 
 				ItemStack item  = new ItemBuilder(product.getItemWithLore())
 						.lore(product.getExchange().getLore(product))
-						.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 						.build();
 
 				items.add(ClickableItem.from(item, e -> {

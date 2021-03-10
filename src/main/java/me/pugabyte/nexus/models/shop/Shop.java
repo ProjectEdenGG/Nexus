@@ -26,13 +26,12 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -228,11 +227,9 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		public ItemStack getItemWithLore() {
-			ItemBuilder builder  = new ItemBuilder(item);
-
-			ItemMeta meta = item.getItemMeta();
-			if (meta.hasLore() || meta.hasEnchants() || meta.hasAttributeModifiers() || (meta instanceof PotionMeta && ((PotionMeta) meta).hasCustomEffects()))
-				builder.lore("&f");
+			ItemBuilder builder = new ItemBuilder(item).lore("&f");
+			if (item.getType() != Material.ENCHANTED_BOOK)
+				builder.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
 			return builder.build();
 		}
@@ -241,7 +238,6 @@ public class Shop extends PlayerOwnedObject {
 			return new ItemBuilder(getItemWithLore())
 					.lore(getExchange().getOwnLore(this))
 					.lore("", "&7Click to edit")
-					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 					.build();
 		}
 
