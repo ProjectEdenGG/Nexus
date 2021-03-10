@@ -532,6 +532,9 @@ public class Murder extends UnbalancedTeamMechanic {
 
 	@EventHandler
 	public void onTimeTick(MatchTimerTickEvent event) {
+		if (!event.getMatch().isMechanic(this))
+			return;
+
 		event.getMatch().getMinigamers().forEach(minigamer -> {
 			String teamName;
 			if (!minigamer.isAlive())
