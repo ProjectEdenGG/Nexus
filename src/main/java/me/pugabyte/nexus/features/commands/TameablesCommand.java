@@ -140,7 +140,16 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		WOLF,
 		CAT,
 		FOX,
-		PARROT
+		PARROT;
+
+		public static boolean isSummonable(EntityType entityType) {
+			try {
+				valueOf(entityType.name());
+				return true;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
 	}
 
 	private enum TameableEntity implements TameableEntityList {
@@ -213,6 +222,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						send(player, PREFIX + "You have untamed your " + entityName);
 						break;
 					case MOVE:
+						if (!SummonableTameableEntity.isSummonable(event.getEntityType())) {
+							send(player, PREFIX + "&cThat animal is not moveable");
+							actions.remove(uuid);
+							return;
+						}
 						checkOwner(player, entity);
 						moveQueue.put(player.getUniqueId(), event.getEntity());
 						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
