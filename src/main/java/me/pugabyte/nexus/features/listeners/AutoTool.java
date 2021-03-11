@@ -31,7 +31,7 @@ public class AutoTool implements Listener {
 				MaterialTag.ALL_TERRACOTTAS, MaterialTag.CONCRETES, MaterialTag.PRISMARINE, MaterialTag.ALL_CORALS, MaterialTag.PURPURS, MaterialTag.END_STONES,
 				new MaterialTag("NETHER_BRICK", MatchMode.CONTAINS).append(Material.NETHERRACK, Material.MAGMA_BLOCK), new MaterialTag(Material.HONEY_BLOCK, Material.OBSIDIAN, Material.ANVIL)),
 		AXE(MaterialTag.AXES, MaterialTag.ALL_WOOD, MaterialTag.CHESTS, new MaterialTag(Material.MELON, Material.PUMPKIN, Material.JACK_O_LANTERN, Material.BOOKSHELF)),
-		SHOVEL(MaterialTag.SHOVELS, MaterialTag.ALL_DIRT, new MaterialTag(Material.SAND, Material.GRAVEL, Material.CLAY, Material.SOUL_SAND, Material.SOUL_SOIL));
+		SHOVEL(MaterialTag.SHOVELS, MaterialTag.ALL_DIRT, new MaterialTag(Material.SAND, Material.GRAVEL, Material.CLAY, Material.SOUL_SAND, Material.SOUL_SOIL, Material.SNOW_BLOCK));
 
 		private final Set<Material> tools = new HashSet<>();
 		private final Set<Material> materials = new HashSet<>();

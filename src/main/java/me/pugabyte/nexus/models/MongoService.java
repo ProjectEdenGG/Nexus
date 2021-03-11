@@ -7,6 +7,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.persistence.MongoDBDatabase;
 import me.pugabyte.nexus.framework.persistence.MongoDBPersistence;
+import me.pugabyte.nexus.models.inventoryhistory.InventoryHistory;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,17 +93,19 @@ public abstract class MongoService extends DatabaseService {
 		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
 			return;
 
+		boolean hideDebug = object instanceof InventoryHistory;
+
 		try {
 			database.merge(object);
 		} catch (UpdateException doesntExistYet) {
 			try {
 				database.save(object);
 			} catch (Exception ex2) {
-				Nexus.log("Error saving " + object.getClass().getSimpleName() + ": " + object.toString());
+				Nexus.log("Error saving " + object.getClass().getSimpleName() + (hideDebug ? "" : ": " + object.toString()));
 				ex2.printStackTrace();
 			}
 		} catch (Exception ex3) {
-			Nexus.log("Error updating " + object.getClass().getSimpleName() + ": " + object.toString());
+			Nexus.log("Error updating " + object.getClass().getSimpleName() + (hideDebug ? "" : ": " + object.toString()));
 			ex3.printStackTrace();
 		}
 	}

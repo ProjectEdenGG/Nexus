@@ -38,15 +38,24 @@ public abstract class DatabaseService {
 	abstract public <T> List<T> getAll();
 
 	public <T> void save(T object) {
+		checkType(object);
 		if (Bukkit.isPrimaryThread())
 			Tasks.async(() -> saveSync(object));
 		else
 			saveSync(object);
 	}
 
+	private <T> void checkType(T object) {
+		if (getPlayerClass() == null) return;
+		if (!object.getClass().isAssignableFrom(getPlayerClass()))
+			throw new InvalidInputException(this.getClass().getSimpleName() + " received wrong class type, expected "
+					+ getPlayerClass().getSimpleName() + ", found " + object.getClass().getSimpleName());
+	}
+
 	abstract public <T> void saveSync(T object);
 
 	public <T> void delete(T object) {
+		checkType(object);
 		if (Bukkit.isPrimaryThread())
 			Tasks.async(() -> deleteSync(object));
 		else
