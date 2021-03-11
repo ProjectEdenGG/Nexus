@@ -4,7 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.shop.Shop;
-import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,13 +38,10 @@ public class BrowseShopsProvider extends _ShopProvider {
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		service.getShops().stream()
+		shops.stream()
+				.filter(shop -> !shop.isMarket() && !shop.getProducts(shopGroup).isEmpty())
 				.sorted(Comparator.comparing(shop -> shop.getInStock(shopGroup).size(), Comparator.reverseOrder()))
 				.forEach(shop -> {
-					if (shop.isMarket()) return;
-					List<Product> products = shop.getProducts(shopGroup);
-					if (products.isEmpty()) return;
-
 					int inStock = shop.getInStock(shopGroup).size();
 					int outOfStock = shop.getOutOfStock(shopGroup).size();
 					ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
