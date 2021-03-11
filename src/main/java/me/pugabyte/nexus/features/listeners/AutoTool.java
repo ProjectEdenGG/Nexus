@@ -27,7 +27,7 @@ public class AutoTool implements Listener {
 
 	@Getter
 	public enum Tool {
-		PICKAXE(MaterialTag.PICKAXES, MaterialTag.ALL_STONE, MaterialTag.ALL_ORES, MaterialTag.SANDSTONES, MaterialTag.FURNACES,
+		PICKAXE(MaterialTag.PICKAXES, MaterialTag.ALL_STONE, MaterialTag.MINERAL_ORES, MaterialTag.SANDSTONES, MaterialTag.FURNACES,
 				MaterialTag.ALL_TERRACOTTAS, MaterialTag.CONCRETES, MaterialTag.PRISMARINE, MaterialTag.ALL_CORALS, MaterialTag.PURPURS, MaterialTag.END_STONES,
 				new MaterialTag("NETHER_BRICK", MatchMode.CONTAINS).append(Material.NETHERRACK, Material.MAGMA_BLOCK), new MaterialTag(Material.HONEY_BLOCK, Material.OBSIDIAN, Material.ANVIL)),
 		AXE(MaterialTag.AXES, MaterialTag.ALL_WOOD, MaterialTag.CHESTS, new MaterialTag(Material.MELON, Material.PUMPKIN, Material.JACK_O_LANTERN, Material.BOOKSHELF)),

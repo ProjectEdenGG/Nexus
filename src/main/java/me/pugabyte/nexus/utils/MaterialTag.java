@@ -9,7 +9,14 @@ import org.bukkit.Tag;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import static me.pugabyte.nexus.utils.Utils.collect;
 import static org.bukkit.Material.*;
@@ -38,9 +45,12 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag END_STONES = new MaterialTag("END_STONE", MatchMode.CONTAINS);
 	public static final MaterialTag SHULKER_BOXES = new MaterialTag("_SHULKER_BOX", MatchMode.SUFFIX).append(SHULKER_BOX);
 	public static final MaterialTag BOOKS = new MaterialTag("BOOK", MatchMode.CONTAINS);
+	public static final MaterialTag ALL_QUARTZ = new MaterialTag("QUARTZ", MatchMode.CONTAINS).exclude(QUARTZ, NETHER_QUARTZ_ORE);
 
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, ALL_BANNERS,
 			ALL_STAINED_GLASS, ALL_TERRACOTTAS, ALL_CONCRETES, SHULKER_BOXES);
+
+	public static final MaterialTag FOODS = new MaterialTag(Material::isEdible);
 
 	public static final MaterialTag SWORDS = new MaterialTag("_SWORD", MatchMode.SUFFIX);
 	public static final MaterialTag PICKAXES = new MaterialTag("_PICKAXE", MatchMode.SUFFIX);
@@ -49,10 +59,10 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag HOES = new MaterialTag("_HOE", MatchMode.SUFFIX);
 
 	public static final MaterialTag TOOLS = new MaterialTag(PICKAXES, AXES, SHOVELS, HOES)
-			.append(FISHING_ROD).append(LEAD).append(SHEARS).append(FLINT_AND_STEEL);
+			.append(FISHING_ROD, LEAD, SHEARS, FLINT_AND_STEEL);
 
 	public static final MaterialTag WEAPONS = new MaterialTag("_SWORD", MatchMode.SUFFIX)
-			.append(BOW).append(CROSSBOW).append(TRIDENT).append("ARROW", MatchMode.SUFFIX);
+			.append(BOW, CROSSBOW, TRIDENT).append("ARROW", MatchMode.SUFFIX);
 
 	public static final MaterialTag ARMOR = new MaterialTag("_HELMET", MatchMode.SUFFIX)
 			.append("_CHESTPLATE", MatchMode.SUFFIX).append("_LEGGINGS", MatchMode.SUFFIX).append("_BOOTS", MatchMode.SUFFIX);
@@ -92,14 +102,16 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag REQUIRES_META = new MaterialTag(POTIONS).append(TIPPED_ARROW, WRITTEN_BOOK, ENCHANTED_BOOK);
 
-	public static final MaterialTag ALL_CORALS = new MaterialTag("CORAL", MatchMode.CONTAINS);
+	public static final MaterialTag CORAL_BLOCKS = new MaterialTag("CORAL_BLOCK", MatchMode.CONTAINS);
 	public static final MaterialTag CORAL_WALL_FANS = new MaterialTag("_WALL_FAN", MatchMode.SUFFIX);
+	public static final MaterialTag ALL_CORALS = new MaterialTag("CORAL", MatchMode.CONTAINS);
 
+	public static final MaterialTag SEEDS = new MaterialTag(COCOA_BEANS, WHEAT_SEEDS, POTATO, CARROT, BEETROOT_SEEDS, PUMPKIN_SEEDS, MELON_SEEDS);
 	public static final MaterialTag PLANTS = new MaterialTag(GRASS, FERN, TALL_GRASS, LARGE_FERN, DEAD_BUSH, SWEET_BERRY_BUSH,
 			BROWN_MUSHROOM, RED_MUSHROOM, LILY_PAD, BAMBOO_SAPLING, BAMBOO, SEAGRASS, TALL_SEAGRASS, KELP, KELP_PLANT, SUGAR_CANE,
-			CACTUS, SEA_PICKLE, CHORUS_PLANT, CHORUS_FLOWER)
-			.append(CORAL_WALL_FANS)
-			.append(Tag.CORALS, Tag.FLOWERS);
+			CACTUS, SEA_PICKLE, CHORUS_PLANT, CHORUS_FLOWER, WEEPING_VINES, TWISTING_VINES, NETHER_SPROUTS, WARPED_ROOTS, CRIMSON_ROOTS,
+			WARPED_FUNGUS, CRIMSON_FUNGUS, VINE)
+			.append(ALL_CORALS, FLOWERS);
 
 	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, TALL_FLOWERS);
 
@@ -111,7 +123,14 @@ public class MaterialTag implements Tag<Material> {
 		.append(new MaterialTag("DIORITE", MatchMode.CONTAINS))
 		.append(new MaterialTag("ANDESITE", MatchMode.CONTAINS));
 
-	public static final MaterialTag ALL_ORES = new MaterialTag("_ORE", MatchMode.CONTAINS);
+	public static final MaterialTag MINERAL_ORES = new MaterialTag("_ORE", MatchMode.CONTAINS);
+	public static final MaterialTag MINERAL_NUGGETS = new MaterialTag(GOLD_NUGGET, IRON_NUGGET, NETHERITE_SCRAP, ANCIENT_DEBRIS);
+	public static final MaterialTag MINERAL_INGOTS = new MaterialTag(COAL, CHARCOAL, LAPIS_LAZULI, REDSTONE, QUARTZ,
+			GOLD_INGOT, IRON_INGOT, DIAMOND, EMERALD, NETHERITE_INGOT);
+	public static final MaterialTag MINERAL_BLOCKS = new MaterialTag(COAL_BLOCK, LAPIS_BLOCK, REDSTONE_BLOCK, GOLD_BLOCK,
+			IRON_BLOCK, DIAMOND_BLOCK, EMERALD_BLOCK, NETHERITE_BLOCK)
+			.append(ALL_QUARTZ);
+	public static final MaterialTag ALL_MINERALS = new MaterialTag(MINERAL_ORES, MINERAL_NUGGETS, MINERAL_INGOTS, MINERAL_BLOCKS);
 
 	public static final MaterialTag ALL_DIRT = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT, GRASS_PATH, MYCELIUM);
 
@@ -130,7 +149,49 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag WOOD_STAIRS = new MaterialTag(OAK_STAIRS, SPRUCE_STAIRS, BIRCH_STAIRS, JUNGLE_STAIRS, ACACIA_STAIRS, DARK_OAK_STAIRS, WARPED_STAIRS, CRIMSON_STAIRS);
 	public static final MaterialTag WOOD_SLABS = new MaterialTag(OAK_SLAB, SPRUCE_SLAB, BIRCH_SLAB, JUNGLE_SLAB, ACACIA_SLAB, DARK_OAK_SLAB, PETRIFIED_OAK_SLAB, WARPED_SLAB, CRIMSON_SLAB);
 
-	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, PLANKS, WOOD_STAIRS, WOOD_SLABS);
+	public static final MaterialTag WOOD_BUTTONS = new MaterialTag(OAK_BUTTON, SPRUCE_BUTTON, BIRCH_BUTTON, JUNGLE_BUTTON, ACACIA_BUTTON, DARK_OAK_BUTTON, WARPED_BUTTON, CRIMSON_BUTTON);
+	public static final MaterialTag WOOD_DOORS = new MaterialTag(OAK_DOOR, SPRUCE_DOOR, BIRCH_DOOR, JUNGLE_DOOR, ACACIA_DOOR, DARK_OAK_DOOR, WARPED_DOOR, CRIMSON_DOOR);
+	public static final MaterialTag WOOD_TRAPDOORS = new MaterialTag(OAK_TRAPDOOR, SPRUCE_TRAPDOOR, BIRCH_TRAPDOOR, JUNGLE_TRAPDOOR, ACACIA_TRAPDOOR, DARK_OAK_TRAPDOOR, WARPED_TRAPDOOR, CRIMSON_TRAPDOOR);
+	public static final MaterialTag WOOD_FENCES = new MaterialTag(OAK_FENCE, SPRUCE_FENCE, BIRCH_FENCE, JUNGLE_FENCE, ACACIA_FENCE, DARK_OAK_FENCE, WARPED_FENCE, CRIMSON_FENCE);
+	public static final MaterialTag WOOD_FENCE_GATES = new MaterialTag(OAK_FENCE_GATE, SPRUCE_FENCE_GATE, BIRCH_FENCE_GATE, JUNGLE_FENCE_GATE, ACACIA_FENCE_GATE, DARK_OAK_FENCE_GATE, WARPED_FENCE_GATE, CRIMSON_FENCE_GATE);
+	public static final MaterialTag WOOD_PRESSURE_PLATES = new MaterialTag(OAK_PRESSURE_PLATE, SPRUCE_PRESSURE_PLATE, BIRCH_PRESSURE_PLATE, JUNGLE_PRESSURE_PLATE, ACACIA_PRESSURE_PLATE, DARK_OAK_PRESSURE_PLATE, WARPED_PRESSURE_PLATE, CRIMSON_PRESSURE_PLATE);
+	public static final MaterialTag WOOD_SIGNS = new MaterialTag(OAK_SIGN, SPRUCE_SIGN, BIRCH_SIGN, JUNGLE_SIGN, ACACIA_SIGN, DARK_OAK_SIGN, WARPED_SIGN, CRIMSON_SIGN);
+
+	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, PLANKS, WOOD_STAIRS, WOOD_SLABS, WOOD_BUTTONS,
+			WOOD_DOORS, WOOD_TRAPDOORS, WOOD_FENCES, WOOD_FENCE_GATES, WOOD_PRESSURE_PLATES, WOOD_SIGNS);
+
+	public static final MaterialTag ALL_NETHER = new MaterialTag(GLOWSTONE, OBSIDIAN, CRYING_OBSIDIAN, GRAVEL, MAGMA_BLOCK, MAGMA_CREAM,
+			WITHER_SKELETON_SKULL, BLAZE_ROD, BLAZE_POWDER, WEEPING_VINES, TWISTING_VINES, MUSIC_DISC_PIGSTEP)
+			.append("NETHER", MatchMode.CONTAINS)
+			.append("NYLIUM", MatchMode.CONTAINS)
+			.append("WARPED", MatchMode.CONTAINS)
+			.append("CRIMSON", MatchMode.CONTAINS)
+			.append("BLACKSTONE", MatchMode.CONTAINS)
+			.append("SOUL", MatchMode.CONTAINS)
+			.append(GOLDEN_SWORD, GOLDEN_HELMET, GOLDEN_CHESTPLATE, GOLDEN_LEGGINGS, GOLDEN_BOOTS)
+			.append(NETHER_QUARTZ_ORE, QUARTZ, NETHER_GOLD_ORE, GOLD_NUGGET, GOLD_INGOT, GOLD_BLOCK).append(ALL_QUARTZ);
+
+	public static final MaterialTag ALL_END = new MaterialTag("END", MatchMode.CONTAINS)
+			.append("PURPUR", MatchMode.CONTAINS)
+			.append("CHORUS", MatchMode.CONTAINS)
+			.append(SHULKER_BOXES)
+			.append(SHULKER_SHELL, ELYTRA, DRAGON_HEAD, OBSIDIAN, MAGENTA_STAINED_GLASS);
+
+	public static final MaterialTag ALL_OCEAN = new MaterialTag(SOUL_SAND, MAGMA_BLOCK, TURTLE_EGG, CONDUIT, SCUTE,
+			PUFFERFISH_BUCKET, SALMON_BUCKET, COD_BUCKET, TROPICAL_FISH_BUCKET, NAUTILUS_SHELL, COD, SALMON, PUFFERFISH,
+			TROPICAL_FISH, COOKED_COD, COOKED_SALMON, LILY_PAD, TURTLE_HELMET, FISHING_ROD, INK_SAC, GRAVEL, Material.SAND)
+			.append("PRISMARINE", MatchMode.CONTAINS)
+			.append("KELP", MatchMode.CONTAINS)
+			.append("SEA", MatchMode.CONTAINS)
+			.append("BOAT", MatchMode.CONTAINS)
+			.append(ALL_CORALS);
+
+	public static final MaterialTag MUSIC = new MaterialTag("DISC", MatchMode.CONTAINS).append(NOTE_BLOCK, JUKEBOX, BELL);
+
+	public static final MaterialTag BLOCKS = new MaterialTag(Material::isSolid)
+			.exclude(CACTUS, BAMBOO, DRAGON_EGG, TURTLE_EGG, CONDUIT, CAKE)
+			.exclude(SIGNS, BANNERS, ALL_CORALS)
+			.append(CORAL_BLOCKS);
 
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
@@ -143,6 +204,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
 	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
 	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);
+	public static final MaterialTag FLORA = new MaterialTag(SAPLINGS, FLOWERS, PLANTS, SEEDS, LEAVES);
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, VINE, LILY_PAD, TURTLE_EGG,
 			REPEATER, COMPARATOR, ITEM_FRAME, BELL, SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER, SOUL_LANTERN)
@@ -233,6 +295,11 @@ public class MaterialTag implements Tag<Material> {
 		append(segment, mode, materials.getValues().toArray(new Material[0]));
 	}
 
+	public MaterialTag(Predicate<Material> predicate) {
+		this.materials = EnumSet.noneOf(Material.class);
+		append(predicate);
+	}
+
 	@Override
 	public NamespacedKey getKey() {
 		return key;
@@ -248,6 +315,13 @@ public class MaterialTag implements Tag<Material> {
 		for (Tag<Material> materialTag : materialTags)
 			this.materials.addAll(materialTag.getValues());
 
+		return this;
+	}
+
+	public MaterialTag append(Predicate<Material> predicate) {
+		for (Material m : Material.values())
+			if (predicate.test(m))
+				this.materials.add(m);
 		return this;
 	}
 
@@ -294,6 +368,11 @@ public class MaterialTag implements Tag<Material> {
 		for (Tag<Material> materialTag : materialTags)
 			this.materials.removeAll(materialTag.getValues());
 
+		return this;
+	}
+
+	public MaterialTag exclude(Predicate<Material> predicate) {
+		materials.removeIf(predicate);
 		return this;
 	}
 

@@ -5,11 +5,15 @@ import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.Shops;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+
+import java.util.function.Predicate;
 
 import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -40,8 +44,8 @@ public class SearchItemsProvider extends _ShopProvider {
 					try {
 						String input = stripColor(lines[0]);
 						if (input.length() > 0) {
-							browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input, product ->
-									product.getItem().getType().name().toLowerCase().contains(input.toLowerCase())));
+							browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input, product -> filter(product.getItem(), item ->
+									item.getType().name().toLowerCase().contains(input.toLowerCase()))));
 							browseItemsMenu.open(player);
 						} else
 							open(player);
@@ -52,28 +56,98 @@ public class SearchItemsProvider extends _ShopProvider {
 				}).open(player)));
 
 		contents.set(1, 3, ClickableItem.from(nameItem(Material.APPLE, "&6Search for food"), e -> {
-			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH
-					.of("Food", product -> product.getItem().getType().isEdible()));
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Food", product -> filter(product.getItem(), MaterialTag.FOODS)));
 			browseItemsMenu.open(player);
 		}));
 
 		contents.set(1, 5, ClickableItem.from(nameItem(Material.ENCHANTED_BOOK, "&6Search for enchanted items"), e -> {
-			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Enchanted items", product -> {
-				if (product.getItem().getType().equals(Material.ENCHANTED_BOOK)) {
-					EnchantmentStorageMeta book = (EnchantmentStorageMeta) product.getItem().getItemMeta();
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Enchanted items", product -> filter(product.getItem(), item -> {
+				if (item.getType().equals(Material.ENCHANTED_BOOK)) {
+					EnchantmentStorageMeta book = (EnchantmentStorageMeta) item.getItemMeta();
 					return book != null && !book.getStoredEnchants().isEmpty();
 				} else {
-					return !product.getItem().getEnchantments().isEmpty();
+					return !item.getEnchantments().isEmpty();
 				}
-			}));
+			})));
 			browseItemsMenu.open(player);
 		}));
 
 		contents.set(1, 7, ClickableItem.from(nameItem(Material.DIAMOND_SWORD, "&6Search for tools,", "&6weapons and armor"), e -> {
-			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Tools, weapons and armor", product ->
-					MaterialTag.TOOLS_WEAPONS_ARMOR.isTagged(product.getItem().getType())));
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Tools, weapons and armor", product -> filter(product.getItem(), MaterialTag.TOOLS_WEAPONS_ARMOR)));
 			browseItemsMenu.open(player);
 		}));
+
+		contents.set(2, 2, ClickableItem.from(nameItem(Material.POTION, "&6Search for potions"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Potions", product -> filter(product.getItem(), MaterialTag.POTIONS)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(2, 4, ClickableItem.from(nameItem(Material.STONE_BRICKS, "&6Search for building blocks"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Building blocks", product -> filter(product.getItem(), MaterialTag.BLOCKS)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(2, 6, ClickableItem.from(nameItem(Material.CYAN_CONCRETE, "&6Search for colored materials"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Colored materials", product -> filter(product.getItem(), MaterialTag.COLORABLE)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(3, 1, ClickableItem.from(nameItem(Material.BLUE_ORCHID, "&6Search for flora"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Flora", product -> filter(product.getItem(), MaterialTag.FLORA)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(3, 3, ClickableItem.from(nameItem(Material.OAK_PLANKS, "&6Search for wooden materials"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Wood", product -> filter(product.getItem(), MaterialTag.ALL_WOOD)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(3, 5, ClickableItem.from(nameItem(Material.DIAMOND_ORE, "&6Search for minerals"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Minerals", product -> filter(product.getItem(), MaterialTag.ALL_MINERALS)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(3, 7, ClickableItem.from(nameItem(Material.MUSIC_DISC_PIGSTEP, "&6Search for musical items"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Musical items", product -> filter(product.getItem(), MaterialTag.MUSIC)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(4, 2, ClickableItem.from(nameItem(Material.NETHERRACK, "&6Search for nether materials"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Nether materials", product -> filter(product.getItem(), MaterialTag.ALL_NETHER)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(4, 4, ClickableItem.from(nameItem(Material.END_STONE, "&6Search for end materials"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("End materials", product -> filter(product.getItem(), MaterialTag.ALL_END)));
+			browseItemsMenu.open(player);
+		}));
+
+		contents.set(4, 6, ClickableItem.from(nameItem(Material.PRISMARINE_BRICKS, "&6Search for ocean materials"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Ocean materials", product -> filter(product.getItem(), MaterialTag.ALL_OCEAN)));
+			browseItemsMenu.open(player);
+		}));
+	}
+
+	private boolean filter(ItemStack item, MaterialTag materialTag) {
+		if (materialTag.isTagged(item.getType()))
+			return true;
+
+		for (ItemStack content : ItemUtils.getShulkerContents(item))
+			if (materialTag.isTagged(content.getType()))
+				return true;
+
+		return false;
+	}
+
+	private boolean filter(ItemStack item, Predicate<ItemStack> predicate) {
+		if (predicate.test(item))
+			return true;
+
+		for (ItemStack content : ItemUtils.getShulkerContents(item))
+			if (predicate.test(content))
+				return true;
+
+		return false;
 	}
 
 }
