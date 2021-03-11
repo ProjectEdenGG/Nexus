@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff;
+package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 
 @Aliases("craft")
-@Permission("group.staff")
+@Permission("workbench")
 public class WorkbenchCommand extends CustomCommand {
 
 	public WorkbenchCommand(CommandEvent event) {

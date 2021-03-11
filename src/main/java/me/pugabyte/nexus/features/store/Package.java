@@ -70,6 +70,10 @@ public enum Package {
 	@Command("/permhelper vaults add [player] 1")
 	VAULTS,
 
+	@Id("4365867")
+	@Permission("workbench")
+	WORKBENCH,
+
 	@Id("2019261")
 	@Command("/permhelper homes add [player] 5")
 	FIVE_SETHOMES,
