@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
+import lombok.Getter;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
 import org.bukkit.Color;
@@ -37,7 +38,8 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 public class ItemBuilder implements Cloneable {
 	private ItemStack itemStack;
 	private ItemMeta itemMeta;
-	private List<String> lore = new ArrayList<>();
+	@Getter
+	private final List<String> lore = new ArrayList<>();
 	private boolean doLoreize = true;
 
 	public ItemBuilder(Material material) {

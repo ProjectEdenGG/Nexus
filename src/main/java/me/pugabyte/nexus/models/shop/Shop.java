@@ -31,6 +31,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
@@ -257,11 +258,25 @@ public class Shop extends PlayerOwnedObject {
 
 			if (item.getType() != Material.ENCHANTED_BOOK)
 				builder.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-			if (item.getItemMeta() instanceof Repairable)
-				builder.lore("&7Repair Cost: " + ((Repairable) item.getItemMeta()).getRepairCost()).lore("&f");
+
+			short maxDurability = item.getType().getMaxDurability();
+			if (item.getType() == Material.ENCHANTED_BOOK || maxDurability > 0)
+				builder.lore("&7Repair Cost: " + ((Repairable) item.getItemMeta()).getRepairCost());
+
+			if (item.getItemMeta() instanceof Damageable) {
+				Damageable meta = (Damageable) item.getItemMeta();
+				if (meta.hasDamage())
+					builder.lore("&7Durability: " + (maxDurability - meta.getDamage()) + " / " + maxDurability);
+			}
 
 			if (!getShulkerContents(item).isEmpty())
-				builder.lore("&7Right click to view contents").lore("&f");
+				builder.lore("&7Right click to view contents");
+
+			if (item.getLore() != null) {
+				if (builder.getLore().size() > (item.getLore().size() + 1))
+					builder.lore("&f");
+			} else if (builder.getLore().size() > 1)
+				builder.lore("&f");
 
 			return builder;
 		}
