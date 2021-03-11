@@ -152,6 +152,7 @@ public class Shop extends PlayerOwnedObject {
 		private double stock;
 		private ExchangeType exchangeType;
 		private Object price;
+		private boolean enabled = true;
 
 		private transient boolean editing;
 
@@ -261,7 +262,11 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		public ItemBuilder getItemWithOwnLore() {
-			return getItemWithLore()
+			ItemBuilder item = getItemWithLore();
+			if (!enabled)
+				item.lore("&cDisabled");
+
+			return item
 					.lore(getExchange().getOwnLore())
 					.lore("", "&7Click to edit");
 		}

@@ -152,9 +152,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 				if (isFiltered(product))
 					return;
 
-				ItemBuilder builder = new ItemBuilder(product.getItemWithCustomerLore().build());
-
-				items.add(ClickableItem.from(builder.build(), e -> {
+				items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
 					try {
 						if (handleRightClick(product, e))
 							return;
@@ -174,6 +172,9 @@ public class BrowseItemsProvider extends _ShopProvider {
 	}
 
 	public boolean isFiltered(Product product) {
+		if (!product.isEnabled())
+			return true;
+
 		if (filters != null)
 			for (Filter filter : filters)
 				if (filter.getFilter() != null)
