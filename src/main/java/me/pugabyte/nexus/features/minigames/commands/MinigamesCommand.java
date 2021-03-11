@@ -47,6 +47,7 @@ import org.bukkit.entity.Player;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +57,8 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @Aliases({"mgm", "mg"})
 @Permission("minigames")
 public class MinigamesCommand extends CustomCommand {
+	public static final String MINIGAME_SIGN_HEADER = "&0&l< &1Minigames &0&l>";
+	public static final String OLD_MGM_SIGN_HEADER = "&1[Minigame]";
 	private Minigamer minigamer;
 
 	public MinigamesCommand(CommandEvent event) {
@@ -136,44 +139,53 @@ public class MinigamesCommand extends CustomCommand {
 		send(arena.toString());
 	}
 
+	void updateSign(String... lines) {
+		String[] trueLines = Arrays.copyOf(lines, 4);
+		Sign sign = getTargetSignRequired();
+		for (int l = 0; l < Math.min(trueLines.length, 4); l++) {
+			sign.setLine(l, StringUtils.colorize(trueLines[l]));
+		}
+		sign.update();
+	}
+
 	@Permission("manage")
 	@Path("signs join <arena>")
 	void joinSign(Arena arena) {
-		Sign sign = getTargetSignRequired();
-		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
-		sign.setLine(1, StringUtils.colorize("&aJoin"));
+		String[] lines = new String[4];
+		lines[0] = MINIGAME_SIGN_HEADER;
+		lines[1] = "&aJoin";
 		String arenaName = arena.getName();
 		if (arenaName.length() > 15) {
-			sign.setLine(2, arenaName.substring(0, 15));
-			sign.setLine(3, arenaName.substring(15));
+			lines[2] = arenaName.substring(0, 15);
+			lines[3] = arenaName.substring(15);
 		} else {
-			sign.setLine(2, arena.getName());
-			sign.setLine(3, "");
+			lines[2] = arena.getName();
 		}
-
-		sign.update();
+		updateSign(lines);
 	}
 
 	@Permission("manage")
 	@Path("signs quit")
 	void quitSign() {
-		Sign sign = getTargetSignRequired();
-		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
-		sign.setLine(1, StringUtils.colorize("&aQuit"));
-		sign.setLine(2, "");
-		sign.setLine(3, "");
-		sign.update();
+		updateSign(MINIGAME_SIGN_HEADER, "&aQuit");
 	}
 
 	@Permission("manage")
 	@Path("signs lobby")
 	void lobbySign() {
-		Sign sign = getTargetSignRequired();
-		sign.setLine(0, StringUtils.colorize("&0&l< &1Minigames &0&l>"));
-		sign.setLine(1, StringUtils.colorize("&aLobby"));
-		sign.setLine(2, "");
-		sign.setLine(3, "");
-		sign.update();
+		updateSign(MINIGAME_SIGN_HEADER, "&aLobby");
+	}
+
+	@Permission("manage")
+	@Path("signs flag <team>")
+	void flagSign(String team) {
+		updateSign(OLD_MGM_SIGN_HEADER, "&aFlag", team);
+	}
+
+	@Permission("manage")
+	@Path("signs flag capture <team>")
+	void flagCaptureSign(String team) {
+		updateSign(OLD_MGM_SIGN_HEADER, "&aFlag", "&aCapture", team);
 	}
 
 	@Path("setTime <seconds>")
