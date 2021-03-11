@@ -31,6 +31,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -256,6 +257,8 @@ public class Shop extends PlayerOwnedObject {
 
 			if (item.getType() != Material.ENCHANTED_BOOK)
 				builder.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			if (item.getItemMeta() instanceof Repairable)
+				builder.lore("&7Repair Cost: " + ((Repairable) item.getItemMeta()).getRepairCost()).lore("&f");
 
 			if (!getShulkerContents(item).isEmpty())
 				builder.lore("&7Right click to view contents").lore("&f");
