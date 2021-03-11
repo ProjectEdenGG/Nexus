@@ -33,7 +33,7 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 
 	@Path
 	void concrete() {
-		Inventory inv = Bukkit.createInventory(null, 27, TITLE);
+		Inventory inv = Bukkit.createInventory(null, 54, TITLE);
 		player().openInventory(inv);
 	}
 
