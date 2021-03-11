@@ -100,6 +100,7 @@ public class Changelog extends PlayerOwnedObject {
 	}
 
 	@Data
+	@NoArgsConstructor
 	@AllArgsConstructor
 	@Converters(LocalDateTimeConverter.class)
 	public static class ChangelogEntry {

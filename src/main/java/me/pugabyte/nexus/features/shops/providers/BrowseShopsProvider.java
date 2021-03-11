@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.plural;
@@ -32,30 +31,27 @@ public class BrowseShopsProvider extends _ShopProvider {
 	}
 
 	public void addItems(Player player, InventoryContents contents) {
-		List<Shop> shops = service.getShops();
+		List<Shop> shops = service.getShopsSorted(shopGroup);
 		if (shops.isEmpty())
 			return;
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		shops.stream()
-				.filter(shop -> !shop.isMarket() && !shop.getProducts(shopGroup).isEmpty())
-				.sorted(Comparator.comparing(shop -> shop.getInStock(shopGroup).size(), Comparator.reverseOrder()))
-				.forEach(shop -> {
-					int inStock = shop.getInStock(shopGroup).size();
-					int outOfStock = shop.getOutOfStock(shopGroup).size();
-					ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
-							.skullOwner(shop.getOfflinePlayer())
-							.name(new Nerd(shop.getOfflinePlayer()).getRankFormat())
-							.lore((inStock == 0 ? "&c" : "&a") + inStock + " " + plural("product", inStock) + " in stock")
-							.lore((outOfStock == 0 ? "&a" : "&c") + outOfStock + " " + plural("product", outOfStock) + " out of stock");
+		for (Shop shop : shops) {
+			int inStock = shop.getInStock(shopGroup).size();
+			int outOfStock = shop.getOutOfStock(shopGroup).size();
+			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
+					.skullOwner(shop.getOfflinePlayer())
+					.name(new Nerd(shop.getOfflinePlayer()).getRankFormat())
+					.lore((inStock == 0 ? "&c" : "&a") + inStock + " " + plural("product", inStock) + " in stock")
+					.lore((outOfStock == 0 ? "&a" : "&c") + outOfStock + " " + plural("product", outOfStock) + " out of stock");
 
-					List<String> description = shop.getDescription();
-					if (!description.isEmpty())
-							head.lore("&f").lore(description);
+			List<String> description = shop.getDescription();
+			if (!description.isEmpty())
+				head.lore("&f").lore(description);
 
-					items.add(ClickableItem.from(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
-				});
+			items.add(ClickableItem.from(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
+		}
 
 		addPagination(player, contents, items);
 	}

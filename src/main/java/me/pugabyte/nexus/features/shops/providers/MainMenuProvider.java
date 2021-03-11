@@ -7,16 +7,13 @@ import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class MainMenuProvider extends _ShopProvider {
 
@@ -48,12 +45,9 @@ public class MainMenuProvider extends _ShopProvider {
 		final AtomicInteger index = new AtomicInteger();
 		final AtomicInteger taskId = new AtomicInteger();
 
-		final List<Shop> shops = service.getShops().stream()
-				.filter(shop -> !shop.isMarket() && !shop.getProducts(shopGroup).isEmpty())
-				.sorted(Comparator.comparing(shop -> shop.getInStock(shopGroup).size(), Comparator.reverseOrder()))
-				.collect(Collectors.toList());
+		final List<Shop> shops = service.getShopsSorted(shopGroup);
 
-		taskId.set(Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		taskId.set(Tasks.repeat(0, 30, () -> {
 			Optional<SmartInventory> inventory = SmartInvsPlugin.manager().getInventory(player);
 			if (!(inventory.isPresent() && this.equals(inventory.get().getProvider()))) {
 				Tasks.cancel(taskId.get());

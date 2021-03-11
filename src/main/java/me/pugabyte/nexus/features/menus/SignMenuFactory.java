@@ -84,7 +84,8 @@ public final class SignMenuFactory {
 					try {
 						menu.response.accept(input);
 					} catch (Exception ex) {
-						menu.onError.accept(input, ex);
+						if (menu.onError != null)
+							menu.onError.accept(input, ex);
 						MenuUtils.handleException(player, menu.prefix, ex);
 					}
 				});
