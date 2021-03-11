@@ -94,11 +94,11 @@ public class Shop extends PlayerOwnedObject {
 	}
 
 	public List<Product> getInStock(ShopGroup shopGroup) {
-		return getProducts(shopGroup).stream().filter(product -> product.getExchange().canFulfillPurchase()).collect(Collectors.toList());
+		return getProducts(shopGroup).stream().filter(Product::canFulfillPurchase).collect(Collectors.toList());
 	}
 
 	public List<Product> getOutOfStock(ShopGroup shopGroup) {
-		return getProducts(shopGroup).stream().filter(product -> !product.getExchange().canFulfillPurchase()).collect(Collectors.toList());
+		return getProducts(shopGroup).stream().filter(product -> !product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
 	public void addHolding(List<ItemStack> itemStacks) {
@@ -202,6 +202,12 @@ public class Shop extends PlayerOwnedObject {
 				return Nexus.getEcon().getBalance(getShop().getOfflinePlayer());
 			else
 				return stock;
+		}
+
+		public boolean canFulfillPurchase() {
+			if (isMarket())
+				return true;
+			return getExchange().canFulfillPurchase();
 		}
 
 		@SneakyThrows

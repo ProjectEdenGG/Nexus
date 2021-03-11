@@ -79,7 +79,7 @@ public class ShopMenuFunctions {
 
 	public enum FilterEmptyStock implements FilterType {
 		SHOWN,
-		HIDDEN(product -> product.getExchange().canFulfillPurchase());
+		HIDDEN(Product::canFulfillPurchase);
 
 		@Getter
 		private Predicate<Product> filter;
