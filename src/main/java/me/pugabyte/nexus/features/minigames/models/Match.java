@@ -8,7 +8,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
@@ -187,35 +186,20 @@ public class Match {
 
 		try {
 			clearEntities();
-			Nexus.severe("huh");
 			balance();
-			Nexus.severe(String.valueOf(minigamers.size()));
-			for (Minigamer minigamer : minigamers) {
-				// this doesn't do anything ????
-				Nexus.severe(minigamer.getName() + ": " + minigamer.getTeam().getName());
-			}
-			Nexus.severe("what");
 			initializeScores();
-			Nexus.severe("aaaa");
 			teleportIn();
-			Nexus.severe("bbbb");
 			startTimer(); // -> arena.getMechanic().startTimer();
-			Nexus.severe("cccc");
 			arena.getMechanic().onStart(event);
-			Nexus.severe("dddd");
 			if (scoreboard != null) scoreboard.update();
-			Nexus.severe("eeee");
 			if (scoreboardTeams != null) scoreboardTeams.update();
-			Nexus.severe("startup finished");
 		} catch (Exception ex) {
-			Nexus.severe("exception");
 			ex.printStackTrace();
 			end();
 		}
 	}
 
 	public void end() {
-		Nexus.severe("??");
 		if (ended) return;
 
 		MatchEndEvent event = new MatchEndEvent(this);
@@ -242,7 +226,6 @@ public class Match {
 		if (scoreboardTeams != null) scoreboardTeams.handleEnd();
 
 		MatchManager.remove(this);
-		Nexus.severe("done ending");
 	}
 
 	private void logScores() {
