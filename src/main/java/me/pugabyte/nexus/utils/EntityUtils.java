@@ -31,6 +31,9 @@ public class EntityUtils {
 	}
 
 	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
+		if (location == null)
+			return null;
+
 		List<Entity> entities = getNearbyEntities(location, radius).keySet().stream()
 				.filter(_entity -> _entity.getType().equals(filter))
 				.filter(_entity -> !(_entity instanceof Player) || (!CitizensUtils.isNPC(_entity) && !PlayerUtils.isVanished((Player) _entity)))
