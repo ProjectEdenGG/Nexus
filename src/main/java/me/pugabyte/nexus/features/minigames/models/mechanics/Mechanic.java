@@ -161,7 +161,6 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void onDeath(MinigamerDeathEvent event) {
-		// TODO: Autobalancing
 		if (event.getAttacker() != null && useAlternativeRegen())
 			event.getAttacker().heal(2);
 

@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
@@ -225,25 +226,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return true;
 	}
 
-	@Override
-	public void balance(List<Minigamer> minigamers) {
-		minigamers = new ArrayList<>(minigamers); // cries in pass by reference
-		if (!basicBalanceCheck(minigamers))
-			return;
+	protected List<BalanceWrapper> getBalanceWrappers(Minigamer minigamer) {
+		return getBalanceWrappers(minigamer.getMatch());
+	}
 
-		minigamers.forEach(minigamer -> minigamer.setTeam(null)); // clear teams
-		Collections.shuffle(minigamers); // lets us assign teams to players in random order
-		Match match = minigamers.get(0).getMatch();
-		List<Team> teams = new ArrayList<>(match.getArena().getTeams()); // old code made a new list so im doing it too
-
-		// only one team, no need to bother with math
-		if (teams.size() == 1) {
-			minigamers.forEach(minigamer -> minigamer.setTeam(teams.get(0)));
-			return;
-		}
-
-		// create wrapper objects
+	protected List<BalanceWrapper> getBalanceWrappers(Match match) {
 		// ALL PERCENTAGES HERE RANGE FROM 0 to 1 !!
+		List<Team> teams = match.getArena().getTeams();
 		List<BalanceWrapper> wrappers = new ArrayList<>();
 		double percentageSum = 0; // sum of all balance percentages
 		int noPercentage = 0; // count of teams w/o balance percentages
@@ -266,6 +255,59 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		double totalPercentage = wrappers.stream().mapToDouble(BalanceWrapper::getPercentage).sum();
 		wrappers.forEach(wrapper -> wrapper.setPercentage(wrapper.getPercentage() / totalPercentage));
 
+		return wrappers;
+	}
+
+	@Override
+	public void onDeath(MinigamerDeathEvent event) {
+		// auto-balancing
+		Match match = event.getMatch();
+		Minigamer minigamer = event.getMinigamer();
+		super.onDeath(event);
+		if (!minigamer.isAlive() || match.isEnded())
+			return;
+
+		List<BalanceWrapper> wrappers = getBalanceWrappers(match).stream().filter(w -> !w.getTeam().equals(minigamer.getTeam()) && w.percentageDiscrepancy() > 0 && w.extraPlayerPercentDiscrepancy() >= 0).collect(Collectors.toList());
+		if (wrappers.isEmpty())
+			return;
+		// sort teams by closest to being equal
+		wrappers.sort((w1, t1) -> (int) ((w1.extraPlayerPercentDiscrepancy() - t1.extraPlayerPercentDiscrepancy())*100));
+		// select randomly if multiple teams are equal
+		List<BalanceWrapper> randomWrappers = new ArrayList<>();
+		randomWrappers.add(wrappers.get(0));
+		double val = wrappers.get(0).extraPlayerPercentDiscrepancy();
+		int c = 1;
+		while (c < wrappers.size() && Math.abs(wrappers.get(c).extraPlayerPercentDiscrepancy() - val) < 0.0001d) {
+			randomWrappers.add(wrappers.get(c));
+			c++;
+		}
+		// assign team
+		Team team = RandomUtils.randomElement(randomWrappers).getTeam();
+		minigamer.setTeam(team);
+		minigamer.tell("", false);
+		minigamer.tell("&3You have been auto balanced to "+team.getColoredName());
+	}
+
+	@Override
+	public void balance(List<Minigamer> minigamers) {
+		minigamers = new ArrayList<>(minigamers); // cries in pass by reference
+		if (!basicBalanceCheck(minigamers))
+			return;
+
+		minigamers.forEach(minigamer -> minigamer.setTeam(null)); // clear teams
+		Collections.shuffle(minigamers); // lets us assign teams to players in random order
+		Match match = minigamers.get(0).getMatch();
+		List<Team> teams = match.getArena().getTeams(); // old code made a new list so im doing it too
+
+		// only one team, no need to bother with math
+		if (teams.size() == 1) {
+			minigamers.forEach(minigamer -> minigamer.setTeam(teams.get(0)));
+			return;
+		}
+
+		// create wrapper objects
+		List<BalanceWrapper> wrappers = getBalanceWrappers(match);
+
 		// add players to teams that need them (i.e. have a minimum player count that is not satisfied)
 		while (!minigamers.isEmpty()) {
 			Optional<BalanceWrapper> needsPlayers = wrappers.stream().filter(e -> e.getNeededPlayers() > 0).findFirst();
@@ -285,6 +327,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			//  select one of them
 			List<BalanceWrapper> equalWrappers = new ArrayList<>();
 			equalWrappers.add(wrappers.get(0));
+			Nexus.severe(String.valueOf(wrappers.get(0).extraPlayerPercentDiscrepancy()));
 			int c = 1;
 			double val = wrappers.get(0).percentageDiscrepancy();
 			while (c < wrappers.size() && Math.abs(wrappers.get(c).percentageDiscrepancy() - val) < 0.0001d) {
@@ -316,11 +359,22 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			else
 				percentage = team.getBalancePercentage()/100d;
 		}
+
 		public int getNeededPlayers() {
 			int teamPlayers = team.getMinigamers(match).size();
 			if (team.getMaxPlayers() > -1 && teamPlayers >= team.getMaxPlayers())
 				return -1;
 			return Math.max(0, team.getMinPlayers()-teamPlayers);
+		}
+
+		public int getTeamPlayers() {
+			return team.getMinigamers(match).size();
+		}
+
+		public int getTotalPlayers() {
+			// should this ignore dead players (spectators)? i'm not sure... i can't think of a minigame that would be
+			//  affected by that either way
+			return (int) match.getMinigamers().stream().filter(minigamer -> minigamer.getTeam() != null).count();
 		}
 
 		/**
@@ -330,15 +384,26 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		 * @return a score ranging from -1 to 1
 		 */
 		public double percentageDiscrepancy() {
-			int totalPlayers = (int) match.getMinigamers().stream().filter(minigamer -> minigamer.getTeam() != null).count();
-			int teamPlayers = team.getMinigamers(match).size();
+			return percentageDiscrepancy(getTeamPlayers(), getTotalPlayers());
+		}
 
+		/**
+		 * Manually calculate the percentage discrepancy of a team
+		 * @param teamPlayers players on this team
+		 * @param totalPlayers all current players in the minigame
+		 * @return a score ranging from -1 to 1
+		 */
+		public double percentageDiscrepancy(int teamPlayers, int totalPlayers) {
 			double matchPercentage;
 			if (totalPlayers == 0)
 				matchPercentage = 0; // this is the first added player, assume all teams are on 0%
 			else
 				matchPercentage = (double)teamPlayers/totalPlayers; // get % of players on this team
 			return percentage-matchPercentage;
+		}
+
+		public double extraPlayerPercentDiscrepancy() {
+			return percentageDiscrepancy(getTeamPlayers()+1, getTotalPlayers());
 		}
 
 		/**
