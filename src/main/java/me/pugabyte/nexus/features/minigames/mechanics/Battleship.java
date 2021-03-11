@@ -23,7 +23,7 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.BattleshipMatchData
 import me.pugabyte.nexus.features.minigames.models.matchdata.BattleshipMatchData.Grid;
 import me.pugabyte.nexus.features.minigames.models.matchdata.BattleshipMatchData.Ship;
 import me.pugabyte.nexus.features.minigames.models.matchdata.BattleshipMatchData.ShipType;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -84,7 +84,7 @@ TODO
 
 @Regenerating("board")
 @Scoreboard(sidebarType = Type.TEAM)
-public class Battleship extends BalancedTeamMechanic {
+public class Battleship extends TeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
 	public static final String SCHEMATIC_FOLDER = "minigames/battleship";

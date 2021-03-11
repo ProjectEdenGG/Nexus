@@ -5,7 +5,7 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Material;
@@ -18,7 +18,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 
 @Regenerating("regen")
-public final class Paintball extends BalancedTeamMechanic {
+public final class Paintball extends TeamMechanic {
 
 	@Override
 	public String getName() {

@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
@@ -11,8 +13,10 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
 import net.md_5.bungee.api.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -123,7 +128,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	@Override
 	public boolean shouldBeOver(Match match) {
 		Set<Team> teams = new HashSet<>();
-		match.getMinigamers().forEach(minigamer -> teams.add(minigamer.getTeam()));
+		match.getMinigamers().stream().filter(Minigamer::isAlive).forEach(minigamer -> teams.add(minigamer.getTeam()));
 		if (teams.size() == 1) {
 			Nexus.log("Match has only one team left, ending");
 			return true;
@@ -201,4 +206,150 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		super.onQuit(event);
 	}
 
+	public boolean basicBalanceCheck(List<Minigamer> minigamers) {
+		if (minigamers.isEmpty())
+			return false;
+
+		Match match = minigamers.get(0).getMatch();
+		Arena arena = match.getArena();
+		List<Team> teams = new ArrayList<>(arena.getTeams());
+
+		int required = 0;
+		for (Team team : teams) required += team.getMinPlayers();
+
+		if (match.getMinigamers().size() < required) {
+			criticalErrorAbort("Not enough players to meet team requirements!", match);
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public void balance(List<Minigamer> minigamers) {
+		minigamers = new ArrayList<>(minigamers); // cries in pass by reference
+		if (!basicBalanceCheck(minigamers))
+			return;
+
+		minigamers.forEach(minigamer -> minigamer.setTeam(null)); // clear teams
+		Collections.shuffle(minigamers); // lets us assign teams to players in random order
+		Match match = minigamers.get(0).getMatch();
+		List<Team> teams = new ArrayList<>(match.getArena().getTeams()); // old code made a new list so im doing it too
+
+		// only one team, no need to bother with math
+		if (teams.size() == 1) {
+			minigamers.forEach(minigamer -> minigamer.setTeam(teams.get(0)));
+			return;
+		}
+
+		// create wrapper objects
+		// ALL PERCENTAGES HERE RANGE FROM 0 to 1 !!
+		List<BalanceWrapper> wrappers = new ArrayList<>();
+		double percentageSum = 0; // sum of all balance percentages
+		int noPercentage = 0; // count of teams w/o balance percentages
+		for (Team team : teams) {
+			BalanceWrapper wrapper = new BalanceWrapper(team, match);
+			wrappers.add(wrapper);
+			if (wrapper.getPercentage() != null)
+				percentageSum += wrapper.getPercentage();
+			else
+				noPercentage++;
+		}
+
+		if (noPercentage > 0 && percentageSum < 1) {
+			// evenly split the balance of teams that don't have a balance percentage (if there is any unassigned %)
+			double percentage = (1d/noPercentage) * (1d-percentageSum);
+			wrappers.stream().filter(wrapper -> wrapper.getPercentage() == null).forEach(wrapper -> wrapper.setPercentage(percentage));
+		}
+
+		// ensure percentages add up to 100
+		double totalPercentage = wrappers.stream().mapToDouble(BalanceWrapper::getPercentage).sum();
+		wrappers.forEach(wrapper -> wrapper.setPercentage(wrapper.getPercentage() / totalPercentage));
+
+		// add players to teams that need them (i.e. have a minimum player count that is not satisfied)
+		while (!minigamers.isEmpty()) {
+			Optional<BalanceWrapper> needsPlayers = wrappers.stream().filter(e -> e.getNeededPlayers() > 0).findFirst();
+			if (!needsPlayers.isPresent())
+				break;
+			Team team = needsPlayers.get().getTeam();
+			minigamers.remove(0).setTeam(team);
+		}
+
+		// add rest of players according to percentages
+		while (!minigamers.isEmpty()) {
+			// this basically finds the team with the largest percent
+			wrappers = wrappers.stream().filter(wrapper -> wrapper.getNeededPlayers() != -1).sorted().collect(Collectors.toList());
+			if (wrappers.isEmpty())
+				break;
+			// get teams with matching percentage discrepancies (ie the teams are perfectly balanced) and randomly
+			//  select one of them
+			List<BalanceWrapper> equalWrappers = new ArrayList<>();
+			equalWrappers.add(wrappers.get(0));
+			int c = 1;
+			double val = wrappers.get(0).percentageDiscrepancy();
+			while (c < wrappers.size() && Math.abs(wrappers.get(c).percentageDiscrepancy() - val) < 0.0001d) {
+				equalWrappers.add(wrappers.get(c));
+				c++;
+			}
+			Team team = RandomUtils.randomElement(equalWrappers).getTeam();
+			minigamers.remove(0).setTeam(team);
+		}
+
+		// leftover players means the teams all (somehow) reached their max player count
+		minigamers.forEach(minigamer -> {
+			minigamer.tell("Could not assign you to a team!");
+			minigamer.quit();
+		});
+	}
+
+	@Data
+	@EqualsAndHashCode
+	public static class BalanceWrapper implements Comparable<BalanceWrapper> {
+		private final Team team;
+		private final Match match;
+		private Double percentage;
+		private BalanceWrapper(Team team, Match match) {
+			this.team = team;
+			this.match = match;
+			if (team.getBalancePercentage() == -1)
+				percentage = null;
+			else
+				percentage = team.getBalancePercentage()/100d;
+		}
+		public int getNeededPlayers() {
+			int teamPlayers = team.getMinigamers(match).size();
+			if (team.getMaxPlayers() > -1 && teamPlayers >= team.getMaxPlayers())
+				return -1;
+			return Math.max(0, team.getMinPlayers()-teamPlayers);
+		}
+
+		/**
+		 * Calculates the difference between the team's specified percentage and its current percentage (i.e. the
+		 * current balance of the match). A negative score is unbalanced in favor of the team, a positive score is
+		 * unbalanced in favor of other teams. Larger scores mean more unbalanced.
+		 * @return a score ranging from -1 to 1
+		 */
+		public double percentageDiscrepancy() {
+			int totalPlayers = (int) match.getMinigamers().stream().filter(minigamer -> minigamer.getTeam() != null).count();
+			int teamPlayers = team.getMinigamers(match).size();
+
+			double matchPercentage;
+			if (totalPlayers == 0)
+				matchPercentage = 0; // this is the first added player, assume all teams are on 0%
+			else
+				matchPercentage = (double)teamPlayers/totalPlayers; // get % of players on this team
+			return percentage-matchPercentage;
+		}
+
+		/**
+		 * Compares which of two teams has a larger player discrepancy. A negative value means this team has a larger
+		 * discrepancy (to allow for naturally sort in descending order)
+		 * @param balanceWrapper the other team
+		 * @return a score ranging from -1 to 1
+		 */
+		@Override
+		public int compareTo(@NotNull BalanceWrapper balanceWrapper) {
+			return (int) ((balanceWrapper.percentageDiscrepancy()-percentageDiscrepancy())*100);
+		}
+	}
 }

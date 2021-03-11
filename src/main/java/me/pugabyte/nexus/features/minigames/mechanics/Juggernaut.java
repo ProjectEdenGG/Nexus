@@ -10,7 +10,7 @@ import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.JuggernautMatchData;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Juggernaut extends UnbalancedTeamMechanic {
+public class Juggernaut extends TeamMechanic {
 	private static final String TEAM_NAME = "Juggernaut";
 
 	@Override
