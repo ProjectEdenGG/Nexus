@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -29,6 +30,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
+import static me.pugabyte.nexus.utils.ItemUtils.getRawShulkerContents;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class EditProductProvider extends _ShopProvider {
@@ -136,7 +138,7 @@ public class EditProductProvider extends _ShopProvider {
 				if (ItemUtils.isNullOrAir(content))
 					continue;
 
-				if (product.getItem().isSimilar(content))
+				if (isSimilar(product.getItem(), content))
 					product.addStock(content.getAmount());
 				else
 					PlayerUtils.giveItem(player, content);
@@ -192,7 +194,7 @@ public class EditProductProvider extends _ShopProvider {
 				if (ItemUtils.isNullOrAir(content))
 					continue;
 
-				if (!product.getItem().isSimilar(content)) {
+				if (!isSimilar(product.getItem(), content)) {
 					PlayerUtils.giveItem(player, content);
 					continue;
 				}
@@ -208,6 +210,28 @@ public class EditProductProvider extends _ShopProvider {
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}
+	}
+
+	private static boolean isSimilar(ItemStack item1, ItemStack item2) {
+		if (item1.getType() != item2.getType())
+			return false;
+
+		if (!MaterialTag.SHULKER_BOXES.isTagged(item1.getType()))
+			return item1.isSimilar(item2);
+
+		List<ItemStack> contents1 = getRawShulkerContents(item1);
+		List<ItemStack> contents2 = getRawShulkerContents(item2);
+		if (contents1.isEmpty() && contents2.isEmpty())
+			return true;
+
+		for (int i = 0; i < contents1.size(); i++) {
+			if (contents1.get(i) == null && contents2.get(i) == null)
+				continue;
+			if (contents1.get(i) == null || !contents1.get(i).isSimilar(contents2.get(i)))
+				return false;
+		}
+
+		return true;
 	}
 
 }
