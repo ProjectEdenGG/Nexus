@@ -36,6 +36,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
+// TODO: Change LinkedList to ArrayList, LinkedList is better for array manipulation, and we're not doing any of that here.
 public class WebConfig extends PlayerOwnedObject {
 	@Id
 	@NonNull
