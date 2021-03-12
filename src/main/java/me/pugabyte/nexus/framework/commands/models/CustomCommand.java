@@ -102,6 +102,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	public void _shutdown() {}
 
+	protected boolean isCommandEvent() {
+		return isCommandEvent();
+	}
+
 	protected String camelCase(Enum<?> _enum) {
 		return camelCase(_enum.name());
 	}

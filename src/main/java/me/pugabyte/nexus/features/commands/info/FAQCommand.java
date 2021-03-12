@@ -5,14 +5,13 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 
 @Redirect(from = "/chatinfo", to = "/faq chatinfo")
 public class FAQCommand extends CustomCommand {
 
 	public FAQCommand(CommandEvent event) {
 		super(event);
-		if (!(event instanceof TabEvent))
+		if (isCommandEvent())
 			line(3);
 	}
 

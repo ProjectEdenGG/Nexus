@@ -7,7 +7,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
@@ -26,7 +25,7 @@ public class EntityNameCommand extends CustomCommand {
 
 	public EntityNameCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (!(event instanceof TabEvent)) {
+		if (isCommandEvent()) {
 			targetEntity = getTargetEntityRequired();
 			if (!(targetEntity instanceof LivingEntity) && !(targetEntity instanceof ItemFrame))
 				error("You must be looking at a living entity or an item frame");

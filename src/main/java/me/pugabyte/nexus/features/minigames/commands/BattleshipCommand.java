@@ -22,7 +22,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.PlayerUtils;
 
@@ -59,7 +58,7 @@ public class BattleshipCommand extends CustomCommand {
 			grid = matchData.getGrid(minigamer.getTeam());
 			team = minigamer.getTeam();
 			otherTeam = grid.getOtherTeam();
-		} else if (!(event instanceof TabEvent))
+		} else if (isCommandEvent())
 			error("You must be playing Battleship to use this command");
 	}
 

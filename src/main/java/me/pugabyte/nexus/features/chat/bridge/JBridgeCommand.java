@@ -8,7 +8,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -24,7 +23,7 @@ public class JBridgeCommand extends CustomCommand {
 	public JBridgeCommand(CommandEvent event) {
 		super(event);
 		service = new DiscordService();
-		if (!(event instanceof TabEvent))
+		if (isCommandEvent())
 			if (Discord.getGuild() == null)
 				error("Not connected to Discord");
 	}

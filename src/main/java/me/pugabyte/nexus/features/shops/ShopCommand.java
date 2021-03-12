@@ -12,7 +12,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.shop.ShopService;
@@ -27,7 +26,7 @@ public class ShopCommand extends CustomCommand {
 
 	public ShopCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (!(event instanceof TabEvent)) {
+		if (isCommandEvent()) {
 			if (!hasPermission("shops.use"))
 				error("&cComing soon!");
 			if (shopGroup == null)

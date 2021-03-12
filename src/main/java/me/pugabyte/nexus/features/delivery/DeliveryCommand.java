@@ -9,7 +9,6 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
@@ -44,7 +43,7 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 	public DeliveryCommand(CommandEvent event) {
 		super(event);
 		user = service.get(player());
-		if (!(event instanceof TabEvent))
+		if (isCommandEvent())
 			if (world().getName().startsWith("resource"))
 				error("You cannot use Deliveries in the resource world");
 	}
