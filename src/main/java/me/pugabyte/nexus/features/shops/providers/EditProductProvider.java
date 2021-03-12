@@ -83,9 +83,9 @@ public class EditProductProvider extends _ShopProvider {
 
 		ItemBuilder enabled = new ItemBuilder(Material.LEVER);
 		if (product.isEnabled())
-			enabled.name("&aEnabled").lore("&7Click to &cdisable");
+			enabled.name("&aEnabled").lore("&7Click to &cdisable&7, hiding").lore("&7the item from public view");
 		else
-			enabled.name("&cDisabled").lore("&7Click to &aenable");
+			enabled.name("&cDisabled").lore("&7Click to &aenable&7, allowing others").lore("&7to view and purchase the item");
 
 		contents.set(3, 3, ClickableItem.from(enabled.build(), e -> {
 			product.setEnabled(!product.isEnabled());

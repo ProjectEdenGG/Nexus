@@ -44,7 +44,12 @@ public class YourShopProvider extends _ShopProvider {
 		Shop shop = new ShopService().get(player);
 
 		contents.set(0, 1, ClickableItem.from(nameItem(Material.ENDER_EYE, "&6Preview your shop"), e -> new PlayerShopProvider(this, shop).open(player)));
-		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.OAK_SIGN).name("&6Set shop description").lore("").lore(shop.getDescription()).build(), e ->
+
+		ItemBuilder description = new ItemBuilder(Material.OAK_SIGN).name("&6Set shop description");
+		if (!shop.getDescription().isEmpty())
+			description.lore("").lore(shop.getDescription());
+
+		contents.set(0, 2, ClickableItem.from(description.build(), e ->
 				Nexus.getSignMenuFactory().lines(shop.getDescriptionArray()).prefix(Shops.PREFIX).colorize(false).response(lines -> {
 					shop.setDescription(Arrays.asList(lines));
 					service.save(shop);

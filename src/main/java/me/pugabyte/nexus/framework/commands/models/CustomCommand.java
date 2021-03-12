@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -103,7 +104,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	public void _shutdown() {}
 
 	protected boolean isCommandEvent() {
-		return isCommandEvent();
+		return !(event instanceof TabEvent);
 	}
 
 	protected String camelCase(Enum<?> _enum) {
