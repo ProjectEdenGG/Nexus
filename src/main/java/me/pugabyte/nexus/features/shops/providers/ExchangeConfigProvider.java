@@ -139,24 +139,22 @@ public class ExchangeConfigProvider extends _ShopProvider {
 			item.name("&e" + camelCase(prettyMoney(price)));
 
 		contents.set(3, 4, ClickableItem.from(item.build(), e ->
-				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount").prefix(Shops.PREFIX).response(lines -> {
-					try {
-						if (lines[0].length() > 0) {
-							String input = lines[0].replaceAll("[^0-9.]+", "");
-							if (!Utils.isDouble(input))
-								throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
-							double price = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
-							if (price < 0)
-								throw new InvalidInputException("Dollar amount must be $0 or greater");
-							this.price = price;
-						}
-						open(player);
-					} catch (Exception ex) {
-						PlayerUtils.send(player, ex.getMessage());
-						open(player);
-					}
-				}).open(player)));
-	}
+				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount")
+						.prefix(Shops.PREFIX)
+						.onError(() -> open(player))
+						.response(lines -> {
+							if (lines[0].length() > 0) {
+								String input = lines[0].replaceAll("[^0-9.]+", "");
+								if (!Utils.isDouble(input))
+									throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
+								double price = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
+								if (price < 0)
+									throw new InvalidInputException("Dollar amount must be $0 or greater");
+								this.price = price;
+							}
+							open(player);
+						}).open(player)));
+		}
 
 	private void addExchangeControl(Player player, InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.PAPER).name("&6Action: ")
@@ -196,21 +194,20 @@ public class ExchangeConfigProvider extends _ShopProvider {
 						open(player);
 					}
 				} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {
-					Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
-						try {
-							if (lines[0].length() > 0) {
-								Function<Material, Boolean> filter = material -> material.name().toLowerCase().contains(lines[0].toLowerCase());
-								new ItemSearchProvider(this, filter, onChoose -> {
-									itemStack.set(new ItemStack(onChoose.getItem().getType()));
+					Nexus.getSignMenuFactory()
+							.lines("", ARROWS, "Enter a", "search term")
+							.prefix(Shops.PREFIX)
+							.onError(() -> open(player))
+							.response(lines -> {
+								if (lines[0].length() > 0) {
+									Function<Material, Boolean> filter = material -> material.name().toLowerCase().contains(lines[0].toLowerCase());
+									new ItemSearchProvider(this, filter, onChoose -> {
+										itemStack.set(new ItemStack(onChoose.getItem().getType()));
+										open(player);
+									}).open(player);
+								} else
 									open(player);
-								}).open(player);
-							} else
-								open(player);
-						} catch (Exception ex) {
-							PlayerUtils.send(player, ex.getMessage());
-							open(player);
-						}
-					}).open(player);
+							}).open(player);
 				} else {
 					itemStack.set(null);
 					open(player);

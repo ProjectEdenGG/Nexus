@@ -61,19 +61,23 @@ public class EditProductProvider extends _ShopProvider {
 					.loreize(false);
 
 			contents.set(1, 4, ClickableItem.from(builder.build(), e ->
-					Nexus.getSignMenuFactory().lines("", ARROWS, "Enter an amount", "or -1 for no limit").prefix(Shops.PREFIX).response(lines -> {
-						if (lines[0].length() > 0) {
-							String input = lines[0].replaceAll("[^0-9.-]+", "");
-							if (!Utils.isDouble(input))
-								throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
-							double stock = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
-							if (!(stock == -1 || stock >= 0))
-								throw new InvalidInputException("Stock must be -1 (unlimited), or $0 or greater");
-							product.setStock(stock);
-							service.save(product.getShop());
-						}
-						open(player);
-					}).open(player)
+					Nexus.getSignMenuFactory()
+							.lines("", ARROWS, "Enter an amount", "or -1 for no limit")
+							.prefix(Shops.PREFIX)
+							.onError(() -> open(player))
+							.response(lines -> {
+								if (lines[0].length() > 0) {
+									String input = lines[0].replaceAll("[^0-9.-]+", "");
+									if (!Utils.isDouble(input))
+										throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
+									double stock = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
+									if (!(stock == -1 || stock >= 0))
+										throw new InvalidInputException("Stock must be -1 (unlimited), or $0 or greater");
+									product.setStock(stock);
+									service.save(product.getShop());
+								}
+								open(player);
+							}).open(player)
 			));
 		} else {
 			contents.set(1, 3, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add Stock"), e -> new AddStockProvider(this, product).open(player)));

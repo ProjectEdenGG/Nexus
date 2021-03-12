@@ -117,6 +117,11 @@ public final class SignMenuFactory {
 			return this;
 		}
 
+		public Menu onError(Runnable onError) {
+			this.onError = (lines, ex) -> onError.run();
+			return this;
+		}
+
 		public Menu onError(BiConsumer<String[], Exception> onError) {
 			this.onError = onError;
 			return this;

@@ -7,7 +7,6 @@ import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,20 +39,19 @@ public class SearchItemsProvider extends _ShopProvider {
 			browseItemsMenu = new BrowseItemsProvider(this);
 
 		contents.set(1, 1, ClickableItem.from(nameItem(Material.NAME_TAG, "&6Search by item name"),
-				e -> Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
-					try {
-						String input = stripColor(lines[0]);
-						if (input.length() > 0) {
-							browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input, product -> filter(product.getItem(), item ->
-									item.getType().name().toLowerCase().contains(input.toLowerCase()))));
-							browseItemsMenu.open(player);
-						} else
-							open(player);
-					} catch (Exception ex) {
-						PlayerUtils.send(player, ex.getMessage());
-						open(player);
-					}
-				}).open(player)));
+				e -> Nexus.getSignMenuFactory()
+						.lines("", ARROWS, "Enter a", "search term")
+						.prefix(Shops.PREFIX)
+						.onError(() -> open(player))
+						.response(lines -> {
+							String input = stripColor(lines[0]);
+							if (input.length() > 0) {
+								browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input, product -> filter(product.getItem(), item ->
+										item.getType().name().toLowerCase().contains(input.toLowerCase()))));
+								browseItemsMenu.open(player);
+							} else
+								open(player);
+						}).open(player)));
 
 		contents.set(1, 3, ClickableItem.from(nameItem(Material.APPLE, "&6Search for food"), e -> {
 			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Food", product -> filter(product.getItem(), MaterialTag.FOODS)));

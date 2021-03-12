@@ -104,7 +104,7 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 							}
 							new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player);
 						})
-						.onError((lines, ex) -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player))
+						.onError(() -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player))
 						.open(player)));
 		contents.set(1, 3, ClickableItem.from(insertItems.build(), e -> new InsertItemsMenu(user, worldGroup, sendTo, items, message)));
 		// TODO: open a book menu where the player can type a message
