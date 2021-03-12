@@ -34,6 +34,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -73,9 +74,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.parseDate;
 import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
@@ -179,16 +180,18 @@ public abstract class CustomCommand extends ICustomCommand {
 		return (Player) targetEntity;
 	}
 
+	protected Location location() {
+		if (isCommandBlock())
+			return commandBlock().getBlock().getLocation();
+		return player().getLocation();
+	}
+
 	protected World world() {
-		return player().getWorld();
+		return location().getWorld();
 	}
 
 	protected WorldGroup worldGroup() {
-		return WorldGroup.get(player());
-	}
-
-	protected Location location() {
-		return player().getLocation();
+		return WorldGroup.get(location());
 	}
 
 	protected PlayerInventory inventory() {
@@ -673,6 +676,15 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(Player.class)
 	public Player convertToPlayer(String value) {
+		if (isCommandBlock() || isAdmin()) {
+			if ("@p".equals(value))
+				return PlayerUtils.getNearestPlayer(location()).getObject();
+			if ("@r".equals(value))
+				return RandomUtils.randomElement(Bukkit.getOnlinePlayers());
+			if ("@s".equals(value))
+				return player();
+		}
+
 		OfflinePlayer offlinePlayer = convertToOfflinePlayer(value);
 		return convertToPlayer(offlinePlayer);
 	}
@@ -692,7 +704,7 @@ public abstract class CustomCommand extends ICustomCommand {
 				.filter(player -> PlayerUtils.canSee(player(), player))
 				.map(player -> new Nerd(player).getName())
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 
 //	@TabCompleterFor(OfflinePlayer.class)
@@ -704,7 +716,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return new NerdService().find(filter).stream()
 				.map(Nerd::getName)
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 
 	@ConverterFor(World.class)
@@ -720,16 +732,16 @@ public abstract class CustomCommand extends ICustomCommand {
 	@TabCompleterFor(World.class)
 	List<String> tabCompleteWorld(String filter) {
 		return Bukkit.getWorlds().stream()
-				.filter(world -> world.getName().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(World::getName)
-				.collect(Collectors.toList());
+				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(toList());
 	}
 
 	@TabCompleterFor({Boolean.class})
 	List<String> tabCompleteBoolean(String filter) {
 		return Stream.of("true", "false")
 				.filter(bool -> bool.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 
 	@ConverterFor(Material.class)
@@ -760,7 +772,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Arrays.stream(ColorType.values())
 				.map(colorType -> colorType.name().toLowerCase())
 				.filter(name -> name.startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 
 	@ConverterFor(LocalDate.class)
@@ -789,7 +801,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Arrays.stream(Enchantment.values())
 				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(enchantment -> enchantment.getKey().getKey())
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 
 	@TabCompleterFor(LivingEntity.class)

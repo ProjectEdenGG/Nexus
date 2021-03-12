@@ -7,10 +7,10 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
@@ -54,13 +54,13 @@ public class RandomUtils {
 		return (T) randomElement(Arrays.asList(list));
 	}
 
-	public static <T> T randomElement(Set<T> list) {
+	public static <T> T randomElement(Collection<T> list) {
 		return randomElement(new ArrayList<>(list));
 	}
 
-	public static <T> T randomElement(List<T> list) {
+	private static <T> T randomElement(List<T> list) {
 		if (Utils.isNullOrEmpty(list)) return null;
-		return list.get(random.nextInt(list.size()));
+		return new ArrayList<>(list).get(random.nextInt(list.size()));
 	}
 
 	public static Vector randomVector() {

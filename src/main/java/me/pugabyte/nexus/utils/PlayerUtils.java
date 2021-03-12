@@ -18,6 +18,7 @@ import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.advancement.Advancement;
@@ -190,6 +191,13 @@ public class PlayerUtils {
 		}
 
 		throw new PlayerNotFoundException(original);
+	}
+
+	public static MinMaxResult<Player> getNearestPlayer(Location location) {
+		return getMin((Collection<Player>) Bukkit.getOnlinePlayers(), player -> {
+			if (!player.getWorld().equals(location.getWorld())) return null;
+			return player.getLocation().distance(location);
+		});
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Player original) {
