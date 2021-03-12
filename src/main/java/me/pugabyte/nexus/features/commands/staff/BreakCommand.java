@@ -28,8 +28,8 @@ public class BreakCommand extends CustomCommand {
 			block.setType(Material.AIR);
 		} else if ("fuck".equalsIgnoreCase(getAliasUsed()))
 			send("&4rude.");
-			else
-				permissionError();
+		else
+			permissionError();
 	}
 
 }

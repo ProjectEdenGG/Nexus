@@ -14,12 +14,15 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -30,6 +33,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 public class LockdownCommand extends CustomCommand implements Listener {
 	private static boolean lockdown = false;
 	private static String reason = null;
+	private static Set<UUID> bypass = new HashSet<>();
 
 	public LockdownCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -60,8 +64,21 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 		lockdown = false;
 		reason = null;
+		bypass.clear();
 
 		broadcast(name() + " ended lockdown");
+	}
+
+	@Path("bypass add <player>")
+	void bypassAdd(OfflinePlayer player) {
+		bypass.add(player.getUniqueId());
+		send(PREFIX + "Added " + player.getName() + " to bypass list");
+	}
+
+	@Path("bypass remove <player>")
+	void bypassRemove(OfflinePlayer player) {
+		bypass.remove(player.getUniqueId());
+		send(PREFIX + "Removed " + player.getName() + " from bypass list");
 	}
 
 	@EventHandler
@@ -80,6 +97,9 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	}
 
 	public boolean canBypass(UUID player) {
+		if (bypass.contains(player))
+			return true;
+
 		Hours hours = new HoursService().get(player);
 		return hours.getTotal() > (30 * 60);
 	}
