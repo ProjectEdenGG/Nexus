@@ -2,6 +2,7 @@ name: Nexus
 main: me.pugabyte.nexus.Nexus
 version: ${project.version}
 api-version: "1.16"
+load: POSTWORLD
 softdepend:
   - BlueMap
   - BuycraftX
@@ -25,3 +26,4 @@ softdepend:
   - WorldGuardRegionAPI
   - GlowAPI
   - LibsDisguises
+  - BentoBox

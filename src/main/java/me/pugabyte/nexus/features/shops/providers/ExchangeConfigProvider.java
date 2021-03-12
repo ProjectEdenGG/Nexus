@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
@@ -181,10 +182,19 @@ public class ExchangeConfigProvider extends _ShopProvider {
 			Consumer<ItemClickData> action = e -> {
 				((InventoryClickEvent) e.getEvent()).setCancelled(true);
 				if (!ItemUtils.isNullOrAir(player.getItemOnCursor())) {
-					itemStack.set(player.getItemOnCursor().clone());
-					PlayerUtils.giveItem(player, player.getItemOnCursor().clone());
-					player.setItemOnCursor(null);
-					open(player);
+					try {
+						ItemStack item = player.getItemOnCursor().clone();
+						if (Backpacks.isBackpack(item))
+							throw new InvalidInputException("Backpacks can not be sold in player shops");
+
+						itemStack.set(item);
+						PlayerUtils.giveItem(player, itemStack.get());
+						player.setItemOnCursor(null);
+						open(player);
+					} catch (Exception ex) {
+						PlayerUtils.send(player, ex.getMessage());
+						open(player);
+					}
 				} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {
 					Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "search term").prefix(Shops.PREFIX).response(lines -> {
 						try {
