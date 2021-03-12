@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.mechanics.common.DeathmatchMechanic;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public final class FourTeamDeathmatch extends TeamMechanic {
+public final class FourTeamDeathmatch extends DeathmatchMechanic {
 
 	@Override
 	public String getName() {
