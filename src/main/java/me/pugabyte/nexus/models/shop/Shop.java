@@ -306,6 +306,9 @@ public class Shop extends PlayerOwnedObject {
 		public List<ItemStack> getItemStacks(int maxStacks) {
 			List<ItemStack> items = new ArrayList<>();
 
+			if (exchangeType == ExchangeType.BUY)
+				return items;
+
 			ItemStack item = this.item.clone();
 			double stock = this.stock;
 			int maxStackSize = item.getMaxStackSize();
