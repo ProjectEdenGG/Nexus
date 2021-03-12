@@ -138,22 +138,22 @@ public class ExchangeConfigProvider extends _ShopProvider {
 		else
 			item.name("&e" + camelCase(prettyMoney(price)));
 
-		contents.set(3, 4, ClickableItem.from(item.build(), e ->
-				Nexus.getSignMenuFactory().lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount")
-						.prefix(Shops.PREFIX)
-						.onError(() -> open(player))
-						.response(lines -> {
-							if (lines[0].length() > 0) {
-								String input = lines[0].replaceAll("[^0-9.]+", "");
-								if (!Utils.isDouble(input))
-									throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
-								double price = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
-								if (price < 0)
-									throw new InvalidInputException("Dollar amount must be $0 or greater");
-								this.price = price;
-							}
-							open(player);
-						}).open(player)));
+		contents.set(3, 4, ClickableItem.from(item.build(), e -> Nexus.getSignMenuFactory()
+				.lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount")
+				.prefix(Shops.PREFIX)
+				.onError(() -> open(player))
+				.response(lines -> {
+					if (lines[0].length() > 0) {
+						String input = lines[0].replaceAll("[^0-9.]+", "");
+						if (!Utils.isDouble(input))
+							throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
+						double price = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
+						if (price < 0)
+							throw new InvalidInputException("Dollar amount must be $0 or greater");
+						this.price = price;
+					}
+					open(player);
+				}).open(player)));
 		}
 
 	private void addExchangeControl(Player player, InventoryContents contents) {

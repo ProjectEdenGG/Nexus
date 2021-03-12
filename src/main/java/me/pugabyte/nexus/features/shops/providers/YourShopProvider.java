@@ -49,16 +49,15 @@ public class YourShopProvider extends _ShopProvider {
 		if (!shop.getDescription().isEmpty())
 			description.lore("").lore(shop.getDescription());
 
-		contents.set(0, 2, ClickableItem.from(description.build(), e ->
-				Nexus.getSignMenuFactory()
-						.lines(shop.getDescriptionArray())
-						.prefix(Shops.PREFIX)
-						.colorize(false)
-						.response(lines -> {
-							shop.setDescription(Arrays.asList(lines));
-							service.save(shop);
-							open(player);
-						}).open(player)));
+		contents.set(0, 2, ClickableItem.from(description.build(), e -> Nexus.getSignMenuFactory()
+				.lines(shop.getDescriptionArray())
+				.prefix(Shops.PREFIX)
+				.colorize(false)
+				.response(lines -> {
+					shop.setDescription(Arrays.asList(lines));
+					service.save(shop);
+					open(player);
+				}).open(player)));
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add item"), e -> new ExchangeConfigProvider(this).open(player)));
 
