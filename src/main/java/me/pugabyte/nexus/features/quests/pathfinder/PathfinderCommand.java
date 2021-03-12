@@ -208,7 +208,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (type.equals(Material.WHITE_CONCRETE_POWDER)) {
+		if (Material.WHITE_CONCRETE_POWDER.equals(type)) {
 			for (Node neighbor : web.getNeighborNodes(currentNode))
 				neighbor.getLocation().getBlock().getRelative(BlockFace.UP).setType(Material.AIR);
 			return;
@@ -220,16 +220,15 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (type.equals(Material.LIME_CONCRETE_POWDER)) {
+		if (Material.LIME_CONCRETE_POWDER.equals(type)) {
 			send(player, "&2Unselected node at " + getShortLocationString(selectedNode.getLocation()));
 			Pathfinder.setSelectedLoc(null);
 
-		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER)) {
+		} else if (Material.PURPLE_CONCRETE_POWDER.equals(type)) {
 			send(player, "&5Removed nodes as neighbors");
 			selectedNode.getNeighbors().remove(currentNode.getUuid());
 			currentNode.getNeighbors().remove(selectedNode.getUuid());
 			service.save(config);
-
 		}
 	}
 

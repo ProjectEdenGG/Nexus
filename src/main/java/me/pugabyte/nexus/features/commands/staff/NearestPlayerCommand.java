@@ -4,10 +4,9 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.entity.Player;
-
-import java.util.Collection;
 
 @Permission("group.staff")
 public class NearestPlayerCommand extends CustomCommand {
@@ -18,22 +17,10 @@ public class NearestPlayerCommand extends CustomCommand {
 
 	@Path
 	void nearestPlayer() {
-		Player nearestPlayer = null;
-		double minDistance = Double.MAX_VALUE;
-		Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+		MinMaxResult<Player> result = PlayerUtils.getNearestPlayer(player());
 
-		for (Player player : players) {
-			if (player.getWorld() == world() && player != player()) {
-				double tempDistance = player.getLocation().distance(location());
-				if (tempDistance < minDistance) {
-					nearestPlayer = player;
-					minDistance = tempDistance;
-				}
-			}
-		}
-
-		if (nearestPlayer != null)
-			send(PREFIX + nearestPlayer.getName() + " is " + (int) minDistance + " blocks away");
+		if (result.getObject() != null)
+			send(PREFIX + result.getObject().getName() + " is " + result.getValue().intValue() + " blocks away");
 		else
 			error("No players are nearby");
 	}

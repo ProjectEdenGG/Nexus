@@ -14,6 +14,7 @@ import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -37,7 +38,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.Utils.getMin;
 
 public class PlayerUtils {
 
@@ -189,18 +192,11 @@ public class PlayerUtils {
 		throw new PlayerNotFoundException(original);
 	}
 
-	public static Player getNearestPlayer(Player player) {
-		Player nearest = null;
-		double distance = Double.MAX_VALUE;
-		for (Player _player : player.getWorld().getPlayers()) {
-			if (player.getLocation().getWorld() != _player.getLocation().getWorld()) continue;
-			double _distance = player.getLocation().distance(_player.getLocation());
-			if (_distance < distance) {
-				distance = _distance;
-				nearest = _player;
-			}
-		}
-		return nearest;
+	public static MinMaxResult<Player> getNearestPlayer(Player original) {
+		return getMin((Collection<Player>) Bukkit.getOnlinePlayers(), player -> {
+			if (!player.getWorld().equals(original.getWorld()) || isSelf(original, player)) return null;
+			return player.getLocation().distance(original.getLocation());
+		});
 	}
 
 	@SneakyThrows
@@ -286,7 +282,7 @@ public class PlayerUtils {
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
 		List<ItemStack> itemList = new ArrayList<>();
 		for (ItemStack item : new ArrayList<>(Arrays.asList(items))) {
-			if (!ItemUtils.isNullOrAir(item))
+			if (!isNullOrAir(item))
 				itemList.add(item);
 		}
 
@@ -297,7 +293,7 @@ public class PlayerUtils {
 		ItemStack[] contents = player.getInventory().getContents();
 		int slotsUsed = 0;
 		for (ItemStack content : contents) {
-			if (!ItemUtils.isNullOrAir(content))
+			if (!isNullOrAir(content))
 				slotsUsed++;
 		}
 
@@ -467,7 +463,7 @@ public class PlayerUtils {
 	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> items) {
 		List<ItemStack> excess = new ArrayList<>();
 		for (ItemStack item : items)
-			if (!ItemUtils.isNullOrAir(item))
+			if (!isNullOrAir(item))
 				excess.addAll(player.getInventory().addItem(item).values());
 
 		return excess;
@@ -502,7 +498,9 @@ public class PlayerUtils {
 
 	public static void dropExcessItems(Player player, List<ItemStack> excess) {
 		if (!excess.isEmpty())
-			excess.forEach(itemStack -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
+			for (ItemStack itemStack : excess)
+				if (!isNullOrAir(itemStack))
+					player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
 	}
 
 }

@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import static me.pugabyte.nexus.utils.Utils.getMin;
+
 public class RandomUtils {
 	@Getter
 	private static final Random random = new Random();
@@ -94,19 +96,7 @@ public class RandomUtils {
 	}
 
 	public static <E> E getWeightedRandom(Map<E, Double> weights) {
-		E result = null;
-		double bestValue = Double.MAX_VALUE;
-
-		for (E element : weights.keySet()) {
-			double value = -Math.log(RandomUtils.getRandom().nextDouble()) / weights.get(element);
-
-			if (value < bestValue) {
-				bestValue = value;
-				result = element;
-			}
-		}
-
-		return result;
+		return getMin(weights.keySet(), element -> -Math.log(RandomUtils.getRandom().nextDouble()) / weights.get(element)).getObject();
 	}
 
 }

@@ -9,6 +9,7 @@ import lombok.NonNull;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
+import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -134,9 +135,8 @@ public class Team implements ConfigurationSerializable {
 			List<Minigamer> toRemove = new ArrayList<>();
 			for (Minigamer minigamer : members) {
 				if (SAFETY < 50) {
-					Player nearestPlayer = getNearestPlayer(minigamer.getPlayer());
-					double distance = nearestPlayer.getLocation().distance(minigamer.getPlayer().getLocation());
-					if (distance < 1)
+					MinMaxResult<Player> result = getNearestPlayer(minigamer.getPlayer());
+					if (result.getValue().doubleValue() < 1)
 						continue;
 				}
 				minigamer.teleport(locs.get(0));

@@ -12,11 +12,14 @@ import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.Location;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.Utils.getMin;
 
 @NoArgsConstructor
 public abstract class _WarpCommand extends CustomCommand {
@@ -97,17 +100,14 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	public Optional<Warp> getNearestWarp(Location location) {
-		Warp nearest = null;
-		double distance = Double.MAX_VALUE;
-		for (Warp warp : new WarpService().getWarpsByType(getWarpType())) {
-			if (location.getWorld() != warp.getLocation().getWorld()) continue;
-			double _distance = location.distance(warp.getLocation());
-			if (_distance < distance) {
-				distance = _distance;
-				nearest = warp;
-			}
-		}
-		return Optional.ofNullable(nearest);
+		List<Warp> warps = new WarpService().getWarpsByType(getWarpType());
+
+		MinMaxResult<Warp> result = getMin(warps, warp -> {
+			if (!location.getWorld().equals(warp.getLocation().getWorld())) return null;
+			return location.distance(warp.getLocation());
+		});
+
+		return Optional.ofNullable(result.getObject());
 	}
 
 	@ConverterFor(Warp.class)

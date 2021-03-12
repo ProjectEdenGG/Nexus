@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.annotations.Disabled;
@@ -39,7 +41,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -82,6 +87,68 @@ public class Utils {
 		Collections.reverse(keys);
 		keys.forEach(key -> reverse.put(key, sorted.get(key)));
 		return reverse;
+	}
+
+	@Data
+	@AllArgsConstructor
+	public static class MinMaxResult<T> {
+		private final T object;
+		private final Number value;
+	}
+
+	@AllArgsConstructor
+	public enum ArithmeticOperator {
+		ADD((n1, n2) -> n1.doubleValue() + n2.doubleValue()),
+		SUBTRACT((n1, n2) -> n1.doubleValue() - n2.doubleValue()),
+		MULTIPLY((n1, n2) -> n1.doubleValue() * n2.doubleValue()),
+		DIVIDE((n1, n2) -> n1.doubleValue() / n2.doubleValue()),
+		POWER((n1, n2) -> Math.pow(n1.doubleValue(), n2.doubleValue()));
+
+		private final BiFunction<Number, Number, Number> function;
+
+		public Number run(Number number1, Number number2) {
+			return function.apply(number1, number2);
+		}
+	}
+
+	@AllArgsConstructor
+	public enum ComparisonOperator {
+		LESS_THAN((n1, n2) -> n1.doubleValue() < n2.doubleValue()),
+		GREATER_THAN((n1, n2) -> n1.doubleValue() > n2.doubleValue()),
+		LESS_THAN_OR_EQUAL_TO((n1, n2) -> n1.doubleValue() <= n2.doubleValue()),
+		GREATER_THAN_OR_EQUAL_TO((n1, n2) -> n1.doubleValue() >= n2.doubleValue());
+
+		private final BiPredicate<Number, Number> predicate;
+
+		public boolean run(Number number1, Number number2) {
+			return predicate.test(number1, number2);
+		}
+	}
+
+	public static <T> MinMaxResult<T> getMax(Collection<T> things, Function<T, Number> getter) {
+		return getMinMax(things, getter, ComparisonOperator.GREATER_THAN);
+	}
+
+	public static <T> MinMaxResult<T> getMin(Collection<T> things, Function<T, Number> getter) {
+		return getMinMax(things, getter, ComparisonOperator.LESS_THAN);
+	}
+
+	private static <T> MinMaxResult<T> getMinMax(Collection<T> things, Function<T, Number> getter, ComparisonOperator operator) {
+		Number number = operator == ComparisonOperator.LESS_THAN ? Double.MAX_VALUE : 0;
+		T result = null;
+
+		for (T thing : things) {
+			Number value = getter.apply(thing);
+			if (value == null)
+				continue;
+
+			if (operator.run(value.doubleValue(), number.doubleValue())) {
+				number = value;
+				result = thing;
+			}
+		}
+
+		return new MinMaxResult<>(result, number);
 	}
 
 	public static Map<String, String> dump(Object object) {

@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
+import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.Utils.getMin;
 
 @Permission("homes.use")
 public class HomesCommand extends CustomCommand {
@@ -69,21 +72,15 @@ public class HomesCommand extends CustomCommand {
 
 	@Path("nearest [player]")
 	void nearest(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
-		Home nearest = null;
-		double distance = Double.MAX_VALUE;
-		for (Home home : service.<HomeOwner>get(player).getHomes()) {
-			if (!world().equals(home.getLocation().getWorld())) continue;
-			double _distance = location().distance(home.getLocation());
-			if (_distance < distance) {
-				distance = _distance;
-				nearest = home;
-			}
-		}
+		MinMaxResult<Home> result = getMin(service.<HomeOwner>get(player).getHomes(), home -> {
+			if (!world().equals(home.getLocation().getWorld())) return null;
+			return location().distance(home.getLocation());
+		});
 
-		if (nearest == null)
+		if (result.getObject() == null)
 			error("No homes found in this world");
 
-		send(PREFIX + "Nearest home is &e" + nearest.getName() + " &3(&e" + (int) distance + " &3blocks away)");
+		send(PREFIX + "Nearest home is &e" + result.getObject().getName() + " &3(&e" + result.getValue().intValue() + " &3blocks away)");
 	}
 
 	@Path("reload")

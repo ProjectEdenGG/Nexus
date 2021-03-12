@@ -21,6 +21,7 @@ import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,6 +58,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static me.pugabyte.nexus.utils.Utils.getMin;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
@@ -178,16 +180,15 @@ public class OrnamentVendor implements Listener {
 
 		Set<ProtectedRegion> regions = Pugmas20.WGUtils.getRegionsLike("pugmas20_trees_" + treeType.name() + "_[0-9]+");
 
-		double distance = Double.MAX_VALUE;
-		int tree = -1;
-		for (ProtectedRegion region : regions) {
-			Location regionLocation = Pugmas20.WGUtils.toLocation(region.getMinimumPoint());
-			double _distance = event.getBlock().getLocation().distance(regionLocation);
-			if (_distance < distance) {
-				distance = _distance;
-				tree = Integer.parseInt(region.getId().split("_")[3]);
-			}
-		}
+		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.WGUtils.toLocation(region.getMinimumPoint())));
+
+		ProtectedRegion region = result.getObject();
+		double distance = result.getValue().doubleValue();
+
+		if (region == null)
+			return;
+
+		int tree = Integer.parseInt(region.getId().split("_")[3]);
 
 		if (tree < 1 || distance > 20)
 			return;
