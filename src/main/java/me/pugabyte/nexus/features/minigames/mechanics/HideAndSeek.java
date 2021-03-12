@@ -111,12 +111,12 @@ public class HideAndSeek extends Infection {
 		Match match = event.getMatch();
 		HideAndSeekMatchData matchData = match.getMatchData();
 		if (matchData.getMapMaterials().size() == 0) {
-			criticalErrorAbort("Arena has no blocks whitelisted!", match);
+			error("Arena has no blocks whitelisted!", match);
 			return;
 		}
 		// the block menu probably accounts for this already but, just to be safe? :P
 		if (matchData.getMapMaterials().stream().anyMatch(material -> !material.isBlock())) {
-			criticalErrorAbort("Map contains non-blocks in its whitelist!", match);
+			error("Map contains non-blocks in its whitelist!", match);
 			return;
 		}
 

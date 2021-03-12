@@ -191,7 +191,6 @@ public class Match {
 			teleportIn();
 			startTimer(); // -> arena.getMechanic().startTimer();
 			arena.getMechanic().onStart(event);
-
 			if (scoreboard != null) scoreboard.update();
 			if (scoreboardTeams != null) scoreboardTeams.update();
 		} catch (Exception ex) {
@@ -314,7 +313,7 @@ public class Match {
 	private void teleportIn() {
 		arena.getTeams().forEach(team -> {
 			if (team.getSpawnpoints().isEmpty())
-				Mechanic.criticalErrorAbort("Team "+team.getName()+" has no spawnpoints!", this);
+				Mechanic.error("Team "+team.getName()+" has no spawnpoints!", this);
 			team.spawn(this);
 		});
 	}

@@ -5,7 +5,7 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.BalancedTeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.utils.MaterialTag;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -15,7 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-public abstract class CaptureTheFlagMechanic extends BalancedTeamMechanic {
+public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@Override
 	public boolean useAlternativeRegen() {

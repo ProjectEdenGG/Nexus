@@ -161,7 +161,6 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void onDeath(MinigamerDeathEvent event) {
-		// TODO: Autobalancing
 		if (event.getAttacker() != null && useAlternativeRegen())
 			event.getAttacker().heal(2);
 
@@ -315,7 +314,7 @@ public abstract class Mechanic implements Listener {
 		return match.getArena().isInRegion(block, region);
 	}
 
-	public static void criticalErrorAbort(String message, Match match) {
+	public static void error(String message, Match match) {
 		Nexus.severe(message);
 		match.broadcast("&c" + message);
 		match.end();

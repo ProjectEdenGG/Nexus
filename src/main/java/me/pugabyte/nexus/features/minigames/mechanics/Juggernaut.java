@@ -10,7 +10,7 @@ import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.JuggernautMatchData;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Juggernaut extends UnbalancedTeamMechanic {
+public class Juggernaut extends TeamMechanic {
 	private static final String TEAM_NAME = "Juggernaut";
 
 	@Override
@@ -72,7 +72,7 @@ public class Juggernaut extends UnbalancedTeamMechanic {
 			Collections.shuffle(minigamers);
 			Optional<Minigamer> minigamer = minigamers.stream().filter(minigamer1 -> !minigamer1.getTeam().getName().equals(TEAM_NAME)).findFirst();
 			if (!minigamer.isPresent()) {
-				criticalErrorAbort("Couldn't find a non-juggernaut player!", victim.getMatch());
+				error("Couldn't find a non-juggernaut player!", victim.getMatch());
 				return;
 			}
 			attacker = minigamer.get();

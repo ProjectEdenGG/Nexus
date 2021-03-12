@@ -15,7 +15,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTick
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.UnbalancedTeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -61,7 +61,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Railgun
 @Scoreboard(teams = false, sidebarType = Type.MATCH)
-public class Murder extends UnbalancedTeamMechanic {
+public class Murder extends TeamMechanic {
 
 	@Override
 	public String getName() {
