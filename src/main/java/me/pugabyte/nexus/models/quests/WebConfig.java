@@ -17,6 +17,7 @@ import lombok.ToString;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -83,17 +84,6 @@ public class WebConfig extends PlayerOwnedObject {
 			return null;
 		}
 
-//		public Route getRouteByUuid(UUID uuid){
-//			if(uuid == null)
-//				return null;
-//
-//			for(Route route : routes) {
-//				if(route.getUuid().equals(uuid))
-//					return route;
-//			}
-//			return null;
-//		}
-
 		public List<Node> getNeighborNodes(Node node) {
 			List<Node> result = new ArrayList<>();
 			Set<UUID> uuids = node.getNeighbors().keySet();
@@ -117,6 +107,10 @@ public class WebConfig extends PlayerOwnedObject {
 			}
 
 			return result;
+		}
+
+		public Node getFurthestNode(Node origin) {
+			return Utils.getMax(getNodes(), node -> node.getLocation().distance(origin.getLocation())).getObject();
 		}
 	}
 
@@ -154,9 +148,6 @@ public class WebConfig extends PlayerOwnedObject {
 	@RequiredArgsConstructor
 	@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 	public static class Route {
-		//		@EqualsAndHashCode.Include
-//		@NonNull
-//		UUID uuid;
 		@EqualsAndHashCode.Include
 		@ToString.Exclude
 		LinkedList<UUID> nodeUuids = new LinkedList<>();
