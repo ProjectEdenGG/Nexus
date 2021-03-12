@@ -219,7 +219,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		for (Team team : teams) required += team.getMinPlayers();
 
 		if (match.getMinigamers().size() < required) {
-			criticalErrorAbort("Not enough players to meet team requirements!", match);
+			error("Not enough players to meet team requirements!", match);
 			return false;
 		}
 
@@ -267,19 +267,22 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		if (!minigamer.isAlive() || match.isEnded())
 			return;
 
-		List<BalanceWrapper> wrappers = getBalanceWrappers(match).stream().filter(w -> !w.getTeam().equals(minigamer.getTeam()) && w.percentageDiscrepancy() > 0 && w.extraPlayerPercentDiscrepancy() >= 0).collect(Collectors.toList());
+		List<BalanceWrapper> wrappers = getBalanceWrappers(match).stream()
+				.filter(wrapper -> !wrapper.getTeam().equals(minigamer.getTeam()) && // only try to auto-balance to other teams
+						wrapper.percentageDiscrepancy() > 0 &&
+						wrapper.extraPlayerPercentDiscrepancy() >= 0).collect(Collectors.toList());
 		if (wrappers.isEmpty())
 			return;
-		// sort teams by closest to being equal
-		wrappers.sort((w1, t1) -> (int) ((w1.extraPlayerPercentDiscrepancy() - t1.extraPlayerPercentDiscrepancy())*100));
+		// sort teams by closest to being equal (inverse of natural sort)
+		wrappers.sort(Collections.reverseOrder());
 		// select randomly if multiple teams are equal
 		List<BalanceWrapper> randomWrappers = new ArrayList<>();
 		randomWrappers.add(wrappers.get(0));
 		double val = wrappers.get(0).extraPlayerPercentDiscrepancy();
-		int c = 1;
-		while (c < wrappers.size() && Math.abs(wrappers.get(c).extraPlayerPercentDiscrepancy() - val) < 0.0001d) {
-			randomWrappers.add(wrappers.get(c));
-			c++;
+		int index = 1; // iterator var
+		while (index < wrappers.size() && Math.abs(wrappers.get(index).extraPlayerPercentDiscrepancy() - val) < 0.0001d) {
+			randomWrappers.add(wrappers.get(index));
+			index++;
 		}
 		// assign team
 		Team team = RandomUtils.randomElement(randomWrappers).getTeam();
@@ -310,7 +313,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		// add players to teams that need them (i.e. have a minimum player count that is not satisfied)
 		while (!minigamers.isEmpty()) {
-			Optional<BalanceWrapper> needsPlayers = wrappers.stream().filter(e -> e.getNeededPlayers() > 0).findFirst();
+			Optional<BalanceWrapper> needsPlayers = wrappers.stream().filter(wrapper -> wrapper.getNeededPlayers() > 0).findFirst();
 			if (!needsPlayers.isPresent())
 				break;
 			Team team = needsPlayers.get().getTeam();
@@ -327,12 +330,11 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			//  select one of them
 			List<BalanceWrapper> equalWrappers = new ArrayList<>();
 			equalWrappers.add(wrappers.get(0));
-			Nexus.severe(String.valueOf(wrappers.get(0).extraPlayerPercentDiscrepancy()));
-			int c = 1;
+			int index = 1;
 			double val = wrappers.get(0).percentageDiscrepancy();
-			while (c < wrappers.size() && Math.abs(wrappers.get(c).percentageDiscrepancy() - val) < 0.0001d) {
-				equalWrappers.add(wrappers.get(c));
-				c++;
+			while (index < wrappers.size() && Math.abs(wrappers.get(index).percentageDiscrepancy() - val) < 0.0001d) {
+				equalWrappers.add(wrappers.get(index));
+				index++;
 			}
 			Team team = RandomUtils.randomElement(equalWrappers).getTeam();
 			minigamers.remove(0).setTeam(team);
@@ -409,12 +411,12 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		/**
 		 * Compares which of two teams has a larger player discrepancy. A negative value means this team has a larger
 		 * discrepancy (to allow for naturally sort in descending order)
-		 * @param balanceWrapper the other team
+		 * @param otherWrapper the other team
 		 * @return a score ranging from -1 to 1
 		 */
 		@Override
-		public int compareTo(@NotNull BalanceWrapper balanceWrapper) {
-			return (int) ((balanceWrapper.percentageDiscrepancy()-percentageDiscrepancy())*100);
+		public int compareTo(@NotNull BalanceWrapper otherWrapper) {
+			return (int) ((otherWrapper.percentageDiscrepancy()-percentageDiscrepancy())*100);
 		}
 	}
 }

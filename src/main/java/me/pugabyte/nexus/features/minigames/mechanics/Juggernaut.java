@@ -72,7 +72,7 @@ public class Juggernaut extends TeamMechanic {
 			Collections.shuffle(minigamers);
 			Optional<Minigamer> minigamer = minigamers.stream().filter(minigamer1 -> !minigamer1.getTeam().getName().equals(TEAM_NAME)).findFirst();
 			if (!minigamer.isPresent()) {
-				criticalErrorAbort("Couldn't find a non-juggernaut player!", victim.getMatch());
+				error("Couldn't find a non-juggernaut player!", victim.getMatch());
 				return;
 			}
 			attacker = minigamer.get();
