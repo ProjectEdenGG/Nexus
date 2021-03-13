@@ -14,11 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +34,7 @@ public class NexusRecipe {
 	public String[] pattern;
 	public Recipe recipe;
 	public RecipeType type = RecipeType.MISC;
+	public NamespacedKey namespacedKey;
 
 	public String getPermission() {
 		return null;
@@ -52,11 +49,11 @@ public class NexusRecipe {
 		return this;
 	}
 
-	public static NexusRecipe shapeless(ItemStack result, Material material, RecipeChoice.MaterialChoice ingredients) {
+	public static NexusRecipe shapeless(ItemStack result, Material material, RecipeChoice.MaterialChoice ingredients, String namespaceKey) {
 		NexusRecipe recipe = new NexusRecipe(result);
 		recipe.getIngredients().add(new ItemStack(material));
 
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + getItemName(result)));
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + getItemName(result) + (namespaceKey != null ? "_" + namespaceKey : "")));
 		ShapelessRecipe bukkitRecipe = new ShapelessRecipe(key, result);
 		bukkitRecipe.addIngredient(material);
 		bukkitRecipe.addIngredient(ingredients);
@@ -67,11 +64,19 @@ public class NexusRecipe {
 		return recipe;
 	}
 
+	public static NexusRecipe shapeless(ItemStack result, Material material, RecipeChoice.MaterialChoice ingredients) {
+		return shapeless(result, material, ingredients, null);
+	}
+
 	public static NexusRecipe shapeless(ItemStack result, Material... ingredients) {
+		return shapeless(result, null, ingredients);
+	}
+
+	public static NexusRecipe shapeless(ItemStack result, String namespaceKey, Material... ingredients) {
 		NexusRecipe recipe = new NexusRecipe(result);
 		Arrays.asList(ingredients).forEach(mat -> recipe.getIngredients().add(new ItemStack(mat)));
 
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + getItemName(result)));
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_" + getItemName(result) + (namespaceKey != null ? "_" + namespaceKey : "")));
 		ShapelessRecipe bukkitRecipe = new ShapelessRecipe(key, result);
 		for (Material material : ingredients)
 			bukkitRecipe.addIngredient(material);
@@ -80,6 +85,7 @@ public class NexusRecipe {
 		CustomRecipes.recipes.add(recipe);
 		return recipe;
 	}
+
 
 	public static NexusRecipe shaped(ItemStack result, String[] pattern, Material... ingredients) {
 		NexusRecipe recipe = new NexusRecipe(result);

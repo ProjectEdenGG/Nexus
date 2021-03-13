@@ -112,20 +112,21 @@ public class CustomRecipes extends Feature implements Listener {
 			List<Material> slabs = new ArrayList<>();
 			for (int i = 0; i < 4; i++)
 				slabs.add(slab);
-			NexusRecipe.shapeless(new ItemStack(block, 2), slabs.toArray(new Material[0])).type(RecipeType.SLABS).register();
+			NexusRecipe.shapeless(new ItemStack(block, 2), "slabs", slabs.toArray(new Material[0])).type(RecipeType.SLABS).register();
 		}
 	}
 
 	public void registerQuartz() {
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ, 4), Material.QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 2), Material.QUARTZ_PILLAR).type(RecipeType.QUARTZ).register();
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_SLAB, 2), Material.CHISELED_QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
+		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ, 4), "quartz_uncrafting" + Material.QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
+		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 2), "quartz_uncrafting", Material.QUARTZ_PILLAR).type(RecipeType.QUARTZ).register();
+		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_SLAB, 2), "quartz_uncrafting", Material.CHISELED_QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
+		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 4), "quartz_uncrafting_bricks", Material.QUARTZ_BRICKS).type(RecipeType.QUARTZ).register();
 	}
 
 	public void registerStoneBricks() {
-		NexusRecipe.shapeless(new ItemStack(Material.STONE, 4), Material.STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICK_SLAB, 2), Material.CHISELED_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICKS), Material.MOSSY_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.STONE, 4), "stonebrick_uncrafting", Material.STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICK_SLAB, 2), "stonebrick_uncrafting", Material.CHISELED_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICKS), "stonebrick_uncrafting", Material.MOSSY_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
 	}
 
 	public void misc() {
