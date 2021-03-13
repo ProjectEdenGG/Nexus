@@ -10,9 +10,11 @@ import me.pugabyte.nexus.models.chat.Channel;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -66,18 +68,32 @@ public class ChatManager {
 			return;
 		}
 
-		Set<Chatter> recipients = channel.getRecipients(chatter);
-		if (channel instanceof PublicChannel) {
-			if (!chatter.canJoin((PublicChannel) channel))
-				throw new InvalidInputException("You do not have permission to speak in that channel");
+		try {
+			Set<Chatter> recipients = channel.getRecipients(chatter);
+			if (channel instanceof PublicChannel) {
+				PublicChannel publicChannel = (PublicChannel) channel;
+				if (!chatter.canJoin(publicChannel))
+					throw new InvalidInputException("You do not have permission to speak in that channel");
 
-			PublicChatEvent event = new PublicChatEvent(chatter, (PublicChannel) channel, message, recipients);
-			if (event.callEvent())
-				process(event);
-		} else if (channel instanceof PrivateChannel) {
-			PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, recipients);
-			if (event.callEvent())
-				process(event);
+				if ("G".equals(publicChannel.getNickname())) {
+					if ("Rai_Rai_".equals(chatter.getName())) {
+						String id = "chat-" + publicChannel.getName().toLowerCase();
+						CooldownService service = new CooldownService();
+						if (!service.check(chatter.getUuid(), id, Time.SECOND.x(15)))
+							throw new InvalidInputException("You are talking too fast! (&e" + service.getDiff(chatter.getUuid(), id) + " left&c)");
+					}
+				}
+
+				PublicChatEvent event = new PublicChatEvent(chatter, publicChannel, message, recipients);
+				if (event.callEvent())
+					process(event);
+			} else if (channel instanceof PrivateChannel) {
+				PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, recipients);
+				if (event.callEvent())
+					process(event);
+			}
+		} catch (InvalidInputException ex) {
+			PlayerUtils.send(chatter.getPlayer(), Chat.PREFIX + "&c" + ex.getMessage());
 		}
 	}
 

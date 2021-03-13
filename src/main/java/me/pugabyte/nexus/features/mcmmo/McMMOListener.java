@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.mcmmo;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.util.player.UserManager;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
@@ -31,6 +32,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Sapling;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +46,15 @@ public class McMMOListener implements Listener {
 	public McMMOListener() {
 		Nexus.registerListener(this);
 		scheduler();
+	}
+
+	private static final LocalDate boostEnd = LocalDate.of(2021, 3, 17);
+	@EventHandler
+	public void onMcMMOExpGain(McMMOPlayerXpGainEvent event) {
+		if (boostEnd.atStartOfDay().isBefore(LocalDateTime.now()))
+			return;
+
+		event.setRawXpGained(event.getRawXpGained() * 2.5f);
 	}
 
 	@EventHandler
