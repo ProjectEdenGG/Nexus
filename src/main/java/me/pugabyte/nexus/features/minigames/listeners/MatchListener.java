@@ -242,7 +242,15 @@ public class MatchListener implements Listener {
 			return;
 		}
 
-		if (!victim.isPlaying() || !victim.isAlive()) return;
+		if (!victim.isPlaying()) return;
+
+		// block damage while in lobby
+		if (!victim.getMatch().isStarted()) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (!victim.isAlive()) return;
 		Mechanic mechanic = victim.getMatch().getMechanic();
 
 		if (victim.isRespawning() || !victim.getMatch().isStarted()) {
