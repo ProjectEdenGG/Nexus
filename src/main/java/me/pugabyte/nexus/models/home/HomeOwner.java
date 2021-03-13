@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -68,6 +69,17 @@ public class HomeOwner extends PlayerOwnedObject {
 				return i;
 
 		return 0;
+	}
+
+	public int getHomesLeft() {
+		int homes = this.homes.size();
+		int max = getMaxHomes();
+		return Math.max(0, max - homes);
+	}
+
+	public void checkHomesLimit() {
+		if (getHomesLeft() <= 0)
+			throw new InvalidInputException("You have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
 	}
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {

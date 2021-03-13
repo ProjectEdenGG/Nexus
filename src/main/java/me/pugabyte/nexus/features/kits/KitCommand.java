@@ -73,7 +73,6 @@ public class KitCommand extends CustomCommand implements Listener {
 		send(PREFIX + "You have been given the &e" + StringUtils.camelCase(kit.getName()) + " &3kit");
 	}
 
-
 	@TabCompleterFor(Kit.class)
 	List<String> tabCompleteKit(String filter) {
 		List<String> list = new ArrayList<>();
