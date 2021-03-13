@@ -16,6 +16,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -26,13 +28,13 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.Utils.sortByValue;
 
 @Permission("group.staff")
-public class NearbyEntitiesCommand extends CustomCommand {
+public class EntitiesCommand extends CustomCommand {
 
-	public NearbyEntitiesCommand(@NonNull CommandEvent event) {
+	public EntitiesCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("[radius]")
+	@Path("near [radius]")
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
@@ -71,8 +73,8 @@ public class NearbyEntitiesCommand extends CustomCommand {
 		});
 	}
 
-	@Path("chunkCount [world] [type]")
-	void count(World world, EntityType type) {
+	@Path("byChunk <type> [world]")
+	void count(EntityType type, @Arg("current") World world) {
 		sortByValue(new HashMap<Chunk, Integer>() {{
 			for (Entity entity : world.getEntities()) {
 				if (entity.getType() == type)
@@ -80,8 +82,55 @@ public class NearbyEntitiesCommand extends CustomCommand {
 			}
 		}}).forEach((chunk, count) -> {
 			if (count > 0)
-				send(json("&e" + chunk.getX() + ", " + chunk.getZ() + " &7- " + count).command("/tppos " + (chunk.getX() * 16) + " 100 " + (chunk.getZ() * 16)));
+				send(getChunkMessage(chunk, count));
 		});
+	}
+
+	@Path("villagers [world]")
+	void villagers(@Arg("current") World world) {
+		HashMap<Chunk, Villager> map = new HashMap<Chunk, Villager>() {{
+			for (Entity entity : world.getEntities())
+				if (entity.getType() == EntityType.VILLAGER)
+					put(entity.getChunk(), (Villager) entity);
+		}};
+
+		HashMap<Chunk, Integer> noBoth = new HashMap<>();
+		HashMap<Chunk, Integer> noProf = new HashMap<>();
+		HashMap<Chunk, Integer> noBeds = new HashMap<>();
+
+		map.forEach((chunk, villager) -> {
+			boolean prof = true;
+			boolean bed = true;
+			if (villager.getProfession() == Profession.NONE)
+				prof = false;
+			if (world.getTime() >= 12541 && world.getTime() <= 23458 && !villager.isSleeping())
+				bed = false;
+
+			if (!prof && !bed)
+				noBoth.put(chunk, noBoth.getOrDefault(chunk, 0) + 1);
+			else {
+				if (!prof)
+					noProf.put(chunk, noProf.getOrDefault(chunk, 0) + 1);
+				if (!bed)
+					noBeds.put(chunk, noBeds.getOrDefault(chunk, 0) + 1);
+			}
+		});
+
+		send(PREFIX + "No profession & no bed");
+		noBoth.forEach((chunk, count) -> { if (count > 0) send(getChunkMessage(chunk, count)); });
+		line();
+
+		send(PREFIX + "No profession");
+		noProf.forEach((chunk, count) -> { if (count > 0) send(getChunkMessage(chunk, count)); });
+		line();
+
+		send(PREFIX + "No bed");
+		noBeds.forEach((chunk, count) -> { if (count > 0) send(getChunkMessage(chunk, count)); });
+		line();
+	}
+
+	private JsonBuilder getChunkMessage(Chunk chunk, Integer count) {
+		return json("&e" + chunk.getX() + ", " + chunk.getZ() + " &7- " + count).command("/tppos " + (chunk.getX() * 16) + " 100 " + (chunk.getZ() * 16) + " " + chunk.getWorld().getName());
 	}
 
 }
