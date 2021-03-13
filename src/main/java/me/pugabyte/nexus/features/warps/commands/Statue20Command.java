@@ -5,13 +5,13 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.statuehunt.StatueHunt;
 import me.pugabyte.nexus.models.statuehunt.StatueHuntService;
 import me.pugabyte.nexus.models.vote.Voter;
@@ -151,7 +151,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 		statueHunt.getFound().add(line);
 		service.save(statueHunt);
-		Nexus.getEcon().depositPlayer(event.getPlayer(), 1000);
+		new BankerService().deposit(event.getPlayer(), 1000);
 		send(event.getPlayer(), PREFIX + "&e$1000 &3has been added to your account for finding &e" + line);
 
 		int found = statueHunt.getFound().size();

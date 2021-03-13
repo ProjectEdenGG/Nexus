@@ -31,8 +31,7 @@ public class PayCommand extends CustomCommand {
 			error("You cannot pay yourself");
 
 		try {
-			self.withdraw(amount);
-			banker.deposit(amount);
+			self.transfer(banker, amount);
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}

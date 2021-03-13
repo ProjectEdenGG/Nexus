@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Sync;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.alerts.Alerts;
 import me.pugabyte.nexus.models.alerts.AlertsService;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
@@ -106,9 +107,9 @@ public class AccountTransferCommand extends CustomCommand {
 		BALANCE {
 			@Override
 			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				double balance = Nexus.getEcon().getBalance(old);
-				Nexus.getEcon().withdrawPlayer(old, balance);
-				Nexus.getEcon().depositPlayer(target, balance);
+				BankerService service = new BankerService();
+				double balance = service.getBalance(old);
+				service.transfer(old, target, balance);
 			}
 		},
 		HOMES {

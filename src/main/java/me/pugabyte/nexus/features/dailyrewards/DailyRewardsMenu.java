@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.dailyreward.Reward;
@@ -157,7 +158,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		} else {
 
 			if (money != null) {
-				Nexus.getEcon().depositPlayer(player, money);
+				new BankerService().deposit(player, money);
 				PlayerUtils.send(player, PREFIX + "&e" + money + " &3has been added to your balance");
 			}
 

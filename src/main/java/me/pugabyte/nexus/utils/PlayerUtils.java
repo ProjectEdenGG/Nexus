@@ -213,14 +213,6 @@ public class PlayerUtils {
 		return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
 	}
 
-	public static void deposit(Player player, double amount) {
-		Nexus.getEcon().depositPlayer(player, amount);
-	}
-
-	public static void withdraw(Player player, double amount) {
-		Nexus.getEcon().withdrawPlayer(player, amount);
-	}
-
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
 //		if (sender instanceof Player)
 //			Utils.callEvent(new PlayerCommandPreprocessEvent((Player) sender, "/" + command));

@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.features.commands;
 
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -19,7 +19,6 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -97,7 +96,7 @@ public class OnlineCommand extends CustomCommand {
 		int ping = PlayerUtils.getPing(player);
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player);
-		double balance = Nexus.getEcon().getBalance(player);
+		String balance = new BankerService().getBalanceFormatted(player);
 		String totalHours = Timespan.of(hours.getTotal()).format();
 		String afk = "";
 
@@ -110,7 +109,7 @@ public class OnlineCommand extends CustomCommand {
 		return afk +
 				"&3Ping: &e" + ping + "\n" +
 				"&3World: &e" + world + "\n" +
-				"&3Balance: &e$" + new DecimalFormat("#.00").format(balance) + "\n" +
+				"&3Balance: &e$" + balance + "\n" +
 				"&3Online for: &e" + onlineFor + "\n" +
 				"&3Hours: &e" + totalHours;
 	}

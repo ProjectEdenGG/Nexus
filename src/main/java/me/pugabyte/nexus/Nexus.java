@@ -33,7 +33,6 @@ import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
-import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -303,9 +302,6 @@ public class Nexus extends JavaPlugin {
 	private static Citizens citizens;
 	@Getter
 	private static BuycraftPluginBase buycraft;
-	@Getter
-	@Setter
-	private static Economy econ = null;
 	@Getter
 	private static Permission perms = null;
 	@Getter

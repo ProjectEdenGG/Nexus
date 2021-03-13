@@ -4,9 +4,9 @@ import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.PushCommand;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.chat.Channel;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
@@ -164,7 +164,7 @@ public enum ScoreboardLine {
 	BALANCE {
 		@Override
 		public String render(Player player) {
-			double balance = Nexus.getEcon().getBalance(player);
+			double balance = new BankerService().getBalance(player);
 
 			String formatted = new DecimalFormat("###,###,###.00").format(balance);
 

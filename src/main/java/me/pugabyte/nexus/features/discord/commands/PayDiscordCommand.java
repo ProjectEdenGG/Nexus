@@ -2,22 +2,21 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
+import me.pugabyte.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
-import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 
-import java.text.NumberFormat;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.KODA)
@@ -43,22 +42,16 @@ public class PayDiscordCommand extends Command {
 				if (player.getUniqueId().equals(target.getUniqueId()))
 					throw new InvalidInputException("You cannot pay yourself");
 
-				if (amount < 0)
-					throw new InvalidInputException("Amount must be greater than $0");
+				if (amount < .01)
+					throw new InvalidInputException("Amount must be greater than $0.01");
 
-				EconomyResponse withdrawal = Nexus.getEcon().withdrawPlayer(player, amount);
-				if (!withdrawal.transactionSuccess())
-					throw new InvalidInputException("You do not have enough money to complete this transaction ("
-							+ NumberFormat.getCurrencyInstance().format(Nexus.getEcon().getBalance(player)) + ")");
+				try {
+					new BankerService().transfer(player, target, amount);
+				} catch (NegativeBalanceException ex) {
+					throw new NotEnoughMoneyException();
+				}
 
-				EconomyResponse deposit = Nexus.getEcon().depositPlayer(target, amount);
-				if (!deposit.transactionSuccess())
-					if (!isNullOrEmpty(deposit.errorMessage))
-						throw new InvalidInputException(deposit.errorMessage);
-					else
-						throw new InvalidInputException("Transaction was not successful");
-
-				String formatted = NumberFormat.getCurrencyInstance().format(amount);
+				String formatted = prettyMoney(amount);
 				if (target.isOnline() && target.getPlayer() != null)
 					PlayerUtils.send(target, "&a" + formatted + " has been received from " + player.getName());
 
