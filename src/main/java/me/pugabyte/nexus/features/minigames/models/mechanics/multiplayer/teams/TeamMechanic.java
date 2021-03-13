@@ -277,8 +277,8 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			return;
 		if (!minigamer.isAlive() || match.isEnded())
 			return;
-
-		// todo: ensure player's current team doesn't need this player (as in .getNeededPlayers())
+		if (minigamer.getTeam().getMinigamers(match).size()-1 < minigamer.getTeam().getMinPlayers())
+			return;
 
 		List<BalanceWrapper> wrappers = getBalanceWrappers(match).stream()
 				.filter(wrapper -> !wrapper.getTeam().equals(minigamer.getTeam()) && // only try to auto-balance to other teams
@@ -376,6 +376,11 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 				percentage = team.getBalancePercentage()/100d;
 		}
 
+		/**
+		 * How many players this team needs to reach its minimum player quota.
+		 * Returns -1 if the team has hit is maximum player count.
+		 * @return integer number of players
+		 */
 		public int getNeededPlayers() {
 			int teamPlayers = team.getMinigamers(match).size();
 			if (team.getMaxPlayers() > -1 && teamPlayers >= team.getMaxPlayers())
