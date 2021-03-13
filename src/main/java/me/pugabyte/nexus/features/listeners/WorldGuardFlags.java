@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -91,7 +92,7 @@ public class WorldGuardFlags implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if (event.getEntity() instanceof Monster || event.getEntity().getType() == EntityType.PHANTOM)
+		if (event.getEntity() instanceof Monster || EntityUtils.getExtraHostileMobs().contains(event.getEntity().getType()))
 			if (WorldGuardFlagUtils.query(event.getLocation(), HOSTILE_SPAWN) == State.DENY)
 				event.setCancelled(true);
 	}
