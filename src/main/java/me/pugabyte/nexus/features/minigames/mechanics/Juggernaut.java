@@ -47,6 +47,11 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
+	public boolean usesAutoBalancing() {
+		return false;
+	}
+
+	@Override
 	public void onDeath(MinigamerDeathEvent event) {
 		Minigamer victim = event.getMinigamer();
 		Minigamer attacker = event.getAttacker();

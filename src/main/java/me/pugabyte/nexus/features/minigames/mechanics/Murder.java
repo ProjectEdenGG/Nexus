@@ -84,6 +84,11 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
+	public boolean usesAutoBalancing() {
+		return false;
+	}
+
+	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 

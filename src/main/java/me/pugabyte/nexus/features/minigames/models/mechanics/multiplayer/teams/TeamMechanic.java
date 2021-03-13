@@ -37,6 +37,15 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return true;
 	}
 
+	/**
+	 * Whether or not this Minigame uses auto-balancing (tries to balance the teams upon player death).
+	 * Recommended to disable for gamemodes that manually set teams like Infection.
+	 * @return whether to enable auto balancing
+	 */
+	public boolean usesAutoBalancing() {
+		return true;
+	}
+
 	@Override
 	public void announceWinners(Match match) {
 		Arena arena = match.getArena();
@@ -264,12 +273,17 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Match match = event.getMatch();
 		Minigamer minigamer = event.getMinigamer();
 		super.onDeath(event);
+		if (!usesAutoBalancing())
+			return;
 		if (!minigamer.isAlive() || match.isEnded())
 			return;
+
+		// todo: ensure player's current team doesn't need this player (as in .getNeededPlayers())
 
 		List<BalanceWrapper> wrappers = getBalanceWrappers(match).stream()
 				.filter(wrapper -> !wrapper.getTeam().equals(minigamer.getTeam()) && // only try to auto-balance to other teams
 						wrapper.percentageDiscrepancy() > 0 &&
+						wrapper.getNeededPlayers() != -1 &&
 						wrapper.extraPlayerPercentDiscrepancy() >= 0).collect(Collectors.toList());
 		if (wrappers.isEmpty())
 			return;

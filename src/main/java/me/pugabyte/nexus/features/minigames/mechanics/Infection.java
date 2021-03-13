@@ -39,6 +39,11 @@ public class Infection extends TeamMechanic {
 		return item.getType() == Material.ARROW;
 	}
 
+	@Override
+	public boolean usesAutoBalancing() {
+		return false;
+	}
+
 	public Team getZombieTeam(Arena arena) {
 		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getColor() == ChatColor.RED).findFirst();
 		return teamOptional.orElse(null);
