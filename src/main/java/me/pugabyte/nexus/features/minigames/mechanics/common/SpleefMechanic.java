@@ -60,6 +60,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 		Match match = MatchManager.getActiveMatchFromLocation(this, event.getLocation());
 		if (match == null) return;
 
+		// TODO: ensure these blocks are part of a floor region?
 		event.blockList().forEach(block -> breakBlock(match, block.getLocation()));
 		event.blockList().clear();
 	}
@@ -67,7 +68,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	public void spawnTnt(Location location) {
 		Location spawnLocation = location.add(0.5, 0, 0.5);
 		TNTPrimed tnt = (TNTPrimed) location.getWorld().spawnEntity(spawnLocation, EntityType.PRIMED_TNT);
-		tnt.setYield(3);
+		tnt.setYield(5);
 		tnt.setFuseTicks(0);
 	}
 
