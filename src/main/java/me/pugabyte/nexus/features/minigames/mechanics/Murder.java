@@ -573,7 +573,7 @@ public class Murder extends TeamMechanic {
 			seconds = event.getTime();
 		// calculate formula
 		List<Location> scrapPoints = ((MurderArena) event.getMatch().getArena()).getScrapPoints();
-		double spawnChancePerPoint = ((1d/3d)/scrapPoints.size()) + ((seconds*event.getMatch().getMinigamers().size())/36000d);
+		double spawnChancePerPoint = ((3d/8d)/scrapPoints.size()) + ((seconds*event.getMatch().getMinigamers().size())/72000d);
 		// drop scraps
 		scrapPoints.forEach(location -> {
 			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)
