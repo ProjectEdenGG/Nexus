@@ -9,7 +9,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 
 @Aliases("tm")
 public class TrademarkCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public TrademarkCommand(CommandEvent event) {
 		super(event);

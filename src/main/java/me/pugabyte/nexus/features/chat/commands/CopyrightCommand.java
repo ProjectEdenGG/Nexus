@@ -7,7 +7,7 @@ import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 
 public class CopyrightCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public CopyrightCommand(CommandEvent event) {
 		super(event);

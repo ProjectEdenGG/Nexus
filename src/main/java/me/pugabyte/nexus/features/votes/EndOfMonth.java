@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.votes;
 
+import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
@@ -49,16 +50,17 @@ public class EndOfMonth {
 				if (data.getMysteryChestWinner() != null)
 					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getUuid()));
 
-				data.getEco30kWinners().forEach(topVoter -> new BankerService().deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000));
-				data.getEco20kWinners().forEach(topVoter -> new BankerService().deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000));
-				data.getEco15kWinners().forEach(topVoter -> new BankerService().deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000));
+				BankerService bankerService = new BankerService();
+				data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000));
+				data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000));
+				data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000));
 			} catch (NexusException ex) {
 				Nexus.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}
 		});
 	}
 
-	@lombok.Data
+	@Data
 	public static class TopVoterData {
 		@NonNull
 		private Month month;

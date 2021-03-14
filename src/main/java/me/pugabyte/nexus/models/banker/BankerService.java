@@ -66,11 +66,13 @@ public class BankerService extends MongoService {
 	}
 
 	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money) {
-		Banker bankerFrom = get(from);
-		Banker bankerTo = get(to);
-		bankerFrom.transfer(bankerTo, money);
-		save(bankerFrom);
-		save(bankerTo);
+		transfer((Banker) get(from), get(to), money);
+	}
+
+	public void transfer(Banker from, Banker to, BigDecimal money) {
+		from.transfer(to, money);
+		save(from);
+		save(to);
 	}
 
 	public void setBalance(OfflinePlayer player, double balance) {

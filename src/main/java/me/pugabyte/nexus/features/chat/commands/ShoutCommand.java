@@ -8,7 +8,7 @@ import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 
 public class ShoutCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public ShoutCommand(CommandEvent event) {
 		super(event);

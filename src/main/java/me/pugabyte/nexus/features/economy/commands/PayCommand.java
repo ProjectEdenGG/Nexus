@@ -31,13 +31,10 @@ public class PayCommand extends CustomCommand {
 			error("You cannot pay yourself");
 
 		try {
-			self.transfer(banker, amount);
+			service.transfer(self, banker, amount);
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}
-
-		service.save(self);
-		service.save(banker);
 
 		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName());
 		if (banker.isOnline())
