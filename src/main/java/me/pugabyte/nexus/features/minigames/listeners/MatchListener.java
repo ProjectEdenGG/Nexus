@@ -138,10 +138,7 @@ public class MatchListener implements Listener {
 		Minigamer victim = PlayerManager.get((Player) event.getEntity());
 		// block damage while in lobby
 
-		if (victim.getMatch() == null)
-			return;
-
-		if (!victim.getMatch().isStarted()) {
+		if (victim.isPlaying() && !victim.getMatch().isStarted()) {
 			event.setCancelled(true);
 			return;
 		}
