@@ -409,6 +409,10 @@ public class Match {
 		return entity;
 	}
 
+	public int getWinningScore() {
+		return arena.getCalculatedWinningScore(this);
+	}
+
 	public static class MatchTimer {
 		private final Match match;
 		private static final List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);

@@ -223,6 +223,11 @@ public abstract class Mechanic implements Listener {
 		Map<String, Integer> lines = new HashMap<>();
 		int lineCount = 0;
 
+		if (match.getWinningScore() > 0) {
+			lines.put("&3&lScore to Win", match.getWinningScore());
+			lineCount++;
+		}
+
 		if (renderTeamNames() && match.getMechanic() instanceof TeamMechanic) {
 			for (Team team : match.getAliveTeams()) {
 				lines.put("- " + team.getColoredName(), team.getScore(match));
