@@ -219,9 +219,6 @@ public class Backpacks extends FunctionalRecipe {
 
 			player.updateInventory();
 		}
-
-
 	}
-
 
 }

@@ -6,12 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -86,7 +81,10 @@ public class GemCommand extends CustomCommand implements Listener {
 		}
 		playAnimation().thenAccept(bool -> {
 			if (!bool) return;
-			inventory.removeItem(gem);
+			if (inventory.getItemInOffHand().equals(gem))
+				inventory.setItemInOffHand(null);
+			else
+				inventory.removeItem(gem);
 			tool.addUnsafeEnchantment(enchantment, level);
 		});
 	}
