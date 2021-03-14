@@ -242,9 +242,11 @@ public abstract class Mechanic implements Listener {
 		int minigamerCount = 0;
 
 		for (Minigamer minigamer : minigamers) {
-			if (lineCount == 14)
-				lines.put(String.format("&o+%d more players...", minigamers.size()-minigamerCount), -1);
-			else if (minigamer.isAlive())
+			if (lineCount == 14) {
+				int minigamersLeft = minigamers.size() - minigamerCount;
+				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), -1);
+				break;
+			 } else if (minigamer.isAlive())
 				lines.put(minigamer.getColoredName(), minigamer.getScore());
 			else
 				// &r to force last
@@ -252,7 +254,6 @@ public abstract class Mechanic implements Listener {
 
 			minigamerCount++;
 			lineCount++;
-			if (lineCount == 15) return lines;
 		}
 
 		return lines;
