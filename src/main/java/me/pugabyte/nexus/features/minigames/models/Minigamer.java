@@ -269,6 +269,13 @@ public class Minigamer {
 					unhideAll();
 					spawn();
 					respawning = false;
+					// hides players who are still respawning (as unhideAll unhides them)
+					match.getMinigamers().forEach(minigamer -> {
+						if (!minigamer.equals(this) && minigamer.isRespawning()) {
+							hidePlayer(minigamer).from(this);
+							hidePlayer(this).from(minigamer);
+						}
+					});
 				}
 			});
 		}
