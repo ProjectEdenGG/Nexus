@@ -136,6 +136,11 @@ public class MatchListener implements Listener {
 		if (!(event.getEntity() instanceof Player)) return;
 
 		Minigamer victim = PlayerManager.get((Player) event.getEntity());
+		// block damage while in lobby
+		if (!victim.getMatch().isStarted()) {
+			event.setCancelled(true);
+			return;
+		}
 		if (!victim.isAlive()) return;
 		Minigamer attacker = null;
 		Projectile projectile = null;
@@ -234,13 +239,9 @@ public class MatchListener implements Listener {
 			}
 		}
 
-		Minigamer victim;
+		if (!(event.getEntity() instanceof Player)) return;
 
-		if (event.getEntity() instanceof Player) {
-			victim = PlayerManager.get((Player) event.getEntity());
-		} else {
-			return;
-		}
+		Minigamer victim = PlayerManager.get((Player) event.getEntity());
 
 		if (!victim.isPlaying()) return;
 
