@@ -92,7 +92,8 @@ public class Match {
 	}
 
 	public List<Team> getAliveTeams() {
-		return getAliveMinigamers().stream().map(Minigamer::getTeam).filter(Objects::nonNull).collect(Collectors.toList());
+		// collects to a set first to remove duplicates
+		return new ArrayList<>(getAliveMinigamers().stream().map(Minigamer::getTeam).filter(Objects::nonNull).collect(Collectors.toSet()));
 	}
 
 	public <T extends Arena> T getArena() {
