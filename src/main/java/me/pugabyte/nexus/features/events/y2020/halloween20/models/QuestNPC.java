@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20.models;
 
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.halloween20.Halloween20;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -54,7 +54,7 @@ public enum QuestNPC {
 						for (Pumpkin pumpkin : Pumpkin.values())
 							builder.shulkerBox(pumpkin.getOriginal().getBlock().getDrops().toArray(new ItemStack[0]));
 						PlayerUtils.giveItem(player, builder.build());
-						Nexus.getEcon().depositPlayer(player, 5000);
+						new BankerService().deposit(player, 5000);
 						PlayerUtils.send(player, "&a$5,000 has been added to your account.");
 					});
 					return Arrays.asList(

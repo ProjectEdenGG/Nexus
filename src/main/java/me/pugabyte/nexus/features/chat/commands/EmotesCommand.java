@@ -17,7 +17,7 @@ import java.util.function.BiFunction;
 
 public class EmotesCommand extends CustomCommand {
 	private final EmoteService service = new EmoteService();
-	private EmoteUser user;
+	private final EmoteUser user;
 
 	public EmotesCommand(@NonNull CommandEvent event) {
 		super(event);

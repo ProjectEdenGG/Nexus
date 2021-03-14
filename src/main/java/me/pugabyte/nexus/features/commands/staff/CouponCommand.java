@@ -22,6 +22,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.coupon.CouponService;
 import me.pugabyte.nexus.models.coupon.Coupons;
 import me.pugabyte.nexus.models.coupon.Coupons.Coupon;
@@ -61,7 +62,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 			@Override
 			void use(PlayerInteractEvent event) {
 				int amount = extractValue(event.getItem());
-				PlayerUtils.runCommandAsConsole("eco give " + event.getPlayer().getName() + " " + amount);
+				new BankerService().deposit(event.getPlayer(), amount);
 				ItemStack item = event.getItem();
 				item.setAmount(item.getAmount() - 1);
 			}
@@ -114,7 +115,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		PUGMAS20_ADVENT_5000(true) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				PlayerUtils.runCommandAsConsole("eco give " + event.getPlayer().getName() + " 5000");
+				new BankerService().deposit(event.getPlayer(), 5000);
 			}
 		},
 		PUGMAS20_ITEM_PAINTING(false) {

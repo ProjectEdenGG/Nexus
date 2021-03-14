@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Aliases({"ch", "chat"})
 @Redirect(from = "/qm", to = "/ch qm")
 public class ChannelCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public ChannelCommand(@NonNull CommandEvent event) {
 		super(event);

@@ -19,6 +19,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -104,10 +105,16 @@ public class Shop extends PlayerOwnedObject {
 	}
 
 	public void addHolding(List<ItemStack> itemStacks) {
+		if (isMarket())
+			return;
+
 		itemStacks.forEach(this::addHolding);
 	}
 
 	public void addHolding(ItemStack itemStack) {
+		if (isMarket())
+			return;
+
 		ItemUtils.combine(holding, itemStack.clone());
 	}
 
@@ -201,7 +208,7 @@ public class Shop extends PlayerOwnedObject {
 
 		public double getCalculatedStock() {
 			if (exchangeType == ExchangeType.BUY && stock == -1)
-				return Nexus.getEcon().getBalance(getShop().getOfflinePlayer());
+				return new BankerService().getBalance(getShop().getOfflinePlayer());
 			else
 				return stock;
 		}
@@ -383,15 +390,12 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Player customer) {
 			checkStock();
 
-			if (!Nexus.getEcon().has(customer, price))
+			if (!new BankerService().has(customer, price))
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
-			if (price > 0) {
-				Nexus.getEcon().withdrawPlayer(customer, price);
-				if (!product.isMarket())
-					Nexus.getEcon().depositPlayer(product.getShop().getOfflinePlayer(), price);
-			}
+			if (price > 0)
+				new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), price);
 			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
@@ -450,8 +454,7 @@ public class Shop extends PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
-			if (!product.isMarket())
-				product.getShop().addHolding(price);
+			product.getShop().addHolding(price);
 			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price));
@@ -509,14 +512,10 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 
 			product.setStock(product.getStock() - price);
-			if (price > 0) {
-				if (!product.isMarket())
-					Nexus.getEcon().withdrawPlayer(product.getShop().getOfflinePlayer(), price);
-				Nexus.getEcon().depositPlayer(customer, price);
-			}
+			if (price > 0)
+				new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, price);
 			customer.getInventory().removeItem(product.getItem());
-			if (!product.isMarket())
-				product.getShop().addHolding(product.getItem());
+			product.getShop().addHolding(product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for " + prettyMoney(price));
 		}

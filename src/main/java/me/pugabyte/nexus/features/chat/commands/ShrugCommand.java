@@ -7,7 +7,7 @@ import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 
 public class ShrugCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public ShrugCommand(CommandEvent event) {
 		super(event);

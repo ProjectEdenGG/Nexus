@@ -27,17 +27,12 @@ public class SetHomeCommand extends CustomCommand {
 	void setHome(@Arg("home") String homeName) {
 		Optional<Home> home = homeOwner.getHome(homeName);
 
-		int homes = homeOwner.getHomes().size();
-		int max = homeOwner.getMaxHomes();
-		int left = Math.max(0, max - homes);
-		if (left <= 0 && !home.isPresent())
-			error("You have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
-
 		String message;
 		if (home.isPresent()) {
 			home.get().setLocation(location());
 			message = "Updated location of home \"&e" + homeName + "&3\"";
 		} else {
+			homeOwner.checkHomesLimit();
 			homeOwner.add(Home.builder()
 					.uuid(homeOwner.getUuid())
 					.name(homeName)

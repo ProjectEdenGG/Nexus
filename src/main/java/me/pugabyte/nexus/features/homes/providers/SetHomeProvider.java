@@ -65,8 +65,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 
 		AtomicInteger column = new AtomicInteger(1);
 		options.forEach((name, item) ->
-				contents.set(1, column.getAndIncrement(), ClickableItem.from(nameItem(item, "&e" + camelCase(name)),
-				e -> {
+				contents.set(1, column.getAndIncrement(), ClickableItem.from(nameItem(item, "&e" + camelCase(name)), e -> {
 					try {
 						HomesMenu.edit(addHome(name, item));
 					} catch (Exception ex) {
@@ -76,6 +75,9 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	private Home addHome(String homeName, ItemStack itemStack) {
+		if (!homeOwner.getHome(homeName).isPresent())
+			homeOwner.checkHomesLimit();
+
 		Home home = Home.builder()
 				.uuid(homeOwner.getUuid())
 				.name(homeName)

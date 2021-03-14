@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.economy.NexusEconomy;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.listeners.LiteBans;
 import me.pugabyte.nexus.features.menus.SignMenuFactory;
@@ -33,7 +32,6 @@ import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
-import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -230,7 +228,7 @@ public class Nexus extends JavaPlugin {
 			new Timer(" Hooks", this::hooks);
 			new Timer(" Features", () -> {
 				features = new Features(this, "me.pugabyte.nexus.features");
-				features.register(Chat.class, Discord.class, NexusEconomy.class); // prioritize
+				features.register(Chat.class, Discord.class); // prioritize
 				features.registerAll();
 			});
 			new Timer(" Commands", () -> {
@@ -303,9 +301,6 @@ public class Nexus extends JavaPlugin {
 	private static Citizens citizens;
 	@Getter
 	private static BuycraftPluginBase buycraft;
-	@Getter
-	@Setter
-	private static Economy econ = null;
 	@Getter
 	private static Permission perms = null;
 	@Getter

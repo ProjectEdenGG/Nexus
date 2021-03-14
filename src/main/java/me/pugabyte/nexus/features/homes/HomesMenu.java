@@ -157,6 +157,7 @@ public class HomesMenu {
 						if (homeOwner.getHome(lines[0]).isPresent())
 							PlayerUtils.send(homeOwner.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
+							homeOwner.checkHomesLimit();
 							homeOwner.add(Home.builder()
 									.uuid(homeOwner.getUuid())
 									.name(lines[0])

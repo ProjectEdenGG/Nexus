@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -9,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
 import me.pugabyte.nexus.models.godmode.Godmode;
@@ -22,7 +22,6 @@ import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -107,7 +106,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Location: &c" + ex.getMessage());
 		}
 
-		json.newline().next("&3Balance: &e" + NumberFormat.getCurrencyInstance().format(Nexus.getEcon().getBalance(offlinePlayer)));
+		json.newline().next("&3Balance: &e" + new BankerService().getBalanceFormatted(offlinePlayer));
 
 		if (offlinePlayer.isOnline() && player != null) {
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode()));

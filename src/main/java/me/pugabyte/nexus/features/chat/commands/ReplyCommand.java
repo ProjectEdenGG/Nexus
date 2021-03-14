@@ -11,7 +11,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 
 @Aliases("r")
 public class ReplyCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public ReplyCommand(@NonNull CommandEvent event) {
 		super(event);

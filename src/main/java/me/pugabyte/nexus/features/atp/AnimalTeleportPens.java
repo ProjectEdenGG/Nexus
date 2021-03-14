@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.atp;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -124,7 +124,7 @@ public class AnimalTeleportPens {
 			return;
 		}
 		int price = getPrice(entities);
-		double balance = Nexus.getEcon().getBalance(player);
+		double balance = new BankerService().getBalance(player);
 		if (balance < price) {
 			PlayerUtils.send(player, PREFIX + "&cYou do not have enough money to use the ATP");
 			return;
@@ -146,7 +146,7 @@ public class AnimalTeleportPens {
 		}
 		Tasks.wait(4, () -> {
 			player.teleport(toLoc);
-			Nexus.getEcon().withdrawPlayer(player, price);
+			new BankerService().withdraw(player, price);
 		});
 	}
 

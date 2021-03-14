@@ -7,6 +7,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage;
 import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -63,7 +64,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 						return;
 
 				if (item.getMoney() > 0)
-					Nexus.getEcon().depositPlayer(player, item.getMoney());
+					new BankerService().deposit(player, item.getMoney());
 				if (item.getConsoleCommand() != null && item.getConsoleCommand().length() > 0)
 					PlayerUtils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)

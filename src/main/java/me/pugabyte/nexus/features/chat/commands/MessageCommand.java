@@ -12,7 +12,7 @@ import me.pugabyte.nexus.models.chat.PrivateChannel;
 
 @Aliases({"m", "msg", "w", "whisper", "t", "tell", "pm", "dm"})
 public class MessageCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public MessageCommand(@NonNull CommandEvent event) {
 		super(event);

@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.models.banker;
 
-import com.dieselpoint.norm.Transaction;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -15,11 +14,10 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceExcep
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.BigDecimalConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
@@ -36,7 +34,6 @@ public class Banker extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private BigDecimal balance = BigDecimal.valueOf(500);
-	private List<Transaction> history = new ArrayList<>();
 
 	public String getBalanceFormatted() {
 		return prettyMoney(balance);
@@ -64,6 +61,23 @@ public class Banker extends PlayerOwnedObject {
 
 	public void withdraw(BigDecimal money) {
 		setBalance(balance.subtract(money));
+	}
+
+	public void transfer(OfflinePlayer from, double amount) {
+		transfer(from, BigDecimal.valueOf(amount));
+	}
+
+	public void transfer(OfflinePlayer from, BigDecimal amount) {
+		transfer(new BankerService().<Banker>get(from), amount);
+	}
+
+	public void transfer(Banker to, BigDecimal amount) {
+		withdraw(amount);
+		to.deposit(amount);
+	}
+
+	public void setBalance(double balance) {
+		setBalance(BigDecimal.valueOf(balance));
 	}
 
 	public void setBalance(BigDecimal balance) {

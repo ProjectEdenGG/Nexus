@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models.achievement;
 
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.achievements.events.AchievementCompletedEvent;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.EnumUtils;
@@ -482,7 +482,7 @@ public enum Achievement {
 				Hours hours = new HoursService().get(achievementPlayer.getPlayer());
 				return hours.getTotal() / 60 / 60;
 			case BALANCE:
-				return (int) Nexus.getEcon().getBalance(achievementPlayer.getPlayer());
+				return (int) new BankerService().getBalance(achievementPlayer.getPlayer());
 		}
 		return 0;
 	}

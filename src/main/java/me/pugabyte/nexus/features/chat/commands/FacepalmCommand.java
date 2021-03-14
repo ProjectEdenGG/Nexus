@@ -7,7 +7,7 @@ import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 
 public class FacepalmCommand extends CustomCommand {
-	private Chatter chatter;
+	private final Chatter chatter;
 
 	public FacepalmCommand(CommandEvent event) {
 		super(event);

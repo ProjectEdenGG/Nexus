@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.features.events.y2020.easter20;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -78,7 +78,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 		clicked++;
 		if (clicked == 19) {
 			send(player, PREFIX + "You have found all the eggs! You have won &e$10,000");
-			Nexus.getEcon().depositPlayer(player, 10000);
+			new BankerService().deposit(player, 10000);
 		} else if (clicked % 3 == 0) {
 			ItemStack headPaper = new ItemBuilder(Material.PAPER).name("&3Coupon for 1 HDB head").lore("&eThis coupon is valid for one head from the head database. " +
 					"Claim it with a staff member").build();
@@ -86,7 +86,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &eone head database coupon");
 		} else {
 			send(player, PREFIX + "You have found &e" + name + "'s &3easter egg. You have been given &e$500");
-			Nexus.getEcon().depositPlayer(player, 500);
+			new BankerService().deposit(player, 500);
 		}
 		setting.setValue(clicked + "");
 		service.save(setting);
