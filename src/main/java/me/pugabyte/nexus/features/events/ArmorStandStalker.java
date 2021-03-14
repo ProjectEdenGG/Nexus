@@ -27,7 +27,13 @@ public class ArmorStandStalker {
 				Location location = stalker.getLocation();
 				if (location == null)
 					continue;
-				ArmorStand armorStand = (ArmorStand) EntityUtils.getNearestEntityType(location, EntityType.ARMOR_STAND, 1.5);
+
+				ArmorStand armorStand;
+				try {
+					armorStand = (ArmorStand) EntityUtils.getNearestEntityType(location, EntityType.ARMOR_STAND, 1.5);
+				} catch (Exception e) {
+					continue;
+				}
 				if (armorStand == null)
 					continue;
 

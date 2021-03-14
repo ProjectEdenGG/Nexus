@@ -10,6 +10,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,7 +72,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		resourcePack(event.getPlayer());
+		Tasks.wait(Time.SECOND.x(1), () -> resourcePack(event.getPlayer()));
 	}
 
 	@EventHandler
