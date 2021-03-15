@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.votes;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.crates.models.CrateType;
+import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -83,6 +84,11 @@ public class VoteCommand extends CustomCommand {
 				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(new Nerd(player()).getName())));
 			}
 		}
+	}
+
+	@Path("points store [page]")
+	void run(@Arg("1") int page) {
+		VPS.open(player(), page);
 	}
 
 	@Path("points [player]")

@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.vote.TopVoter;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -51,9 +52,9 @@ public class EndOfMonth {
 					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getUuid()));
 
 				BankerService bankerService = new BankerService();
-				data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000));
-				data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000));
-				data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000));
+				data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000, TransactionCause.VOTE_REWARD));
+				data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000, TransactionCause.VOTE_REWARD));
+				data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000, TransactionCause.VOTE_REWARD));
 			} catch (NexusException ex) {
 				Nexus.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}

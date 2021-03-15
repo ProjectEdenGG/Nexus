@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.Gate;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -112,7 +113,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		Tasks.wait(Time.SECOND.x(6), () -> {
 			PlayerUtils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simply use &c/halloween20 &3to be teleported inside of the gate.");
 			Tasks.wait(Time.SECOND.x(5), () -> {
-				new BankerService().deposit(player, 10000);
+				new BankerService().deposit(player, 10000, TransactionCause.EVENT);
 				PlayerUtils.send(player, "&a$10,000 has been added to your account.");
 				//new MysteryChest(player).give(2, RewardChestType.MYSTERY);
 			});

@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -46,7 +47,7 @@ public class PayDiscordCommand extends Command {
 					throw new InvalidInputException("Amount must be greater than $0.01");
 
 				try {
-					new BankerService().transfer(player, target, amount);
+					new BankerService().transfer(player, target, amount, TransactionCause.PAY);
 				} catch (NegativeBalanceException ex) {
 					throw new NotEnoughMoneyException();
 				}

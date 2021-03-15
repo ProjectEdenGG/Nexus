@@ -20,6 +20,8 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -36,6 +38,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -394,8 +397,10 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
-			if (price > 0)
-				new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), price);
+			if (price > 0) {
+				Transaction transaction = TransactionCause.SHOP_SELL.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), pretty(product.getItem()));
+				new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), transaction);
+			}
 			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
@@ -512,8 +517,10 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 
 			product.setStock(product.getStock() - price);
-			if (price > 0)
-				new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, price);
+			if (price > 0) {
+				Transaction transaction = TransactionCause.SHOP_SELL.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), pretty(product.getItem()));
+				new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), transaction);
+			}
 			customer.getInventory().removeItem(product.getItem());
 			product.getShop().addHolding(product.getItem());
 			new ShopService().save(product.getShop());

@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.statuehunt.StatueHunt;
 import me.pugabyte.nexus.models.statuehunt.StatueHuntService;
 import me.pugabyte.nexus.models.vote.Voter;
@@ -151,7 +152,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 		statueHunt.getFound().add(line);
 		service.save(statueHunt);
-		new BankerService().deposit(event.getPlayer(), 1000);
+		new BankerService().deposit(event.getPlayer(), 1000, TransactionCause.EVENT);
 		send(event.getPlayer(), PREFIX + "&e$1000 &3has been added to your account for finding &e" + line);
 
 		int found = statueHunt.getFound().size();

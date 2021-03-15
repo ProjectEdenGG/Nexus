@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -146,7 +147,7 @@ public class AnimalTeleportPens {
 		}
 		Tasks.wait(4, () -> {
 			player.teleport(toLoc);
-			new BankerService().withdraw(player, price);
+			new BankerService().withdraw(player, price, TransactionCause.ANIMAL_TELEPORT_PEN);
 		});
 	}
 

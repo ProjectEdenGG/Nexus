@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -195,17 +194,13 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 		if (arena.ownsRegion(event.getRegion(), "track")) {
 			if (!(event.getParentEvent() instanceof PlayerMoveEvent) || !arena.isInRegion(((PlayerMoveEvent) event.getParentEvent()).getTo(), "track"))
-				if (match.isStarted()) {
-					Nexus.debug("Cancelling " + minigamer.getName() + " leaving HITW track region");
+				if (match.isStarted())
 					event.setCancelled(true);
-				}
 		}
 
 		if (arena.ownsRegion(event.getRegion(), "lobby")) {
-			if (!match.isStarted()) {
-				Nexus.debug("Cancelling " + minigamer.getName() + " leaving HITW lobby region");
+			if (!match.isStarted())
 				event.setCancelled(true);
-			}
 		}
 	}
 

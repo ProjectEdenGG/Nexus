@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceExcep
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.utils.StringUtils;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public class PayCommand extends CustomCommand {
 			error("You cannot pay yourself");
 
 		try {
-			service.transfer(self, banker, amount);
+			service.transfer(self, banker, amount, TransactionCause.PAY);
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}

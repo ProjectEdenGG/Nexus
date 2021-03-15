@@ -95,6 +95,10 @@ public class Nexus extends JavaPlugin {
 		}
 	}
 
+	public static boolean isUUID0(UUID uuid) {
+		return UUID0.equals(uuid);
+	}
+
 	@Getter
 	@Setter
 	private static boolean debug = false;

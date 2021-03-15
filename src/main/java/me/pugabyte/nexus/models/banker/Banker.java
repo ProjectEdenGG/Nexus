@@ -15,12 +15,14 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceExcep
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.BigDecimalConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import org.bukkit.OfflinePlayer;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import static me.pugabyte.nexus.models.banker.BankerService.rounded;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 @Data
@@ -35,67 +37,66 @@ public class Banker extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private BigDecimal balance = BigDecimal.valueOf(500);
+	private List<Transaction> transactions = new ArrayList<>();
 
 	public boolean isMarket() {
-		return Nexus.getUUID0().equals(uuid);
+		return Nexus.isUUID0(uuid);
 	}
 
 	public String getBalanceFormatted() {
 		return prettyMoney(balance);
 	}
 
-	public boolean has(double money) {
-		return has(BigDecimal.valueOf(money));
+	public boolean has(double amount) {
+		return has(BigDecimal.valueOf(amount));
 	}
 
-	public boolean has(BigDecimal money) {
-		return balance.compareTo(money) >= 0;
+	public boolean has(BigDecimal amount) {
+		return balance.compareTo(amount) >= 0;
 	}
 
-	public void deposit(double money) {
-		deposit(BigDecimal.valueOf(money));
+	void deposit(BigDecimal amount, TransactionCause cause) {
+		deposit(amount, cause.of(null, getOfflinePlayer(), amount));
 	}
 
-	public void deposit(BigDecimal money) {
-		setBalance(balance.add(money));
+	void deposit(BigDecimal amount, Transaction transaction) {
+		setBalance(balance.add(amount), transaction);
 	}
 
-	public void withdraw(double money) {
-		withdraw(BigDecimal.valueOf(money));
+	void withdraw(BigDecimal amount, TransactionCause cause) {
+		withdraw(amount, cause.of(null, getOfflinePlayer(), amount));
 	}
 
-	public void withdraw(BigDecimal money) {
-		setBalance(balance.subtract(money));
+	void withdraw(BigDecimal amount, Transaction transaction) {
+		setBalance(balance.subtract(amount), transaction);
 	}
 
-	public void transfer(OfflinePlayer from, double amount) {
-		transfer(from, BigDecimal.valueOf(amount));
+	void transfer(Banker to, BigDecimal amount, TransactionCause cause) {
+		transfer(to, amount, cause.of(getOfflinePlayer(), to.getOfflinePlayer(), amount));
 	}
 
-	public void transfer(OfflinePlayer from, BigDecimal amount) {
-		transfer(new BankerService().<Banker>get(from), amount);
+	void transfer(Banker to, BigDecimal amount, Transaction transaction) {
+		withdraw(amount, transaction);
+		to.deposit(amount, transaction);
 	}
 
-	public void transfer(Banker to, BigDecimal amount) {
-		withdraw(amount);
-		to.deposit(amount);
+	void setBalance(BigDecimal balance, TransactionCause cause) {
+		setBalance(balance, cause.of(getOfflinePlayer(), balance));
 	}
 
-	public void setBalance(double balance) {
-		setBalance(BigDecimal.valueOf(balance));
-	}
-
-	public void setBalance(BigDecimal balance) {
+	void setBalance(BigDecimal balance, Transaction transaction) {
 		if (isMarket())
 			return;
 
 		if (balance.signum() == -1)
 			throw new NegativeBalanceException();
 
-		BigDecimal newBalance = balance.setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal newBalance = rounded(balance);
 
-		if (new BalanceChangeEvent(getOfflinePlayer(), this.balance, newBalance).callEvent())
+		if (new BalanceChangeEvent(getOfflinePlayer(), this.balance, newBalance).callEvent()) {
+			transactions.add(transaction);
 			this.balance = newBalance;
+		}
 	}
 
 }

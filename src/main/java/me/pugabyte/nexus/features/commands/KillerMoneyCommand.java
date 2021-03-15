@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.killermoney.KillerMoney;
 import me.pugabyte.nexus.models.killermoney.KillerMoneyService;
 import me.pugabyte.nexus.models.setting.Setting;
@@ -162,7 +163,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			playerBoost = km.getBoost();
 
 		double money = mob.getRandomValue() * BOOST * playerBoost;
-		new BankerService().deposit(player, money);
+		new BankerService().deposit(player, money, TransactionCause.KILLER_MONEY);
 		if (!km.isMuted())
 			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
 					"&3 and received &e" + formatter.format(money));
