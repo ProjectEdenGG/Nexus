@@ -69,7 +69,7 @@ public class WitherCommand extends CustomCommand {
 			error("You cannot invite players after the fight has started");
 		send(PREFIX + "You have invited &e" + player.getName() + " &3to fight the wither with you");
 		send(player, json(PREFIX + "&e" + player().getName() + " &3has invited you to challenge the wither in " +
-				WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode.")
+				WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode. ")
 				.next("&e&lClick here to join").command("/wither join").hover("&eYou will be added to the wither queue"));
 	}
 
@@ -111,7 +111,6 @@ public class WitherCommand extends CustomCommand {
 		if (!WitherChallenge.currentFight.getParty().contains(uuid()))
 			error("You are not in the current party.");
 		if (WitherChallenge.currentFight.isStarted()) {
-			WitherChallenge.currentFight.getAlivePlayers().remove(uuid());
 			WitherChallenge.currentFight.processPlayerQuit(player(), "quit");
 		} else if (WitherChallenge.currentFight.getParty().size() == 1) {
 			WitherChallenge.reset();
@@ -163,10 +162,12 @@ public class WitherCommand extends CustomCommand {
 	void spectate() {
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
-		if (WitherChallenge.currentFight.isStarted())
+		if (!WitherChallenge.currentFight.isStarted())
 			error("The current fight has not started yet. Please wait for it to start");
 		if (WitherChallenge.currentFight.getSpectators().contains(uuid()))
 			error("You are already spectating the current fight");
+		if (WitherChallenge.currentFight.getAlivePlayers().contains(uuid()))
+			error("You cannot spectate the match as a party member");
 		player().teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
 		player().setGameMode(GameMode.SPECTATOR);
 	}

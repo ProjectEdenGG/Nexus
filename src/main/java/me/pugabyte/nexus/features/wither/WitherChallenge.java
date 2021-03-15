@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +48,10 @@ public class WitherChallenge extends Feature implements Listener {
 	public static void reset(boolean processQueue) {
 		if (currentFight != null) {
 			Nexus.unregisterListener(currentFight);
+			currentFight.tasks.forEach(Tasks::cancel);
 			if (currentFight.wither != null)
 				currentFight.wither.remove();
+			currentFight.scoreboardTeams.values().forEach(Team::unregister);
 			currentFight = null;
 		}
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils("events");
