@@ -77,13 +77,12 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (minigamer.getMatch() == null) return;
 		if (minigamer.canTeleport()) return;
-		if (event.getTo() != null)
-			if (event.getFrom().getWorld() == event.getTo().getWorld())
-				if (event.getFrom().distance(event.getTo()) < 2)
-					return;
+		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
+			if (event.getFrom().distance(event.getTo()) < 2)
+				return;
 
 		event.setCancelled(true);
-		Nexus.log("Minigamer tried to teleport to " + event.getTo() + " but was denied");
+		Nexus.log("Cancelled minigamer " + minigamer.getName() + " teleporting from " + event.getFrom() + " to " + event.getTo());
 		minigamer.tell("You cannot teleport while in a game!");
 	}
 

@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -30,6 +31,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -192,11 +194,18 @@ public class HoleInTheWall extends TeamlessMechanic {
 		HoleInTheWallArena arena = match.getArena();
 
 		if (arena.ownsRegion(event.getRegion(), "track")) {
-			if (match.isStarted())
+			if (!(event.getParentEvent() instanceof PlayerMoveEvent) || !arena.isInRegion(((PlayerMoveEvent) event.getParentEvent()).getTo(), "track"))
+				if (match.isStarted()) {
+					Nexus.debug("Cancelling " + minigamer.getName() + " leaving HITW track region");
+					event.setCancelled(true);
+				}
+		}
+
+		if (arena.ownsRegion(event.getRegion(), "lobby")) {
+			if (!match.isStarted()) {
+				Nexus.debug("Cancelling " + minigamer.getName() + " leaving HITW lobby region");
 				event.setCancelled(true);
-		} else if (arena.ownsRegion(event.getRegion(), "lobby")) {
-			if (!match.isStarted())
-				event.setCancelled(true);
+			}
 		}
 	}
 

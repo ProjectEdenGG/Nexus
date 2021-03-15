@@ -88,4 +88,3 @@ public class BankerService extends MongoService {
 	}
 
 }
-

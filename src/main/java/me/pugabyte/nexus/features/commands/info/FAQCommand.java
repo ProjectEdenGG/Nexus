@@ -64,7 +64,7 @@ public class FAQCommand extends CustomCommand {
 		send(json("&e[+] &3You start out as a &7Guest&3."));
 		send(json("&e[+] &3Play for 24 hours to become &fMember&3.").command("/hours").hover("&eClick here &3to view how long you've played"));
 		send(json("&e[+] &3Follow the rules, and you might get promoted to &eTrusted&3."));
-		send(json("&e[+] &3Enforce the rules and be a role model to become &6Elite&3."));
+		send(json("&e[+] &3Be a role model to become &6Elite&3."));
 		line();
 		back();
 	}

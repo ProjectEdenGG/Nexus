@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.BigDecimalConverter;
@@ -34,6 +35,10 @@ public class Banker extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private BigDecimal balance = BigDecimal.valueOf(500);
+
+	public boolean isMarket() {
+		return Nexus.getUUID0().equals(uuid);
+	}
 
 	public String getBalanceFormatted() {
 		return prettyMoney(balance);
@@ -81,6 +86,9 @@ public class Banker extends PlayerOwnedObject {
 	}
 
 	public void setBalance(BigDecimal balance) {
+		if (isMarket())
+			return;
+
 		if (balance.signum() == -1)
 			throw new NegativeBalanceException();
 
