@@ -41,7 +41,7 @@ public class Transaction {
 		if (sender != null && !Nexus.isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
 			this.senderOldBalance = rounded(new BankerService().<Banker>get(sender).getBalance());
-			this.senderNewBalance = rounded(this.senderOldBalance.add(amount));
+			this.senderNewBalance = rounded(this.senderOldBalance.subtract(amount));
 		}
 
 		this.amount = amount;
