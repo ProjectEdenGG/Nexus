@@ -5,8 +5,6 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.warps.Warps;
-import me.pugabyte.nexus.features.wither.fights.CorruptedFight;
-import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -16,9 +14,6 @@ import me.pugabyte.nexus.utils.*;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -193,20 +188,6 @@ public class WitherCommand extends CustomCommand {
 	void maintenance() {
 		WitherChallenge.maintenance = !WitherChallenge.maintenance;
 		send(PREFIX + "Wither arena maintenance mode " + (WitherChallenge.maintenance ? "&aenabled" : "&cdisabled"));
-	}
-
-	@Path("testCounter <counter>")
-	void testCounter(WitherFight.CounterAttack attack) {
-		attack.execute(new ArrayList<UUID>() {{
-			add(uuid());
-		}});
-	}
-
-	@Path("testCorruptedCounter <counter>")
-	void testCounter(CorruptedFight.CorruptedCounterAttacks attack) {
-		attack.execute(new ArrayList<UUID>() {{
-			add(uuid());
-		}});
 	}
 
 }
