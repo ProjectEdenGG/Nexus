@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.CaptureTheFlagMatch
 import me.pugabyte.nexus.features.minigames.models.matchdata.Flag;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
@@ -101,7 +102,9 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 			matchData.removeFlagCarrier(minigamer);
 
-			event.getMatch().broadcast(minigamer.getColoredName() + " &3dropped " + carriedFlag.getTeam().getColoredName() + "&3's flag");
+			Match match = event.getMatch();
+			flagMessage(match, minigamer.getTeam(), minigamer, minigamer.getColoredName() + " &3dropped " + carriedFlag.getTeam().getColoredName() + "&3's flag", true);
+			flagMessage(match, carriedFlag.getTeam(), event.getAttacker(), minigamer.getColoredName() + "&3 dropped your flag", false);
 		}
 		super.onDeath(event);
 	}
@@ -110,7 +113,12 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = match.getMatchData();
 
-		match.broadcast(minigamer.getColoredName() + " &3returned " + minigamer.getTeam().getColoredName() + "&3's flag");
+		String message = minigamer.getColoredName() + "&3 returned " + minigamer.getTeam().getColoredName() + "&3's flag";
+		match.broadcast(message);
+		// broadcast sound & msg to other team(s)
+		match.getAliveTeams().stream().filter(team -> !team.equals(minigamer.getTeam())).forEach(team -> flagMessage(match, team, message, Sound.BLOCK_BEACON_DEACTIVATE, 1.1f, false));
+		
+		flagMessage(match, minigamer.getTeam(), minigamer, minigamer.getColoredName() + "&3 returned your flag", false);
 
 		Flag flag = matchData.getFlag(minigamer.getTeam());
 		flag.respawn();
@@ -121,7 +129,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = match.getMatchData();
 
-		match.broadcast(minigamer.getColoredName() + " &3captured " + team.getColoredName() + "&3's flag");
+		flagMessage(match, minigamer.getTeam(), minigamer, minigamer.getColoredName() + "&3 captured " + team.getColoredName() + "&3's flag", true);
+		flagMessage(match, team, minigamer.getColoredName() + "&3 captured your flag", Sound.ENTITY_ENDER_DRAGON_GROWL, 0.4f, false);
 
 		minigamer.scored();
 		minigamer.getMatch().scored(minigamer.getTeam());
@@ -138,7 +147,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		CaptureTheFlagMatchData matchData = match.getMatchData();
 
-		match.broadcast(minigamer.getColoredName() + " &3took " + flag.getTeam().getColoredName() + "&3's flag");
+		flagMessage(match, minigamer.getTeam(), minigamer, minigamer.getColoredName() + " &3took " + flag.getTeam().getColoredName() + "&3's flag", true);
+		flagMessage(match, flag.getTeam(), minigamer.getColoredName() + "&3 took your flag!", false);
 
 		matchData.addFlagCarrier(flag, minigamer);
 

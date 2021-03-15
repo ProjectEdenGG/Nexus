@@ -53,7 +53,7 @@ public final class Siege extends OneFlagCaptureTheFlag {
 		Match match = minigamer.getMatch();
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
 
-		match.broadcast(minigamer.getColoredName() + " &3returned the flag");
+		flagMessage(match.getMinigamers(), minigamer, minigamer.getColoredName() + "&3 returned the flag", true);
 
 		Flag flag = matchData.getFlag();
 		if (flag != null) {
