@@ -47,7 +47,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 			takeFlag(minigamer);
 		} else if ((ChatColor.GREEN + "Capture").equalsIgnoreCase(sign.getLine(2)))
 			if (minigamer.equals(matchData.getFlagCarrier()))
-				if (stripColor(sign.getLine(3)).equalsIgnoreCase(minigamer.getTeam().getName()))
+				if (!stripColor(sign.getLine(3)).equalsIgnoreCase(minigamer.getTeam().getName()))
 					minigamer.tell("&cYou must capture the flag at the other team's base");
 				else
 					captureFlag(minigamer);
