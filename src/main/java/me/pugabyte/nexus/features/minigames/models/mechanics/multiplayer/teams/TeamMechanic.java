@@ -3,6 +3,8 @@ package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -11,12 +13,22 @@ import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskTyp
 import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
+import me.pugabyte.nexus.models.discord.DiscordService;
+import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -31,10 +43,97 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
+	private static final Set<String> TEAM_VOICE_CHANNELS = new HashSet<>();
+	static {
+		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.RED.getId());
+		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.BLUE.getId());
+		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.GREEN.getId());
+		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.YELLOW.getId());
+		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.WHITE.getId());
+	}
 
 	@Override
 	public boolean isTeamGame() {
 		return true;
+	}
+
+	public static Member getVoiceChannelMember(Player player) {
+		Guild guild = Discord.getGuild();
+		if (guild == null) return null;
+
+		DiscordUser discordUser = new DiscordService().get(player);
+		Member member = discordUser.getMember();
+		if (member == null) {
+			// user has no linked account, find a disc account with matching (nick)name
+			Optional<Member> optionalMember = guild.getMembers().stream()
+					.filter(fmember -> (fmember.getNickname() != null && fmember.getNickname().equalsIgnoreCase(player.getName()))
+							|| fmember.getUser().getName().equalsIgnoreCase(player.getName()))
+					.findAny();
+			if (optionalMember.isPresent())
+				member = optionalMember.get();
+			else
+				return null;
+		}
+		if (member.getVoiceState() == null || !member.getVoiceState().inVoiceChannel())
+			return null;
+		return member;
+	}
+
+	@Override
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
+		Guild guild = Discord.getGuild();
+		if (guild == null) return;
+
+		event.getMatch().getAliveTeams().forEach(team -> {
+			// TODO: text channels
+			ChatColor chatColor = team.getColor();
+			DiscordId.VoiceChannel vcID;
+			if (chatColor == ChatColor.RED || chatColor == ChatColor.DARK_RED)
+				vcID = DiscordId.VoiceChannel.RED;
+			else if (chatColor == ChatColor.BLUE || chatColor == ChatColor.AQUA || chatColor == ChatColor.DARK_AQUA || chatColor == ChatColor.DARK_BLUE)
+				vcID = DiscordId.VoiceChannel.BLUE;
+			else if (chatColor == ChatColor.WHITE || chatColor == ChatColor.GRAY)
+				vcID = DiscordId.VoiceChannel.WHITE;
+			else if (chatColor == ChatColor.GREEN || chatColor == ChatColor.DARK_GREEN)
+				vcID = DiscordId.VoiceChannel.GREEN;
+			else if (chatColor == ChatColor.YELLOW || chatColor == ChatColor.GOLD)
+				vcID = DiscordId.VoiceChannel.YELLOW;
+			else
+				return;
+
+			VoiceChannel vc = guild.getVoiceChannelById(vcID.getId());
+			if (vc == null) return;
+			BaseComponent[] message = new JsonBuilder().next("&e&lClick here&f&3 to join your team's voice channel.").command("voicechannel "+vc.getId()).newline().build();
+
+			team.getMinigamers(event.getMatch()).forEach(minigamer -> {
+				// get user with linked account
+				Member member = getVoiceChannelMember(minigamer.getPlayer());
+				if (member == null) return;
+				// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
+				assert member.getVoiceState() != null;
+				assert member.getVoiceState().getChannel() != null;
+
+				if (member.getVoiceState().getChannel().getId().equals(DiscordId.VoiceChannel.MINIGAMES.getId()))
+					minigamer.getPlayer().sendMessage(message);
+			});
+		});
+	}
+
+	@Override
+	public void onEnd(MatchEndEvent event) {
+		super.onEnd(event);
+		BaseComponent[] message = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
+		event.getMatch().getMinigamers().forEach(minigamer -> {
+			Member member = getVoiceChannelMember(minigamer.getPlayer());
+			if (member == null) return;
+			// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
+			assert member.getVoiceState() != null;
+			assert member.getVoiceState().getChannel() != null;
+
+			if (TEAM_VOICE_CHANNELS.contains(member.getVoiceState().getChannel().getId()))
+				minigamer.getPlayer().sendMessage(message);
+		});
 	}
 
 	/**
