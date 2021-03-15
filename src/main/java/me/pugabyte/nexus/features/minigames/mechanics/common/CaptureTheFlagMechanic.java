@@ -4,16 +4,25 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TitleUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
@@ -75,6 +84,32 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 		if (event.getTime() % 2 != 0) return;
 
 		doFlagParticles(event.getMatch());
+	}
+
+	protected void flagMessage(Match match, Team team, String message, boolean chat) {
+		flagMessage(match, team, message, Sound.ENTITY_WITHER_SPAWN, 0.6f, chat);
+	}
+
+	protected void flagMessage(Match match, Team team, String message, Sound sound, float volume, boolean chat) {
+		flagMessage(team.getMinigamers(match), message, sound, volume, chat);
+	}
+
+	protected void flagMessage(Match match, Team team, Minigamer except, String message, boolean chat) {
+		flagMessage(match, team, except, message, Sound.ENTITY_WITHER_SPAWN, 0.6f, chat);
+	}
+
+	protected void flagMessage(Match match, Team team, Minigamer except, String message, Sound sound, float volume, boolean chat) {
+		flagMessage(team.getMinigamers(match).stream().filter(minigamer -> !minigamer.equals(except)).collect(Collectors.toList()), message, sound, volume, chat);
+	}
+
+	protected void flagMessage(List<Minigamer> minigamers, String message, Sound sound, float volume, boolean chat) {
+		if (chat && !minigamers.isEmpty())
+			minigamers.get(0).getMatch().broadcast(message);
+		minigamers.forEach(enemy -> {
+			SoundUtils.playSound(enemy.getPlayer(), sound, SoundCategory.PLAYERS, volume, 1.2f);
+			SoundUtils.playSound(enemy.getPlayer(), Sound.ENTITY_ENDER_DRAGON_FLAP, SoundCategory.PLAYERS, 0.9f, 1.0f);
+			TitleUtils.sendSubtitle(enemy.getPlayer(), message, 7, Time.SECOND.x(3), 7);
+		});
 	}
 
 }
