@@ -9,9 +9,7 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
@@ -48,10 +46,8 @@ public class TeamVisibilityMenu extends MenuUtils implements InventoryProvider {
 		int column = 0;
 		for (NameTagVisibility visibility : NameTagVisibility.values()) {
 			ItemStack item = nameItem(getIcon(visibility), "&e"+camelCase(visibility));
-			if (team.getNameTagVisibility() == visibility) {
-				item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-				item.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-			}
+			if (team.getNameTagVisibility() == visibility)
+				addGlowing(item);
 			contents.set(1, column, ClickableItem.from(item, e -> {
 				team.setNameTagVisibility(visibility);
 				arena.write();
