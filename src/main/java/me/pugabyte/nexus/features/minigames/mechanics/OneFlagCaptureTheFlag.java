@@ -87,7 +87,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 
 				matchData.setFlagCarrier(null);
 
-				event.getMatch().broadcast(minigamer.getColoredName() + " &3dropped the flag");
+				flagMessage(event.getMatch().getMinigamers(), minigamer, minigamer.getColoredName() + "&3 dropped the flag", true);
 			}
 		}
 
@@ -98,7 +98,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 		Match match = minigamer.getMatch();
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
 
-		match.broadcast(minigamer.getColoredName() + " &3captured the flag");
+		flagMessage(match.getMinigamers(), minigamer.getColoredName() + "&3 captured the flag", true);
 
 		minigamer.scored();
 		minigamer.getMatch().scored(minigamer.getTeam());
@@ -113,14 +113,15 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	protected void takeFlag(Minigamer minigamer) {
 		Match match = minigamer.getMatch();
 		OneFlagCaptureTheFlagMatchData matchData = match.getMatchData();
+		Flag flag = matchData.getFlag();
 
-		match.broadcast(minigamer.getColoredName() + " &3took the flag");
+		flagMessage(match.getMinigamers(), minigamer, minigamer.getColoredName() + "&3 took the flag", true);
 
 		matchData.setFlagCarrier(minigamer);
 
-		matchData.getFlag().despawn();
+		flag.despawn();
 
-		match.getTasks().cancel(matchData.getFlag().getTaskId());
+		match.getTasks().cancel(flag.getTaskId());
 	}
 
 	@Override

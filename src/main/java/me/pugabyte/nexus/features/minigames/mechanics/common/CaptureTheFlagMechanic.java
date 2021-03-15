@@ -102,6 +102,14 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 		flagMessage(team.getMinigamers(match).stream().filter(minigamer -> !minigamer.equals(except)).collect(Collectors.toList()), message, sound, volume, chat);
 	}
 
+	protected void flagMessage(List<Minigamer> minigamers, String message, boolean chat) {
+		flagMessage(minigamers, message, Sound.ENTITY_WITHER_SPAWN, 0.6f, chat);
+	}
+
+	protected void flagMessage(List<Minigamer> minigamers, Minigamer except, String message, boolean chat) {
+		flagMessage(minigamers.stream().filter(minigamer -> !minigamer.equals(except)).collect(Collectors.toList()), message, chat);
+	}
+
 	protected void flagMessage(List<Minigamer> minigamers, String message, Sound sound, float volume, boolean chat) {
 		if (chat && !minigamers.isEmpty())
 			minigamers.get(0).getMatch().broadcast(message);
