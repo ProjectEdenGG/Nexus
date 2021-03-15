@@ -12,6 +12,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -29,6 +30,39 @@ public class CorruptedFight extends WitherFight {
 	@Override
 	public WitherChallenge.Difficulty getDifficulty() {
 		return WitherChallenge.Difficulty.CORRUPTED;
+	}
+
+	@Override
+	public void start() {
+		super.start();
+		for (UUID uuid : alivePlayers)
+			PlayerUtils.getPlayer(uuid).getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999, 0));
+	}
+
+	@EventHandler
+	public void stopWitherHearts(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+		Player player = (Player) event.getEntity();
+		if (!alivePlayers.contains(player.getUniqueId())) return;
+		if (event.getCause() != EntityDamageEvent.DamageCause.WITHER) return;
+		event.setCancelled(true);
+	}
+
+	public Map<UUID, Integer> playerRegenAmounts = new HashMap<>();
+
+	@EventHandler
+	public void slowRegen(EntityRegainHealthEvent event) {
+		if (!(event.getEntity() instanceof Player)) return;
+		Player player = (Player) event.getEntity();
+		if (!alivePlayers.contains(player.getUniqueId())) return;
+		if (event.getRegainReason() != EntityRegainHealthEvent.RegainReason.SATIATED) return;
+		int regenAmount = playerRegenAmounts.getOrDefault(player.getUniqueId(), 0);
+		if (regenAmount == 3) {
+			playerRegenAmounts.put(player.getUniqueId(), 0);
+			return;
+		}
+		event.setCancelled(true);
+		playerRegenAmounts.put(player.getUniqueId(), regenAmount + 1);
 	}
 
 	@Override
@@ -65,8 +99,8 @@ public class CorruptedFight extends WitherFight {
 	@EventHandler
 	public void counterAttack(EntityDamageByEntityEvent event) {
 		if (event.getEntity() != this.wither) return;
-		if (RandomUtils.chanceOf(25))
-			if (RandomUtils.chanceOf(50))
+		if (RandomUtils.chanceOf(30))
+			if (RandomUtils.chanceOf(25))
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers);
 			else
 				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers);

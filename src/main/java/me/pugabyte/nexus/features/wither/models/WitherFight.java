@@ -16,6 +16,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -27,12 +28,13 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 public abstract class WitherFight implements Listener {
@@ -47,7 +49,8 @@ public abstract class WitherFight implements Listener {
 	public List<Location> playerPlacedBlocks = new ArrayList<>();
 	public List<Blaze> blazes = new ArrayList<>();
 	public boolean gotStar = false;
-	public int breakBlocksTaskId;
+	public List<Integer> tasks = new ArrayList<>();
+	public Map<UUID, Team> scoreboardTeams = new HashMap<>();
 
 	public abstract WitherChallenge.Difficulty getDifficulty();
 
@@ -58,14 +61,14 @@ public abstract class WitherFight implements Listener {
 	public abstract List<ItemStack> getAlternateDrops();
 
 	public void start() {
-		Chat.broadcastIngame(new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
-				.command("/wither spectate").hover("&eYou will be teleported to the wither arena"), MuteMenuItem.EVENTS);
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(location -> {
+			Chat.broadcastIngame(new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
+					.command("/wither spectate").hover("&eYou will be teleported to the wither arena"), MuteMenuItem.EVENTS);
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
 			new WorldEditUtils("events").set("witherarena-lobby", BlockTypes.NETHERRACK);
-			breakBlocksTaskId = Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(5), () -> {
+			tasks.add(Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(5), () -> {
 				if (!shouldRegen) return;
 				if (wither.getTarget() == null)
 					wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
@@ -86,7 +89,33 @@ public abstract class WitherFight implements Listener {
 					loc.getWorld().playSound(loc, Sound.BLOCK_NETHER_BRICKS_BREAK, 1f, 1f);
 					block.setType(Material.AIR);
 				}
-			});
+			}));
+
+			Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+			for (UUID uuid : alivePlayers) {
+				try {
+					OfflinePlayer player = PlayerUtils.getPlayer(uuid).getPlayer();
+					Nexus.debug("Registering team");
+					if (!player.isOnline()) continue;
+					Team team = scoreboard.registerNewTeam("wither-" + uuid.toString().split("-")[0]);
+					Nexus.debug("Registered new Team: " + team.getName());
+					team.addEntry(player.getName());
+					player.getPlayer().setScoreboard(scoreboard);
+					scoreboardTeams.put(uuid, team);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			tasks.add(Tasks.repeat(0, Time.SECOND.x(5), () -> {
+				for (UUID uuid : alivePlayers) {
+					OfflinePlayer player = PlayerUtils.getPlayer(uuid).getPlayer();
+					if (!player.isOnline()) continue;
+					Nexus.debug("Setting team " + scoreboardTeams.get(uuid).getName() + "'s prefix to " + ((int) player.getPlayer().getHealth()) + " &c❤ &r");
+					scoreboardTeams.get(uuid).setPrefix(colorize(((int) player.getPlayer().getHealth()) + " &c❤ &r"));
+				}
+			}));
+
 		});
 	}
 
@@ -214,6 +243,13 @@ public abstract class WitherFight implements Listener {
 	}
 
 	@EventHandler
+	public void onEntityTarget(EntityTargetLivingEntityEvent event) {
+		if (!isInRegion(event.getEntity().getLocation())) return;
+		if (event.getTarget() instanceof Player && alivePlayers.contains(event.getTarget().getUniqueId())) return;
+		event.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+	}
+
+	@EventHandler
 	public void onKillEntity(EntityDeathEvent event) {
 		if (!isInRegion(event.getEntity().getLocation())) return;
 		if (event.getEntityType() == EntityType.PLAYER) return;
@@ -245,8 +281,8 @@ public abstract class WitherFight implements Listener {
 	public void processPlayerQuit(Player player, String reason) {
 		player.setGameMode(GameMode.SURVIVAL);
 		Warps.spawn(player);
-		if (alivePlayers.size() == 0) {
-			Tasks.cancel(breakBlocksTaskId);
+		if (alivePlayers.size() == 1) {
+			tasks.forEach(Tasks::cancel);
 			int partySize = party.size();
 			Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
@@ -255,17 +291,22 @@ public abstract class WitherFight implements Listener {
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 					" lost to the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode");
 			WitherChallenge.reset();
-		} else
+		} else {
 			WitherChallenge.currentFight.broadcastToParty("&e" + player.getName() + " &chas " + reason + " and is out of the fight!");
+			wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+		}
+		alivePlayers.remove(player.getUniqueId());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onDeath(PlayerDeathEvent event) {
 		if (WitherChallenge.currentFight == null) return;
 		Player player = event.getEntity();
 		if (!alivePlayers.contains(player.getUniqueId())) return;
-		alivePlayers.remove(player.getUniqueId());
+		scoreboardTeams.get(player.getUniqueId()).unregister();
+		scoreboardTeams.remove(player.getUniqueId());
 		event.setCancelled(true);
+		event.getEntity().removePotionEffect(PotionEffectType.WITHER);
 		Warps.spawn(player);
 		processPlayerQuit(player, "died");
 	}
@@ -275,7 +316,7 @@ public abstract class WitherFight implements Listener {
 		if (event.getEntityType() != EntityType.WITHER) return;
 		Wither wither = (Wither) event.getEntity();
 		if (wither != this.wither) return;
-		Tasks.cancel(breakBlocksTaskId);
+		tasks.forEach(Tasks::cancel);
 		giveItems();
 
 		int partySize = party.size();
@@ -286,6 +327,11 @@ public abstract class WitherFight implements Listener {
 		Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "and got the star" : "but did not get the star"));
+
+		new WorldGuardUtils("events").getEntitiesInRegion("witherarena").forEach(e -> {
+			if (e.getType() != EntityType.PLAYER)
+				e.remove();
+		});
 
 		Tasks.wait(Time.SECOND.x(10), () -> {
 			started = false;
@@ -387,11 +433,6 @@ public abstract class WitherFight implements Listener {
 		event.getPlayer().updateInventory();
 	}
 
-	@EventHandler
-	public void onPlayerDamage(EntityDamageEvent event) {
-
-	}
-
 	public enum CounterAttack {
 		KNOCKBACK {
 			@Override
@@ -431,6 +472,7 @@ public abstract class WitherFight implements Listener {
 					OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 					if (player.getPlayer() == null) continue;
 					for (PotionEffect effect : player.getPlayer().getActivePotionEffects()) {
+						if (effect.getType() == PotionEffectType.WITHER) continue;
 						player.getPlayer().removePotionEffect(effect.getType());
 						player.getPlayer().sendTitle(new Title("", "&8&kbbb &4&lStipped Potion Effects &8&kbbb", 10, 40, 10));
 					}
