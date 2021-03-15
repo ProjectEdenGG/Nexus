@@ -60,7 +60,8 @@ public class Banker extends PlayerOwnedObject {
 	}
 
 	void deposit(BigDecimal amount, Transaction transaction) {
-		setBalance(balance.add(amount), transaction);
+		if (amount.signum() != 0)
+			setBalance(balance.add(amount), transaction);
 	}
 
 	void withdraw(BigDecimal amount, TransactionCause cause) {
@@ -68,7 +69,8 @@ public class Banker extends PlayerOwnedObject {
 	}
 
 	void withdraw(BigDecimal amount, Transaction transaction) {
-		setBalance(balance.subtract(amount), transaction);
+		if (amount.signum() != 0)
+			setBalance(balance.subtract(amount), transaction);
 	}
 
 	void transfer(Banker to, BigDecimal amount, TransactionCause cause) {

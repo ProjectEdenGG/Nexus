@@ -4,12 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.shop.Shop;
+import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
+import me.pugabyte.nexus.models.shop.Shop.Product;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
+import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -28,18 +39,68 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
+@Permission("group.admin")
+@Cooldown(@Part(value = Time.SECOND))
 public class ConvertShopCommand extends CustomCommand {
 
 	public ConvertShopCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Path("convert")
+	void convert() {
+		tryConvert(getTargetSignRequired());
+		results();
+	}
+
+	@Path("convertRadius [radius]")
+	void convertRadius(@Arg(value = "10", max = 25) int radius) {
+		for (Block block : BlockUtils.getBlocksInRadius(location(), radius))
+			if (MaterialTag.SIGNS.isTagged(block.getType()))
+				tryConvert(block);
+
+		results();
+	}
+
+	int signs = 0;
+	int conversions = 0;
+	int exceptions = 0;
+
+	private void tryConvert(Block block) {
+		tryConvert((Sign) block.getState());
+	}
+
+	private void tryConvert(Sign sign) {
+		try {
+			convert(sign);
+		} catch (NexusException ex) {
+			event.handleException(ex);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			++exceptions;
+		}
+	}
+
+	private void results() {
+		if (signs == 0)
+			error("Could not find any trade signs to convert");
+
+		if (conversions > 0)
+			send(PREFIX + "Successfully converted &e" + conversions + "&3/&e" + signs + " &3signs");
+
+		if (exceptions > 0)
+			send(PREFIX + "&cCould not convert &e" + exceptions + "&c/&e" + signs + " &csigns, errors logged to console");
 	}
 
 	@Data
@@ -54,157 +115,154 @@ public class ConvertShopCommand extends CustomCommand {
 		private int stock = 0;
 	}
 
-	@Path("read [radius]")
-	@Cooldown(@Part(value = Time.SECOND, x = 10))
-	void read(@Arg("10") int radius) {
-		if (radius > 25) {
-			send(PREFIX + "Limiting search to 25 block radius. Please run the command multiple times in different locations to find more signs");
-			radius = 25;
-		}
+	private void convert(Sign sign) {
+		ShopService service = new ShopService();
+		ShopGroup shopGroup = ShopGroup.get(player());
 
-		List<Block> signs = new ArrayList<>();
-		List<SignData> conversions = new ArrayList<>();
-		List<Throwable> exceptions = new ArrayList<>();
-		BlockUtils.getBlocksInRadius(location(), radius).forEach(block -> {
-			if (!MaterialTag.SIGNS.isTagged(block.getType())) return;
+		if (!isValidShopSign(sign))
+			error("Not a valid shop sign");
 
-			Sign sign = (Sign) block.getState();
-			String line1 = stripColor(sign.getLine(0));
-			if (!Arrays.asList("[Trade]", "[Ench Trade]", "[Arrow Trade]", "[Potion Trade]").contains(line1)) return;
+		SignData data = read(sign);
+		if (!isSelf(data.getPlayer()) && !isStaff())
+			error("This sign belongs to " + data.getPlayer().getName());
 
-			signs.add(block);
-
-			try {
-				conversions.add(readSign(sign));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				exceptions.add(ex);
-			}
-		});
-
-		if (signs.size() == 0)
-			error("Could not find any trade signs to convert");
-
-		if (conversions.size() > 0)
-			send("Successfully converted &e" + conversions.size() + "&3/&e" + signs.size() + " &3signs within " + radius + " blocks");
-
-		if (exceptions.size() > 0)
-			send("&cCould not convert &e" + exceptions.size() + "&c/&e" + signs.size() + " &csigns, errors logged to console");
+		++signs;
+		Shop shop = service.get(data.getPlayer());
+		Product product = new Product(data.getPlayer().getUniqueId(), shopGroup, data.getItem(), data.getStock(), ExchangeType.SELL, data.getPrice());
+		shop.getProducts().add(product);
+		service.save(shop);
+		if (data.getMoneyInSign() > 0)
+			new BankerService().deposit(data.getPlayer(), data.getMoneyInSign(), TransactionCause.SERVER);
+		sign.getBlock().setType(Material.AIR);
+		++conversions;
 	}
 
-	public SignData readSign(Sign sign) {
-		SignData data = new SignData();
+	private boolean isValidShopSign(Sign sign) {
+		return Arrays.asList("[Trade]", "[Ench Trade]", "[Arrow Trade]", "[Potion Trade]").contains(stripColor(sign.getLine(0)));
+	}
+
+	public SignData read(Sign sign) {
 		String[] lines = sign.getLines();
 
-		if (StringUtils.stripColor(lines[0]).equals("[Trade]")) {
-			data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(":")[0]));
-			data.setMoneyInSign(Double.parseDouble(lines[1].split(":")[1]));
-			data.setStock(Integer.parseInt(lines[2].split(" ")[1].split(":")[1]));
-			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
+		if (StringUtils.stripColor(lines[0]).equals("[Trade]"))
+			return readNormalSign(lines);
 
-			String idForSale = lines[2].split(" ")[1].split(":")[0];
+		if (StringUtils.stripColor(lines[0]).equals("[Ench Trade]"))
+			return readEnchTradeSign(lines);
 
-			Material material;
+		if (StringUtils.stripColor(lines[0]).equals("[Potion Trade]"))
+			return readPotionTradeSign(lines);
+
+		if (StringUtils.stripColor(lines[0]).equals("[Arrow Trade]"))
+			return readArrowTradeSign(lines);
+
+		throw new InvalidInputException("Not a valid shop sign");
+	}
+
+	@NotNull
+	private SignData readNormalSign(String[] lines) {
+		SignData data = new SignData();
+		data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(":")[0]));
+		data.setMoneyInSign(Double.parseDouble(lines[1].split(":")[1]));
+		data.setStock(Integer.parseInt(lines[2].split(" ")[1].split(":")[1]));
+		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
+
+		String idForSale = lines[2].split(" ")[1].split(":")[0];
+
+		Material material = Material.matchMaterial(idForSale);
+		if (material == null) {
 			if (idForSale.contains(";"))
 				material = convertMaterial(Integer.parseInt(idForSale.split(";")[0]), Byte.parseByte(idForSale.split(";")[1]));
 			else if (Utils.isInt(idForSale))
 				material = convertMaterial(Integer.parseInt(idForSale.split(";")[0]), (byte) 0);
 			else
 				material = essentialsAliases(idForSale);
-
-			if (material == null)
-				error("Could not convert material &e" + idForSale);
-			ItemStack item = new ItemStack(material);
-			item.setAmount(Integer.parseInt(lines[2].split(" ")[0]));
-			data.setItem(item);
-			return data;
 		}
 
-		if (StringUtils.stripColor(lines[0]).equals("[Ench Trade]")) {
-			data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(" \\| ")[0]));
-			data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK)
-					.enchant(getEnchantFromShort(lines[2].split(" ")[0]), Integer.parseInt(lines[2].split(" ")[1])).build());
-			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
-			return data;
+		if (material == null)
+			error("Could not convert material &e" + idForSale);
+		ItemStack item = new ItemStack(material);
+		item.setAmount(Integer.parseInt(lines[2].split(" ")[0]));
+		data.setItem(item);
+		return data;
+	}
+
+	@NotNull
+	private SignData readEnchTradeSign(String[] lines) {
+		SignData data = new SignData();
+		data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(" \\| ")[0]));
+		data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK)
+				.enchant(getEnchantFromShort(lines[2].split(" ")[0]), Integer.parseInt(lines[2].split(" ")[1])).build());
+		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
+		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
+		return data;
+	}
+
+	@NotNull
+	private SignData readPotionTradeSign(String[] lines) {
+		SignData data = new SignData();
+		data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
+		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
+		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
+
+		boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
+		boolean isMultiplied = isMultiplied(lines[2]);
+
+		ItemStack item = new ItemStack(Material.POTION);
+
+		if (StringUtils.left(lines[2], 2).equals("S "))
+			item.setType(Material.SPLASH_POTION);
+		if (StringUtils.left(lines[2], 2).equals("L "))
+			item.setType(Material.LINGERING_POTION);
+
+		String potionName = lines[2].replace("P ", "").replace("L ", "")
+				.replace("S ", "").replace(" Ext", "").replace(" 2", "");
+
+		PotionMeta arrowMeta = (PotionMeta) item.getItemMeta();
+		arrowMeta.setBasePotionData(new PotionData(getPotionFromShort(potionName), ext, isMultiplied));
+		item.setItemMeta(arrowMeta);
+		item.setAmount(1);
+
+		data.setItem(item);
+		return data;
+	}
+
+	@NotNull
+	private SignData readArrowTradeSign(String[] lines) {
+		SignData data = new SignData();
+		data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
+		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
+		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
+
+		boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
+		boolean isMultiplied = isMultiplied(lines[2]);
+
+		ItemStack item = new ItemStack(Material.TIPPED_ARROW);
+
+		String potionName = lines[2].replace(" Ext", "").replace(" 2", "");
+		String amountMaybe = potionName.split(" ")[0];
+		if (Utils.isInt(amountMaybe)) {
+			item.setAmount(Integer.parseInt(amountMaybe));
+			potionName = potionName.replace(amountMaybe + " ", "");
 		}
 
-		if (StringUtils.stripColor(lines[0]).equals("[Potion Trade]")) {
-			data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
-			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
+		PotionMeta arrowMeta = (PotionMeta) item.getItemMeta();
+		arrowMeta.setBasePotionData(new PotionData(getPotionFromShort(potionName), ext, isMultiplied));
+		item.setItemMeta(arrowMeta);
+		item.setAmount(1);
 
-			boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
-			boolean isMultiplied = isMultiplied(lines[2]);
-
-			ItemStack item = new ItemStack(Material.POTION);
-
-			if (StringUtils.left(lines[2], 2).equals("S "))
-				item.setType(Material.SPLASH_POTION);
-			if (StringUtils.left(lines[2], 2).equals("L "))
-				item.setType(Material.LINGERING_POTION);
-
-			String potionName = lines[2].replace("P ", "").replace("L ", "")
-					.replace("S ", "").replace(" Ext", "").replace(" 2", "");
-
-			PotionMeta arrowMeta = (PotionMeta) item.getItemMeta();
-			arrowMeta.setBasePotionData(new PotionData(getPotionFromShort(potionName), ext, isMultiplied));
-			item.setItemMeta(arrowMeta);
-			item.setAmount(Integer.parseInt(lines[1].split(" \\| ")[1]));
-
-			data.setItem(item);
-			return data;
-		}
-
-		if (StringUtils.stripColor(lines[0]).equals("[Arrow Trade]")) {
-			data.setPrice(Integer.parseInt(lines[1].replace("$", "").split(" \\| ")[0]));
-			data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
-			data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
-
-			boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
-			boolean isMultiplied = isMultiplied(lines[2]);
-
-			ItemStack item = new ItemStack(Material.TIPPED_ARROW);
-
-			String potionName = lines[2].replace(" Ext", "").replace(" 2", "");
-			String amountMaybe = potionName.split(" ")[0];
-			if (Utils.isInt(amountMaybe)) {
-				item.setAmount(Integer.parseInt(amountMaybe));
-				potionName = potionName.replace(amountMaybe + " ", "");
-			}
-
-			PotionMeta arrowMeta = (PotionMeta) item.getItemMeta();
-			arrowMeta.setBasePotionData(new PotionData(getPotionFromShort(potionName), ext, isMultiplied));
-			item.setItemMeta(arrowMeta);
-			item.setAmount(Integer.parseInt(lines[1].split(" \\| ")[1]));
-
-			data.setItem(item);
-			return data;
-		}
-		error("You are not looking at a shop sign");
-		return null;
+		data.setItem(item);
+		return data;
 	}
 
 	@SuppressWarnings("deprecation")
-	public static Material convertMaterial(int ID, byte Data) {
+	public static Material convertMaterial(int id, byte data) {
 		for (Material i : EnumSet.allOf(Material.class)) {
-			if (!i.isLegacy()) continue;
-			if (i.getId() == ID)
-				return Bukkit.getUnsafe().fromLegacy(new MaterialData(i, Data));
+			if (!i.isLegacy())
+				continue;
+			if (i.getId() == id)
+				return Bukkit.getUnsafe().fromLegacy(new MaterialData(i, data));
 		}
-		return null;
-	}
-
-	public Material essentialsAliases(String name) {
-//		if (name.equalsIgnoreCase("steak"))
-//			return Material.COOKED_BEEF;
-//		try {
-//			ItemStack item = Nexus.getEssentials().getItemDb().get(name);
-//			return item.getType();
-//		} catch (Exception e) {
-//			error("Could not parse item from essentials aliases");
-//			Nexus.warn("Could not convert the shop from player " + name());
-//		}
 		return null;
 	}
 
@@ -325,6 +383,37 @@ public class ConvertShopCommand extends CustomCommand {
 				return PotionType.LUCK;
 			default:
 				return null;
+		}
+	}
+
+	public Material essentialsAliases(String name) {
+		try {
+			return ItemDb.get(name);
+		} catch (Exception e) {
+			error("Could not parse item from essentials aliases");
+			Nexus.warn("Could not convert the shop from player " + name());
+		}
+		return null;
+	}
+
+	private static class ItemDb {
+		private static final Map<String, Material> items = new HashMap<>();
+
+		static {
+			String line;
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(Nexus.getFile("items.csv")));
+				while ((line = br.readLine()) != null) {
+					String[] split = line.split(",");
+					items.put(split[0].toUpperCase(), convertMaterial(Integer.parseInt(split[1]), Byte.parseByte(split[2])));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public static Material get(String id) {
+			return items.get(id.toUpperCase());
 		}
 	}
 
