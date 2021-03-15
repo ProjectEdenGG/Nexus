@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
@@ -68,7 +69,10 @@ public class DiscordUser {
 	}
 
 	public Member getMember() {
-		return Discord.getGuild().retrieveMemberById(userId).complete();
+		if (userId == null) return null;
+		Guild guild = Discord.getGuild();
+		if (guild == null) return null;
+		return guild.retrieveMemberById(userId).complete();
 	}
 
 }
