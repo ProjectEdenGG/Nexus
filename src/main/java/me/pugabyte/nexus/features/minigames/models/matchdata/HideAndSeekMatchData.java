@@ -13,14 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -32,7 +25,7 @@ public class HideAndSeekMatchData extends MatchData {
 	private final List<Material> mapMaterials = arena.getBlockList().stream().filter(material -> !BANNED_MATERIALS.contains(material) && material.isBlock()).collect(Collectors.toList());
 	private final Map<UUID, FallingBlock> solidBlocks = new HashMap<>();
 	private final Map<Minigamer, Location> solidPlayers = new HashMap<>();
-	private final Random random = new Random();
+	private static final Random random = new Random();
 
 	static {
 		// drunk wakka told me to use MaterialTag.INVENTORY_BLOCKS but that includes shit like barrels and furnaces and anvils and a whole lot of perfectly fine & functional blocks

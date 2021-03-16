@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import com.destroystokyo.paper.block.TargetBlockInfo;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -18,17 +19,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import me.pugabyte.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -42,17 +34,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
-import static me.pugabyte.nexus.utils.StringUtils.camelCase;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.plural;
+import static me.pugabyte.nexus.utils.StringUtils.*;
 
 public class HideAndSeek extends Infection {
 	private static final int SOLIDIFY_PLAYER_AT = Time.SECOND.x(5);
@@ -114,11 +100,6 @@ public class HideAndSeek extends Infection {
 			error("Arena has no blocks whitelisted!", match);
 			return;
 		}
-		// the block menu probably accounts for this already but, just to be safe? :P
-		if (matchData.getMapMaterials().stream().anyMatch(material -> !material.isBlock())) {
-			error("Map contains non-blocks in its whitelist!", match);
-			return;
-		}
 
 		for (Minigamer minigamer : match.getMinigamers()) {
 			if (isZombie(minigamer)) {
@@ -133,9 +114,7 @@ public class HideAndSeek extends Infection {
 		}
 
 		int taskId = match.getTasks().repeat(0, 1, () -> {
-			for (Minigamer minigamer : match.getMinigamers()) {
-				if (isZombie(minigamer)) continue;
-
+			for (Minigamer minigamer : getHumans(match)) {
 				Player player = minigamer.getPlayer();
 				UUID userId = player.getUniqueId();
 				Map<Minigamer, Location> solidPlayers = matchData.getSolidPlayers();
@@ -191,17 +170,38 @@ public class HideAndSeek extends Infection {
 			}
 		});
 		match.getTasks().register(taskId);
+
+		// separate task so this doesn't run as often
+		int hunterTaskId = match.getTasks().repeat(0, 5, () -> getZombies(match).forEach(minigamer -> {
+			Block block = minigamer.getPlayer().getTargetBlock(4, TargetBlockInfo.FluidMode.NEVER);
+			if (block == null) return;
+			Material type = block.getType();
+
+			// this will create some grammatically weird messages ("Oak Planks is a possible hider")
+			// idk what to do about that though
+			String message;
+			if (matchData.getMapMaterials().contains(type))
+				message = "&a" + camelCase(type) + " is a possible hider";
+			else
+				message = "&c" + camelCase(type) + " is not a possible hider";
+			sendBarWithTimer(minigamer, message);
+		}));
+		match.getTasks().register(hunterTaskId);
 	}
 
 	private void disguisedBlockTick(Minigamer minigamer) {
 		HideAndSeekMatchData matchData = minigamer.getMatch().getMatchData();
 		Material blockChoice = matchData.getBlockChoice(minigamer);
-
-		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId()))
-			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
-
 		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
-		sendBarWithTimer(minigamer, "&aYou are currently fully disguised as a " + camelCase(blockChoice));
+
+		// todo: use a localization string for proper block name
+		String message = "&aYou are currently fully disguised as a " + camelCase(blockChoice);
+		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId())) {
+			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
+			if (MaterialTag.ALL_AIR.isTagged(minigamer.getPlayer().getInventory().getItemInMainHand().getType()))
+				message = "&cWarning: Your weapon is visible!";
+		}
+		sendBarWithTimer(minigamer, message);
 	}
 
 	protected void blockChange(Minigamer origin, Location location, Material block) {
