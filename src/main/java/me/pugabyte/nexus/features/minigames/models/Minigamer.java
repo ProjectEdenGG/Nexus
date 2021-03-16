@@ -315,7 +315,7 @@ public class Minigamer {
 			immobileTicks++;
 		lastLocation = playerLocation;
 
-		if (getMatch().getMechanic().useAlternativeRegen())
+		if (getMatch().getMechanic().usesAlternativeRegen())
 			regen();
 	}
 

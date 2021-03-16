@@ -42,12 +42,17 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public boolean useAlternativeRegen() {
+	public boolean usesAlternativeRegen() {
 		return true;
 	}
 
 	@Override
 	public boolean usesAutoBalancing() {
+		return false;
+	}
+
+	@Override
+	public boolean usesTeamChannels() {
 		return false;
 	}
 

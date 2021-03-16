@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -32,7 +31,6 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
@@ -53,6 +51,8 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
 	private static final Set<String> TEAM_VOICE_CHANNELS = new HashSet<>();
+	private static final BaseComponent[] RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
+
 	static {
 		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.RED.getId());
 		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.BLUE.getId());
@@ -63,6 +63,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 	@Override
 	public boolean isTeamGame() {
+		return true;
+	}
+
+	public boolean usesTeamChannels() {
 		return true;
 	}
 
@@ -88,7 +92,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return member;
 	}
 
-	protected static PublicChannel getTeamChannel(Team team) {
+	private PublicChannel getTeamChannel(Match match, Team team, boolean createChannel) {
+		Map<Team, PublicChannel> teamChannels = match.getMatchData().getTeamChannels();
+		if (teamChannels.containsKey(team))
+			return teamChannels.get(team);
+		else if (!createChannel)
+			return null;
+
 		ColorType colorType = team.getColorType();
 		if (colorType == null)
 			return null;
@@ -101,109 +111,101 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		nickname = nickname.substring(0, 1);
 
-		return PublicChannel.builder()
+		PublicChannel channel = PublicChannel.builder()
 				.name(camelCase(colorType.getName()))
 				.nickname(nickname)
 				.color(colorType.getChatColor())
 				.local(false)
 				.crossWorld(true)
 				.build();
+
+		teamChannels.put(team, channel);
+		return channel;
 	}
 
-	protected static PublicChannel getTeamChannel(Minigamer minigamer, boolean createChannel) {
+	private PublicChannel createTeamChannel(Match match, Team team) {
+		return getTeamChannel(match, team, true);
+	}
+
+	private PublicChannel getTeamChannel(Minigamer minigamer, boolean createChannel) {
 		Team team = minigamer.getTeam();
 		ColorType colorType = team.getColorType();
 		if (colorType == null)
 			return null;
 		Chatter chatter = new ChatService().get(minigamer.getPlayer());
 		Optional<PublicChannel> optionalPublicChannel = chatter.getJoinedChannels().stream().filter(publicChannel -> publicChannel.getName().equalsIgnoreCase(colorType.getName())).findFirst();
-		PublicChannel publicChannel;
-		if (optionalPublicChannel.isPresent())
-			publicChannel = optionalPublicChannel.get();
-		else if (createChannel)
-			publicChannel = getTeamChannel(team);
-		else
-			publicChannel = null;
-		return publicChannel;
+		return optionalPublicChannel.orElseGet(() -> getTeamChannel(minigamer.getMatch(), team, createChannel));
 	}
 
-	@Override
-	@SneakyThrows
-	public void onStart(MatchStartEvent event) {
-		super.onStart(event);
-		Guild guild = Discord.getGuild();
+	private void joinTeamChannel(Team team, List<Minigamer> teamMembers) {
+		if (!usesTeamChannels()) return;
+		if (teamMembers.isEmpty()) return;
 
-		event.getMatch().getAliveTeams().forEach(team -> {
-			ChatColor chatColor = team.getColor();
-			DiscordId.VoiceChannel vcID;
+		Match match = teamMembers.get(0).getMatch();
+		ChatColor chatColor = team.getColor();
+		DiscordId.VoiceChannel vcID;
 
-			if (guild == null)
-				vcID = null;
-			else if (chatColor == ChatColor.RED || chatColor == ChatColor.DARK_RED)
-				vcID = DiscordId.VoiceChannel.RED;
-			else if (chatColor == ChatColor.BLUE || chatColor == ChatColor.AQUA || chatColor == ChatColor.DARK_AQUA || chatColor == ChatColor.DARK_BLUE)
-				vcID = DiscordId.VoiceChannel.BLUE;
-			else if (chatColor == ChatColor.WHITE || chatColor == ChatColor.GRAY)
-				vcID = DiscordId.VoiceChannel.WHITE;
-			else if (chatColor == ChatColor.GREEN || chatColor == ChatColor.DARK_GREEN)
-				vcID = DiscordId.VoiceChannel.GREEN;
-			else if (chatColor == ChatColor.YELLOW || chatColor == ChatColor.GOLD)
-				vcID = DiscordId.VoiceChannel.YELLOW;
-			else
-				vcID = null;
+		if (chatColor == ChatColor.RED || chatColor == ChatColor.DARK_RED)
+			vcID = DiscordId.VoiceChannel.RED;
+		else if (chatColor == ChatColor.BLUE || chatColor == ChatColor.AQUA || chatColor == ChatColor.DARK_AQUA || chatColor == ChatColor.DARK_BLUE)
+			vcID = DiscordId.VoiceChannel.BLUE;
+		else if (chatColor == ChatColor.WHITE || chatColor == ChatColor.GRAY)
+			vcID = DiscordId.VoiceChannel.WHITE;
+		else if (chatColor == ChatColor.GREEN || chatColor == ChatColor.DARK_GREEN)
+			vcID = DiscordId.VoiceChannel.GREEN;
+		else if (chatColor == ChatColor.YELLOW || chatColor == ChatColor.GOLD)
+			vcID = DiscordId.VoiceChannel.YELLOW;
+		else
+			vcID = null;
 
-			PublicChannel teamChannel = getTeamChannel(team);
+		PublicChannel teamChannel = createTeamChannel(match, team);
 
-			JsonBuilder voiceMessageBuilder = new JsonBuilder();
-			if (vcID != null) {
-				VoiceChannel vc = guild.getVoiceChannelById(vcID.getId());
-				if (vc != null) {
-					voiceMessageBuilder.next("&e&lClick here&f&3 to join your team's voice channel").command("voicechannel " + vc.getId()).newline();
-					voiceMessageBuilder.initialize();
+		JsonBuilder voiceMessageBuilder = new JsonBuilder();
+		if (vcID != null) {
+			voiceMessageBuilder.next("&e&lClick here&f&3 to join your team's voice channel").command("voicechannel " + vcID).newline();
+			voiceMessageBuilder.initialize();
+		}
+
+		if (teamChannel == null && !voiceMessageBuilder.isInitialized()) return;
+
+		BaseComponent[] message;
+		if (voiceMessageBuilder.isInitialized())
+			message = voiceMessageBuilder.build();
+		else
+			message = new BaseComponent[]{}; // not rly necessary but it makes IDE stop yelling that it's not initialized
+
+		teamMembers.forEach(minigamer -> {
+			// add user to text channel
+			Chatter chatter = new ChatService().get(minigamer.getPlayer());
+			if (teamChannel != null)
+				chatter.setActiveChannel(teamChannel);
+
+			// add voice channel text if present and if user is in voice
+			if (voiceMessageBuilder.isInitialized()) {
+				Member member = getVoiceChannelMember(minigamer.getPlayer());
+				if (member != null) {
+					// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
+					assert member.getVoiceState() != null;
+					assert member.getVoiceState().getChannel() != null;
+
+					if (member.getVoiceState().getChannel().getId().equals(DiscordId.VoiceChannel.MINIGAMES.getId()))
+						minigamer.getPlayer().sendMessage(message);
 				}
 			}
-
-			if (teamChannel == null && !voiceMessageBuilder.isInitialized()) return;
-
-			BaseComponent[] message;
-			if (voiceMessageBuilder.isInitialized())
-				message = voiceMessageBuilder.build();
-			else
-				message = new BaseComponent[]{}; // not rly necessary but it makes IDE stop yelling that it's not initialized
-
-			team.getMinigamers(event.getMatch()).forEach(minigamer -> {
-				// add user to text channel
-				Chatter chatter = new ChatService().get(minigamer.getPlayer());
-				if (teamChannel != null)
-					chatter.setActiveChannel(teamChannel);
-
-				// add voice channel text if present and if user is in voice
-				if (voiceMessageBuilder.isInitialized()) {
-					Member member = getVoiceChannelMember(minigamer.getPlayer());
-					if (member != null) {
-						// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
-						assert member.getVoiceState() != null;
-						assert member.getVoiceState().getChannel() != null;
-
-						if (member.getVoiceState().getChannel().getId().equals(DiscordId.VoiceChannel.MINIGAMES.getId()))
-							minigamer.getPlayer().sendMessage(message);
-					}
-				}
-
-			});
 		});
 	}
 
-	@Override
-	public void onJoin(MatchJoinEvent event) {
-		super.onJoin(event);
-		Match match = event.getMatch();
-		if (match.isStarted()) {
-			// TODO: join team chat
-		}
+	private void joinTeamChannel(Minigamer minigamer) {
+		joinTeamChannel(minigamer.getTeam(), Collections.singletonList(minigamer));
 	}
 
-	private void leaveTeamChannel(Minigamer minigamer) {
+	private void joinTeamChannel(Team team, Match match) {
+		joinTeamChannel(team, team.getAliveMinigamers(match));
+	}
+
+	private void leaveTeamTextChannel(Minigamer minigamer) {
+		if (!usesTeamChannels()) return;
+
 		PublicChannel teamChannel = getTeamChannel(minigamer, false);
 		if (teamChannel == null) return;
 		Chatter chatter = new ChatService().get(minigamer.getPlayer());
@@ -212,22 +214,42 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		chatter.leave(teamChannel);
 	}
 
+	private void leaveTeamVoiceChannel(Minigamer minigamer) {
+		if (!usesTeamChannels()) return;
+
+		Member member = getVoiceChannelMember(minigamer.getPlayer());
+		if (member == null) return;
+		// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
+		assert member.getVoiceState() != null;
+		assert member.getVoiceState().getChannel() != null;
+
+		if (TEAM_VOICE_CHANNELS.contains(member.getVoiceState().getChannel().getId()))
+			minigamer.getPlayer().sendMessage(RETURN_VC);
+	}
+
+	private void leaveTeamChannel(Minigamer minigamer) {
+		leaveTeamTextChannel(minigamer);
+		leaveTeamVoiceChannel(minigamer);
+	}
+
+	@Override
+	public void onStart(MatchStartEvent event) {
+		super.onStart(event);
+		Match match = event.getMatch();
+		match.getAliveTeams().forEach(team -> joinTeamChannel(team, match));
+	}
+
+	@Override
+	public void onJoin(MatchJoinEvent event) {
+		super.onJoin(event);
+		Match match = event.getMatch();
+		if (match.isStarted())
+			joinTeamChannel(event.getMinigamer());
+	}
+
 	@Override
 	public void onEnd(MatchEndEvent event) {
-		BaseComponent[] message = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
-		event.getMatch().getMinigamers().forEach(minigamer -> {
-			leaveTeamChannel(minigamer);
-
-			Member member = getVoiceChannelMember(minigamer.getPlayer());
-			if (member == null) return;
-			// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
-			assert member.getVoiceState() != null;
-			assert member.getVoiceState().getChannel() != null;
-
-			if (TEAM_VOICE_CHANNELS.contains(member.getVoiceState().getChannel().getId()))
-				minigamer.getPlayer().sendMessage(message);
-		});
-
+		event.getMatch().getMinigamers().forEach(this::leaveTeamChannel);
 		super.onEnd(event);
 	}
 
@@ -495,10 +517,12 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			index++;
 		}
 		// assign team
+		leaveTeamChannel(minigamer);
 		Team team = RandomUtils.randomElement(randomWrappers).getTeam();
 		minigamer.setTeam(team);
 		minigamer.tell("", false);
 		minigamer.tell("&3You have been auto balanced to "+team.getColoredName());
+		joinTeamChannel(minigamer);
 	}
 
 	@Override
