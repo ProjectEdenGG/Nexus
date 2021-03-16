@@ -16,9 +16,7 @@ import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import me.pugabyte.nexus.models.chat.ChatService;
@@ -65,6 +63,9 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		channels.add(DiscordId.VoiceChannel.WHITE.getId());
 		TEAM_VOICE_CHANNELS = ImmutableSet.copyOf(channels);
 	}
+
+	// TODO: add spectators to all team channels (read-only)?
+	// TODO: spectator chat? (git#26)
 
 	@Override
 	public boolean isTeamGame() {
@@ -143,9 +144,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return optionalPublicChannel.orElseGet(() -> getTeamChannel(minigamer.getMatch(), team, createChannel));
 	}
 
-	private void joinTeamChannel(Team team, List<Minigamer> teamMembers) {
+	public void joinTeamChannel(Team team, List<Minigamer> teamMembers) {
 		if (!usesTeamChannels()) return;
 		if (teamMembers.isEmpty()) return;
+		if (team == null) {
+			teamMembers.forEach(this::leaveTeamChannel);
+			return;
+		}
 
 		Match match = teamMembers.get(0).getMatch();
 		ChatColor chatColor = team.getColor();
@@ -201,16 +206,18 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		});
 	}
 
-	private void joinTeamChannel(Minigamer minigamer) {
+	public void joinTeamChannel(Minigamer minigamer) {
 		joinTeamChannel(minigamer.getTeam(), Collections.singletonList(minigamer));
 	}
 
-	private void joinTeamChannel(Team team, Match match) {
+	public void joinTeamChannel(Team team, Match match) {
 		joinTeamChannel(team, team.getAliveMinigamers(match));
 	}
 
-	private void leaveTeamTextChannel(Minigamer minigamer) {
+	public void leaveTeamTextChannel(Minigamer minigamer) {
 		if (!usesTeamChannels()) return;
+		if (minigamer.getTeam() == null) return;
+		// TODO: leave all team channels (future-proof)
 
 		PublicChannel teamChannel = getTeamChannel(minigamer, false);
 		if (teamChannel == null) return;
@@ -220,7 +227,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		chatter.leave(teamChannel);
 	}
 
-	private void leaveTeamVoiceChannel(Minigamer minigamer) {
+	public void leaveTeamVoiceChannel(Minigamer minigamer) {
 		if (!usesTeamChannels()) return;
 
 		Member member = getVoiceChannelMember(minigamer.getPlayer());
@@ -233,24 +240,9 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			minigamer.getPlayer().sendMessage(RETURN_VC);
 	}
 
-	private void leaveTeamChannel(Minigamer minigamer) {
+	public void leaveTeamChannel(Minigamer minigamer) {
 		leaveTeamTextChannel(minigamer);
 		leaveTeamVoiceChannel(minigamer);
-	}
-
-	@Override
-	public void onStart(MatchStartEvent event) {
-		super.onStart(event);
-		Match match = event.getMatch();
-		match.getAliveTeams().forEach(team -> joinTeamChannel(team, match));
-	}
-
-	@Override
-	public void onJoin(MatchJoinEvent event) {
-		super.onJoin(event);
-		Match match = event.getMatch();
-		if (match.isStarted())
-			joinTeamChannel(event.getMinigamer());
 	}
 
 	@Override
@@ -523,12 +515,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			index++;
 		}
 		// assign team
-		leaveTeamChannel(minigamer);
 		Team team = RandomUtils.randomElement(randomWrappers).getTeam();
 		minigamer.setTeam(team);
 		minigamer.tell("", false);
 		minigamer.tell("&3You have been auto balanced to "+team.getColoredName());
-		joinTeamChannel(minigamer);
 	}
 
 	@Override
