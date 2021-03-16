@@ -15,8 +15,14 @@ import me.pugabyte.nexus.models.killermoney.KillerMoney;
 import me.pugabyte.nexus.models.killermoney.KillerMoneyService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
@@ -161,7 +167,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			playerBoost = km.getBoost();
 
 		double money = mob.getRandomValue() * BOOST * playerBoost;
-		new BankerService().deposit(player, money, TransactionCause.KILLER_MONEY);
+		new BankerService().deposit(player, money, ShopGroup.get(player), TransactionCause.KILLER_MONEY);
 		if (!km.isMuted())
 			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
 					"&3 and received &e" + formatter.format(money));

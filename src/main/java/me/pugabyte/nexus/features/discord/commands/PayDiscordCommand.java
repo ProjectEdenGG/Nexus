@@ -12,10 +12,13 @@ import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
+
+import java.math.BigDecimal;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -33,12 +36,18 @@ public class PayDiscordCommand extends Command {
 				DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
 
 				String[] args = event.getArgs().split(" ");
-				if (args.length != 2 || !Utils.isDouble(args[1]))
-					throw new InvalidInputException("Correct usage: `/pay <player> <amount>`");
+				if (args.length < 2 || !Utils.isDouble(args[1]))
+					throw new InvalidInputException("Correct usage: `/pay <player> <amount> [shopGroup] [reason...]`");
 
 				OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 				OfflinePlayer target = PlayerUtils.getPlayer(args[0]);
 				double amount = Double.parseDouble(args[1]);
+				ShopGroup shopGroup = ShopGroup.SURVIVAL;
+				String reason = null;
+				if (args.length > 2)
+					shopGroup = ShopGroup.valueOf(args[2]);
+				if (args.length > 3)
+					reason = event.getArgs().split(" ", 4)[3];
 
 				if (player.getUniqueId().equals(target.getUniqueId()))
 					throw new InvalidInputException("You cannot pay yourself");
@@ -47,7 +56,7 @@ public class PayDiscordCommand extends Command {
 					throw new InvalidInputException("Amount must be greater than $0.01");
 
 				try {
-					new BankerService().transfer(player, target, amount, TransactionCause.PAY);
+					new BankerService().transfer(player, target, BigDecimal.valueOf(amount), shopGroup, TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), shopGroup, reason));
 				} catch (NegativeBalanceException ex) {
 					throw new NotEnoughMoneyException();
 				}

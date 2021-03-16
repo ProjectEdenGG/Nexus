@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.OfflinePlayer;
@@ -106,7 +107,10 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Location: &c" + ex.getMessage());
 		}
 
-		json.newline().next("&3Balance: &e" + new BankerService().getBalanceFormatted(offlinePlayer));
+		json.newline().next("&3Balances:");
+		for (ShopGroup shopGroup : ShopGroup.values())
+			if (new BankerService().getBalance(offlinePlayer, shopGroup) != 500)
+				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup));
 
 		if (offlinePlayer.isOnline() && player != null) {
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode()));

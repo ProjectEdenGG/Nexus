@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
@@ -39,6 +41,7 @@ public class Transaction {
 	private String description;
 	private TransactionCause cause;
 	private LocalDateTime timestamp = LocalDateTime.now();
+	private ShopGroup shopGroup;
 
 	@PreLoad
 	void fix(DBObject dbObject) {
@@ -50,44 +53,55 @@ public class Transaction {
 			dbObject.put("cause", "MARKET_PURCHASE");
 		else if ("MARKET_SELL".equals(dbObject.get("cause")))
 			dbObject.put("cause", "MARKET_SALE");
+
+		if (dbObject.get("shopGroup") == null)
+			dbObject.put("shopGroup", ShopGroup.SURVIVAL);
 	}
 
 	// Add/subtract
-	public Transaction(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, TransactionCause cause) {
-		this(sender, receiver, amount, null, cause);
+	public Transaction(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, ShopGroup shopGroup, TransactionCause cause) {
+		this(sender, receiver, amount, shopGroup, null, cause);
 	}
 
-	public Transaction(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, String description, TransactionCause cause) {
+	public Transaction(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, ShopGroup shopGroup, String description, TransactionCause cause) {
 		if (receiver != null && !Nexus.isUUID0(receiver.getUniqueId())) {
 			this.receiver = receiver.getUniqueId();
-			this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance());
+			this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance(shopGroup));
 			this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
 		}
 
 		if (sender != null && !Nexus.isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
-			this.senderOldBalance = rounded(new BankerService().<Banker>get(sender).getBalance());
+			this.senderOldBalance = rounded(new BankerService().<Banker>get(sender).getBalance(shopGroup));
 			this.senderNewBalance = rounded(this.senderOldBalance.subtract(amount));
 		}
 
 		this.amount = amount;
 		this.description = description;
 		this.cause = cause;
+		this.shopGroup = shopGroup;
+
+		if (shopGroup == null)
+			throw new InvalidInputException("Could not determine shop group for transaction");
 	}
 
 	// Set
-	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, TransactionCause cause) {
-		this(receiver, newBalance, null, cause);
+	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, ShopGroup shopGroup, TransactionCause cause) {
+		this(receiver, newBalance, shopGroup, null, cause);
 	}
 
-	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, String description, TransactionCause cause) {
+	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, ShopGroup shopGroup, String description, TransactionCause cause) {
 		this.receiver = receiver.getUniqueId();
-		this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance());
+		this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance(shopGroup));
 		this.receiverNewBalance = rounded(newBalance);
 
 		this.amount = rounded(this.receiverNewBalance.subtract(receiverOldBalance));
 		this.description = description;
 		this.cause = cause;
+		this.shopGroup = shopGroup;
+
+		if (shopGroup == null)
+			throw new InvalidInputException("Could not determine shop group for transaction");
 	}
 
 	public boolean isDeposit(UUID uuid) {
@@ -205,20 +219,20 @@ public class Transaction {
 
 		public static final List<TransactionCause> shopCauses = Arrays.asList(SHOP_SALE, SHOP_PURCHASE, MARKET_SALE, MARKET_PURCHASE);
 
-		public Transaction of(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount) {
-			return of(sender, receiver, amount, null);
+		public Transaction of(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, ShopGroup shopGroup) {
+			return of(sender, receiver, amount, shopGroup, null);
 		}
 
-		public Transaction of(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, String description) {
-			return new Transaction(sender, receiver, amount, description, this);
+		public Transaction of(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, ShopGroup shopGroup, String description) {
+			return new Transaction(sender, receiver, amount, shopGroup, description, this);
 		}
 
-		public Transaction of(OfflinePlayer receiver, BigDecimal newBalance) {
-			return of(receiver, newBalance, null);
+		public Transaction of(OfflinePlayer receiver, BigDecimal newBalance, ShopGroup shopGroup) {
+			return of(receiver, newBalance, shopGroup, null);
 		}
 
-		public Transaction of(OfflinePlayer receiver, BigDecimal newBalance, String description) {
-			return new Transaction(receiver, newBalance, description, this);
+		public Transaction of(OfflinePlayer receiver, BigDecimal newBalance, ShopGroup shopGroup, String description) {
+			return new Transaction(receiver, newBalance, shopGroup, description, this);
 		}
 	}
 

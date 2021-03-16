@@ -29,6 +29,7 @@ import me.pugabyte.nexus.models.lwc.LWCProtection;
 import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.TrustService;
 import me.pugabyte.nexus.utils.Tasks;
@@ -109,8 +110,10 @@ public class AccountTransferCommand extends CustomCommand {
 			@Override
 			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				BankerService service = new BankerService();
-				double balance = service.getBalance(old);
-				service.transfer(old, target, balance, TransactionCause.SERVER);
+				for (ShopGroup shopGroup : ShopGroup.values()) {
+					double balance = service.getBalance(old, shopGroup);
+					service.transfer(old, target, balance, shopGroup, TransactionCause.SERVER);
+				}
 			}
 		},
 		HOMES {

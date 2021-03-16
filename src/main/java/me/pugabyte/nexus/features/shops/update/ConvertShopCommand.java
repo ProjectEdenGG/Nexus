@@ -132,7 +132,7 @@ public class ConvertShopCommand extends CustomCommand {
 		shop.getProducts().add(product);
 		service.save(shop);
 		if (data.getMoneyInSign() > 0)
-			new BankerService().deposit(data.getPlayer(), data.getMoneyInSign(), TransactionCause.SERVER);
+			new BankerService().deposit(data.getPlayer(), data.getMoneyInSign(), shopGroup, TransactionCause.SERVER);
 		sign.getBlock().setType(Material.AIR);
 		++conversions;
 	}

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.banker;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,103 +21,103 @@ public class BankerService extends MongoService {
 		return cache;
 	}
 
-	public double getBalance(OfflinePlayer player) {
-		return this.<Banker>get(player).getBalance().doubleValue();
+	public double getBalance(OfflinePlayer player, ShopGroup shopGroup) {
+		return this.<Banker>get(player).getBalance(shopGroup).doubleValue();
 	}
 
-	public String getBalanceFormatted(OfflinePlayer player) {
-		return this.<Banker>get(player).getBalanceFormatted();
+	public String getBalanceFormatted(OfflinePlayer player, ShopGroup shopGroup) {
+		return this.<Banker>get(player).getBalanceFormatted(shopGroup);
 	}
 
-	public boolean has(OfflinePlayer player, double money) {
-		return this.<Banker>get(player).has(money);
+	public boolean has(OfflinePlayer player, double money, ShopGroup shopGroup) {
+		return this.<Banker>get(player).has(money, shopGroup);
 	}
 
-	public boolean has(OfflinePlayer player, BigDecimal money) {
-		return this.<Banker>get(player).has(money);
+	public boolean has(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup) {
+		return this.<Banker>get(player).has(money, shopGroup);
 	}
 
-	public void deposit(OfflinePlayer player, double amount, TransactionCause cause) {
-		deposit(player, BigDecimal.valueOf(amount), cause);
+	public void deposit(OfflinePlayer player, double amount, ShopGroup shopGroup, TransactionCause cause) {
+		deposit(player, BigDecimal.valueOf(amount), shopGroup, cause);
 	}
 
-	public void deposit(OfflinePlayer player, BigDecimal money, TransactionCause cause) {
+	public void deposit(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
 		Banker banker = get(player);
-		banker.deposit(money, cause);
+		banker.deposit(money, shopGroup, cause);
 		save(banker);
 	}
 
-	public void deposit(OfflinePlayer player, double amount, Transaction transaction) {
-		deposit(player, BigDecimal.valueOf(amount), transaction);
+	public void deposit(OfflinePlayer player, double amount, ShopGroup shopGroup, Transaction transaction) {
+		deposit(player, BigDecimal.valueOf(amount), shopGroup, transaction);
 	}
 
-	public void deposit(OfflinePlayer player, BigDecimal money, Transaction transaction) {
+	public void deposit(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
 		Banker banker = get(player);
-		banker.deposit(money, transaction);
+		banker.deposit(money, shopGroup, transaction);
 		save(banker);
 	}
 
-	public void withdraw(OfflinePlayer player, double amount, TransactionCause cause) {
-		withdraw(player, BigDecimal.valueOf(amount), cause);
+	public void withdraw(OfflinePlayer player, double amount, ShopGroup shopGroup, TransactionCause cause) {
+		withdraw(player, BigDecimal.valueOf(amount), shopGroup, cause);
 	}
 
-	public void withdraw(OfflinePlayer player, BigDecimal money, TransactionCause cause) {
+	public void withdraw(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
 		Banker banker = get(player);
-		banker.withdraw(money, cause);
+		banker.withdraw(money, shopGroup, cause);
 		save(banker);
 	}
 
-	public void withdraw(OfflinePlayer player, double amount, Transaction transaction) {
-		withdraw(player, BigDecimal.valueOf(amount), transaction);
+	public void withdraw(OfflinePlayer player, double amount, ShopGroup shopGroup, Transaction transaction) {
+		withdraw(player, BigDecimal.valueOf(amount), shopGroup, transaction);
 	}
 
-	public void withdraw(OfflinePlayer player, BigDecimal money, Transaction transaction) {
+	public void withdraw(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
 		Banker banker = get(player);
-		banker.withdraw(money, transaction);
+		banker.withdraw(money, shopGroup, transaction);
 		save(banker);
 	}
 
-	public void transfer(OfflinePlayer from, OfflinePlayer to, double amount, TransactionCause cause) {
-		transfer(from, to, BigDecimal.valueOf(amount), cause);
+	public void transfer(OfflinePlayer from, OfflinePlayer to, double amount, ShopGroup shopGroup, TransactionCause cause) {
+		transfer(from, to, BigDecimal.valueOf(amount), shopGroup, cause);
 	}
 
-	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, TransactionCause cause) {
-		transfer((Banker) get(from), get(to), money, cause);
+	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
+		transfer((Banker) get(from), get(to), money, shopGroup, cause);
 	}
 
-	public void transfer(Banker from, Banker to, BigDecimal money, TransactionCause cause) {
-		from.transfer(to, money, cause);
+	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
+		from.transfer(to, money, shopGroup, cause);
 		save(from);
 		save(to);
 	}
 
-	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, Transaction transaction) {
-		transfer(get(from), this.<Banker>get(to), money, transaction);
+	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
+		transfer(get(from), this.<Banker>get(to), money, shopGroup, transaction);
 	}
 
-	public void transfer(Banker from, Banker to, BigDecimal money, Transaction transaction) {
-		from.transfer(to, money, transaction);
+	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
+		from.transfer(to, money, shopGroup, transaction);
 		save(from);
 		save(to);
 	}
 
-	public void setBalance(OfflinePlayer player, double balance, TransactionCause cause) {
-		setBalance(player, BigDecimal.valueOf(balance), cause);
+	public void setBalance(OfflinePlayer player, double balance, ShopGroup shopGroup, TransactionCause cause) {
+		setBalance(player, BigDecimal.valueOf(balance), shopGroup, cause);
 	}
 
-	public void setBalance(OfflinePlayer player, BigDecimal balance, TransactionCause cause) {
+	public void setBalance(OfflinePlayer player, BigDecimal balance, ShopGroup shopGroup, TransactionCause cause) {
 		Banker banker = get(player);
-		banker.setBalance(balance, cause);
+		banker.setBalance(balance, shopGroup, cause);
 		save(banker);
 	}
 
-	public void setBalance(OfflinePlayer player, double balance, Transaction transaction) {
-		setBalance(player, BigDecimal.valueOf(balance), transaction);
+	public void setBalance(OfflinePlayer player, double balance, ShopGroup shopGroup, Transaction transaction) {
+		setBalance(player, BigDecimal.valueOf(balance), shopGroup, transaction);
 	}
 
-	public void setBalance(OfflinePlayer player, BigDecimal balance, Transaction transaction) {
+	public void setBalance(OfflinePlayer player, BigDecimal balance, ShopGroup shopGroup, Transaction transaction) {
 		Banker banker = get(player);
-		banker.setBalance(balance, transaction);
+		banker.setBalance(balance, shopGroup, transaction);
 		save(banker);
 	}
 

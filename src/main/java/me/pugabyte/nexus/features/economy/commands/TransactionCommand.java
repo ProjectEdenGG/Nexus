@@ -11,17 +11,18 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 import static me.pugabyte.nexus.models.banker.Transaction.combine;
@@ -31,22 +32,26 @@ import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @Aliases("txn")
 public class TransactionCommand extends CustomCommand {
+	private final ShopGroup shopGroup;
 
 	public TransactionCommand(@NonNull CommandEvent event) {
 		super(event);
+		shopGroup = ShopGroup.get(player());
 	}
 
 	@Async
 	@Path("history [player] [page]")
 	void history(@Arg("self") Banker banker, @Arg("1") int page) {
-		List<Transaction> transactions = new ArrayList<>(banker.getTransactions());
-		transactions.sort(Comparator.comparing(Transaction::getTimestamp).reversed());
+		List<Transaction> transactions = banker.getTransactions().stream()
+				.filter(transaction -> transaction.getShopGroup() == shopGroup)
+				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+				.collect(Collectors.toList());
 
 		if (transactions.isEmpty())
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + camelCase(shopGroup) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 

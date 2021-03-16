@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 
@@ -36,27 +37,28 @@ public class PayCommand extends CustomCommand {
 		self = service.get(player());
 	}
 
-	@Path("<player> <amount> [reason...]")
-	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, String reason) {
+	@Path("<player> <amount> [shopGroup] [reason...]")
+	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, @Arg("current") ShopGroup shopGroup, String reason) {
 		if (isSelf(banker))
 			error("You cannot pay yourself");
 
 		try {
-			service.transfer(self, banker, amount, TransactionCause.PAY.of(player(), banker.getOfflinePlayer(), amount, reason));
+			service.transfer(self, banker, amount, shopGroup, TransactionCause.PAY.of(player(), banker.getOfflinePlayer(), amount, shopGroup, reason));
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}
 
-		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName() + (reason == null ? "" : " &3for &e" + reason));
+		String description = (reason == null ? "" : " &3for &e" + reason) + " &3in &e" + camelCase(shopGroup);
+		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName() + description);
 		if (banker.isOnline())
-			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + (reason == null ? "" : " &3for &e" + reason));
+			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + description);
 	}
 
 	@Async
-	@Path("history [player] [page]")
-	void history(@Arg("self") Banker banker, @Arg("1") int page) {
-		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
-				.stream().filter(transaction -> transaction.getCause() == TransactionCause.PAY)
+	@Path("history [player] [shopGroup] [page]")
+	void history(@Arg("self") Banker banker, @Arg("current") ShopGroup shopGroup, @Arg("1") int page) {
+		List<Transaction> transactions = new ArrayList<>(banker.getTransactions()).stream()
+				.filter(transaction -> transaction.getShopGroup() == shopGroup && transaction.getCause() == TransactionCause.PAY)
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
 				.collect(Collectors.toList());
 
@@ -64,11 +66,11 @@ public class PayCommand extends CustomCommand {
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + camelCase(shopGroup) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/pay history " + banker.getName(), page);
+		paginate(combine(transactions), formatter, "/pay history " + banker.getName() + " " + shopGroup.name().toLowerCase(), page);
 	}
 
 }
