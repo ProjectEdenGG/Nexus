@@ -117,6 +117,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 				.color(colorType.getChatColor())
 				.local(false)
 				.crossWorld(true)
+				.persistent(false)
 				.build();
 
 		teamChannels.put(team, channel);
