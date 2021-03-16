@@ -20,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.pugabyte.nexus.features.minigames.menus.teams.TeamColorMenu.COLOR_TYPES;
 import static me.pugabyte.nexus.utils.PlayerUtils.getNearestPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -181,7 +181,7 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public ColorType getColorType() {
-		ColorType colorType = Arrays.stream(ColorType.values()).filter(colorType1 -> getColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
+		ColorType colorType = COLOR_TYPES.stream().filter(colorType1 -> getColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
 		if (colorType == null)
 			Nexus.warn("Could not find a matching color type for team "+getName()+" (Color: "+getColor().getName()+")");
 		return colorType;
