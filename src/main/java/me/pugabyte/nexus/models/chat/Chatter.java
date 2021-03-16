@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.ChatManager;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -69,9 +70,13 @@ public class Chatter extends PlayerOwnedObject {
 		else
 			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
 
+		if (!hasPerm)
+			return false;
+
 		if (channel.getRank() != null)
-			return Nerd.of(getOfflinePlayer()).getRank().gte(channel.getRank()) && hasPerm;
-		return hasPerm;
+			return Nerd.of(getOfflinePlayer()).getRank().gte(channel.getRank());
+
+		return true;
 	}
 
 	public boolean hasJoined(PublicChannel channel) {

@@ -92,6 +92,10 @@ public class Match {
 		return allMinigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
 	}
 
+	/**
+	 * Gets all teams with living (i.e. not spectating) players.
+	 * @return list of teams
+	 */
 	public List<Team> getAliveTeams() {
 		// collects to a set first to remove duplicates
 		return new ArrayList<>(getAliveMinigamers().stream().map(Minigamer::getTeam).filter(Objects::nonNull).collect(Collectors.toSet()));
