@@ -56,6 +56,7 @@ public class Listeners implements Listener {
 
 		ItemStack result = event.getInventory().getResult();
 		if (isNullOrAir(result)) return;
+		if (!ItemTagsUtils.isArmor(result) && !ItemTagsUtils.isTool(result)) return;
 
 		ItemStack updated = updateItem(result);
 

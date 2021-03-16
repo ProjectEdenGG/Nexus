@@ -33,6 +33,8 @@ public class ItemTagsUtils {
 	public static ItemStack updateItem(ItemStack itemStack) {
 		Condition condition = Condition.of(itemStack);
 		Rarity rarity = Rarity.of(itemStack);
+		if (condition == null && rarity == null)
+			return itemStack;
 
 		// Clear Tags
 		itemStack = clearTags(itemStack);
