@@ -32,13 +32,14 @@ class DatabaseChatter {
 	public DatabaseChatter(Chatter chatter) {
 		uuid = chatter.getUuid();
 		if (chatter.getActiveChannel() instanceof PublicChannel)
-			activePublicChannel = ((PublicChannel) chatter.getActiveChannel()).getName();
+			if (((PublicChannel) chatter.getActiveChannel()).isPersistent())
+				activePublicChannel = ((PublicChannel) chatter.getActiveChannel()).getName();
 		else if (chatter.getActiveChannel() instanceof PrivateChannel)
 			activePrivateChannel = getRecipients((PrivateChannel) chatter.getActiveChannel());
 		if (chatter.getJoinedChannels() != null)
-			joinedChannels = chatter.getJoinedChannels().stream().map(PublicChannel::getName).collect(Collectors.toList());
+			joinedChannels = chatter.getJoinedChannels().stream().filter(PublicChannel::isPersistent).map(PublicChannel::getName).collect(Collectors.toList());
 		if (chatter.getLeftChannels() != null)
-			leftChannels = chatter.getLeftChannels().stream().map(PublicChannel::getName).collect(Collectors.toList());
+			leftChannels = chatter.getLeftChannels().stream().filter(PublicChannel::isPersistent).map(PublicChannel::getName).collect(Collectors.toList());
 		lastPrivateMessage = getRecipients(chatter.getLastPrivateMessage());
 	}
 

@@ -38,6 +38,7 @@ public class PublicChannel implements Channel {
 	private boolean crossWorld;
 	private String permission;
 	private Rank rank;
+	private boolean persistent = true;
 
 	public ChatColor getDiscordColor() {
 		return discordColor == null ? color : discordColor;
