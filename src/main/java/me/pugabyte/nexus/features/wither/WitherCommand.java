@@ -25,6 +25,8 @@ public class WitherCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
+		if (!PlayerUtils.isStaffGroup(player()))
+			error("The wither is currently being beta tested by staff. It should be back soon!");
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 		if (WitherChallenge.currentFight != null)
