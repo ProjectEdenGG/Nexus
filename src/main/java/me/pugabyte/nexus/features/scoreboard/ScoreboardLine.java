@@ -15,6 +15,7 @@ import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -164,7 +165,7 @@ public enum ScoreboardLine {
 	BALANCE {
 		@Override
 		public String render(Player player) {
-			double balance = new BankerService().getBalance(player);
+			double balance = new BankerService().getBalance(player, ShopGroup.get(player));
 
 			String formatted = new DecimalFormat("###,###,###.00").format(balance);
 

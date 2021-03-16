@@ -84,6 +84,7 @@ public class ShopCommand extends CustomCommand {
 	void history(@Arg("self") Banker banker, @Arg("1") int page) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
 				.stream().filter(transaction ->
+						transaction.getShopGroup() == shopGroup &&
 						(transaction.getCause() == TransactionCause.SHOP_PURCHASE && banker.getUuid().equals(transaction.getSender())) ||
 						(transaction.getCause() == TransactionCause.SHOP_SALE && banker.getUuid().equals(transaction.getReceiver())))
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
@@ -93,7 +94,7 @@ public class ShopCommand extends CustomCommand {
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + camelCase(shopGroup) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 

@@ -11,6 +11,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -96,7 +97,8 @@ public class OnlineCommand extends CustomCommand {
 		int ping = PlayerUtils.getPing(player);
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player);
-		String balance = new BankerService().getBalanceFormatted(player);
+		ShopGroup shopGroup = ShopGroup.get(player);
+		String balance = new BankerService().getBalanceFormatted(player, shopGroup);
 		String totalHours = Timespan.of(hours.getTotal()).format();
 		String afk = "";
 
@@ -109,7 +111,7 @@ public class OnlineCommand extends CustomCommand {
 		return afk +
 				"&3Ping: &e" + ping + "\n" +
 				"&3World: &e" + world + "\n" +
-				"&3Balance: &e$" + balance + "\n" +
+				"&3" + camelCase(shopGroup) + " balance: &e$" + balance + "\n" +
 				"&3Online for: &e" + onlineFor + "\n" +
 				"&3Hours: &e" + totalHours;
 	}

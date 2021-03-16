@@ -125,6 +125,13 @@ public class Nerd extends PlayerOwnedObject {
 		return null;
 	}
 
+	public World getWorld() {
+		if (isOnline())
+			return getLocation().getWorld();
+		else
+			return getDimension();
+	}
+
 	public World getDimension() {
 		NBTFile dataFile = getDataFile();
 		if (dataFile == null)

@@ -213,7 +213,7 @@ public class Shop extends PlayerOwnedObject {
 
 		public double getCalculatedStock() {
 			if (exchangeType == ExchangeType.BUY && stock == -1)
-				return new BankerService().getBalance(getShop().getOfflinePlayer());
+				return new BankerService().getBalance(getShop().getOfflinePlayer(), shopGroup);
 			else
 				return stock;
 		}
@@ -403,7 +403,7 @@ public class Shop extends PlayerOwnedObject {
 		public void process(Player customer) {
 			checkStock();
 
-			if (!new BankerService().has(customer, price))
+			if (!new BankerService().has(customer, price, product.getShopGroup()))
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
@@ -418,8 +418,8 @@ public class Shop extends PlayerOwnedObject {
 				return;
 
 			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_SALE : TransactionCause.SHOP_SALE;
-			Transaction transaction = cause.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), pretty(product.getItem()));
-			new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), transaction);
+			Transaction transaction = cause.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
+			new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), product.getShopGroup(), transaction);
 		}
 
 		public boolean canFulfillPurchase() {
@@ -544,8 +544,8 @@ public class Shop extends PlayerOwnedObject {
 			if (price <= 0)
 				return;
 			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_PURCHASE : TransactionCause.SHOP_PURCHASE;
-			Transaction transaction = cause.of(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), pretty(product.getItem()));
-			new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), transaction);
+			Transaction transaction = cause.of(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
+			new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), product.getShopGroup(), transaction);
 		}
 
 		@Override

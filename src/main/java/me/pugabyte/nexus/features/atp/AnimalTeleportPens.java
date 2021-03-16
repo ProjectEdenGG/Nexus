@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -125,7 +126,7 @@ public class AnimalTeleportPens {
 			return;
 		}
 		int price = getPrice(entities);
-		double balance = new BankerService().getBalance(player);
+		double balance = new BankerService().getBalance(player, ShopGroup.SURVIVAL);
 		if (balance < price) {
 			PlayerUtils.send(player, PREFIX + "&cYou do not have enough money to use the ATP");
 			return;
@@ -147,7 +148,7 @@ public class AnimalTeleportPens {
 		}
 		Tasks.wait(4, () -> {
 			player.teleport(toLoc);
-			new BankerService().withdraw(player, price, TransactionCause.ANIMAL_TELEPORT_PEN);
+			new BankerService().withdraw(player, price, ShopGroup.SURVIVAL, TransactionCause.ANIMAL_TELEPORT_PEN);
 		});
 	}
 

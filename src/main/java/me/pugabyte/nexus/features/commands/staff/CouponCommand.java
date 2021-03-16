@@ -24,6 +24,7 @@ import me.pugabyte.nexus.models.coupon.Coupons;
 import me.pugabyte.nexus.models.coupon.Coupons.Coupon;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.*;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -54,7 +55,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 			@Override
 			void use(PlayerInteractEvent event) {
 				int amount = extractValue(event.getItem());
-				new BankerService().deposit(event.getPlayer(), amount, TransactionCause.COUPON);
+				new BankerService().deposit(event.getPlayer(), amount, ShopGroup.get(event.getPlayer()), TransactionCause.COUPON);
 				ItemStack item = event.getItem();
 				item.setAmount(item.getAmount() - 1);
 				PlayerUtils.send(event.getPlayer(), "&e$" + amount + " &3has been added to your account");
@@ -108,7 +109,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		PUGMAS20_ADVENT_5000(true) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				new BankerService().deposit(event.getPlayer(), 5000, TransactionCause.COUPON);
+				new BankerService().deposit(event.getPlayer(), 5000, ShopGroup.get(event.getPlayer()), TransactionCause.COUPON);
 			}
 		},
 		PUGMAS20_ITEM_PAINTING(false) {

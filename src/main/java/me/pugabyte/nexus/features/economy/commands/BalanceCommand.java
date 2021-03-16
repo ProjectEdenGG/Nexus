@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
 
 @Aliases({"bal", "money"})
@@ -17,12 +18,12 @@ public class BalanceCommand extends CustomCommand {
 		PREFIX = StringUtils.getPrefix("Economy");
 	}
 
-	@Path("[player]")
-	void balance(@Arg("self") Banker banker) {
+	@Path("[player] [shopGroup]")
+	void balance(@Arg("self") Banker banker, @Arg("current") ShopGroup shopGroup) {
 		if (isSelf(banker))
-			send(PREFIX + "Your balance: &e" + banker.getBalanceFormatted());
+			send(PREFIX + "Your " + camelCase(shopGroup) + " balance: &e" + banker.getBalanceFormatted(shopGroup));
 		else
-			send(PREFIX + "&e" + banker.getName() + "'s &3balance: &e" + banker.getBalanceFormatted());
+			send(PREFIX + "&e" + banker.getName() + "'s &3" + camelCase(shopGroup) + " balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
 }

@@ -66,7 +66,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 			addBackItem(contents, e -> previousMenu.open(player));
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.GOLD_INGOT).name("&e&lBalance")
-				.lore("&f" + new BankerService().getBalanceFormatted(player)).build()));
+				.lore("&f" + new BankerService().getBalanceFormatted(player, shopGroup)).build()));
 	}
 
 	@Override

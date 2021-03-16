@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.listeners;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
-import dev.morphia.query.Sort;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.HoursCommand.HoursTopArguments;
@@ -19,6 +18,7 @@ import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.purchase.PurchaseService;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -30,6 +30,7 @@ import org.bukkit.event.Listener;
 
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -37,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
@@ -83,10 +85,13 @@ public class Leaderboards implements Listener {
 		BALANCE(2703, 2702, 2701) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new BankerService().<Banker>getAllSortedBy(Sort.descending("balance")).subList(0, 3).stream()
+				return new BankerService().<Banker>getAll().stream()
+						.sorted(Comparator.comparing(banker -> banker.getBalance(ShopGroup.SURVIVAL), Comparator.reverseOrder()))
+						.collect(toList())
+						.subList(0, 3).stream()
 						.collect(Collectors.toMap(
 								Banker::getUuid,
-								Banker::getBalanceFormatted,
+								banker -> banker.getBalanceFormatted(ShopGroup.SURVIVAL),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}

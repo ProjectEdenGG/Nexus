@@ -15,6 +15,7 @@ import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.mcmmo.McMMOPrestige;
 import me.pugabyte.nexus.models.mcmmo.McMMOService;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -212,7 +213,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		Koda.say(player.getName() + " has reset all of their McMMO skills!");
 
 		PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
-		new BankerService().deposit(player, 20000, TransactionCause.MCMMO_RESET);
+		new BankerService().deposit(player, 20000, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 
 		for (PrimarySkillType skillType : PrimarySkillType.values()) {
 			if (skillType.isChildSkill()) continue;
@@ -227,7 +228,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
 		skill.onClick(player);
-		new BankerService().deposit(player, 10000, TransactionCause.MCMMO_RESET);
+		new BankerService().deposit(player, 10000, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 		mcmmoPlayer.modifySkill(PrimarySkillType.valueOf(skill.name()), 0);
 
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());

@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.dailyreward.Reward;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -159,7 +160,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		} else {
 
 			if (money != null) {
-				new BankerService().deposit(player, money, TransactionCause.DAILY_REWARD);
+				new BankerService().deposit(player, money, ShopGroup.get(player), TransactionCause.DAILY_REWARD);
 				PlayerUtils.send(player, PREFIX + "&e" + money + " &3has been added to your balance");
 			}
 
