@@ -397,13 +397,19 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("You do not have enough money to purchase this item");
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
-			if (price > 0) {
-				Transaction transaction = TransactionCause.SHOP_SELL.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), pretty(product.getItem()));
-				new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), transaction);
-			}
+			transaction(customer);
 			giveItems(customer, product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
+		}
+
+		private void transaction(Player customer) {
+			if (price <= 0)
+				return;
+
+			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_SALE : TransactionCause.SHOP_SALE;
+			Transaction transaction = cause.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), pretty(product.getItem()));
+			new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), transaction);
 		}
 
 		public boolean canFulfillPurchase() {
@@ -517,14 +523,19 @@ public class Shop extends PlayerOwnedObject {
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 
 			product.setStock(product.getStock() - price);
-			if (price > 0) {
-				Transaction transaction = TransactionCause.SHOP_SELL.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), pretty(product.getItem()));
-				new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), transaction);
-			}
+			transaction(customer);
 			customer.getInventory().removeItem(product.getItem());
 			product.getShop().addHolding(product.getItem());
 			new ShopService().save(product.getShop());
 			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for " + prettyMoney(price));
+		}
+
+		private void transaction(Player customer) {
+			if (price <= 0)
+				return;
+			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_PURCHASE : TransactionCause.SHOP_PURCHASE;
+			Transaction transaction = cause.of(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), pretty(product.getItem()));
+			new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), transaction);
 		}
 
 		@Override

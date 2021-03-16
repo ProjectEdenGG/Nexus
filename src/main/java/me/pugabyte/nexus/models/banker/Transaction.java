@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.models.banker;
 
+import com.mongodb.DBObject;
+import dev.morphia.annotations.PreLoad;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
@@ -16,9 +18,9 @@ import static me.pugabyte.nexus.models.banker.BankerService.rounded;
 @Data
 @NoArgsConstructor
 public class Transaction {
-	private UUID receiver;
-	private BigDecimal receiverOldBalance;
-	private BigDecimal receiverNewBalance;
+	private UUID receiver = null;
+	private BigDecimal receiverOldBalance = null;
+	private BigDecimal receiverNewBalance = null;
 
 	private UUID sender = null;
 	private BigDecimal senderOldBalance = null;
@@ -29,14 +31,25 @@ public class Transaction {
 	private TransactionCause cause;
 	private LocalDateTime timestamp = LocalDateTime.now();
 
-	public Transaction(@Nullable OfflinePlayer sender, @NotNull OfflinePlayer receiver, @NotNull BigDecimal amount, @NotNull TransactionCause cause) {
+	@PreLoad
+	void fix(DBObject dbObject) {
+		if ("SHOP_BUY".equals(dbObject.get("cause")))
+			dbObject.put("cause", "SHOP_PURCHASE");
+		else if ("SHOP_SELL".equals(dbObject.get("cause")))
+			dbObject.put("cause", "SHOP_SALE");
+	}
+
+	// Add/subtract
+	public Transaction(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, TransactionCause cause) {
 		this(sender, receiver, amount, null, cause);
 	}
-	// Add/subtract
-	public Transaction(@Nullable OfflinePlayer sender, @NotNull OfflinePlayer receiver, @NotNull BigDecimal amount, @Nullable String description, @NotNull TransactionCause cause) {
-		this.receiver = receiver.getUniqueId();
-		this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance());
-		this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
+
+	public Transaction(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, String description, TransactionCause cause) {
+		if (receiver != null && !Nexus.isUUID0(receiver.getUniqueId())) {
+			this.receiver = receiver.getUniqueId();
+			this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance());
+			this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
+		}
 
 		if (sender != null && !Nexus.isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
@@ -50,7 +63,7 @@ public class Transaction {
 	}
 
 	// Set
-	public Transaction(@NotNull OfflinePlayer receiver, @NotNull BigDecimal newBalance, @NotNull TransactionCause cause) {
+	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, TransactionCause cause) {
 		this.receiver = receiver.getUniqueId();
 		this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance());
 		this.receiverNewBalance = rounded(newBalance);
@@ -61,10 +74,10 @@ public class Transaction {
 
 	public enum TransactionCause {
 		PAY,
-		SHOP_SELL,
-		SHOP_BUY,
-		MARKET_SELL,
-		MARKET_BUY,
+		SHOP_SALE,
+		SHOP_PURCHASE,
+		MARKET_SALE,
+		MARKET_PURCHASE,
 		KILLER_MONEY,
 		ANIMAL_TELEPORT_PEN,
 		VOTE_POINT_STORE,

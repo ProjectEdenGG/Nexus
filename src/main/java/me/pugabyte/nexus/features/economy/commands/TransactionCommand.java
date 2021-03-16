@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.economy.commands;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -14,6 +15,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -39,16 +41,16 @@ public class TransactionCommand extends CustomCommand {
 			String timestamp = shortDateTimeFormat(transaction.getTimestamp());
 
 			String cost = prettyMoney(transaction.getAmount());
-			String cause = "";
 			String description = "";
-			if (!transaction.getCause().equals(TransactionCause.PAY)) {
-				cause = "&3, " + StringUtils.camelCase(transaction.getCause());
+			List<TransactionCause> shopCauses = Arrays.asList(TransactionCause.SHOP_SALE, TransactionCause.SHOP_PURCHASE, TransactionCause.MARKET_SALE, TransactionCause.MARKET_PURCHASE);
+			if (shopCauses.contains(transaction.getCause())) {
+				description += "&3" + StringUtils.camelCase(transaction.getCause());
 				if (transaction.getDescription() != null)
-					description = "&3: &e" + transaction.getDescription();
+					description += ": &e" + transaction.getDescription();
 			}
 
 			// Deposit
-			String fromPlayer = getName(transaction.getSender(), transaction.getCause());
+			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), transaction.getCause());
 			String toPlayer = "&7&lYOU";
 			String symbol = "&a+";
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
@@ -57,18 +59,21 @@ public class TransactionCommand extends CustomCommand {
 			if (!transaction.getReceiver().equals(banker.getUuid())) {
 				symbol = "&c-";
 				fromPlayer = "&7&lYOU";
-				toPlayer = getName(transaction.getReceiver(), transaction.getCause());
+				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), transaction.getCause());
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
 			}
 
-			return json("&3" + (index + 1) + " &e" + timestamp + " &7- " +
-					"&e" + fromPlayer + " &3→&e " + toPlayer + "&3, " + symbol + cost + "&3, &e" + newBalance + cause + description)
-					.addHover("&3Time since: &e" + timespanDiff(transaction.getTimestamp()));
+			cost = symbol + cost;
+			newBalance = "&e" + newBalance;
+
+			return json("&3" + (index + 1) + " &7" + timestamp + "  " + newBalance + "  &7|  " +
+					fromPlayer + " &3→ " + toPlayer + "  " + cost + "  " + description)
+					.addHover("&3Time since: &e" + timespanDiff(transaction.getTimestamp()))
+					.addHover("")
+					.addHover(transaction.toString());
 		};
 
 		paginate(transactions, formatter, "/transaction history " + banker.getName(), page);
-
-
 	}
 
 	// fix UUID0
@@ -76,15 +81,23 @@ public class TransactionCommand extends CustomCommand {
 		if (uuid == null) {
 			switch (cause) {
 				case PAY:
-				case SHOP_SELL:
-				case SHOP_BUY:
+				case SHOP_SALE:
+				case SHOP_PURCHASE:
 					return "Unknown";
+				case MARKET_SALE:
+				case MARKET_PURCHASE:
+					return "Market";
 				default:
-					return "Server";
+					return camelCase(cause);
 			}
 		}
 
-		return PlayerUtils.getPlayer(uuid).getName();
+		if (StringUtils.isV4Uuid(uuid))
+			return PlayerUtils.getPlayer(uuid).getName();
+		else if (Nexus.isUUID0(uuid))
+			return "Market";
+		else
+			return "Unknown";
 	}
 
 }
