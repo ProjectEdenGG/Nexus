@@ -74,8 +74,8 @@ public class SearchProductsProvider extends _ShopProvider {
 			browseItemsMenu.open(player);
 		}));
 
-		contents.set(2, 2, ClickableItem.from(nameItem(Material.POTION, "&6Search for potions"), e -> {
-			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Potions", product -> filter(product.getItem(), MaterialTag.POTIONS)));
+		contents.set(2, 2, ClickableItem.from(nameItem(Material.POTION, "&6Search for potion materials"), e -> {
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Potion materials", product -> filter(product.getItem(), MaterialTag.POTION_MATERIALS)));
 			browseItemsMenu.open(player);
 		}));
 

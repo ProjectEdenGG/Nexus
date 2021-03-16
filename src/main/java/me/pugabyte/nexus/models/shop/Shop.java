@@ -434,13 +434,13 @@ public class Shop extends PlayerOwnedObject {
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
 						desc,
-						"&7Seller: &6Market"
+						"&7Owner: &6Market"
 				);
 			else
 				return Arrays.asList(
 						desc,
 						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
+						"&7Owner: &e" + product.getShop().getOfflinePlayer().getName()
 				);
 		}
 
@@ -493,13 +493,13 @@ public class Shop extends PlayerOwnedObject {
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
 						desc,
-						"&7Seller: &6Market"
+						"&7Owner: &6Market"
 				);
 			else
 				return Arrays.asList(
 						desc,
 						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
+						"&7Owner: &e" + product.getShop().getOfflinePlayer().getName()
 				);
 		}
 
@@ -559,13 +559,13 @@ public class Shop extends PlayerOwnedObject {
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
 						desc,
-						"&7Seller: &6Market"
+						"&7Owner: &6Market"
 				);
 			else
 				return Arrays.asList(
 						desc,
 						"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false),
-						"&7Seller: &e" + product.getShop().getOfflinePlayer().getName()
+						"&7Owner: &e" + product.getShop().getOfflinePlayer().getName()
 				);
 		}
 
