@@ -26,19 +26,24 @@ public class VoiceChannelCommand extends CustomCommand {
 	@Path("[channel]")
 	void run(String channel) {
 		Guild guild = Discord.getGuild();
-		if (guild == null)
+		if (guild == null) {
 			error("Could not load the Discord server");
-
+			return;
+		}
 		VoiceChannel vc = guild.getVoiceChannelById(channel);
-		if (vc == null)
+		if (vc == null) {
 			error("Could not find that voice channel");
-		if (!VALID_VOICE_CHANNELS.contains(channel))
+			return;
+		}
+		if (!VALID_VOICE_CHANNELS.contains(channel)) {
 			error("You can only move to Minigame voice channels");
-
+			return;
+		}
 		Member member = TeamMechanic.getVoiceChannelMember(player());
-		if (member == null)
+		if (member == null) {
 			error("Could not find you in a voice channel");
-
+			return;
+		}
 		guild.moveVoiceMember(member, vc).complete();
 	}
 }

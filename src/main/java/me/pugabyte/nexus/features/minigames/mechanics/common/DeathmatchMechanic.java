@@ -5,7 +5,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.T
 
 public abstract class DeathmatchMechanic extends TeamMechanic {
 	@Override
-	public boolean useAlternativeRegen() {
+	public boolean usesAlternativeRegen() {
 		return true;
 	}
 

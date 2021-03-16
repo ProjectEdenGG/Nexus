@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@Override
-	public boolean useAlternativeRegen() {
+	public boolean usesAlternativeRegen() {
 		return true;
 	}
 

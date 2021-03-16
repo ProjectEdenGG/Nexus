@@ -67,7 +67,7 @@ public abstract class Mechanic implements Listener {
 		return false;
 	}
 
-	public boolean useAlternativeRegen() {
+	public boolean usesAlternativeRegen() {
 		return false;
 	}
 
@@ -162,7 +162,7 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void onDeath(MinigamerDeathEvent event) {
-		if (event.getAttacker() != null && useAlternativeRegen())
+		if (event.getAttacker() != null && usesAlternativeRegen())
 			event.getAttacker().heal(2);
 
 		event.broadcastDeathMessage();

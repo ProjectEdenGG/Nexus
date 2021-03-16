@@ -30,7 +30,7 @@ public final class FreeForAll extends TeamlessMechanic {
 	}
 
 	@Override
-	public boolean useAlternativeRegen() {
+	public boolean usesAlternativeRegen() {
 		return true;
 	}
 }
