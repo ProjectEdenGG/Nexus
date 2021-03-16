@@ -31,9 +31,11 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Beehive;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
@@ -277,6 +279,14 @@ public class Shop extends PlayerOwnedObject {
 				Damageable meta = (Damageable) item.getItemMeta();
 				if (meta.hasDamage())
 					builder.lore("&7Durability: " + (maxDurability - meta.getDamage()) + " / " + maxDurability);
+			}
+
+			if (item.getItemMeta() instanceof BlockStateMeta) {
+				BlockStateMeta meta = (BlockStateMeta) item.getItemMeta();
+				if (meta.getBlockState() instanceof Beehive) {
+					Beehive beehive = (Beehive) meta.getBlockState();
+					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
+				}
 			}
 
 			if (!getShulkerContents(item).isEmpty())
