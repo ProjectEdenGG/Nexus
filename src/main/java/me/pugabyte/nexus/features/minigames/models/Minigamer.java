@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -233,7 +234,16 @@ public class Minigamer {
 	}
 
 	public void setTeam(Team team) {
+		// leave current team channel
+		if (match.getMechanic() instanceof TeamMechanic && this.team != null)
+			((TeamMechanic)match.getMechanic()).leaveTeamTextChannel(this);
+
 		this.team = team;
+
+		// join new team channel
+		if (match.getMechanic() instanceof TeamMechanic && team != null)
+			((TeamMechanic)match.getMechanic()).joinTeamChannel(this);
+
 		if (this.getMatch().getScoreboardTeams() != null)
 			this.match.getScoreboardTeams().update();
 	}
