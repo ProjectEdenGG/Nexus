@@ -37,6 +37,10 @@ public class Transaction {
 			dbObject.put("cause", "SHOP_PURCHASE");
 		else if ("SHOP_SELL".equals(dbObject.get("cause")))
 			dbObject.put("cause", "SHOP_SALE");
+		else if ("MARKET_BUY".equals(dbObject.get("cause")))
+			dbObject.put("cause", "MARKET_PURCHASE");
+		else if ("MARKET_SELL".equals(dbObject.get("cause")))
+			dbObject.put("cause", "MARKET_SALE");
 	}
 
 	// Add/subtract

@@ -37,6 +37,12 @@ public class TransactionCommand extends CustomCommand {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions());
 		transactions.sort(Comparator.comparing(Transaction::getTimestamp).reversed());
 
+		if (transactions.isEmpty())
+			error("&cNo transactions found");
+
+		send("");
+		send(PREFIX + "Transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+
 		BiFunction<Transaction, Integer, JsonBuilder> formatter = (transaction, index) -> {
 			String timestamp = shortDateTimeFormat(transaction.getTimestamp());
 
@@ -51,14 +57,14 @@ public class TransactionCommand extends CustomCommand {
 
 			// Deposit
 			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), transaction.getCause());
-			String toPlayer = "&7&lYOU";
+			String toPlayer = isSelf(banker) ? "&7&lYOU" : "&7" + banker.getName();
 			String symbol = "&a+";
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
 			// Withdrawal
 			if (!transaction.getReceiver().equals(banker.getUuid())) {
 				symbol = "&c-";
-				fromPlayer = "&7&lYOU";
+				fromPlayer = isSelf(banker) ? "&7&lYOU" : "&7" + banker.getName();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), transaction.getCause());
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
 			}
