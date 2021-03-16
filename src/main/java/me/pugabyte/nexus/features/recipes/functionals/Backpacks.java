@@ -17,6 +17,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -118,10 +119,19 @@ public class Backpacks extends FunctionalRecipe {
 		BackpackColor color = BackpackColor.fromDye(dye.getType());
 		if (color == null) return;
 		ItemStack newBackpack = new ItemBuilder(backpack.clone()).material(Material.valueOf(color.name() + "_SHULKER_BOX")).name("&" + color.getColorCode() + "Backpack").build();
+		// Copy Contents
+		BlockStateMeta oldMeta = (BlockStateMeta) backpack.getItemMeta();
+		BlockStateMeta newMeta = (BlockStateMeta) newBackpack.getItemMeta();
+		ShulkerBox oldBox = (ShulkerBox) oldMeta.getBlockState();
+		ShulkerBox newBox = (ShulkerBox) newMeta.getBlockState();
+		newBox.getInventory().setContents(oldBox.getInventory().getContents());
+		newMeta.setBlockState(newBox);
+		newBackpack.setItemMeta(newMeta);
+
 		event.getInventory().setResult(newBackpack);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onCraftBackpack(PrepareItemCraftEvent event) {
 		if (event.getRecipe() == null) return;
 		if (event.getInventory().getResult() == null) return;
