@@ -120,6 +120,8 @@ public class HoursCommand extends CustomCommand {
 			String[] args = input.split(" ");
 			String[] split = args[0].split("-");
 			this.input = args[0];
+			if (Utils.isInt(this.input) && Integer.parseInt(this.input) < 2015) // its page number
+				this.input = "";
 
 			switch (args[0]) {
 				case "day":
