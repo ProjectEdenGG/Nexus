@@ -16,12 +16,7 @@ import me.pugabyte.nexus.models.killermoney.KillerMoneyService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
@@ -138,6 +133,9 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		KillerMoney km = kmService.get(player);
 
 		if (!player.getGameMode().equals(GameMode.SURVIVAL))
+			return;
+
+		if (player.getWorld().getName().contains("events"))
 			return;
 
 		if (Arrays.asList(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG, SpawnReason.NETHER_PORTAL).contains(event.getEntity().getEntitySpawnReason()))

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands;
 
+import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -50,10 +51,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		if (deathMessages.getBehavior() == Behavior.HIDDEN)
 			event.setDeathMessage(null);
 
-		if (event.getDeathMessage() == null) {
-			deathMessages.send(message);
-			return;
-		}
+		if (Strings.isNullOrEmpty(event.getDeathMessage())) return;
 
 		event.setDeathMessage(null);
 

@@ -296,6 +296,7 @@ public abstract class WitherFight implements Listener {
 			wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
+		player.removePotionEffect(PotionEffectType.WITHER);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -306,7 +307,7 @@ public abstract class WitherFight implements Listener {
 		scoreboardTeams.get(player.getUniqueId()).unregister();
 		scoreboardTeams.remove(player.getUniqueId());
 		event.setCancelled(true);
-		event.getEntity().removePotionEffect(PotionEffectType.WITHER);
+		event.setDeathMessage(null);
 		Warps.spawn(player);
 		processPlayerQuit(player, "died");
 	}

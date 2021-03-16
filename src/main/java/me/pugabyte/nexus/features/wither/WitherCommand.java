@@ -29,7 +29,7 @@ public class WitherCommand extends CustomCommand {
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 		if (WitherChallenge.currentFight != null)
 			error("The wither is currently being fought. Please wait!");
-		if (WitherChallenge.maintenance)
+		if (WitherChallenge.maintenance && !PlayerUtils.isStaffGroup(player()))
 			error("The wither arena is currently under maintenance, please wait");
 		if (!hasItems())
 			error("You do not have the necessary items in your inventory to spawn the wither");
