@@ -125,7 +125,7 @@ public class SearchProductsProvider extends _ShopProvider {
 		}));
 	}
 
-	private boolean filter(ItemStack item, MaterialTag materialTag) {
+	public static boolean filter(ItemStack item, MaterialTag materialTag) {
 		if (materialTag.isTagged(item.getType()))
 			return true;
 
@@ -136,7 +136,7 @@ public class SearchProductsProvider extends _ShopProvider {
 		return false;
 	}
 
-	private boolean filter(ItemStack item, Predicate<ItemStack> predicate) {
+	public static boolean filter(ItemStack item, Predicate<ItemStack> predicate) {
 		if (predicate.test(item))
 			return true;
 

@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.providers.BrowseProductsProvider;
 import me.pugabyte.nexus.features.shops.providers.MainMenuProvider;
 import me.pugabyte.nexus.features.shops.providers.PlayerShopProvider;
+import me.pugabyte.nexus.features.shops.providers.SearchProductsProvider;
 import me.pugabyte.nexus.features.shops.providers.YourShopProvider;
 import me.pugabyte.nexus.features.shops.providers.YourShopProvider.CollectItemsProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -69,7 +70,7 @@ public class ShopCommand extends CustomCommand {
 	@Path("search <item>")
 	void search(@Arg(tabCompleter = Material.class) String text) {
 		BrowseProductsProvider provider = new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text), product ->
-				product.getItem().getType().name().toLowerCase().contains(stripColor(text).toLowerCase())));
+				SearchProductsProvider.filter(product.getItem(), item -> item.getType().name().toLowerCase().contains(stripColor(text).toLowerCase()))));
 		provider.open(player());
 	}
 
