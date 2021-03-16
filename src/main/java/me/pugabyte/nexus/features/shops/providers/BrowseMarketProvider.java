@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.content.InventoryContents;
+import me.pugabyte.nexus.features.shops.Shops.Market;
 import me.pugabyte.nexus.models.shop.ShopService;
 import org.bukkit.entity.Player;
 
@@ -12,6 +13,9 @@ public class BrowseMarketProvider extends PlayerShopProvider {
 
 	@Override
 	public void open(Player viewer, int page) {
+		if (shop.getProducts().isEmpty())
+			new Market();
+
 		open(viewer, page, this, "&0Browse Market");
 	}
 

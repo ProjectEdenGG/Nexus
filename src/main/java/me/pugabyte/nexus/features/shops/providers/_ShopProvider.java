@@ -8,7 +8,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.shops.Shops;
-import me.pugabyte.nexus.features.shops.providers.BrowseItemsProvider.ShulkerContentsProvider;
+import me.pugabyte.nexus.features.shops.providers.BrowseProductsProvider.ShulkerContentsProvider;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;

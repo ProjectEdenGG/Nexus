@@ -4,7 +4,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.models.shop.Shop;
 import org.bukkit.entity.Player;
 
-public class PlayerShopProvider extends BrowseItemsProvider {
+public class PlayerShopProvider extends BrowseProductsProvider {
 
 	public PlayerShopProvider(_ShopProvider previousMenu, Shop shop) {
 		super(previousMenu, shop);

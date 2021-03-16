@@ -19,13 +19,13 @@ public class Shops extends Feature {
 	@Override
 	public void onStart() {
 		new ShopDisabler();
-		new Market();
+		Tasks.waitAsync(5, Market::new);
 	}
 
-	private static class Market {
+	public static class Market {
 
 		public Market() {
-			Tasks.waitAsync(5, this::setup);
+			setup();
 		}
 
 		private void setup() {

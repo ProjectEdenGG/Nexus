@@ -17,9 +17,9 @@ import java.util.function.Predicate;
 import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-public class SearchItemsProvider extends _ShopProvider {
+public class SearchProductsProvider extends _ShopProvider {
 
-	public SearchItemsProvider(_ShopProvider previousMenu) {
+	public SearchProductsProvider(_ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 
@@ -32,11 +32,11 @@ public class SearchItemsProvider extends _ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		BrowseItemsProvider browseItemsMenu;
-		if (previousMenu instanceof BrowseItemsProvider)
-			browseItemsMenu = (BrowseItemsProvider) previousMenu;
+		BrowseProductsProvider browseItemsMenu;
+		if (previousMenu instanceof BrowseProductsProvider)
+			browseItemsMenu = (BrowseProductsProvider) previousMenu;
 		else
-			browseItemsMenu = new BrowseItemsProvider(this);
+			browseItemsMenu = new BrowseProductsProvider(this);
 
 		contents.set(1, 1, ClickableItem.from(nameItem(Material.NAME_TAG, "&6Search by item name"), e -> Nexus.getSignMenuFactory()
 				.lines("", ARROWS, "Enter a", "search term")

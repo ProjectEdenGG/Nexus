@@ -28,28 +28,28 @@ import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.ItemUtils.getRawShulkerContents;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
-public class BrowseItemsProvider extends _ShopProvider {
+public class BrowseProductsProvider extends _ShopProvider {
 	@Getter
 	protected List<Filter> filters;
 	protected Shop shop;
 
-	public BrowseItemsProvider(_ShopProvider previousMenu) {
+	public BrowseProductsProvider(_ShopProvider previousMenu) {
 		this(previousMenu, null, new ArrayList<>());
 	}
 
-	public BrowseItemsProvider(_ShopProvider previousMenu, Shop shop) {
+	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop) {
 		this(previousMenu, shop, new ArrayList<>());
 	}
 
-	public BrowseItemsProvider(_ShopProvider previousMenu, Filter filter) {
+	public BrowseProductsProvider(_ShopProvider previousMenu, Filter filter) {
 		this(previousMenu, null, Collections.singletonList(filter));
 	}
 
-	public BrowseItemsProvider(_ShopProvider previousMenu, Shop shop, Filter filter) {
+	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop, Filter filter) {
 		this(previousMenu, shop, Collections.singletonList(filter));
 	}
 
-	public BrowseItemsProvider(_ShopProvider previousMenu, Shop shop, List<Filter> filters) {
+	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop, List<Filter> filters) {
 		this.previousMenu = previousMenu;
 		if (previousMenu != null && previousMenu.getPreviousMenu() != null && previousMenu.getPreviousMenu().getPreviousMenu() != null
 				&& previousMenu.getPreviousMenu().getClass() == this.getClass())
@@ -94,7 +94,7 @@ public class BrowseItemsProvider extends _ShopProvider {
 				open(player, contents.pagination().getPage());
 			}));
 		} else
-			contents.set(0, 4, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchItemsProvider(this).open(player)));
+			contents.set(0, 4, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchProductsProvider(this).open(player)));
 	}
 
 	public void addStockFilter(Player player, InventoryContents contents) {

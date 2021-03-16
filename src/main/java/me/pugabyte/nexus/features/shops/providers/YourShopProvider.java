@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -61,8 +62,10 @@ public class YourShopProvider extends _ShopProvider {
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add item"), e -> new ExchangeConfigProvider(this).open(player)));
 
-		// TODO
-		contents.set(0, 6, ClickableItem.from(nameItem(Material.WRITABLE_BOOK, "&6Shop history"), e -> {}));
+		contents.set(0, 6, ClickableItem.from(nameItem(Material.WRITABLE_BOOK, "&6Shop history"), e -> {
+			PlayerUtils.runCommand(player, "shop history");
+			player.closeInventory();
+		}));
 		contents.set(0, 7, ClickableItem.from(nameItem(Material.CYAN_SHULKER_BOX, "&6Collect items"), e -> new CollectItemsProvider(this).open(player)));
 
 		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;

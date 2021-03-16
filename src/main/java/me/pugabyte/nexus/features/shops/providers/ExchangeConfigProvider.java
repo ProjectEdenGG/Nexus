@@ -186,7 +186,7 @@ public class ExchangeConfigProvider extends _ShopProvider {
 							throw new InvalidInputException("Backpacks can not be sold in player shops");
 
 						itemStack.set(item);
-						PlayerUtils.giveItem(player, itemStack.get());
+						PlayerUtils.giveItem(player, itemStack.get().clone());
 						player.setItemOnCursor(null);
 						open(player);
 					} catch (Exception ex) {
