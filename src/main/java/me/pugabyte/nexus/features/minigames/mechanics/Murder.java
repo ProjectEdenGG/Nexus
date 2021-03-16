@@ -25,7 +25,11 @@ import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
@@ -46,7 +50,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
@@ -150,9 +158,9 @@ public class Murder extends TeamMechanic {
 
 		String broadcast = "";
 		if (!murdererAlive)
-			broadcast = "The murderer has been stopped by the &9gunner &3on";
+			broadcast = matchData.getMurderer().getColoredName() + " has been stopped by " + matchData.getHero().getColoredName() + "&3on";
 		else if (match.getTimer().getTime() != 0)
-			broadcast = "The &cMurderer &3has won";
+			broadcast = matchData.getMurderer().getColoredName() + " &3has won";
 		else
 			broadcast = "The &9innocents &3have won";
 

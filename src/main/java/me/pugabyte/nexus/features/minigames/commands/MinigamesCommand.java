@@ -412,7 +412,11 @@ public class MinigamesCommand extends CustomCommand {
 
 			String line3 = stripColor(sign.getLine(2)) + stripColor(sign.getLine(3));
 			inviteCommand = prefix + " join " + line3;
-			inviteMessage = line3;
+
+			String mechanic = ArenaManager.get(line3).getMechanic().getName();
+			inviteMessage = mechanic + " &3on &e" + line3;
+			if (line3.equalsIgnoreCase(mechanic))
+				inviteMessage = line3;
 		}
 	}
 
@@ -425,7 +429,7 @@ public class MinigamesCommand extends CustomCommand {
 
 			send(player, json("")
 					.newline()
-					.next(" &e" + sender + " &3has invited you to &e" + inviteMessage).group()
+					.next(" &e" + sender + " &3has invited you to play &e" + inviteMessage).group()
 					.newline()
 					.next("&e Click here to &a&laccept")
 					.command("/mgm accept")
