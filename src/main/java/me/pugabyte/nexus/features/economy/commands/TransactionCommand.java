@@ -43,7 +43,7 @@ public class TransactionCommand extends CustomCommand {
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + "Transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, Integer, JsonBuilder> formatter = getFormatter(player(), banker);
 
@@ -55,18 +55,33 @@ public class TransactionCommand extends CustomCommand {
 		return (transaction, index) -> {
 			String timestamp = shortDateTimeFormat(transaction.getTimestamp());
 
+			boolean deposit = transaction.isDeposit(banker.getUuid());
+			boolean withdrawal = transaction.isWithdrawal(banker.getUuid());
 			TransactionCause cause = transaction.getCause();
+
 			String cost = prettyMoney(transaction.getAmount());
-			String description = "&3";
+			String description = "";
 			List<TransactionCause> shopCauses = Arrays.asList(TransactionCause.SHOP_SALE, TransactionCause.SHOP_PURCHASE, TransactionCause.MARKET_SALE, TransactionCause.MARKET_PURCHASE);
+
 			if (shopCauses.contains(cause)) {
 				if (cause.name().contains("SALE"))
-					description += "Sold";
+					description = "Sold";
 				else if (cause.name().contains("PURCHASE"))
-					description += "Purchased";
+					description = "Purchased";
+
+				if (cause == TransactionCause.SHOP_PURCHASE && deposit)
+					description = "Sold";
+				else if (cause == TransactionCause.SHOP_SALE && withdrawal)
+					description = "Purchased";
+				else if (cause == TransactionCause.MARKET_PURCHASE && deposit)
+					description = "Sold";
+				else if (cause == TransactionCause.MARKET_SALE && withdrawal)
+					description = "Purchased";
 
 				if (transaction.getDescription() != null)
 					description += " &e" + transaction.getDescription();
+
+				description = "&3" + description;
 			}
 
 			// Deposit
@@ -76,12 +91,11 @@ public class TransactionCommand extends CustomCommand {
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
 			// Withdrawal
-			if (!banker.getUuid().equals(transaction.getReceiver())) {
+			if (withdrawal) {
 				symbol = "&c-";
 				fromPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + banker.getName();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), cause);
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
-				description = description.replace("Sold", "Purchased");
 			}
 
 			cost = symbol + cost;
@@ -100,7 +114,6 @@ public class TransactionCommand extends CustomCommand {
 		};
 	}
 
-	// fix UUID0
 	private static String getName(UUID uuid, TransactionCause cause) {
 		if (uuid == null) {
 			switch (cause) {

@@ -76,6 +76,14 @@ public class Transaction {
 		this.cause = cause;
 	}
 
+	public boolean isDeposit(UUID uuid) {
+		return !isWithdrawal(uuid);
+	}
+
+	public boolean isWithdrawal(UUID uuid) {
+		return !uuid.equals(receiver);
+	}
+
 	public enum TransactionCause {
 		PAY,
 		SHOP_SALE,
