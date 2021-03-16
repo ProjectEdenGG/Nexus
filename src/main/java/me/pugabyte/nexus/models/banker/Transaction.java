@@ -2,21 +2,27 @@ package me.pugabyte.nexus.models.banker;
 
 import com.mongodb.DBObject;
 import dev.morphia.annotations.PreLoad;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.models.banker.BankerService.rounded;
+import static me.pugabyte.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 	private UUID receiver = null;
 	private BigDecimal receiverOldBalance = null;
@@ -68,11 +74,16 @@ public class Transaction {
 
 	// Set
 	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, TransactionCause cause) {
+		this(receiver, newBalance, null, cause);
+	}
+
+	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, String description, TransactionCause cause) {
 		this.receiver = receiver.getUniqueId();
 		this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance());
 		this.receiverNewBalance = rounded(newBalance);
 
 		this.amount = rounded(this.receiverNewBalance.subtract(receiverOldBalance));
+		this.description = description;
 		this.cause = cause;
 	}
 
@@ -82,6 +93,45 @@ public class Transaction {
 
 	public boolean isWithdrawal(UUID uuid) {
 		return !uuid.equals(receiver);
+	}
+
+	public boolean isSimilar(Transaction transaction) {
+		if (!Objects.equals(cause, transaction.getCause()))
+			return false;
+
+		if (!Objects.equals(receiver, transaction.getReceiver()))
+			return false;
+		if (!Objects.equals(sender, transaction.getSender()))
+			return false;
+
+		if (!Objects.equals(description, transaction.getDescription()))
+			return false;
+
+		if (shopCauses.contains(transaction.getCause()) && !Objects.equals(amount, transaction.getAmount()))
+			return false;
+
+		return true;
+	}
+
+	public Transaction clone() {
+		return Transaction.builder()
+				.receiver(receiver)
+				.receiverOldBalance(clone(receiverOldBalance))
+				.receiverNewBalance(clone(receiverNewBalance))
+				.sender(sender)
+				.senderOldBalance(clone(senderOldBalance))
+				.senderNewBalance(clone(senderNewBalance))
+				.amount(clone(amount))
+				.description(description)
+				.cause(cause)
+				.timestamp(timestamp)
+				.build();
+	}
+
+	private BigDecimal clone(BigDecimal amount) {
+		if (amount == null)
+			return null;
+		return new BigDecimal(amount.toString());
 	}
 
 	public enum TransactionCause {
@@ -100,16 +150,22 @@ public class Transaction {
 		COUPON,
 		SERVER;
 
-		public Transaction of(@Nullable OfflinePlayer sender, @NotNull OfflinePlayer receiver, @NotNull BigDecimal amount) {
-			return new Transaction(sender, receiver, amount, null, this);
+		public static final List<TransactionCause> shopCauses = Arrays.asList(SHOP_SALE, SHOP_PURCHASE, MARKET_SALE, MARKET_PURCHASE);
+
+		public Transaction of(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount) {
+			return of(sender, receiver, amount, null);
 		}
 
-		public Transaction of(@Nullable OfflinePlayer sender, @NotNull OfflinePlayer receiver, @NotNull BigDecimal amount, String description) {
+		public Transaction of(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, String description) {
 			return new Transaction(sender, receiver, amount, description, this);
 		}
 
-		public Transaction of(@NotNull OfflinePlayer receiver, @NotNull BigDecimal newBalance) {
-			return new Transaction(receiver, newBalance, this);
+		public Transaction of(OfflinePlayer receiver, BigDecimal newBalance) {
+			return of(receiver, newBalance, null);
+		}
+
+		public Transaction of(OfflinePlayer receiver, BigDecimal newBalance, String description) {
+			return new Transaction(receiver, newBalance, description, this);
 		}
 	}
 

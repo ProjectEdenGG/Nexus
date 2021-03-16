@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.economy.commands;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -16,17 +17,19 @@ import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static me.pugabyte.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
+@Aliases("txn")
 public class TransactionCommand extends CustomCommand {
 
 	public TransactionCommand(@NonNull CommandEvent event) {
@@ -42,12 +45,38 @@ public class TransactionCommand extends CustomCommand {
 		if (transactions.isEmpty())
 			error("&cNo transactions found");
 
+		transactions = combine(transactions);
+
 		send("");
 		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
 		paginate(transactions, formatter, "/transaction history " + banker.getName(), page);
+	}
+
+	private List<Transaction> combine(List<Transaction> transactions) {
+		List<Transaction> combined = new ArrayList<>();
+		Transaction previous = null;
+		BigDecimal combinedAmount = BigDecimal.ZERO;
+		for (Transaction transaction : transactions) {
+			if (previous == null) {
+				previous = transaction.clone();
+				combinedAmount = new BigDecimal(previous.getAmount().toString());
+				continue;
+			}
+
+			if (previous.isSimilar(transaction))
+				combinedAmount = combinedAmount.add(transaction.getAmount());
+			else {
+				previous.setAmount(combinedAmount);
+				combined.add(previous);
+				previous = transaction.clone();
+				combinedAmount = new BigDecimal(transaction.getAmount().toString());
+			}
+		}
+
+		return combined;
 	}
 
 	@NotNull
@@ -59,9 +88,8 @@ public class TransactionCommand extends CustomCommand {
 			boolean withdrawal = transaction.isWithdrawal(banker.getUuid());
 			TransactionCause cause = transaction.getCause();
 
-			String cost = prettyMoney(transaction.getAmount());
+			String amount = prettyMoney(transaction.getAmount());
 			String description = "";
-			List<TransactionCause> shopCauses = Arrays.asList(TransactionCause.SHOP_SALE, TransactionCause.SHOP_PURCHASE, TransactionCause.MARKET_SALE, TransactionCause.MARKET_PURCHASE);
 
 			if (shopCauses.contains(cause)) {
 				if (cause.name().contains("SALE"))
@@ -79,10 +107,13 @@ public class TransactionCommand extends CustomCommand {
 					description = "Purchased";
 
 				if (transaction.getDescription() != null)
-					description += " &e" + transaction.getDescription();
+					description += " ";
 
 				description = "&3" + description;
 			}
+
+			if (transaction.getDescription() != null)
+				description += "&e" + transaction.getDescription();
 
 			// Deposit
 			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
@@ -98,14 +129,14 @@ public class TransactionCommand extends CustomCommand {
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
 			}
 
-			cost = symbol + cost;
+			amount = symbol + amount;
 			newBalance = "&e" + newBalance;
 
 			JsonBuilder jsonBuilder = new JsonBuilder("&3" + index + " &7" + timestamp + "  " + newBalance + "  &7|  " +
-					fromPlayer + " &3→ " + toPlayer + "  " + cost + "  " + description)
+					fromPlayer + " &3→ " + toPlayer + "  " + amount + "  " + description)
 					.addHover("&3Time since: &e" + timespanDiff(transaction.getTimestamp()));
 
-			if (PlayerUtils.isAdminGroup(player))
+			if (PlayerUtils.isAdminGroup(player) && Nexus.isDebug())
 				jsonBuilder
 					.addHover("")
 					.addHover(transaction.toString());

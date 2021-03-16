@@ -26,20 +26,20 @@ public class PayCommand extends CustomCommand {
 		self = service.get(player());
 	}
 
-	@Path("<player> <amount>")
-	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount) {
+	@Path("<player> <amount> [reason...]")
+	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, String reason) {
 		if (isSelf(banker))
 			error("You cannot pay yourself");
 
 		try {
-			service.transfer(self, banker, amount, TransactionCause.PAY);
+			service.transfer(self, banker, amount, TransactionCause.PAY.of(player(), banker.getOfflinePlayer(), amount, reason));
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}
 
-		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName());
+		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName() + (reason == null ? "" : " &3for &e" + reason));
 		if (banker.isOnline())
-			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName());
+			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + (reason == null ? "" : " &3for &e" + reason));
 	}
 
 }

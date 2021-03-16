@@ -65,24 +65,24 @@ public class EconomyCommand extends CustomCommand {
 		send(json("&3[+] &eEconomy related commands").command("/economy commands"));
 	}
 
-	@Path("set <player> <balance> [reason]")
+	@Path("set <player> <balance> [cause] [reason...]")
 	@Permission("group.admin")
-	void set(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause) {
-		service.setBalance(banker.getOfflinePlayer(), balance, cause);
+	void set(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason) {
+		service.setBalance(banker.getOfflinePlayer(), balance, cause.of(banker.getOfflinePlayer(), balance, reason));
 		send(PREFIX + "Set &e" + banker.getName() + "'s &3balance to &e" + banker.getBalanceFormatted());
 	}
 
-	@Path("give <player> <balance> [reason]")
+	@Path("give <player> <balance> [cause] [reason...]")
 	@Permission("group.admin")
-	void give(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause) {
-		service.deposit(banker.getOfflinePlayer(), balance, cause);
+	void give(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason) {
+		service.deposit(banker.getOfflinePlayer(), balance, cause.of(null, banker.getOfflinePlayer(), balance, reason));
 		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + banker.getName() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted());
 	}
 
-	@Path("take <player> <balance> [reason]")
+	@Path("take <player> <balance> [cause] [reason...]")
 	@Permission("group.admin")
-	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause) {
-		service.withdraw(banker.getOfflinePlayer(), balance, cause);
+	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason) {
+		service.withdraw(banker.getOfflinePlayer(), balance, cause.of(null, banker.getOfflinePlayer(), balance, reason));
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getName() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted());
 	}
 

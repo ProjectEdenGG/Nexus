@@ -46,6 +46,16 @@ public class BankerService extends MongoService {
 		save(banker);
 	}
 
+	public void deposit(OfflinePlayer player, double amount, Transaction transaction) {
+		deposit(player, BigDecimal.valueOf(amount), transaction);
+	}
+
+	public void deposit(OfflinePlayer player, BigDecimal money, Transaction transaction) {
+		Banker banker = get(player);
+		banker.deposit(money, transaction);
+		save(banker);
+	}
+
 	public void withdraw(OfflinePlayer player, double amount, TransactionCause cause) {
 		withdraw(player, BigDecimal.valueOf(amount), cause);
 	}
@@ -53,6 +63,16 @@ public class BankerService extends MongoService {
 	public void withdraw(OfflinePlayer player, BigDecimal money, TransactionCause cause) {
 		Banker banker = get(player);
 		banker.withdraw(money, cause);
+		save(banker);
+	}
+
+	public void withdraw(OfflinePlayer player, double amount, Transaction transaction) {
+		withdraw(player, BigDecimal.valueOf(amount), transaction);
+	}
+
+	public void withdraw(OfflinePlayer player, BigDecimal money, Transaction transaction) {
+		Banker banker = get(player);
+		banker.withdraw(money, transaction);
 		save(banker);
 	}
 
@@ -87,6 +107,16 @@ public class BankerService extends MongoService {
 	public void setBalance(OfflinePlayer player, BigDecimal balance, TransactionCause cause) {
 		Banker banker = get(player);
 		banker.setBalance(balance, cause);
+		save(banker);
+	}
+
+	public void setBalance(OfflinePlayer player, double balance, Transaction transaction) {
+		setBalance(player, BigDecimal.valueOf(balance), transaction);
+	}
+
+	public void setBalance(OfflinePlayer player, BigDecimal balance, Transaction transaction) {
+		Banker banker = get(player);
+		banker.setBalance(balance, transaction);
 		save(banker);
 	}
 
