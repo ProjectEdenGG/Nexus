@@ -2,15 +2,18 @@ package me.pugabyte.nexus.models.banker;
 
 import com.mongodb.DBObject;
 import dev.morphia.annotations.PreLoad;
+import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -126,6 +129,56 @@ public class Transaction {
 				.cause(cause)
 				.timestamp(timestamp)
 				.build();
+	}
+
+	public static List<Transaction> combine(List<Transaction> transactions) {
+		List<Transaction> combined = new ArrayList<>();
+
+		Transaction previous = null;
+		BigDecimal combinedAmount = BigDecimal.ZERO;
+		int count = 0;
+
+		for (Transaction transaction : transactions) {
+			if (previous == null) {
+				previous = transaction.clone();
+				combinedAmount = new BigDecimal(previous.getAmount().toString());
+				count = calculateCount(previous, transaction);
+				continue;
+			}
+
+			if (previous.isSimilar(transaction)) {
+				combinedAmount = combinedAmount.add(transaction.getAmount());
+				count += calculateCount(previous, transaction);
+			} else {
+				previous.setAmount(combinedAmount);
+				if (count > 0)
+					previous.setDescription(count + " " + previous.getDescription().split(" ", 2)[1]);
+				combined.add(previous);
+
+				previous = transaction.clone();
+				combinedAmount = new BigDecimal(transaction.getAmount().toString());
+				count = calculateCount(previous, transaction);
+			}
+		}
+
+		return combined;
+	}
+
+	private static int calculateCount(Transaction previous, Transaction transaction) {
+		if (!shopCauses.contains(previous.getCause()))
+			return 0;
+
+		if (Strings.isNullOrEmpty(transaction.getDescription()))
+			return 0;
+
+		String[] split = transaction.getDescription().split(" ", 2);
+		if (split.length != 2)
+			return 0;
+
+		if (!Utils.isInt(split[0]))
+			return 0;
+
+		return Integer.parseInt(split[0]);
 	}
 
 	private BigDecimal clone(BigDecimal amount) {

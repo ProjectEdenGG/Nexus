@@ -17,7 +17,6 @@ import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 
 import static me.pugabyte.nexus.models.banker.Transaction.TransactionCause.shopCauses;
+import static me.pugabyte.nexus.models.banker.Transaction.combine;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
@@ -45,38 +45,12 @@ public class TransactionCommand extends CustomCommand {
 		if (transactions.isEmpty())
 			error("&cNo transactions found");
 
-		transactions = combine(transactions);
-
 		send("");
 		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(transactions, formatter, "/transaction history " + banker.getName(), page);
-	}
-
-	private List<Transaction> combine(List<Transaction> transactions) {
-		List<Transaction> combined = new ArrayList<>();
-		Transaction previous = null;
-		BigDecimal combinedAmount = BigDecimal.ZERO;
-		for (Transaction transaction : transactions) {
-			if (previous == null) {
-				previous = transaction.clone();
-				combinedAmount = new BigDecimal(previous.getAmount().toString());
-				continue;
-			}
-
-			if (previous.isSimilar(transaction))
-				combinedAmount = combinedAmount.add(transaction.getAmount());
-			else {
-				previous.setAmount(combinedAmount);
-				combined.add(previous);
-				previous = transaction.clone();
-				combinedAmount = new BigDecimal(transaction.getAmount().toString());
-			}
-		}
-
-		return combined;
+		paginate(combine(transactions), formatter, "/transaction history " + banker.getName(), page);
 	}
 
 	@NotNull
