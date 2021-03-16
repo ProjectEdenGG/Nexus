@@ -96,8 +96,8 @@ public class HoursCommand extends CustomCommand {
 		send("");
 		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
-		BiFunction<PageResult, Integer, JsonBuilder> formatter = (result, index) ->
-				json("&3" + (index + 1) + " &e" + result.getOfflinePlayer().getName() + " &7- " + Timespan.of(result.getTotal()).format());
+		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
+				json("&3" + index + " &e" + result.getOfflinePlayer().getName() + " &7- " + Timespan.of(result.getTotal()).format());
 
 		paginate(results, formatter, "/hours top " + args.getInput(), page);
 	}

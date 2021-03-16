@@ -250,9 +250,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 		}
 
 		send(PREFIX + "Staff times");
-		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
+		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			String time = Timespan.of(staffTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
-			return json("&3" + (index + 1) + " &e" + time + " &7- " + new Nerd(uuid).getRankFormat());
+			return json("&3" + index + " &e" + time + " &7- " + new Nerd(uuid).getRankFormat());
 		};
 
 		paginate(new ArrayList<>(Utils.sortByValueReverse(staffTimeMap).keySet()), formatter, "/hoh staffTime", page);
@@ -281,9 +281,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 		OptionalDouble average = promotionTimeMap.values().stream().mapToLong(Long::valueOf).average();
 
 		send(PREFIX + "Promotion times  |  Average: " + StringUtils.getNf().format(average.orElse(0)) + " days");
-		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) -> {
+		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			String time = Timespan.of(promotionTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
-			return json("&3" + (index + 1) + " &e" + new Nerd(uuid).getName() + " &7- " + time);
+			return json("&3" + index + " &e" + new Nerd(uuid).getName() + " &7- " + time);
 		};
 
 		paginate(new ArrayList<>(Utils.sortByValue(promotionTimeMap).keySet()), formatter, "/hoh promotionTimes", page);

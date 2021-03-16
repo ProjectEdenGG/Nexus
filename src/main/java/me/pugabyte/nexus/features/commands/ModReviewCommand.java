@@ -66,8 +66,8 @@ public class ModReviewCommand extends CustomCommand {
 		if (page == 1)
 			send(PREFIX + "List of reviewed mods. Click on a mod for more info");
 
-		BiFunction<Mod, Integer, JsonBuilder> formatter = (mod, index) -> json()
-				.next("&3" + (index + 1) + " &e" + mod.getName() + " &7- " + mod.getVerdict().getColor() + camelCase(mod.getVerdict()))
+		BiFunction<Mod, String, JsonBuilder> formatter = (mod, index) -> json()
+				.next("&3" + index + " &e" + mod.getName() + " &7- " + mod.getVerdict().getColor() + camelCase(mod.getVerdict()))
 				.command("/modreview " + mod.getName())
 				.hover("&3Click for more info");
 
@@ -94,8 +94,8 @@ public class ModReviewCommand extends CustomCommand {
 		if (requests.isEmpty())
 			error("No pending review requests");
 
-		BiFunction<ModReviewRequest, Integer, JsonBuilder> formatter = (request, index) -> {
-			JsonBuilder json = json("&3" + (index + 1) + " &3" + getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
+		BiFunction<ModReviewRequest, String, JsonBuilder> formatter = (request, index) -> {
+			JsonBuilder json = json("&3" + index + " &3" + getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
 					(isNullOrEmpty(request.getNotes()) ? "" : " &7- " + request.getNotes()));
 			if (PlayerUtils.isAdminGroup(player()))
 				json.suggest("/modreview add " + request.getName() + " ").hover("&3Click to review");

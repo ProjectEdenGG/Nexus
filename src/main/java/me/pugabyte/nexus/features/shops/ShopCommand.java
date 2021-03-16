@@ -93,7 +93,7 @@ public class ShopCommand extends CustomCommand {
 		send("");
 		send(PREFIX + "Shop history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
-		BiFunction<Transaction, Integer, JsonBuilder> formatter = getFormatter(player(), banker);
+		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
 		paginate(transactions, formatter, "/shop history " + banker.getName(), page);
 	}

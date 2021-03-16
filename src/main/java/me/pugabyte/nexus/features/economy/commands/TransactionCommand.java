@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 public class TransactionCommand extends CustomCommand {
@@ -45,15 +45,15 @@ public class TransactionCommand extends CustomCommand {
 		send("");
 		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
-		BiFunction<Transaction, Integer, JsonBuilder> formatter = getFormatter(player(), banker);
+		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
 		paginate(transactions, formatter, "/transaction history " + banker.getName(), page);
 	}
 
 	@NotNull
-	public static BiFunction<Transaction, Integer, JsonBuilder> getFormatter(Player player, Banker banker) {
+	public static BiFunction<Transaction, String, JsonBuilder> getFormatter(Player player, Banker banker) {
 		return (transaction, index) -> {
-			String timestamp = shortDateTimeFormat(transaction.getTimestamp());
+			String timestamp = shortishDateTimeFormat(transaction.getTimestamp());
 
 			boolean deposit = transaction.isDeposit(banker.getUuid());
 			boolean withdrawal = transaction.isWithdrawal(banker.getUuid());
@@ -101,7 +101,7 @@ public class TransactionCommand extends CustomCommand {
 			cost = symbol + cost;
 			newBalance = "&e" + newBalance;
 
-			JsonBuilder jsonBuilder = new JsonBuilder("&3" + (index + 1) + " &7" + timestamp + "  " + newBalance + "  &7|  " +
+			JsonBuilder jsonBuilder = new JsonBuilder("&3" + index + " &7" + timestamp + "  " + newBalance + "  &7|  " +
 					fromPlayer + " &3→ " + toPlayer + "  " + cost + "  " + description)
 					.addHover("&3Time since: &e" + timespanDiff(transaction.getTimestamp()));
 

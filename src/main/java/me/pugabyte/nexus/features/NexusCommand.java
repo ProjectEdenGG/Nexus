@@ -239,8 +239,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 		Map<Class<? extends Event>, Integer> sorted = Utils.sortByValueReverse(counts);
 
 		send(PREFIX + "Event Handlers");
-		BiFunction<Class<? extends Event>, Integer, JsonBuilder> formatter = (clazz, index) ->
-				json("&3" + (index + 1) + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
+		BiFunction<Class<? extends Event>, String, JsonBuilder> formatter = (clazz, index) ->
+				json("&3" + index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
 		paginate(new ArrayList<>(sorted.keySet()), formatter, "/nexus stats eventHandlers", page);
 	}
 
@@ -732,7 +732,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("advancements [player] [page]")
 	void advancements(@Arg("self") Player player, @Arg("1") int page) {
-		BiFunction<Advancement, Integer, JsonBuilder> formatter = (advancement, index) -> {
+		BiFunction<Advancement, String, JsonBuilder> formatter = (advancement, index) -> {
 			JsonBuilder json = json(" ");
 			AdvancementProgress progress = player.getAdvancementProgress(advancement);
 			json.next((progress.isDone() ? "&e" : "&c") + advancement.getKey().getKey());

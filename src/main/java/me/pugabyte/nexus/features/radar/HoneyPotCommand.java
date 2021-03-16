@@ -151,9 +151,9 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			error("There are no Honey Pots in your world.");
 
 		send(PREFIX + "Honey Pots in your world:");
-		BiFunction<ProtectedRegion, Integer, JsonBuilder> formatter = (region, index) -> {
+		BiFunction<ProtectedRegion, String, JsonBuilder> formatter = (region, index) -> {
 			int bans = honeyPotBans.get(region.getId()).getBans();
-			return json("&3" + (index + 1) + " &e" + region.getId() + " &7- " + bans + plural(" ban", bans))
+			return json("&3" + index + " &e" + region.getId() + " &7- " + bans + plural(" ban", bans))
 					.command("/honeypots teleport " + getName(region))
 					.hover("&3Click to Teleport");
 		};

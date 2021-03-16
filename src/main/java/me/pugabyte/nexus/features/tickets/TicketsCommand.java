@@ -139,8 +139,8 @@ public class TicketsCommand extends CustomCommand {
 			closers.put(closedByUuid, closers.getOrDefault(closedByUuid, 0) + 1);
 		}
 
-		BiFunction<UUID, Integer, JsonBuilder> formatter = (uuid, index) ->
-				json("&3" + (index + 1) + " &e" + new Nerd(uuid).getRankFormat() + " &7- " + closers.get(uuid));
+		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
+				json("&3" + index + " &e" + new Nerd(uuid).getRankFormat() + " &7- " + closers.get(uuid));
 		paginate(new ArrayList<>(Utils.sortByValueReverse(closers).keySet()), formatter, "/tickets stats closed", page);
 	}
 

@@ -106,8 +106,8 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 			error("No players have been watchlisted");
 
 		send(PREFIX + "Watchlisted players");
-		BiFunction<Watchlisted, Integer, JsonBuilder> formatter = (watchlisted, index) ->
-				json("&3" + (index + 1) + " &7" + shortDateFormat(watchlisted.getWatchlistedOn().toLocalDate()) + " &e"
+		BiFunction<Watchlisted, String, JsonBuilder> formatter = (watchlisted, index) ->
+				json("&3" + index + " &7" + shortDateFormat(watchlisted.getWatchlistedOn().toLocalDate()) + " &e"
 						+ watchlisted.getName() + " &7- " + ellipsis(watchlisted.getReason(), 50))
 						.addHover("&7" + watchlisted.getReason())
 						.command("/watchlist info " + watchlisted.getName());

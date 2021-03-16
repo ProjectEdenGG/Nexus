@@ -41,8 +41,8 @@ public class NewPlayersCommand extends CustomCommand {
 		HashMap<Player, Integer> sorted = Utils.sortByValue(players);
 
 		send(PREFIX);
-		BiFunction<Player, Integer, JsonBuilder> formatter = (player, index) ->
-				json("&3" + (index + 1) + "  ")
+		BiFunction<Player, String, JsonBuilder> formatter = (player, index) ->
+				json("&3" + index + 1 + "  ")
 						.group()
 						.next("&6&l[TP]")
 						.command("/mcmd vanish on ;; tp " + player.getName())

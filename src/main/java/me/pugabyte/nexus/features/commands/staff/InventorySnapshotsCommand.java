@@ -43,6 +43,7 @@ import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @NoArgsConstructor
@@ -61,12 +62,12 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			error("No snapshots have been created");
 
 		send(PREFIX + "Snapshots for &e" + history.getName());
-		BiFunction<InventorySnapshot, Integer, JsonBuilder> formatter = (snapshot, index) -> {
-			String timestamp = shortDateTimeFormat(snapshot.getTimestamp());
+		BiFunction<InventorySnapshot, String, JsonBuilder> formatter = (snapshot, index) -> {
+			String timestamp = shortishDateTimeFormat(snapshot.getTimestamp());
 			String timestampIso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(snapshot.getTimestamp());
 			String worldName = snapshot.getLocation().getWorld().getName();
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
-			return json("&3" + (index + 1) + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
+			return json("&3" + index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
 					.addHover("&3Time since: &e" + timespanDiff(snapshot.getTimestamp()))
 					.addHover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);

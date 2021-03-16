@@ -60,6 +60,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.time.LocalDate;
@@ -816,11 +817,11 @@ public abstract class CustomCommand extends ICustomCommand {
 		}};
 	}
 
-	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page) {
+	protected <T> void paginate(List<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page) {
 		paginate(values, formatter, command, page, 10);
 	}
 
-	protected <T> void paginate(List<T> values, BiFunction<T, Integer, JsonBuilder> formatter, String command, int page, int amount) {
+	protected <T> void paginate(List<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page, int amount) {
 		if (page < 1)
 			error("Page number must be 1 or greater");
 
@@ -832,7 +833,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		line();
 		AtomicInteger index = new AtomicInteger(start);
-		values.subList(start, end).forEach(t -> send(formatter.apply(t, index.getAndIncrement())));
+		values.subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index, end))));
 		line();
 
 		boolean first = page == 1;
@@ -855,6 +856,22 @@ public abstract class CustomCommand extends ICustomCommand {
 			buttons.next("  &eNext »").command(command + " " + (page + 1));
 
 		send(buttons.group());
+	}
+
+	@NotNull
+	private String getLeadingZeroIndex(AtomicInteger index, int end) {
+		int nextIndex = index.incrementAndGet();
+		int nextMagnitude = Integer.parseInt("1" + Strings.repeat("0", String.valueOf(nextIndex).length()));
+		int needsLeading0 = nextMagnitude - 10;
+
+		String string = String.valueOf(nextIndex);
+		if (nextIndex > 1 && nextIndex == nextMagnitude / 10)
+			return string;
+
+		if (nextIndex > needsLeading0)
+			string = "0" + string;
+		Nexus.debug("nextIndex: " + nextIndex + " nextMagnitude: " + nextMagnitude + " needsLeading0: " + needsLeading0 + " result: " + string);
+		return string;
 	}
 
 	@Path("help")
