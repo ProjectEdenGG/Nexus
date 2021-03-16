@@ -593,12 +593,20 @@ public class StringUtils {
 		return shortDateFormat(dateTime.toLocalDate()) + " " + shortTimeFormat(dateTime);
 	}
 
+	public static String shortishDateTimeFormat(LocalDateTime dateTime) {
+		return shortishDateFormat(dateTime.toLocalDate()) + " " + shortishTimeFormat(dateTime);
+	}
+
 	public static String longDateFormat(LocalDate date) {
 		return camelCase(date.getMonth().name()) + " " + getNumberWithSuffix(date.getDayOfMonth()) + ", " + date.getYear();
 	}
 
 	public static String shortDateFormat(LocalDate date) {
 		return date.format(DateTimeFormatter.ofPattern("M/d/yy"));
+	}
+
+	public static String shortishDateFormat(LocalDate date) {
+		return date.format(DateTimeFormatter.ofPattern("MM/dd/yy"));
 	}
 
 	public static String dateFormat(LocalDate date) {
@@ -611,6 +619,10 @@ public class StringUtils {
 
 	public static String shortTimeFormat(LocalDateTime time) {
 		return time.format(DateTimeFormatter.ofPattern("h:mm a"));
+	}
+
+	public static String shortishTimeFormat(LocalDateTime time) {
+		return time.format(DateTimeFormatter.ofPattern("hh:mm a"));
 	}
 
 	public static LocalDate parseShortDate(String input) {

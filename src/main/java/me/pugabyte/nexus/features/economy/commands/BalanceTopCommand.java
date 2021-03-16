@@ -34,8 +34,8 @@ public class BalanceTopCommand extends CustomCommand {
 		double sum = bankers.stream().mapToDouble(banker -> banker.getBalance().doubleValue()).sum();
 
 		send(PREFIX + "Top balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
-		BiFunction<Banker, Integer, JsonBuilder> formatter = (banker, index) ->
-				json("&3" + (index + 1) + " &e" + banker.getName() + " &7- " + banker.getBalanceFormatted());
+		BiFunction<Banker, String, JsonBuilder> formatter = (banker, index) ->
+				json("&3" + index + " &e" + banker.getName() + " &7- " + banker.getBalanceFormatted());
 		paginate(bankers, formatter, "/baltop", page);
 	}
 

@@ -26,7 +26,7 @@ public class EmotesCommand extends CustomCommand {
 
 	@Path("[page]")
 	void page(@Arg("1") int page) {
-		BiFunction<Emotes, Integer, JsonBuilder> formatter = (emote, index) -> {
+		BiFunction<Emotes, String, JsonBuilder> formatter = (emote, index) -> {
 			JsonBuilder json = json();
 			if (emote.getColors().isEmpty()) {
 				if (user.isEnabled(emote))

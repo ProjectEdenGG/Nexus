@@ -73,10 +73,10 @@ public class ChangelogCommand extends CustomCommand {
 			error("No snapshots have been created");
 
 		send(PREFIX + "Changelog entries");
-		BiFunction<ChangelogEntry, Integer, JsonBuilder> formatter = (entry, index) -> {
+		BiFunction<ChangelogEntry, String, JsonBuilder> formatter = (entry, index) -> {
 			String timestamp = shortDateTimeFormat(entry.getTimestamp());
 			String timestampIso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(entry.getTimestamp());
-			return json("&3" + (index + 1) + " &e" + timestamp + " &7- &3" + entry.getMinecraftVersion() + " #" + entry.getPaperVersion())
+			return json("&3" + index + " &e" + timestamp + " &7- &3" + entry.getMinecraftVersion() + " #" + entry.getPaperVersion())
 					.addHover("&3Plugins: &e" + entry.getPluginVersions().size())
 					.addHover("&3Plugin Notes: &e" + entry.getPluginNotes().size())
 					.addHover("&3Commits: &e" + entry.getCommits().size())

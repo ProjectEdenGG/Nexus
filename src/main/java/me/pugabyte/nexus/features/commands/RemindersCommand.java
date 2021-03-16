@@ -283,8 +283,8 @@ public class RemindersCommand extends CustomCommand implements Listener {
 			error("No reminders have been created");
 
 		send(PREFIX + "Reminders");
-		BiFunction<Reminder, Integer, JsonBuilder> formatter = (reminder, index) ->
-				json("&3" + (index + 1) + " " + (reminder.isMotd() ? "&6➤" : "&b⚡") + " &e" + reminder.getId() + " &7- " + ellipsis(reminder.getText(), 50))
+		BiFunction<Reminder, String, JsonBuilder> formatter = (reminder, index) ->
+				json("&3" + index + " " + (reminder.isMotd() ? "&6➤" : "&b⚡") + " &e" + reminder.getId() + " &7- " + ellipsis(reminder.getText(), 50))
 						.addHover("&3Type: &e" + (reminder.isMotd() ? "MOTD" : "Reminder"))
 						.addHover("&7" + reminder.getText())
 						.command("/reminders edit " + reminder.getId());

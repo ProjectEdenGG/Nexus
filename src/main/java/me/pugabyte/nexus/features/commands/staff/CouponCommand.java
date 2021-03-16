@@ -206,7 +206,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Created coupons:");
 
-		BiFunction<Coupon, Integer, JsonBuilder> json = (coupon, index) -> json()
+		BiFunction<Coupon, String, JsonBuilder> json = (coupon, index) -> json()
 				.next(" &e" + coupon.getId() + " &7- " + coupon.getUses())
 				.command("/coupons get " + coupon.getId())
 				.hover(coupon.getItem());
