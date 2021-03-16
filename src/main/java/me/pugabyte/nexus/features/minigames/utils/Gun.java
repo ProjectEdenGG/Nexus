@@ -3,14 +3,12 @@ package me.pugabyte.nexus.features.minigames.utils;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
+import me.pugabyte.nexus.features.minigames.mechanics.Murder;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.matchdata.MurderMatchData;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -76,6 +74,12 @@ public class Gun {
 			boolean inGunRange = blockDistance > target.getPlayer().getLocation().distance(location);
 			if (notTargetingSelf && inGunRange && sameMatch)
 				if (Vector3D.hasIntersection(observerStart, observerEnd, minimum, maximum)) {
+					if (minigamer.getMatch().getMechanic() instanceof Murder) {
+						MurderMatchData matchData = minigamer.getMatch().getMatchData();
+						if (PlayerManager.get(target).equals(matchData.getMurderer()))
+							matchData.setHero(minigamer);
+					}
+
 					minigamer.getPlayer().playSound(location, Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
 					minigamer.getMatch().getMechanic().kill(PlayerManager.get(target), minigamer);
 				}

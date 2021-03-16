@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTick
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
+import me.pugabyte.nexus.features.minigames.models.matchdata.MurderMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -24,11 +25,7 @@ import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
@@ -49,11 +46,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
@@ -149,13 +142,16 @@ public class Murder extends TeamMechanic {
 
 	@Override
 	public void announceWinners(Match match) {
+		MurderMatchData matchData = match.getMatchData();
+		Minigamer murderer = matchData.getMurderer();
+		Minigamer gunner = matchData.getGunner();
+		Minigamer hero = matchData.getHero();
 		boolean murdererAlive = match.getAliveTeams().stream().anyMatch(team -> team.getColor() == ChatColor.RED);
 
 		String broadcast = "";
 		if (!murdererAlive)
 			broadcast = "The murderer has been stopped by the &9gunner &3on";
-		else
-		if (match.getTimer().getTime() != 0)
+		else if (match.getTimer().getTime() != 0)
 			broadcast = "The &cMurderer &3has won";
 		else
 			broadcast = "The &9innocents &3have won";
@@ -204,15 +200,19 @@ public class Murder extends TeamMechanic {
 				.filter(minigamer -> !isMurderer(minigamer))
 				.collect(Collectors.toList()));
 
-		if (gunner != null)
+		if (gunner != null) {
+			MurderMatchData matchData = match.getMatchData();
+			matchData.setGunner(gunner);
 			gunner.getPlayer().getInventory().setItem(1, gun);
+		}
 	}
 
 	private void sendAssignMessages(Match match) {
 		match.getAliveMinigamers().forEach(minigamer -> {
-			if (isMurderer(minigamer))
+			if (isMurderer(minigamer)) {
+				((MurderMatchData) match.getMatchData()).setMurderer(minigamer);
 				minigamer.tell("You are the &cmurderer&3! Kill everyone in your path, but don't get caught!");
-			else if (isGunner(minigamer))
+			} else if (isGunner(minigamer))
 				minigamer.tell("You are the &6gunner&3! Find the murderer and shoot them with your gun.");
 			else
 				minigamer.tell("You are an &9innocent&3! Try to find scraps to craft a gun.");
