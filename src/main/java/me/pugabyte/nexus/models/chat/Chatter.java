@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.ChatManager;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -20,6 +19,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import static me.pugabyte.nexus.features.chat.Chat.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 
@@ -36,7 +36,7 @@ public class Chatter extends PlayerOwnedObject {
 	private PrivateChannel lastPrivateMessage;
 
 	public void playSound() {
-		if (getOfflinePlayer().isOnline())
+		if (isOnline())
 			Jingle.PING.play(getOfflinePlayer().getPlayer());
 	}
 
@@ -53,18 +53,18 @@ public class Chatter extends PlayerOwnedObject {
 
 	public void setActiveChannel(Channel channel) {
 		if (channel == null)
-			new Nerd(getOfflinePlayer()).send(Chat.PREFIX + "You are no longer speaking in a channel");
+			new Nerd(getOfflinePlayer()).send(PREFIX + "You are no longer speaking in a channel");
 		else {
 			if (channel instanceof PublicChannel)
 				join((PublicChannel) channel);
-			new Nerd(getOfflinePlayer()).send(Chat.PREFIX + channel.getAssignMessage(this));
+			new Nerd(getOfflinePlayer()).send(PREFIX + channel.getAssignMessage(this));
 		}
 		this.activeChannel = channel;
 	}
 
 	public boolean canJoin(PublicChannel channel) {
 		boolean hasPerm;
-		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
+		if (isOnline())
 			hasPerm = getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
 		else
 			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
@@ -107,27 +107,31 @@ public class Chatter extends PlayerOwnedObject {
 		fixChannelSets();
 		joinedChannels.remove(channel);
 		leftChannels.add(channel);
-		if (activeChannel == channel && channel != ChatManager.getMainChannel())
-			setActiveChannel(ChatManager.getMainChannel());
+		send(PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
+		if (channel.equals(activeChannel))
+			if (!joinedChannels.isEmpty())
+				setActiveChannel(joinedChannels.iterator().next());
+			else
+				setActiveChannel(null);
 	}
 
 	public void send(String message) {
-		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
+		if (isOnline())
 			getOfflinePlayer().getPlayer().sendMessage(colorize(message));
 	}
 
 	public void send(JsonBuilder message) {
-		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
+		if (isOnline())
 			getOfflinePlayer().getPlayer().spigot().sendMessage(message.build());
 	}
 
 	public void updateChannels() {
-		if (getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null)
+		if (isOnline())
 			ChatManager.getChannels().forEach(channel -> {
 				if (canJoin(channel)) {
 					if (!hasJoined(channel) && !hasLeft(channel))
 						join(channel);
-				} else {
+				} else if (hasJoined(channel)) {
 					leave(channel);
 				}
 			});

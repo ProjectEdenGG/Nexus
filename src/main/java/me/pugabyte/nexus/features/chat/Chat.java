@@ -35,6 +35,7 @@ public class Chat extends Feature {
 		new Timer("    IngameBridgeListener", () -> Nexus.registerListener(new IngameBridgeListener()));
 		new Timer("    AlertsListener", () -> Nexus.registerListener(new AlertsListener()));
 		new Timer("    Translator", () -> Nexus.registerListener(new Translator()));
+		new Timer("    updateChannels", this::updateChannels);
 	}
 
 	@Override
