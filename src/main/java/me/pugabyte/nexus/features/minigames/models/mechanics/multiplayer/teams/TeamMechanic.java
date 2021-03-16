@@ -52,8 +52,8 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
-	private static final Set<String> TEAM_VOICE_CHANNELS;
-	private static final Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
+	public static final Set<String> TEAM_VOICE_CHANNELS;
+	public static final Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
 	private static final BaseComponent[] RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
 
 	static {
