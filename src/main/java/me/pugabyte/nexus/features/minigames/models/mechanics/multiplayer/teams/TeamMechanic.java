@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.pugabyte.nexus.Nexus;
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,15 +52,18 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
-	private static final Set<String> TEAM_VOICE_CHANNELS = new HashSet<>();
+	private static final Set<String> TEAM_VOICE_CHANNELS;
+	private static final Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
 	private static final BaseComponent[] RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
 
 	static {
-		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.RED.getId());
-		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.BLUE.getId());
-		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.GREEN.getId());
-		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.YELLOW.getId());
-		TEAM_VOICE_CHANNELS.add(DiscordId.VoiceChannel.WHITE.getId());
+		Set<String> channels = new HashSet<>();
+		channels.add(DiscordId.VoiceChannel.RED.getId());
+		channels.add(DiscordId.VoiceChannel.BLUE.getId());
+		channels.add(DiscordId.VoiceChannel.GREEN.getId());
+		channels.add(DiscordId.VoiceChannel.YELLOW.getId());
+		channels.add(DiscordId.VoiceChannel.WHITE.getId());
+		TEAM_VOICE_CHANNELS = ImmutableSet.copyOf(channels);
 	}
 
 	@Override
@@ -189,7 +194,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 					assert member.getVoiceState() != null;
 					assert member.getVoiceState().getChannel() != null;
 
-					if (member.getVoiceState().getChannel().getId().equals(DiscordId.VoiceChannel.MINIGAMES.getId()))
+					if (MINIGAME_VOICE_CHANNELS.contains(member.getVoiceState().getChannel().getId()))
 						minigamer.getPlayer().sendMessage(message);
 				}
 			}
