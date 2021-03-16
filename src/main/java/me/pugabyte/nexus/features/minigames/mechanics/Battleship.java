@@ -132,6 +132,11 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
+	public boolean usesTeamChannels() {
+		return false;
+	}
+
+	@Override
 	public String getScoreboardTitle(Match match) {
 		return "&6&lBattleship";
 	}
