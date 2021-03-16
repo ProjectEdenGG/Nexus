@@ -7,8 +7,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
+import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -18,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -175,6 +178,13 @@ public class Team implements ConfigurationSerializable {
 
 	public int getScore(Match match) {
 		return match.getScores().getOrDefault(this, 0);
+	}
+
+	public ColorType getColorType() {
+		ColorType colorType = Arrays.stream(ColorType.values()).filter(colorType1 -> getColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
+		if (colorType == null)
+			Nexus.warn("Could not find a matching color type for team "+getName()+" (Color: "+getColor().getName()+")");
+		return colorType;
 	}
 
 	public void broadcast(Match match, String text) {

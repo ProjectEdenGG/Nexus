@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.menus.teams;
 
+import com.google.common.collect.ImmutableSet;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
@@ -12,7 +13,17 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class TeamColorMenu extends MenuUtils implements InventoryProvider {
+	public static final Set<ColorType> COLOR_TYPES = ImmutableSet.copyOf(Arrays.stream(ColorType.values()).filter(
+			colorType -> colorType.getChatColor() != null &&
+					colorType.getDurability() != null &&
+					colorType.getChatColor() != ChatColor.BLACK)
+			.collect(Collectors.toSet()));
+
 	Arena arena;
 	Team team;
 	TeamMenus teamMenus = new TeamMenus();
@@ -28,26 +39,25 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 
 		int column = 0;
 		int row = 1;
-		for (ColorType colorType : ColorType.values())
-			if (colorType.getChatColor() != null && colorType.getDurability() != null && colorType.getChatColor() != ChatColor.BLACK) {
-				ItemStack item = nameItem(colorType.getWool(), colorType.getDisplayName());
+		for (ColorType colorType : COLOR_TYPES) {
+			ItemStack item = nameItem(colorType.getWool(), colorType.getDisplayName());
 
-				if (colorType.getChatColor() == team.getColor())
-					addGlowing(item);
+			if (colorType.getChatColor() == team.getColor())
+				addGlowing(item);
 
-				contents.set(row, column, ClickableItem.from(item, e -> {
-					team.setColor(colorType.getChatColor());
-					arena.write();
-					teamMenus.openTeamsColorMenu(player, arena, team);
-				}));
+			contents.set(row, column, ClickableItem.from(item, e -> {
+				team.setColor(colorType.getChatColor());
+				arena.write();
+				teamMenus.openTeamsColorMenu(player, arena, team);
+			}));
 
-				if (column != 8) {
-					column++;
-				} else {
-					column = 2;
-					row++;
-				}
+			if (column != 8) {
+				column++;
+			} else {
+				column = 2;
+				row++;
 			}
+		}
 	}
 
 }
