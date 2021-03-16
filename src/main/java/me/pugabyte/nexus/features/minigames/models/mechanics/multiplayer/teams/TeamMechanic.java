@@ -144,26 +144,26 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		Match match = teamMembers.get(0).getMatch();
 		ChatColor chatColor = team.getColor();
-		DiscordId.VoiceChannel vcID;
+		DiscordId.VoiceChannel vcEnum;
 
 		if (chatColor == ChatColor.RED || chatColor == ChatColor.DARK_RED)
-			vcID = DiscordId.VoiceChannel.RED;
+			vcEnum = DiscordId.VoiceChannel.RED;
 		else if (chatColor == ChatColor.BLUE || chatColor == ChatColor.AQUA || chatColor == ChatColor.DARK_AQUA || chatColor == ChatColor.DARK_BLUE)
-			vcID = DiscordId.VoiceChannel.BLUE;
+			vcEnum = DiscordId.VoiceChannel.BLUE;
 		else if (chatColor == ChatColor.WHITE || chatColor == ChatColor.GRAY)
-			vcID = DiscordId.VoiceChannel.WHITE;
+			vcEnum = DiscordId.VoiceChannel.WHITE;
 		else if (chatColor == ChatColor.GREEN || chatColor == ChatColor.DARK_GREEN)
-			vcID = DiscordId.VoiceChannel.GREEN;
+			vcEnum = DiscordId.VoiceChannel.GREEN;
 		else if (chatColor == ChatColor.YELLOW || chatColor == ChatColor.GOLD)
-			vcID = DiscordId.VoiceChannel.YELLOW;
+			vcEnum = DiscordId.VoiceChannel.YELLOW;
 		else
-			vcID = null;
+			vcEnum = null;
 
 		PublicChannel teamChannel = createTeamChannel(match, team);
 
 		JsonBuilder voiceMessageBuilder = new JsonBuilder();
-		if (vcID != null) {
-			voiceMessageBuilder.next("&e&lClick here&f&3 to join your team's voice channel").command("voicechannel " + vcID).newline();
+		if (vcEnum != null) {
+			voiceMessageBuilder.next("&e&lClick here&f&3 to join your team's voice channel").command("voicechannel " + vcEnum.getId()).newline();
 			voiceMessageBuilder.initialize();
 		}
 
