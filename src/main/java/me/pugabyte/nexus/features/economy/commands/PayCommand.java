@@ -3,17 +3,27 @@ package me.pugabyte.nexus.features.economy.commands;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.features.economy.commands.TransactionCommand.getFormatter;
+import static me.pugabyte.nexus.models.banker.Transaction.combine;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 public class PayCommand extends CustomCommand {
@@ -26,20 +36,39 @@ public class PayCommand extends CustomCommand {
 		self = service.get(player());
 	}
 
-	@Path("<player> <amount>")
-	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount) {
+	@Path("<player> <amount> [reason...]")
+	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, String reason) {
 		if (isSelf(banker))
 			error("You cannot pay yourself");
 
 		try {
-			service.transfer(self, banker, amount, TransactionCause.PAY);
+			service.transfer(self, banker, amount, TransactionCause.PAY.of(player(), banker.getOfflinePlayer(), amount, reason));
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}
 
-		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName());
+		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName() + (reason == null ? "" : " &3for &e" + reason));
 		if (banker.isOnline())
-			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName());
+			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + (reason == null ? "" : " &3for &e" + reason));
+	}
+
+	@Async
+	@Path("history [player] [page]")
+	void history(@Arg("self") Banker banker, @Arg("1") int page) {
+		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
+				.stream().filter(transaction -> transaction.getCause() == TransactionCause.PAY)
+				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+				.collect(Collectors.toList());
+
+		if (transactions.isEmpty())
+			error("&cNo transactions found");
+
+		send("");
+		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+
+		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
+
+		paginate(combine(transactions), formatter, "/pay history " + banker.getName(), page);
 	}
 
 }

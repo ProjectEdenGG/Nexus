@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.providers.BrowseProductsProvider;
 import me.pugabyte.nexus.features.shops.providers.MainMenuProvider;
 import me.pugabyte.nexus.features.shops.providers.PlayerShopProvider;
+import me.pugabyte.nexus.features.shops.providers.SearchProductsProvider;
 import me.pugabyte.nexus.features.shops.providers.YourShopProvider;
 import me.pugabyte.nexus.features.shops.providers.YourShopProvider.CollectItemsProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -29,6 +30,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.economy.commands.TransactionCommand.getFormatter;
+import static me.pugabyte.nexus.models.banker.Transaction.combine;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Aliases("shops")
@@ -68,7 +70,7 @@ public class ShopCommand extends CustomCommand {
 	@Path("search <item>")
 	void search(@Arg(tabCompleter = Material.class) String text) {
 		BrowseProductsProvider provider = new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text), product ->
-				product.getItem().getType().name().toLowerCase().contains(stripColor(text).toLowerCase())));
+				SearchProductsProvider.filter(product.getItem(), item -> item.getType().name().toLowerCase().contains(stripColor(text).toLowerCase()))));
 		provider.open(player());
 	}
 
@@ -91,11 +93,11 @@ public class ShopCommand extends CustomCommand {
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + "Shop history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + "History" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(transactions, formatter, "/shop history " + banker.getName(), page);
+		paginate(combine(transactions), formatter, "/shop history " + banker.getName(), page);
 	}
 
 }

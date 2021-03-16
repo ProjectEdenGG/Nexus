@@ -833,7 +833,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		line();
 		AtomicInteger index = new AtomicInteger(start);
-		values.subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index, end))));
+		values.subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index))));
 		line();
 
 		boolean first = page == 1;
@@ -859,7 +859,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	@NotNull
-	private String getLeadingZeroIndex(AtomicInteger index, int end) {
+	private String getLeadingZeroIndex(AtomicInteger index) {
 		int nextIndex = index.incrementAndGet();
 		int nextMagnitude = Integer.parseInt("1" + Strings.repeat("0", String.valueOf(nextIndex).length()));
 		int needsLeading0 = nextMagnitude - 10;
@@ -870,7 +870,6 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		if (nextIndex > needsLeading0)
 			string = "0" + string;
-		Nexus.debug("nextIndex: " + nextIndex + " nextMagnitude: " + nextMagnitude + " needsLeading0: " + needsLeading0 + " result: " + string);
 		return string;
 	}
 

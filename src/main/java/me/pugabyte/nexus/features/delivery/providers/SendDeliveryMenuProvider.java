@@ -50,17 +50,26 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 
 	@Override
 	public void open(Player viewer, int page) {
-		SmartInventory.builder()
+		getMenu().open(user.getPlayer());
+	}
+
+	private SmartInventory getMenu() {
+		return SmartInventory.builder()
 				.provider(this)
 				.size(3, 9)
 				.title(colorize("&3Send A Delivery"))
-				.build()
-				.open(user.getPlayer());
+				.closeable(false)
+				.build();
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new DeliveryMenuProvider(user, worldGroup).open(player));
+		addBackItem(contents, e -> {
+			getMenu().close(player);
+			if (!Utils.isNullOrEmpty(items))
+				PlayerUtils.giveItems(player, items);
+			new DeliveryMenuProvider(user, worldGroup).open(player);
+		});
 
 		ItemBuilder playerName = new ItemBuilder(Material.NAME_TAG).name("Insert Player Name");
 		if (sendTo != null)
@@ -93,26 +102,33 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 		else if (Utils.isNullOrEmpty(items) && Strings.isNullOrEmpty(message))
 			confirm.lore("&cDelivery is empty");
 
-		contents.set(1, 1, ClickableItem.from(playerName.build(), e ->
-				Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name")
-						.prefix(PREFIX)
-						.response(lines -> {
-							if (lines[0].length() > 0) {
-								OfflinePlayer _player = PlayerUtils.getPlayer(lines[0]);
-								if (!PlayerUtils.isSelf(player, _player))
-									sendTo = _player.getUniqueId();
-							}
-							new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player);
-						})
-						.onError(() -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player))
-						.open(player)));
-		contents.set(1, 3, ClickableItem.from(insertItems.build(), e -> new InsertItemsMenu(user, worldGroup, sendTo, items, message)));
+		contents.set(1, 1, ClickableItem.from(playerName.build(), e -> {
+			getMenu().close(player);
+			Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name")
+					.prefix(PREFIX)
+					.response(lines -> {
+						if (lines[0].length() > 0) {
+							OfflinePlayer _player = PlayerUtils.getPlayer(lines[0]);
+							if (!PlayerUtils.isSelf(player, _player))
+								sendTo = _player.getUniqueId();
+						}
+						new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player);
+					})
+					.onError(() -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(player))
+					.open(player);
+		}));
+		contents.set(1, 3, ClickableItem.from(insertItems.build(), e -> {
+			getMenu().close(player);
+			new InsertItemsMenu(user, worldGroup, sendTo, items, message);
+		}));
+
 		// TODO: open a book menu where the player can type a message
 		// TODO: on opening a delivery: if has message, set it as a written book given to the player, unless it's from the server
 		contents.set(1, 4, ClickableItem.empty(typeMessage.build()));
 		contents.set(1, 7, ClickableItem.from(confirm.build(), e -> {
-			if (sendTo != null && (!Utils.isNullOrEmpty(items) || !Strings.isNullOrEmpty(message)))
+			if (sendTo != null && (!Utils.isNullOrEmpty(items) || !Strings.isNullOrEmpty(message))) {
 				sendDelivery(player);
+			}
 		}));
 	}
 
@@ -123,7 +139,7 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 		toUser.add(worldGroup, delivery);
 		service.save(toUser);
 
-		player.closeInventory();
+		getMenu().close(player);
 
 		toUser.sendNotification();
 	}
