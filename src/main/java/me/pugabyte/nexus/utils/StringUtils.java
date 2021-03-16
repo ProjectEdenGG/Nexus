@@ -332,6 +332,8 @@ public class StringUtils {
 	}
 
 	public static String prettyMoney(Number number) {
+		if (number == null)
+			return null;
 		return "$" + pretty(number);
 	}
 

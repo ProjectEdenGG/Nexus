@@ -62,11 +62,12 @@ public class TransactionCommand extends CustomCommand {
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
 			// Withdrawal
-			if (!transaction.getReceiver().equals(banker.getUuid())) {
+			if (!banker.getUuid().equals(transaction.getReceiver())) {
 				symbol = "&c-";
 				fromPlayer = isSelf(banker) ? "&7&lYOU" : "&7" + banker.getName();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), transaction.getCause());
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
+				description = description.replace("Sale", "Purchase");
 			}
 
 			cost = symbol + cost;
