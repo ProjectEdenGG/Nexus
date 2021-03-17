@@ -37,7 +37,7 @@ public class Backpacks extends FunctionalRecipe {
 
 	@Override
 	public String getPermission() {
-		return "group.staff";
+		return null;
 	}
 
 	@Override
