@@ -12,7 +12,6 @@ import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 public class MurderMatchData extends MatchData {
 
 	Minigamer murderer;
-	Minigamer gunner;
 	Minigamer hero;
 
 	public MurderMatchData(Match match) {

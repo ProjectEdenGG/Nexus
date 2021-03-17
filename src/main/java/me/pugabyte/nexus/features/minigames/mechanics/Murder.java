@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
@@ -151,16 +152,14 @@ public class Murder extends TeamMechanic {
 	@Override
 	public void announceWinners(Match match) {
 		MurderMatchData matchData = match.getMatchData();
-		Minigamer murderer = matchData.getMurderer();
-		Minigamer gunner = matchData.getGunner();
+		Minigamer murderer = getMurderer(match);
 		Minigamer hero = matchData.getHero();
-		boolean murdererAlive = match.getAliveTeams().stream().anyMatch(team -> team.getColor() == ChatColor.RED);
 
-		String broadcast = "";
-		if (!murdererAlive)
-			broadcast = matchData.getMurderer().getColoredName() + " has been stopped by " + matchData.getHero().getColoredName() + "&3on";
+		String broadcast;
+		if (!murderer.isAlive())
+			broadcast = murderer.getColoredName() + " has been stopped by " + hero.getColoredName() + "&3 on";
 		else if (match.getTimer().getTime() != 0)
-			broadcast = matchData.getMurderer().getColoredName() + " &3has won";
+			broadcast = murderer.getColoredName() + "&3 has won";
 		else
 			broadcast = "The &9innocents &3have won";
 
@@ -210,7 +209,6 @@ public class Murder extends TeamMechanic {
 
 		if (gunner != null) {
 			MurderMatchData matchData = match.getMatchData();
-			matchData.setGunner(gunner);
 			gunner.getPlayer().getInventory().setItem(1, gun);
 		}
 	}
@@ -536,11 +534,11 @@ public class Murder extends TeamMechanic {
 	}
 
 	private Minigamer getMurderer(Match match) {
-		for (Minigamer minigamer : match.getAliveMinigamers())
-			if (isMurderer(minigamer.getPlayer()))
-				return minigamer;
+		return ((MurderMatchData)match.getMatchData()).getMurderer();
+	}
 
-		return null;
+	private Set<Minigamer> getGunners(Match match) {
+		return match.getAliveMinigamers().stream().filter(this::isGunner).collect(Collectors.toSet());
 	}
 
 	@EventHandler
