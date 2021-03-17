@@ -55,6 +55,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,7 +261,7 @@ public class Battleship extends TeamMechanic {
 		Tasks.wait(Time.SECOND, () -> match.getWEUtils().fixLight(match.getArena().getRegion("board")));
 
 		Region floor = match.getArena().getRegion("floor");
-		match.getArena().getWEUtils().replace(floor, Sets.newHashSet(BlockTypes.BLUE_CONCRETE, BlockTypes.YELLOW_WOOL), BlockTypes.WATER);
+		match.getArena().getWEUtils().replace(floor, Sets.newHashSet(BlockTypes.BLUE_CONCRETE, BlockTypes.YELLOW_WOOL), Collections.singleton(BlockTypes.WATER));
 	}
 
 	public void hideShips(Match match, Team team) {
