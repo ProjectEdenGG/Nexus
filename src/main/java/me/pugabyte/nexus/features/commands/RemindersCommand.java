@@ -35,8 +35,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 
@@ -279,7 +279,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Path("list [page]")
 	void list(@Arg("1") int page) {
-		if (config.getAllReminders().isEmpty())
+		if (config.getAll().isEmpty())
 			error("No reminders have been created");
 
 		send(PREFIX + "Reminders");
@@ -288,7 +288,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 						.addHover("&3Type: &e" + (reminder.isMotd() ? "MOTD" : "Reminder"))
 						.addHover("&7" + reminder.getText())
 						.command("/reminders edit " + reminder.getId());
-		paginate(config.getAllReminders(), formatter, "/reminders list", page);
+		paginate(config.getAll(), formatter, "/reminders list", page);
 	}
 
 	@Path("show <player> <reminder>")
@@ -317,10 +317,10 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@TabCompleterFor(Reminder.class)
 	List<String> tabCompleteReminder(String filter) {
-		return config.getAllReminders().stream()
+		return config.getAll().stream()
 				.map(Reminder::getId)
 				.filter(request -> request.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 
 	@Path("setInterval <seconds>")
@@ -355,9 +355,20 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		for (Reminder motd : config.getMotds())
-			if (motd.test(event.getPlayer()))
-				motd.send(event.getPlayer());
+		event.getPlayer().sendMessage("§3 §6 §3 §6 §3 §6 §e  §3 §6 §3 §6 §3 §6 §d"); // disable voxelmap radar
+
+		Tasks.waitAsync(Time.SECOND, () -> {
+			if (!event.getPlayer().isOnline())
+				return;
+
+			List<Reminder> motds = config.getMotds(event.getPlayer());
+			if (motds.isEmpty())
+				return;
+
+			event.getPlayer().sendMessage("");
+			motds.forEach(motd -> motd.send(event.getPlayer()));
+			event.getPlayer().sendMessage("");
+		});
 	}
 
 }

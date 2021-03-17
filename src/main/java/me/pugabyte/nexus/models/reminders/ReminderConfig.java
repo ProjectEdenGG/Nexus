@@ -35,7 +35,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Data
 @Builder
@@ -66,16 +67,24 @@ public class ReminderConfig implements ConfigurationSerializable {
 		return RandomUtils.randomElement(getReminders());
 	}
 
-	public List<Reminder> getAllReminders() {
+	public List<Reminder> getAll() {
 		return reminders;
 	}
 
 	public List<Reminder> getReminders() {
-		return reminders.stream().filter(Reminder::isReminder).collect(Collectors.toList());
+		return reminders.stream().filter(Reminder::isReminder).collect(toList());
 	}
 
 	public List<Reminder> getMotds() {
-		return reminders.stream().filter(Reminder::isMotd).collect(Collectors.toList());
+		return reminders.stream().filter(Reminder::isMotd).collect(toList());
+	}
+
+	public List<Reminder> getReminders(Player player) {
+		return getReminders().stream().filter(reminder -> reminder.test(player)).collect(toList());
+	}
+
+	public List<Reminder> getMotds(Player player) {
+		return getMotds().stream().filter(reminder -> reminder.test(player)).collect(toList());
 	}
 
 	public void add(Reminder reminder) {
