@@ -83,6 +83,16 @@ public class EditProductProvider extends _ShopProvider {
 			contents.set(1, 5, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
 		}
 
+		ItemBuilder purchasable = new ItemBuilder(Material.LEVER);
+		if (product.isPurchasable())
+			purchasable.name("&aPurchasable")
+					.lore("&7Click to &cdisable &7purchases")
+					.lore("&7Item will still show in your shop,")
+					.lore("&7but players cannot purchase it.")
+					.lore("&7Can be used for shop organization")
+					.loreize(false);
+		else
+			purchasable.name("&cNot purchasable").lore("&7Click to &aenable &7purchases");
 
 		ItemBuilder enabled = new ItemBuilder(Material.LEVER);
 		if (product.isEnabled())
@@ -90,7 +100,13 @@ public class EditProductProvider extends _ShopProvider {
 		else
 			enabled.name("&cDisabled").lore("&7Click to &aenable&7, allowing others").lore("&7to view and purchase the item");
 
-		contents.set(3, 3, ClickableItem.from(enabled.build(), e -> {
+		contents.set(3, 3, ClickableItem.from(purchasable.build(), e -> {
+			product.setPurchasable(!product.isPurchasable());
+			service.save(product.getShop());
+			open(player);
+		}));
+
+		contents.set(3, 4, ClickableItem.from(enabled.build(), e -> {
 			product.setEnabled(!product.isEnabled());
 			service.save(product.getShop());
 			open(player);

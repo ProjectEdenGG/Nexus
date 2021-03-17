@@ -155,6 +155,9 @@ public class BrowseProductsProvider extends _ShopProvider {
 					return;
 
 				items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
+					if (!product.isPurchasable())
+						return;
+
 					try {
 						if (handleRightClick(product, e))
 							return;
@@ -176,6 +179,9 @@ public class BrowseProductsProvider extends _ShopProvider {
 	public boolean isFiltered(Product product) {
 		if (!product.isEnabled())
 			return true;
+		if (!(this instanceof PlayerShopProvider))
+			if (!product.isPurchasable())
+				return true;
 
 		if (filters != null)
 			for (Filter filter : filters)

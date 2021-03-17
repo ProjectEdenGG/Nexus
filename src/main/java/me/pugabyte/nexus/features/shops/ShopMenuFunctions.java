@@ -116,7 +116,7 @@ public class ShopMenuFunctions {
 
 	public enum FilterEmptyStock implements FilterType {
 		SHOWN,
-		HIDDEN(Product::canFulfillPurchase);
+		HIDDEN(product -> !product.isPurchasable() || product.canFulfillPurchase());
 
 		@Getter
 		private Predicate<Product> filter;

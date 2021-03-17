@@ -102,11 +102,11 @@ public class Shop extends PlayerOwnedObject {
 	}
 
 	public List<Product> getInStock(ShopGroup shopGroup) {
-		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && product.canFulfillPurchase()).collect(Collectors.toList());
+		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && product.isPurchasable() && product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
 	public List<Product> getOutOfStock(ShopGroup shopGroup) {
-		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && !product.canFulfillPurchase()).collect(Collectors.toList());
+		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && product.isPurchasable() && !product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
 	public void addHolding(List<ItemStack> itemStacks) {
@@ -160,12 +160,13 @@ public class Shop extends PlayerOwnedObject {
 		@NonNull
 		private ShopGroup shopGroup;
 		private boolean resourceWorld;
+		private boolean purchasable = true;
+		private boolean enabled = true;
 		@Embedded
 		private ItemStack item;
 		private double stock;
 		private ExchangeType exchangeType;
 		private Object price;
-		private boolean enabled = true;
 
 		private transient boolean editing;
 
@@ -306,17 +307,26 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		public ItemBuilder getItemWithCustomerLore() {
+			if (!purchasable)
+				return new ItemBuilder(item);
+
 			return getItemWithLore().lore(getExchange().getLore());
 		}
 
 		public ItemBuilder getItemWithOwnLore() {
-			ItemBuilder item = getItemWithLore();
-			if (!enabled)
-				item.lore("&cDisabled");
+			ItemBuilder builder;
+			if (!purchasable)
+				builder = new ItemBuilder(item).lore("&f").lore("&cNot Purchasable");
+			else
+				builder = getItemWithLore();
 
-			return item
-					.lore(getExchange().getOwnLore())
-					.lore("", "&7Click to edit");
+			if (!enabled)
+				builder.lore("&cDisabled");
+
+			if (purchasable)
+				builder.lore(getExchange().getOwnLore());
+
+			return builder.lore("", "&7Click to edit");
 		}
 
 		public boolean isMarket() {
