@@ -138,14 +138,12 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		public static ShopGroup get(String world) {
-			if (world.toLowerCase().startsWith("resource"))
-				return RESOURCE;
-			else if (WorldGroup.get(world) == WorldGroup.SKYBLOCK)
-				return SKYBLOCK;
-			else if (WorldGroup.get(world) == WorldGroup.ONEBLOCK)
-				return ONEBLOCK;
-			else if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
+			if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
 				return SURVIVAL;
+			if (WorldGroup.get(world) == WorldGroup.SKYBLOCK)
+				return SKYBLOCK;
+			if (WorldGroup.get(world) == WorldGroup.ONEBLOCK)
+				return ONEBLOCK;
 
 			return null;
 		}
@@ -161,6 +159,7 @@ public class Shop extends PlayerOwnedObject {
 		private UUID uuid;
 		@NonNull
 		private ShopGroup shopGroup;
+		private boolean resourceWorld;
 		@Embedded
 		private ItemStack item;
 		private double stock;
@@ -171,8 +170,13 @@ public class Shop extends PlayerOwnedObject {
 		private transient boolean editing;
 
 		public Product(@NonNull UUID uuid, @NonNull ShopGroup shopGroup, ItemStack item, double stock, ExchangeType exchangeType, Object price) {
+			this(uuid, shopGroup, false, item, stock, exchangeType, price);
+		}
+
+		public Product(@NonNull UUID uuid, @NonNull ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double stock, ExchangeType exchangeType, Object price) {
 			this.uuid = uuid;
 			this.shopGroup = shopGroup;
+			this.resourceWorld = isResourceWorld;
 			this.item = item;
 			this.stock = stock;
 			this.exchangeType = exchangeType;

@@ -98,6 +98,8 @@ public class OnlineCommand extends CustomCommand {
 		String onlineFor = StringUtils.timespanDiff(nerd.getLastJoin());
 		WorldGroup world = WorldGroup.get(player);
 		ShopGroup shopGroup = ShopGroup.get(player);
+		if (shopGroup == null)
+			shopGroup = ShopGroup.SURVIVAL;
 		String balance = new BankerService().getBalanceFormatted(player, shopGroup);
 		String totalHours = Timespan.of(hours.getTotal()).format();
 		String afk = "";
@@ -111,7 +113,7 @@ public class OnlineCommand extends CustomCommand {
 		return afk +
 				"&3Ping: &e" + ping + "\n" +
 				"&3World: &e" + world + "\n" +
-				"&3" + camelCase(shopGroup) + " balance: &e$" + balance + "\n" +
+				"&3" + camelCase(shopGroup) + " balance: &e" + balance + "\n" +
 				"&3Online for: &e" + onlineFor + "\n" +
 				"&3Hours: &e" + totalHours;
 	}

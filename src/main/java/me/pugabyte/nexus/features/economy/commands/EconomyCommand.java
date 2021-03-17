@@ -88,20 +88,6 @@ public class EconomyCommand extends CustomCommand {
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getName() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
-	@ConverterFor(ShopGroup.class)
-	ShopGroup convertToShopGroup(String value) {
-		if ("current".equalsIgnoreCase(value)) {
-			if (isConsole())
-				error("You must specify a shop group");
-			ShopGroup shopGroup = ShopGroup.get(world());
-			if (shopGroup == null)
-				return ShopGroup.SURVIVAL;
-			return shopGroup;
-		}
-
-		return (ShopGroup) convertToEnum(value, ShopGroup.class);
-	}
-
 //	@Async
 //	@Path("convertBalances")
 //	void convertBalance() {
@@ -122,5 +108,19 @@ public class EconomyCommand extends CustomCommand {
 //			}
 //		}
 //	}
+
+	@ConverterFor(ShopGroup.class)
+	ShopGroup convertToShopGroup(String value) {
+		if ("current".equalsIgnoreCase(value)) {
+			if (isConsole())
+				error("You must specify a shop group");
+			ShopGroup shopGroup = ShopGroup.get(world());
+			if (shopGroup == null)
+				return ShopGroup.SURVIVAL;
+			return shopGroup;
+		}
+
+		return (ShopGroup) convertToEnum(value, ShopGroup.class);
+	}
 
 }

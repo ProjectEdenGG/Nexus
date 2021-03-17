@@ -5,6 +5,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
+import dev.morphia.annotations.PreLoad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,8 +53,15 @@ public class Banker extends PlayerOwnedObject {
 	@Setter(AccessLevel.PRIVATE)
 	private BigDecimal balance = BigDecimal.ZERO;
 
+	@PreLoad
+	void fixPreLoad(DBObject dbObject) {
+		DBObject map = (DBObject) dbObject.get("balances");
+		if (map != null && map.containsField("RESOURCE"))
+			map.removeField("RESOURCE");
+	}
+
 	@PostLoad
-	void fix(DBObject dbObject) {
+	void fixPostLoad(DBObject dbObject) {
 		if (balance.signum() == 1) {
 			balances.put(ShopGroup.SURVIVAL, new BigDecimal(balance.toString()));
 			balance = BigDecimal.ZERO;

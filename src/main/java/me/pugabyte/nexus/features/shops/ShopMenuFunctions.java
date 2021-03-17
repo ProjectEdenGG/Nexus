@@ -44,6 +44,10 @@ public class ShopMenuFunctions {
 		}
 	}
 
+	public enum FilterRequiredType implements FilterType {
+		REQUIRED
+	}
+
 	public enum FilterSearchType implements FilterType {
 		SEARCH
 	}

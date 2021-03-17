@@ -4,6 +4,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.homes.HomesFeature;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.shop.Shop;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.models.tip.Tip;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
@@ -62,8 +63,8 @@ public class ResourceWorld implements Listener {
 					return;
 				}
 			}
-			List<Material> materials = new ShopService().getMarket().getProducts(Shop.ShopGroup.RESOURCE).stream()
-					.filter(product -> product.getExchangeType() == Shop.ExchangeType.BUY)
+			List<Material> materials = new ShopService().getMarket().getProducts(ShopGroup.SURVIVAL).stream()
+					.filter(product -> product.isResourceWorld() && product.getExchangeType() == Shop.ExchangeType.BUY)
 					.map(product -> product.getItem().getType())
 					.collect(Collectors.toList());
 

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.economy.commands.TransactionCommand.getFormatter;
+import static me.pugabyte.nexus.features.economy.commands.TransactionsCommand.getFormatter;
 import static me.pugabyte.nexus.models.banker.Transaction.combine;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -45,7 +45,7 @@ public class ShopCommand extends CustomCommand {
 				error("&cComing soon!");
 			if (shopGroup == null)
 				error("Shops are not enabled in this world");
-			if (shopGroup == ShopGroup.RESOURCE)
+			if (world().getName().startsWith("resource"))
 				error("You cannot use player shops while in the resource world");
 		}
 	}

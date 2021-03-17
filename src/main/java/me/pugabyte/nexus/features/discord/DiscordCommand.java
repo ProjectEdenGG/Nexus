@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.discord;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia;
+import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -22,6 +22,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.bukkit.OfflinePlayer;
@@ -40,8 +41,16 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Path
+	@Async
 	void run() {
-		send(json().next("&e" + SocialMedia.BNSocialMediaSite.DISCORD.getUrl()));
+		Guild guild = Discord.getGuild();
+		if (guild == null)
+			error("Discord bot is not connected");
+		TextChannel channel = guild.getTextChannelById(Channel.GENERAL.getId());
+		if (channel == null)
+			error("General channel not found");
+
+		send(json().next("&e" + channel.createInvite().complete().getUrl()));
 	}
 
 	@Async

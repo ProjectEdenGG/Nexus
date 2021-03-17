@@ -131,7 +131,8 @@ public class YourShopProvider extends _ShopProvider {
 
 			Nexus.unregisterTempListener(this);
 			event.getPlayer().closeInventory();
-			Tasks.wait(1, () -> previousMenu.open(player));
+			if (previousMenu != null)
+				Tasks.wait(1, () -> previousMenu.open(player));
 		}
 	}
 

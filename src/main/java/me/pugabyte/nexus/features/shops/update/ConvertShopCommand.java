@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.shops.update;
 
+import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -191,8 +192,17 @@ public class ConvertShopCommand extends CustomCommand {
 	private SignData readEnchTradeSign(String[] lines) {
 		SignData data = new SignData();
 		data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(" \\| ")[0]));
-		data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK)
-				.enchant(getEnchantFromShort(lines[2].split(" ")[0]), Integer.parseInt(lines[2].split(" ")[1])).build());
+		String[] line3 = lines[2].split(" ");
+		String enchShort = Strings.join(Arrays.copyOfRange(line3, 0, line3.length - 1), " ");
+		Enchantment enchant = getEnchantFromShort(enchShort);
+		int level = Integer.parseInt(line3[line3.length - 1]);
+
+		if (enchant == null)
+			throw new InvalidInputException("Enchantment from &e" + enchShort + " &cnot found");
+		if (level < 1)
+			throw new InvalidInputException("Enchantment level cannot be &e" + level);
+
+		data.setItem(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchant, level).build());
 		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
 		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 		return data;
@@ -266,8 +276,8 @@ public class ConvertShopCommand extends CustomCommand {
 		return null;
 	}
 
-	public Enchantment getEnchantFromShort(String potionShort) {
-		switch (potionShort) {
+	public Enchantment getEnchantFromShort(String enchantShort) {
+		switch (enchantShort) {
 			case "Eff.":
 				return Enchantment.DIG_SPEED;
 			case "Silk Touch":
@@ -404,8 +414,12 @@ public class ConvertShopCommand extends CustomCommand {
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(Nexus.getFile("items.csv")));
 				while ((line = br.readLine()) != null) {
-					String[] split = line.split(",");
-					items.put(split[0].toUpperCase(), convertMaterial(Integer.parseInt(split[1]), Byte.parseByte(split[2])));
+					try {
+						String[] split = line.split(",");
+						items.put(split[0].toUpperCase(), convertMaterial(Integer.parseInt(split[1]), Byte.parseByte(split[2])));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

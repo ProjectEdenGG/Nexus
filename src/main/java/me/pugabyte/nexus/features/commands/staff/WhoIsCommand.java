@@ -23,6 +23,7 @@ import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -46,8 +47,15 @@ public class WhoIsCommand extends CustomCommand {
 		send("&3Who the fuck is &6&l" + nerd.getName() + "&3?");
 
 		HoursService hoursService = new HoursService();
-		LiteBansService liteBansService = new LiteBansService();
 		GeoIPService geoIpService = new GeoIPService();
+
+		int history = 0;
+		List<String> alts = new ArrayList<>();
+		try {
+			LiteBansService liteBansService = new LiteBansService();
+			history = liteBansService.getHistory(nerd.getUuid().toString());
+			alts = liteBansService.getAlts(nerd.getUuid().toString());
+		} catch (Exception ignore) {}
 
 		Hours hours = hoursService.get(nerd);
 		String rank = nerd.getRank().withColor();
@@ -69,9 +77,6 @@ public class WhoIsCommand extends CustomCommand {
 			lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
 			lastJoinQuitDiff = timespanDiff(nerd.getLastJoin());
 		}
-
-		int history = liteBansService.getHistory(nerd.getUuid().toString());
-		List<String> alts = liteBansService.getAlts(nerd.getUuid().toString());
 		Set<String> pastNames = nerd.getPastNames();
 		Godmode godmode = new GodmodeService().get(nerd);
 

@@ -482,31 +482,31 @@ public enum VPSMenu {
 						.price(60));
 
 				put(37, VPSSlot.builder()
-						.name("1 respawn anchor")
-						.displayAndGive(Material.RESPAWN_ANCHOR)
-						.price(25));
+						.name("4 Crying Obsidian")
+						.displayAndGive(Material.CRYING_OBSIDIAN, 4)
+						.price(10));
 				put(38, VPSSlot.builder()
-						.name("1 dragon head")
+						.name("1 Dragon Head")
 						.displayAndGive(Material.DRAGON_HEAD)
 						.price(50));
 				put(39, VPSSlot.builder()
-						.name("4 ender crystals")
+						.name("4 Ender Crystals")
 						.displayAndGive(Material.END_CRYSTAL, 4)
 						.price(20));
 				put(40, VPSSlot.builder()
-						.name("1 shulker box")
+						.name("1 Shulker Box")
 						.displayAndGive(Material.SHULKER_BOX)
 						.price(50));
 				put(41, VPSSlot.builder()
-						.name("1 elytra")
+						.name("1 Elytra")
 						.displayAndGive(Material.ELYTRA)
 						.price(40));
 				put(42, VPSSlot.builder()
-						.name("1 totem of undying")
+						.name("1 Totem of Undying")
 						.displayAndGive(Material.TOTEM_OF_UNDYING)
 						.price(50));
 				put(43, VPSSlot.builder()
-						.name("1 Pigstep music disc")
+						.name("1 Pigstep Music Disc")
 						.displayAndGive(Material.MUSIC_DISC_PIGSTEP)
 						.price(30));
 			}}).build());

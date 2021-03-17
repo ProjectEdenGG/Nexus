@@ -139,7 +139,10 @@ public class Nerd extends PlayerOwnedObject {
 
 		String dimension = dataFile.getString("Dimension").replace("minecraft:", "");
 		if (isNullOrEmpty(dimension))
-			dimension = dataFile.getString("SpawnWorld");
+			dimension = dataFile.getString("SpawnWorld").replace("minecraft:", "");
+
+		if ("overworld".equals(dimension))
+			return Bukkit.getWorlds().get(0);
 
 		return Bukkit.getWorld(dimension);
 	}
