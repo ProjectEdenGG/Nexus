@@ -59,32 +59,29 @@ public class ShopMenuFunctions {
 			return SEARCH.of(message, product -> SearchProductsProvider.filter(product.getItem(), item -> {
 				Material type = item.getType();
 
-				if (type.name().toLowerCase().contains(message.toLowerCase()))
-					return true;
-				if (type.name().toLowerCase().replace("_", " ").contains(message.toLowerCase()))
+				if (contains(type.name(), message))
 					return true;
 
-				for (Enchantment enchantment : item.getEnchantments().keySet()) {
-					String key = enchantment.getKey().getKey();
-					if (key.toLowerCase().contains(message.toLowerCase()))
-						return true;
-					if (key.replace("_", " ").toLowerCase().contains(message.toLowerCase()))
-						return true;
-				}
+				for (Enchantment enchantment : item.getEnchantments().keySet())
+					if (contains(enchantment.getKey().getKey(), message)) return true;
 
 				if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
 					EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
-					for (Enchantment enchantment : meta.getStoredEnchants().keySet()) {
-						String key = enchantment.getKey().getKey();
-						if (key.toLowerCase().contains(message.toLowerCase()))
-							return true;
-						if (key.replace("_", " ").toLowerCase().contains(message.toLowerCase()))
-							return true;
-					}
+					for (Enchantment enchantment : meta.getStoredEnchants().keySet())
+						if (contains(enchantment.getKey().getKey(), message)) return true;
 				}
 
 				return false;
 			}));
+		}
+
+		private boolean contains(String key, String message) {
+			if (key.toLowerCase().contains(message.toLowerCase()))
+				return true;
+			if (key.replace("_", " ").toLowerCase().contains(message.toLowerCase()))
+				return true;
+
+			return false;
 		}
 	}
 
