@@ -83,7 +83,7 @@ public class EditProductProvider extends _ShopProvider {
 			contents.set(1, 5, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
 		}
 
-		ItemBuilder purchasable = new ItemBuilder(Material.LEVER);
+		ItemBuilder purchasable = new ItemBuilder(Material.WHITE_STAINED_GLASS);
 		if (product.isPurchasable())
 			purchasable.name("&aPurchasable")
 					.lore("&7Click to &cdisable &7purchases")
@@ -100,7 +100,7 @@ public class EditProductProvider extends _ShopProvider {
 		else
 			enabled.name("&cDisabled").lore("&7Click to &aenable&7, allowing others").lore("&7to view and purchase the item");
 
-		contents.set(3, 3, ClickableItem.from(purchasable.build(), e -> {
+		contents.set(3, 2, ClickableItem.from(purchasable.build(), e -> {
 			product.setPurchasable(!product.isPurchasable());
 			service.save(product.getShop());
 			open(player);
@@ -112,7 +112,7 @@ public class EditProductProvider extends _ShopProvider {
 			open(player);
 		}));
 
-		contents.set(3, 5, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
+		contents.set(3, 6, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
 				ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
 							Shop shop = service.get(player);

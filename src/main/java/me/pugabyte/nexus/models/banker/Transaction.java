@@ -175,6 +175,13 @@ public class Transaction {
 			}
 		}
 
+		if (previous != null) {
+			previous.setAmount(combinedAmount);
+			if (count > 0)
+				previous.setDescription(count + " " + previous.getDescription().split(" ", 2)[1]);
+			combined.add(previous);
+		}
+
 		return combined;
 	}
 
