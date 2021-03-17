@@ -118,14 +118,19 @@ public class Flag {
 
 	public static Location getSuitableLocation(Location originalLocation) {
 		Location location = originalLocation.clone();
+		double originalHeight = location.getY();
 		int maxHeight = location.getWorld().getMaxHeight();
 		int minHeight = 0; // 1.17: use location.getWorld().getMinHeight()
 
-		while (!MaterialTag.ALL_AIR.isTagged(location.getBlock().getType()) && location.getY() < maxHeight)
+		while (!MaterialTag.ALL_AIR.isTagged(location.getBlock().getType()) && // goal is to be in an air block
+				location.getY() < maxHeight && // don't go above the world
+				// this next one is basically ensuring the flag doesn't go above a ceiling
+				// the check against the current height is to avoid warping down on stairs
+				(location.getY()-originalHeight < 2 || !location.getBlock().getType().isSolid()))
 			location.add(0, 1, 0);
 
 		Block below = location.clone().subtract(0, 1, 0).getBlock();
-		while ((MaterialTag.ALL_AIR.isTagged(below.getType()) || !MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) &&
+		while ((MaterialTag.ALL_AIR.isTagged(below.getType()) || below.getType() == Material.BARRIER || !MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) &&
 				ArenaManager.getFromLocation(originalLocation).getRegion().contains(new WorldGuardUtils(Minigames.getWorld()).toBlockVector3(location))) {
 			location.subtract(0, 1, 0);
 			below = location.clone().subtract(0, 1, 0).getBlock();
