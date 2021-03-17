@@ -24,6 +24,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -168,6 +169,7 @@ public abstract class WitherFight implements Listener {
 				location = utils.getRandomBlock("witherarena-pigmen").getLocation();
 			} while (location.getBlock().getType() != Material.AIR);
 			PigZombie piglin = location.getWorld().spawn(location, PigZombie.class);
+			piglin.setAdult();
 			piglin.setCanPickupItems(false);
 			piglin.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
 		}
@@ -181,6 +183,7 @@ public abstract class WitherFight implements Listener {
 				location = utils.getRandomBlock("witherarena-pigmen").getLocation();
 			} while (location.getBlock().getType() != Material.AIR);
 			Hoglin hoglin = location.getWorld().spawn(location, Hoglin.class);
+			hoglin.setAdult();
 			hoglin.setCanPickupItems(false);
 			hoglin.setImmuneToZombification(true);
 			hoglin.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
@@ -357,6 +360,20 @@ public abstract class WitherFight implements Listener {
 	}
 
 	@EventHandler
+	public void onPlaceWater(PlayerBucketEmptyEvent event) {
+		if (!isInRegion(event.getBlock().getLocation())) return;
+		if (event.getBucket() != Material.WATER_BUCKET) return;
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onWitherSkeletonDamage(EntityDamageByEntityEvent event) {
+		if (!(event.getEntity() instanceof WitherSkeleton)) return;
+		if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow)) return;
+		if (!isInRegion(event.getEntity().getLocation())) return;
+	}
+
+	@EventHandler
 	public void onFallingBlockLand(EntityChangeBlockEvent event) {
 		if (!(event.getEntity() instanceof FallingBlock)) return;
 		if (!isInRegion(event.getEntity().getLocation())) return;
@@ -475,7 +492,7 @@ public abstract class WitherFight implements Listener {
 					for (PotionEffect effect : player.getPlayer().getActivePotionEffects()) {
 						if (effect.getType() == PotionEffectType.WITHER) continue;
 						player.getPlayer().removePotionEffect(effect.getType());
-						player.getPlayer().sendTitle(new Title("", "&8&kbbb &4&lStipped Potion Effects &8&kbbb", 10, 40, 10));
+						player.getPlayer().sendTitle(new Title("", colorize("&8&kbbb &4&lStipped Potion Effects &8&kbbb"), 10, 40, 10));
 					}
 
 				}

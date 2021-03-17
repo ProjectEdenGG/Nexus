@@ -20,6 +20,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+
 @NoArgsConstructor
 public class CorruptedFight extends WitherFight {
 
@@ -100,7 +102,7 @@ public class CorruptedFight extends WitherFight {
 	public void counterAttack(EntityDamageByEntityEvent event) {
 		if (event.getEntity() != this.wither) return;
 		if (RandomUtils.chanceOf(30))
-			if (RandomUtils.chanceOf(25))
+			if (RandomUtils.chanceOf(35))
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers);
 			else
 				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers);
@@ -164,7 +166,7 @@ public class CorruptedFight extends WitherFight {
 					for (int i = 0; i < 36; i++)
 						player.getInventory().setItem(i, contents.get(i));
 					player.getInventory().setItemInOffHand(contents.get(contents.size() - 1));
-					player.sendTitle(new Title("", "&8&kbbb &4&lInventory Scrambled &8&kbbb", 10, 40, 10));
+					player.sendTitle(new Title("", colorize("&8&kbbb &4&lInventory Scrambled &8&kbbb"), 10, 40, 10));
 				}
 			}
 		},
@@ -181,7 +183,7 @@ public class CorruptedFight extends WitherFight {
 						armor.set(armor.indexOf(item), null);
 						player.getInventory().setArmorContents(armor.toArray(new ItemStack[0]));
 						player.getInventory().addItem(item);
-						player.sendTitle(new Title("", "&8&kbbb &4&lArmor Piece Stripped &8&kbbb", 10, 40, 10));
+						player.sendTitle(new Title("", colorize("&8&kbbb &4&lArmor Piece Stripped &8&kbbb"), 10, 40, 10));
 					}
 				}
 			}

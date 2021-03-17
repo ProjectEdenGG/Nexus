@@ -22,10 +22,12 @@ public class WitherCommand extends CustomCommand {
 		super(event);
 	}
 
+	public boolean betaMode = true;
+
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
-		if (!PlayerUtils.isStaffGroup(player()))
+		if (!PlayerUtils.isStaffGroup(player()) && betaMode)
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
@@ -72,6 +74,8 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("join")
 	void join() {
+		if (!PlayerUtils.isStaffGroup(player()) && betaMode)
+			error("The wither is currently being beta tested by staff. It should be back soon!");
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (WitherChallenge.currentFight.getParty().contains(player().getUniqueId()))
@@ -157,6 +161,8 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("spectate")
 	void spectate() {
+		if (!PlayerUtils.isStaffGroup(player()) && betaMode)
+			error("The wither is currently being beta tested by staff. It should be back soon!");
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (!WitherChallenge.currentFight.isStarted())
