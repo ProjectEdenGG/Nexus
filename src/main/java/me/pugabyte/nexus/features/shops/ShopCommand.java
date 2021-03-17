@@ -42,7 +42,7 @@ public class ShopCommand extends CustomCommand {
 		super(event);
 		if (isCommandEvent()) {
 			if (!hasPermission("shops.use"))
-				error("&cComing soon!");
+				error("Currently in beta testing, coming soon!");
 			if (shopGroup == null)
 				error("Shops are not enabled in this world");
 		}

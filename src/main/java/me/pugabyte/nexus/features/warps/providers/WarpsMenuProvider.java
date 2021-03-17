@@ -5,6 +5,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.shops.providers.MainMenuProvider;
 import me.pugabyte.nexus.features.warps.WarpMenu;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.warps.WarpsMenu;
@@ -81,12 +82,11 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 					}));
 				}
 
-				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu||||&cCurrently Disabled");
+				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
 				ItemStack resource = nameItem(Material.DIAMOND_PICKAXE, "&3Resource", "&eClick to teleport to the resource world");
 				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy", "&eClick to view legacy world warps");
 
-				//contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
-				contents.set(1, 7, ClickableItem.empty(shops));
+				contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
 				contents.set(2, 7, ClickableItem.from(resource, e -> warpService.get("resource", WarpType.NORMAL).teleport(player)));
 				contents.set(3, 7, ClickableItem.from(legacy, e -> WarpsMenu.open(player, WarpMenu.LEGACY)));
 
@@ -106,11 +106,10 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 					}));
 				}
 
-				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu||||&cCurrently Disabled");
+				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
 				ItemStack newWorld = nameItem(Material.GRASS_BLOCK, "&3Survival", "&eClick to view the survival world warps");
 
-				//contents.set(1, 7, ClickableItem.from(shops2, e -> new MainMenuProvider(null).open(player)));
-				contents.set(1, 7, ClickableItem.empty(shops2));
+				contents.set(1, 7, ClickableItem.from(shops2, e -> new MainMenuProvider(null).open(player)));
 				contents.set(3, 7, ClickableItem.from(newWorld, e -> WarpsMenu.open(player, WarpMenu.SURVIVAL)));
 
 				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +

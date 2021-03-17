@@ -62,6 +62,8 @@ public class BrowseProductsProvider extends _ShopProvider {
 	private void addDefaultFilters() {
 		if (getFilter(FilterEmptyStock.class) == null)
 			filters.add(FilterEmptyStock.HIDDEN.get());
+		if (!(this instanceof BrowseMarketProvider))
+			filters.add(FilterMarketItems.HIDDEN.get());
 	}
 
 	@Override
