@@ -1,19 +1,9 @@
 package me.pugabyte.nexus.framework.commands.models;
 
 import com.google.common.base.Strings;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
-import me.pugabyte.nexus.framework.commands.models.annotations.Description;
-import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
-import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -29,23 +19,10 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.ColorType;
-import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.BlockCommandSender;
@@ -66,23 +43,14 @@ import org.reflections.Reflections;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.StringUtils.parseDate;
-import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
-import static me.pugabyte.nexus.utils.StringUtils.parseShortDate;
-import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
+import static me.pugabyte.nexus.utils.StringUtils.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -798,7 +766,23 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	@TabCompleterFor(Enchantment.class)
-	List<String> tabCompleteEnchantment(String filter) {
+	List<String> applicableEnchantmentsTabCompleter(String filter) {
+		List<String> results = new ArrayList<>();
+		try {
+			List<String> enchants = ItemUtils.getApplicableEnchantments(getToolRequired()).stream()
+					.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
+					.map(enchantment -> enchantment.getKey().getKey())
+					.collect(toList());
+			if (enchants.size() == 0)
+				return getAllEnchants(filter);
+			else
+				return enchants;
+		} catch (InvalidInputException ignore) {
+			return getAllEnchants(filter);
+		}
+	}
+
+	public List<String> getAllEnchants(String filter) {
 		return Arrays.stream(Enchantment.values())
 				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(enchantment -> enchantment.getKey().getKey())
