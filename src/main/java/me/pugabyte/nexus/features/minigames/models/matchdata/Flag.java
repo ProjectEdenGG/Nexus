@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.minigames.models.matchdata;
 import com.destroystokyo.paper.ParticleBuilder;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.mechanics.CaptureTheFlag;
@@ -10,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.mechanics.OneFlagCaptureTheFlag;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -114,22 +116,26 @@ public class Flag {
 		});
 	}
 
-	public Location getSuitableLocation(Location originalLocation) {
+	public static Location getSuitableLocation(Location originalLocation) {
 		Location location = originalLocation.clone();
-		if (location.getBlock().isLiquid()) {
-			while (location.getBlock().isLiquid() && location.getY() <= 255)
-				location.add(0, 1, 0);
-			return location;
-		}
+		int maxHeight = location.getWorld().getMaxHeight();
+		int minHeight = 0; // 1.17: use location.getWorld().getMinHeight()
 
-		while (location.getBlock().getType() != Material.AIR && !location.getBlock().getType().isSolid())
+		while (!MaterialTag.ALL_AIR.isTagged(location.getBlock().getType()) && location.getY() < maxHeight)
 			location.add(0, 1, 0);
 
 		Block below = location.clone().subtract(0, 1, 0).getBlock();
-		while ((below.getType() == Material.AIR || location.getBlock().getType() != Material.AIR) &&
+		while ((MaterialTag.ALL_AIR.isTagged(below.getType()) || !MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) &&
 				ArenaManager.getFromLocation(originalLocation).getRegion().contains(new WorldGuardUtils(Minigames.getWorld()).toBlockVector3(location))) {
 			location.subtract(0, 1, 0);
 			below = location.clone().subtract(0, 1, 0).getBlock();
+
+			if (location.getY() <= minHeight) {
+				// maybe this should throw an exception to avoid possible harm in deleting blocks?
+				// although it's probably just bedrock...
+				Nexus.warn("Could not find a safe location for flag, dumping it at " + location.toString() + " (overwriting " + location.getBlock().getType().name() + ")");
+				break;
+			}
 		}
 		return location;
 	}
