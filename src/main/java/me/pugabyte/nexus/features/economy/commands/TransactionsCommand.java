@@ -9,13 +9,20 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
+import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -30,11 +37,11 @@ import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
-@Aliases("txn")
-public class TransactionCommand extends CustomCommand {
+@Aliases({"transaction", "txn"})
+public class TransactionsCommand extends CustomCommand {
 	private final ShopGroup shopGroup;
 
-	public TransactionCommand(@NonNull CommandEvent event) {
+	public TransactionsCommand(@NonNull CommandEvent event) {
 		super(event);
 		shopGroup = ShopGroup.get(player());
 	}
@@ -145,6 +152,21 @@ public class TransactionCommand extends CustomCommand {
 			return "Market";
 		else
 			return "Unknown";
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		Tasks.waitAsync(Time.SECOND, () -> {
+			if (!event.getPlayer().isOnline())
+				return;
+
+			Nerd nerd = new NerdService().get(event.getPlayer());
+			Banker banker = new BankerService().get(event.getPlayer());
+			Transaction transaction = banker.getTransactions().get(banker.getTransactions().size() - 1);
+
+			if (transaction.getTimestamp().isAfter(nerd.getLastQuit()))
+				nerd.send(StringUtils.getPrefix("Transactions") + "Transactions have been made while you were offline, click here or use &c/txn history &3to view them");
+		});
 	}
 
 }

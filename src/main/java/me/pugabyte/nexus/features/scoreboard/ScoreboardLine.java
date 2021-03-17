@@ -165,7 +165,9 @@ public enum ScoreboardLine {
 	BALANCE {
 		@Override
 		public String render(Player player) {
-			double balance = new BankerService().getBalance(player, ShopGroup.get(player));
+			ShopGroup shopGroup = ShopGroup.get(player);
+			if (shopGroup == null) shopGroup = ShopGroup.SURVIVAL;
+			double balance = new BankerService().getBalance(player, shopGroup);
 
 			String formatted = new DecimalFormat("###,###,###.00").format(balance);
 

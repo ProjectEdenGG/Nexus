@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.content.InventoryContents;
+import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterRequiredType;
 import me.pugabyte.nexus.features.shops.Shops.Market;
 import me.pugabyte.nexus.models.shop.ShopService;
 import org.bukkit.entity.Player;
@@ -23,6 +24,9 @@ public class BrowseMarketProvider extends PlayerShopProvider {
 	public void addFilters(Player player, InventoryContents contents) {
 		addSearchFilter(player, contents);
 		addExchangeFilter(player, contents);
+
+		boolean isResourceWorld = player.getWorld().getName().startsWith("resource");
+		filters.add(FilterRequiredType.REQUIRED.of("This worlds items", product -> isResourceWorld == product.isResourceWorld()));
 	}
 
 }

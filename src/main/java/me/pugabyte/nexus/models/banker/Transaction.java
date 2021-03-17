@@ -170,7 +170,7 @@ public class Transaction {
 				combined.add(previous);
 
 				previous = transaction.clone();
-				combinedAmount = new BigDecimal(transaction.getAmount().toString());
+				combinedAmount = new BigDecimal(previous.getAmount().toString());
 				count = calculateCount(previous, transaction);
 			}
 		}

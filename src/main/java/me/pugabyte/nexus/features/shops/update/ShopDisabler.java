@@ -34,7 +34,7 @@ public class ShopDisabler implements Listener {
 	}
 
 	public void tell(Player player) {
-		PlayerUtils.send(player, StringUtils.getPrefix("Shops") + "Shop signs are temporarily disabled until the new shop system is in place.");
+		PlayerUtils.send(player, StringUtils.getPrefix("Shops") + "Shop signs are no longer supported, use &c/shops&3. Ask an admin to convert signs for you");
 	}
 
 	@EventHandler
