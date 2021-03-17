@@ -29,7 +29,7 @@ public class ActionBar {
 		add("&3Join us at &e{local_mgn_time} &3on &e{local_mgn_day} &3for &eMinigame Night!");
 		add("&3Make sure to join &c/discord &3on &eMinigame Night.");
 		add("&3Use &c/discord link &3to connect your Discord and MC accounts");
-		add("&3Use &c/discord mgnr &3to set up Minigame Night &ereminders");
+//		add("&3Use &c/discord mgnr &3to set up Minigame Night &ereminders");
 		add("&3Please use the &eMinigame Channel &3with &c/ch m");
 		add("&bPodium Players of the Week - {podiums_left}");
 		add("&bPodium Players of the Week - {podiums_middle}");
