@@ -67,5 +67,4 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 			send(event.getPlayer(), "&3Did you know? &e- &3You can use &c/concrete &3to easily convert concrete powder into hardened concrete.");
 	}
 
-
 }
