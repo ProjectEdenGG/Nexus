@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.economy.commands;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -22,6 +23,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,9 +39,10 @@ import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
+@NoArgsConstructor
 @Aliases({"transaction", "txn"})
-public class TransactionsCommand extends CustomCommand {
-	private final ShopGroup shopGroup;
+public class TransactionsCommand extends CustomCommand implements Listener {
+	private ShopGroup shopGroup;
 
 	public TransactionsCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -165,7 +168,8 @@ public class TransactionsCommand extends CustomCommand {
 			Transaction transaction = banker.getTransactions().get(banker.getTransactions().size() - 1);
 
 			if (transaction.getTimestamp().isAfter(nerd.getLastQuit()))
-				nerd.send(StringUtils.getPrefix("Transactions") + "Transactions have been made while you were offline, click here or use &c/txn history &3to view them");
+				nerd.send(json(StringUtils.getPrefix("Transactions") + "Transactions were made while you were offline, " +
+						"&eclick here &3or use &c/txn history &3to view them").command("/txn history"));
 		});
 	}
 
