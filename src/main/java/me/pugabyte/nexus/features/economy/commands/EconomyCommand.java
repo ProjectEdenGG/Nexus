@@ -20,11 +20,11 @@ import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
 @Aliases("eco")
 public class EconomyCommand extends CustomCommand {
+	public static final String PREFIX = StringUtils.getPrefix("Economy");
 	private final BankerService service = new BankerService();
 
 	public EconomyCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = StringUtils.getPrefix("Economy");
 	}
 
 	@Path("selling")

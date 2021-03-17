@@ -9,6 +9,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.features.shops.providers.BrowseProductsProvider.ShulkerContentsProvider;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
@@ -47,6 +48,9 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 		this.page = page;
 		this.shopGroup = ShopGroup.get(viewer);
 		try {
+			if (viewer.getWorld().getName().startsWith("resource"))
+				throw new InvalidInputException("You cannot use player shops while in the resource world");
+
 			SmartInventory.builder()
 					.provider(provider)
 					.title(colorize(title))

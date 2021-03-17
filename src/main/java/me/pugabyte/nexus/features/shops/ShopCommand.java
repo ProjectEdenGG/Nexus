@@ -45,8 +45,6 @@ public class ShopCommand extends CustomCommand {
 				error("&cComing soon!");
 			if (shopGroup == null)
 				error("Shops are not enabled in this world");
-			if (world().getName().startsWith("resource"))
-				error("You cannot use player shops while in the resource world");
 		}
 	}
 
@@ -76,6 +74,9 @@ public class ShopCommand extends CustomCommand {
 
 	@Path("collect")
 	void collect() {
+		if (world().getName().startsWith("resource"))
+			error("You cannot use player shops while in the resource world");
+
 		new CollectItemsProvider(null).open(player());
 	}
 

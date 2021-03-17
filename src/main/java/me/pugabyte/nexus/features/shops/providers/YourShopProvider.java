@@ -98,7 +98,6 @@ public class YourShopProvider extends _ShopProvider {
 			final int size = 54;
 			Inventory inv = Bukkit.createInventory(null, size, TITLE);
 
-
 			ShopService service = new ShopService();
 			Shop shop = service.get(player);
 
