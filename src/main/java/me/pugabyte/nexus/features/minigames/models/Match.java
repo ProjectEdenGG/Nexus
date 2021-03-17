@@ -69,7 +69,7 @@ public class Match {
 	private Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
-	private MinigameScoreboard.Teams scoreboardTeams;
+	private MinigameScoreboard.ITeams scoreboardTeams;
 	private ArrayList<Entity> entities = new ArrayList<>();
 	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
@@ -254,7 +254,7 @@ public class Match {
 				initializeMatchData();
 				tasks = new MatchTasks();
 				scoreboard = MinigameScoreboard.Factory.create(this);
-				scoreboardTeams = MinigameScoreboard.Teams.Factory.create(this);
+				scoreboardTeams = MinigameScoreboard.ITeams.Factory.create(this);
 				arena.getMechanic().onInitialize(event);
 				initialized = true;
 			} catch (Exception ex) {

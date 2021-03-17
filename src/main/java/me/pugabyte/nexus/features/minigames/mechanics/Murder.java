@@ -62,7 +62,7 @@ import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Railgun
-@Scoreboard(teams = false, sidebarType = Type.MATCH)
+@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = false)
 public class Murder extends TeamMechanic {
 
 	@Override
@@ -72,7 +72,7 @@ public class Murder extends TeamMechanic {
 
 	@Override
 	public String getDescription() {
-		return "TODO";
+		return "One of these villagers is not who they claim to be...";
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class Murder extends TeamMechanic {
 
 		String broadcast;
 		if (!murderer.isAlive())
-			broadcast = murderer.getColoredName() + " has been stopped by " + hero.getColoredName() + "&3 on";
+			broadcast = murderer.getColoredName() + "&3 has been stopped by " + hero.getColoredName() + "&3 on";
 		else if (match.getTimer().getTime() != 0)
 			broadcast = murderer.getColoredName() + "&3 has won";
 		else
