@@ -166,6 +166,10 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			Nerd nerd = new NerdService().get(event.getPlayer());
 			Banker banker = new BankerService().get(event.getPlayer());
+
+			if (banker.getTransactions().isEmpty())
+				return;
+
 			Transaction transaction = banker.getTransactions().get(banker.getTransactions().size() - 1);
 
 			if (transaction.getTimestamp().isAfter(nerd.getLastQuit()))

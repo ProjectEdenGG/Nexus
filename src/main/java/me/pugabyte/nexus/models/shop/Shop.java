@@ -102,11 +102,11 @@ public class Shop extends PlayerOwnedObject {
 	}
 
 	public List<Product> getInStock(ShopGroup shopGroup) {
-		return getProducts(shopGroup).stream().filter(Product::canFulfillPurchase).collect(Collectors.toList());
+		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
 	public List<Product> getOutOfStock(ShopGroup shopGroup) {
-		return getProducts(shopGroup).stream().filter(product -> !product.canFulfillPurchase()).collect(Collectors.toList());
+		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && !product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
 	public void addHolding(List<ItemStack> itemStacks) {
