@@ -3,9 +3,13 @@ package me.pugabyte.nexus.features.shops;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import me.pugabyte.nexus.features.shops.providers.SearchProductsProvider;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.function.Predicate;
 
@@ -49,7 +53,31 @@ public class ShopMenuFunctions {
 	}
 
 	public enum FilterSearchType implements FilterType {
-		SEARCH
+		SEARCH;
+
+		public Filter of(String message) {
+			return SEARCH.of(message, product -> SearchProductsProvider.filter(product.getItem(), item -> {
+				Material type = item.getType();
+
+				if (type.name().toLowerCase().contains(message.toLowerCase()))
+					return true;
+				if (type.name().toLowerCase().replace("_", " ").contains(message.toLowerCase()))
+					return true;
+
+				for (Enchantment enchantment : item.getEnchantments().keySet())
+					if (enchantment.getKey().getKey().toLowerCase().contains(message.toLowerCase()))
+						return true;
+
+				if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
+					EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+					for (Enchantment enchantment : meta.getStoredEnchants().keySet())
+						if (enchantment.getKey().getKey().toLowerCase().contains(message.toLowerCase()))
+							return true;
+				}
+
+				return false;
+			}));
+		}
 	}
 
 	public enum FilterExchangeType implements FilterType {

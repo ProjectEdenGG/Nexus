@@ -45,8 +45,7 @@ public class SearchProductsProvider extends _ShopProvider {
 				.response(lines -> {
 					String input = stripColor(lines[0]);
 					if (input.length() > 0) {
-						browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input, product -> filter(product.getItem(), item ->
-								item.getType().name().toLowerCase().contains(input.toLowerCase()))));
+						browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input));
 						browseItemsMenu.open(player);
 					} else
 						open(player);
