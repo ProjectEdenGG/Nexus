@@ -64,15 +64,23 @@ public class ShopMenuFunctions {
 				if (type.name().toLowerCase().replace("_", " ").contains(message.toLowerCase()))
 					return true;
 
-				for (Enchantment enchantment : item.getEnchantments().keySet())
-					if (enchantment.getKey().getKey().toLowerCase().contains(message.toLowerCase()))
+				for (Enchantment enchantment : item.getEnchantments().keySet()) {
+					String key = enchantment.getKey().getKey();
+					if (key.toLowerCase().contains(message.toLowerCase()))
 						return true;
+					if (key.replace("_", " ").toLowerCase().contains(message.toLowerCase()))
+						return true;
+				}
 
 				if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
 					EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
-					for (Enchantment enchantment : meta.getStoredEnchants().keySet())
-						if (enchantment.getKey().getKey().toLowerCase().contains(message.toLowerCase()))
+					for (Enchantment enchantment : meta.getStoredEnchants().keySet()) {
+						String key = enchantment.getKey().getKey();
+						if (key.toLowerCase().contains(message.toLowerCase()))
 							return true;
+						if (key.replace("_", " ").toLowerCase().contains(message.toLowerCase()))
+							return true;
+					}
 				}
 
 				return false;
