@@ -37,6 +37,7 @@ import java.util.Map;
 import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
+import static me.pugabyte.nexus.utils.Utils.getMin;
 
 public abstract class Mechanic implements Listener {
 
@@ -244,10 +245,11 @@ public abstract class Mechanic implements Listener {
 		for (Minigamer minigamer : minigamers) {
 			if (lineCount == 14) {
 				int minigamersLeft = minigamers.size() - minigamerCount;
-				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), -1);
+				int minScore = getMin(lines.values(), Integer::intValue).getObject();
+				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), minScore-1);
 				break;
 			 } else if (minigamer.isAlive())
-				lines.put(minigamer.getColoredName(), minigamer.getScore());
+				lines.put("&f" + minigamer.getColoredName(), minigamer.getScore());
 			else
 				// &r to force last
 				lines.put("&r&c&m" + minigamer.getName(), minigamer.getScore());
