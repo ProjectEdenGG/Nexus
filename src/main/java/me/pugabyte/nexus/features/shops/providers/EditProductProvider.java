@@ -117,7 +117,7 @@ public class EditProductProvider extends _ShopProvider {
 						.onConfirm(e2 -> {
 							Shop shop = service.get(player);
 							shop.getProducts().remove(product);
-							ShopUtils.giveItems(player, product.getItemStacks(), true);
+							ShopUtils.giveItems(player, product.getItemStacks());
 							service.save(shop);
 							previousMenu.open(player);
 						})
