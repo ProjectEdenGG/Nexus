@@ -283,7 +283,6 @@ public abstract class WitherFight implements Listener {
 
 	public void processPlayerQuit(Player player, String reason) {
 		player.setGameMode(GameMode.SURVIVAL);
-		Warps.spawn(player);
 		if (alivePlayers.size() == 1) {
 			tasks.forEach(Tasks::cancel);
 			int partySize = party.size();
@@ -299,6 +298,7 @@ public abstract class WitherFight implements Listener {
 			wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
+		Warps.spawn(player);
 		player.removePotionEffect(PotionEffectType.WITHER);
 	}
 
@@ -311,7 +311,6 @@ public abstract class WitherFight implements Listener {
 		scoreboardTeams.remove(player.getUniqueId());
 		event.setCancelled(true);
 		event.setDeathMessage(null);
-		Warps.spawn(player);
 		processPlayerQuit(player, "died");
 	}
 
