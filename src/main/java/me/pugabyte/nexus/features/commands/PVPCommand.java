@@ -15,6 +15,7 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -69,12 +70,24 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		if (!(event.getDamager() instanceof Player)) return;
 		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
+		PVP attacker = null;
+		Projectile projectile;
+		if (event.getDamager() instanceof Player) {
+			attacker = service.get((Player) event.getDamager());
+		} else if (event.getDamager() instanceof Projectile) {
+			projectile = (Projectile) event.getDamager();
+			if (projectile.getShooter() instanceof Player)
+				attacker = service.get((Player) projectile.getShooter());
+		}
+
+		if (attacker == null)
+			return;
+
+		if (!(event.getEntity() instanceof Player)) return;
+
 		PVP victim = service.get((Player) event.getEntity());
-		PVP attacker = service.get((Player) event.getDamager());
 
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
