@@ -189,6 +189,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setKeepInventory(true);
+		event.getDrops().clear();
 		toCheckpoint(minigamer);
 
 		event.setDeathMessage(null);
