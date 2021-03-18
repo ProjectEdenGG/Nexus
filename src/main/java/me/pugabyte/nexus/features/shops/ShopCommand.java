@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.shops;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.providers.BrowseProductsProvider;
+import me.pugabyte.nexus.features.shops.providers.BrowseShopsProvider;
 import me.pugabyte.nexus.features.shops.providers.MainMenuProvider;
 import me.pugabyte.nexus.features.shops.providers.PlayerShopProvider;
 import me.pugabyte.nexus.features.shops.providers.YourShopProvider;
@@ -67,6 +68,11 @@ public class ShopCommand extends CustomCommand {
 	@Path("search <item>")
 	void search(@Arg(tabCompleter = Material.class) String text) {
 		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
+	}
+
+	@Path("list")
+	void list() {
+		new BrowseShopsProvider(null).open(player());
 	}
 
 	@Path("collect")
