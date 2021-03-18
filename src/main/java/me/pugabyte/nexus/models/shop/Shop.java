@@ -15,6 +15,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.shops.ShopUtils;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -121,6 +122,11 @@ public class Shop extends PlayerOwnedObject {
 			return;
 
 		ItemUtils.combine(holding, itemStack.clone());
+	}
+
+	public void removeProduct(Product product) {
+		products.remove(product);
+		ShopUtils.giveItems(getOfflinePlayer(), product.getItemStacks());
 	}
 
 	public enum ShopGroup {

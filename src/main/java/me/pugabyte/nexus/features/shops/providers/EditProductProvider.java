@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.shops.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.shops.ShopUtils;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
@@ -116,8 +115,7 @@ public class EditProductProvider extends _ShopProvider {
 				ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
 							Shop shop = service.get(player);
-							shop.getProducts().remove(product);
-							ShopUtils.giveItems(player, product.getItemStacks());
+							shop.removeProduct(product);
 							service.save(shop);
 							previousMenu.open(player);
 						})

@@ -21,7 +21,6 @@ import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDate;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
 import static me.pugabyte.nexus.utils.StringUtils.dateFormat;
@@ -162,42 +160,42 @@ public class HallOfHistoryCommand extends CustomCommand {
 		Tasks.wait(3, () -> runCommand("warps set hallofhistory"));
 	}
 
-	@Path("expand")
-	@Permission("hoh.edit")
-	void expand() {
-		send(PREFIX + "Expanding HOH. &4&lDon't move!");
-		int wait = 40;
-		AtomicReference<Location> newLocation = new AtomicReference<>(location());
-		Tasks.wait(wait, () -> runCommand("/warp hallofhistory"));
-		Tasks.wait(wait += 20, () -> newLocation.set(location().add(16, 0, 0).clone()));
-		Tasks.wait(wait += 3, () -> runCommand("/pos1"));
-		Tasks.wait(wait += 3, () -> runCommand("/pos2"));
-		Tasks.wait(wait += 3, () -> runCommand("/expand 7"));
-		Tasks.wait(wait += 3, () -> runCommand("/expand 15 s"));
-		Tasks.wait(wait += 3, () -> runCommand("/expand 15 n"));
-		Tasks.wait(wait += 3, () -> runCommand("/expand 10 e"));
-		Tasks.wait(wait += 3, () -> runCommand("/expandv 10"));
-		Tasks.wait(wait += 3, () -> runCommand("/move 16 e"));
-		Tasks.wait(wait += 20, () -> player().teleport(newLocation.get()));
-		Tasks.wait(wait += 5, () -> runCommand("/hoh setwarp"));
-		Tasks.wait(wait += 5, () -> runCommand("/schem load hoh-expansion"));
-		Tasks.wait(wait += 20, () -> runCommand("/paste"));
-		Tasks.wait(wait += 20, () -> runCommand("/contract 17"));
-		Tasks.wait(wait += 3, () -> runCommand("/expand 1"));
-		Tasks.wait(wait += 3, () -> runCommand("/contract 1"));
-		Tasks.wait(wait += 3, () -> runCommand("/contract 12 d"));
-		Tasks.wait(wait += 3, () -> runCommand("/contracth 5"));
-		Tasks.wait(wait += 3, () -> runCommand("/contract 3 u"));
-		Tasks.wait(wait += 3, () -> runCommand("/cut"));
-		Tasks.wait(wait += 3, () -> runCommand("/expand -1"));
-		Tasks.wait(wait += 3, () -> runCommand("/contract -1"));
-		Tasks.wait(wait += 3, () -> runCommand("/stack 1"));
-		Tasks.wait(wait += 3, () -> runCommand("/expand -15"));
-		Tasks.wait(wait += 3, () -> runCommand("/contract -15"));
-		Tasks.wait(wait += 3, () -> runCommand("/set stone_slab:8"));
-		Tasks.wait(wait += 3, () -> runCommand("/desel"));
-		send(PREFIX + "Expansion complete! Took &e" + (wait / 20) + " &3seconds");
-	}
+//	@Path("expand")
+//	@Permission("hoh.edit")
+//	void expand() {
+//		send(PREFIX + "Expanding HOH. &4&lDon't move!");
+//		int wait = 40;
+//		AtomicReference<Location> newLocation = new AtomicReference<>(location());
+//		Tasks.wait(wait, () -> runCommand("/warp hallofhistory"));
+//		Tasks.wait(wait += 20, () -> newLocation.set(location().add(16, 0, 0).clone()));
+//		Tasks.wait(wait += 3, () -> runCommand("/pos1"));
+//		Tasks.wait(wait += 3, () -> runCommand("/pos2"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expand 7"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expand 15 s"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expand 15 n"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expand 10 e"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expandv 10"));
+//		Tasks.wait(wait += 3, () -> runCommand("/move 16 e"));
+//		Tasks.wait(wait += 20, () -> player().teleport(newLocation.get()));
+//		Tasks.wait(wait += 5, () -> runCommand("/hoh setwarp"));
+//		Tasks.wait(wait += 5, () -> runCommand("/schem load hoh-expansion"));
+//		Tasks.wait(wait += 20, () -> runCommand("/paste"));
+//		Tasks.wait(wait += 20, () -> runCommand("/contract 17"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expand 1"));
+//		Tasks.wait(wait += 3, () -> runCommand("/contract 1"));
+//		Tasks.wait(wait += 3, () -> runCommand("/contract 12 d"));
+//		Tasks.wait(wait += 3, () -> runCommand("/contracth 5"));
+//		Tasks.wait(wait += 3, () -> runCommand("/contract 3 u"));
+//		Tasks.wait(wait += 3, () -> runCommand("/cut"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expand -1"));
+//		Tasks.wait(wait += 3, () -> runCommand("/contract -1"));
+//		Tasks.wait(wait += 3, () -> runCommand("/stack 1"));
+//		Tasks.wait(wait += 3, () -> runCommand("/expand -15"));
+//		Tasks.wait(wait += 3, () -> runCommand("/contract -15"));
+//		Tasks.wait(wait += 3, () -> runCommand("/set stone_slab:8"));
+//		Tasks.wait(wait += 3, () -> runCommand("/desel"));
+//		send(PREFIX + "Expansion complete! Took &e" + (wait / 20) + " &3seconds");
+//	}
 
 	@Path("about <about...>")
 	void about(String about) {
