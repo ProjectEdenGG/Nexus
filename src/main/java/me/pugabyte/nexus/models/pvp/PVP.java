@@ -1,8 +1,13 @@
-package me.pugabyte.nexus.models.spvp;
+package me.pugabyte.nexus.models.pvp;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.UUID;
@@ -14,16 +19,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class PVP extends PlayerOwnedObject {
-
 	@Id
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = false;
 	private boolean keepInventory = true;
-
-	@Override
-	public UUID getUuid() {
-		return uuid;
-	}
 
 }

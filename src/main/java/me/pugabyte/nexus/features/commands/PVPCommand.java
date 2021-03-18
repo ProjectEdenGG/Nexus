@@ -5,8 +5,8 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.spvp.PVP;
-import me.pugabyte.nexus.models.spvp.PVPService;
+import me.pugabyte.nexus.models.pvp.PVP;
+import me.pugabyte.nexus.models.pvp.PVPService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -22,12 +22,12 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @NoArgsConstructor
 @Aliases({"spvp", "duel", "fight"})
 public class PVPCommand extends CustomCommand implements Listener {
-
-	public PVPService service = new PVPService();
+	public final PVPService service = new PVPService();
+	public PVP pvp;
 
 	static {
-		PVPService service = new PVPService();
 		Tasks.repeatAsync(5, Time.SECOND.x(2), () -> {
+			PVPService service = new PVPService();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				PVP pvp = service.get(player);
 				if (pvp.isEnabled())
@@ -38,30 +38,29 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	public PVPCommand(CommandEvent event) {
 		super(event);
+		if (isPlayer())
+			pvp = service.get(player());
 	}
 
 	@Path("on")
 	void on() {
-		PVP pvp = service.get(player());
 		pvp.setEnabled(true);
 		service.save(pvp);
-		send(PREFIX + "You have turned PVP on");
+		send(PREFIX + "&aEnabled");
 	}
 
 	@Path("off")
 	void off() {
-		PVP pvp = service.get(player());
 		pvp.setEnabled(false);
 		service.save(pvp);
-		send(PREFIX + "You have turned PVP off");
+		send(PREFIX + "&cDisabled");
 	}
 
 	@Path("keepInventory")
 	void keepInventory() {
-		PVP pvp = service.get(player());
 		pvp.setKeepInventory(!pvp.isKeepInventory());
 		service.save(pvp);
-		send(PREFIX + "You will &e" + (pvp.isKeepInventory() ? "now" : "no longer") + " &3keep your inventory during pvp");
+		send(PREFIX + "Keep inventory on PVP death " + (pvp.isKeepInventory() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@EventHandler

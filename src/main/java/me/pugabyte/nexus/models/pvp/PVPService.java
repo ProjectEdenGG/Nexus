@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.models.spvp;
+package me.pugabyte.nexus.models.pvp;
 
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
