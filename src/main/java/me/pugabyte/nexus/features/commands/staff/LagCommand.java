@@ -19,7 +19,7 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 
-@Permission("group.admin")
+@Permission("group.seniorstaff")
 @Aliases({"gc", "memory", "uptime"})
 public class LagCommand extends CustomCommand {
 
