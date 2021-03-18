@@ -28,15 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -281,23 +273,15 @@ public class PlayerUtils {
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
 		List<ItemStack> itemList = new ArrayList<>();
-		for (ItemStack item : new ArrayList<>(Arrays.asList(items))) {
+		for (ItemStack item : Arrays.asList(items)) {
 			if (!isNullOrAir(item))
 				itemList.add(item);
 		}
 
-		return hasRoomFor(player, itemList.size());
-	}
-
-	public static boolean hasRoomFor(Player player, int slots) {
 		ItemStack[] contents = player.getInventory().getContents();
-		int slotsUsed = 0;
-		for (ItemStack content : contents) {
-			if (!isNullOrAir(content))
-				slotsUsed++;
-		}
-
-		return (slotsUsed <= (36 - slots));
+		List<ItemStack> excess = giveItemsGetExcess(player, itemList);
+		player.getInventory().setContents(contents);
+		return excess.isEmpty();
 	}
 
 	public static boolean playerHas(Player player, ItemStack itemStack) {

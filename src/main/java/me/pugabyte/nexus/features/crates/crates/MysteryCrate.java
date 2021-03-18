@@ -7,11 +7,7 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
-import me.pugabyte.nexus.utils.ColorType;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -61,7 +57,7 @@ public class MysteryCrate extends Crate {
 	@Override
 	public boolean canHoldItems(Player player) {
 		if (loot.getItems().size() >= 9) {
-			if (!PlayerUtils.hasRoomFor(player, 1)) {
+			if (!PlayerUtils.hasRoomFor(player, new ItemStack(Material.SHULKER_BOX))) {
 				PlayerUtils.send(player, Crates.PREFIX + "You must clear room in your inventory before you can open crates");
 				reset();
 				return false;
