@@ -127,6 +127,8 @@ public class PVPCommand extends CustomCommand implements Listener {
 		if (victim.isKeepInventory()) {
 			event.setKeepInventory(true);
 			event.getDrops().clear();
+			event.setKeepLevel(true);
+			event.setDroppedExp(0);
 		} else
 			event.setKeepInventory(false);
 	}
