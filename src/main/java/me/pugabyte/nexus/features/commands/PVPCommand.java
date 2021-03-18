@@ -5,18 +5,22 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.godmode.Godmode;
+import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.models.pvp.PVP;
 import me.pugabyte.nexus.models.pvp.PVPService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
@@ -73,8 +77,29 @@ public class PVPCommand extends CustomCommand implements Listener {
 		PVP attacker = service.get((Player) event.getDamager());
 
 		// Cancel if both players do not have pvp on
-		if (!victim.isEnabled() || !attacker.isEnabled())
+		if (!victim.isEnabled() || !attacker.isEnabled()) {
 			event.setCancelled(true);
+			return;
+		}
+
+		if (isVanished(victim.getPlayer()) || isVanished(attacker.getPlayer())) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (victim.getPlayer().getGameMode() != GameMode.SURVIVAL || attacker.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+			event.setCancelled(true);
+			return;
+		}
+
+		GodmodeService godmodeService = new GodmodeService();
+		Godmode victimGodmode = godmodeService.get(victim.getPlayer());
+		Godmode attackerGodmode = godmodeService.get(attacker.getPlayer());
+
+		if (victimGodmode.isEnabled() || attackerGodmode.isEnabled()) {
+			event.setCancelled(true);
+			return;
+		}
 	}
 
 	@EventHandler

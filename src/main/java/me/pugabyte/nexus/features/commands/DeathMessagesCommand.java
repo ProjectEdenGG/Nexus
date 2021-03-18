@@ -47,6 +47,8 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		String message = "&c☠ " + event.getDeathMessage();
 		message = message.replaceFirst(event.getEntity().getName(), "&e" + event.getEntity().getName() + "&c");
+		if (event.getEntity().getKiller() != null)
+			message = message.replaceFirst(event.getEntity().getKiller().getName(), "&e" + event.getEntity().getKiller().getName() + "&c");
 
 		if (deathMessages.getBehavior() == Behavior.HIDDEN)
 			event.setDeathMessage(null);
