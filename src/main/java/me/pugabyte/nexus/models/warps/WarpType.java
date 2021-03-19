@@ -5,6 +5,7 @@ public enum WarpType {
 	ARENA,
 	ATP,
 	BEAR_FAIR,
+	EASTER21,
 	GILIHOUSE,
 	NORMAL,
 	STAFF,
