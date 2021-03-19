@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -98,7 +99,10 @@ public class BoopCommand extends CustomCommand {
 		}
 
 		send(toBooper);
-		send(booped, toBooped);
+		JsonBuilder json = new JsonBuilder(toBooped);
+		if (!anon)
+			json.next(" &eClick to Boop Back").suggest("/boop " + booper.getName() + " ");
+		send(booped, json);
 		booped.playSound(booped.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
 	}
 }
