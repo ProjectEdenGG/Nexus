@@ -17,6 +17,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -52,7 +53,11 @@ public class PoofCommand extends CustomCommand {
 		if (isSelf(target))
 			error("You cannot poof to yourself");
 
-		if (!isStaff() && WorldGroup.get(new Nerd(target).getLocation()).equals(WorldGroup.STAFF))
+		Location targetLocation = new Nerd(target).getLocation();
+		if (!isStaff() && WorldGroup.get(targetLocation).equals(WorldGroup.MINIGAMES))
+			error("Cannot teleport to " + target.getName() + ", they are playing minigames");
+
+		if (!isStaff() && WorldGroup.get(targetLocation).equals(WorldGroup.STAFF))
 			error("Cannot teleport to " + target.getName() + ", they are in a staff world");
 
 		Trust trust = new TrustService().get(target);
