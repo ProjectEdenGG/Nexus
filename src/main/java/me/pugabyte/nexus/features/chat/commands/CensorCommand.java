@@ -23,7 +23,7 @@ public class CensorCommand extends CustomCommand {
 
 	@Path("process <channel> <message...>")
 	void process(PublicChannel channel, String message) {
-		ChatEvent event = new PublicChatEvent(new ChatService().get(player()), channel, message, new HashSet<>());
+		ChatEvent event = new PublicChatEvent(new ChatService().get(player()), channel, message, message, new HashSet<>());
 		Censor.process(event);
 		send(PREFIX + "Processed message:" + (event.isCancelled() ? " &c(Cancelled)" : ""));
 		send("&eOriginal: &f" + message);

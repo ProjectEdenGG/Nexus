@@ -14,6 +14,7 @@ public class PublicChatEvent extends MinecraftChatEvent {
 	private final Chatter chatter;
 	private PublicChannel channel;
 	private String message;
+	private String originalMessage;
 
 	private Set<Chatter> recipients;
 
