@@ -20,16 +20,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
-	protected static LinkedHashSet<PerkType> sortPerks(Collection<PerkType> perkTypes) {
-		return perkTypes.stream().sorted((perkType, t1) -> t1.getPerk().getPrice() - perkType.getPerk().getPrice()).collect(Collectors.toCollection(LinkedHashSet::new));
-	}
-
 	@Override
 	public void open(Player viewer, int page) {
 		PerkOwner perkOwner = service.get(viewer);
@@ -84,7 +79,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 			perkOwner.setTokens(perkOwner.getTokens() - perk.getPrice());
 			perkOwner.getEnabledPerks().put(perkType, false);
 			service.save(perkOwner);
-			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+" tokens");
+			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+StringUtils.plural(" token", perk.getPrice()));
 			open(player);
 		} else {
 			send(player, "&cYou don't have enough tokens to purchase that");

@@ -14,6 +14,8 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -472,6 +474,16 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("collectibles")
 	void collectibles() {
 		new PerkMenu().open(player());
+	}
+
+	@Path("set_collectibles <amount>")
+	@Permission("group.seniorstaff")
+	void setCollectibles(int amount) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner perkOwner = service.get(player());
+		perkOwner.setTokens(amount);
+		service.save(perkOwner);
+		send(PREFIX + "Tokens set to " + amount);
 	}
 
 	@Path("mastermind showAnswer")
