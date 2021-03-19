@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.recipes;
 
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
@@ -140,5 +142,15 @@ public class CustomRecipes extends Feature implements Listener {
 		NexusRecipe.surround(new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build(),
 				new ItemBuilder(Material.LINGERING_POTION).potionEffect(PotionEffectType.INVISIBILITY).name("Lingering Invisibility Potion").build(),
 				new RecipeChoice.MaterialChoice(Material.ITEM_FRAME)).type(RecipeType.FUNCTIONAL);
+	}
+
+	public static boolean isCustomItem(ItemStack item) {
+		return new NBTItem(item).hasKey("CustomModelData");
+	}
+
+	@EventHandler
+	public void onPlace(BlockPlaceEvent event) {
+		if (isCustomItem(event.getItemInHand()))
+			event.setCancelled(true);
 	}
 }

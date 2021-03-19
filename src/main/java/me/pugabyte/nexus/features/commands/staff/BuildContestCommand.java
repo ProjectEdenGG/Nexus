@@ -72,6 +72,14 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		line();
 	}
 
+	@Path("start")
+	@Permission("group.admin")
+	void _finalize() {
+		buildContest.setActive(true);
+		save();
+		send(PREFIX + "Build contest " + buildContest.getId() + " setup completed!");
+	}
+
 	@Path("end")
 	@Permission("group.admin")
 	void end() {
@@ -134,9 +142,9 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		tasks.add(this::line);
 		tasks.add(() -> send("&e&lStep 2: &3Warp Item"));
 		tasks.add(() -> send("&e    &3Hold the material you want to appear in the warp menu"));
-		tasks.add(() -> send(json("&e    &3Click here and type the theme").suggest("/bc setup item ")));
+		tasks.add(() -> send(json("&e    &eClick here &3and type the theme").suggest("/bc setup item ")));
 		tasks.add(this::line);
-		tasks.add(() -> send(json("&a&l Continue &a»").command("buildcontest setup finalize")));
+		tasks.add(() -> send(json("&a&l Continue &a»").command("buildcontest start")));
 		tasks.add(this::line);
 
 		int wait = 0;
@@ -156,14 +164,6 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		buildContest.setTheme(theme);
 		save();
 		send(PREFIX + "Saved the item to the item in your hand");
-	}
-
-	@Path("setup finalize")
-	@Permission("group.admin")
-	void _finalize() {
-		buildContest.setActive(true);
-		save();
-		send(PREFIX + "Build contest " + buildContest.getId() + " setup completed!");
 	}
 
 	@EventHandler

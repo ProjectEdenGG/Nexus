@@ -13,12 +13,17 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -49,6 +54,19 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("getStatus [player]")
 	void getStatus(@Arg("self") Player player) {
 		send(PREFIX + "Resource pack status for " + player.getName() + ": &e" + (player.getResourcePackStatus() == null ? "null" : camelCase(player.getResourcePackStatus())));
+	}
+
+	@Permission("group.staff")
+	@Path("getStatuses")
+	void getStatuses() {
+		send(PREFIX + "Statuses: ");
+		new HashMap<Status, List<String>>() {{
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				List<String> uuids = getOrDefault(player.getResourcePackStatus(), new ArrayList<>());
+				uuids.add(player.getName());
+				put(player.getResourcePackStatus(), uuids);
+			}
+		}}.forEach((status, names) -> send("&e" + camelCase(status) + "&3: " + String.join(", ", names)));
 	}
 
 	@Async
