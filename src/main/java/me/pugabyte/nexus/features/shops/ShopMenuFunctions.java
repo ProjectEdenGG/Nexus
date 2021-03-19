@@ -57,18 +57,19 @@ public class ShopMenuFunctions {
 
 		public Filter of(String message) {
 			return SEARCH.of(message, product -> SearchProductsProvider.filter(product.getItem(), item -> {
+				String input = message.trim();
 				Material type = item.getType();
 
-				if (contains(type.name(), message))
+				if (contains(type.name(), input))
 					return true;
 
 				for (Enchantment enchantment : item.getEnchantments().keySet())
-					if (contains(enchantment.getKey().getKey(), message)) return true;
+					if (contains(enchantment.getKey().getKey(), input)) return true;
 
 				if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
 					EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
 					for (Enchantment enchantment : meta.getStoredEnchants().keySet())
-						if (contains(enchantment.getKey().getKey(), message)) return true;
+						if (contains(enchantment.getKey().getKey(), input)) return true;
 				}
 
 				return false;

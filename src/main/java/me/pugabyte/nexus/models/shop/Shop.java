@@ -314,7 +314,7 @@ public class Shop extends PlayerOwnedObject {
 
 		public ItemBuilder getItemWithCustomerLore() {
 			if (!purchasable)
-				return new ItemBuilder(item);
+				return new ItemBuilder(item).lore("&f").lore("&cNot Purchasable");
 
 			return getItemWithLore().lore(getExchange().getLore());
 		}
