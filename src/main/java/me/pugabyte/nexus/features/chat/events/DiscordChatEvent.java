@@ -22,8 +22,18 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class DiscordChatEvent extends ChatEvent {
 	private Member member;
 	private PublicChannel channel;
+	private final String originalMessage;
 	private String message;
 	private String permission;
+	private boolean filtered;
+
+	public DiscordChatEvent(Member member, PublicChannel channel, String originalMessage, String message, String permission) {
+		this.member = member;
+		this.channel = channel;
+		this.originalMessage = originalMessage;
+		this.message = message;
+		this.permission = permission;
+	}
 
 	public String getMessage() {
 		return this.message;

@@ -12,10 +12,19 @@ import java.util.Set;
 public class PrivateChatEvent extends MinecraftChatEvent {
 	private final Chatter chatter;
 	private PrivateChannel channel;
+	private final String originalMessage;
 	private String message;
-	public String originalMessage;
+	private boolean filtered;
 
 	private Set<Chatter> recipients;
+
+	public PrivateChatEvent(Chatter chatter, PrivateChannel channel, String originalMessage, String message, Set<Chatter> recipients) {
+		this.chatter = chatter;
+		this.channel = channel;
+		this.originalMessage = originalMessage;
+		this.message = message;
+		this.recipients = recipients;
+	}
 
 	@Override
 	public boolean wasSeen() {

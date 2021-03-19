@@ -10,11 +10,15 @@ import org.bukkit.event.HandlerList;
 
 import java.util.Set;
 
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+
 public abstract class ChatEvent extends Event implements Cancellable {
 
 	public abstract Chatter getChatter();
 
 	public abstract String getOrigin();
+
+	public abstract String getOriginalMessage();
 
 	public abstract String getMessage();
 
@@ -35,6 +39,14 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	public void respond(String response) {
 		getRecipients().forEach(chatter -> chatter.send(response));
 	}
+
+	public boolean wasChanged() {
+		return !stripColor(getMessage()).equalsIgnoreCase(stripColor(getOriginalMessage()));
+	}
+
+	public abstract boolean isFiltered();
+
+	public abstract void setFiltered(boolean wasFilitered);
 
 	//<editor-fold desc="Boilerplate Bukkit">
 	private static final HandlerList handlers = new HandlerList();
