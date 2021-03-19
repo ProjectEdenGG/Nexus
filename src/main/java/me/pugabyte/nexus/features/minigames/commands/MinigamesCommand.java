@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.mechanics.Mastermind;
 import me.pugabyte.nexus.features.minigames.mechanics.common.CheckpointMechanic;
+import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -466,6 +467,11 @@ public class MinigamesCommand extends CustomCommand {
 	void holeInTheWallFlag(Arena arena, String regionType, Flag<?> flag, String setting) {
 		for (int i = 1; i <= arena.getMaxPlayers(); i++)
 			runCommand("rg flag holeinthewall_" + arena.getName() + "_" + regionType + "_" + i + " " + flag + " " + setting);
+	}
+
+	@Path("collectibles")
+	void collectibles() {
+		new PerkMenu().open(player());
 	}
 
 	@Path("mastermind showAnswer")
