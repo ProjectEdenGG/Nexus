@@ -118,7 +118,7 @@ public class CustomRecipes extends Feature implements Listener {
 
 	public void registerQuartz() {
 		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ, 4), "quartz_uncrafting", Material.QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 2), "quartz_uncrafting", Material.QUARTZ_PILLAR).type(RecipeType.QUARTZ).register();
+		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 1), "quartz_uncrafting", Material.QUARTZ_PILLAR).type(RecipeType.QUARTZ).register();
 		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_SLAB, 2), "quartz_uncrafting", Material.CHISELED_QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
 		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 4), "quartz_uncrafting_bricks", Material.QUARTZ_BRICKS).type(RecipeType.QUARTZ).register();
 	}
