@@ -83,7 +83,7 @@ public class MatchListener implements Listener {
 
 		event.setCancelled(true);
 		Nexus.log("Cancelled minigamer " + minigamer.getName() + " teleporting from " + event.getFrom() + " to " + event.getTo());
-		minigamer.tell("You cannot teleport while in a game!");
+		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 
 	@EventHandler
