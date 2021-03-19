@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -172,7 +173,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		String message = event.getMessage().replace("/plot setup buildcontest", "");
 		buildContest.setId(Integer.parseInt(message));
 		save();
-		runCommand(event.getPlayer(), "buildcontest setup steps");
+		Tasks.wait(Time.SECOND.x(3), () -> runCommand(event.getPlayer(), "buildcontest setup steps"));
 	}
 
 }

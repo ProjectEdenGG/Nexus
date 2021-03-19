@@ -110,6 +110,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected String camelCase(Enum<?> _enum) {
+		if (_enum == null) return null;
 		return camelCase(_enum.name());
 	}
 

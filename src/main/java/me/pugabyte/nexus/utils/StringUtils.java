@@ -213,13 +213,13 @@ public class StringUtils {
 	}
 
 	public static String camelCase(Enum<?> _enum) {
+		if (_enum == null) return null;
 		return camelCase(_enum.name());
 	}
 
 	public static String camelCase(String text) {
-		if (Strings.isNullOrEmpty(text)) {
+		if (Strings.isNullOrEmpty(text))
 			return text;
-		}
 
 		return Arrays.stream(text.replaceAll("_", " ").split(" "))
 				.map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase())
