@@ -84,11 +84,11 @@ public class ChatManager {
 					}
 				}
 
-				PublicChatEvent event = new PublicChatEvent(chatter, publicChannel, message, recipients);
+				PublicChatEvent event = new PublicChatEvent(chatter, publicChannel, message, message, recipients);
 				if (event.callEvent())
 					process(event);
 			} else if (channel instanceof PrivateChannel) {
-				PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, recipients);
+				PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, message, recipients);
 				if (event.callEvent())
 					process(event);
 			}
@@ -105,7 +105,16 @@ public class ChatManager {
 				.next(event.getChannel().getChatterFormat(event.getChatter()))
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 
-		event.getRecipients().forEach(recipient -> recipient.send(json));
+		event.getRecipients().forEach(recipient -> {
+			if (PlayerUtils.isStaffGroup(recipient.getPlayer()) && !stripColor(event.getMessage()).equalsIgnoreCase(stripColor(event.getOriginalMessage()))) {
+				JsonBuilder builder = new JsonBuilder()
+						.next(event.getChannel().getChatterFormat(event.getChatter()))
+						.next(event.getChannel().getMessageColor() + event.getMessage()).group();
+				builder.next(" &7&o[Filtered]").hover(event.getOriginalMessage());
+				recipient.send(builder);
+			} else
+				recipient.send(json);
+		});
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}
