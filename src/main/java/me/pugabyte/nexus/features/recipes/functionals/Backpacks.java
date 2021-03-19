@@ -52,7 +52,7 @@ public class Backpacks extends FunctionalRecipe {
 		recipe.shape("121", "343", "111");
 		recipe.setIngredient('1', Material.LEATHER);
 		recipe.setIngredient('2', Material.TRIPWIRE_HOOK);
-		recipe.setIngredient('3', Material.STRING);
+		recipe.setIngredient('3', Material.SHULKER_SHELL);
 		recipe.setIngredient('4', Material.CHEST);
 		return recipe;
 	}
@@ -62,7 +62,7 @@ public class Backpacks extends FunctionalRecipe {
 		return new ArrayList<ItemStack>() {{
 			add(new ItemStack(Material.LEATHER));
 			add(new ItemStack(Material.TRIPWIRE_HOOK));
-			add(new ItemStack(Material.STRING));
+			add(new ItemStack(Material.SHULKER_SHELL));
 			add(new ItemStack(Material.CHEST));
 		}};
 	}
