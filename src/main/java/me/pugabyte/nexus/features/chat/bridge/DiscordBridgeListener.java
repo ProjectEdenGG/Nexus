@@ -29,7 +29,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-		Tasks.async(() -> {
+		Tasks.sync(() -> {
 			Optional<PublicChannel> channel = ChatManager.getChannelByDiscordId(event.getChannel().getId());
 			if (!channel.isPresent()) return;
 
@@ -37,9 +37,18 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				if (!event.getAuthor().getId().equals(User.UBER.getId()))
 					return;
 
-			JsonBuilder builder = new JsonBuilder(channel.get().getDiscordColor() + "[D] ");
+			String content = event.getMessage().getContentDisplay().trim();
+
+			DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, content, channel.get().getPermission());
+			if (!discordChatEvent.callEvent()) {
+				Tasks.async(() -> event.getMessage().delete().queue());
+				return;
+			}
+
+			content = discordChatEvent.getMessage();
 
 			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
+			JsonBuilder builder = new JsonBuilder(channel.get().getDiscordColor() + "[D] ");
 
 			if (user != null && !isNullOrEmpty(user.getUuid()))
 				builder.next(new NerdService().<Nerd>get(UUID.fromString(user.getUuid())).getChatFormat());
@@ -47,8 +56,6 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				builder.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
 
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
-
-			String content = event.getMessage().getContentDisplay().trim();
 
 			try {
 				content = EmojiParser.parseToAliases(content);
@@ -62,19 +69,8 @@ public class DiscordBridgeListener extends ListenerAdapter {
 							.next(" &f&l[View Attachment]")
 							.url(attachment.getUrl());
 
-				DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, channel.get().getPermission());
-
-				Tasks.sync(() -> {
-					discordChatEvent.callEvent();
-					if (discordChatEvent.isCancelled()) {
-						Tasks.async(() -> event.getMessage().delete().queue());
-						return;
-					}
-
-					channel.get().broadcastIngame(builder);
-				});
+				channel.get().broadcastIngame(builder);
 			}
-
 		});
 	}
 
