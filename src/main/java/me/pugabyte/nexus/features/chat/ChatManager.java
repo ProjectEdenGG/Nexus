@@ -11,6 +11,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.canSee;
+import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class ChatManager {
@@ -101,18 +103,20 @@ public class ChatManager {
 		if (!event.wasSeen())
 			Tasks.wait(1, () -> event.getChatter().send(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
 
-		JsonBuilder json = new JsonBuilder()
-				.next(event.getChannel().getChatterFormat(event.getChatter()))
-				.next(event.getChannel().getMessageColor() + event.getMessage());
+		String chatterFormat = event.getChannel().getChatterFormat(event.getChatter());
+		JsonBuilder json = new JsonBuilder(chatterFormat + event.getMessage());
+		JsonBuilder staff = new JsonBuilder(chatterFormat + event.getMessage());
+
+		if (event.isFiltered())
+			staff.next(" &c&l*")
+					.addHover("&cChat message was filtered")
+					.addHover("&cClick to see original message")
+					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
 
 		event.getRecipients().forEach(recipient -> {
-			if (PlayerUtils.isStaffGroup(recipient.getPlayer()) && !stripColor(event.getMessage()).equalsIgnoreCase(stripColor(event.getOriginalMessage()))) {
-				JsonBuilder builder = new JsonBuilder()
-						.next(event.getChannel().getChatterFormat(event.getChatter()))
-						.next(event.getChannel().getMessageColor() + event.getMessage()).group();
-				builder.next(" &7&o[Filtered]").hover(event.getOriginalMessage());
-				recipient.send(builder);
-			} else
+			if (Rank.of(recipient.getPlayer()).isStaff())
+				recipient.send(staff);
+			else
 				recipient.send(json);
 		});
 

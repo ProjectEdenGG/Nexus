@@ -6,7 +6,6 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
-import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -96,6 +95,8 @@ public class Censor {
 					if (!censorItem.getReplace().isEmpty())
 						message = message.replaceAll("(?i)" + regex, censorItem.getCensored());
 
+					event.setFiltered(true);
+
 					if (censorItem.isBad())
 						++bad;
 
@@ -106,14 +107,12 @@ public class Censor {
 		}
 
 		if (bad >= 1) {
-			Nexus.fileLog("swears", event.getChatter().getOfflinePlayer().getName() + ": " + event.getMessage());
+			Nexus.fileLog("swears", event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
 				event.getChatter().send("&cPlease watch your language!");
 				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), StaticChannel.STAFF);
 				event.setCancelled(true);
 			}
-			if (event instanceof MinecraftChatEvent)
-				((MinecraftChatEvent) event).setOriginalMessage(event.getMessage());
 		}
 
 		event.setMessage(message);
