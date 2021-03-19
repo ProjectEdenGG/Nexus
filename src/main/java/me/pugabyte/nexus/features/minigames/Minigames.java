@@ -9,6 +9,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.lobby.ActionBar;
 import me.pugabyte.nexus.features.minigames.lobby.Basketball;
 import me.pugabyte.nexus.features.minigames.lobby.Parkour;
+import me.pugabyte.nexus.features.minigames.lobby.TickPerks;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
+	public static final int PERK_TICK_DELAY = 4;
 	@Getter
 	private static final World world = Bukkit.getWorld("gameworld");
 	@Getter
@@ -79,6 +81,7 @@ public class Minigames extends Feature {
 		new ActionBar();
 		new Basketball();
 		new Parkour();
+		new TickPerks();
 	}
 
 	@Override

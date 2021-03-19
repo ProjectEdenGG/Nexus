@@ -1,9 +1,10 @@
 package me.pugabyte.nexus.features.minigames.perks;
 
-import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.common.TickablePerk;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class FlameParticle extends TickablePerk {
@@ -33,7 +34,7 @@ public class FlameParticle extends TickablePerk {
 	}
 
 	@Override
-	public void tick(Minigamer minigamer) {
-
+	public void tick(Player player) {
+		particle(player, Particle.FLAME, 0.002d);
 	}
 }
