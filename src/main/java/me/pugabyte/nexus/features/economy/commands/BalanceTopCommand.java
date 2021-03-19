@@ -31,8 +31,10 @@ public class BalanceTopCommand extends CustomCommand {
 	@Async
 	@Path("[shopGroup] [page]")
 	void baltop(@Arg("current") ShopGroup shopGroup, @Arg(value = "1", min = 1) int page) {
-		List<Banker> bankers = service.<Banker>getAll().stream().filter(banker -> !banker.isMarket() && !banker.getBalance(shopGroup).equals(BigDecimal.valueOf(500))).collect(Collectors.toList());
-		bankers.sort(Comparator.comparing(banker -> banker.getBalance(shopGroup), Comparator.reverseOrder()));
+		List<Banker> bankers = service.<Banker>getAll().stream()
+				.filter(banker -> !banker.isMarket() && banker.getBalance(shopGroup).compareTo(BigDecimal.valueOf(500)) != 0)
+				.sorted(Comparator.comparing(banker -> banker.getBalance(shopGroup), Comparator.reverseOrder()))
+				.collect(Collectors.toList());
 
 		if (bankers.isEmpty())
 			error("No balances found");

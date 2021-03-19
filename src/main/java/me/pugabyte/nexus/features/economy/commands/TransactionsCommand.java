@@ -59,7 +59,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 				.collect(Collectors.toList());
 
 		if (transactions.isEmpty())
-			error("&cNo transactions found");
+			error("&cNo transactions found in this world");
 
 		send("");
 		send(PREFIX + camelCase(shopGroup) + " transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
