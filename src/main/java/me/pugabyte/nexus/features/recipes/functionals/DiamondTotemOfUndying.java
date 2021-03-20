@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.recipes.functionals;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
-import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -28,15 +28,11 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack diamondTotemOfUndying = new ItemBuilder(Material.TOTEM_OF_UNDYING)
-			.name("&bDiamond Totem Of Undying")
-			.lore("&7Activates from anywhere", "&7in your inventory")
-			.customModelData(1)
-			.build();
+	private static final ItemStack item = CustomModel.DIAMOND_TOTEM.getItem();
 
 	@Override
 	public ItemStack getResult() {
-		return diamondTotemOfUndying;
+		return item;
 	}
 
 	@Override
@@ -80,12 +76,12 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 			return;
 		}
 
-		if (!PlayerUtils.playerHas(player, diamondTotemOfUndying)) {
+		if (!PlayerUtils.playerHas(player, item)) {
 			return;
 		}
 
 		// Delete the totem they have
-		inv.removeItemAnySlot(diamondTotemOfUndying);
+		inv.removeItemAnySlot(item);
 		// Move item from offhand
 		ItemStack offHand = inv.getItemInOffHand();
 		if (!ItemUtils.isNullOrAir(offHand)) {
@@ -93,7 +89,7 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 		}
 
 		// Put a totem in their offhand
-		inv.setItemInOffHand(diamondTotemOfUndying);
+		inv.setItemInOffHand(item);
 	}
 
 	@EventHandler

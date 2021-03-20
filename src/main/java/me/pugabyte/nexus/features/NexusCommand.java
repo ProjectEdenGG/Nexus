@@ -131,6 +131,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reload")
+	@Cooldown(@Part(value = Time.SECOND, x = 15))
 	void reload() {
 		JsonBuilder retry = json(" ").group().next("&e⟳").command("/nexus reload");
 		File file = Paths.get("plugins/Nexus.jar").toFile();

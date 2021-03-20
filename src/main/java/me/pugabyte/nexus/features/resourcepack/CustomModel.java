@@ -2,12 +2,17 @@ package me.pugabyte.nexus.features.resourcepack;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public enum CustomModels {
-	DIAMOND_TOTEM(Material.TOTEM_OF_UNDYING, 1, "&bDiamond Totem Of Undying"),
+public enum CustomModel {
+	DIAMOND_TOTEM(Material.TOTEM_OF_UNDYING, 1, "&bDiamond Totem Of Undying", "&7Activates from anywhere", "&7in your inventory"),
 	BUNDLE(Material.CHEST, 1, "&fBundle"),
 	HOOK(Material.TRIPWIRE_HOOK, 1, "&fHook"),
 
@@ -127,4 +132,16 @@ public enum CustomModels {
 	private final Material material;
 	private final int data;
 	private final String name;
+	private final List<String> lore;
+
+	CustomModel(Material material, int data, String name, String... lore) {
+		this.material = material;
+		this.data = data;
+		this.name = name;
+		this.lore = Arrays.asList(lore);
+	}
+
+	public ItemStack getItem() {
+		return new ItemBuilder(material).customModelData(data).name(name).lore(lore).build();
+	}
 }
