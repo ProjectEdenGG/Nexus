@@ -1,12 +1,16 @@
 package me.pugabyte.nexus.features.discord;
 
+import joptsimple.internal.Strings;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.queup.Queup;
+import me.pugabyte.nexus.models.queup.QueupService;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -199,7 +203,7 @@ public class Discord extends Feature {
 				.sorted(Comparator.comparing(Player::getName))
 				.collect(Collectors.toList());
 
-		return "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
+		String topic = "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
 					String name = discordize(new Nerd(player).getName());
 					if (AFK.get(player).isAfk())
@@ -207,6 +211,13 @@ public class Discord extends Feature {
 					return name.trim();
 				})
 				.collect(Collectors.joining(", " + System.lineSeparator()));
+
+		QueupService queupService = new QueupService();
+		Queup queup = queupService.get();
+		if (!Strings.isNullOrEmpty(queup.getLastSong()))
+			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + BNSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+
+		return topic;
 	}
 
 	private static void updateBridgeTopic(String newBridgeTopic) {

@@ -53,7 +53,8 @@ public class MuteMenuCommand extends CustomCommand {
 			AFK("AFK Broadcasts", Material.REDSTONE_LAMP),
 			JOIN_QUIT("Join/Quit Messages", Material.OAK_FENCE_GATE),
 			EVENTS("Event Broadcasts", Material.BEACON),
-			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD), // TODO
+			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD),
+			QUEUP("Queup Song Updates", Material.JUKEBOX),
 			// Sounds
 			FIRST_JOIN_SOUND("First Join", Material.GOLD_BLOCK, 50),
 			JOIN_QUIT_SOUNDS("Join/Quit", Material.NOTE_BLOCK, 50),
