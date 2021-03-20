@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands;
+package me.pugabyte.nexus.features.resourcepack;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
