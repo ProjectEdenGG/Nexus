@@ -127,6 +127,16 @@ public enum CustomModel {
 	BACKPACK_GREEN(Material.GREEN_SHULKER_BOX, 1, "&2Backpack"),
 	BACKPACK_RED(Material.RED_SHULKER_BOX, 1, "&cBackpack"),
 	BACKPACK_BLACK(Material.BLACK_SHULKER_BOX, 1, "&0Backpack"),
+
+	BAKEWARE(Material.FLOWER_POT, 1, "&fBakeware"),
+	CUTTING_BOARD(Material.IRON_SWORD, 1, "&fCutting Board"),
+	GRINDER(Material.BOWL, 1, "&fGrinder"),
+	JUICER(Material.FLOWER_POT, 2, "&fJuicer"),
+	MIXING_BOWL(Material.BOWL, 2, "&fMixing Bowl"),
+	POT(Material.BUCKET, 1, "&fPot"),
+	ROLLER(Material.STICK, 1, "&fRoller"),
+	SAUCEPAN(Material.BUCKET, 2, "&fSaucepan"),
+	SKILLET(Material.BUCKET, 3, "&fSkillet"),
 	;
 
 	private final Material material;

@@ -53,7 +53,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		if (hash == null)
 			error("Resource pack hash is null");
 
-		if (Status.DECLINED.equals(player().getResourcePackStatus()))
+		if (Status.DECLINED == player().getResourcePackStatus())
 			error("You declined the original prompt for the resource pack. In order to use the resource pack, you must edit the server in your server list and change the \"Server Resource Packs\" option to either \"enabled\" or \"prompt\"");
 
 		resourcePack(player());
@@ -145,12 +145,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		Tasks.wait(Time.SECOND.x(1), () -> {
+		Tasks.wait(Time.SECOND, () -> {
 			resourcePack(player);
 
 			// Try Again if failed
-			if (Status.FAILED_DOWNLOAD.equals(player.getResourcePackStatus()))
-				Tasks.wait(Time.SECOND.x(1), () -> resourcePack(player));
+			Tasks.wait(Time.SECOND, () -> {
+				if (Status.FAILED_DOWNLOAD == player.getResourcePackStatus())
+					resourcePack(player);
+			});
 		});
 	}
 
