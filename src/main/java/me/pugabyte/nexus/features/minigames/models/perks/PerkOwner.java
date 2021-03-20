@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -39,6 +40,10 @@ public class PerkOwner extends PlayerOwnedObject {
 				perks.add(perkType);
 		});
 		return perks;
+	}
+
+	public <T extends Perk> Set<T> getEnabledPerksByClass(Class<T> tClass) {
+		return getEnabledPerks().stream().filter(perkType -> tClass.isInstance(perkType.getPerk())).map(perkType -> tClass.cast(perkType.getPerk())).collect(Collectors.toSet());
 	}
 
 	public boolean equals(PerkOwner other) {
