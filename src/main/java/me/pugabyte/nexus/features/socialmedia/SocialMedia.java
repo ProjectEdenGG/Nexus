@@ -67,7 +67,8 @@ public class SocialMedia extends Feature implements Listener {
 		DISCORD("Discord", ChatColor.of("#7289da"), "https://discord.com", "{{USERNAME}}"),
 		STEAM("Steam", ChatColor.of("#356d92"), "https://store.steampowered.com", "https://steamcommunity.com/id/{{USERNAME}}"),
 		REDDIT("Reddit", ChatColor.of("#ff5700"), "https://reddit.com", "https://reddit.com/u/{{USERNAME}}"),
-		GITHUB("GitHub", ChatColor.of("#ffffff"), "https://github.com", "https://github.com/{{USERNAME}}");
+		GITHUB("GitHub", ChatColor.of("#ffffff"), "https://github.com", "https://github.com/{{USERNAME}}"),
+		QUEUP("Queup", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/{{USERNAME}}");
 
 		@Getter
 		private final String name;
@@ -140,7 +141,8 @@ public class SocialMedia extends Feature implements Listener {
 		TWITTER("https://twitter.bnn.gg"),
 		INSTAGRAM("https://instagram.bnn.gg"),
 		REDDIT("https://reddit.bnn.gg"),
-		STEAM("https://steam.bnn.gg");
+		STEAM("https://steam.bnn.gg"),
+		QUEUP("https://queup.bnn.gg");
 
 		@Getter
 		private String name = "&3" + camelCase(name());
