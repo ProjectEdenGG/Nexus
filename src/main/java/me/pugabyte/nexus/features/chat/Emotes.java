@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static org.apache.commons.lang.StringUtils.indexOfIgnoreCase;
 
 public enum Emotes {
@@ -105,7 +106,7 @@ public enum Emotes {
 					result = RandomUtils.randomElement(value.getColors()) + result;
 
 				int index = indexOfIgnoreCase(message, value.getKey());
-				message = message.substring(0, index) + result + (resetColor != null ? resetColor : "") + message.substring(index + value.getKey().length());
+				message = message.substring(0, index) + colorize(result) + (resetColor != null ? resetColor : "") + message.substring(index + value.getKey().length());
 			}
 		return message;
 	}
