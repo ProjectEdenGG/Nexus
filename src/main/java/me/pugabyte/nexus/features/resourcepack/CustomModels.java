@@ -9,6 +9,7 @@ import org.bukkit.Material;
 public enum CustomModels {
 	DIAMOND_TOTEM(Material.TOTEM_OF_UNDYING, 1, "&bDiamond Totem Of Undying"),
 	BUNDLE(Material.CHEST, 1, "&fBundle"),
+	HOOK(Material.TRIPWIRE_HOOK, 1, "&fHook"),
 
 	PIRATE_HAT_WHITE_CAVALIER(Material.STONE_BUTTON, 1, "White Cavalier"),
 	PIRATE_HAT_WHITE_BICORN(Material.STONE_BUTTON, 2, "White Bicorn"),
@@ -121,8 +122,6 @@ public enum CustomModels {
 	BACKPACK_GREEN(Material.GREEN_SHULKER_BOX, 1, "&2Backpack"),
 	BACKPACK_RED(Material.RED_SHULKER_BOX, 1, "&cBackpack"),
 	BACKPACK_BLACK(Material.BLACK_SHULKER_BOX, 1, "&0Backpack"),
-
-	HOOK(Material.TRIPWIRE_HOOK, 1, "&fHook"),
 	;
 
 	private final Material material;
