@@ -62,7 +62,7 @@ import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Railgun
-@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = false)
+@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = true)
 public class Murder extends TeamMechanic {
 
 	@Override
