@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
@@ -13,8 +14,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.queup.Queup;
-import me.pugabyte.nexus.models.queup.QueupService;
+import me.pugabyte.nexus.models.queup.QueUp;
+import me.pugabyte.nexus.models.queup.QueUpService;
+import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -27,14 +29,14 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Aliases("dubtrack")
 @SuppressWarnings("SameParameterValue")
-public class QueupCommand extends CustomCommand {
+public class QueUpCommand extends CustomCommand {
 	private static final String URL = BNSocialMediaSite.QUEUP.getUrl();
 
 	private static boolean enabled = true;
-	private static final QueupService service = new QueupService();
-	private static final Queup queup = service.get();
+	private static final QueUpService service = new QueUpService();
+	private static final QueUp queup = service.get();
 
-	public QueupCommand(@NonNull CommandEvent event) {
+	public QueUpCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -67,41 +69,42 @@ public class QueupCommand extends CustomCommand {
 	private static final Request ACTIVE_SONG_REQUEST = new Request.Builder().url(BASE_URL + ACTIVE_SONG_PATH).build();
 
 	static {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(15), () -> {
-			if (!enabled)
-				return;
+		if (Nexus.getEnv() == Env.PROD)
+			Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(15), () -> {
+				if (!enabled)
+					return;
 
-			ActiveSong activeSong = call(ACTIVE_SONG_REQUEST, ActiveSong.class);
+				ActiveSong activeSong = call(ACTIVE_SONG_REQUEST, ActiveSong.class);
 
-			if (
-					activeSong == null ||
-					activeSong.getData() == null ||
-					activeSong.getData().getSong() == null ||
-					activeSong.getData().getSongInfo() == null
-			) {
-				queup.setLastSong(null);
+				if (
+						activeSong == null ||
+						activeSong.getData() == null ||
+						activeSong.getData().getSong() == null ||
+						activeSong.getData().getSongInfo() == null
+				) {
+					queup.setLastSong(null);
+					service.save(queup);
+					return;
+				}
+
+				String song = activeSong.getData().getSongInfo().getName();
+				String user = activeSong.getData().getSong().getUserName();
+
+				song = stripColor(StringEscapeUtils.unescapeHtml(song));
+				user = stripColor(StringEscapeUtils.unescapeHtml(user));
+
+				String currentSong = song + " &3(Queued by &e" + user + "&3)";
+
+				if (currentSong.equals(queup.getLastSong()))
+					return;
+
+				queup.setLastSong(currentSong);
 				service.save(queup);
-				return;
-			}
 
-			String song = activeSong.getData().getSongInfo().getName();
-			String user = activeSong.getData().getSong().getUserName();
-
-			song = stripColor(StringEscapeUtils.unescapeHtml(song));
-			user = stripColor(StringEscapeUtils.unescapeHtml(user));
-
-			String currentSong = song + " &3(Queued by &e" + user + "&3)";
-
-			if (currentSong.equals(queup.getLastSong()))
-				return;
-
-			queup.setLastSong(currentSong);
-			service.save(queup);
-
-			String hover = "&eClick me to join &dQueup&e!";
-			Chat.broadcastIngame(new JsonBuilder("&3Now playing on &d" + URL + "&3:").hover(hover).url(URL), MuteMenuItem.QUEUP);
-			Chat.broadcastIngame(new JsonBuilder("&e " + currentSong).hover(hover).url(URL), MuteMenuItem.QUEUP);
-		});
+				String hover = "&eClick me to join &dQueUp&e!";
+				Chat.broadcastIngame(new JsonBuilder("&3Now playing on &d" + URL + "&3:").hover(hover).url(URL), MuteMenuItem.QUEUP);
+				Chat.broadcastIngame(new JsonBuilder("&e " + currentSong).hover(hover).url(URL), MuteMenuItem.QUEUP);
+			});
 	}
 
 	@Data
@@ -144,12 +147,15 @@ public class QueupCommand extends CustomCommand {
 		return call(new Request.Builder().url(url).build(), responseClass);
 	}
 
-	private static <T> T call(Request request, Class<T> responseClass) {
-		try (Response response = new OkHttpClient().newCall(request).execute()) {
-			if (response.body() == null)
-				throw new InvalidInputException("Queup API response is null");
+	private static final Gson gson = new Gson();
+	private static final OkHttpClient client = new OkHttpClient();
 
-			return new Gson().fromJson(response.body().string(), responseClass);
+	private static <T> T call(Request request, Class<T> responseClass) {
+		try (Response response = client.newCall(request).execute()) {
+			if (response.body() == null)
+				throw new InvalidInputException("QueUp API response is null");
+
+			return gson.fromJson(response.body().string(), responseClass);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

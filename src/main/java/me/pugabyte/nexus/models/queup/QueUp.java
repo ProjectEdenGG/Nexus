@@ -17,12 +17,12 @@ import java.util.UUID;
 
 @Data
 @Builder
-@Entity("asset_competition")
+@Entity("queup")
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class Queup extends PlayerOwnedObject {
+public class QueUp extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

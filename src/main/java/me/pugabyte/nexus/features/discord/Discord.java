@@ -9,8 +9,8 @@ import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.queup.Queup;
-import me.pugabyte.nexus.models.queup.QueupService;
+import me.pugabyte.nexus.models.queup.QueUp;
+import me.pugabyte.nexus.models.queup.QueUpService;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -212,8 +212,8 @@ public class Discord extends Feature {
 				})
 				.collect(Collectors.joining(", " + System.lineSeparator()));
 
-		QueupService queupService = new QueupService();
-		Queup queup = queupService.get();
+		QueUpService queupService = new QueUpService();
+		QueUp queup = queupService.get();
 		if (!Strings.isNullOrEmpty(queup.getLastSong()))
 			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + BNSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
 

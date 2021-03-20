@@ -8,15 +8,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@PlayerClass(Queup.class)
-public class QueupService extends MongoService {
-	private final static Map<UUID, Queup> cache = new HashMap<>();
+@PlayerClass(QueUp.class)
+public class QueUpService extends MongoService {
+	private final static Map<UUID, QueUp> cache = new HashMap<>();
 
-	public Map<UUID, Queup> getCache() {
+	public Map<UUID, QueUp> getCache() {
 		return cache;
 	}
 
-	public Queup get() {
+	public QueUp get() {
 		return get(Nexus.getUUID0());
 	}
 
