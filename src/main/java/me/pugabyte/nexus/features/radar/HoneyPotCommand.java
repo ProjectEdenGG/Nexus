@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.radar;
 
+import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -14,11 +15,7 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.worldedit.ExpandAllCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.*;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -26,13 +23,7 @@ import me.pugabyte.nexus.models.honeypot.HoneyPotBans;
 import me.pugabyte.nexus.models.honeypot.HoneyPotBansService;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGriefer;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGrieferService;
-import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.WorldEditUtils;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -314,6 +305,9 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + name + "`", StaticChannel.STAFF);
 			}
 
+			if ((triggered == 3 || triggered == 3.5) && !griefer.isWarned())
+				PlayerUtils.runCommandAsConsole("warn " + player.getName() + " You have been automatically warned by a grief trap. Griefing is not allowed! (HP: " + region.getId() + ")");
+
 			if (triggered >= 10) {
 				final HoneyPotBansService bansService = new HoneyPotBansService();
 				final HoneyPotBans honeyPotBans = bansService.get(Nexus.getUUID0());
@@ -332,6 +326,18 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		}
 
 		return false;
+	}
+
+	@EventHandler
+	public void onRegionExit(RegionLeftEvent event) {
+		if (!event.getRegion().getId().contains("hp_")) return;
+		HoneyPotGriefer griefer = grieferService.get(event.getPlayer());
+		if (griefer.getTriggered() <= 0) return;
+		Tasks.wait(Time.SECOND.x(30), () -> {
+			if (event.getPlayer().isOnline())
+				removeHoneyPotItems(event.getPlayer());
+			fix(event.getRegion(), event.getPlayer().getWorld());
+		});
 	}
 
 
