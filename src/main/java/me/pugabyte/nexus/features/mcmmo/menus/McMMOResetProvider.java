@@ -4,6 +4,7 @@ import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
@@ -140,17 +142,26 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
+	public void open(Player player) {
+		SmartInventory.builder()
+				.provider(new McMMOResetProvider())
+				.size(6, 9)
+				.title(StringUtils.colorize("McMMO Reset"))
+				.build().open(player);
+	}
+
+	@Override
 	public void init(Player player, InventoryContents contents) {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
 		ItemStack all = new ItemBuilder(Material.BEACON)
-				.name("&cAll Skills")
-				.lore("&6Power Level: " + mcmmoPlayer.getPowerLevel() + "/1300" +
-						"||&f||&e&lReward:||" +
+				.name("&eAll Skills")
+				.lore("&3Power Level: &e" + mcmmoPlayer.getPowerLevel() + "/1300" +
+						"|| ||&3&lReward:||" +
 						"&f- $150,000||&f- All normal rewards||" + "&f- When your health gets low, this breastplate will give you the " +
 						"strength of an angry barbarian!").build();
 		if (mcmmoPlayer.getPowerLevel() >= 1300) addGlowing(all);
-		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&c&lReset all with &4no reward").build();
+		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&cReset all with &lno reward").build();
 
 		contents.set(0, 4, ClickableItem.from(all, (e) -> {
 			if (mcmmoPlayer.getPowerLevel() < 1300)
@@ -174,13 +185,15 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						})
 						.open(player)));
 
+		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		for (ResetSkillType skill : ResetSkillType.values()) {
-			ItemStack item = new ItemBuilder(skill.getMaterial())
-					.name("&c" + StringUtils.camelCase(skill.name()))
-					.lore("&6Level: " + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) +
-							"|| ||&e&lReward:" +
+			ItemStack item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
+					.name("&e" + StringUtils.camelCase(skill.name()))
+					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) +
+							"|| ||&3&lReward:" +
 							"||&f$10,000" +
-							"||&f" + skill.getRewardDescription())
+							"||&f" + skill.getRewardDescription() +
+							"|| ||&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
 					.build();
 
 			if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= 100)

@@ -20,8 +20,8 @@ public class McMMOPrestigeCommand extends CustomCommand {
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 
 		line();
-		send("Prestige for " + player.getName());
-		mcMMOPrestige.getPrestiges().forEach((type, count) -> send(camelCase(type) + ": " + count));
+		send("&ePrestige for " + player.getName());
+		mcMMOPrestige.getPrestiges().forEach((type, count) -> send("&3" + camelCase(type) + ": &e" + count));
 
 	}
 

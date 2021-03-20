@@ -27,7 +27,6 @@ public class CustomRecipesCommand extends CustomCommand {
 		int amount = CustomRecipes.getRecipes().size();
 		CustomRecipes.getRecipes().forEach(nexusRecipe -> Bukkit.removeRecipe(((Keyed) nexusRecipe.getRecipe()).getKey()));
 		CustomRecipes.getRecipes().clear();
-		new CustomRecipes().onStop();
 		new CustomRecipes().onStart();
 		send(PREFIX + "Successfully reloaded &e" + amount + "&3 custom recipes");
 	}

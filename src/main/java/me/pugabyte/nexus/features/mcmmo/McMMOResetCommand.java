@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.mcmmo;
 
-import me.pugabyte.nexus.features.mcmmo.menus.McMMOResetMenu;
+import me.pugabyte.nexus.features.mcmmo.menus.McMMOResetProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -18,6 +18,6 @@ public class McMMOResetCommand extends CustomCommand {
 		if (WorldGroup.get(player()) != WorldGroup.SURVIVAL)
 			error("You cannot use this outside of survival");
 
-		McMMOResetMenu.openMcMMOReset(player());
+		new McMMOResetProvider().open(player());
 	}
 }
