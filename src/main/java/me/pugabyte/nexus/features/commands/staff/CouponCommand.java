@@ -300,6 +300,9 @@ public class CouponCommand extends CustomCommand implements Listener {
 				ItemStack item = new ItemBuilder(skill.getMaterial()).name("&e" + StringUtils.camelCase(skill.name()))
 						.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()))).build();
 				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, e -> {
+					int mcMMOLevel = mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()));
+					if (mcMMOLevel >= 100) return;
+					levels = Math.min(100 - mcMMOLevel, levels);
 					PlayerUtils.runCommandAsConsole("addlevels " + player.getName() + " " + skill.name().toLowerCase() + " " + levels);
 					player.getInventory().removeItem(coupon);
 					player.closeInventory();
