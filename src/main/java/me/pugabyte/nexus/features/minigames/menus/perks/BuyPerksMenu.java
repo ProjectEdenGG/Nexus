@@ -46,7 +46,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 				.lore("&f"+perkOwner.getTokens()) // TODO: properly format item lore
 				.build()));
 
-		LinkedHashSet<PerkType> playerPerks = sortPerks(perkOwner.getEnabledPerks().keySet());
+		LinkedHashSet<PerkType> playerPerks = sortPerks(perkOwner.getPurchasedPerks().keySet());
 		LinkedHashSet<PerkType> unownedPerks = sortPerks(Arrays.stream(PerkType.values()).filter(perkType -> !playerPerks.contains(perkType)).collect(Collectors.toSet()));
 		LinkedHashSet<PerkType> allPerks = new LinkedHashSet<>(unownedPerks);
 		allPerks.addAll(playerPerks);
@@ -71,13 +71,13 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 	protected void buyItem(Player player, PerkType perkType) {
 		Perk perk = perkType.getPerk();
 		PerkOwner perkOwner = service.get(player);
-		if (perkOwner.getEnabledPerks().containsKey(perkType)) {
+		if (perkOwner.getPurchasedPerks().containsKey(perkType)) {
 			send(player, "&cYou already own that item");
 			SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, 0.8f, 1.0f);
 		}
 		else if (perkOwner.getTokens() >= perk.getPrice()) {
 			perkOwner.setTokens(perkOwner.getTokens() - perk.getPrice());
-			perkOwner.getEnabledPerks().put(perkType, false);
+			perkOwner.getPurchasedPerks().put(perkType, false);
 			service.save(perkOwner);
 			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+StringUtils.plural(" token", perk.getPrice()));
 			open(player);

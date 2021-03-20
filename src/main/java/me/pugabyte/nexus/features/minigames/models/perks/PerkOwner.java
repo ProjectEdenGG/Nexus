@@ -13,7 +13,9 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -27,6 +29,19 @@ public class PerkOwner extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<PerkType, Boolean> enabledPerks = new HashMap<>();
+	private Map<PerkType, Boolean> purchasedPerks = new HashMap<>();
 	private int tokens = 0;
+
+	public Set<PerkType> getEnabledPerks() {
+		Set<PerkType> perks = new HashSet<>();
+		purchasedPerks.forEach((perkType, enabled) -> {
+			if (enabled)
+				perks.add(perkType);
+		});
+		return perks;
+	}
+
+	public boolean equals(PerkOwner other) {
+		return uuid.equals(other.getUuid());
+	}
 }

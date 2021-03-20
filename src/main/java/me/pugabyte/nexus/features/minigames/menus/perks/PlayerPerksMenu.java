@@ -23,7 +23,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 		SmartInventory.builder()
 				.provider(this)
 				.title("Your Collectibles")
-				.size(Math.max(3, getRows(perkOwner.getEnabledPerks().size(), 2)), 9)
+				.size(Math.max(3, getRows(perkOwner.getPurchasedPerks().size(), 2)), 9)
 				.build()
 				.open(viewer, page);
 	}
@@ -34,10 +34,10 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 
 		PerkOwner perkOwner = service.get(player);
 		List<ClickableItem> clickableItems = new ArrayList<>();
-		perkOwner.getEnabledPerks().forEach((perkType, enabled) -> {
+		perkOwner.getPurchasedPerks().forEach((perkType, enabled) -> {
 			Perk perk = perkType.getPerk();
 			List<String> lore = getLore(perk);
-			lore.add(1, enabled ? "&aEnabled" : "&cDisabled");
+			lore.add(1, enabled ? "&aEnabled" : "&cDisabled"); // TODO: glowing
 			// insert whitespace
 			if (lore.size() > 2)
 				lore.add(2, "");
@@ -50,7 +50,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 
 	protected void toggleBoolean(Player player, PerkType perkType) {
 		PerkOwner perkOwner = service.get(player);
-		Map<PerkType, Boolean> perkTypes = perkOwner.getEnabledPerks();
+		Map<PerkType, Boolean> perkTypes = perkOwner.getPurchasedPerks();
 		boolean setTo = !perkTypes.get(perkType);
 		// disable other perk types if this is being enabled and this is part of an exclusive perk category
 		if (setTo && perkType.getPerk().getCategory().isExclusive())

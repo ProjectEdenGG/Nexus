@@ -32,7 +32,7 @@ public abstract class LoadoutPerk extends TickablePerk {
 		getLoadout().forEach(((itemSlot, itemStack) -> sendPackets(player, player.getWorld().getPlayers(), itemStack, itemSlot)));
 	}
 
-	private static void sendPackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
+	public static void sendPackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
 		PlayerInventory inventory = player.getInventory();
 
 		ItemStack currentStack;
@@ -63,7 +63,6 @@ public abstract class LoadoutPerk extends TickablePerk {
 		PacketContainer packet = PacketContainer.fromPacket(rawPacket);
 
 		players.stream().filter(_player -> player.getWorld() == _player.getWorld()).forEach(_player -> {
-			if (_player.getUniqueId().equals(player.getUniqueId())) return;
 			try {
 				PacketContainer clone = packet.deepClone();
 				ProtocolLibrary.getProtocolManager().sendServerPacket(_player, clone);
