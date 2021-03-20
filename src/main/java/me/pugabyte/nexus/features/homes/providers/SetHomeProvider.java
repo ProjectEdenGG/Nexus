@@ -53,7 +53,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 			put("farm", new ItemStack(Material.WHEAT));
 			put("mine", new ItemBuilder(Material.DIAMOND_PICKAXE).itemFlags(ItemFlag.HIDE_ATTRIBUTES).build());
 			put("storage", new ItemStack(Material.CHEST));
-			put("shop", new ItemStack(Material.OAK_SIGN));
+			put("friend", new ItemStack(Material.PLAYER_HEAD));
 
 			if (player.getWorld().getEnvironment().equals(Environment.NETHER))
 				put("nether", new ItemStack(Material.NETHERRACK));
