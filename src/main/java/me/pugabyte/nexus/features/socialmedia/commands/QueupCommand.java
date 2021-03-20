@@ -30,18 +30,21 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 public class QueupCommand extends CustomCommand {
 	private static final String URL = BNSocialMediaSite.QUEUP.getUrl();
 
+	private static boolean enabled = true;
+	private static final QueupService service = new QueupService();
+	private static final Queup queup = service.get();
+
 	public QueupCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	@Path
 	void run() {
-		send(json().next("&e" + URL));
-	}
+		send(json("&e" + URL));
 
-	private static boolean enabled = true;
-	private static final QueupService service = new QueupService();
-	private static final Queup queup = service.get();
+		if (!isNullOrEmpty(queup.getLastSong()))
+			send("&3Currently playing: &e" + queup.getLastSong());
+	}
 
 	@Path("updates [enable]")
 	@Permission("group.staff")
