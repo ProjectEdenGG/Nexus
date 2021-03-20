@@ -53,6 +53,8 @@ public class TickPerks implements Listener {
 						}
 					}
 					else if (perk instanceof TickablePerk) {
+						if (minigamer.isPlaying() && minigamer.isRespawning()) return;
+
 						TickablePerk tickablePerk = (TickablePerk) perk;
 						if (minigamer.isPlaying())
 							tickablePerk.tick(minigamer);
