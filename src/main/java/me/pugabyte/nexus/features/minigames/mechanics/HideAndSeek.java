@@ -19,8 +19,17 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
-import me.pugabyte.nexus.utils.*;
-import org.bukkit.*;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -34,11 +43,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
-import static me.pugabyte.nexus.utils.StringUtils.*;
+import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
 	private static final int SOLIDIFY_PLAYER_AT = Time.SECOND.x(5);
@@ -198,7 +213,7 @@ public class HideAndSeek extends Infection {
 		String message = "&aYou are currently fully disguised as a " + camelCase(blockChoice);
 		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId())) {
 			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
-			if (MaterialTag.ALL_AIR.isTagged(minigamer.getPlayer().getInventory().getItemInMainHand().getType()))
+			if (!MaterialTag.ALL_AIR.isTagged(minigamer.getPlayer().getInventory().getItemInMainHand().getType()))
 				message = "&cWarning: Your weapon is visible!";
 		}
 		sendBarWithTimer(minigamer, message);
