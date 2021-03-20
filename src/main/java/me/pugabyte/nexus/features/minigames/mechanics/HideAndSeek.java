@@ -191,6 +191,7 @@ public class HideAndSeek extends Infection {
 			Block block = minigamer.getPlayer().getTargetBlock(4, TargetBlockInfo.FluidMode.NEVER);
 			if (block == null) return;
 			Material type = block.getType();
+			if (MaterialTag.ALL_AIR.isTagged(type)) return;
 
 			// this will create some grammatically weird messages ("Oak Planks is a possible hider")
 			// idk what to do about that though
