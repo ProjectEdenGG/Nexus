@@ -103,6 +103,13 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		new CustomModelsMenu().open(player());
 	}
 
+	@Path("customModels [item]")
+	@Permission("group.admin")
+	void customModels(CustomModel customModel) {
+		PlayerUtils.giveItem(player(), customModel.getItem());
+		send(PREFIX + "Gave custom model &e" + camelCase(customModel));
+	}
+
 	@NoArgsConstructor
 	public static class CustomModelsMenu extends MenuUtils implements InventoryProvider {
 

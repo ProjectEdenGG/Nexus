@@ -3,15 +3,17 @@ package me.pugabyte.nexus.features;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
 import fr.minuskube.inv.SmartInvsPlugin;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.listeners.ResourceWorld;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.features.recipes.CustomRecipes;
 import me.pugabyte.nexus.features.warps.Warps.LegacySurvivalWarp;
@@ -30,14 +32,15 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
@@ -82,6 +85,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -129,55 +133,123 @@ public class NexusCommand extends CustomCommand implements Listener {
 	public void _shutdown() {
 		shutdownBossBars();
 	}
+	@Path("cancelReload")
+	@Cooldown(@Part(value = Time.SECOND, x = 15))
+	void cancelReload() {
+		reloader = null;
+		send(PREFIX + "Reload unqueued");
+	}
 
 	@Path("reload")
-	@Cooldown(@Part(value = Time.SECOND, x = 15))
 	void reload() {
-		JsonBuilder retry = json(" ").group().next("&e⟳").command("/nexus reload");
-		File file = Paths.get("plugins/Nexus.jar").toFile();
-		if (!file.exists())
-			error(json("Nexus.jar doesn't exist, cannot reload").next(retry));
-
 		try {
-			new ZipFile(file).entries();
-		} catch (IOException ex) {
-			error(json("Nexus.jar is not complete, cannot reload").next(retry));
+			ReloadCondition.tryReload();
+		} catch (Exception ex) {
+			reloader = uuid();
+			error(json(ex.getMessage()).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
-
-		long matchCount = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
-		if (matchCount > 0)
-			error(json("There are " + matchCount + " active matches, cannot reload").next(retry));
-
-		long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
-		if (invCount > 0)
-			error(json("There are " + invCount + " SmartInvs menus open, cannot reload").next(retry));
-
-		if (Nexus.getTempListenerCount() > 0)
-			error(json("There are " + Nexus.getTempListenerCount() + " temporary listeners registered, cannot reload").next(retry));
-
-		if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
-			error(json("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open, cannot reload").next(retry));
-
-		List<Pugmas20User> all = new Pugmas20Service().getAll();
-		long torchCount = all.stream().filter(pugmas20User -> pugmas20User.isOnline() && pugmas20User.isLightingTorches() && pugmas20User.getTorchTimerTaskId() > 0).count();
-		if (torchCount > 0)
-			error(json("There are " + torchCount + " people completing the Pugmas20 torch quest, cannot reload").next(retry));
-
-		if (Pugmas20.isTreeAnimating())
-			error(json("Pugmas tree is animating, cannot reload").next(retry));
-
-		for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
-			if (crateType.getCrateClass().isInUse())
-				error(json("Someone is opening a crate, cannot reload").next(retry));
-
-		if (WitherChallenge.currentFight != null)
-			error(json("The wither is currently being fought, cannot reload").next(retry));
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (player.equals(PlayerUtils.wakka()) || player.equals(PlayerUtils.blast()))
 				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
+		CooldownService cooldownService = new CooldownService();
+		if (!cooldownService.check(Nexus.getUUID0(), "reload", Time.SECOND.x(15)))
+			throw new CommandCooldownException(Nexus.getUUID0(), "reload");
+
 		runCommand("plugman reload Nexus");
+	}
+
+	private static UUID reloader;
+
+	@Getter
+	@AllArgsConstructor
+	public enum ReloadCondition {
+		FILE_NOT_FOUND(() -> {
+			File file = Paths.get("plugins/Nexus.jar").toFile();
+			if (!file.exists())
+				throw new InvalidInputException("Nexus.jar doesn't exist");
+		}),
+		FILE_NOT_COMPLETE(() -> {
+			File file = Paths.get("plugins/Nexus.jar").toFile();
+			try {
+				new ZipFile(file).entries();
+			} catch (IOException ex) {
+				throw new InvalidInputException("Nexus.jar is not complete");
+			}
+		}),
+		MINIGAMES(() -> {
+			long matchCount = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
+			if (matchCount > 0)
+				throw new InvalidInputException("There are " + matchCount + " active matches");
+		}),
+		SMARTINVS(() -> {
+			long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
+			if (invCount > 0)
+				throw new InvalidInputException("There are " + invCount + " SmartInvs menus open");
+		}),
+		TEMP_LISTENERS(() -> {
+			if (Nexus.getTempListenerCount() > 0)
+				throw new InvalidInputException("There are " + Nexus.getTempListenerCount() + " temporary listeners registered");
+		}),
+		SIGN_MENUS(() -> {
+			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
+				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
+		}),
+		CRATES(() -> {
+			for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
+				if (crateType.getCrateClass().isInUse())
+					throw new InvalidInputException("Someone is opening a crate");
+		}),
+		WITHER(() -> {
+			if (WitherChallenge.currentFight != null)
+				throw new InvalidInputException("The wither is currently being fought");
+		});
+
+		public static boolean canReload() {
+			try {
+				tryReload();
+			} catch (Exception ex) {
+				return false;
+			}
+
+			return true;
+		}
+
+		public static void tryReload() {
+			for (ReloadCondition condition : ReloadCondition.values())
+				condition.getRunnable().run();
+		}
+
+		private final Runnable runnable;
+	}
+
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		Tasks.wait(5, NexusCommand::tryReload);
+	}
+
+	@EventHandler
+	public void onMatchEnd(MatchEndEvent event) {
+		Tasks.wait(5, NexusCommand::tryReload);
+	}
+
+	static {
+		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(5), NexusCommand::tryReload);
+	}
+
+	private static void tryReload() {
+		if (reloader == null)
+			return;
+
+		if (!ReloadCondition.canReload())
+			return;
+
+		OfflinePlayer player = Bukkit.getOfflinePlayer(reloader);
+		if (!player.isOnline())
+			return;
+
+		PlayerUtils.runCommand(player.getPlayer(), "nexus reload");
 	}
 
 	@Path("debug")
