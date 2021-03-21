@@ -68,6 +68,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,6 +200,13 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected PlayerInventory inventory() {
 		return player().getInventory();
+	}
+
+	public void giveItem(ItemStack item) {
+		PlayerUtils.giveItems(player(), Collections.singletonList(item));
+	}
+	public void giveItems(Collection<ItemStack> items) {
+		PlayerUtils.giveItems(player(), items, null);
 	}
 
 	protected void send(CommandSender sender, String message) {

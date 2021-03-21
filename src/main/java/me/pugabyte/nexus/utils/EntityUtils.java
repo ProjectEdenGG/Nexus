@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -80,5 +81,16 @@ public class EntityUtils {
 
 		EulerAngle ea = new EulerAngle(x, y, 0);
 		stand.setHeadPose(ea);
+	}
+
+	public static boolean isUnnaturalSpawn(LivingEntity entity) {
+		switch (entity.getEntitySpawnReason()) {
+			case SPAWNER_EGG:
+			case SPAWNER:
+			case CUSTOM:
+				return true;
+			default:
+				return false;
+		}
 	}
 }

@@ -1,8 +1,6 @@
-package me.pugabyte.nexus.features.quests;
+package me.pugabyte.nexus.features.mobheads;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -12,19 +10,10 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -37,61 +26,15 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.EntityUtils.isUnnaturalSpawn;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
 @Environments(Env.PROD)
-// Supports these mob types: https://paste.bnn.gg/zekog.txt
 public class MobHeads extends Feature implements Listener {
-	@Getter
-	private static final Map<EntityType, ItemStack> mobHeads = new HashMap<>();
-	@Getter
-	private static final Map<EntityType, Double> mobChance = new HashMap<>();
-
-	@Override
-	public void onStart() {
-		World world = Bukkit.getWorld("survival");
-		WorldGuardUtils WGUtils = new WorldGuardUtils(world);
-		WorldEditUtils WEUtils = new WorldEditUtils(world);
-
-		for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads"))) {
-			if (!MaterialTag.SIGNS.isTagged(block.getType()))
-				continue;
-
-			Sign sign = (Sign) block.getState();
-			Directional directional = (Directional) sign.getBlockData();
-			ItemStack skull = block.getRelative(directional.getFacing().getOppositeFace()).getRelative(BlockFace.UP)
-					.getDrops().stream().findFirst().orElse(null);
-			if (skull == null)
-				continue;
-
-			EntityType type;
-			String entity = (sign.getLine(0) + sign.getLine(1)).trim();
-			try {
-				type = EntityType.valueOf(entity);
-			} catch (Exception ignored) {
-				Nexus.log("Cannot parse entity type: " + entity);
-				continue;
-			}
-
-			double chance = Double.parseDouble(sign.getLine(3));
-
-			skull = new ItemBuilder(skull).name("&e" + StringUtils.camelCase(type) + " Head").build();
-			mobHeads.put(type, skull);
-			mobChance.put(type, chance);
-		}
-	}
-
-	public static ItemStack getMobHead(EntityType type) {
-		return mobHeads.get(type);
-	}
-
-	public static Double getHeadDropChance(EntityType type) {
-		return mobChance.get(type);
-	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onKillEntity(EntityDeathEvent event) {
@@ -111,12 +54,16 @@ public class MobHeads extends Feature implements Listener {
 		//
 
 		EntityType type = victim.getType();
-		ItemStack skull = getMobHead(type);
+		MobHeadType mobHeadType = MobHeadType.of(type);
+		ItemStack skull = MobHeadType.getSkull(victim);
+
+		if (isNullOrAir(skull))
+			return;
 
 		if (victim instanceof Player)
 			skull = new ItemBuilder(skull).name("&e" + ((Player) victim).getDisplayName() + "'s Head").skullOwner((OfflinePlayer) victim).build();
 
-		if (skull != null && RandomUtils.chanceOf(getHeadDropChance(type)))
+		if (skull != null && RandomUtils.chanceOf(mobHeadType.getChance()))
 			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
 	}
 
@@ -126,17 +73,6 @@ public class MobHeads extends Feature implements Listener {
 			return !ageable.isAdult();
 		}
 		return false;
-	}
-
-	private static boolean isUnnaturalSpawn(LivingEntity entity) {
-		switch (entity.getEntitySpawnReason()) {
-			case SPAWNER_EGG:
-			case SPAWNER:
-			case CUSTOM:
-				return true;
-			default:
-				return false;
-		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -157,7 +93,7 @@ public class MobHeads extends Feature implements Listener {
 
 		UUID skullOwner = ItemUtils.getSkullOwner(itemStack);
 		if (skullOwner != null) {
-			for (ItemStack mobHead : mobHeads.values()) {
+			for (ItemStack mobHead : MobHeadType.getAllSkulls()) {
 				if (!MaterialTag.SKULLS.isTagged(mobHead.getType()))
 					continue;
 
@@ -176,12 +112,15 @@ public class MobHeads extends Feature implements Listener {
 			if (!vanillaSkull)
 				return;
 
-			ItemStack skull = mobHeads.values()
+			Optional<ItemStack> skull = MobHeadType.getAllSkulls()
 					.stream()
 					.filter(mobHead -> mobHead.getType().equals(itemType))
-					.collect(Collectors.toList())
-					.get(0);
-			item.setItemStack(skull);
+					.findFirst();
+
+			if (!skull.isPresent())
+				return;
+
+			item.setItemStack(skull.get());
 			item.getItemStack().setAmount(itemStack.getAmount());
 		}
 	}

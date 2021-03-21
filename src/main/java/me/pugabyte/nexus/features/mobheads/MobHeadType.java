@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.quests;
+package me.pugabyte.nexus.features.mobheads;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,119 +28,155 @@ import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @Getter
-@RequiredArgsConstructor
-public enum MobTest {
-
-	AXOLOTL(null, null),
-	BAT(EntityType.BAT, null),
-	BEE(EntityType.BEE, null),
-	BLAZE(EntityType.BLAZE, null),
-	CAT(EntityType.CAT, entity -> CatType.of((Cat) entity).getItemStack()),
-	CAVE_SPIDER(EntityType.CAVE_SPIDER, null),
-	CHICKEN(EntityType.CHICKEN, null),
-	COD(EntityType.COD, null),
-	COW(EntityType.COW, null),
-	CREEPER(EntityType.CREEPER, entity -> CreeperType.of((Creeper) entity).getItemStack()),
-	DOLPHIN(EntityType.DOLPHIN, null),
-	DONKEY(EntityType.DONKEY, null),
-	DROWNED(EntityType.DROWNED, null),
-	ELDER_GUARDIAN(EntityType.ELDER_GUARDIAN, null),
-	ENDER_DRAGON(EntityType.ENDER_DRAGON, null),
-	ENDERMAN(EntityType.ENDERMAN, null),
-	ENDERMITE(EntityType.ENDERMITE, null),
-	EVOKER(EntityType.EVOKER, null),
-	FOX(EntityType.FOX, entity -> FoxType.of((Fox) entity).getItemStack()),
-	GHAST(EntityType.GHAST, null),
-	GLOW_SQUID(null, null),
-	GOAT(null, null),
-	GUARDIAN(EntityType.GUARDIAN, null),
-	HOGLIN(EntityType.HOGLIN, null),
-	HORSE(EntityType.HORSE, entity -> HorseStyle.of((Horse) entity).getItemStack()),
-	HUSK(EntityType.HUSK, null),
-	ILLUSIONER(EntityType.ILLUSIONER, null),
-	IRON_GOLEM(EntityType.IRON_GOLEM, null),
-	LLAMA(EntityType.LLAMA, entity -> LlamaColor.of((Llama) entity).getItemStack()),
-	MAGMA_CUBE(EntityType.MAGMA_CUBE, null),
-	MUSHROOM_COW(EntityType.MUSHROOM_COW, entity -> MooshroomType.of((MushroomCow) entity).getItemStack()),
-	MULE(EntityType.MULE, null),
-	OCELOT(EntityType.OCELOT, null),
-	PANDA(EntityType.PANDA, entity -> PandaGene.of((Panda) entity).getItemStack()),
-	PARROT(EntityType.PARROT, entity -> ParrotVariant.of((Parrot) entity).getItemStack()),
-	PHANTOM(EntityType.PHANTOM, null),
-	PIG(EntityType.PIG, null),
-	PIGLIN(EntityType.PIGLIN, null),
-	PIGLIN_BRUTE(EntityType.PIGLIN_BRUTE, null),
-	PILLAGER(EntityType.PILLAGER, null),
-	PLAYER(EntityType.PLAYER, null),
-	POLAR_BEAR(EntityType.POLAR_BEAR, null),
-	PUFFERFISH(EntityType.PUFFERFISH, null),
-	RABBIT(EntityType.RABBIT, entity -> RabbitType.of((Rabbit) entity).getItemStack()),
-	RAVAGER(EntityType.RAVAGER, null),
-	SALMON(EntityType.SALMON, null),
-	SHEEP(EntityType.SHEEP, entity -> SheepColor.of((Sheep) entity).getItemStack()),
-	SHULKER(EntityType.SHULKER, null),
-	SILVERFISH(EntityType.SILVERFISH, null),
-	SKELETON(EntityType.SKELETON, null),
-	SKELETON_HORSE(EntityType.SKELETON_HORSE, null),
-	SLIME(EntityType.SLIME, null),
-	SNOWMAN(EntityType.SNOWMAN, entity -> SnowmanType.of((Snowman) entity).getItemStack()),
-	SPIDER(EntityType.SPIDER, null),
-	SQUID(EntityType.SQUID, null),
-	STRAY(EntityType.STRAY, null),
-	STRIDER(EntityType.STRIDER, null),
-	TRADER_LLAMA(EntityType.TRADER_LLAMA, entity -> TraderLlamaColor.of((TraderLlama) entity).getItemStack()),
-	TROPICAL_FISH(EntityType.TROPICAL_FISH, entity -> TropicalFishType.RANDOM.getItemStack()),
-	TURTLE(EntityType.TURTLE, null),
-	VEX(EntityType.VEX, null),
-	VILLAGER(EntityType.VILLAGER, entity -> VillagerProfession.of((Villager) entity).getItemStack()),
-	VINDICATOR(EntityType.VINDICATOR, null),
-	WANDERING_TRADER(EntityType.WANDERING_TRADER, null),
-	WITCH(EntityType.WITCH, null),
-	WITHER(EntityType.WITHER, null),
-	WITHER_SKELETON(EntityType.WITHER_SKELETON, null),
-	WOLF(EntityType.WOLF, null),
-	ZOGLIN(EntityType.ZOGLIN, null),
-	ZOMBIE(EntityType.ZOMBIE, null),
-	ZOMBIE_HORSE(EntityType.ZOMBIE_HORSE, null),
-	ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, entity -> ZombieVillagerProfession.of((ZombieVillager) entity).getItemStack()),
-	ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN, null),
+public enum MobHeadType {
+	AXOLOTL,
+	BAT(EntityType.BAT),
+	BEE(EntityType.BEE),
+	BLAZE(EntityType.BLAZE),
+	CAT(EntityType.CAT, CatType.class, entity -> CatType.of((Cat) entity)),
+	CAVE_SPIDER(EntityType.CAVE_SPIDER),
+	CHICKEN(EntityType.CHICKEN),
+	COD(EntityType.COD),
+	COW(EntityType.COW),
+	CREEPER(EntityType.CREEPER, CreeperType.class, entity -> CreeperType.of((Creeper) entity)),
+	DOLPHIN(EntityType.DOLPHIN),
+	DONKEY(EntityType.DONKEY),
+	DROWNED(EntityType.DROWNED),
+	ELDER_GUARDIAN(EntityType.ELDER_GUARDIAN),
+	ENDER_DRAGON(EntityType.ENDER_DRAGON),
+	ENDERMAN(EntityType.ENDERMAN),
+	ENDERMITE(EntityType.ENDERMITE),
+	EVOKER(EntityType.EVOKER),
+	FOX(EntityType.FOX, FoxType.class, entity -> FoxType.of((Fox) entity)),
+	GHAST(EntityType.GHAST),
+	GLOW_SQUID,
+	GOAT,
+	GUARDIAN(EntityType.GUARDIAN),
+	HOGLIN(EntityType.HOGLIN),
+	HORSE(EntityType.HORSE, HorseColor.class, entity -> HorseColor.of((Horse) entity)),
+	HUSK(EntityType.HUSK),
+	ILLUSIONER(EntityType.ILLUSIONER),
+	IRON_GOLEM(EntityType.IRON_GOLEM),
+	LLAMA(EntityType.LLAMA, LlamaColor.class, entity -> LlamaColor.of((Llama) entity)),
+	MAGMA_CUBE(EntityType.MAGMA_CUBE),
+	MUSHROOM_COW(EntityType.MUSHROOM_COW, MooshroomType.class, entity -> MooshroomType.of((MushroomCow) entity)),
+	MULE(EntityType.MULE),
+	OCELOT(EntityType.OCELOT),
+	PANDA(EntityType.PANDA, PandaGene.class, entity -> PandaGene.of((Panda) entity)),
+	PARROT(EntityType.PARROT, ParrotVariant.class, entity -> ParrotVariant.of((Parrot) entity)),
+	PHANTOM(EntityType.PHANTOM),
+	PIG(EntityType.PIG),
+	PIGLIN(EntityType.PIGLIN),
+	PIGLIN_BRUTE(EntityType.PIGLIN_BRUTE),
+	PILLAGER(EntityType.PILLAGER),
+	PLAYER(EntityType.PLAYER),
+	POLAR_BEAR(EntityType.POLAR_BEAR),
+	PUFFERFISH(EntityType.PUFFERFISH),
+	RABBIT(EntityType.RABBIT, RabbitType.class, entity -> RabbitType.of((Rabbit) entity)),
+	RAVAGER(EntityType.RAVAGER),
+	SALMON(EntityType.SALMON),
+	SHEEP(EntityType.SHEEP, SheepColor.class, entity -> SheepColor.of((Sheep) entity)),
+	SHULKER(EntityType.SHULKER),
+	SILVERFISH(EntityType.SILVERFISH),
+	SKELETON(EntityType.SKELETON),
+	SKELETON_HORSE(EntityType.SKELETON_HORSE),
+	SLIME(EntityType.SLIME),
+	SNOWMAN(EntityType.SNOWMAN, SnowmanType.class, entity -> SnowmanType.of((Snowman) entity)),
+	SPIDER(EntityType.SPIDER),
+	SQUID(EntityType.SQUID),
+	STRAY(EntityType.STRAY),
+	STRIDER(EntityType.STRIDER),
+	TRADER_LLAMA(EntityType.TRADER_LLAMA, TraderLlamaColor.class, entity -> TraderLlamaColor.of((TraderLlama) entity)),
+	TROPICAL_FISH(EntityType.TROPICAL_FISH, TropicalFishType.class, entity -> TropicalFishType.RANDOM),
+	TURTLE(EntityType.TURTLE),
+	VEX(EntityType.VEX),
+	VILLAGER(EntityType.VILLAGER, VillagerProfession.class, entity -> VillagerProfession.of((Villager) entity)),
+	VINDICATOR(EntityType.VINDICATOR),
+	WANDERING_TRADER(EntityType.WANDERING_TRADER),
+	WITCH(EntityType.WITCH),
+	WITHER(EntityType.WITHER),
+	WITHER_SKELETON(EntityType.WITHER_SKELETON),
+	WOLF(EntityType.WOLF),
+	ZOGLIN(EntityType.ZOGLIN),
+	ZOMBIE(EntityType.ZOMBIE),
+	ZOMBIE_HORSE(EntityType.ZOMBIE_HORSE),
+	ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, ZombieVillagerProfession.class, entity -> ZombieVillagerProfession.of((ZombieVillager) entity)),
+	ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN),
 	;
 
-	private static MobTest of(EntityType from) {
+	private final EntityType type;
+	private final Class<? extends MobHeadVariant> variant;
+	private final Function<Entity, MobHeadVariant> converter;
+
+	@Setter
+	private ItemStack generic;
+	@Setter
+	private double chance;
+
+	@Getter
+	private static final Set<ItemStack> allSkulls = new HashSet<>();
+
+	MobHeadType() {
+		this(null);
+	}
+
+	MobHeadType(EntityType type) {
+		this(type, null, null);
+	}
+
+	MobHeadType(EntityType type, Class<? extends MobHeadVariant> variant, Function<Entity, MobHeadVariant> getter) {
+		this.type = type;
+		this.variant = variant;
+		this.converter = getter;
+	}
+
+	public static MobHeadType of(EntityType from) {
 		return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(null);
 	}
 
-	private final EntityType type;
-	@Setter
-	private ItemStack generic;
-	private final Function<Entity, ItemStack> variant;
+	public static ItemStack getSkull(Entity entity) {
+		MobHeadType mobHeadType = MobHeadType.of(entity.getType());
+		if (mobHeadType == null)
+			return null;
 
-	@Getter
-	private static final Map<EntityType, Double> mobChance = new HashMap<>();
+		if (mobHeadType.getConverter() == null)
+			return mobHeadType.getGeneric();
 
-	public static ItemStack getEntityHead(Entity entity) {
-		MobTest mobTest = MobTest.of(entity.getType());
-		ItemStack skull = mobTest.getVariant().apply(entity);
-		if (skull == null)
-			skull = mobTest.getGeneric();
-		return skull;
+		return mobHeadType.getConverter().apply(entity).getSkull();
 	}
 
-	public static ItemStack getEntityTypeHead(EntityType type) {
-		return MobTest.of(type).getGeneric();
+	public ItemStack getSkull(MobHeadVariant variant) {
+		return variant == null ? generic : variant.getSkull();
 	}
 
-	private interface MobHeadVariant {
+	public interface MobHeadVariant {
+
 		EntityType getEntityType();
+
+		ItemStack getItemStack();
+
+		default ItemStack getSkull() {
+			ItemStack skull = getItemStack();
+			if (isNullOrAir(skull))
+				return MobHeadType.of(getEntityType()).getGeneric();
+			return skull;
+		}
+
 		void setItemStack(ItemStack itemStack);
+
+		default String getDisplayName() {
+			return "&e" + camelCase((Enum<?>) this) + " " + camelCase(getEntityType()) + " Head";
+		}
+
 	}
 
 	@Getter
@@ -181,7 +217,7 @@ public enum MobTest {
 
 	@Getter
 	@RequiredArgsConstructor
-	private enum HorseStyle implements MobHeadVariant {
+	private enum HorseColor implements MobHeadVariant {
 		NONE(null),
 		WHITE(Horse.Color.WHITE),
 		CREAMY(Horse.Color.CREAMY),
@@ -201,7 +237,7 @@ public enum MobTest {
 			return EntityType.HORSE;
 		}
 
-		public static HorseStyle of(Horse horse) {
+		public static HorseColor of(Horse horse) {
 			return Arrays.stream(values()).filter(entry -> horse.getColor() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
@@ -283,6 +319,11 @@ public enum MobTest {
 
 		public void setItemStack(ItemStack itemStack) {
 			itemStacks.add(itemStack);
+		}
+
+		@Override
+		public String getDisplayName() {
+			return "&e" + camelCase(getEntityType()) + " Head";
 		}
 	}
 
@@ -568,14 +609,15 @@ public enum MobTest {
 				double chance = Double.parseDouble(sign.getLine(3));
 
 				skull = new ItemBuilder(skull).name("&e" + camelCase(type) + " Head").build();
-				MobTest.of(type).setGeneric(skull);
-				mobChance.put(type, chance);
+				MobHeadType.of(type).setGeneric(skull);
+				MobHeadType.of(type).setChance(chance);
+				allSkulls.add(skull);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
 
-		Reflections reflections = new Reflections(MobTest.class.getPackage().getName());
+		Reflections reflections = new Reflections(MobHeadType.class.getPackage().getName());
 		for (Class<? extends MobHeadVariant> variant : reflections.getSubTypesOf(MobHeadVariant.class)) {
 			for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads_variant_" + variant.getSimpleName().toLowerCase()))) {
 				try {
@@ -601,8 +643,9 @@ public enum MobTest {
 						continue;
 					}
 
-					skull = new ItemBuilder(skull).name("&e" + camelCase((Enum<?>) mobHeadVariant) + " " + camelCase(mobHeadVariant.getEntityType()) + " Head").build();
+					skull = new ItemBuilder(skull).name(mobHeadVariant.getDisplayName()).build();
 					mobHeadVariant.setItemStack(skull);
+					allSkulls.add(skull);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

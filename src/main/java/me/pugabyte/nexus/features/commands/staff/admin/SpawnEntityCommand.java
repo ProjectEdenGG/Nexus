@@ -23,6 +23,7 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +36,13 @@ public class SpawnEntityCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<entityType> [amount]")
-	void spawnEntity(@Arg(type = EntitySpawnData.class, tabCompleter = LivingEntity.class) List<EntitySpawnData> entities, @Arg(value = "1", min = 1) int amount) {
+	@Path("<entityType> [amount] [reason]")
+	void spawnEntity(@Arg(type = EntitySpawnData.class, tabCompleter = LivingEntity.class) List<EntitySpawnData> entities,
+					 @Arg(value = "1", min = 1) int amount,
+					 @Arg("CUSTOM") SpawnReason reason) {
 		for (int i = 0; i < amount; i++) {
 			List<EntitySpawnData> copy = new ArrayList<>(entities);
-			Entity entity = copy.remove(0).spawn();
+			Entity entity = copy.remove(0).spawn(reason);
 
 			for (EntitySpawnData spawnData : copy) {
 				Entity passenger = spawnData.spawn();
@@ -60,7 +63,11 @@ public class SpawnEntityCommand extends CustomCommand {
 		private String data;
 
 		public Entity spawn() {
-			Entity entity = location.getWorld().spawnEntity(location, type);
+			return spawn(SpawnReason.CUSTOM);
+		}
+
+		public Entity spawn(SpawnReason spawnReason) {
+			Entity entity = location.getWorld().spawnEntity(location, type, spawnReason);
 
 			if (!Strings.isNullOrEmpty(data)) {
 				if ("baby".equalsIgnoreCase(data) && entity instanceof Ageable)
