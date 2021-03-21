@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -38,6 +39,7 @@ public class QueUp extends PlayerOwnedObject {
 	private UUID uuid;
 	private String lastSong;
 
+	@SneakyThrows
 	public String getCurrentSong() {
 		ActiveSong activeSong = ActiveSong.call();
 
@@ -53,8 +55,8 @@ public class QueUp extends PlayerOwnedObject {
 		String song = activeSong.getData().getSongInfo().getName();
 		String user = activeSong.getData().getSong().getUserName();
 
-		song = stripColor(StringEscapeUtils.unescapeHtml(song));
-		user = stripColor(StringEscapeUtils.unescapeHtml(user));
+		song = stripColor(StringEscapeUtils.unescapeHtml(song).replaceAll("&apos;", "'")); // it doesnt know what &apos; is??
+		user = stripColor(StringEscapeUtils.unescapeHtml(user).replaceAll("&apos;", "'"));
 
 		return "&e" + song + " &3(Queued by &e" + user + "&3)";
 	}
