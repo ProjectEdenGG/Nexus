@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
@@ -19,18 +19,21 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Cat.Type;
-import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Llama.Color;
 import org.bukkit.entity.MushroomCow.Variant;
 import org.bukkit.entity.Panda.Gene;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
+import org.reflections.Reflections;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
@@ -93,7 +96,7 @@ public enum MobTest {
 	SQUID(EntityType.SQUID, null),
 	STRAY(EntityType.STRAY, null),
 	STRIDER(EntityType.STRIDER, null),
-	TRADER_LLAMA(EntityType.TRADER_LLAMA, entity -> LlamaColor.of((TraderLlama) entity).getItemStack()),
+	TRADER_LLAMA(EntityType.TRADER_LLAMA, entity -> TraderLlamaColor.of((TraderLlama) entity).getItemStack()),
 	TROPICAL_FISH(EntityType.TROPICAL_FISH, entity -> TropicalFishType.RANDOM.getItemStack()),
 	TURTLE(EntityType.TURTLE, null),
 	VEX(EntityType.VEX, null),
@@ -107,7 +110,7 @@ public enum MobTest {
 	ZOGLIN(EntityType.ZOGLIN, null),
 	ZOMBIE(EntityType.ZOMBIE, null),
 	ZOMBIE_HORSE(EntityType.ZOMBIE_HORSE, null),
-	ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, entity -> VillagerProfession.of((ZombieVillager) entity).getItemStack()),
+	ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, entity -> ZombieVillagerProfession.of((ZombieVillager) entity).getItemStack()),
 	ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN, null),
 	;
 
@@ -123,15 +126,6 @@ public enum MobTest {
 	@Getter
 	private static final Map<EntityType, Double> mobChance = new HashMap<>();
 
-	private static void setEntityGenericHead(EntityType type, ItemStack generic) {
-		MobTest.of(type).setGeneric(generic);
-	}
-
-	private static void setEntityVariantHead(EntityType type, ItemStack variant) {
-		// TODO: get pugs help
-//		SheepColor.RED.setItemStack(variant);
-	}
-
 	public static ItemStack getEntityHead(Entity entity) {
 		MobTest mobTest = MobTest.of(entity.getType());
 		ItemStack skull = mobTest.getVariant().apply(entity);
@@ -144,10 +138,14 @@ public enum MobTest {
 		return MobTest.of(type).getGeneric();
 	}
 
-	// SHEEP
+	private interface MobHeadVariant {
+		EntityType getEntityType();
+		void setItemStack(ItemStack itemStack);
+	}
+
 	@Getter
 	@RequiredArgsConstructor
-	private enum SheepColor {
+	private enum SheepColor implements MobHeadVariant {
 		NONE(null),
 		RED(ColorType.RED),
 		ORANGE(ColorType.ORANGE),
@@ -171,37 +169,46 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.SHEEP;
+		}
+
 		public static SheepColor of(Sheep sheep) {
-			ColorType from = ColorType.of(sheep.getColor());
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> ColorType.of(sheep.getColor()) == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// HORSE
 	@Getter
 	@RequiredArgsConstructor
-	private enum HorseStyle {
+	private enum HorseStyle implements MobHeadVariant {
 		NONE(null),
-		WHITE(Style.WHITE),
-		BLACK_DOTS(Style.BLACK_DOTS),
-		WHITE_DOTS(Style.WHITE_DOTS),
-		WHITEFIELD(Style.WHITEFIELD),
+		WHITE(Horse.Color.WHITE),
+		CREAMY(Horse.Color.CREAMY),
+		CHESTNUT(Horse.Color.CHESTNUT),
+		BROWN(Horse.Color.BROWN),
+		BLACK(Horse.Color.BLACK),
+		GRAY(Horse.Color.GRAY),
+		DARK_BROWN(Horse.Color.DARK_BROWN),
 		;
 
-		private final Horse.Style type;
+		private final Horse.Color type;
 		@Setter
 		private ItemStack itemStack;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.HORSE;
+		}
+
 		public static HorseStyle of(Horse horse) {
-			Horse.Style from = horse.getStyle();
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> horse.getColor() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// CAT
 	@Getter
 	@RequiredArgsConstructor
-	private enum CatType {
+	private enum CatType implements MobHeadVariant {
 		NONE(null),
 		BLACK(Type.BLACK),
 		WHITE(Type.WHITE),
@@ -216,20 +223,23 @@ public enum MobTest {
 		TABBY(Type.TABBY),
 		;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.CAT;
+		}
+
 		private final Cat.Type type;
 		@Setter
 		private ItemStack itemStack;
 
 		public static CatType of(Cat cat) {
-			Cat.Type from = cat.getCatType();
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> cat.getCatType() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// RABBIT
 	@Getter
 	@RequiredArgsConstructor
-	private enum RabbitType {
+	private enum RabbitType implements MobHeadVariant {
 		NONE(null),
 		BLACK(Rabbit.Type.BLACK),
 		WHITE(Rabbit.Type.WHITE),
@@ -243,31 +253,42 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.RABBIT;
+		}
+
 		public static RabbitType of(Rabbit rabbit) {
-			Rabbit.Type from = rabbit.getRabbitType();
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> rabbit.getRabbitType() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// TROPICAL FISH
 	@Getter
 	@RequiredArgsConstructor
-	private enum TropicalFishType {
-		RANDOM(),
+	private enum TropicalFishType implements MobHeadVariant {
+		RANDOM,
 		;
 
 		@Setter
-		private List<ItemStack> itemStacks;
+		private List<ItemStack> itemStacks = new ArrayList<>();
 
 		public ItemStack getItemStack() {
 			return RandomUtils.randomElement(itemStacks);
 		}
+
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.TROPICAL_FISH;
+		}
+
+		public void setItemStack(ItemStack itemStack) {
+			itemStacks.add(itemStack);
+		}
 	}
 
-	// PARROT
 	@Getter
 	@RequiredArgsConstructor
-	private enum ParrotVariant {
+	private enum ParrotVariant implements MobHeadVariant {
 		NONE(null),
 		BLUE(Parrot.Variant.BLUE),
 		RED(Parrot.Variant.RED),
@@ -280,16 +301,19 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.PARROT;
+		}
+
 		public static ParrotVariant of(Parrot parrot) {
-			Parrot.Variant from = parrot.getVariant();
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> parrot.getVariant() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// FOX
 	@Getter
 	@RequiredArgsConstructor
-	private enum FoxType {
+	private enum FoxType implements MobHeadVariant {
 		NONE(null),
 		RED(Fox.Type.RED),
 		SNOW(Fox.Type.SNOW),
@@ -299,32 +323,39 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.FOX;
+		}
+
 		public static FoxType of(Fox fox) {
-			Fox.Type from = fox.getFoxType();
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> fox.getFoxType() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// CREEPER
 	@Getter
 	@RequiredArgsConstructor
-	private enum CreeperType {
-		NONE(),
-		POWERED(),
+	private enum CreeperType implements MobHeadVariant {
+		NONE,
+		POWERED,
 		;
 
 		@Setter
 		private ItemStack itemStack;
+
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.CREEPER;
+		}
 
 		public static CreeperType of(Creeper creeper) {
 			return creeper.isPowered() ? POWERED : NONE;
 		}
 	}
 
-	// PANDA
 	@Getter
 	@RequiredArgsConstructor
-	private enum PandaGene {
+	private enum PandaGene implements MobHeadVariant {
 		NONE(null),
 		BROWN(Gene.BROWN),
 		AGGRESSIVE(Gene.AGGRESSIVE),
@@ -339,22 +370,30 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.PANDA;
+		}
+
 		public static PandaGene of(Panda panda) {
-			Panda.Gene from = panda.getMainGene();
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> panda.getMainGene() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// SNOW GOLEM
 	@Getter
 	@RequiredArgsConstructor
-	private enum SnowmanType {
-		NONE(),
-		DERP(),
+	private enum SnowmanType implements MobHeadVariant {
+		NONE,
+		DERP,
 		;
 
 		@Setter
 		private ItemStack itemStack;
+
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.SNOWMAN;
+		}
 
 		public static SnowmanType of(Snowman snowman) {
 			return snowman.isDerp() ? DERP : NONE;
@@ -362,11 +401,9 @@ public enum MobTest {
 
 	}
 
-	// VILLAGER
-	// ZOMBIE VILLAGER
 	@Getter
 	@RequiredArgsConstructor
-	private enum VillagerProfession {
+	private enum VillagerProfession implements MobHeadVariant {
 		NONE(null),
 		ARMORER(Profession.ARMORER),
 		BUTCHER(Profession.BUTCHER),
@@ -388,24 +425,53 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
-		public static VillagerProfession of(ZombieVillager zombieVillager) {
-			return of(zombieVillager.getVillagerProfession());
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.VILLAGER;
 		}
 
-		public static VillagerProfession of(Villager villager) {
-			return of(villager.getProfession());
-		}
-
-		private static VillagerProfession of(Villager.Profession from) {
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+		private static VillagerProfession of(Villager villager) {
+			return Arrays.stream(values()).filter(entry -> villager.getProfession() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// LLAMA
-	// TRADER LLAMA
 	@Getter
 	@RequiredArgsConstructor
-	private enum LlamaColor {
+	private enum ZombieVillagerProfession implements MobHeadVariant {
+		NONE(null),
+		ARMORER(Profession.ARMORER),
+		BUTCHER(Profession.BUTCHER),
+		CARTOGRAPHER(Profession.CARTOGRAPHER),
+		CLERIC(Profession.CLERIC),
+		FARMER(Profession.FARMER),
+		FISHERMAN(Profession.FISHERMAN),
+		FLETCHER(Profession.FLETCHER),
+		LEATHERWORKER(Profession.LEATHERWORKER),
+		LIBRARIAN(Profession.LIBRARIAN),
+		MASON(Profession.MASON),
+		NITWIT(Profession.NITWIT),
+		SHEPHERD(Profession.SHEPHERD),
+		TOOLSMITH(Profession.TOOLSMITH),
+		WEAPONSMITH(Profession.WEAPONSMITH),
+		;
+
+		private final Villager.Profession type;
+		@Setter
+		private ItemStack itemStack;
+
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.VILLAGER;
+		}
+
+		public static ZombieVillagerProfession of(ZombieVillager zombieVillager) {
+			return Arrays.stream(values()).filter(entry -> zombieVillager.getVillagerProfession() == entry.getType()).findFirst().orElse(NONE);
+		}
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	private enum LlamaColor implements MobHeadVariant {
 		NONE(null),
 		GRAY(Color.GRAY),
 		WHITE(Color.WHITE),
@@ -417,23 +483,43 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
-		public static LlamaColor of(Llama llama) {
-			return of(llama.getColor());
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.LLAMA;
 		}
 
-		public static LlamaColor of(TraderLlama traderLlama) {
-			return of(traderLlama.getColor());
-		}
-
-		private static LlamaColor of(Llama.Color from) {
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+		private static LlamaColor of(Llama llama) {
+			return Arrays.stream(values()).filter(entry -> llama.getColor() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
-	// MOOSHROOM
 	@Getter
 	@RequiredArgsConstructor
-	private enum MooshroomType {
+	private enum TraderLlamaColor implements MobHeadVariant {
+		NONE(null),
+		GRAY(Color.GRAY),
+		WHITE(Color.WHITE),
+		BROWN(Color.BROWN),
+		CREAMY(Color.CREAMY),
+		;
+
+		private final Llama.Color type;
+		@Setter
+		private ItemStack itemStack;
+
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.TRADER_LLAMA;
+		}
+
+		public static TraderLlamaColor of(TraderLlama traderLlama) {
+			return Arrays.stream(values()).filter(entry -> traderLlama.getColor() == entry.getType()).findFirst().orElse(NONE);
+		}
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	private enum MooshroomType implements MobHeadVariant {
 		NONE(null),
 		RED(Variant.RED),
 		BROWN(Variant.BROWN),
@@ -443,9 +529,13 @@ public enum MobTest {
 		@Setter
 		private ItemStack itemStack;
 
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.MUSHROOM_COW;
+		}
+
 		public static MooshroomType of(MushroomCow mushroomCow) {
-			MushroomCow.Variant from = mushroomCow.getVariant();
-			return Arrays.stream(values()).filter(entry -> from.equals(entry.getType())).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> mushroomCow.getVariant() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
@@ -455,30 +545,68 @@ public enum MobTest {
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
 
 		for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads"))) {
-			if (!MaterialTag.SIGNS.isTagged(block.getType()))
-				continue;
-
-			Sign sign = (Sign) block.getState();
-			Directional directional = (Directional) sign.getBlockData();
-			ItemStack skull = block.getRelative(directional.getFacing().getOppositeFace()).getRelative(BlockFace.UP)
-					.getDrops().stream().findFirst().orElse(null);
-			if (skull == null)
-				continue;
-
-			EntityType type;
-			String entity = (sign.getLine(0) + sign.getLine(1)).trim();
 			try {
-				type = EntityType.valueOf(entity);
-			} catch (Exception ignored) {
-				Nexus.log("Cannot parse entity type: " + entity);
-				continue;
+				if (!MaterialTag.SIGNS.isTagged(block.getType()))
+					continue;
+
+				Sign sign = (Sign) block.getState();
+				Directional directional = (Directional) sign.getBlockData();
+				ItemStack skull = block.getRelative(directional.getFacing().getOppositeFace()).getRelative(BlockFace.UP)
+						.getDrops().stream().findFirst().orElse(null);
+				if (skull == null)
+					continue;
+
+				EntityType type;
+				String entity = (sign.getLine(0) + sign.getLine(1)).trim();
+				try {
+					type = EntityType.valueOf(entity);
+				} catch (Exception ignored) {
+					Nexus.log("Cannot parse entity type: " + entity);
+					continue;
+				}
+
+				double chance = Double.parseDouble(sign.getLine(3));
+
+				skull = new ItemBuilder(skull).name("&e" + camelCase(type) + " Head").build();
+				MobTest.of(type).setGeneric(skull);
+				mobChance.put(type, chance);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
+		}
 
-			double chance = Double.parseDouble(sign.getLine(3));
+		Reflections reflections = new Reflections(MobTest.class.getPackage().getName());
+		for (Class<? extends MobHeadVariant> variant : reflections.getSubTypesOf(MobHeadVariant.class)) {
+			for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads_variant_" + variant.getSimpleName().toLowerCase()))) {
+				try {
+					if (!MaterialTag.SIGNS.isTagged(block.getType()))
+						continue;
 
-			skull = new ItemBuilder(skull).name("&e" + StringUtils.camelCase(type) + " Head").build();
-			setEntityGenericHead(type, skull);
-			mobChance.put(type, chance);
+					Sign sign = (Sign) block.getState();
+					Directional directional = (Directional) sign.getBlockData();
+					ItemStack skull = block.getRelative(directional.getFacing().getOppositeFace())
+							.getRelative(BlockFace.UP)
+							.getDrops().stream()
+							.findFirst().orElse(null);
+
+					if (skull == null)
+						continue;
+
+					MobHeadVariant mobHeadVariant;
+					String variantType = (sign.getLine(0) + sign.getLine(1)).trim();
+					try {
+						mobHeadVariant = EnumUtils.valueOf(variant, variantType);
+					} catch (Exception ignored) {
+						Nexus.log("Cannot parse entity variant: " + variant.getSimpleName() + "." + variantType);
+						continue;
+					}
+
+					skull = new ItemBuilder(skull).name("&e" + camelCase((Enum<?>) mobHeadVariant) + " " + camelCase(mobHeadVariant.getEntityType()) + " Head").build();
+					mobHeadVariant.setItemStack(skull);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
 		}
 	}
 }
