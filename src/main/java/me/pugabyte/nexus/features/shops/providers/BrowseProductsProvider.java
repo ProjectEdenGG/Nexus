@@ -158,8 +158,13 @@ public class BrowseProductsProvider extends _ShopProvider {
 				.collect(toList());
 
 		ClickableItem empty = ClickableItem.empty(new ItemStack(Material.BARRIER));
-		int start = 36 * page.getPage();
-		int end = start + 36;
+
+		int perPage = 36;
+		if (page.getPage() > products.size() / perPage)
+			page.page(products.size() / perPage);
+
+		int start = perPage * page.getPage();
+		int end = start + perPage;
 
 		for (int i = 0; i < start; i++)
 			items.add(empty);
