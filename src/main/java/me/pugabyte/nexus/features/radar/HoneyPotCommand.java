@@ -305,8 +305,10 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + name + "`", StaticChannel.STAFF);
 			}
 
-			if ((triggered == 3 || triggered == 3.5) && !griefer.isWarned())
+			if ((triggered == 3 || triggered == 3.5) && !griefer.isWarned()) {
 				PlayerUtils.runCommandAsConsole("warn " + player.getName() + " You have been automatically warned by a grief trap. Griefing is not allowed! (HP: " + region.getId() + ")");
+				griefer.setWarned(true);
+			}
 
 			if (triggered >= 10) {
 				final HoneyPotBansService bansService = new HoneyPotBansService();
