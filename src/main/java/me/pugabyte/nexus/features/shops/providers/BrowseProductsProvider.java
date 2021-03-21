@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.ItemUtils.getRawShulkerContents;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
@@ -149,13 +150,23 @@ public class BrowseProductsProvider extends _ShopProvider {
 
 		Pagination page = contents.pagination();
 
-		new ArrayList<Product>() {{ shops.forEach(shop -> addAll(shop.getProducts(shopGroup))); }}.stream()
+		List<Product> products = new ArrayList<Product>() {{
+			shops.forEach(shop -> addAll(shop.getProducts(shopGroup)));
+		}}.stream()
+				.filter(product -> !isFiltered(product))
 				.sorted(Product::compareTo)
+				.collect(toList());
+
+		ClickableItem empty = ClickableItem.empty(new ItemStack(Material.BARRIER));
+		int start = 36 * page.getPage();
+		int end = start + 36;
+
+		for (int i = 0; i < start; i++)
+			items.add(empty);
+
+		products.subList(start, Math.min(end, products.size()))
 				.forEach(product -> {
 					try {
-						if (isFiltered(product))
-							return;
-
 						items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
 							if (!product.isPurchasable())
 								return;
@@ -174,6 +185,9 @@ public class BrowseProductsProvider extends _ShopProvider {
 						ex.printStackTrace();
 					}
 				});
+
+		if (end < products.size())
+			items.add(empty);
 
 		addPagination(player, contents, items);
 	}
