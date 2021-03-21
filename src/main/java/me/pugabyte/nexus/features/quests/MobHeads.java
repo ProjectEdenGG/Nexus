@@ -85,6 +85,14 @@ public class MobHeads extends Feature implements Listener {
 		}
 	}
 
+	public static ItemStack getMobHead(EntityType type) {
+		return mobHeads.get(type);
+	}
+
+	public static Double getHeadDropChance(EntityType type) {
+		return mobChance.get(type);
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public static void onKillEntity(EntityDeathEvent event) {
 		if (event.isCancelled())
@@ -103,12 +111,12 @@ public class MobHeads extends Feature implements Listener {
 		//
 
 		EntityType type = victim.getType();
-		ItemStack skull = mobHeads.get(type);
+		ItemStack skull = getMobHead(type);
 
 		if (victim instanceof Player)
 			skull = new ItemBuilder(skull).name("&e" + ((Player) victim).getDisplayName() + "'s Head").skullOwner((OfflinePlayer) victim).build();
 
-		if (skull != null && RandomUtils.chanceOf(mobChance.get(type)))
+		if (skull != null && RandomUtils.chanceOf(getHeadDropChance(type)))
 			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
 	}
 

@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public enum CustomModel {
 	DIAMOND_TOTEM(Material.TOTEM_OF_UNDYING, 1, "&bDiamond Totem Of Undying", "&7Activates from anywhere", "&7in your inventory"),
-	BUNDLE(Material.CHEST, 1, "&fBundle"),
-	HOOK(Material.TRIPWIRE_HOOK, 1, "&fHook"),
+	BUNDLE(Material.CHEST, 1, "Bundle"),
+	HOOK(Material.TRIPWIRE_HOOK, 1, "Hook"),
 
 	PIRATE_HAT_WHITE_CAVALIER(Material.STONE_BUTTON, 1, "White Cavalier"),
 	PIRATE_HAT_WHITE_BICORN(Material.STONE_BUTTON, 2, "White Bicorn"),
@@ -89,29 +89,29 @@ public enum CustomModel {
 	PIRATE_HAT_PINK_BICORN_SIDE(Material.STONE_BUTTON, 71, "Pink Bicorn Side"),
 	PIRATE_HAT_PINK_TRICORN(Material.STONE_BUTTON, 72, "Pink Tricorn"),
 
-	GEM_SAPPHIRE(Material.EMERALD, 1, "&fSapphire"),
-	GEM_ALEXANDRITE(Material.EMERALD, 2, "&fAlexandrite"),
-	GEM_AMBER(Material.EMERALD, 3, "&fAmber"),
-	GEM_AMETHYST(Material.EMERALD, 4, "&fAmethyst"),
-	GEM_AQUAMARINE(Material.EMERALD, 5, "&fAquamarine"),
-	GEM_BLACK_OPAL(Material.EMERALD, 6, "&fBlack Opal"),
-	GEM_GARNET(Material.EMERALD, 7, "&fGarnet"),
-	GEM_JADE(Material.EMERALD, 8, "&fJade"),
-	GEM_JASPER(Material.EMERALD, 9, "&fJasper"),
-	GEM_MALACHITE(Material.EMERALD, 10, "&fMalachite"),
-	GEM_ONYX(Material.EMERALD, 11, "&fOnyx"),
-	GEM_OPAL(Material.EMERALD, 12, "&fOpal"),
-	GEM_PERIDOT(Material.EMERALD, 13, "&fPeridot"),
-	GEM_ROSE_QUARTZ(Material.EMERALD, 14, "&fRose Quartz"),
-	GEM_RUBY(Material.EMERALD, 15, "&fRuby"),
-	GEM_SPINEL(Material.EMERALD, 16, "&fSpinel"),
-	GEM_SUGILITE(Material.EMERALD, 17, "&fSugilite"),
-	GEM_TRANZANITE(Material.EMERALD, 18, "&fTranzanite"),
-	GEM_TOPAZ(Material.EMERALD, 19, "&fTopaz"),
-	GEM_TOURMALINE(Material.EMERALD, 20, "&fTourmaline"),
+	GEM_SAPPHIRE(Material.EMERALD, 1, "Sapphire"),
+	GEM_ALEXANDRITE(Material.EMERALD, 2, "Alexandrite"),
+	GEM_AMBER(Material.EMERALD, 3, "Amber"),
+	GEM_AMETHYST(Material.EMERALD, 4, "Amethyst"),
+	GEM_AQUAMARINE(Material.EMERALD, 5, "Aquamarine"),
+	GEM_BLACK_OPAL(Material.EMERALD, 6, "Black Opal"),
+	GEM_GARNET(Material.EMERALD, 7, "Garnet"),
+	GEM_JADE(Material.EMERALD, 8, "Jade"),
+	GEM_JASPER(Material.EMERALD, 9, "Jasper"),
+	GEM_MALACHITE(Material.EMERALD, 10, "Malachite"),
+	GEM_ONYX(Material.EMERALD, 11, "Onyx"),
+	GEM_OPAL(Material.EMERALD, 12, "Opal"),
+	GEM_PERIDOT(Material.EMERALD, 13, "Peridot"),
+	GEM_ROSE_QUARTZ(Material.EMERALD, 14, "Rose Quartz"),
+	GEM_RUBY(Material.EMERALD, 15, "Ruby"),
+	GEM_SPINEL(Material.EMERALD, 16, "Spinel"),
+	GEM_SUGILITE(Material.EMERALD, 17, "Sugilite"),
+	GEM_TRANZANITE(Material.EMERALD, 18, "Tranzanite"),
+	GEM_TOPAZ(Material.EMERALD, 19, "Topaz"),
+	GEM_TOURMALINE(Material.EMERALD, 20, "Tourmaline"),
 
-	BACKPACK(Material.SHULKER_BOX, 1, "&fBackpack"),
-	BACKPACK_WHITE(Material.WHITE_SHULKER_BOX, 1, "&fBackpack"),
+	BACKPACK(Material.SHULKER_BOX, 1, "Backpack"),
+	BACKPACK_WHITE(Material.WHITE_SHULKER_BOX, 1, "Backpack"),
 	BACKPACK_ORANGE(Material.ORANGE_SHULKER_BOX, 1, "&6Backpack"),
 	BACKPACK_MAGENTA(Material.MAGENTA_SHULKER_BOX, 1, "&dBackpack"),
 	BACKPACK_LIGHT_BLUE(Material.LIGHT_BLUE_SHULKER_BOX, 1, "&aBackpack"),
@@ -128,15 +128,15 @@ public enum CustomModel {
 	BACKPACK_RED(Material.RED_SHULKER_BOX, 1, "&cBackpack"),
 	BACKPACK_BLACK(Material.BLACK_SHULKER_BOX, 1, "&0Backpack"),
 
-	BAKEWARE(Material.FLOWER_POT, 1, "&fBakeware"),
-	CUTTING_BOARD(Material.IRON_SWORD, 1, "&fCutting Board"),
-	GRINDER(Material.BOWL, 1, "&fGrinder"),
-	JUICER(Material.FLOWER_POT, 2, "&fJuicer"),
-	MIXING_BOWL(Material.BOWL, 2, "&fMixing Bowl"),
-	POT(Material.BUCKET, 1, "&fPot"),
-	ROLLER(Material.STICK, 1, "&fRoller"),
-	SAUCEPAN(Material.BUCKET, 2, "&fSaucepan"),
-	SKILLET(Material.BUCKET, 3, "&fSkillet"),
+	BAKEWARE(Material.FLOWER_POT, 1, "Bakeware"),
+	CUTTING_BOARD(Material.IRON_SWORD, 1, "Cutting Board"),
+	GRINDER(Material.BOWL, 1, "Grinder"),
+	JUICER(Material.FLOWER_POT, 2, "Juicer"),
+	MIXING_BOWL(Material.BOWL, 2, "Mixing Bowl"),
+	POT(Material.BUCKET, 1, "Pot"),
+	ROLLER(Material.STICK, 1, "Roller"),
+	SAUCEPAN(Material.BUCKET, 2, "Saucepan"),
+	SKILLET(Material.BUCKET, 3, "Skillet"),
 	;
 
 	private final Material material;
@@ -153,5 +153,9 @@ public enum CustomModel {
 
 	public ItemStack getItem() {
 		return new ItemBuilder(material).customModelData(data).name(name).lore(lore).build();
+	}
+
+	public String getName() {
+		return "&f" + name;
 	}
 }
