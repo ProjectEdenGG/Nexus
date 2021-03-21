@@ -94,7 +94,8 @@ public class SocialMedia extends Feature implements Listener {
 		}
 
 		static {
-			reload();
+			if (Nexus.getEnv() == Env.PROD)
+				reload();
 		}
 
 		public static void reload() {

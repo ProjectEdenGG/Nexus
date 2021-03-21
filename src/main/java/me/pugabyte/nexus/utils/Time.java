@@ -33,8 +33,9 @@ public enum Time {
 			runnable.run();
 
 			long duration = System.currentTimeMillis() - startTime;
-			if (duration > IGNORE)
-				Nexus.log("[Timer] " + id + " took " + duration + "ms");
+			if (duration >= 1)
+				if (Nexus.isDebug() || duration > IGNORE)
+					Nexus.log("[Timer] " + id + " took " + duration + "ms");
 		}
 	}
 }
