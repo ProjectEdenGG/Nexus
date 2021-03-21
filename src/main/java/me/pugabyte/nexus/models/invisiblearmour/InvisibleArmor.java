@@ -1,27 +1,34 @@
 package me.pugabyte.nexus.models.invisiblearmour;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import javax.persistence.Table;
+import java.util.UUID;
 
 @Data
+@Builder
+@Entity("invisible_armor")
 @NoArgsConstructor
+@AllArgsConstructor
 @RequiredArgsConstructor
-@Accessors(fluent = true)
-@Table(name = "invisible_armour")
-public class InvisibleArmour {
+@Converters(UUIDConverter.class)
+public class InvisibleArmor extends PlayerOwnedObject {
+	@Id
 	@NonNull
-	@Accessors(fluent = false)
-	private String uuid;
-	@Accessors(fluent = false)
+	private UUID uuid;
 	private boolean enabled;
 
 	private boolean helmet = true;
