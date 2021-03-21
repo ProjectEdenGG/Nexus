@@ -160,7 +160,7 @@ public class Shop extends PlayerOwnedObject {
 	@AllArgsConstructor
 	@RequiredArgsConstructor
 	@Converters({UUIDConverter.class, ItemStackConverter.class})
-	public static class Product {
+	public static class Product implements Comparable {
 		@NonNull
 		private UUID uuid;
 		@NonNull
@@ -366,6 +366,21 @@ public class Shop extends PlayerOwnedObject {
 			return items;
 		}
 
+		@Override
+		public int compareTo(@NotNull Object o) {
+			Product product = (Product) o;
+			if (item.getType().name().equals(product.getItem().getType().name())) {
+				if (price instanceof Number && product.getPrice() instanceof Number)
+					return ((Double) price).compareTo((Double) product.getPrice());
+				else if (price instanceof Number)
+					return ((Double) price).compareTo(Double.MAX_VALUE);
+				else if (product.getPrice() instanceof Number)
+					return ((Double) Double.MAX_VALUE).compareTo(((Double) product.getPrice()));
+				else
+					return 0;
+			} else
+				return item.getType().name().compareTo(product.getItem().getType().name());
+		}
 	}
 
 	// Dumb enum due to morphia refusing to deserialize interfaces properly

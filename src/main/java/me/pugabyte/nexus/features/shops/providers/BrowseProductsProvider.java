@@ -149,29 +149,31 @@ public class BrowseProductsProvider extends _ShopProvider {
 
 		Pagination page = contents.pagination();
 
-		shops.forEach(shop -> shop.getProducts(shopGroup).forEach(product -> {
-			try {
-				if (isFiltered(product))
-					return;
-
-				items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
-					if (!product.isPurchasable())
-						return;
-
+		new ArrayList<Product>() {{ shops.forEach(shop -> addAll(shop.getProducts(shopGroup))); }}.stream()
+				.sorted(Product::compareTo)
+				.forEach(product -> {
 					try {
-						if (handleRightClick(product, e))
+						if (isFiltered(product))
 							return;
-						product.process(player);
-						open(player, page.getPage());
+
+						items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
+							if (!product.isPurchasable())
+								return;
+
+							try {
+								if (handleRightClick(product, e))
+									return;
+								product.process(player);
+								open(player, page.getPage());
+							} catch (Exception ex) {
+								PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+							}
+						}));
 					} catch (Exception ex) {
-						PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+						Nexus.severe("Error formatting product in BrowseItemsProvider: " + StringUtils.toPrettyString(product));
+						ex.printStackTrace();
 					}
-				}));
-			} catch (Exception ex) {
-				Nexus.severe("Error formatting product in BrowseItemsProvider: " + StringUtils.toPrettyString(product));
-				ex.printStackTrace();
-			}
-		}));
+				});
 
 		addPagination(player, contents, items);
 	}

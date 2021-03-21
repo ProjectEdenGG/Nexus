@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.shops.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.shops.ShopCommand;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
@@ -11,7 +12,7 @@ import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -20,6 +21,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -29,8 +32,9 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
-import static me.pugabyte.nexus.utils.ItemUtils.getRawShulkerContents;
+import static me.pugabyte.nexus.features.shops.ShopUtils.isSimilar;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.pretty;
 
 public class EditProductProvider extends _ShopProvider {
 	private final Product product;
@@ -78,7 +82,16 @@ public class EditProductProvider extends _ShopProvider {
 					}).open(player)
 			));
 		} else {
-			contents.set(1, 3, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add Stock"), e -> new AddStockProvider(this, product).open(player)));
+			contents.set(1, 3, ClickableItem.from(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
+				if (e.getEvent() instanceof InventoryClickEvent && ((InventoryClickEvent) e.getEvent()).getClick() == ClickType.RIGHT) {
+					player.closeInventory();
+					ShopCommand.getInteractStockMap().put(player.getUniqueId(), product);
+					PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
+							+ pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
+				} else {
+					new AddStockProvider(this, product).open(player);
+				}
+			}));
 			contents.set(1, 5, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
 		}
 
@@ -227,28 +240,6 @@ public class EditProductProvider extends _ShopProvider {
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}
-	}
-
-	private static boolean isSimilar(ItemStack item1, ItemStack item2) {
-		if (item1.getType() != item2.getType())
-			return false;
-
-		if (!MaterialTag.SHULKER_BOXES.isTagged(item1.getType()))
-			return item1.isSimilar(item2);
-
-		List<ItemStack> contents1 = getRawShulkerContents(item1);
-		List<ItemStack> contents2 = getRawShulkerContents(item2);
-		if (contents1.isEmpty() && contents2.isEmpty())
-			return true;
-
-		for (int i = 0; i < contents1.size(); i++) {
-			if (contents1.get(i) == null && contents2.get(i) == null)
-				continue;
-			if (contents1.get(i) == null || !contents1.get(i).isSimilar(contents2.get(i)))
-				return false;
-		}
-
-		return true;
 	}
 
 }
