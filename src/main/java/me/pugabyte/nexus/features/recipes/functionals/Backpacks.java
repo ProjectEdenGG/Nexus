@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
@@ -189,6 +190,7 @@ public class Backpacks extends FunctionalRecipe {
 
 		ItemStack backpack;
 		Player player;
+		Inventory inv;
 
 		public BackPackMenuListener(Player player, ItemStack backpack) {
 			this.backpack = backpack;
@@ -201,6 +203,7 @@ public class Backpacks extends FunctionalRecipe {
 
 			Inventory inv = Bukkit.createInventory(null, 27, backpack.getItemMeta().getDisplayName());
 			inv.setContents(contents);
+			this.inv = inv;
 			player.openInventory(inv);
 
 			Nexus.registerListener(this);
@@ -209,9 +212,19 @@ public class Backpacks extends FunctionalRecipe {
 		// Cancel Moving Shulker Boxes While backpack is open
 		@EventHandler
 		public void onClickBackPack(InventoryClickEvent event) {
+			Nexus.debug("Clicked Backpack");
 			if (player != event.getWhoClicked()) return;
-			if (event.getCurrentItem() == null) return;
-			if (!MaterialTag.SHULKER_BOXES.isTagged(event.getCurrentItem().getType())) return;
+			Nexus.debug("Backpack player ==");
+			if (event.getClickedInventory() == null) return;
+			Nexus.debug("Clicked Ivnentory Not Null");
+			ItemStack item = event.getClickedInventory().getItem(event.getSlot());
+			if (event.getClick() == ClickType.NUMBER_KEY)
+				item = player.getInventory().getContents()[event.getHotbarButton()];
+			if (ItemUtils.isNullOrAir(item)) return;
+			Nexus.debug("Item Not Null");
+			if (!MaterialTag.SHULKER_BOXES.isTagged(item.getType())) return;
+			Nexus.debug("Is Shulker Box");
+			Nexus.debug("Cancelling");
 			event.setCancelled(true);
 		}
 
