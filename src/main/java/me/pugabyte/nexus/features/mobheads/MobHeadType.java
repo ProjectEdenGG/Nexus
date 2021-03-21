@@ -502,7 +502,7 @@ public enum MobHeadType {
 
 		@Override
 		public EntityType getEntityType() {
-			return EntityType.VILLAGER;
+			return EntityType.ZOMBIE_VILLAGER;
 		}
 
 		public static ZombieVillagerProfession of(ZombieVillager zombieVillager) {

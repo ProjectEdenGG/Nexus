@@ -4,19 +4,23 @@ import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
+import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @Aliases("eco")
 public class EconomyCommand extends CustomCommand {
@@ -86,6 +90,27 @@ public class EconomyCommand extends CustomCommand {
 	void take(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
 		service.withdraw(banker.getOfflinePlayer(), balance, shopGroup, cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getName() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
+	}
+
+	@Async
+	@Path("volume [startTime] [endTime]")
+	void volume(LocalDateTime startTime, LocalDateTime endTime) {
+		if (endTime == null)
+			endTime = LocalDateTime.now();
+
+		BigDecimal total = BigDecimal.valueOf(0);
+
+		for (Banker banker : service.<Banker>getAll())
+			for (Transaction transaction : banker.getTransactions()) {
+				if (startTime != null && !transaction.getTimestamp().isAfter(startTime))
+					continue;
+				if (!transaction.getTimestamp().isBefore(endTime))
+					continue;
+
+				total = total.add(transaction.getAmount());
+			}
+
+		send(PREFIX + "Total volume" + (startTime != null ? " for " + timespanDiff(startTime, endTime) : "") + ": &e" + prettyMoney(total));
 	}
 
 //	@Async
