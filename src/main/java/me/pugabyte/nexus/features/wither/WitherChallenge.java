@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.*;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -52,6 +53,13 @@ public class WitherChallenge extends Feature implements Listener {
 			if (currentFight.wither != null)
 				currentFight.wither.remove();
 			currentFight.scoreboardTeams.values().forEach(Team::unregister);
+
+			for (UUID uuid : currentFight.spectators) {
+				Player player = PlayerUtils.getPlayer(uuid).getPlayer();
+				if (player != null)
+					Warps.spawn(player);
+			}
+
 			currentFight = null;
 		}
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils("events");
@@ -174,7 +182,7 @@ public class WitherChallenge extends Feature implements Listener {
 		EASY("&a", EasyFight.class, Material.LIME_CONCRETE, "&712.5% chance of star drop"),
 		MEDIUM("&6", MediumFight.class, Material.ORANGE_CONCRETE, "&725% chance of star drop", "&7If no star is dropped,", "&7you will receive 2 Wither Crate Keys"),
 		HARD("&c", HardFight.class, Material.RED_CONCRETE, "&750% chance of star drop", "&7If no star is dropped,", "&7you will receive 3 Wither Crate Keys"),
-		CORRUPTED("&8", CorruptedFight.class, Material.BLACK_CONCRETE, "&7100% chance of star drop", "&7and 2 Wither Crate Keys");
+		CORRUPTED("&8", CorruptedFight.class, Material.BLACK_CONCRETE, "&7100% chance of star drop", "&7and 2 Wither Crate Keys", " ", "&cFull Netherite Armor Recommended");
 
 		String color;
 		Class<? extends WitherFight> witherFightClass;

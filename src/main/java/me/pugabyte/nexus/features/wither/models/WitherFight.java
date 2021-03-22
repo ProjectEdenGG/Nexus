@@ -76,7 +76,7 @@ public abstract class WitherFight implements Listener {
 				if (wither.hasLineOfSight(wither.getTarget())) return;
 				List<Block> blocks = BlockUtils.getBlocksInRadius(wither.getLocation(), 4);
 				for (Block block : blocks) {
-					if (block.getType() == Material.BEDROCK) continue;
+					if (block.getType() == Material.BEDROCK || block.getType() == Material.AIR) continue;
 					Location loc = block.getLocation();
 					for (Block face : BlockUtils.getAdjacentBlocks(block))
 						if (MaterialTag.NEEDS_SUPPORT.isTagged(face.getType()))
@@ -298,8 +298,8 @@ public abstract class WitherFight implements Listener {
 			wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
-		Warps.spawn(player);
 		player.removePotionEffect(PotionEffectType.WITHER);
+		Tasks.wait(5, () -> Warps.spawn(player));
 	}
 
 	@EventHandler(priority = EventPriority.LOW)

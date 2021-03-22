@@ -11,9 +11,14 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.*;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -35,8 +40,7 @@ public class WitherCommand extends CustomCommand {
 			error("The wither is currently being fought. Please wait!");
 		if (WitherChallenge.maintenance && !PlayerUtils.isStaffGroup(player()))
 			error("The wither arena is currently under maintenance, please wait");
-		if (!hasItems())
-			error("You do not have the necessary items in your inventory to spawn the wither");
+		if (!checkHasItems()) return;
 		if (!WitherChallenge.queue.contains(uuid()))
 			WitherChallenge.queue.add(uuid());
 		else if (WitherChallenge.queue.indexOf(uuid()) > 0)
@@ -53,9 +57,31 @@ public class WitherCommand extends CustomCommand {
 					"You will be prompted when it is your time to challenge the wither. Please keep the necessary items on you to spawn the Wither");
 	}
 
-	public boolean hasItems() {
-		if (!player().getInventory().contains(Material.WITHER_SKELETON_SKULL, 3)) return false;
-		return player().getInventory().contains(Material.SOUL_SAND, 4);
+	public boolean checkHasItems() {
+		List<ItemStack> missingItems = new ArrayList<>();
+		List<ItemStack> neededItems = new ArrayList<ItemStack>() {{
+			add(new ItemStack(Material.WITHER_SKELETON_SKULL, 3));
+			add(new ItemStack(Material.SOUL_SAND, 4));
+			add(new ItemStack(Material.BOW));
+			add(new ItemStack(Material.ARROW));
+		}};
+		for (ItemStack item : neededItems) {
+			if (!player().getInventory().contains(item.getType(), item.getAmount()))
+				missingItems.add(item);
+		}
+		if (missingItems.size() != 0) {
+			tellNeededItems(missingItems);
+			return false;
+		}
+		return true;
+	}
+
+	public void tellNeededItems(List<ItemStack> mats) {
+		send(PREFIX + "&cYou do not have the necessary items in your inventory to spawn the wither. You are missing:");
+		for (ItemStack item : mats) {
+			send("&c - " + camelCase(item.getType()) + (item.getAmount() > 1 ? " &ex &c" + item.getAmount() : ""));
+		}
+
 	}
 
 	@Path("invite <player>")
@@ -128,8 +154,7 @@ public class WitherCommand extends CustomCommand {
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
-		if (!hasItems())
-			error("You do not have the necessary items in your inventory to spawn the wither");
+		if (!checkHasItems()) return;
 		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
 		int partySize = WitherChallenge.currentFight.getParty().size();
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + WitherChallenge.currentFight.getHostPlayer().getName() +
@@ -171,7 +196,7 @@ public class WitherCommand extends CustomCommand {
 			error("You are already spectating the current fight");
 		if (WitherChallenge.currentFight.getAlivePlayers().contains(uuid()))
 			error("You cannot spectate the match as a party member");
-		player().teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
+		player().teleport(WitherChallenge.cageLoc);
 		player().setGameMode(GameMode.SPECTATOR);
 	}
 
