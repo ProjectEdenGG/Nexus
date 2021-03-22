@@ -167,9 +167,4 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				e -> teamMenus.openTeamsVisibilityMenu(player, arena, team)));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 }

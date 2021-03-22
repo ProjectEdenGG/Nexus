@@ -84,8 +84,4 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 		if (user.getFoundComboLockNumbers().size() == 11)
 			PlayerUtils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-	}
 }

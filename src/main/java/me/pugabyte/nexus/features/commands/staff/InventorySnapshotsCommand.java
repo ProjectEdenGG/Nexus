@@ -164,9 +164,6 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			contents.set(0, 8, ClickableItem.empty(info));
 			formatInventoryContents(contents, snapshot.getContents().toArray(new ItemStack[0]));
 		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {}
 	}
 
 }

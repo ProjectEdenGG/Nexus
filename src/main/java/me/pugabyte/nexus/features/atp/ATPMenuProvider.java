@@ -77,11 +77,6 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 	public class ATPHomesMenuProvider extends MenuUtils implements InventoryProvider {
 
 		HomeService service = new HomeService();
@@ -114,11 +109,6 @@ public class ATPMenuProvider extends MenuUtils implements InventoryProvider {
 					column++;
 				}
 			}
-
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
 
 		}
 	}

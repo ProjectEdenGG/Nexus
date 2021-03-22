@@ -113,10 +113,6 @@ public class HorsePickerCommand extends CustomCommand {
 				}));
 			}
 		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-		}
 	}
 
 	public class HorsePickerMarkingsProvider extends MenuUtils implements InventoryProvider {
@@ -136,10 +132,6 @@ public class HorsePickerCommand extends CustomCommand {
 					Nexus.getPerms().playerRemove(player, "horsepicker.pick");
 				}));
 			}
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
 		}
 	}
 

@@ -75,8 +75,4 @@ public class OpenDeliveryMenuProvider extends MenuUtils implements InventoryProv
 			}
 		}
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

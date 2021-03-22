@@ -51,11 +51,6 @@ public class KangarooJumpingMenu extends MenuUtils implements InventoryProvider 
 				e -> openPowerUpLocationsMenu(arena).open(player)));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 	public static class KangarooJumpingSubMenu extends MenuUtils implements InventoryProvider {
 		KangarooJumpingArena arena;
 
@@ -122,11 +117,6 @@ public class KangarooJumpingMenu extends MenuUtils implements InventoryProvider 
 				contents.set(0, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e -> kangarooJumpingMenu.openPowerUpLocationsMenu(arena).open(player, page.next().getPage())));
 			if (!page.isFirst())
 				contents.set(0, 7, ClickableItem.from(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e -> kangarooJumpingMenu.openPowerUpLocationsMenu(arena).open(player, page.previous().getPage())));
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-
 		}
 
 	}

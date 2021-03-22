@@ -75,9 +75,6 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 				.lore("&f" + new BankerService().getBalanceFormatted(player, shopGroup)).build()));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {}
-
 	protected boolean handleRightClick(Product product, ItemClickData clickData) {
 		if (!(clickData.getEvent() instanceof InventoryClickEvent))
 			return false;

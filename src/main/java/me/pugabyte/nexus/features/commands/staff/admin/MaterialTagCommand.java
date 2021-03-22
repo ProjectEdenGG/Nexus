@@ -92,8 +92,5 @@ public class MaterialTagCommand extends CustomCommand {
 			addPagination(player, contents, items);
 		}
 
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {}
-
 	}
 }

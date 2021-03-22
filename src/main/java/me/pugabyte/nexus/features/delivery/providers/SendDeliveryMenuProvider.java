@@ -143,8 +143,4 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 
 		toUser.sendNotification();
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

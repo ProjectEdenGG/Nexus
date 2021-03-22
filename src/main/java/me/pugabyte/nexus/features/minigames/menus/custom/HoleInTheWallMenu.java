@@ -49,9 +49,6 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 				e -> openDesignStartLocationsMenu(arena).open(player)));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {}
-
 	public static class HoleInTheWallSubMenu extends MenuUtils implements InventoryProvider {
 		HoleInTheWallArena arena;
 
@@ -121,11 +118,6 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 			if (!page.isFirst())
 				contents.set(0, 7, ClickableItem.from(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e ->
 						holeInTheWallMenu.openDesignStartLocationsMenu(arena).open(player, page.previous().getPage())));
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-
 		}
 
 	}

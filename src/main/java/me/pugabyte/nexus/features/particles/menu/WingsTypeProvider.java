@@ -52,9 +52,4 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 }

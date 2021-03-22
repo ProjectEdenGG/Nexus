@@ -40,9 +40,4 @@ public class ColorSelectMenu extends MenuUtils implements InventoryProvider {
 				column++;
 		}
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

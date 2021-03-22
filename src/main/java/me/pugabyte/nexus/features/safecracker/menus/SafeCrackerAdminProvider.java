@@ -125,9 +125,4 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 		}
 
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

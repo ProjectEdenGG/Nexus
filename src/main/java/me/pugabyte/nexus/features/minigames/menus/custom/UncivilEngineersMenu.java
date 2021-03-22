@@ -60,10 +60,6 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 		INV.open(player);
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-	}
-
 	public void openMobPointsMenu(Player player) {
 		SmartInventory INV = SmartInventory.builder()
 				.provider(new UncivilEngineersMobPointsMenu())
@@ -112,11 +108,6 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 					row++;
 				}
 			}
-
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
 
 		}
 	}
@@ -188,10 +179,6 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				}
 			}
 		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-		}
 	}
 
 	public class UncivilEngineersOriginsMenu extends MenuUtils implements InventoryProvider {
@@ -261,10 +248,6 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 					row++;
 				}
 			}
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
 		}
 	}
 

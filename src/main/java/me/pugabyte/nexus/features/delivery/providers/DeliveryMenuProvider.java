@@ -42,8 +42,4 @@ public class DeliveryMenuProvider extends MenuUtils implements InventoryProvider
 		contents.set(1, 2, ClickableItem.from(sendDelivery, e -> new SendDeliveryMenuProvider(user, worldGroup).open(player)));
 		contents.set(1, 6, ClickableItem.from(viewDeliveries, e -> new ViewDeliveriesMenuProvider(user, worldGroup).open(player)));
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

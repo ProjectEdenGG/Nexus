@@ -67,9 +67,4 @@ public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProv
 
 		contents.set(0, 4, ClickableItem.empty(builder.build()));
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

@@ -90,8 +90,4 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 		return home;
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
-
 }

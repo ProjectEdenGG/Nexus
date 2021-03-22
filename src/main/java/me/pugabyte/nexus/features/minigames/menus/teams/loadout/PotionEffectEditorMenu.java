@@ -127,9 +127,4 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 }

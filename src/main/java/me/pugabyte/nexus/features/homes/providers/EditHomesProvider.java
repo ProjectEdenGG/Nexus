@@ -133,8 +133,4 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		addPagination(homeOwner.getPlayer(), contents, items, e -> HomesMenu.edit(homeOwner, page.previous().getPage()), e -> HomesMenu.edit(homeOwner, page.next().getPage()));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
-
 }

@@ -136,8 +136,4 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 			add("&f||&aClick to show waypoint");
 		}};
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

@@ -274,9 +274,6 @@ public class InvisibleArmorCommand extends CustomCommand {
 			ItemBuilder save = new ItemBuilder(Material.NETHER_STAR).name("&eSave & Close");
 			contents.set(5, 8, ClickableItem.from(save.build(), e -> e.getPlayer().closeInventory()));
 		}
-
-		@Override
-		public void update(Player player, InventoryContents contents) {}
 	}
 
 }

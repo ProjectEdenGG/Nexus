@@ -27,9 +27,4 @@ public class ThimbleMenu extends MenuUtils implements InventoryProvider {
 		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 }

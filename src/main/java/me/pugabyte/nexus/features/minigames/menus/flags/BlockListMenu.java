@@ -108,9 +108,4 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {
-
-	}
-
 }

@@ -85,10 +85,5 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 		if (!page.isLast())
 			contents.set(5, 3, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
 					type.previewDrops(loot).open(player, page.next().getPage())));
-
-	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
 	}
 }

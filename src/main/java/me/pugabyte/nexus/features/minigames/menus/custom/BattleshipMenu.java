@@ -29,7 +29,4 @@ public class BattleshipMenu extends MenuUtils implements InventoryProvider {
 		contents.set(1, 0, ClickableItem.empty(nameItem(Material.BLACK_CONCRETE, "")));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {}
-
 }

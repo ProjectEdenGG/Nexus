@@ -59,11 +59,6 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 				e -> openScrapPointsMenu(arena).open(player)));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 	public static class MurderSubMenu extends MenuUtils implements InventoryProvider {
 
 		MurderArena arena;
@@ -131,11 +126,6 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 				contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.next().getPage())));
 			if (!page.isFirst())
 				contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.previous().getPage())));
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-
 		}
 
 	}

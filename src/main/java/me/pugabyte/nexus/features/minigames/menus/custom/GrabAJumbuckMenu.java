@@ -71,9 +71,4 @@ public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 			column++;
 		}
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

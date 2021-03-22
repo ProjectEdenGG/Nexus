@@ -351,10 +351,5 @@ public class HideAndSeek extends Infection {
 			});
 			addPagination(player, contents, clickableItems);
 		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-
-		}
 	}
 }

@@ -66,8 +66,4 @@ public class DeliveryWorldMenu extends MenuUtils implements InventoryProvider {
 		contents.set(new SlotPos(1, 4), ClickableItem.from(creative, e -> save.accept(WorldGroup.CREATIVE)));
 		contents.set(new SlotPos(1, 6), ClickableItem.empty(skyblock));
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

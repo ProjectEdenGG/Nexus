@@ -77,8 +77,4 @@ public class AchievementProvider implements InventoryProvider {
 			itemMeta.addItemFlags(itemFlag);
 		}
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

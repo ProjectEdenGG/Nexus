@@ -137,9 +137,6 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			addPagination(player, contents, items);
 		}
 
-		@Override
-		public void update(Player player, InventoryContents contents) {}
-
 	}
 
 	@EventHandler

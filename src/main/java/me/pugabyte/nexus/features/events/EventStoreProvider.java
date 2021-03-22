@@ -37,8 +37,4 @@ public class EventStoreProvider extends MenuUtils implements InventoryProvider {
 		contents.set(3, 6, ClickableItem.empty(songs));
 		contents.set(3, 8, ClickableItem.empty(store));
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

@@ -101,10 +101,6 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 		}
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
-
 
 	public void log(Player player, VPSSlot vpsSlot) {
 		List<String> columns = new ArrayList<>(Arrays.asList(

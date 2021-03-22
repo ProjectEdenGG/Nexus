@@ -52,9 +52,4 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 			}
 		}
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

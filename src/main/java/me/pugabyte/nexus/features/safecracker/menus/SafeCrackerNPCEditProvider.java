@@ -81,9 +81,4 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 		}));
 
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

@@ -625,10 +625,6 @@ public final class Thimble extends TeamlessMechanic {
 			player.closeInventory();
 		}
 
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-		}
 	}
 
 }

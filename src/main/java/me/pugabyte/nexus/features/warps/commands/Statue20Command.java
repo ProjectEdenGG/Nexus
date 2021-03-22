@@ -225,11 +225,6 @@ public class Statue20Command extends _WarpCommand implements Listener {
 			}));
 
 		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-
-		}
 	}
 
 }

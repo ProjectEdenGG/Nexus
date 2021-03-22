@@ -36,9 +36,4 @@ public class DeleteLoadoutMenu extends MenuUtils implements InventoryProvider {
 		}));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
-
 }

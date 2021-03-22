@@ -116,10 +116,6 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-	}
-
 	public void saveAndReturn(InventoryContents contents, int day, int initialDay) {
 		dailyReward.claim(day);
 		service.save(dailyReward);

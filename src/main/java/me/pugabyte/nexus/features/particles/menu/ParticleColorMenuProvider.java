@@ -135,9 +135,4 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 		}
 
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

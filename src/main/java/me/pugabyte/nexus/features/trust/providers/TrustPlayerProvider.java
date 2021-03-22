@@ -78,7 +78,4 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 						.open(player)));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {}
-
 }

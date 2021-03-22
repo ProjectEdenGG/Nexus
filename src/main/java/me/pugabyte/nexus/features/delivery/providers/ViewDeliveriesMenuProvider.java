@@ -85,8 +85,4 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 
 		addPagination(player, contents, items);
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

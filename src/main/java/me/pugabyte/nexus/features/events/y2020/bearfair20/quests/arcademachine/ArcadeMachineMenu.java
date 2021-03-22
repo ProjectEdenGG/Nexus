@@ -151,9 +151,4 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			}
 		}
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-
-	}
 }

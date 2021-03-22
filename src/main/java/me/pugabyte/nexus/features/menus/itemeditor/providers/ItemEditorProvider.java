@@ -262,11 +262,5 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 		return;
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {
-
-
-	}
-
 
 }

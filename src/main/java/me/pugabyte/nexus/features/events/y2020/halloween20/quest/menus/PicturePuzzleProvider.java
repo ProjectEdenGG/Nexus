@@ -102,9 +102,4 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 			}
 		});
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-
-	}
 }

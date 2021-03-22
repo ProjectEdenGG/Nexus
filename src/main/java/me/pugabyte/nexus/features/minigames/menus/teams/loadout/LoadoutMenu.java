@@ -113,8 +113,4 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 		formatInventoryContents(contents, team.getLoadout().getInventory());
 	}
 
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-	}
-
 }

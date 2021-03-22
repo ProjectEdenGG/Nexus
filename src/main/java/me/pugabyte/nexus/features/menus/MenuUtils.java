@@ -256,10 +256,6 @@ public abstract class MenuUtils {
 					e.getPlayer().closeInventory();
 			}));
 		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-		}
 	}
 
 	public void formatInventoryContents(InventoryContents contents, ItemStack[] inventory) {

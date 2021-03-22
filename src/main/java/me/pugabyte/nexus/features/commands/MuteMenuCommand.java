@@ -200,10 +200,6 @@ public class MuteMenuCommand extends CustomCommand {
 			}
 		}
 
-		@Override
-		public void update(Player player, InventoryContents contents) {
-		}
-
 		private int getViewableItems(Player player, PageType pageType) {
 			int count = 0;
 			if (pageType.equals(PageType.SOUNDS)) {

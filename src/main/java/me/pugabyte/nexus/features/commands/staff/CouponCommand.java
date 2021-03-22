@@ -317,10 +317,6 @@ public class CouponCommand extends CustomCommand implements Listener {
 			}
 
 		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
-		}
 	}
 
 }

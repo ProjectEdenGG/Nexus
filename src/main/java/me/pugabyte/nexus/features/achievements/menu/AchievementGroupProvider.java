@@ -48,8 +48,4 @@ public class AchievementGroupProvider implements InventoryProvider {
 			contents.add(ClickableItem.of(itemStack, e -> AchievementGroupProvider.open(player, group)));
 		}
 	}
-
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
 }

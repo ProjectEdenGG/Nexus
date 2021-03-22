@@ -120,9 +120,4 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 			});
 		});
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

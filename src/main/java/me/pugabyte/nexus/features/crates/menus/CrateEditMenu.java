@@ -3,7 +3,11 @@ package me.pugabyte.nexus.features.crates.menus;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
-import fr.minuskube.inv.content.*;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
+import fr.minuskube.inv.content.SlotIterator;
+import fr.minuskube.inv.content.SlotPos;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
@@ -11,7 +15,12 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -238,10 +247,6 @@ public class CrateEditMenu {
 			CrateLoot editing = ((CrateEditProvider) inv.getProvider()).editing;
 			if (editing == null) return;
 			save(event.getInventory(), editing);
-		}
-
-		@Override
-		public void update(Player player, InventoryContents inventoryContents) {
 		}
 	}
 

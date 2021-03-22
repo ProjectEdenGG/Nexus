@@ -154,9 +154,4 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 		KitManager.getConfig().set(id + "", kit);
 		KitManager.saveConfig();
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-
-	}
 }

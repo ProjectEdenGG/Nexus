@@ -153,10 +153,6 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 					StatisticsMenu.open(player, menu, page.next().getPage(), targetPlayer)));
 	}
 
-	@Override
-	public void update(Player player, InventoryContents contents) {
-	}
-
 	public ClickableItem[] getMobStats() {
 		List<EntityType> entities = Arrays.stream(EntityType.values()).filter(EntityType::isAlive).collect(Collectors.toList());
 		LinkedHashMap<ItemStack, Integer> stats = new LinkedHashMap<>();
