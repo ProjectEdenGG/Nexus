@@ -218,7 +218,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		public static void tryReload() {
 			for (ReloadCondition condition : ReloadCondition.values())
-				condition.getRunnable().run();
+				condition.run();
+		}
+
+		public void run() {
+			runnable.run();
 		}
 
 		private final Runnable runnable;

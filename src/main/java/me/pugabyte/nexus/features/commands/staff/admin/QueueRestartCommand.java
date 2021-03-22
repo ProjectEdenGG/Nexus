@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff;
+package me.pugabyte.nexus.features.commands.staff.admin;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
