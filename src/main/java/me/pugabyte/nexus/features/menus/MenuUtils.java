@@ -13,15 +13,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -31,6 +35,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.loreize;
 
@@ -53,6 +58,18 @@ public abstract class MenuUtils {
 	}
 
 	public void open(Player viewer, int page) {
+	}
+
+	protected boolean isRightClick(ItemClickData e) {
+		return isClickType(e, ClickType.RIGHT);
+	}
+
+	protected boolean isLeftClick(ItemClickData e) {
+		return isClickType(e, ClickType.LEFT);
+	}
+
+	protected boolean isClickType(ItemClickData e, ClickType clickType) {
+		return e.getEvent() instanceof InventoryClickEvent && ((InventoryClickEvent) e.getEvent()).getClick() == clickType;
 	}
 
 	protected ItemStack addGlowing(ItemStack itemStack) {
@@ -158,15 +175,30 @@ public abstract class MenuUtils {
 	}
 
 	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {
+		int perPage = 36;
 		Pagination page = contents.pagination();
-		addPagination(player, contents, items, e -> open(player, page.previous().getPage()), e -> open(player, page.next().getPage()));
+
+		if (page.getPage() > items.size() / perPage)
+			page.page(items.size() / perPage);
+		int curPage = page.getPage() + 1;
+
+		String[] lore = {"&f", "&7Right click to jump to a page"};
+		addPagination(contents, items, perPage,
+				ClickableItem.from(new ItemBuilder(Material.ARROW).amount(Math.max(curPage - 1, 1)).name("&fPrevious Page").lore(lore).build(), e -> {
+					if (isRightClick(e))
+						jumpToPage(player, page.getPage());
+					else
+						open(player, page.previous().getPage());
+				}),
+				ClickableItem.from(new ItemBuilder(Material.ARROW).amount(curPage + 1).name("&fNext Page").lore(lore).build(), e -> {
+					if (isRightClick(e))
+						jumpToPage(player, page.getPage());
+					else
+						open(player, page.next().getPage());
+				}));
 	}
 
-	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items, Consumer<ItemClickData> previous, Consumer<ItemClickData> next) {
-		addPagination(player, contents, items, 36, previous, next);
-	}
-
-	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items, int perPage, Consumer<ItemClickData> previous, Consumer<ItemClickData> next) {
+	protected void addPagination(InventoryContents contents, List<ClickableItem> items, int perPage, ClickableItem previous, ClickableItem next) {
 		Pagination page = contents.pagination();
 		page.setItemsPerPage(perPage);
 		page.setItems(items.toArray(new ClickableItem[0]));
@@ -174,11 +206,27 @@ public abstract class MenuUtils {
 			page.page(items.size() / perPage);
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
-		int curPage = page.getPage() + 1;
 		if (!page.isFirst())
-			contents.set(contents.inventory().getRows() - 1, 0, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, Math.max(curPage - 1, 1)), "&fPrevious Page"), previous));
+			contents.set(contents.inventory().getRows() - 1, 0, previous);
 		if (!page.isLast())
-			contents.set(contents.inventory().getRows() - 1, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW, curPage + 1), "&fNext Page"), next));
+			contents.set(contents.inventory().getRows() - 1, 8, next);
+	}
+
+	private void jumpToPage(Player player, int currentPage) {
+		Nexus.getSignMenuFactory()
+				.lines("", ARROWS, "Enter a", "page number")
+				.prefix(Shops.PREFIX)
+				.onError(() -> open(player, currentPage))
+				.response(lines -> {
+					if (lines[0].length() > 0) {
+						String input = lines[0].replaceAll("[^0-9.-]+", "");
+						if (!Utils.isInt(input))
+							throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a page number");
+						int pageNumber = Math.max(0, Integer.parseInt(input) - 1);
+						open(player, pageNumber);
+					} else
+						open(player, currentPage);
+				}).open(player);
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {

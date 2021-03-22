@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.homes;
 
-import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.homes.providers.EditHomeProvider;
 import me.pugabyte.nexus.features.homes.providers.EditHomesProvider;
@@ -12,7 +11,6 @@ import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -37,30 +35,15 @@ public class HomesMenu {
 	}
 
 	public static void edit(HomeOwner homeOwner, int page) {
-		SmartInventory.builder()
-				.provider(new EditHomesProvider(homeOwner))
-				.size((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 2), 9)
-				.title(StringUtils.colorize("&3Home Editor"))
-				.build()
-				.open(homeOwner.getPlayer(), page);
+		new EditHomesProvider(homeOwner).open(homeOwner.getPlayer(), page);
 	}
 
 	public static void edit(Home home) {
-		SmartInventory.builder()
-				.provider(new EditHomeProvider(home))
-				.size(6, 9)
-				.title(StringUtils.colorize((home.isLocked() ? "&4" : "&a") + StringUtils.camelCase(home.getName())))
-				.build()
-				.open(home.getOwner().getPlayer());
+		new EditHomeProvider(home).open(home.getOwner().getPlayer());
 	}
 
 	public static void setHome(HomeOwner homeOwner) {
-		SmartInventory.builder()
-				.provider(new SetHomeProvider(homeOwner))
-				.size(5, 9)
-				.title(StringUtils.colorize("&3Set a new home"))
-				.build()
-				.open(homeOwner.getPlayer());
+		new SetHomeProvider(homeOwner).open(homeOwner.getPlayer());
 	}
 
 	private static final String[] playerNameLines = {"", ARROWS, "Enter a", "player's name"};

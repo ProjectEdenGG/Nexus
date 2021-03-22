@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.homes.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.Pagination;
 import me.pugabyte.nexus.features.homes.HomesMenu;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.trust.providers.TrustProvider;
@@ -11,6 +11,7 @@ import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -30,6 +31,16 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 
 	private void refresh() {
 		HomesMenu.edit(homeOwner);
+	}
+
+	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.provider(this)
+				.size((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 2), 9)
+				.title(StringUtils.colorize("&3Home Editor"))
+				.build()
+				.open(homeOwner.getPlayer(), page);
 	}
 
 	@Override
@@ -129,8 +140,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			items.add(ClickableItem.from(item.build(), e -> HomesMenu.edit(home)));
 		});
 
-		Pagination page = contents.pagination();
-		addPagination(homeOwner.getPlayer(), contents, items, e -> HomesMenu.edit(homeOwner, page.previous().getPage()), e -> HomesMenu.edit(homeOwner, page.next().getPage()));
+		addPagination(homeOwner.getPlayer(), contents, items);
 	}
 
 }

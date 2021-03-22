@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.homes.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.homes.HomesMenu;
@@ -9,6 +10,7 @@ import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -26,6 +28,16 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 
 	private void refresh() {
 		HomesMenu.edit(home);
+	}
+
+	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.provider(this)
+				.size(6, 9)
+				.title(StringUtils.colorize((home.isLocked() ? "&4" : "&a") + StringUtils.camelCase(home.getName())))
+				.build()
+				.open(home.getOwner().getPlayer(), page);
 	}
 
 	@Override

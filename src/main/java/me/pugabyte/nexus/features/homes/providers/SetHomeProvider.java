@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.homes.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.homes.HomesFeature;
@@ -10,6 +11,7 @@ import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -27,6 +29,16 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 
 	public SetHomeProvider(HomeOwner homeOwner) {
 		this.homeOwner = homeOwner;
+	}
+
+	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.provider(this)
+				.size(5, 9)
+				.title(StringUtils.colorize("&3Set a new home"))
+				.build()
+				.open(homeOwner.getPlayer(), page);
 	}
 
 	@Override

@@ -21,8 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -83,7 +81,7 @@ public class EditProductProvider extends _ShopProvider {
 			));
 		} else {
 			contents.set(1, 3, ClickableItem.from(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
-				if (e.getEvent() instanceof InventoryClickEvent && ((InventoryClickEvent) e.getEvent()).getClick() == ClickType.RIGHT) {
+				if (isRightClick(e)) {
 					player.closeInventory();
 					ShopCommand.getInteractStockMap().put(player.getUniqueId(), product);
 					PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
