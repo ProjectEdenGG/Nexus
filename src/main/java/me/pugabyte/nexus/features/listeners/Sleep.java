@@ -41,7 +41,7 @@ public class Sleep implements Listener {
 		if (sleeping == 0)
 			return;
 
-		int needed = (int) Math.ceil(active / 2);
+		int needed = (int) Math.ceil(active / 2d);
 
 		if (sleeping != lastCalculatedSleeping || needed != lastCalculatedNeeded)
 			for (Player player : players)
