@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -61,5 +62,25 @@ public class TitleUtils {
 
 	public static void sendTitle(final Player player, final String title, final String subtitle, int fadeIn, int stay, int fadeOut) {
 		player.sendTitle(colorize(title), colorize(subtitle), fadeIn, stay, fadeOut);
+	}
+
+	// All Players
+
+	public static void sendTitleToAllPlayers(String title, String subtitle) {
+		sendTitleToAllPlayers(title, subtitle, 20, 200, 20);
+	}
+
+	public static void sendTitleToAllPlayers(String title, String subtitle, int stay) {
+		sendTitleToAllPlayers(title, subtitle, 20, stay, 20);
+	}
+
+	public static void sendTitleToAllPlayers(String title, String subtitle, int stay, int fade) {
+		sendTitleToAllPlayers(title, subtitle, fade, stay, fade);
+	}
+
+	public static void sendTitleToAllPlayers(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			sendTitle(player, title, subtitle, fadeIn, stay, fadeOut);
+		}
 	}
 }

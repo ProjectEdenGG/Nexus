@@ -15,6 +15,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	public TestCommand(CommandEvent event) {
 		super(event);
+	}
 
 //		Tasks.repeat(10, 5, () -> {
 //			List<Player> players = new ArrayList<>(controlMinecart);
@@ -29,7 +30,7 @@ public class TestCommand extends CustomCommand implements Listener {
 //				minecart.setVelocity((minecart.getVelocity().add(unitVector.multiply(0.2))).setY(0));
 //			}
 //		});
-	}
+//	}
 
 //	@Path("gravity fix")
 //	public void fixgravity() {
