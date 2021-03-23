@@ -354,7 +354,7 @@ public class Shop extends PlayerOwnedObject {
 			int maxStackSize = item.getMaxStackSize();
 
 			while (stock > 0) {
-				if (maxStacks > 0 && items.size() > maxStacks)
+				if (maxStacks > 0 && items.size() >= maxStacks)
 					break;
 
 				ItemStack next = new ItemStack(item.clone());
