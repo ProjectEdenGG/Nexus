@@ -7,6 +7,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.apache.commons.lang.math.NumberRange;
+import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -15,6 +16,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
@@ -35,8 +38,8 @@ public class Sleep implements Listener {
 			return;
 
 		List<Player> players = world.getPlayers();
-		long sleeping = players.stream().filter(Player::isSleeping).count();
-		long active = players.stream().filter(player -> !PlayerUtils.isVanished(player) && !AFK.get(player).isAfk()).count();
+		long sleeping = players.stream().filter(player -> player.isSleeping() && this.canSleep(player)).count();
+		long active = players.stream().filter(this::canSleep).count();
 
 		if (sleeping == 0)
 			return;
@@ -78,33 +81,50 @@ public class Sleep implements Listener {
 		}
 	}
 
+	protected boolean canSleep(Player player) {
+		return !PlayerUtils.isVanished(player) && !AFK.get(player).isAfk() && player.getGameMode() == GameMode.SURVIVAL;
+	}
+
+	protected void handle(World world) {
+		if (!handling)
+			Tasks.wait(1, () -> calculate(world));
+	}
+
+	protected void handle(Player player) {
+		handle(player.getWorld());
+	}
+
+	protected void handle(PlayerEvent event) {
+		handle(event.getPlayer());
+	}
+
 	@EventHandler
 	public void onBedEnter(PlayerBedEnterEvent event) {
-		if (!handling)
-			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
+		handle(event);
 	}
 
 	@EventHandler
 	public void onBedLeave(PlayerBedLeaveEvent event) {
-		if (!handling)
-			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
+		handle(event);
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		if (!handling)
-			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
+		handle(event);
 	}
 
 	@EventHandler
 	public void onPlayerVanish(VanishEvent event) {
-		if (!handling)
-			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
+		handle(event);
 	}
 
 	@EventHandler
 	public void onPlayerChangeWorlds(PlayerChangedWorldEvent event) {
-		if (!handling)
-			Tasks.wait(1, () -> calculate(event.getPlayer().getWorld()));
+		handle(event);
+	}
+
+	@EventHandler
+	public void onGameModeChange(PlayerGameModeChangeEvent event) {
+		handle(event);
 	}
 }

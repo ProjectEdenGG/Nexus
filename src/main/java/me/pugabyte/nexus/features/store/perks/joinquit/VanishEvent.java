@@ -1,17 +1,15 @@
 package me.pugabyte.nexus.features.store.perks.joinquit;
 
-import lombok.Getter;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class VanishEvent extends Event {
+public class VanishEvent extends PlayerEvent {
 	private static final HandlerList handlers = new HandlerList();
-	@Getter
-	private Player player;
 
 	public VanishEvent(Player player) {
-		this.player = player;
+		super(player);
 	}
 
 	public static HandlerList getHandlerList() {
@@ -19,6 +17,7 @@ public class VanishEvent extends Event {
 	}
 
 	@Override
+	@NotNull
 	public HandlerList getHandlers() {
 		return handlers;
 	}
