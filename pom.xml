@@ -122,6 +122,10 @@
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
         <repository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        </repository>
+        <repository>
             <id>citizens-repo</id>
             <url>https://repo.citizensnpcs.co/</url>
         </repository>
@@ -422,9 +426,9 @@
         </dependency>
         <!-- AnvilGUI -->
         <dependency>
-            <groupId>com.github.WesJD.AnvilGUI</groupId>
+            <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>1.5.0-SNAPSHOT</version>
         </dependency>
         <!-- HolographicDisplays -->
         <dependency>
