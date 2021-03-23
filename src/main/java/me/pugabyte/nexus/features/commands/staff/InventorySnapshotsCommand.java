@@ -25,6 +25,7 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -37,6 +38,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
@@ -92,6 +96,36 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	void takeSnapshot(@Arg("self") Player player) {
 		takeSnapshot(player, SnapshotReason.MANUAL);
 		send(PREFIX + "Snapshot created");
+	}
+
+	@Async
+	@Path("nearbyDeaths [page]")
+	void nearbyDeaths(@Arg("1") int page) {
+		Map<InventorySnapshot, Double> nearbyDeaths = new HashMap<>();
+		for (InventoryHistory history : service.<InventoryHistory>getAll()) {
+			history.janitor();
+			for (InventorySnapshot snapshot : history.getSnapshots()) {
+				if (snapshot.getReason() != SnapshotReason.DEATH)
+					continue;
+
+				if (snapshot.getLocation() == null || !snapshot.getLocation().getWorld().equals(world()))
+					continue;
+
+				nearbyDeaths.put(snapshot, snapshot.getLocation().distance(location()));
+			}
+			service.save(history);
+		}
+
+		BiFunction<InventorySnapshot, String, JsonBuilder> function = (snapshot, index) -> {
+			String name = getPlayer(snapshot.getUuid()).getName();
+			int distance = nearbyDeaths.get(snapshot).intValue();
+			String timeSince = timespanDiff(snapshot.getTimestamp());
+			return json("&3" + index + " &e" + name + " &7- " + distance + "m / " + timeSince + " ago")
+					.hover("&eClick to teleport")
+					.command("/tppos " + getShortLocationString(snapshot.getLocation()));
+		};
+
+		paginate(new ArrayList<>(Utils.sortByValue(nearbyDeaths).keySet()), function, "/inventorysnapshots nearbyDeaths", page);
 	}
 
 	@EventHandler

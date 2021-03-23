@@ -172,6 +172,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 		}
 
 		product.addStock(stockToAdd);
+		service.save(product.getShop());
 
 		send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
 				+ pretty(product.getItem()) + " (&e" + product.getStock() + " &3total). &eClick here to end")
