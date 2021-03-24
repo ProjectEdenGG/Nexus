@@ -106,14 +106,14 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			player().teleportAsync(modifier.update(), TeleportCause.COMMAND);
 		} else if (isOfflinePlayerArg(1)) {
 			OfflinePlayer player1 = offlinePlayerArg(1);
-			Location location1 = new Nerd(player1).getLocation();
+			Location location1 = Nerd.of(player1).getLocation();
 			if (isOfflinePlayerArg(2)) {
 				OfflinePlayer player2 = offlinePlayerArg(2);
 				if (player1.isOnline() && player1.getPlayer() != null) {
 					if (checkTeleportDisabled(player1.getPlayer(), player2))
 						return;
 
-					player1.getPlayer().teleportAsync(new Nerd(player2).getLocation(), TeleportCause.COMMAND);
+					player1.getPlayer().teleportAsync(Nerd.of(player2).getLocation(), TeleportCause.COMMAND);
 					send(PREFIX + "Poofing to &e" + player2.getName() + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);
@@ -134,8 +134,8 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		SettingService settingService = new SettingService();
 		Setting setting = settingService.get(to, "tpDisable");
 		if (setting.getBoolean()) {
-			Rank fromRank = new Nerd(from).getRank();
-			Rank toRank = new Nerd(to).getRank();
+			Rank fromRank = Nerd.of(from).getRank();
+			Rank toRank = Nerd.of(to).getRank();
 			if (fromRank.ordinal() > toRank.ordinal())
 				if (!(Arrays.asList(Rank.BUILDER, Rank.ARCHITECT).contains(toRank) && fromRank == Rank.MODERATOR))
 					return false;

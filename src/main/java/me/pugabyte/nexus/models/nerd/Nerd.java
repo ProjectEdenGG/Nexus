@@ -19,6 +19,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeC
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -61,16 +62,16 @@ public class Nerd extends PlayerOwnedObject {
 	private Set<String> aliases = new HashSet<>();
 	private Set<String> pastNames = new HashSet<>();
 
-	public Nerd(String name) {
-		this(PlayerUtils.getPlayer(name));
+	public static Nerd of(String name) {
+		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public Nerd(UUID uuid) {
-		this(PlayerUtils.getPlayer(uuid));
+	public static Nerd of(UUID uuid) {
+		return of(PlayerUtils.getPlayer(uuid));
 	}
 
-	public Nerd(OfflinePlayer player) {
-		fromPlayer(player);
+	public static Nerd of(OfflinePlayer player) {
+		return new NerdService().get(player);
 	}
 
 	public void fromPlayer(OfflinePlayer player) {
@@ -81,8 +82,12 @@ public class Nerd extends PlayerOwnedObject {
 			firstJoin = newFirstJoin;
 	}
 
+	public boolean hasNickname() {
+		return !isNullOrEmpty(nickname);
+	}
+
 	public String getNickname() {
-		if (!isNullOrEmpty(nickname))
+		if (hasNickname())
 			return nickname;
 		return name;
 	}
@@ -93,13 +98,23 @@ public class Nerd extends PlayerOwnedObject {
 	}
 
 	@ToString.Include
-	public String getRankFormat() {
+	public String getNameFormat() {
 		return getRank().getColor() + getName();
+	}
+
+	public String getNicknameFormat() {
+		if (isKoda())
+			return Koda.getNameFormat();
+		return getRank().getColor() + getNickname();
+	}
+
+	private boolean isKoda() {
+		return Dev.KODA.is(this);
 	}
 
 	@ToString.Include
 	public String getChatFormat() {
-		if ("KodaBear".equals(name))
+		if (isKoda())
 			return Koda.getNameFormat();
 
 		Rank rank = getRank();
@@ -113,7 +128,7 @@ public class Nerd extends PlayerOwnedObject {
 
 		if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmark)
 			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (rank.getColor() + getName()).trim())).trim();
+		return colorize((prefix.trim() + " " + (rank.getColor() + getNickname()).trim())).trim();
 	}
 
 	@ToString.Include

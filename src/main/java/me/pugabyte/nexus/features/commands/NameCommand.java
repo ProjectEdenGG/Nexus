@@ -11,7 +11,7 @@ public class NameCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<uuid>")
+	@Path("<partial/uuid/nickname>")
 	void uuid(Nerd nerd) {
 		send(json("&e" + nerd.getName())
 				.hover("&3Shift+Click to insert into your chat")

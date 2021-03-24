@@ -50,7 +50,9 @@ public class PlayerUtils {
 		PUGA("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
-		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12");
+		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
+		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
+		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94");
 
 		@Getter
 		private final UUID uuid;
@@ -70,6 +72,10 @@ public class PlayerUtils {
 			return PlayerUtils.getPlayer(uuid);
 		}
 
+		public Nerd getNerd() {
+			return Nerd.of(getOfflinePlayer());
+		}
+
 		public void send(String message) {
 			OfflinePlayer player = getOfflinePlayer();
 			if (player.isOnline() && player.getPlayer() != null)
@@ -84,6 +90,10 @@ public class PlayerUtils {
 
 		public boolean is(OfflinePlayer player) {
 			return uuid.equals(player.getUniqueId());
+		}
+
+		public boolean is(Nerd nerd) {
+			return uuid.equals(nerd.getUuid());
 		}
 	}
 

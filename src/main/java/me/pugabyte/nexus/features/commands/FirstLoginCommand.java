@@ -17,6 +17,6 @@ public class FirstLoginCommand extends CustomCommand {
 
 	@Path("[player]")
 	void firstJoin(@Arg("self") Nerd nerd) {
-		send("&e&l" + nerd.getName() + " &3first joined Bear Nation on &e" + StringUtils.longDateTimeFormat(nerd.getFirstJoin()) + " &3US Eastern Time");
+		send("&e&l" + nerd.getNickname() + " &3first joined Bear Nation on &e" + StringUtils.longDateTimeFormat(nerd.getFirstJoin()) + " &3US Eastern Time");
 	}
 }

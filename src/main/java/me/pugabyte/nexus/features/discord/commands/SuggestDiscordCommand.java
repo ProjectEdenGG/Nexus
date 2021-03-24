@@ -69,8 +69,11 @@ public class SuggestDiscordCommand extends Command {
 				Rank next = nerd.getRank().next();
 				embed.setColor(next.getDiscordColor());
 
+				String name = nerd.getName();
+				if (nerd.hasNickname())
+					name += " (" + nerd.getNickname() + ")";
 				event.reply(new MessageBuilder()
-						.setContent("@here " + event.getAuthor().getAsMention() + " is suggesting **" + nerd.getName() + "** for **" + camelCase(next.plain()) + "**")
+						.setContent("@here " + event.getAuthor().getAsMention() + " is suggesting **" + name + "** for **" + camelCase(next.plain()) + "**")
 						.setEmbed(embed.build())
 						.build());
 			} catch (Exception ex) {

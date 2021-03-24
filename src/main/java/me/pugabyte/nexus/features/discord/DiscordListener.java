@@ -70,7 +70,7 @@ public class DiscordListener extends ListenerAdapter {
 					if (user != null && !Strings.isNullOrEmpty(user.getUuid())) {
 						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
 
-						if (new Nerd(UUID.fromString(user.getUuid())).getRank() == Rank.VETERAN)
+						if (Nerd.of(UUID.fromString(user.getUuid())).getRank() == Rank.VETERAN)
 							Discord.addRole(event.getUser().getId(), Role.VETERAN);
 
 						if (Nexus.getPerms().playerHas(null, user.getOfflinePlayer(), "donated"))

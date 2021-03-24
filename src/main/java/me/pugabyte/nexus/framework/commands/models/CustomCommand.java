@@ -353,7 +353,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (!isPlayer())
 			return sender().getName();
 		else
-			return new Nerd(player()).getName();
+			return Nerd.of(player()).getName();
 	}
 
 	protected ConsoleCommandSender console() {
@@ -425,11 +425,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isStaff(Player player) {
-		return isPlayer(player) && new Nerd(player).getRank().isStaff();
+		return isPlayer(player) && Nerd.of(player).getRank().isStaff();
 	}
 
 	protected boolean isStaff(OfflinePlayer player) {
-		return isOfflinePlayer(player) && new Nerd(player).getRank().isStaff();
+		return isOfflinePlayer(player) && Nerd.of(player).getRank().isStaff();
 	}
 
 	protected boolean isSeniorStaff() {
@@ -437,11 +437,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSeniorStaff(Player player) {
-		return isPlayer(player) && new Nerd(player).getRank().isSeniorStaff();
+		return isPlayer(player) && Nerd.of(player).getRank().isSeniorStaff();
 	}
 
 	protected boolean isSeniorStaff(OfflinePlayer player) {
-		return isOfflinePlayer(player) && new Nerd(player).getRank().isSeniorStaff();
+		return isOfflinePlayer(player) && Nerd.of(player).getRank().isSeniorStaff();
 	}
 
 	protected boolean isAdmin() {
@@ -449,11 +449,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isAdmin(Player player) {
-		return isPlayer(player) && (new Nerd(player).getRank().equals(Rank.ADMIN) || new Nerd(player).getRank().equals(Rank.OWNER));
+		return isPlayer(player) && (Nerd.of(player).getRank().equals(Rank.ADMIN) || Nerd.of(player).getRank().equals(Rank.OWNER));
 	}
 
 	protected boolean isAdmin(OfflinePlayer player) {
-		return isOfflinePlayer(player) && (new Nerd(player).getRank().equals(Rank.ADMIN) || new Nerd(player).getRank().equals(Rank.OWNER));
+		return isOfflinePlayer(player) && (Nerd.of(player).getRank().equals(Rank.ADMIN) || Nerd.of(player).getRank().equals(Rank.OWNER));
 	}
 
 	protected boolean isNullOrEmpty(String string) {
@@ -713,7 +713,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
-				.map(player -> new Nerd(player).getName())
+				.map(player -> Nerd.of(player).getNickname())
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(toList());
 	}

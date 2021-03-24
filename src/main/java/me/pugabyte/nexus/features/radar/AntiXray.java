@@ -47,7 +47,7 @@ public class AntiXray implements Listener {
 		Player player = event.getPlayer();
 		if (WorldGroup.get(player) != WorldGroup.SURVIVAL) return;
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return;
-		Nerd nerd = new Nerd(player);
+		Nerd nerd = Nerd.of(player);
 		if (nerd.getRank().isStaff()) return;
 
 		Material ore = event.getBlock().getType();

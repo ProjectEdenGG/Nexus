@@ -60,7 +60,7 @@ public class Ticket {
 	}
 	
 	public boolean canBeSeenBy(Player player) {
-		return new Nerd(player).getRank().isMod() || ownsTicket(player);
+		return Nerd.of(player).getRank().isMod() || ownsTicket(player);
 	}
 
 	public void setOpen(boolean open) {

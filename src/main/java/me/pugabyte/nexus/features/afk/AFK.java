@@ -85,7 +85,7 @@ public class AFK extends Feature {
 			int result = 0;
 			Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
 			for (Player player : playerList) {
-				Nerd nerd = new Nerd(player);
+				Nerd nerd = Nerd.of(player);
 				if (nerd.getRank().isStaff())
 					if (!get(player).isAfk())
 						++result;

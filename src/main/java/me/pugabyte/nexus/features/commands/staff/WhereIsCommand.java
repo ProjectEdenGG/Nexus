@@ -122,7 +122,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void glow(Player glower, Player viewer) {
-		GlowAPI.setGlowing(glower, new Nerd(glower).getRank().getGlowColor(), viewer);
+		GlowAPI.setGlowing(glower, Nerd.of(glower).getRank().getGlowColor(), viewer);
 	}
 
 	private static void unglow(Player glower, Player viewer) {

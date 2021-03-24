@@ -33,7 +33,8 @@ public class NerdService extends MongoService {
 
 	public List<Nerd> find(String partialName) {
 		Query<Nerd> query = database.createQuery(Nerd.class);
-		query.and(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)));
+		query.or(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)))
+				.or(query.criteria("nickname").startsWithIgnoreCase(partialName));
 		if (query.count() > 50)
 			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + query.count() + ")");
 

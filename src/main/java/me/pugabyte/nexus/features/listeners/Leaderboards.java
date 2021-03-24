@@ -153,10 +153,10 @@ public class Leaderboards implements Listener {
 				Tasks.sync(() -> {
 					AtomicInteger i = new AtomicInteger(0);
 					top.entrySet().iterator().forEachRemaining(entry -> {
-						Nerd nerd = new Nerd(entry.getKey());
+						Nerd nerd = Nerd.of(entry.getKey());
 						CitizensUtils.updateSkin(ids[i.get()], nerd.getOfflinePlayer().getName());
 						CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
-						runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getRankFormat())));
+						runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getNameFormat())));
 					});
 				});
 			});

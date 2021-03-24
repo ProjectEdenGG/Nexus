@@ -102,7 +102,7 @@ public enum Rank {
 
 	public List<Nerd> getOnlineNerds() {
 		return Bukkit.getOnlinePlayers().stream()
-				.filter(player -> new Nerd(player).getRank() == this)
+				.filter(player -> Nerd.of(player).getRank() == this)
 				.sorted(Comparator.comparing(Player::getName))
 				.map(player -> (Nerd) new NerdService().get(player))
 				.collect(Collectors.toList());
@@ -114,7 +114,7 @@ public enum Rank {
 
 	public static List<Nerd> getOnlineStaff() {
 		return Bukkit.getOnlinePlayers().stream()
-				.filter(player -> new Nerd(player).getRank().isStaff() && new Nerd(player).getRank().isActive())
+				.filter(player -> Nerd.of(player).getRank().isStaff() && Nerd.of(player).getRank().isActive())
 				.sorted(Comparator.comparing(Player::getName))
 				.map(player -> (Nerd) new NerdService().get(player))
 				.collect(Collectors.toList());
@@ -126,7 +126,7 @@ public enum Rank {
 
 	public static List<Nerd> getOnlineMods() {
 		return Bukkit.getOnlinePlayers().stream()
-				.filter(player -> new Nerd(player).getRank().isMod() && new Nerd(player).getRank().isActive())
+				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
 				.sorted(Comparator.comparing(Player::getName))
 				.map(player -> (Nerd) new NerdService().get(player))
 				.collect(Collectors.toList());

@@ -36,11 +36,11 @@ public class BirthdaysCommand extends CustomCommand {
 		line();
 		for (int i = 0; i < Math.min(amount, nerds.size()); i++) {
 			if (LocalDate.now().getDayOfYear() == getNextBirthday(nerds.get(i)).getDayOfYear())
-				send("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- Today");
+				send("&3" + (i + 1) + " &e" + nerds.get(i).getNickname() + " &7- Today");
 			else {
 				long until = ChronoUnit.DAYS.between(LocalDate.now(), getNextBirthday(nerds.get(i)));
 				send(json()
-						.next("&3" + (i + 1) + " &e" + nerds.get(i).getName() + " &7- " + until + plural(" day", until))
+						.next("&3" + (i + 1) + " &e" + nerds.get(i).getNickname() + " &7- " + until + plural(" day", until))
 						.hover(nerds.get(i).getBirthday().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))));
 			}
 		}

@@ -36,7 +36,7 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 
 	@Path("<player>")
 	void commandWatch(Player target) {
-		if (!isAdmin() && !Rank.GUEST.equals(new Nerd(target).getRank()))
+		if (!isAdmin() && !Rank.GUEST.equals(Nerd.of(target).getRank()))
 			error("You can only command watch guests");
 
 		watchMap.putIfAbsent(target, new ArrayList<>());

@@ -47,7 +47,7 @@ public class Home extends PlayerOwnedObject {
 		this.uuid = uuid;
 		this.name = name;
 		this.location = location;
-		this.locked = getOwner().isAutoLock() || new Nerd(getOfflinePlayer()).getRank().isStaff();
+		this.locked = getOwner().isAutoLock() || Nerd.of(getOfflinePlayer()).getRank().isStaff();
 		this.item = item;
 
 		validateName(name);

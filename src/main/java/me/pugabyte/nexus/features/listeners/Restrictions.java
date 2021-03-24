@@ -83,7 +83,7 @@ public class Restrictions implements Listener {
 		if (event.getFrom().getWorld().getEnvironment() == Environment.THE_END || event.getTo().getWorld().getEnvironment() != Environment.THE_END)
 			return;
 
-		Nerd nerd = new Nerd(event.getPlayer());
+		Nerd nerd = Nerd.of(event.getPlayer());
 		if (nerd.getRank().gte(Rank.TRUSTED))
 			return;
 
@@ -109,7 +109,7 @@ public class Restrictions implements Listener {
 	// TODO This should be handled by WE but its broken
 	@EventHandler
 	public void onWorldEditCommand(PlayerCommandPreprocessEvent event) {
-		if (!Arrays.asList(Rank.GUEST, Rank.MEMBER).contains(new Nerd(event.getPlayer()).getRank()))
+		if (!Arrays.asList(Rank.GUEST, Rank.MEMBER).contains(Nerd.of(event.getPlayer()).getRank()))
 			return;
 
 		String command = event.getMessage().toLowerCase();

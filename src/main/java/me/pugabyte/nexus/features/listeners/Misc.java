@@ -246,7 +246,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
-		Nerd nerd = new Nerd(event.getUniqueId());
+		Nerd nerd = Nerd.of(event.getUniqueId());
 		World world = nerd.getDimension();
 		if (world == null) return;
 

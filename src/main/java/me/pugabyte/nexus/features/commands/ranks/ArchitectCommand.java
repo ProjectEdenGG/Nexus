@@ -29,9 +29,8 @@ public class ArchitectCommand extends CustomCommand {
 	void list() {
 		line();
 		send("&3All current " + Rank.ARCHITECT.getColor() + "Architects &3and the date they were promoted:");
-		Rank.ARCHITECT.getNerds().forEach(nerd -> {
-			send(Rank.ARCHITECT.getColor() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
-		});
+		Rank.ARCHITECT.getNerds().forEach(nerd ->
+				send(nerd.getNicknameFormat() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate())));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

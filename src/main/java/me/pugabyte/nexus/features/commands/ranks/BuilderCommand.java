@@ -35,9 +35,8 @@ public class BuilderCommand extends CustomCommand {
 	void list() {
 		line();
 		send("&3All current " + Rank.BUILDER.getColor() + "Builders &3and the date they were promoted:");
-		Rank.BUILDER.getNerds().forEach(nerd -> {
-			send(Rank.BUILDER.getColor() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
-		});
+		Rank.BUILDER.getNerds().forEach(nerd ->
+				send(nerd.getNicknameFormat() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate())));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

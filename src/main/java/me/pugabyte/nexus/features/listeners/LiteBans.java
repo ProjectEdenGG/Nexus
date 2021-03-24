@@ -80,7 +80,7 @@ public class LiteBans implements Listener {
 				}
 
 				Tasks.waitAsync(10, () -> {
-					Nerd nerd = new Nerd(player);
+					Nerd nerd = Nerd.of(player);
 					Hours hours = new HoursService().get(nerd);
 					if (hours.getTotal() >= Time.HOUR.get() / 20) {
 						DiscordUser discordUser = new DiscordService().get(executor);

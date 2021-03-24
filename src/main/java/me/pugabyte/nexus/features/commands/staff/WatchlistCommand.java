@@ -123,7 +123,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 
 			WatchlistedService service = new WatchlistedService();
 
-			if (new Nerd(player).getRank().isStaff())
+			if (Nerd.of(player).getRank().isStaff())
 				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 					Watchlisted watchlisted = service.get(onlinePlayer);
 					if (watchlisted.isActive())

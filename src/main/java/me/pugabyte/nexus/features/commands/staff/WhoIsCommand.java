@@ -57,6 +57,7 @@ public class WhoIsCommand extends CustomCommand {
 			alts = liteBansService.getAlts(nerd.getUuid().toString());
 		} catch (Exception ignore) {}
 
+		String nickname = nerd.getNickname();
 		Hours hours = hoursService.get(nerd);
 		String rank = nerd.getRank().withColor();
 		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());
@@ -80,9 +81,13 @@ public class WhoIsCommand extends CustomCommand {
 		Set<String> pastNames = nerd.getPastNames();
 		Godmode godmode = new GodmodeService().get(nerd);
 
-		JsonBuilder json = json()
-				.newline().next("&3Rank: &e" + rank)
-				.newline().next("&3First Join: &e" + firstJoin);
+		JsonBuilder json = json();
+
+		if (nerd.hasNickname())
+			json.newline().next("&3Nickname: &e" + nickname);
+
+		json.newline().next("&3Rank: &e" + rank);
+		json.newline().next("&3First Join: &e" + firstJoin);
 
 		if (lastJoinQuitDate != null)
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate);

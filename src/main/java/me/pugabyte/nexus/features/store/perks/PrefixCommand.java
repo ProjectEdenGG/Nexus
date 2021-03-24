@@ -87,7 +87,7 @@ public class PrefixCommand extends CustomCommand {
 		String prefix = nerd.getPrefix();
 
 		if (isNullOrEmpty(prefix))
-			prefix = new Nerd(player()).getRank().getPrefix();
+			prefix = Nerd.of(player()).getRank().getPrefix();
 
 		if (isNullOrEmpty(prefix))
 			error("You do not have a prefix");

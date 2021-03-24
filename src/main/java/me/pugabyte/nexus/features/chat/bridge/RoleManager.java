@@ -5,20 +5,22 @@ import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.OfflinePlayer;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class RoleManager {
-	public static final List<String> ignore = Arrays.asList(
-			"Pugabyte",
-			"WakkaFlocka",
-			"Filid",
-			"Blast",
-			"KodaBear"
+	public static final List<UUID> ignore = Arrays.asList(
+			Dev.PUGA.getUuid(),
+			Dev.WAKKA.getUuid(),
+			Dev.FILID.getUuid(),
+			Dev.BLAST.getUuid(),
+			Dev.KODA.getUuid()
 	);
 
 	public static void update(DiscordUser user) {
@@ -28,11 +30,11 @@ public class RoleManager {
 		DiscordService service = new DiscordService();
 		OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
-		String username = new Nerd(player).getNickname();
-		if (ignore.contains(username))
+		if (ignore.contains(player.getUniqueId()))
 			return;
 
-		Color roleColor = new Nerd(player).getRank().getDiscordColor();
+		String username = Nerd.of(player).getNickname();
+		Color roleColor = Nerd.of(player).getRank().getDiscordColor();
 
 		if (roleColor == null) {
 			user.setRoleId(null);
@@ -51,7 +53,7 @@ public class RoleManager {
 			else
 				Discord.getGuild().createRole()
 						.setName(username)
-						.setColor(new Nerd(player).getRank().getDiscordColor())
+						.setColor(Nerd.of(player).getRank().getDiscordColor())
 						.setMentionable(true)
 						.queue();
 		} else {

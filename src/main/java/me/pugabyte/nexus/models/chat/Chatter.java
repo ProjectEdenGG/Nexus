@@ -53,11 +53,11 @@ public class Chatter extends PlayerOwnedObject {
 
 	public void setActiveChannel(Channel channel) {
 		if (channel == null)
-			new Nerd(getOfflinePlayer()).send(PREFIX + "You are no longer speaking in a channel");
+			Nerd.of(getOfflinePlayer()).send(PREFIX + "You are no longer speaking in a channel");
 		else {
 			if (channel instanceof PublicChannel)
 				join((PublicChannel) channel);
-			new Nerd(getOfflinePlayer()).send(PREFIX + channel.getAssignMessage(this));
+			Nerd.of(getOfflinePlayer()).send(PREFIX + channel.getAssignMessage(this));
 		}
 		this.activeChannel = channel;
 	}
@@ -70,7 +70,7 @@ public class Chatter extends PlayerOwnedObject {
 			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
 
 		if (channel.getRank() != null)
-			return new Nerd(getOfflinePlayer()).getRank().gte(channel.getRank()) && hasPerm;
+			return Nerd.of(getOfflinePlayer()).getRank().gte(channel.getRank()) && hasPerm;
 		return hasPerm;
 	}
 

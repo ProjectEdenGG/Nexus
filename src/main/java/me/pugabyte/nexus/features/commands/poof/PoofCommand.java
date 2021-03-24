@@ -53,7 +53,7 @@ public class PoofCommand extends CustomCommand {
 		if (isSelf(target))
 			error("You cannot poof to yourself");
 
-		Location targetLocation = new Nerd(target).getLocation();
+		Location targetLocation = Nerd.of(target).getLocation();
 		WorldGroup targetWorldGroup = WorldGroup.get(targetLocation);
 
 		if (!isStaff() && targetWorldGroup.equals(WorldGroup.MINIGAMES))

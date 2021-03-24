@@ -74,7 +74,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	public void format_AutoLock(InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.REDSTONE);
 
-		if (new Nerd(homeOwner.getOfflinePlayer()).getRank().isStaff()) {
+		if (Nerd.of(homeOwner.getOfflinePlayer()).getRank().isStaff()) {
 			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked||&f||&cRequired for staff members").glow();
 			contents.set(0, 3, ClickableItem.empty(item.build()));
 		} else {

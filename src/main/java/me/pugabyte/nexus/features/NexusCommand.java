@@ -920,7 +920,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@ConverterFor(StaffMember.class)
 	StaffMember convertToStaffMember(String value) {
 		OfflinePlayer player = convertToOfflinePlayer(value);
-		if (!new Nerd(player).getRank().isStaff())
+		if (!Nerd.of(player).getRank().isStaff())
 			error(player.getName() + " is not staff");
 		return new StaffMember(player.getUniqueId());
 	}
@@ -928,7 +928,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@TabCompleterFor(StaffMember.class)
 	List<String> tabCompleteStaffMember(String filter) {
 		return new HoursService().getActivePlayers().stream()
-				.filter(player -> new Nerd(player).getRank().isStaff())
+				.filter(player -> Nerd.of(player).getRank().isStaff())
 				.map(OfflinePlayer::getName)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());

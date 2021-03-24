@@ -31,9 +31,8 @@ public class OperatorCommand extends CustomCommand {
 	void list() {
 		line();
 		send("&3All current " + Rank.OPERATOR.getColor() + "Operators &3and the date they were promoted:");
-		Rank.OPERATOR.getNerds().forEach(nerd -> {
-			send(Rank.OPERATOR.getColor() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
-		});
+		Rank.OPERATOR.getNerds().forEach(nerd ->
+				send(nerd.getNicknameFormat() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate())));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

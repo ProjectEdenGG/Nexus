@@ -140,7 +140,7 @@ public class TicketsCommand extends CustomCommand {
 		}
 
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
-				json("&3" + index + " &e" + new Nerd(uuid).getRankFormat() + " &7- " + closers.get(uuid));
+				json("&3" + index + " &e" + Nerd.of(uuid).getNameFormat() + " &7- " + closers.get(uuid));
 		paginate(new ArrayList<>(Utils.sortByValueReverse(closers).keySet()), formatter, "/tickets stats closed", page);
 	}
 

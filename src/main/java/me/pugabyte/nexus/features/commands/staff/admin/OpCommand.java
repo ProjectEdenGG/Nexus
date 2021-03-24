@@ -23,7 +23,7 @@ public class OpCommand extends CustomCommand {
 	@Path("<player>")
 	public void op(StaffMember staffMember) {
 		OfflinePlayer player = staffMember.getOfflinePlayer();
-		Nerd nerd = new Nerd(player);
+		Nerd nerd = Nerd.of(player);
 
 		String oper = name();
 		String opee = nerd.getName();

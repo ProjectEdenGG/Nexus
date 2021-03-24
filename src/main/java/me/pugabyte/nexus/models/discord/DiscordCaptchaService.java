@@ -1,40 +1,23 @@
 package me.pugabyte.nexus.models.discord;
 
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.geoip.GeoIP;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(DiscordCaptcha.class)
 public class DiscordCaptchaService extends MongoService {
+	private final static Map<UUID, DiscordCaptcha> cache = new HashMap<>();
 
-	@Deprecated
-	public Map<UUID, GeoIP> getCache() {
-		return null;
+	public Map<UUID, DiscordCaptcha> getCache() {
+		return cache;
 	}
 
-	@Override
-	@NotNull
-	@Deprecated // Use get()
-	public <T> T get(UUID uuid) {
-		throw new UnsupportedOperationException("Use get()");
-	}
-
-	public static DiscordCaptcha captcha;
-
-	// Just a single object, tying it all to Koda's account
 	public DiscordCaptcha get() {
-		if (captcha == null) {
-			captcha = database.createQuery(DiscordCaptcha.class).first();
-			if (captcha == null)
-				captcha = new DiscordCaptcha(PlayerUtils.getPlayer("KodaBear").getUniqueId());
-		}
-
-		return captcha;
+		return super.get(Nexus.getUUID0());
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class JoinQuit extends Feature implements Listener {
 		final String finalMessage = message;
 
 		if (player.isOnline()) {
-			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + new Nerd(player).getName() + "&5");
+			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + Nerd.of(player).getNickname() + "&5");
 
 			Bukkit.getOnlinePlayers().forEach(_player -> {
 				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT))
@@ -84,7 +84,7 @@ public class JoinQuit extends Feature implements Listener {
 				DiscordUser user = new DiscordService().get(player);
 				RoleManager.update(user);
 
-				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + new Nerd(player).getName() + "**"));
+				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nerd.of(player).getNickname() + "**"));
 				Discord.send(":arrow_right: " + discord, Channel.BRIDGE);
 			});
 		}
@@ -104,7 +104,7 @@ public class JoinQuit extends Feature implements Listener {
 
 		final String finalMessage = message;
 
-		final String ingame = "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + new Nerd(player).getName() + "&5");
+		final String ingame = "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + Nerd.of(player).getNickname() + "&5");
 
 		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
@@ -120,7 +120,7 @@ public class JoinQuit extends Feature implements Listener {
 			DiscordUser user = new DiscordService().get(player);
 			RoleManager.update(user);
 
-			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + new Nerd(player).getName() + "**"));
+			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nerd.of(player).getNickname() + "**"));
 			Discord.send("<:red_arrow_left:331808021267218432> " + discord, Channel.BRIDGE);
 		});
 	}
@@ -134,8 +134,8 @@ public class JoinQuit extends Feature implements Listener {
 		event.setJoinMessage(null);
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
-			Koda.replyIngame("&lWelcome to Bear Nation, " + new Nerd(player).getName() + "!");
-			Koda.replyDiscord("**Welcome to Bear Nation, " + discordize(new Nerd(player).getName()) + "!**");
+			Koda.replyIngame("&lWelcome to Bear Nation, " + Nerd.of(player).getNickname() + "!");
+			Koda.replyDiscord("**Welcome to Bear Nation, " + discordize(Nerd.of(player).getNickname()) + "!**");
 		}
 
 		if (!PlayerUtils.isVanished(player))

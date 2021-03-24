@@ -17,6 +17,6 @@ public class LastLogoutCommand extends CustomCommand {
 
 	@Path("[player]")
 	void lastLogout(@Arg("self") Nerd nerd) {
-		send("&e&l" + nerd.getName() + " &3last logged out &e" + StringUtils.timespanDiff(nerd.getLastQuit()) + " &3ago");
+		send("&e&l" + nerd.getNickname() + " &3last logged out &e" + StringUtils.timespanDiff(nerd.getLastQuit()) + " &3ago");
 	}
 }

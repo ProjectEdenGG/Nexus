@@ -36,9 +36,8 @@ public class ModeratorCommand extends CustomCommand {
 	void list() {
 		line();
 		send("&3All current " + Rank.MODERATOR.getColor() + "Moderators &3and the date they were promoted:");
-		Rank.MODERATOR.getNerds().forEach(nerd -> {
-			send(Rank.MODERATOR.getColor() + nerd.getName() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate()));
-		});
+		Rank.MODERATOR.getNerds().forEach(nerd ->
+				send(nerd.getNicknameFormat() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate())));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

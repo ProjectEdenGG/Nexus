@@ -100,7 +100,7 @@ public class Votes extends Feature implements Listener {
 
 		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
 		if (user != null && user.getMutualGuilds().size() > 0) {
-			String username = new Nerd(vote.getUuid()).getName();
+			String username = Nerd.of(vote.getUuid()).getName();
 			Nexus.log("[Votes] Sending vote reminder to " + username);
 			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(createEmbed(username));
 			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
@@ -174,7 +174,7 @@ public class Votes extends Feature implements Listener {
 				for (TopVoter topVoter : topVoters) {
 					if (++index <= 3) {
 						String name = "Unknown";
-						try { name = new Nerd(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
+						try { name = Nerd.of(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
 
 						writer.write("<div class=\"col-sm-4\">" + System.lineSeparator());
 						writer.write("  <h3 style=\"text-align: center;\">#" + index + "</h3>" + System.lineSeparator());
@@ -196,7 +196,7 @@ public class Votes extends Feature implements Listener {
 						if (index < 54) {
 							String name = "Unknown";
 							try {
-								name = new Nerd(topVoter.getUuid()).getName();
+								name = Nerd.of(topVoter.getUuid()).getName();
 							} catch (PlayerNotFoundException ignore) {}
 
 							writer.write("  <tr>" + System.lineSeparator());
@@ -221,7 +221,7 @@ public class Votes extends Feature implements Listener {
 					if (++index <= 50) {
 						String name = "Unknown";
 						try {
-							name = new Nerd(topVoter.getUuid()).getName();
+							name = Nerd.of(topVoter.getUuid()).getName();
 						} catch (PlayerNotFoundException ignore) {}
 
 						writer.write("  <tr>" + System.lineSeparator());

@@ -43,6 +43,13 @@ public class Tasks {
 	public static int repeat(long startDelay, long interval, Runnable runnable) {
 		if (instance.isEnabled())
 			return scheduler.scheduleSyncRepeatingTask(instance, runnable, startDelay, interval);
+//		try {
+//			throw new InvalidInputException("");
+//		} catch (Exception ex) {
+//			String fileName = ex.getStackTrace()[1].getFileName();
+//			int lineNumber = ex.getStackTrace()[1].getLineNumber();
+//			String key = fileName + ":" + lineNumber;
+//		}
 		Nexus.log("Attempted to register repeat task while disabled");
 		return -1;
 	}

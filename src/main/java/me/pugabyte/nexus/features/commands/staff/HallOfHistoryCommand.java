@@ -250,7 +250,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Staff times");
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			String time = Timespan.of(staffTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
-			return json("&3" + index + " &e" + time + " &7- " + new Nerd(uuid).getRankFormat());
+			return json("&3" + index + " &e" + time + " &7- " + Nerd.of(uuid).getNameFormat());
 		};
 
 		paginate(new ArrayList<>(Utils.sortByValueReverse(staffTimeMap).keySet()), formatter, "/hoh staffTime", page);
@@ -281,7 +281,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Promotion times  |  Average: " + StringUtils.getNf().format(average.orElse(0)) + " days");
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			String time = Timespan.of(promotionTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
-			return json("&3" + index + " &e" + new Nerd(uuid).getName() + " &7- " + time);
+			return json("&3" + index + " &e" + Nerd.of(uuid).getNickname() + " &7- " + time);
 		};
 
 		paginate(new ArrayList<>(Utils.sortByValue(promotionTimeMap).keySet()), formatter, "/hoh promotionTimes", page);

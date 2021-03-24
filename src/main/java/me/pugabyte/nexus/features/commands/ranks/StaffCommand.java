@@ -26,7 +26,7 @@ public class StaffCommand extends CustomCommand {
 		Collections.reverse(ranks);
 		ranks.forEach(rank -> send(rank.withColor() + "&f:&e " + rank.getNerds().stream()
 				.sorted(Comparator.comparing(Nerd::getName, String.CASE_INSENSITIVE_ORDER))
-				.map(Nerd::getName)
+				.map(Nerd::getNickname)
 				.filter(name -> !name.equals("KodaBear"))
 				.collect(Collectors.joining("&f, &e"))));
 		line();
