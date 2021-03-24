@@ -48,7 +48,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 		this.page = page;
 		this.shopGroup = ShopGroup.get(viewer);
 		try {
-			if (!(this instanceof BrowseMarketProvider) && viewer.getWorld().getName().startsWith("resource"))
+			if (!(this instanceof BrowseMarketProvider || this instanceof SearchProductsProvider) && viewer.getWorld().getName().startsWith("resource"))
 				throw new InvalidInputException("You cannot use player shops while in the resource world");
 			if ((this instanceof YourShopProvider) && !viewer.hasPermission("shops.edit"))
 				throw new InvalidInputException("Shops is currently in beta testing, only Trusted and above can create shops");

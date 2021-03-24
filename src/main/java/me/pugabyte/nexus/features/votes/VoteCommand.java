@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.votes;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -13,27 +12,20 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.vote.TopVoter;
+import me.pugabyte.nexus.models.setting.Setting;
+import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.vote.Vote;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static me.pugabyte.nexus.utils.StringUtils.progressBar;
@@ -86,6 +78,22 @@ public class VoteCommand extends CustomCommand {
 		}
 	}
 
+	@Path("reminders [enable]")
+	void reminders(Boolean enable) {
+		SettingService settingService = new SettingService();
+		Setting reminders = settingService.get(uuid().toString(), "vote-reminders");
+		if (enable == null)
+			if (reminders.getValue() != null)
+				enable = !reminders.getBoolean();
+			else
+				enable = false;
+
+		reminders.setBoolean(enable);
+		settingService.save(reminders);
+
+		send(PREFIX + "Discord voting reminders " + (enable ? "&aenabled" : "&cdisabled"));
+	}
+
 	@Path("points store [page]")
 	void run(@Arg("1") int page) {
 		VPS.open(player(), page);
@@ -136,48 +144,6 @@ public class VoteCommand extends CustomCommand {
 	void write() {
 		Votes.write();
 		send(PREFIX + "Done");
-	}
-
-	@Path("calcFebKeys [dryRun]")
-	@Permission("group.admin")
-	void calcFebKeys(@Arg("true") boolean dryRun) {
-		Map<UUID, Integer> voteKey = new HashMap<>();
-		List<TopVoter> topVoters = new VoteService().getTopVoters(Month.FEBRUARY);
-		for (TopVoter topVoter : topVoters) {
-			if (topVoter.getCount() < 50) continue;
-			voteKey.put(UUID.fromString(topVoter.getUuid()), 0);
-		}
-		for (TopVoter topVoter : topVoters) {
-			if (topVoters.indexOf(topVoter) >= (((double) voteKey.size()) * .33)) continue;
-			voteKey.put(UUID.fromString(topVoter.getUuid()), 1);
-		}
-		for (TopVoter topVoter : topVoters) {
-			if (topVoters.indexOf(topVoter) >= (((double) voteKey.size()) * .1)) continue;
-			voteKey.put(UUID.fromString(topVoter.getUuid()), 2);
-		}
-
-		StringBuilder paste = new StringBuilder();
-
-		Utils.sortByValue(voteKey).forEach((uuid, amount) -> {
-			if (amount < 1)
-				return;
-
-			OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-			paste.append(player.getName()).append(": ").append(amount).append(System.lineSeparator());
-
-			ItemStack key = CrateType.FEB_VOTE_REWARD.getKey();
-			key.setAmount(amount);
-			if (!dryRun) {
-				PlayerUtils.giveItemAndDeliverExcess(player, key, WorldGroup.SURVIVAL);
-				if (player.getPlayer() != null)
-					send(player.getPlayer(), PREFIX + "You have been given &e" + amount + " February Vote Keys &3for the server monthly reward");
-			} else {
-				ItemBuilder.addLore(key, player.getName() + "'s keys");
-				PlayerUtils.giveItem(player(), key);
-			}
-		});
-
-		send(json(PREFIX + "February Vote Keys were given. &eClick here to view the amounts.").url(StringUtils.paste(paste.toString())).hover("&eOpens paste link"));
 	}
 
 	@ConverterFor(Voter.class)
