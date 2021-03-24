@@ -84,7 +84,7 @@ public class OnlineCommand extends CustomCommand {
 		else
 			builder.next("&f, ").group();
 
-		builder.next(modifiers + nerd.getRank().getColor() + nerd.getName())
+		builder.next(modifiers + nerd.getNicknameFormat())
 				.command("/quickaction " + nerd.getName())
 				.hover(getInfo(nerd, modifiers))
 				.group();

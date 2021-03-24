@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
@@ -91,11 +92,11 @@ public class BoopCommand extends CustomCommand {
 			message = " &3and said &e" + message;
 
 		if (anon) {
-			toBooper += "&3You anonymously booped &e" + booped.getName() + message;
+			toBooper += "&3You anonymously booped &e" + Nerd.of(booped).getNickname() + message;
 			toBooped += "&eSomebody &3booped you" + message;
 		} else {
-			toBooper += "&3You booped &e" + booped.getName() + message;
-			toBooped += "&e" + name() + " &3booped you" + message;
+			toBooper += "&3You booped &e" + Nerd.of(booped).getNickname() + message;
+			toBooped += "&e" + nickname() + " &3booped you" + message;
 		}
 
 		send(toBooper);

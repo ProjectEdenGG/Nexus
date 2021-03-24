@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
@@ -42,6 +43,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @Entity("nerd")
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
 public class Nerd extends PlayerOwnedObject {
 	@Id
@@ -68,6 +70,10 @@ public class Nerd extends PlayerOwnedObject {
 
 	public static Nerd of(UUID uuid) {
 		return of(PlayerUtils.getPlayer(uuid));
+	}
+
+	public static Nerd of(PlayerOwnedObject player) {
+		return of(player.getUuid());
 	}
 
 	public static Nerd of(OfflinePlayer player) {

@@ -65,7 +65,7 @@ public class PoofCommand extends CustomCommand {
 		Trust trust = new TrustService().get(target);
 		if (trust.trusts(Type.TELEPORTS, player())) {
 			player().teleportAsync(targetLocation, TeleportCause.COMMAND);
-			send(PREFIX + "Poofing to &e" + target.getName() + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
+			send(PREFIX + "Poofing to &e" + Nerd.of(target).getNickname() + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
 			return;
 		}
 
@@ -73,8 +73,8 @@ public class PoofCommand extends CustomCommand {
 
 		Poof request = new Poof(player(), targetPlayer, Poof.PoofType.POOF);
 		service.save(request);
-		send(json("&ePoof &3request sent to " + targetPlayer.getName() + ". ").next("&eClick to cancel").command("poof cancel"));
-		send(targetPlayer, "  &e" + name() + " &3is asking to poof &eto you&3.");
+		send(json("&ePoof &3request sent to " + Nerd.of(targetPlayer).getNickname() + ". ").next("&eClick to cancel").command("poof cancel"));
+		send(targetPlayer, "  &e" + nickname() + " &3is asking to poof &eto you&3.");
 		send(targetPlayer, json("&3  Click one  ||  &a&lAccept")
 				.command("/poof accept")
 				.hover("&eClick &3to accept")

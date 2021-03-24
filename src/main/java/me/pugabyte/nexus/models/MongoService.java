@@ -73,6 +73,7 @@ public abstract class MongoService extends DatabaseService {
 			constructor.setAccessible(true);
 			return constructor.newInstance(uuid);
 		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
+			ex.printStackTrace();
 			throw new NexusException(this.getClass().getSimpleName() + " not implemented correctly");
 		}
 	}

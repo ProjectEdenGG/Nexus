@@ -2,6 +2,7 @@ package me.pugabyte.nexus.models.chat;
 
 import lombok.Data;
 import lombok.ToString;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.md_5.bungee.api.ChatColor;
 
@@ -55,7 +56,7 @@ public class PrivateChannel implements Channel {
 
 	public Set<String> getOthersNames(Chatter chatter) {
 		return getOthers(chatter).stream()
-				.map(recipient -> recipient.getOfflinePlayer().getName())
+				.map(recipient -> Nerd.of(recipient.getOfflinePlayer()).getNickname())
 				.collect(Collectors.toSet());
 	}
 

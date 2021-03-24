@@ -107,14 +107,14 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			// Deposit
 			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
-			String toPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + banker.getName();
+			String toPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + Nerd.of(banker).getNickname();
 			String symbol = "&a+";
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
 			// Withdrawal
 			if (withdrawal) {
 				symbol = "&c-";
-				fromPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + banker.getName();
+				fromPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + Nerd.of(banker).getNickname();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), cause);
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
 			}

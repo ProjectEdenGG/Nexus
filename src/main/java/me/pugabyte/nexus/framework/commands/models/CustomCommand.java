@@ -345,6 +345,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Bukkit.getOfflinePlayer(uuid());
 	}
 
+	protected Nerd nerd() {
+		return Nerd.of(player());
+	}
+
 	protected UUID uuid() {
 		return player().getUniqueId();
 	}
@@ -353,7 +357,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (!isPlayer())
 			return sender().getName();
 		else
-			return Nerd.of(player()).getName();
+			return nerd().getName();
+	}
+
+	protected String nickname() {
+		if (!isPlayer())
+			return sender().getName();
+		else
+			return nerd().getNickname();
 	}
 
 	protected ConsoleCommandSender console() {
