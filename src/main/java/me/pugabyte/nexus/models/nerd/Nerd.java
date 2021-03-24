@@ -77,7 +77,9 @@ public class Nerd extends PlayerOwnedObject {
 	}
 
 	public static Nerd of(OfflinePlayer player) {
-		return new NerdService().get(player);
+		Nerd nerd = new NerdService().get(player);
+		nerd.fromPlayer(player);
+		return nerd;
 	}
 
 	public void fromPlayer(OfflinePlayer player) {
@@ -93,6 +95,7 @@ public class Nerd extends PlayerOwnedObject {
 	}
 
 	public String getNickname() {
+		fromPlayer(getOfflinePlayer());
 		if (hasNickname())
 			return nickname;
 		return name;

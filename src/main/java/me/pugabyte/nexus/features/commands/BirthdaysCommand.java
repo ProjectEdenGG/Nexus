@@ -48,7 +48,7 @@ public class BirthdaysCommand extends CustomCommand {
 
 	@Path("set <birthday>")
 	void set(LocalDate birthday) {
-		Nerd nerd = service.get(player());
+		Nerd nerd = Nerd.of(player());
 		nerd.setBirthday(birthday);
 		service.save(nerd);
 		send(PREFIX + "Your birthday has been set to &e" + birthday.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + birthday.getDayOfMonth() + ", " + birthday.getYear());

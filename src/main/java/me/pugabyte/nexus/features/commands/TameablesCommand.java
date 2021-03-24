@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.GlowTask;
@@ -87,7 +88,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		if (player().equals(transfer))
 			error("You can't transfer an animal to yourself");
 		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.TRANSFER, transfer));
-		send(PREFIX + "Punch the animal you wish to transfer to " + transfer.getName());
+		send(PREFIX + "Punch the animal you wish to transfer to " + nickname(transfer));
 	}
 
 	@Path("count <entityType>")
@@ -214,7 +215,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						checkOwner(player, entity);
 						OfflinePlayer transfer = action.getPlayer();
 						updateOwner(entity, player, transfer);
-						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + transfer.getName());
+						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + Nerd.of(transfer).getNickname());
 						break;
 					case UNTAME:
 						checkOwner(player, entity);

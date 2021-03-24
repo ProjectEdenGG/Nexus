@@ -19,6 +19,7 @@ import me.pugabyte.nexus.features.recipes.CustomRecipes;
 import me.pugabyte.nexus.features.warps.Warps.LegacySurvivalWarp;
 import me.pugabyte.nexus.features.warps.Warps.SurvivalWarp;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
+import me.pugabyte.nexus.framework.commands.CommandMapUtils;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -40,7 +41,6 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
@@ -78,6 +78,8 @@ import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.command.Command;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -91,6 +93,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 import org.reflections.Reflections;
@@ -104,8 +107,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -305,8 +310,39 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Recipes: " + CustomRecipes.getRecipes().size());
 	}
 
+	@Path("stats commands [page]")
+	void statsCommands(@Arg("1") int page) {
+		CommandMapUtils mapUtils = Nexus.getInstance().getCommands().getMapUtils();
+
+		Map<Plugin, Integer> commands = new HashMap<>();
+		Set<String> keys = new HashSet<>();
+
+		for (Command value : mapUtils.getKnownCommandMap().values()) {
+			if (!(value instanceof PluginCommand))
+				continue;
+
+			PluginCommand command = (PluginCommand) value;
+			Plugin plugin = command.getPlugin();
+
+			String commandName = command.getName();
+			if (commandName.contains(":"))
+				commandName = commandName.split(":")[1];
+
+			String key = plugin.getName() + "-" + commandName;
+			if (keys.contains(key))
+				continue;
+
+			keys.add(key);
+			commands.put(plugin, commands.getOrDefault(plugin, 0) + 1);
+		}
+
+		send(PREFIX + "Commands by plugin");
+		paginate(new ArrayList<>(Utils.sortByValueReverse(commands).keySet()), (plugin, index) ->
+				json("&3" + index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)), "/nexus stats commands", page);
+	}
+
 	@Path("stats eventHandlers [page]")
-	void eventHandlers(@Arg("1") int page) {
+	void statsEventHandlers(@Arg("1") int page) {
 		Map<Class<? extends Event>, Integer> counts = new HashMap<>();
 		for (Class<? extends Event> eventHandler : Nexus.getEventHandlers())
 			counts.put(eventHandler, counts.getOrDefault(eventHandler, 0) + 1);
@@ -882,7 +918,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
-		return new NerdService().get(convertToOfflinePlayer(value));
+		return Nerd.of(convertToOfflinePlayer(value));
 	}
 
 	@TabCompleterFor(Nerd.class)
@@ -920,8 +956,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@ConverterFor(StaffMember.class)
 	StaffMember convertToStaffMember(String value) {
 		OfflinePlayer player = convertToOfflinePlayer(value);
-		if (!Nerd.of(player).getRank().isStaff())
-			error(player.getName() + " is not staff");
+		Nerd nerd = Nerd.of(player);
+		if (!nerd.getRank().isStaff())
+			error(nerd.getNickname() + " is not staff");
 		return new StaffMember(player.getUniqueId());
 	}
 

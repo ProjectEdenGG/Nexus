@@ -26,7 +26,7 @@ public class PrefixCommand extends CustomCommand {
 	public PrefixCommand(CommandEvent event) {
 		super(event);
 		if (isPlayer())
-			nerd = service.get(player());
+			nerd = Nerd.of(player());
 	}
 
 	@Path("checkmark")
@@ -48,7 +48,7 @@ public class PrefixCommand extends CustomCommand {
 	@Path("expire <player>")
 	void expire(OfflinePlayer player) {
 		console();
-		nerd = service.get(player);
+		nerd = Nerd.of(player);
 		nerd.setPrefix(null);
 		service.save(nerd);
 		send(PREFIX + "Reset prefix");

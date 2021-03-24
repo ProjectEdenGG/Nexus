@@ -22,7 +22,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Path("<nickname...>")
 	void run(String nickname) {
-		Nerd nerd = service.get(player());
+		Nerd nerd = Nerd.of(player());
 		nerd.setNickname(stripColor(nickname));
 		service.save(nerd);
 		send(PREFIX + "Nickname set to &e" + nerd.getNickname());

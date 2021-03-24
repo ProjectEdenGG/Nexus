@@ -14,7 +14,6 @@ import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -164,7 +163,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			if (!event.getPlayer().isOnline())
 				return;
 
-			Nerd nerd = new NerdService().get(event.getPlayer());
+			Nerd nerd = Nerd.of(event.getPlayer());
 			Banker banker = new BankerService().get(event.getPlayer());
 
 			if (banker.getTransactions().isEmpty())

@@ -78,7 +78,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		}
 
 		line();
-		Nerd nerd = new NerdService().get(target.getUniqueId());
+		Nerd nerd = Nerd.of(target);
 		if (!isNullOrEmpty(nerd.getAbout()))
 			send("  &eAbout me: &3" + nerd.getAbout());
 		if (nerd.isMeetMeVideo()) {
@@ -200,7 +200,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Path("about <about...>")
 	void about(String about) {
 		NerdService service = new NerdService();
-		Nerd nerd = service.get(player());
+		Nerd nerd = Nerd.of(player());
 		nerd.setAbout(stripColor(about));
 		service.save(nerd);
 		send(PREFIX + "Set your about to: &e" + nerd.getAbout());
@@ -209,7 +209,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Path("preferredName <name...>")
 	void preferredName(String name) {
 		NerdService service = new NerdService();
-		Nerd nerd = service.get(player());
+		Nerd nerd = Nerd.of(player());
 		nerd.setPreferredName(stripColor(name));
 		service.save(nerd);
 		send(PREFIX + "Set your preferred name to: &e" + nerd.getPreferredName());
@@ -263,7 +263,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();
 
 		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
-			Nerd nerd = nerdService.get(hallOfHistory.getUuid());
+			Nerd nerd = Nerd.of(hallOfHistory.getUuid());
 			List<RankHistory> history = hallOfHistory.getRankHistory();
 			history.sort(Comparator.comparing(RankHistory::getPromotionDate));
 

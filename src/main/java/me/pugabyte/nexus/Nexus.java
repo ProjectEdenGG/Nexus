@@ -65,7 +65,9 @@ import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Nexus extends JavaPlugin {
+	@Getter
 	private Commands commands;
+	@Getter
 	private Features features;
 	private static Nexus instance;
 	@Getter

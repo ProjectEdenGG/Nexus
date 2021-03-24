@@ -14,7 +14,6 @@ import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.tip.Tip;
@@ -251,7 +250,7 @@ public class Misc implements Listener {
 		if (world == null) return;
 
 		if (world.getName().startsWith("resource")) {
-			nerd = new NerdService().get(event.getUniqueId());
+			nerd = Nerd.of(event.getUniqueId());
 			if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
 				toSpawn.add(event.getUniqueId());
 		}

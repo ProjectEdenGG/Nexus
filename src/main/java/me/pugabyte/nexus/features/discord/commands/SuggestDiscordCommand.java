@@ -12,7 +12,6 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -46,7 +45,7 @@ public class SuggestDiscordCommand extends Command {
 				if (args.length == 0)
 					throw new InvalidInputException("Correct usage: `/suggest <player>`");
 
-				Nerd nerd = new NerdService().get(PlayerUtils.getPlayer(args[0]));
+				Nerd nerd = Nerd.of(PlayerUtils.getPlayer(args[0]));
 				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED).contains(nerd.getRank()))
 					throw new InvalidInputException(nerd.getName() + " is not eligible for promotion (They are " + nerd.getRank().plain() + ")");
 

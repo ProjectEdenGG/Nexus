@@ -96,7 +96,7 @@ public enum Rank {
 				.filter(player -> Nexus.getPerms().playerHas(null, player, "rank." + name().toLowerCase()))
 				.collect(Collectors.toList());
 		Set<Nerd> nerds = new HashSet<>();
-		inGroup.forEach(player -> nerds.add(new NerdService().get(player)));
+		inGroup.forEach(player -> nerds.add(Nerd.of(player)));
 		return new ArrayList<>(nerds);
 	}
 
@@ -104,7 +104,7 @@ public enum Rank {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank() == this)
 				.sorted(Comparator.comparing(Player::getName))
-				.map(player -> (Nerd) new NerdService().get(player))
+				.map(Nerd::of)
 				.collect(Collectors.toList());
 	}
 
@@ -116,7 +116,7 @@ public enum Rank {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff() && Nerd.of(player).getRank().isActive())
 				.sorted(Comparator.comparing(Player::getName))
-				.map(player -> (Nerd) new NerdService().get(player))
+				.map(Nerd::of)
 				.collect(Collectors.toList());
 	}
 
@@ -128,7 +128,7 @@ public enum Rank {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
 				.sorted(Comparator.comparing(Player::getName))
-				.map(player -> (Nerd) new NerdService().get(player))
+				.map(Nerd::of)
 				.collect(Collectors.toList());
 	}
 

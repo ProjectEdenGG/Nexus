@@ -27,6 +27,7 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 @SuppressWarnings({"unused", "unchecked"})
 public class Commands {
 	private final Plugin plugin;
+	@Getter
 	private final CommandMapUtils mapUtils;
 	private final Set<Class<? extends CustomCommand>> commandSet;
 	@Getter

@@ -26,7 +26,7 @@ public class PlayerAliasesCommand extends CustomCommand {
 
 	@Path("list [player]")
 	void list(@Arg("self") OfflinePlayer player) {
-		nerd = service.get(player);
+		nerd = Nerd.of(player);
 		if (nerd.getAliases().isEmpty())
 			error("No nicknames found");
 		send(PREFIX + String.join(", ", nerd.getAliases()));
@@ -34,7 +34,7 @@ public class PlayerAliasesCommand extends CustomCommand {
 
 	@Path("add <player> <nickname>")
 	void add(OfflinePlayer player, String nickname) {
-		nerd = service.get(player);
+		nerd = Nerd.of(player);
 		if (nerd.getAliases().contains(nickname))
 			error("Nickname &e" + nickname + " &calready exists for " + player.getName());
 		nerd.getAliases().add(nickname);
@@ -44,7 +44,7 @@ public class PlayerAliasesCommand extends CustomCommand {
 
 	@Path("remove <player> <nickname>")
 	void remove(OfflinePlayer player, String nickname) {
-		nerd = service.get(player);
+		nerd = Nerd.of(player);
 		if (!nerd.getAliases().contains(nickname))
 			error("Nickname &e" + nickname + " &cdoes not exist for " + player.getName());
 		nerd.getAliases().remove(nickname);

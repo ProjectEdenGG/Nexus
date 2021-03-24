@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.framework.commands;
 
+import lombok.Getter;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -19,11 +20,15 @@ import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-class CommandMapUtils {
+public class CommandMapUtils {
 	private final Plugin plugin;
 	private final Constructor<PluginCommand> COMMAND_CONSTRUCTOR;
 	private final Field COMMAND_MAP_FIELD;
 	private final Field KNOWN_COMMANDS_FIELD;
+	@Getter
+	private final CommandMap commandMap;
+	@Getter
+	private final Map<String, Command> knownCommandMap;
 
 	CommandMapUtils(Plugin plugin) {
 		this.plugin = plugin;
@@ -36,24 +41,11 @@ class CommandMapUtils {
 
 			KNOWN_COMMANDS_FIELD = SimpleCommandMap.class.getDeclaredField("knownCommands");
 			KNOWN_COMMANDS_FIELD.setAccessible(true);
-		} catch (NoSuchMethodException | NoSuchFieldException e) {
+
+			commandMap = (CommandMap) COMMAND_MAP_FIELD.get(Bukkit.getServer().getPluginManager());
+			knownCommandMap = (Map<String, Command>) KNOWN_COMMANDS_FIELD.get(commandMap);
+		} catch (NoSuchMethodException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	private CommandMap getCommandMap() {
-		try {
-			return (CommandMap) COMMAND_MAP_FIELD.get(Bukkit.getServer().getPluginManager());
-		} catch (Exception ex) {
-			throw new RuntimeException("Could not get CommandMap", ex);
-		}
-	}
-
-	private Map<String, Command> getKnownCommandMap() {
-		try {
-			return (Map<String, Command>) KNOWN_COMMANDS_FIELD.get(getCommandMap());
-		} catch (Exception ex) {
-			throw new RuntimeException("Could not get known commands map", ex);
 		}
 	}
 
@@ -72,9 +64,9 @@ class CommandMapUtils {
 		if (permission != null)
 			pluginCommand.setPermission(permission.value());
 
-		getCommandMap().register(plugin.getDescription().getName(), pluginCommand);
-		getKnownCommandMap().put(plugin.getDescription().getName().toLowerCase() + ":" + name, pluginCommand);
-		getKnownCommandMap().put(name, pluginCommand);
+		commandMap.register(plugin.getDescription().getName(), pluginCommand);
+		knownCommandMap.put(plugin.getDescription().getName().toLowerCase() + ":" + name, pluginCommand);
+		knownCommandMap.put(name, pluginCommand);
 
 		registerRedirects(customCommand);
 	}
@@ -86,13 +78,12 @@ class CommandMapUtils {
 	}
 
 	void unregister(String name) {
-		CommandMap map = getCommandMap();
-		Iterator<Command> iterator = getKnownCommandMap().values().iterator();
+		Iterator<Command> iterator = knownCommandMap.values().iterator();
 
 		while (iterator.hasNext()) {
 			Command command = iterator.next();
 			if (command instanceof PluginCommand && name.equals(command.getLabel())) {
-				command.unregister(map);
+				command.unregister(commandMap);
 				iterator.remove();
 			}
 		}

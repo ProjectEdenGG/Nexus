@@ -44,10 +44,9 @@ public class OpenDeliveryMenuProvider extends MenuUtils implements InventoryProv
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> {
-			for (ItemStack item : player.getOpenInventory().getTopInventory().getContents()) {
+			for (ItemStack item : player.getOpenInventory().getTopInventory().getContents())
 				if (delivery.getItems().contains(item))
 					PlayerUtils.giveItem(player, item);
-			}
 			new ViewDeliveriesMenuProvider(user, worldGroup).open(player);
 		});
 

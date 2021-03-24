@@ -68,8 +68,8 @@ public class AccountTransferCommand extends CustomCommand {
 			@Override
 			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				NerdService service = new NerdService();
-				Nerd previous = service.get(old);
-				Nerd current = service.get(target);
+				Nerd previous = Nerd.of(old);
+				Nerd current = Nerd.of(target);
 
 				current.setPreferredName(previous.getPreferredName());
 				current.setBirthday(previous.getBirthday());

@@ -367,6 +367,14 @@ public abstract class CustomCommand extends ICustomCommand {
 			return nerd().getNickname();
 	}
 
+	protected String nickname(OfflinePlayer player) {
+		return Nerd.of(player).getNickname();
+	}
+
+	protected String nickname(PlayerOwnedObject player) {
+		return Nerd.of(player).getNickname();
+	}
+
 	protected ConsoleCommandSender console() {
 		if (!isConsole())
 			throw new MustBeConsoleException();

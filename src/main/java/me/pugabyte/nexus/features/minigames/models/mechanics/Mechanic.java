@@ -145,13 +145,13 @@ public abstract class Mechanic implements Listener {
 
 	public void onJoin(MatchJoinEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has joined");
+		minigamer.getMatch().broadcast("&e" + minigamer.getName() + " &3has joined");
 		tellMapAndMechanic(minigamer);
 	}
 
 	public void onQuit(MatchQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getPlayer().getName() + " &3has quit");
+		minigamer.getMatch().broadcast("&e" + minigamer.getName() + " &3has quit");
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
 			minigamer.getMatch().end();
 	}

@@ -114,7 +114,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 						return;
 
 					player1.getPlayer().teleportAsync(Nerd.of(player2).getLocation(), TeleportCause.COMMAND);
-					send(PREFIX + "Poofing to &e" + player2.getName() + (player2.isOnline() ? "" : " &3(Offline)"));
+					send(PREFIX + "Poofing to &e" + Nerd.of(player2).getNickname() + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);
 			} else {
@@ -122,7 +122,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 					return;
 
 				player().teleportAsync(location1, TeleportCause.COMMAND);
-				send(PREFIX + "Poofing to &e" + player1.getName() + (player1.isOnline() ? "" : " &3(Offline)"));
+				send(PREFIX + "Poofing to &e" + Nerd.of(player1).getNickname() + (player1.isOnline() ? "" : " &3(Offline)"));
 			}
 		} else {
 			send("&c/" + getAliasUsed() + " <player> [player]");

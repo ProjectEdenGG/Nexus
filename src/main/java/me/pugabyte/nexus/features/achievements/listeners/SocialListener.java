@@ -5,7 +5,6 @@ import me.pugabyte.nexus.features.achievements.events.social.poof.PoofToEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.nexus.models.achievement.Achievement;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -88,7 +87,7 @@ public class SocialListener implements Listener {
 	}
 
 	private static void checkSession(Player player) {
-		Nerd nerd = new NerdService().get(player);
+		Nerd nerd = Nerd.of(player);
 		long login = nerd.getLastJoin().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 		long now = System.currentTimeMillis();
 

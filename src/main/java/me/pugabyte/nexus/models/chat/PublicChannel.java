@@ -8,7 +8,6 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import net.md_5.bungee.api.ChatColor;
@@ -55,7 +54,7 @@ public class PublicChannel implements Channel {
 	}
 
 	public String getChatterFormat(Chatter chatter) {
-		return color + "[" + nickname.toUpperCase() + "] " + new NerdService().<Nerd>get(chatter.getOfflinePlayer()).getChatFormat().trim() + " " + color + ChatColor.BOLD + "> " + getMessageColor();
+		return color + "[" + nickname.toUpperCase() + "] " + Nerd.of(chatter.getOfflinePlayer()).getChatFormat() + " " + color + ChatColor.BOLD + "> " + getMessageColor();
 	}
 
 	public Set<Chatter> getRecipients(Chatter chatter) {

@@ -14,7 +14,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.referral.Referral;
 import me.pugabyte.nexus.models.referral.Referral.Origin;
 import me.pugabyte.nexus.models.referral.ReferralService;
@@ -141,7 +140,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		Tasks.waitAsync(Time.MINUTE, () -> {
 			Referral referral = new ReferralService().get(event.getPlayer());
 			if (referral.getOrigin() == null) {
-				Nerd nerd = new NerdService().get(event.getPlayer());
+				Nerd nerd = Nerd.of(event.getPlayer());
 				if (nerd.getFirstJoin().isAfter(LocalDateTime.now().minusHours(2))) {
 					Tasks.sync(() -> {
 						if (!event.getPlayer().isOnline())

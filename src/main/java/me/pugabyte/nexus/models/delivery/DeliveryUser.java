@@ -17,7 +17,7 @@ import me.pugabyte.nexus.features.delivery.DeliveryWorldMenu;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.inventory.ItemStack;
@@ -154,7 +154,7 @@ public class DeliveryUser extends PlayerOwnedObject {
 		public String getFrom() {
 			String from = "Server";
 			if (!this.fromUUID.equals(Nexus.getUUID0()))
-				from = PlayerUtils.getPlayer(this.fromUUID).getName();
+				from = Nerd.of(this.fromUUID).getNickname();
 			return from;
 		}
 	}

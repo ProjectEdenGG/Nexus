@@ -19,6 +19,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.hours.HoursService.PageResult;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -268,7 +269,7 @@ public class HoursCommand extends CustomCommand {
 						if (hours.getTotal() > DAY) {
 							Tasks.sync(() -> {
 								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
-								Koda.say("Congrats on Member rank, " + player.getName() + "!");
+								Koda.say("Congrats on Member rank, " + Nerd.of(player).getNickname() + "!");
 								Jingle.RANKUP.play(player);
 								PlayerUtils.send(player, "");
 								PlayerUtils.send(player, "");

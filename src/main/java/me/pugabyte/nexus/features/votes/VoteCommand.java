@@ -103,7 +103,7 @@ public class VoteCommand extends CustomCommand {
 	void points(@Arg("self") OfflinePlayer player) {
 		if (!isSelf(player)) {
 			voter = new Voter(player);
-			send("&e" + player.getName() + " &3has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
+			send("&e" + nickname(player) + " &3has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 		} else
 			send("&3You have &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
@@ -113,7 +113,7 @@ public class VoteCommand extends CustomCommand {
 	void setPoints(OfflinePlayer player, int number) {
 		Voter voter = new Voter(player);
 		voter.setPoints(number);
-		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
+		send("&e" + nickname(player) + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
 	@Permission("group.seniorstaff")
@@ -121,7 +121,7 @@ public class VoteCommand extends CustomCommand {
 	void givePoints(OfflinePlayer player, int number) {
 		Voter voter = new Voter(player);
 		voter.givePoints(number);
-		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
+		send("&e" + nickname(player) + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
 	@Permission("group.seniorstaff")
@@ -129,7 +129,7 @@ public class VoteCommand extends CustomCommand {
 	void takePoints(OfflinePlayer player, int number) {
 		Voter voter = new Voter(player);
 		voter.takePoints(number);
-		send("&e" + player.getName() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
+		send("&e" + nickname(player) + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
 	@Path("endOfMonth [month]")

@@ -4,10 +4,8 @@ import dev.morphia.query.Query;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils;
 
 import java.util.ArrayList;
@@ -24,17 +22,9 @@ public class NerdService extends MongoService {
 		return cache;
 	}
 
-	@Override
-	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
-		Nerd nerd = super.getNoCache(uuid);
-		nerd.fromPlayer(PlayerUtils.getPlayer(uuid));
-		return (T) nerd;
-	}
-
 	public List<Nerd> find(String partialName) {
 		Query<Nerd> query = database.createQuery(Nerd.class);
-		query.or(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)))
-				.or(query.criteria("nickname").startsWithIgnoreCase(partialName));
+		query.and(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)));
 		if (query.count() > 50)
 			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + query.count() + ")");
 
@@ -55,6 +45,10 @@ public class NerdService extends MongoService {
 
 	public Nerd getFromAlias(String alias) {
 		return database.createQuery(Nerd.class).filter("aliases", sanitize(alias)).find().tryNext();
+	}
+
+	public Nerd getFromNickname(String nickname) {
+		return database.createQuery(Nerd.class).filter("nickname", sanitize(nickname)).find().tryNext();
 	}
 
 }
