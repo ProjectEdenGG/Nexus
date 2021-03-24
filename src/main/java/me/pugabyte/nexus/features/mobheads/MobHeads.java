@@ -8,7 +8,7 @@ import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -50,7 +50,7 @@ public class MobHeads extends Feature implements Listener {
 		if (!new CooldownService().check(victim.getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2))) return;
 
 		// TODO: Remove when done
-		if (!PlayerUtils.isWakka(killer)) return;
+		if (!Dev.WAKKA.is(killer)) return;
 		//
 
 		EntityType type = victim.getType();
@@ -82,7 +82,7 @@ public class MobHeads extends Feature implements Listener {
 
 		Player player = (Player) event.getEntity();
 		// TODO: Remove when done
-		if (!PlayerUtils.isWakka(player))
+		if (!Dev.WAKKA.is(player))
 			return;
 		//
 

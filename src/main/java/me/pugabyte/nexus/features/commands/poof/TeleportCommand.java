@@ -140,7 +140,8 @@ public class TeleportCommand extends CustomCommand implements Listener {
 				if (!(Arrays.asList(Rank.BUILDER, Rank.ARCHITECT).contains(toRank) && fromRank == Rank.MODERATOR))
 					return false;
 
-			PlayerUtils.send(to, PREFIX + "&c" + from.getName() + " tried to teleport to you, but you have teleports disabled");
+			if (to.isOnline() && to.getPlayer() != null)
+				PlayerUtils.send(to.getPlayer(), PREFIX + "&c" + from.getName() + " tried to teleport to you, but you have teleports disabled");
 
 			send(PREFIX + "&cThat player has teleports disabled. Sending a request instead");
 			runCommand(from, "tpa " + argsString());

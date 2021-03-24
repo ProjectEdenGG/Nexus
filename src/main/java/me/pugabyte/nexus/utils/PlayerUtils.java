@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -28,7 +29,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -37,70 +46,45 @@ import static me.pugabyte.nexus.utils.Utils.getMin;
 
 public class PlayerUtils {
 
-	public static void puga(String message) {
-		send(puga(), message);
-	}
+	public enum Dev {
+		PUGA("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
+		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
+		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
+		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12");
 
-	public static void wakka(String message) {
-		send(wakka(), message);
-	}
+		@Getter
+		private final UUID uuid;
 
-	public static void blast(String message) {
-		send(blast(), message);
-	}
+		Dev(String uuid) {
+			this.uuid = UUID.fromString(uuid);
+		}
 
-	public static void zani(String message) {
-		send(zani(), message);
-	}
+		public Player getPlayer() {
+			OfflinePlayer offlinePlayer = getOfflinePlayer();
+			if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
+				throw new PlayerNotOnlineException(offlinePlayer);
+			return offlinePlayer.getPlayer();
+		}
 
-	public static void vroom(String message){
-		send(vroom(), message);
-	}
+		public OfflinePlayer getOfflinePlayer() {
+			return PlayerUtils.getPlayer(uuid);
+		}
 
-	public static void lexi(String message){
-		send(lexi(), message);
-	}
+		public void send(String message) {
+			OfflinePlayer player = getOfflinePlayer();
+			if (player.isOnline() && player.getPlayer() != null)
+				PlayerUtils.send(player.getPlayer(), message);
+		}
 
-	public static Player puga() {
-		return Bukkit.getPlayer("Pugabyte");
-	}
+		public void send(JsonBuilder message) {
+			OfflinePlayer player = getOfflinePlayer();
+			if (player.isOnline() && player.getPlayer() != null)
+				PlayerUtils.send(player.getPlayer(), message);
+		}
 
-	public static Player wakka() {
-		return Bukkit.getPlayer("WakkaFlocka");
-	}
-
-	public static Player blast() {
-		return Bukkit.getPlayer("Blast");
-	}
-
-	public static Player zani() {
-		return Bukkit.getPlayer("Zanitaeni");
-	}
-
-	public static Player vroom() {
-		return Bukkit.getPlayer("Camaros");
-	}
-
-	public static Player lexi() {
-		return Bukkit.getPlayer("lexikiq");
-	}
-
-	public static boolean isPuga(Player player) {
-		return isPlayer(puga(), player);
-	}
-
-	public static boolean isWakka(Player player) {
-		return isPlayer(wakka(), player);
-	}
-
-	public static boolean isBlast(Player player) {
-		return isPlayer(blast(), player);
-	}
-
-	private static boolean isPlayer(Player player1, Player player2) {
-		if (player1 == null || player2 == null)
-			return false;
-		return player1.equals(player2);
+		public boolean is(OfflinePlayer player) {
+			return uuid.equals(player.getUniqueId());
+		}
 	}
 
 	public static boolean isVanished(Player player) {
@@ -223,48 +207,18 @@ public class PlayerUtils {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
-	public static void send(String uuid, String message) {
-		send(getPlayer(uuid), message);
-	}
-
 	public static void send(UUID uuid, String message) {
-		OfflinePlayer offlinePlayer = getPlayer(uuid);
-		send(offlinePlayer, message);
-	}
-
-	public static void send(OfflinePlayer offlinePlayer, String message) {
-		if (offlinePlayer.getPlayer() != null)
-			send(offlinePlayer.getPlayer(), message);
-	}
-
-	public static void send(Player player, String message) {
-		if (player != null && player.isOnline())
-			player.sendMessage(colorize(message));
+		OfflinePlayer player = getPlayer(uuid);
+		if (player.isOnline() && player.getPlayer() != null)
+			send(player.getPlayer(), message);
 	}
 
 	public static void send(CommandSender sender, String message) {
-		if (sender instanceof Player)
-			send((Player) sender, message);
-		else if (sender instanceof OfflinePlayer) {
-			OfflinePlayer offlinePlayer = (OfflinePlayer) sender;
-			if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null)
-				send(offlinePlayer.getPlayer(), message);
-		} else
-			sender.sendMessage(colorize(message));
-	}
-
-	public static void send(Player player, JsonBuilder builder) {
-		if (player.isOnline())
-			player.sendMessage(builder.build());
+		sender.sendMessage(colorize(message));
 	}
 
 	public static void send(CommandSender sender, JsonBuilder builder) {
 		sender.sendMessage(builder.build());
-	}
-
-	public static void send(Player player, BaseComponent... baseComponents) {
-		if (player.isOnline())
-			player.sendMessage(baseComponents);
 	}
 
 	public static void send(CommandSender sender, BaseComponent... baseComponents) {

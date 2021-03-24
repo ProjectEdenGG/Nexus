@@ -66,7 +66,7 @@ public class UnfreezeDiscordCommand extends Command {
 						if (player.getPlayer().getVehicle() != null)
 							player.getPlayer().getVehicle().remove();
 
-						PlayerUtils.send(player, "&cYou have been unfrozen.");
+						freeze.send("&cYou have been unfrozen.");
 						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));

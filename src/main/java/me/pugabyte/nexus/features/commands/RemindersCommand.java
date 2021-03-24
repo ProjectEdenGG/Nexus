@@ -17,7 +17,7 @@ import me.pugabyte.nexus.models.reminders.ReminderConfig;
 import me.pugabyte.nexus.models.reminders.ReminderConfig.Reminder;
 import me.pugabyte.nexus.models.reminders.ReminderConfig.Reminder.ReminderCondition;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -337,7 +337,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		Tasks.cancel(taskId);
 		taskId = Tasks.repeatAsync(interval, interval, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!PlayerUtils.isPuga(player))
+				if (!Dev.PUGA.is(player))
 					continue;
 
 				Utils.attempt(100, () -> {

@@ -13,7 +13,7 @@ import me.pugabyte.nexus.models.quests.WebConfig.Node;
 import me.pugabyte.nexus.models.quests.WebConfig.Route;
 import me.pugabyte.nexus.models.quests.WebConfig.Web;
 import me.pugabyte.nexus.models.quests.WebConfigService;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -94,7 +94,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlaceBlock(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (!PlayerUtils.isWakka(player)) return;
+		if (!Dev.WAKKA.is(player)) return;
 
 		Material type = event.getBlock().getType();
 		boolean end = true;
@@ -176,7 +176,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBreakBlock(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (!PlayerUtils.isWakka(player)) return;
+		if (!Dev.WAKKA.is(player)) return;
 
 		Material type = event.getBlock().getType();
 		boolean end = true;

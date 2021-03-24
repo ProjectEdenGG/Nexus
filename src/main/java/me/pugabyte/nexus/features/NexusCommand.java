@@ -50,6 +50,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -150,7 +151,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (player.equals(PlayerUtils.wakka()) || player.equals(PlayerUtils.blast()))
+			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player))
 				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
 		CooldownService cooldownService = new CooldownService();
@@ -340,7 +341,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 						Map<String, Object> data = task.getJson();
 						OfflinePlayer player = PlayerUtils.getPlayer((String) data.get("uuid"));
 						if (player.isOnline() && player.getPlayer() != null)
-							PlayerUtils.send(player, (String) data.get("message"));
+							PlayerUtils.send(player.getPlayer(), (String) data.get("message"));
 						service.complete(task);
 					}));
 		});

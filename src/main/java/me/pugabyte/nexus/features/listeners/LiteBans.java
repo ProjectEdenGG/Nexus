@@ -49,7 +49,7 @@ public class LiteBans implements Listener {
 
 			if (player.getUniqueId().version() != 4) {
 				if (executor.isOnline() && executor.getPlayer() != null)
-					PlayerUtils.send(executor, "&4&lUnknown player, check your spelling");
+					PlayerUtils.send(executor.getPlayer(), "&4&lUnknown player, check your spelling");
 
 			} else {
 

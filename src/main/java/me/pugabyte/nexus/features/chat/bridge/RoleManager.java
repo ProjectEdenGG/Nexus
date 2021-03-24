@@ -18,7 +18,8 @@ public class RoleManager {
 			"WakkaFlocka",
 			"Filid",
 			"Blast",
-			"KodaBear");
+			"KodaBear"
+	);
 
 	public static void update(DiscordUser user) {
 		if (Discord.getGuild() == null)
@@ -27,7 +28,7 @@ public class RoleManager {
 		DiscordService service = new DiscordService();
 		OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
-		String username = new Nerd(player).getName();
+		String username = new Nerd(player).getNickname();
 		if (ignore.contains(username))
 			return;
 

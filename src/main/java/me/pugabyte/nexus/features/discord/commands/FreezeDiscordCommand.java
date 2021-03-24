@@ -64,7 +64,7 @@ public class FreezeDiscordCommand extends Command {
 								service.save(freeze);
 								if (player.getPlayer().getVehicle() != null)
 									player.getPlayer().getVehicle().remove();
-								PlayerUtils.send(player, "&cYou have been unfrozen.");
+								freeze.send("&cYou have been unfrozen.");
 								Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
 							} else
 								FreezeCommand.freezePlayer(player.getPlayer());
@@ -76,7 +76,7 @@ public class FreezeDiscordCommand extends Command {
 						service.save(freeze);
 
 						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
-						PlayerUtils.send(player, "&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+						freeze.send("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));
 						if (!(ex instanceof NexusException))

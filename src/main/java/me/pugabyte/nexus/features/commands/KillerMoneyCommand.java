@@ -68,7 +68,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 				Map<String, Object> data = task.getJson();
 				OfflinePlayer player = PlayerUtils.getPlayer((String) data.get("uuid"));
 				if (player.isOnline() && player.getPlayer() != null)
-					PlayerUtils.send(player, StringUtils.getPrefix("KillerMoney") + "Your boost has expired");
+					PlayerUtils.send(player.getPlayer(), StringUtils.getPrefix("KillerMoney") + "Your boost has expired");
 
 				KillerMoneyService kmService = new KillerMoneyService();
 				KillerMoney km = kmService.get(player);

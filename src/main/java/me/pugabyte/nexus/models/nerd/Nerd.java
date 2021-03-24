@@ -81,6 +81,12 @@ public class Nerd extends PlayerOwnedObject {
 			firstJoin = newFirstJoin;
 	}
 
+	public String getNickname() {
+		if (!isNullOrEmpty(nickname))
+			return nickname;
+		return name;
+	}
+
 	@ToString.Include
 	public Rank getRank() {
 		return Rank.of(getOfflinePlayer());
