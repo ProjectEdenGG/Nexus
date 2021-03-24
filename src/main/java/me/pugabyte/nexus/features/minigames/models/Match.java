@@ -243,7 +243,7 @@ public class Match {
 		}
 
 		getAllMinigamers().stream().sorted(Comparator.comparing(Minigamer::getScore).reversed()).forEach(minigamer ->
-				scores.append("- ").append(minigamer.getName()).append(" - ").append(minigamer.getScore()).append(System.lineSeparator()));
+				scores.append("- ").append(minigamer.getNickname()).append(" - ").append(minigamer.getScore()).append(System.lineSeparator()));
 
 		if (scores.length() > 0) {
 			String header = "Scores for " + getArena().getName() + " (" + arena.getMechanic().getName() + "):" + System.lineSeparator();

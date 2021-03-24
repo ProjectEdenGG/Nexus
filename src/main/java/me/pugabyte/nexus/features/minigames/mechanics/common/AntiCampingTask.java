@@ -94,7 +94,7 @@ public class AntiCampingTask {
 			floorAt = getFloorAt(minigamer);
 
 			if (floorAt == null)
-				throw new InvalidInputException("Could not find floor for player " + minigamer.getName());
+				throw new InvalidInputException("Could not find floor for player " + minigamer.getNickname());
 
 			floorId = Arena.getRegionNumber(floorAt);
 		} else {

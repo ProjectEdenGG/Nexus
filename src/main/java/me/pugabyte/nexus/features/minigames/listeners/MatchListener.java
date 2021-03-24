@@ -82,7 +82,7 @@ public class MatchListener implements Listener {
 				return;
 
 		event.setCancelled(true);
-		Nexus.log("Cancelled minigamer " + minigamer.getName() + " teleporting from " + event.getFrom() + " to " + event.getTo());
+		Nexus.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + event.getFrom() + " to " + event.getTo());
 		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 
@@ -201,7 +201,7 @@ public class MatchListener implements Listener {
 					}
 
 					if (attacker != null && event.getDamager() instanceof Arrow)
-						attacker.tell("&7" + victim.getName() + " is on &c" + new DecimalFormat("#.0").format(newHealth) + " &7HP");
+						attacker.tell("&7" + victim.getNickname() + " is on &c" + new DecimalFormat("#.0").format(newHealth) + " &7HP");
 
 					mechanic.onDamage(damageEvent);
 

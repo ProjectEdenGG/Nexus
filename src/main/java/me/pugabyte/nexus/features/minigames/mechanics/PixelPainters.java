@@ -174,7 +174,7 @@ public class PixelPainters extends TeamlessMechanic {
 			// Inbetween Rounds
 			if (matchData.isRoundOver()) {
 				for (Minigamer minigamer : match.getMinigamers()) {
-					lines.put(minigamer.getName(), minigamer.getScore());
+					lines.put(minigamer.getNickname(), minigamer.getScore());
 				}
 				lines.put("&1", 0);
 				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, 0);
@@ -189,9 +189,9 @@ public class PixelPainters extends TeamlessMechanic {
 			} else {
 				for (Minigamer minigamer : match.getMinigamers()) {
 					if (matchData.getChecked().contains(minigamer))
-						lines.put("&1&a" + minigamer.getName(), 0);
+						lines.put("&1&a" + minigamer.getNickname(), 0);
 					else
-						lines.put("&1&f" + minigamer.getName(), 0);
+						lines.put("&1&f" + minigamer.getNickname(), 0);
 
 					lines.put("&2", 0);
 
@@ -368,7 +368,7 @@ public class PixelPainters extends TeamlessMechanic {
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
 			long miliseconds = System.currentTimeMillis() - matchData.getRoundStart();
 			long seconds = miliseconds / 1000;
-			match.broadcast("&a" + minigamer.getName() + " &2finished in &a" + seconds + " &2seconds!");
+			match.broadcast("&a" + minigamer.getNickname() + " &2finished in &a" + seconds + " &2seconds!");
 			matchData.getChecked().add(minigamer);
 
 			int size = matchData.getChecked().size();

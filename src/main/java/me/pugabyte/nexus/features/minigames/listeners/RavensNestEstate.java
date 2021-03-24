@@ -123,7 +123,7 @@ public class RavensNestEstate implements Listener {
 		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(event.getMinigamer().getPlayer().getLocation());
 		for (ProtectedRegion region : regions) {
 			if (region.getId().equalsIgnoreCase(match.getArena().getProtectedRegion("deathzone").getId())) {
-				event.setDeathMessage(event.getMinigamer().getName() + " drowned in blood.");
+				event.setDeathMessage(event.getMinigamer().getNickname() + " drowned in blood.");
 				break;
 			}
 		}

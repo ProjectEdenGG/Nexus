@@ -11,6 +11,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -128,7 +129,7 @@ public class ChatManager {
 
 		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
-		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + event.getChatter().getOfflinePlayer().getName() + " &b&l> ")
+		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nerd.of(event.getChatter().getOfflinePlayer()).getNickname() + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 
 		int seen = 0;

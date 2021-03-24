@@ -280,7 +280,7 @@ public class PixelDrop extends TeamlessMechanic {
 			}
 
 			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
-			match.broadcastNoPrefix(PREFIX + "&e" + minigamer.getName() + " &3guessed the word!");
+			match.broadcastNoPrefix(PREFIX + "&e" + minigamer.getNickname() + " &3guessed the word!");
 			matchData.getGuessed().add(minigamer);
 			minigamer.scored(Math.max(1, 1 + (4 - matchData.getGuessed().size())));
 			match.getScoreboard().update();
@@ -295,7 +295,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	private String getChatFormat(Minigamer sender, String message) {
-		return StringUtils.getPrefix("PixelDrop") + sender.getName() + " > " + message;
+		return StringUtils.getPrefix("PixelDrop") + sender.getNickname() + " > " + message;
 	}
 
 	private void sendChat(Minigamer recipient, Minigamer sender, String message) {

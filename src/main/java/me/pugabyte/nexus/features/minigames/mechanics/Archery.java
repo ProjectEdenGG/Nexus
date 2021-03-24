@@ -138,7 +138,7 @@ public class Archery extends TeamlessMechanic {
 				if (ndx >= order.length)
 					break;
 
-				String name = sbMinigamer.getName();
+				String name = sbMinigamer.getNickname();
 				if (minigamer.equals(sbMinigamer))
 					name = "&f&lYOU";
 
@@ -147,7 +147,7 @@ public class Archery extends TeamlessMechanic {
 			}
 		} else {
 			for (Minigamer sbMinigamer : match.getMinigamers())
-				lines.put(sbMinigamer.getName(), 0);
+				lines.put(sbMinigamer.getNickname(), 0);
 		}
 		return lines;
 	}

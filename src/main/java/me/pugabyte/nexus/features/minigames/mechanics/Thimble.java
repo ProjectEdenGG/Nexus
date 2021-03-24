@@ -169,9 +169,9 @@ public final class Thimble extends TeamlessMechanic {
 			for (Minigamer minigamer : match.getMinigamers())
 				if (minigamer.getScore() >= 1)
 					if (minigamer.isAlive())
-						lines.put(minigamer.getName(), minigamer.getScore());
+						lines.put(minigamer.getNickname(), minigamer.getScore());
 					else
-						lines.put("&c&m" + minigamer.getName(), minigamer.getScore());
+						lines.put("&c&m" + minigamer.getNickname(), minigamer.getScore());
 		}
 
 		return lines;

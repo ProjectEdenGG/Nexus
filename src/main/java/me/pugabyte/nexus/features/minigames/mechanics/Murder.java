@@ -188,7 +188,7 @@ public class Murder extends TeamMechanic {
 	public Map<String, Integer> getScoreboardLines(Match match) {
 		return new HashMap<String, Integer>() {{
 			match.getMinigamers().stream().filter(Minigamer::isAlive)
-					.forEach(minigamer -> put(minigamer.getName(), 0));
+					.forEach(minigamer -> put(minigamer.getNickname(), 0));
 		}};
 	}
 

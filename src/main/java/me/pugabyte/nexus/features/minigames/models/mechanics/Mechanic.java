@@ -252,7 +252,7 @@ public abstract class Mechanic implements Listener {
 				lines.put("&f" + minigamer.getColoredName(), minigamer.getScore());
 			else
 				// &r to force last
-				lines.put("&r&c&m" + minigamer.getName(), minigamer.getScore());
+				lines.put("&r&c&m" + minigamer.getNickname(), minigamer.getScore());
 
 			minigamerCount++;
 			lineCount++;

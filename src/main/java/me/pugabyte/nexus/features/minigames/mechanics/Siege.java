@@ -61,7 +61,7 @@ public final class Siege extends OneFlagCaptureTheFlag {
 		if (winningScore == 0) {
 			winningTeam = getDefendingTeam(match);
 			announcement = winningTeam == null ? "Defenders" : winningTeam.getColoredName();
-			announcement += "&3 protected the flag on &e"+match.getArena().getName();
+			announcement += "&3 protected the flag on &e" + match.getArena().getName();
 		} else {
 			winningTeam = getMax(match.getAliveTeams(), team -> team.getScore(match)).getObject();
 			announcement = winningTeam.getColoredName() + "&3 captured the flag on &e" + match.getArena().getName();

@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -62,10 +63,14 @@ public class Minigamer {
 		return player.getName();
 	}
 
+	public String getNickname() {
+		return Nerd.of(player).getNickname();
+	}
+
 	public String getColoredName() {
 		if (team == null)
-			return player.getName();
-		return team.getColor() + player.getName();
+			return getNickname();
+		return team.getColor() + getNickname();
 	}
 
 	public void join(String name) {
