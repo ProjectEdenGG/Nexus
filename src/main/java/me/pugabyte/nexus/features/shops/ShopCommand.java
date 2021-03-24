@@ -83,7 +83,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 		new PlayerShopProvider(null, shop).open(player());
 	}
 
-	@Path("search <item>")
+	@Path("search <item...>")
 	void search(@Arg(tabCompleter = Material.class) String text) {
 		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
 	}
