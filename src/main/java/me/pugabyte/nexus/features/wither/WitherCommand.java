@@ -4,13 +4,18 @@ import fr.minuskube.inv.SmartInventory;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.features.commands.staff.admin.RebootCommand;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -34,6 +39,8 @@ public class WitherCommand extends CustomCommand {
 	void fight() {
 		if (!PlayerUtils.isStaffGroup(player()) && betaMode)
 			error("The wither is currently being beta tested by staff. It should be back soon!");
+		if (RebootCommand.isQueued())
+			error("Server reboot is queued, cannot start a new fight");
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 		if (WitherChallenge.currentFight != null)

@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import me.pugabyte.nexus.features.commands.staff.admin.RebootCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
@@ -124,6 +125,11 @@ public class Match {
 		List<Class<?>> usesWorldEdit = Arrays.asList(UncivilEngineers.class);
 		if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
+			return false;
+		}
+
+		if (!initialized && RebootCommand.isQueued()) {
+			minigamer.tell("Server reboot is queued, cannot start a new match");
 			return false;
 		}
 
