@@ -105,14 +105,17 @@ public class ChatManager {
 			Tasks.wait(1, () -> event.getChatter().send(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
 
 		String chatterFormat = event.getChannel().getChatterFormat(event.getChatter());
-		JsonBuilder json = new JsonBuilder(chatterFormat + event.getMessage());
-		JsonBuilder staff = new JsonBuilder(chatterFormat + event.getMessage());
+		JsonBuilder json = new JsonBuilder(chatterFormat);
+		JsonBuilder staff = new JsonBuilder(chatterFormat);
 
 		Nerd nerd = Nerd.of(event.getChatter());
 		if (nerd.hasNickname()) {
 			json.hover("&3Real name: " + nerd.getName());
 			staff.hover("&3Real name: " + nerd.getName());
 		}
+
+		json.group().next(event.getMessage());
+		staff.group().next(event.getMessage());
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")
