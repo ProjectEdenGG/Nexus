@@ -137,12 +137,11 @@ public class MatchListener implements Listener {
 		Minigamer victim = PlayerManager.get((Player) event.getEntity());
 		// block damage while in lobby
 
-		if (victim.isPlaying() && !victim.getMatch().isStarted()) {
+		if ((victim.isPlaying() && !victim.getMatch().isStarted()) || !victim.isAlive() || victim.isRespawning()) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (!victim.isAlive()) return;
 		Minigamer attacker = null;
 		Projectile projectile = null;
 		if (event.getDamager() instanceof Player) {
@@ -247,18 +246,12 @@ public class MatchListener implements Listener {
 		if (!victim.isPlaying()) return;
 
 		// block damage while in lobby
-		if (!victim.getMatch().isStarted()) {
+		if (!victim.isAlive() || victim.isRespawning() || !victim.getMatch().isStarted()) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (!victim.isAlive()) return;
 		Mechanic mechanic = victim.getMatch().getMechanic();
-
-		if (victim.isRespawning() || !victim.getMatch().isStarted()) {
-			event.setCancelled(true);
-			return;
-		}
 
 		if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
 			MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, event);
