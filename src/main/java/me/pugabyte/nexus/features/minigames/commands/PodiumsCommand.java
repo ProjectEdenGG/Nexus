@@ -36,7 +36,8 @@ public class PodiumsCommand extends CustomCommand {
 
 	@Path("<position> <player> <title...>")
 	void update(Position position, OfflinePlayer player, String title) {
-		CitizensUtils.updateNameAndSkin(getNpc(position), "&l" + Nerd.of(player).getNickname());
+		CitizensUtils.updateName(getNpc(position), "&l" + Nerd.of(player).getNickname());
+		CitizensUtils.updateSkin(getNpc(position), player.getName());
 		PlayerUtils.runCommandAsConsole("hd setline podium_" + position + " 1 " + title);
 		send(PREFIX + "Podium updated");
 	}

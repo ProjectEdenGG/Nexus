@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -59,10 +60,19 @@ public class Minigamer {
 	private static final double HEALTH_PER_TICK = (1d/2d)/ Time.SECOND.x(2);
 	private static final int IMMOBILE_SECONDS = Time.SECOND.x(3);
 
+	/**
+	 * Returns the Minigamer's Minecraft username.
+	 * You should consider using {@link #getNickname()} instead.
+	 */
+	@Deprecated
+	@NotNull
 	public String getName() {
 		return player.getName();
 	}
 
+	/**
+	 * Returns this minigamer's nickname, or player name if absent
+	 */
 	public String getNickname() {
 		return Nerd.of(player).getNickname();
 	}
@@ -206,7 +216,7 @@ public class Minigamer {
 
 	public void teleport(Location location, boolean withSlowness) {
 		if (location == null)
-			throw new InvalidInputException("Tried to teleport " + player.getName() + " to a null location");
+			throw new InvalidInputException("Tried to teleport " + getName() + " to a null location");
 
 		player.setVelocity(new Vector(0, 0, 0));
 		canTeleport = true;

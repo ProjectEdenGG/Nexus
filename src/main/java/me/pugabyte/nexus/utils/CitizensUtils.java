@@ -1,9 +1,11 @@
 package me.pugabyte.nexus.utils;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -22,6 +24,26 @@ public class CitizensUtils {
 	public static void updateNameAndSkin(NPC npc, String name) {
 		updateName(npc, name);
 		updateSkin(npc, name);
+	}
+
+	/**
+	 * Sets an NPC to a player's (nick)name and skin
+	 * @param npc NPC to update
+	 * @param player a server member
+	 */
+	public static void updateNameAndSkin(NPC npc, OfflinePlayer player) {
+		updateName(npc, Nerd.of(player).getNickname());
+		updateSkin(npc, player.getName());
+	}
+
+	/**
+	 * Sets an NPC to a player's (nick)name and skin
+	 * @param npc NPC to update
+	 * @param nerd a server member
+	 */
+	public static void updateNameAndSkin(NPC npc, Nerd nerd) {
+		updateName(npc, nerd.getNickname());
+		updateSkin(npc, nerd.getOfflinePlayer().getName());
 	}
 
 	public static void updateName(int id, String name) {

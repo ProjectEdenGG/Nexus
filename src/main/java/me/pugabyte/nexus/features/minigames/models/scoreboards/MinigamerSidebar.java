@@ -17,7 +17,7 @@ public class MinigamerSidebar implements MinigameScoreboard {
 
 	private BNScoreboard createScoreboard(Minigamer minigamer) {
 		return new BNScoreboard(
-				minigamer.getName() + "-" + minigamer.getMatch().getArena().getName(),
+				minigamer.getNickname() + "-" + minigamer.getMatch().getArena().getName(),
 				match.getMechanic().getScoreboardTitle(match),
 				minigamer.getPlayer()
 		);

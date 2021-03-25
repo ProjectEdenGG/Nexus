@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.lobby;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -118,7 +119,7 @@ public class Connect4 extends CustomCommand {
 		public void win(Connect4Team team) {
 			won = true;
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (player.getWorld().getName().equals("gameworld")) {
+				if (player.getWorld() == Minigames.getWorld()) {
 					String teamName = team.getColor() + "" + team.name().charAt(0) + team.name().substring(1).toLowerCase() + " Team";
 					PlayerUtils.send(player, PREFIX + teamName + ChatColor.WHITE + " has won Connect4!");
 				}
