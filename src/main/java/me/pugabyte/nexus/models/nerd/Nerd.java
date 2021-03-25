@@ -70,10 +70,12 @@ public class Nerd extends PlayerOwnedObject {
 	private List<NicknameData> pastNicknames = new ArrayList<>();
 
 	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class NicknameData {
-		private final String nickname;
-		private final LocalDateTime timestamp;
-		private final String nicknameQueueId;
+		private String nickname;
+		private LocalDateTime timestamp;
+		private String nicknameQueueId;
 		private boolean pending = true;
 		private boolean accepted;
 
