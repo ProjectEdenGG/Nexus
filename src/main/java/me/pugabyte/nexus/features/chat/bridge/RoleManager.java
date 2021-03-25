@@ -48,9 +48,10 @@ public class RoleManager {
 
 		if (user.getRoleId() == null || role == null) {
 			List<Role> rolesByName = Discord.getGuild().getRolesByName(username, true);
-			if (rolesByName.size() > 0)
+			if (rolesByName.size() > 0) {
 				user.setRoleId(rolesByName.get(0).getId());
-			else
+				service.save(user);
+			} else
 				Discord.getGuild().createRole()
 						.setName(username)
 						.setColor(Nerd.of(player).getRank().getDiscordColor())

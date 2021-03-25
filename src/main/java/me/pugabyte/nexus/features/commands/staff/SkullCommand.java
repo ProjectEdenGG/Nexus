@@ -18,9 +18,9 @@ public class SkullCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<owner>")
-	void run(@Arg(tabCompleter = OfflinePlayer.class) String owner) {
-		PlayerUtils.giveItem(player(), new ItemBuilder(Material.PLAYER_HEAD).name("&fSkull of " + owner).skullOwner(owner).build());
+	@Path("[owner]")
+	void run(@Arg("self") OfflinePlayer owner) {
+		PlayerUtils.giveItem(player(), new ItemBuilder(Material.PLAYER_HEAD).name("&fSkull of " + owner.getName()).skullOwner(owner).build());
 	}
 
 }

@@ -70,7 +70,7 @@ public class TicketsCommand extends CustomCommand {
 
 		player().teleport(ticket.getLocation(), TeleportCause.COMMAND);
 
-		String message = "&e" + name() + " &3teleported to ticket &e#" + ticket.getId();
+		String message = "&e" + nickname() + " &3teleported to ticket &e#" + ticket.getId();
 		Tickets.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Teleporting to ticket &e#" + ticket.getId());
@@ -101,7 +101,7 @@ public class TicketsCommand extends CustomCommand {
 		ticket.setClosedByUuid(uuid().toString());
 		service.save(ticket);
 
-		String message = "&e" + name() + " &cclosed &3ticket &e#" + ticket.getId();
+		String message = "&e" + nickname() + " &cclosed &3ticket &e#" + ticket.getId();
 		Tickets.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &cclosed");
@@ -115,7 +115,7 @@ public class TicketsCommand extends CustomCommand {
 		ticket.setOpen(true);
 		service.save(ticket);
 
-		String message = "&e" + name() + " &areopened &3ticket &e#" + ticket.getId();
+		String message = "&e" + nickname() + " &areopened &3ticket &e#" + ticket.getId();
 		Tickets.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");

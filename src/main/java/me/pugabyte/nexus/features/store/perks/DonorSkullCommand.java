@@ -12,7 +12,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Material;
 
-@Cooldown(@Part(Time.DAY))
+@Cooldown(value = @Part(Time.DAY), bypass = "group.admin")
 @Permission("essentials.skull")
 public class DonorSkullCommand extends CustomCommand {
 

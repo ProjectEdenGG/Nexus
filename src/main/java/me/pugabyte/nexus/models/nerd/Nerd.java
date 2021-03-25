@@ -22,6 +22,8 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Utils;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -40,7 +42,9 @@ import java.util.UUID;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.CHECK;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @Data
 @Entity("nerd")
@@ -78,6 +82,8 @@ public class Nerd extends PlayerOwnedObject {
 		private String nicknameQueueId;
 		private boolean pending = true;
 		private boolean accepted;
+		private boolean seenResult;
+		private String response;
 
 		public NicknameData(String nickname) {
 			this(nickname, null);
@@ -87,6 +93,29 @@ public class Nerd extends PlayerOwnedObject {
 			this.nickname = nickname;
 			this.timestamp = LocalDateTime.now();
 			this.nicknameQueueId = nicknameQueueId;
+		}
+
+		public static MessageBuilder buildQueueMessage(Nerd nerd, String nickname) {
+			EmbedBuilder embed = new EmbedBuilder()
+					.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png")
+					.setColor(nerd.getRank().getDiscordColor());
+
+			if (!nerd.getPastNicknames().isEmpty()) {
+				LocalDateTime lastChange = nerd.getPastNicknames().get(nerd.getPastNicknames().size() - 1).getTimestamp();
+				embed.appendDescription("**Time since last change:** " + timespanDiff(lastChange) + System.lineSeparator());
+				embed.appendDescription("**Past nick names:**" + System.lineSeparator());
+				nerd.getPastNicknames().forEach(data -> {
+					String timestamp = shortishDateTimeFormat(data.getTimestamp());
+					String status = data.isPending() ? "Pending" : data.isAccepted() ? "Accepted" : "Denied";
+					embed.appendDescription("\t" + timestamp + " - " + data.getNickname() + " (" + status + ")" + System.lineSeparator());
+				});
+			} else {
+				embed.appendDescription("No past nicknames found");
+			}
+
+			return new MessageBuilder()
+					.setContent("@everyone **" + nerd.getName() + "** has requested a new nickname: **" + nickname + "**")
+					.setEmbed(embed.build());
 		}
 	}
 
@@ -129,8 +158,12 @@ public class Nerd extends PlayerOwnedObject {
 	}
 
 	public void setNickname(String nickname) {
-		this.nickname = stripColor(nickname);
-		this.pastNicknames.add(new NicknameData(nickname));
+		nickname = stripColor(nickname);
+		if (!isNullOrEmpty(nickname)) {
+			this.nickname = nickname;
+			this.pastNicknames.add(new NicknameData(nickname));
+		} else
+			this.nickname = null;
 	}
 
 	public void fixPastNicknames() {

@@ -129,43 +129,37 @@ public class Discord extends Feature {
 	}
 
 	public static void send(String message, DiscordId.Channel... targets) {
-		if (targets == null || targets.length == 0)
-			 targets = new DiscordId.Channel[]{ Channel.BRIDGE };
-		message = stripColor(message);
-		for (DiscordId.Channel target : targets) {
-			if (target == null || Bot.RELAY.jda() == null)
-				continue;
-			TextChannel channel = Bot.RELAY.jda().getTextChannelById(target.getId());
-			if (channel != null)
-				channel.sendMessage(message).queue();
-		}
-	}
-	public static void send(MessageBuilder message, DiscordId.Channel... targets) {
-		send(message, success -> {}, targets);
+		send(new MessageBuilder(stripColor(message)), targets);
 	}
 
-	public static void send(MessageBuilder message, Consumer<Message> onSuccess, DiscordId.Channel... targets) {
-		if (targets == null || targets.length == 0)
-			targets = new DiscordId.Channel[]{ Channel.BRIDGE };
-		for (DiscordId.Channel target : targets) {
-			if (target == null || Bot.RELAY.jda() == null)
-				continue;
-			TextChannel channel = Bot.RELAY.jda().getTextChannelById(target.getId());
-			if (channel != null)
-				channel.sendMessage(message.build()).queue(onSuccess);
-		}
+	public static void send(MessageBuilder message, DiscordId.Channel... targets) {
+		send(message, success -> {}, error -> {}, targets);
+	}
+
+	public static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, DiscordId.Channel... targets) {
+		send(message, onSuccess, onError, Bot.RELAY, targets);
 	}
 
 	public static void koda(String message, DiscordId.Channel... targets) {
+		koda(new MessageBuilder(stripColor(message)), targets);
+	}
+	public static void koda(MessageBuilder message, DiscordId.Channel... targets) {
+		koda(message, success -> {}, error -> {}, targets);
+	}
+
+	public static void koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, DiscordId.Channel... targets) {
+		send(message, onSuccess, onError, Bot.KODA, targets);
+	}
+
+	private static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, DiscordId.Channel... targets) {
 		if (targets == null || targets.length == 0)
-			targets = new DiscordId.Channel[]{ Channel.BRIDGE };
-		message = stripColor(message);
-		for (DiscordId.Channel target : targets) {
-			if (target == null || Bot.KODA.jda() == null)
+			targets = new Channel[]{ Channel.BRIDGE };
+		for (Channel target : targets) {
+			if (target == null || bot.jda() == null)
 				continue;
-			TextChannel channel = Bot.KODA.jda().getTextChannelById(target.getId());
+			TextChannel channel = bot.jda().getTextChannelById(target.getId());
 			if (channel != null)
-				channel.sendMessage(message).queue();
+				channel.sendMessage(message.build()).queue(onSuccess, onError);
 		}
 	}
 

@@ -32,28 +32,6 @@ public class AutoTrash extends PlayerOwnedObject {
 	private Behavior behavior = Behavior.TRASH;
 	private Set<Material> materials = new HashSet<>();
 
-/*
-	@Embedded
-	private List<AutoTrashItem> items = new ArrayList<>();
-
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	@Converters(UUIDConverter.class)
-	public static class AutoTrashItem {
-		@NonNull
-		private UUID uuid;
-		private Material material;
-		private Behavior behavior = Behavior.TRASH;
-		private MatchMode matchMode = MatchMode.MATERIAL;
-
-		public enum MatchMode {
-			MATERIAL,
-			META
-		}
-	}
-*/
-
 	public enum Behavior {
 		NO_PICKUP,
 		TRASH
