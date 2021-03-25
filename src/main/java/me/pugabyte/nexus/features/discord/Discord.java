@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -29,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -138,8 +140,11 @@ public class Discord extends Feature {
 				channel.sendMessage(message).queue();
 		}
 	}
-
 	public static void send(MessageBuilder message, DiscordId.Channel... targets) {
+		send(message, success -> {}, targets);
+	}
+
+	public static void send(MessageBuilder message, Consumer<Message> onSuccess, DiscordId.Channel... targets) {
 		if (targets == null || targets.length == 0)
 			targets = new DiscordId.Channel[]{ Channel.BRIDGE };
 		for (DiscordId.Channel target : targets) {
@@ -147,7 +152,7 @@ public class Discord extends Feature {
 				continue;
 			TextChannel channel = Bot.RELAY.jda().getTextChannelById(target.getId());
 			if (channel != null)
-				channel.sendMessage(message.build()).queue();
+				channel.sendMessage(message.build()).queue(onSuccess);
 		}
 	}
 

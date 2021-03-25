@@ -108,6 +108,12 @@ public class ChatManager {
 		JsonBuilder json = new JsonBuilder(chatterFormat + event.getMessage());
 		JsonBuilder staff = new JsonBuilder(chatterFormat + event.getMessage());
 
+		Nerd nerd = Nerd.of(event.getChatter());
+		if (nerd.hasNickname()) {
+			json.hover("&3Real name: " + nerd.getName());
+			staff.hover("&3Real name: " + nerd.getName());
+		}
+
 		if (event.isFiltered())
 			staff.next(" &c&l*")
 					.addHover("&cChat message was filtered")

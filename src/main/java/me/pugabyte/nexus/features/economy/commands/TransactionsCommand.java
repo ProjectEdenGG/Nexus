@@ -150,7 +150,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 		}
 
 		if (StringUtils.isV4Uuid(uuid))
-			return PlayerUtils.getPlayer(uuid).getName();
+			return Nerd.of(uuid).getNickname();
 		else if (Nexus.isUUID0(uuid))
 			return "Market";
 		else

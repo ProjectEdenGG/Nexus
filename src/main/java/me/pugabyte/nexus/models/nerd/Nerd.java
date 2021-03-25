@@ -31,13 +31,16 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.CHECK;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Entity("nerd")
@@ -50,7 +53,6 @@ public class Nerd extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private String name;
-	private String nickname;
 	private String preferredName;
 	private String prefix;
 	private boolean checkmark;
@@ -63,6 +65,28 @@ public class Nerd extends PlayerOwnedObject {
 	private boolean meetMeVideo;
 	private Set<String> aliases = new HashSet<>();
 	private Set<String> pastNames = new HashSet<>();
+
+	private String nickname;
+	private List<NicknameData> pastNicknames = new ArrayList<>();
+
+	@Data
+	public static class NicknameData {
+		private final String nickname;
+		private final LocalDateTime timestamp;
+		private final String nicknameQueueId;
+		private boolean pending = true;
+		private boolean accepted;
+
+		public NicknameData(String nickname) {
+			this(nickname, null);
+		}
+
+		public NicknameData(String nickname, String nicknameQueueId) {
+			this.nickname = nickname;
+			this.timestamp = LocalDateTime.now();
+			this.nicknameQueueId = nicknameQueueId;
+		}
+	}
 
 	public static Nerd of(String name) {
 		return of(PlayerUtils.getPlayer(name));
@@ -88,6 +112,7 @@ public class Nerd extends PlayerOwnedObject {
 		LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
 		if (firstJoin == null || newFirstJoin.isBefore(firstJoin))
 			firstJoin = newFirstJoin;
+		fixPastNicknames();
 	}
 
 	public boolean hasNickname() {
@@ -99,6 +124,16 @@ public class Nerd extends PlayerOwnedObject {
 		if (hasNickname())
 			return nickname;
 		return name;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = stripColor(nickname);
+		this.pastNicknames.add(new NicknameData(nickname));
+	}
+
+	public void fixPastNicknames() {
+		if (hasNickname() && !pastNicknames.isEmpty())
+			pastNicknames.add(new NicknameData(nickname));
 	}
 
 	@ToString.Include

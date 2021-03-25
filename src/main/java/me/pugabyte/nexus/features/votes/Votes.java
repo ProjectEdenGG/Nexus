@@ -112,7 +112,7 @@ public class Votes extends Feature implements Listener {
 		String username = event.getVote().getUsername().replaceAll(" ", "");
 		OfflinePlayer player = null;
 		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
-		String name = player != null ? player.getName() : "Unknown";
+		String name = player != null ? Nerd.of(player).getNickname() : "Unknown";
 		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 

@@ -35,6 +35,10 @@ public abstract class DatabaseService {
 		return get(nerd.getOfflinePlayer());
 	}
 
+	public <T> T get(PlayerOwnedObject player) {
+		return get(player.getUuid());
+	}
+
 	abstract public <T> List<T> getAll();
 
 	public <T> void save(T object) {

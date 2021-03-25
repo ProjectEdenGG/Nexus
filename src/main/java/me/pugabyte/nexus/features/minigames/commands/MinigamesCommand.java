@@ -421,7 +421,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	private void sendInvite(Collection<? extends Player> players) {
-		String sender = name();
+		String sender = nickname();
 		send("&3Invite sent to &e" + (players.size() - 1) + " &3players for &e" + inviteMessage);
 		for (Player player : players) {
 			if (player.equals(player()))
