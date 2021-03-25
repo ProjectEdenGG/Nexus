@@ -234,10 +234,6 @@ public class Minigamer {
 	}
 
 	public void setTeam(Team team) {
-		// leave current team channel
-		if (match.getMechanic() instanceof TeamMechanic && this.team != null)
-			((TeamMechanic)match.getMechanic()).leaveTeamTextChannel(this);
-
 		this.team = team;
 
 		// join new team channel

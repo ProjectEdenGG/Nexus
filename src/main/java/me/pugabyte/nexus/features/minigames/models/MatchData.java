@@ -4,15 +4,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -34,8 +31,6 @@ public class MatchData {
 	protected int turns;
 	@Accessors(fluent = true)
 	protected boolean isEnding;
-
-	protected Map<Team, PublicChannel> teamChannels = new HashMap<>();
 
 	public MatchData(Match match) {
 		this.match = match;
