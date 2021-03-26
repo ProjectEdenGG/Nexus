@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.models.hallofhistory.HallOfHistory;
 import me.pugabyte.nexus.models.hallofhistory.HallOfHistory.RankHistory;
 import me.pugabyte.nexus.models.hallofhistory.HallOfHistoryService;
@@ -90,9 +91,15 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Permission("hoh.edit")
 	@Path("create <player>")
-	void create(String player) {
+	void create(@Arg(tabCompleter = Nerd.class) String player) {
 		runCommand("blockcenter");
-		Tasks.wait(5, () -> runCommand("npc create " + player));
+		try {
+			Nerd nerd = Nerd.of(convertToOfflinePlayer(player));
+			Tasks.wait(5, () -> runCommand("npc create " + nerd.getNicknameFormat()));
+			Tasks.wait(10, () -> runCommand("npc skin " + nerd.getName()));
+		} catch (PlayerNotFoundException e) {
+			Tasks.wait(5, () -> runCommand("npc create " + player));
+		}
 	}
 
 	@Async
