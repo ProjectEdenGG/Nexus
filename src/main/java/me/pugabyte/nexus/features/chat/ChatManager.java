@@ -110,12 +110,12 @@ public class ChatManager {
 
 		Nerd nerd = Nerd.of(event.getChatter());
 		if (nerd.hasNickname()) {
-			json.hover("&3Real name: " + nerd.getName());
-			staff.hover("&3Real name: " + nerd.getName());
+			json.hover("&3Real name: &e" + nerd.getName()).group();
+			staff.hover("&3Real name: &e" + nerd.getName()).group();
 		}
 
-		json.group().next(event.getMessage());
-		staff.group().next(event.getMessage());
+		json.next(event.getMessage());
+		staff.next(event.getMessage());
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")

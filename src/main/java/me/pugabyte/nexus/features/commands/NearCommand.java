@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -39,9 +40,9 @@ public class NearCommand extends CustomCommand {
 			send(message + " (&3" + nearby.size() + "&e): &f" + nearby.stream()
 					.map(_player -> {
 						if (showDistance)
-							return _player.getName() + " (&3" + getDistance(player, _player) + "m&f)";
+							return Nerd.of(_player).getNickname() + " (&3" + getDistance(player, _player) + "m&f)";
 						else
-							return _player.getName();
+							return Nerd.of(_player).getNickname();
 					})
 					.collect(Collectors.joining(", ")));
 	}

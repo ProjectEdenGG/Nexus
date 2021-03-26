@@ -78,8 +78,9 @@ public class Nerd extends PlayerOwnedObject {
 	@AllArgsConstructor
 	public static class NicknameData {
 		private String nickname;
-		private LocalDateTime timestamp;
+		private LocalDateTime requestedTimestamp;
 		private String nicknameQueueId;
+		private LocalDateTime responseTimestamp;
 		private boolean pending = true;
 		private boolean accepted;
 		private boolean seenResult;
@@ -91,8 +92,13 @@ public class Nerd extends PlayerOwnedObject {
 
 		public NicknameData(String nickname, String nicknameQueueId) {
 			this.nickname = nickname;
-			this.timestamp = LocalDateTime.now();
-			this.nicknameQueueId = nicknameQueueId;
+			this.requestedTimestamp = LocalDateTime.now();
+			if (isNullOrEmpty(nicknameQueueId)) {
+				pending = false;
+				accepted = true;
+				seenResult = true;
+			} else
+				this.nicknameQueueId = nicknameQueueId;
 		}
 
 		public static MessageBuilder buildQueueMessage(Nerd nerd, String nickname) {
@@ -101,11 +107,11 @@ public class Nerd extends PlayerOwnedObject {
 					.setColor(nerd.getRank().getDiscordColor());
 
 			if (!nerd.getPastNicknames().isEmpty()) {
-				LocalDateTime lastChange = nerd.getPastNicknames().get(nerd.getPastNicknames().size() - 1).getTimestamp();
+				LocalDateTime lastChange = nerd.getPastNicknames().get(nerd.getPastNicknames().size() - 1).getRequestedTimestamp();
 				embed.appendDescription("**Time since last change:** " + timespanDiff(lastChange) + System.lineSeparator());
 				embed.appendDescription("**Past nick names:**" + System.lineSeparator());
 				nerd.getPastNicknames().forEach(data -> {
-					String timestamp = shortishDateTimeFormat(data.getTimestamp());
+					String timestamp = shortishDateTimeFormat(data.getRequestedTimestamp());
 					String status = data.isPending() ? "Pending" : data.isAccepted() ? "Accepted" : "Denied";
 					embed.appendDescription("\t" + timestamp + " - " + data.getNickname() + " (" + status + ")" + System.lineSeparator());
 				});
@@ -167,8 +173,13 @@ public class Nerd extends PlayerOwnedObject {
 	}
 
 	public void fixPastNicknames() {
-		if (hasNickname() && !pastNicknames.isEmpty())
-			pastNicknames.add(new NicknameData(nickname));
+		if (hasNickname())
+			if (!pastNicknames.isEmpty()) {
+				pastNicknames.add(new NicknameData(nickname));
+				for (NicknameData pastNickname : pastNicknames)
+					if (pastNickname.getRequestedTimestamp() == null)
+						pastNickname.setRequestedTimestamp(LocalDateTime.now());
+			}
 	}
 
 	@ToString.Include

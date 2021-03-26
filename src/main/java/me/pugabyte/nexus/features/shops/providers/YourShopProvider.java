@@ -68,6 +68,27 @@ public class YourShopProvider extends _ShopProvider {
 		}));
 		contents.set(0, 7, ClickableItem.from(nameItem(Material.CYAN_SHULKER_BOX, "&6Collect items"), e -> new CollectItemsProvider(this).open(player)));
 
+		contents.set(5, 3, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&cDisable all", "&f||&7Click to disable all items"), e -> {
+			ConfirmationMenu.builder()
+					.onConfirm(e2 -> {
+						shop.getProducts().forEach(product -> product.setEnabled(false));
+						service.save(shop);
+						open(player, page);
+					})
+					.onCancel(e2 -> open(player, page))
+					.open(player);
+		}));
+		contents.set(5, 5, ClickableItem.from(nameItem(Material.LIME_CONCRETE_POWDER, "&aEnable all", "&f||&7Click to enable all items"), e -> {
+			ConfirmationMenu.builder()
+					.onConfirm(e2 -> {
+						shop.getProducts().forEach(product -> product.setEnabled(true));
+						service.save(shop);
+						open(player, page);
+					})
+					.onCancel(e2 -> open(player, page))
+					.open(player);
+		}));
+
 		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();
 
