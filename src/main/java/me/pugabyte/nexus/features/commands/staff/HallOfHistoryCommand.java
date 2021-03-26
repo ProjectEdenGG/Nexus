@@ -93,13 +93,22 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Path("create <player>")
 	void create(@Arg(tabCompleter = Nerd.class) String player) {
 		runCommand("blockcenter");
+		String name;
+		String skin;
 		try {
 			Nerd nerd = Nerd.of(convertToOfflinePlayer(player));
-			Tasks.wait(5, () -> runCommand("npc create " + nerd.getNicknameFormat()));
-			Tasks.wait(10, () -> runCommand("npc skin " + nerd.getName()));
+			name = nerd.getNicknameFormat();
+			skin = nerd.getName();
 		} catch (PlayerNotFoundException e) {
-			Tasks.wait(5, () -> runCommand("npc create " + player));
+			// probably a veteran
+			name = Rank.VETERAN.getHex() + player;
+			skin = player;
 		}
+		// is there a better workaround for this? :P
+		final String name1 = name;
+		final String skin1 = skin;
+		Tasks.wait(5, () -> runCommand("npc create " + name1));
+		Tasks.wait(10, () -> runCommand("npc skin " + skin1));
 	}
 
 	@Async
