@@ -131,11 +131,11 @@ public class Shops extends Feature {
 			addSellItem(ShopGroup.SURVIVAL, false, Material.FIRE_CORAL_BLOCK, 16, 300);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.HORN_CORAL_BLOCK, 16, 300);
 
-			addBuyItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 64, 30);
-			addBuyItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 64, 60);
-			addBuyItem(ShopGroup.SURVIVAL, false, Material.MOSSY_STONE_BRICKS, 64, 70);
-			addBuyItem(ShopGroup.SURVIVAL, false, Material.CRACKED_STONE_BRICKS, 64, 70);
-			addBuyItem(ShopGroup.SURVIVAL, false, Material.CHISELED_STONE_BRICKS, 64, 80);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 64, 10);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 64, 15);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.MOSSY_STONE_BRICKS, 64, 20);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.CRACKED_STONE_BRICKS, 64, 20);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.CHISELED_STONE_BRICKS, 64, 25);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.IRON_ORE, 32, 600);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.GOLD_ORE, 32, 900);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.COAL_BLOCK, 32, 120);

@@ -162,6 +162,12 @@ public class PlayerUtils {
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (Nerd.of(player).getNickname().toLowerCase().startsWith((partialName)))
+				return player;
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (Nerd.of(player).getNickname().toLowerCase().contains((partialName)))
+				return player;
 
 		NerdService nerdService = new NerdService();
 
