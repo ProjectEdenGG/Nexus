@@ -5,13 +5,12 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import me.pugabyte.nexus.models.nerd.Rank;
 
 @Aliases({"colours", "color"})
 @NoArgsConstructor
@@ -42,11 +41,7 @@ public class ColorsCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onSignEdit(SignChangeEvent event) {
-		if (!event.getPlayer().hasPermission("signs.colorsigns"))
-			for (int i = 0; i < event.getLines().length; i++)
-				event.setLine(i, stripColor(event.getLine(i)));
-		else
-			for (int i = 0; i < event.getLines().length; i++)
-				event.setLine(i, colorize(event.getLine(i)));
+		for (int i = 0; i < event.getLines().length; i++)
+			event.setLine(i, colorize(event.getLine(i)));
 	}
 }
