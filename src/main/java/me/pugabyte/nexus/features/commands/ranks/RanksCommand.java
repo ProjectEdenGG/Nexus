@@ -21,7 +21,7 @@ public class RanksCommand extends CustomCommand {
 		super(event);
 	}
 
-	public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/YY");
+	public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
 
 	@Path
 	void ranks() {
