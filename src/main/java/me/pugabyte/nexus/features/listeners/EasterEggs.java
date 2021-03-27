@@ -154,10 +154,17 @@ public class EasterEggs implements Listener {
 	}
 
 	private void raven(Player player, ItemStack heldItem, Player clicked) {
-		removeItem(heldItem);
+		switch (heldItem.getType()) {
+			case WHEAT_SEEDS:
+			case BEETROOT_SEEDS:
+			case MELON_SEEDS:
+			case PUMPKIN_SEEDS:
+				removeItem(heldItem);
 
-		eatEffect(player, clicked, Sound.ENTITY_PARROT_EAT,
-				() -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PARROT_AMBIENT, 0.5F, 1F));
+				eatEffect(player, clicked, Sound.ENTITY_PARROT_EAT,
+						() -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PARROT_AMBIENT, 0.5F, 1F));
+				break;
+		}
 	}
 
 	private void tark(Player player, ItemStack heldItem, Player clicked) {
