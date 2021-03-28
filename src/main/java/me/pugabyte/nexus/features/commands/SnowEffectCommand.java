@@ -7,7 +7,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.snoweffect.SnowEffect;
 import me.pugabyte.nexus.models.snoweffect.SnowEffectService;
-import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
@@ -15,7 +14,6 @@ import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -70,19 +68,6 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 	}
 
 	private static boolean isBelowCeiling(Player player) {
-		int count = 0;
-		int playerY = player.getLocation().getBlockY();
-		for (int y = playerY; y <= 255; y++) {
-			Block relative = player.getLocation().getBlock().getRelative(0, y - (playerY - 1), 0);
-			Material material = relative.getType();
-
-			if (material == Material.BARRIER)
-				continue;
-			if (material.isOccluding() || MaterialTag.STAIRS.isTagged(material) || MaterialTag.SLABS.isTagged(material))
-				++count;
-			if (count >= 1)
-				return true;
-		}
-		return false;
+		return player.getLocation().getBlock().getLightFromSky() < 15;
 	}
 }

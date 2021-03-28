@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WGUtils;
-import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 public class Sounds {
 	private final List<Material> ignoreMaterials = Arrays.asList(Material.SNOW, Material.SNOW_BLOCK, Material.ICE, Material.PACKED_ICE,
@@ -36,7 +35,7 @@ public class Sounds {
 						continue;
 
 					Location loc = player.getLocation();
-					if (isInside(player))
+					if (isInside(player, (byte) 2))
 						player.playSound(loc, windSound, SoundCategory.AMBIENT, 3F, 0.5F);
 					else
 						player.playSound(loc, windSound, SoundCategory.AMBIENT, 3F, 1F);
@@ -46,19 +45,7 @@ public class Sounds {
 	}
 
 
-	private boolean isInside(Player player) {
-		int count = 0;
-		Location loc = player.getLocation();
-		int playerY = loc.getBlockY() + 1;
-		for (int y = playerY; y <= 255; y++) {
-			Material material = loc.getBlock().getRelative(0, y - playerY, 0).getType();
-
-			if (!ignoreMaterials.contains(material) && !isNullOrAir(material))
-				++count;
-
-			if (count >= 2)
-				return true;
-		}
-		return false;
+	private boolean isInside(Player player, byte blocks) {
+		return player.getLocation().getBlock().getLightFromSky() < (15 - blocks);
 	}
 }
