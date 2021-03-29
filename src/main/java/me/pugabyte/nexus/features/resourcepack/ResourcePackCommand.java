@@ -142,11 +142,11 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		Tasks.wait(Time.SECOND, () -> {
+		Tasks.wait(Time.SECOND.x(2), () -> {
 			resourcePack(player);
 
 			// Try Again if failed
-			Tasks.wait(Time.SECOND, () -> {
+			Tasks.wait(Time.SECOND.x(5), () -> {
 				if (Status.FAILED_DOWNLOAD == player.getResourcePackStatus())
 					resourcePack(player);
 			});

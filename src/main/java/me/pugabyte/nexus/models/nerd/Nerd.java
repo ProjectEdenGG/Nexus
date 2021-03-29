@@ -176,7 +176,7 @@ public class Nerd extends PlayerOwnedObject {
 		if (hasNickname())
 			if (!pastNicknames.isEmpty()) {
 				pastNicknames.add(new NicknameData(nickname));
-				for (NicknameData pastNickname : pastNicknames)
+				for (NicknameData pastNickname : new ArrayList<>(pastNicknames))
 					if (pastNickname.getRequestedTimestamp() == null)
 						pastNickname.setRequestedTimestamp(LocalDateTime.now());
 			}
