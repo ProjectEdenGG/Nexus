@@ -54,20 +54,23 @@ public class QueUpCommand extends CustomCommand {
 				if (!enabled)
 					return;
 
-				String currentSong = queup.getCurrentSong();
+				try {
+					String currentSong = queup.getCurrentSong();
 
-				if (currentSong != null && currentSong.equals(queup.getLastSong()))
-					return;
+					if (currentSong != null && currentSong.equals(queup.getLastSong()))
+						return;
 
-				queup.setLastSong(currentSong);
-				service.save(queup);
+					queup.setLastSong(currentSong);
+					service.save(queup);
 
-				if (currentSong == null)
-					return;
+					if (currentSong == null)
+						return;
 
-				String hover = "&eClick me to join &dQueUp&e!";
-				Chat.broadcastIngame(new JsonBuilder("&3Now playing on &d" + URL + "&3:").hover(hover).url(URL), MuteMenuItem.QUEUP);
-				Chat.broadcastIngame(new JsonBuilder(" " + currentSong).hover(hover).url(URL), MuteMenuItem.QUEUP);
+					String hover = "&eClick me to join &dQueUp&e!";
+					Chat.broadcastIngame(new JsonBuilder("&3Now playing on &d" + URL + "&3:").hover(hover).url(URL), MuteMenuItem.QUEUP);
+					Chat.broadcastIngame(new JsonBuilder(" " + currentSong).hover(hover).url(URL), MuteMenuItem.QUEUP);
+				} catch (Exception ignored) {
+				}
 			});
 	}
 
