@@ -156,11 +156,11 @@ public class ModReviewCommand extends CustomCommand {
 	}
 
 	@Permission("group.admin")
-	@Path("set notes <mod> <notes>")
+	@Path("set notes <mod> [notes]")
 	void setNotes(Mod mod, String notes) {
 		mod.setNotes(notes);
 		save();
-		send(PREFIX + "Notes updated for mod &e" + mod.getName());
+		send(PREFIX + "Notes updated for mod &e" + mod.getName() + "&3: " + mod.getNotes());
 	}
 
 	@Confirm
