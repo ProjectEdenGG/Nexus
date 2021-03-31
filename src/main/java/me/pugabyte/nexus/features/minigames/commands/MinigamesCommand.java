@@ -476,9 +476,9 @@ public class MinigamesCommand extends CustomCommand {
 		new PerkMenu().open(player());
 	}
 
-	@Path("set_collectibles <amount>")
+	@Path("setTokens <amount>")
 	@Permission("group.seniorstaff")
-	void setCollectibles(int amount) {
+	void setTokens(int amount) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(player());
 		perkOwner.setTokens(amount);

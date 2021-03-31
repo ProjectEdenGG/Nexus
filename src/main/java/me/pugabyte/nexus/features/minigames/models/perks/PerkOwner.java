@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.minigames.menus.perks.CommonPerksMenu;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
@@ -48,5 +49,35 @@ public class PerkOwner extends PlayerOwnedObject {
 
 	public boolean equals(PerkOwner other) {
 		return uuid.equals(other.getUuid());
+	}
+
+	public boolean purchase(PerkType perk) {
+		if (purchasedPerks.containsKey(perk))
+			return false;
+		if (perk.getPerk().getPrice() > tokens)
+			return false;
+		tokens -= perk.getPerk().getPrice();
+		purchasedPerks.put(perk, false);
+		CommonPerksMenu.service.save(this);
+		return true;
+	}
+
+	/**
+	 * Enables or disables a perk
+	 * @return whether or not the user had the perk
+	 */
+	public boolean toggle(PerkType perkType) {
+		if (!purchasedPerks.containsKey(perkType))
+			return false;
+
+		boolean setTo = !purchasedPerks.get(perkType);
+		// disable other perk types if this is being enabled and this is part of an exclusive perk category
+		if (setTo && perkType.getPerk().getPerkCategory().isExclusive())
+			(new HashSet<>(purchasedPerks.keySet())).stream().filter(perkType::excludes).forEach(otherType -> purchasedPerks.put(otherType, false));
+
+		purchasedPerks.put(perkType, setTo);
+
+		CommonPerksMenu.service.save(this);
+		return true;
 	}
 }

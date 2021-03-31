@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvider {
 	@Override
@@ -33,32 +33,37 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 		addBackItem(contents, $ -> new PerkMenu().open(player));
 
 		PerkOwner perkOwner = service.get(player);
+
+		// get perks and sort them
+		List<PerkSortWrapper> perkSortWrappers = new ArrayList<>();
+		perkOwner.getPurchasedPerks().keySet().forEach(perkType -> perkSortWrappers.add(new PerkSortWrapper(true, perkType)));
+		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::getCategory).thenComparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
+		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
+
 		List<ClickableItem> clickableItems = new ArrayList<>();
-		perkOwner.getPurchasedPerks().forEach((perkType, enabled) -> {
+		perks.forEach(perkType -> {
+			boolean enabled = perkOwner.getPurchasedPerks().get(perkType);
 			Perk perk = perkType.getPerk();
-			List<String> lore = getLore(perk);
-			lore.add(1, enabled ? "&aEnabled" : "&cDisabled"); // TODO: glowing
+
+			List<String> lore = getLore(player, perk);
+			lore.add(1, enabled ? "&aEnabled" : "&cDisabled");
 			// insert whitespace
 			if (lore.size() > 2)
 				lore.add(2, "");
 
 			ItemStack item = getItem(perk, lore);
-			clickableItems.add(ClickableItem.from(item, e -> toggleBoolean(player, perkType)));
+			if (enabled)
+				addGlowing(item);
+
+			clickableItems.add(ClickableItem.from(item, e -> toggleBoolean(player, perkType, contents)));
 		});
 		addPagination(player, contents, clickableItems);
 	}
 
-	protected void toggleBoolean(Player player, PerkType perkType) {
+	protected void toggleBoolean(Player player, PerkType perkType, InventoryContents contents) {
 		PerkOwner perkOwner = service.get(player);
-		Map<PerkType, Boolean> perkTypes = perkOwner.getPurchasedPerks();
-		boolean setTo = !perkTypes.get(perkType);
-		// disable other perk types if this is being enabled and this is part of an exclusive perk category
-		if (setTo && perkType.getPerk().getCategory().isExclusive())
-			(new HashSet<>(perkTypes.keySet())).stream().filter(otherType -> otherType.getPerk().getCategory() == perkType.getPerk().getCategory()).forEach(otherType -> perkTypes.put(otherType, false));
-
-		perkTypes.put(perkType, setTo);
-		service.save(perkOwner);
-		open(player); // TODO: can i get the page?
+		perkOwner.toggle(perkType);
+		open(player, contents.pagination().getPage());
 	}
 
 	@Override

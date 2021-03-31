@@ -7,17 +7,30 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 @Getter
-public enum PerkCategory {
-	PARTICLE(true),
-	HAT(true);
+public enum PerkCategory implements IHasPerkCategory {
+	HAT(2),
+	TEAM_HAT(2),
+	PARTICLE(1)
+	;
 
 	/**
-	 * Whether only one of this perk can be enabled at once.
+	 * Specifies a group of perks of which only one can be enabled, or 0 if the perk can be enabled regardless of the
+	 * status of others.<br>
+	 * See {@link #excludes(IHasPerkCategory)} to determine if a perk blocks another perk.
 	 */
-	private final boolean exclusive;
+	private final int exclusionGroup;
 
 	@Override
 	public String toString() {
 		return camelCase(name());
+	}
+
+	public boolean isExclusive() {
+		return exclusionGroup != 0;
+	}
+
+	@Override
+	public PerkCategory getPerkCategory() {
+		return this;
 	}
 }

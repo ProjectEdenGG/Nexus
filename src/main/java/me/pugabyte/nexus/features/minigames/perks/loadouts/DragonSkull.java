@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.perks;
+package me.pugabyte.nexus.features.minigames.perks.loadouts;
 
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
@@ -9,32 +9,32 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UnicornHorn extends LoadoutPerk {
+public class DragonSkull extends LoadoutPerk {
 	private static final Map<EnumItemSlot, ItemStack> loadout = new HashMap<>();
 
 	static {
-		loadout.put(EnumItemSlot.HEAD, new ItemStack(Material.END_ROD));
+		loadout.put(EnumItemSlot.HEAD, new ItemStack(Material.DRAGON_HEAD));
 	}
 
 	@Override
 	public String getName() {
-		return "Unicorn Horn";
+		return "Dragon Skull";
 	}
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.END_ROD);
+		return new ItemStack(Material.DRAGON_HEAD);
 	}
 
 	@Override
 	public String[] getDescription() {
-		return new String[]{"Become a pretty unicorn",
-		                    "with this glowing horn",
-				            "on top of your head!"};
+		return new String[]{"Scare your enemies with",
+		                    "the frightening skull",
+				            "of a mighty dragon!"};
 	}
 
 	@Override
-	public PerkCategory getCategory() {
+	public PerkCategory getPerkCategory() {
 		return PerkCategory.HAT;
 	}
 

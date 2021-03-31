@@ -4,27 +4,30 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.StringUtils.plural;
+
 public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
+	private static final DecimalFormat FORMATTER = new DecimalFormat("#,###");
+
 	@Override
 	public void open(Player viewer, int page) {
 		PerkOwner perkOwner = service.get(viewer);
@@ -43,27 +46,28 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 		PerkOwner perkOwner = service.get(player);
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.EMERALD).name("&2&lBalance")
-				.lore("&f"+perkOwner.getTokens()) // TODO: properly format item lore
+				.lore("&f"+FORMATTER.format(perkOwner.getTokens()) + plural(" token", perkOwner.getTokens()))
 				.build()));
 
-		LinkedHashSet<PerkType> playerPerks = sortPerks(perkOwner.getPurchasedPerks().keySet());
-		LinkedHashSet<PerkType> unownedPerks = sortPerks(Arrays.stream(PerkType.values()).filter(perkType -> !playerPerks.contains(perkType)).collect(Collectors.toSet()));
-		LinkedHashSet<PerkType> allPerks = new LinkedHashSet<>(unownedPerks);
-		allPerks.addAll(playerPerks);
+		// get perks and sort them
+		List<PerkSortWrapper> perkSortWrappers = new ArrayList<>();
+		Arrays.stream(PerkType.values()).forEach(perkType -> perkSortWrappers.add(PerkSortWrapper.of(perkOwner, perkType)));
+		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::isOwned).thenComparing(PerkSortWrapper::getCategory).thenComparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
+		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
 
+		// create the items
 		List<ClickableItem> clickableItems = new ArrayList<>();
-		allPerks.forEach(perkType -> {
+		perks.forEach(perkType -> {
 			Perk perk = perkType.getPerk();
-			boolean userOwned = playerPerks.contains(perkType);
+			boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);
 
-			List<String> lore = getLore(perk);
-			lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + StringUtils.plural("point", perk.getPrice())));
+			List<String> lore = getLore(player, perk);
+			lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + plural("token", perk.getPrice())));
 			if (lore.size() > 2)
 				lore.add(2, "");
 
 			ItemStack item = getItem(perk, lore);
 			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType)));
-			Nexus.severe("a");
 		});
 		addPagination(player, contents, clickableItems);
 	}
@@ -79,7 +83,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 			perkOwner.setTokens(perkOwner.getTokens() - perk.getPrice());
 			perkOwner.getPurchasedPerks().put(perkType, false);
 			service.save(perkOwner);
-			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+StringUtils.plural(" token", perk.getPrice()));
+			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+ plural(" token", perk.getPrice()));
 			open(player);
 		} else {
 			send(player, "&cYou don't have enough tokens to purchase that");

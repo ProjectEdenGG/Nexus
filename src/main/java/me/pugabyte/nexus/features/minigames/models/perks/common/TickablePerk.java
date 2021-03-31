@@ -18,6 +18,10 @@ public abstract class TickablePerk extends Perk {
 	}
 
 	public static void particle(Player player, Particle particle, double speed) {
+		// don't play particles on sneaking players
+		if (player.isSneaking())
+			return;
+
 		ParticleUtils.display(particle, player.getLocation().add(0, 0.5, 0), 5, .15d, .7d, .15d, speed);
 	}
 }

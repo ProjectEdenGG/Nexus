@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.perks;
+package me.pugabyte.nexus.features.minigames.perks.particles;
 
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.common.TickablePerk;
@@ -20,11 +20,13 @@ public class FlameParticle extends TickablePerk {
 
 	@Override
 	public String[] getDescription() {
-		return new String[]{"TODO"};
+		return new String[]{"Burn like the fire",
+							"that fuels your",
+							"craving for blood!"};
 	}
 
 	@Override
-	public PerkCategory getCategory() {
+	public PerkCategory getPerkCategory() {
 		return PerkCategory.PARTICLE;
 	}
 
