@@ -71,14 +71,31 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	abstract public void nextTurn(Match match);
 
+	public int getMultiplier(Match match, Minigamer minigamer) {
+		// int winningScore = getWinningScore(match.getMinigamers().stream().map(Minigamer::getScore).collect(Collectors.toList()));
+		// ^ feels like a computational waste to do this
+		int winningScore = match.getWinningScore();
+		if (minigamer.getScore() <= 0 || winningScore <= 0)
+			return 0;
+		return winningScore - Math.min(winningScore, minigamer.getScore()) + 1;
+	}
+
+	public void giveRewards(Match match) {
+
+		match.getMinigamers().forEach(minigamer -> {
+			PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
+			// max of 1 in 50 chance of getting a reward (dependant on score)
+			int multiplier = getMultiplier(match, minigamer);
+			if (multiplier == 0)
+				return;
+			if (RandomUtils.randomInt(1, 50 * multiplier) == 1)
+				perkOwner.reward(match.getArena());
+		});
+	}
+
 	@Override
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
-		event.getMatch().getMinigamers().forEach(minigamer -> {
-			PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
-			// 1 in 50 chance of getting a reward
-			if (RandomUtils.randomInt(1, 50) == 1)
-				perkOwner.reward(event.getMatch().getArena());
-		});
+		giveRewards(event.getMatch());
 	}
 }
