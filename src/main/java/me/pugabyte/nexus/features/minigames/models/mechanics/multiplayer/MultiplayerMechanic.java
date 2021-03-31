@@ -4,8 +4,11 @@ import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBeginEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
+import me.pugabyte.nexus.utils.RandomUtils;
 
 public abstract class MultiplayerMechanic extends Mechanic {
 
@@ -68,4 +71,14 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	abstract public void nextTurn(Match match);
 
+	@Override
+	public void onEnd(MatchEndEvent event) {
+		super.onEnd(event);
+		event.getMatch().getMinigamers().forEach(minigamer -> {
+			PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
+			// 1 in 50 chance of getting a reward
+			if (RandomUtils.randomInt(1, 50) == 1)
+				perkOwner.reward(event.getMatch().getArena());
+		});
+	}
 }

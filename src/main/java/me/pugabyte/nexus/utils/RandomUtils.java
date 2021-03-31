@@ -33,7 +33,11 @@ public class RandomUtils {
 	public static int randomInt(int min, int max) {
 		if (min == max) return min;
 		if (min > max) throw new InvalidInputException("Min cannot be greater than max!");
-		return (int) ((random.nextDouble() * ((max - min) + 1)) + min);
+		return min + random.nextInt(max-min+1);
+	}
+
+	public static double randomDouble() {
+		return random.nextDouble();
 	}
 
 	public static double randomDouble(double max) {

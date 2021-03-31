@@ -9,9 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.minigames.menus.perks.CommonPerksMenu;
+import me.pugabyte.nexus.features.minigames.Minigames;
+import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 @Data
 @Builder
@@ -28,6 +33,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
 public class PerkOwner extends PlayerOwnedObject {
+	public static final PerkOwnerService service = new PerkOwnerService();
+
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -58,8 +65,19 @@ public class PerkOwner extends PlayerOwnedObject {
 			return false;
 		tokens -= perk.getPerk().getPrice();
 		purchasedPerks.put(perk, false);
-		CommonPerksMenu.service.save(this);
+		service.save(this);
 		return true;
+	}
+
+	/**
+	 * Rewards the user for winning a minigame
+	 * @param arena
+	 */
+	public void reward(Arena arena) {
+		int amount = RandomUtils.randomInt(5, 10);
+		tokens += amount;
+		service.save(this);
+		PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for winning &e" + arena.getName());
 	}
 
 	/**
@@ -77,7 +95,7 @@ public class PerkOwner extends PlayerOwnedObject {
 
 		purchasedPerks.put(perkType, setTo);
 
-		CommonPerksMenu.service.save(this);
+		service.save(this);
 		return true;
 	}
 }
