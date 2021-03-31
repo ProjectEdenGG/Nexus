@@ -124,7 +124,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void registerStoneBricks() {
-		NexusRecipe.shapeless(new ItemStack(Material.STONE, 4), "stonebrick_uncrafting", Material.STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.STONE, 1), "stonebrick_uncrafting", Material.STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
 		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICK_SLAB, 2), "stonebrick_uncrafting", Material.CHISELED_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
 		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICKS), "stonebrick_uncrafting", Material.MOSSY_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
 	}
