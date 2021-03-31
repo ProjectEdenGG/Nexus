@@ -93,21 +93,19 @@ public abstract class MongoService extends DatabaseService {
 		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
 			return;
 
-		String toString = object.toString();
-		boolean hideDebug = toString.length() >= Short.MAX_VALUE;
-		String debug = hideDebug ? "" : ": " + toString;
-
 		try {
 			database.merge(object);
 		} catch (UpdateException doesntExistYet) {
 			try {
 				database.save(object);
 			} catch (Exception ex2) {
-				Nexus.log("Error saving " + object.getClass().getSimpleName() + debug);
+				String toString = object.toString();
+				Nexus.log("Error saving " + object.getClass().getSimpleName() + (toString.length() >= Short.MAX_VALUE ? "" : ": " + toString));
 				ex2.printStackTrace();
 			}
 		} catch (Exception ex3) {
-			Nexus.log("Error updating " + object.getClass().getSimpleName() + debug);
+			String toString = object.toString();
+			Nexus.log("Error updating " + object.getClass().getSimpleName() + (toString.length() >= Short.MAX_VALUE ? "" : ": " + toString));
 			ex3.printStackTrace();
 		}
 	}
