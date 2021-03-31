@@ -10,7 +10,8 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 public enum PerkCategory implements IHasPerkCategory {
 	HAT(2),
 	TEAM_HAT(2),
-	PARTICLE(1)
+	PARTICLE(1),
+	ARROW_TRAIL(3)
 	;
 
 	/**

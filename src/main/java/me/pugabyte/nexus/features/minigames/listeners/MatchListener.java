@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -15,6 +16,10 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
+import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -319,5 +324,14 @@ public class MatchListener implements Listener {
 
 		if (mechanic.usesAlternativeRegen())
 			event.setCancelled(true);
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying())
+			return;
+		PerkOwner owner = new PerkOwnerService().get(event.getPlayer());
+		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, event.getProjectile()));
 	}
 }
