@@ -6,6 +6,8 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.NerdService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -41,11 +43,19 @@ public class IngameBridgeListener implements Listener {
 			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]+").matcher(message);
 			while (matcher.find()) {
 				String group = matcher.group();
-				OfflinePlayer player = Bukkit.getOfflinePlayer(group.replace("@", ""));
-				if (player.hasPlayedBefore()) {
-					DiscordUser mentioned = new DiscordService().get(player);
-					if (mentioned.getUserId() != null)
-						message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+				String search = group.replace("@", "");
+				OfflinePlayer player = Bukkit.getOfflinePlayer(search);
+				DiscordUser mentioned = new DiscordService().get(player);
+				if (mentioned.getUserId() != null) {
+					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+					continue;
+				}
+
+				Nerd fromNickname = new NerdService().getFromNickname(search);
+				mentioned = new DiscordService().get(fromNickname.getOfflinePlayer());
+				if (mentioned.getUserId() != null) {
+					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+					continue;
 				}
 			}
 		}
