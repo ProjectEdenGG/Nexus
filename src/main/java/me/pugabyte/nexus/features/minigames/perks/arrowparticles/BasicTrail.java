@@ -40,4 +40,9 @@ public class BasicTrail extends ParticleProjectilePerk {
     public int getPrice() {
         return 2;
     }
+
+    @Override
+    public double getSpeed() {
+        return 0.01d;
+    }
 }

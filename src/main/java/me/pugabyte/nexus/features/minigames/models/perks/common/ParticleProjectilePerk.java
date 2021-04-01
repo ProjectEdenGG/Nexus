@@ -7,10 +7,10 @@ import org.bukkit.entity.Projectile;
 
 public abstract class ParticleProjectilePerk extends Perk {
     public abstract Particle getParticle();
-    public int getSpeed() {
-        return 1;
+    public double getSpeed() {
+        return 1d;
     }
     public void tick(Projectile projectile) {
-        ParticleUtils.display(getParticle(), projectile.getLocation(), 1, .02d, .02d, .02d, 2);
+        ParticleUtils.display(getParticle(), projectile.getLocation(), 2, .02d, .02d, .02d, getSpeed());
     }
 }

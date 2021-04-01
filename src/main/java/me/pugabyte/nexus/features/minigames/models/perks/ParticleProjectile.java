@@ -13,7 +13,7 @@ public class ParticleProjectile {
     public ParticleProjectile(ParticleProjectilePerk perk, Projectile projectile) {
         this.perk = perk;
         this.projectile = projectile;
-        this.taskId = Tasks.repeat(1, 2, () -> {
+        this.taskId = Tasks.repeat(1, 1, () -> {
             if (!projectile.isValid() || projectile.isDead() || projectile.isOnGround()) {
                 Tasks.cancel(getTaskId());
                 return;

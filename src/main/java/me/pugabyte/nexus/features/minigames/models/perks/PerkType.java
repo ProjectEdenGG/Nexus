@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.perks;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.pugabyte.nexus.features.minigames.perks.arrowparticles.BasicTrail;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.DragonSkull;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.UnicornHorn;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.Concrete;
@@ -15,7 +16,8 @@ public enum PerkType implements IHasPerkCategory {
 	HEART_PARTICLE(new HeartParticle()),
 	UNICORN_HORN(new UnicornHorn()),
 	DRAGON_SKULL(new DragonSkull()),
-	CONCRETE(new Concrete())
+	CONCRETE(new Concrete()),
+	BASIC_TRAIL(new BasicTrail())
 	;
 
 	private final Perk perk;

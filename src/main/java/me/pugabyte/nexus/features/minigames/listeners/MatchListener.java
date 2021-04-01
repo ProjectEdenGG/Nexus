@@ -33,6 +33,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -326,12 +327,25 @@ public class MatchListener implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler(ignoreCancelled = true)
-	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+	public void onShootProjectile(Player player, Projectile projectile) {
+		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying())
 			return;
-		PerkOwner owner = new PerkOwnerService().get(event.getPlayer());
-		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, event.getProjectile()));
+		PerkOwner owner = new PerkOwnerService().get(player);
+		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile));
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onBowShoot(EntityShootBowEvent event) {
+		if (!(event.getEntity() instanceof Player))
+			return;
+		if (!(event.getProjectile() instanceof Projectile))
+			return;
+		onShootProjectile((Player) event.getEntity(), (Projectile) event.getProjectile());
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
+		onShootProjectile(event.getPlayer(), event.getProjectile());
 	}
 }
