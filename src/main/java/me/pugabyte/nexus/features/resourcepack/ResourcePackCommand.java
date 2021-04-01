@@ -98,13 +98,13 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("customModels")
-	@Permission("group.admin")
+	@Permission("group.staff")
 	void customModels() {
 		new CustomModelsMenu().open(player());
 	}
 
 	@Path("customModels [item]")
-	@Permission("group.admin")
+	@Permission("group.staff")
 	void customModels(CustomModel customModel) {
 		PlayerUtils.giveItem(player(), customModel.getItem());
 		send(PREFIX + "Gave custom model &e" + camelCase(customModel));
