@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models;
 
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -24,12 +25,20 @@ public abstract class PlayerOwnedObject {
 		return getOfflinePlayer().getPlayer();
 	}
 
+	public Nerd getNerd() {
+		return Nerd.of(getUuid());
+	}
+
 	public boolean isOnline() {
 		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
 	}
 
 	public String getName() {
 		return getOfflinePlayer().getName();
+	}
+
+	public String getNickname() {
+		return getNerd().getNickname();
 	}
 
 	public void send(String message) {

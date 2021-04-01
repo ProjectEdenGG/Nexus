@@ -5,6 +5,7 @@ import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,8 +54,8 @@ public class BankerService extends MongoService {
 		save(banker);
 	}
 
-	public void deposit(OfflinePlayer player, double amount, ShopGroup shopGroup, Transaction transaction) {
-		deposit(player, BigDecimal.valueOf(amount), shopGroup, transaction);
+	public void deposit(Transaction transaction) {
+		deposit(Bukkit.getOfflinePlayer(transaction.getReceiver()), transaction.getAmount(), transaction.getShopGroup(), transaction);
 	}
 
 	public void deposit(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
@@ -75,8 +76,8 @@ public class BankerService extends MongoService {
 		save(banker);
 	}
 
-	public void withdraw(OfflinePlayer player, double amount, ShopGroup shopGroup, Transaction transaction) {
-		withdraw(player, BigDecimal.valueOf(amount), shopGroup, transaction);
+	public void withdraw(Transaction transaction) {
+		withdraw(Bukkit.getOfflinePlayer(transaction.getReceiver()), transaction.getAmount(), transaction.getShopGroup(), transaction);
 	}
 
 	public void withdraw(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
@@ -123,8 +124,8 @@ public class BankerService extends MongoService {
 		save(banker);
 	}
 
-	public void setBalance(OfflinePlayer player, double balance, ShopGroup shopGroup, Transaction transaction) {
-		setBalance(player, BigDecimal.valueOf(balance), shopGroup, transaction);
+	public void setBalance(Transaction transaction) {
+		setBalance(Bukkit.getOfflinePlayer(transaction.getReceiver()), transaction.getAmount(), transaction.getShopGroup(), transaction);
 	}
 
 	public void setBalance(OfflinePlayer player, BigDecimal balance, ShopGroup shopGroup, Transaction transaction) {
