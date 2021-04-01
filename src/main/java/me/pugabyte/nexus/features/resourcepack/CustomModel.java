@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.resourcepack;
 
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -156,6 +157,10 @@ public enum CustomModel {
 		this.data = data;
 		this.name = name;
 		this.lore = Arrays.asList(lore);
+	}
+
+	public static boolean exists(ItemStack cursor) {
+		return new NBTItem(cursor).hasKey("CustomModelData");
 	}
 
 	public ItemStack getItem() {
