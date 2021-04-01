@@ -81,7 +81,6 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	public void giveRewards(Match match) {
-
 		match.getMinigamers().forEach(minigamer -> {
 			PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
 			// max of 1 in 50 chance of getting a reward (dependant on score)

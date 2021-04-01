@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,12 +35,15 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @Converters(UUIDConverter.class)
 public class PerkOwner extends PlayerOwnedObject {
 	public static final PerkOwnerService service = new PerkOwnerService();
+	private static final int MAX_DAILY_TOKENS = 20;
 
 	@Id
 	@NonNull
 	private UUID uuid;
 	private Map<PerkType, Boolean> purchasedPerks = new HashMap<>();
 	private int tokens = 0;
+	private int dailyTokens = 0;
+	private LocalDate tokenDate = LocalDate.now();
 
 	public Set<PerkType> getEnabledPerks() {
 		Set<PerkType> perks = new HashSet<>();
@@ -71,13 +75,22 @@ public class PerkOwner extends PlayerOwnedObject {
 
 	/**
 	 * Rewards the user for winning a minigame
-	 * @param arena
 	 */
 	public void reward(Arena arena) {
-		int amount = RandomUtils.randomInt(5, 10);
-		tokens += amount;
+		LocalDate date = LocalDate.now();
+		if (date.isAfter(tokenDate)) {
+			tokenDate = date;
+			dailyTokens = 0;
+		}
+		int amount = Math.min(MAX_DAILY_TOKENS-dailyTokens, RandomUtils.randomInt(5, 10));
+		if (amount > 0) {
+			tokens += amount;
+			dailyTokens += amount;
+			PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for winning &e" + arena.getName());
+			if (dailyTokens == MAX_DAILY_TOKENS)
+				PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");
+		}
 		service.save(this);
-		PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for winning &e" + arena.getName());
 	}
 
 	/**
