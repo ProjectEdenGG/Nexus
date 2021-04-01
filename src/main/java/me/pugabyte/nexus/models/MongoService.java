@@ -87,6 +87,13 @@ public abstract class MongoService extends DatabaseService {
 				.find().toList();
 	}
 
+	public <T> List<T> getAllSortedByLimit(int limit, Sort... sorts) {
+		return (List<T>) database.createQuery(getPlayerClass())
+				.order(sorts)
+				.limit(limit)
+				.find().toList();
+	}
+
 	@Override
 	public <T> void saveSync(T object) {
 		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
