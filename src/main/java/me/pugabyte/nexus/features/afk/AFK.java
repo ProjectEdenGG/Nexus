@@ -42,6 +42,8 @@ public class AFK extends Feature {
 	}
 
 	private static boolean isSameLocation(Location from, Location to) {
+		if (from == null || to == null)
+			return false;
 		if (!from.getWorld().equals(to.getWorld()))
 			return false;
 
