@@ -22,7 +22,7 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-@Permission("group.admin")
+@Permission("group.seniorstaff")
 public class RebootCommand extends CustomCommand {
 	@Getter
 	private static boolean queued;
