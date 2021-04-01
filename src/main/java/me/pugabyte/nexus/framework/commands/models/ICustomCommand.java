@@ -143,15 +143,13 @@ public abstract class ICustomCommand {
 		};
 
 		Confirm confirm = method.getAnnotation(Confirm.class);
-		if (confirm != null) {
+		if (event.getSender() instanceof Player && confirm != null) {
 			ConfirmationMenu.builder()
 					.onConfirm(e -> run.run())
 					.title(confirm.title())
 					.open(event.getPlayer());
-		} else {
+		} else
 			run.run();
-		}
-
 	}
 
 	Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
