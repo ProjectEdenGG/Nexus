@@ -296,6 +296,11 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		reminder.send(player);
 	}
 
+	@Path("motd [player]")
+	void motd(@Arg("self") Player player) {
+		config.showMotd(player);
+	}
+
 	@Path("test <player> <reminder>")
 	void test(Player player, Reminder reminder) {
 		send(PREFIX + player.getName() + " &ewould" + (reminder.test(player) ? "" : " not") + " &3receive the &e" + reminder.getId() + " &3reminder");
@@ -355,20 +360,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		event.getPlayer().sendMessage("§3 §6 §3 §6 §3 §6 §e  §3 §6 §3 §6 §3 §6 §d"); // disable voxelmap radar
-
-		Tasks.waitAsync(Time.SECOND, () -> {
-			if (!event.getPlayer().isOnline())
-				return;
-
-			List<Reminder> motds = config.getMotds(event.getPlayer());
-			if (motds.isEmpty())
-				return;
-
-			event.getPlayer().sendMessage("");
-			motds.forEach(motd -> motd.send(event.getPlayer()));
-			event.getPlayer().sendMessage("");
-		});
+		config.showMotd(event.getPlayer());
 	}
 
 }

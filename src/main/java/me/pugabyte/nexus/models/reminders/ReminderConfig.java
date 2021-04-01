@@ -21,6 +21,8 @@ import me.pugabyte.nexus.models.wallsofgrace.WallsOfGraceService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -99,6 +101,23 @@ public class ReminderConfig implements ConfigurationSerializable {
 			throw new InvalidInputException("Reminder with id &e" + id + " &cnot found");
 
 		reminders.removeIf(reminder -> reminder.getId().equalsIgnoreCase(id));
+	}
+
+	public void showMotd(Player player) {
+		player.sendMessage("§3 §6 §3 §6 §3 §6 §e  §3 §6 §3 §6 §3 §6 §d"); // disable voxelmap radar
+
+		Tasks.waitAsync(Time.SECOND, () -> {
+			if (!player.isOnline())
+				return;
+
+			List<Reminder> motds = getMotds(player);
+			if (motds.isEmpty())
+				return;
+
+			player.sendMessage("");
+			motds.forEach(motd -> motd.send(player));
+			player.sendMessage("");
+		});
 	}
 
 	@Data

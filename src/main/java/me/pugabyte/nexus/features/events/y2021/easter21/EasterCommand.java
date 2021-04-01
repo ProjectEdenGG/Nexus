@@ -35,7 +35,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 
 	@Path("[player]")
 	void run(@Arg("self") Easter21User user) {
-		send(PREFIX + (isSelf(user) ? "You have found" : user.getNickname() + " has found") + " &e" + plural(" easter egg", user.getFound().size()));
+		send(PREFIX + (isSelf(user) ? "You have found" : user.getNickname() + " has found") + " &e" + user.getFound().size() + plural(" easter egg", user.getFound().size()));
 	}
 
 	@Path("start")
