@@ -37,6 +37,6 @@ public class HeartParticle extends TickablePerk {
 
 	@Override
 	public void tick(Player player) {
-		particle(player, Particle.HEART, 0.7d);
+		particle(player, Particle.HEART, 0.7d, player.getWorld().getPlayers());
 	}
 }

@@ -14,6 +14,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData;
+import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -505,6 +506,15 @@ public class MinigamesCommand extends CustomCommand {
 
 		MastermindMatchData matchData = minigamer.getMatch().getMatchData();
 		matchData.reset(minigamer);
+	}
+
+	@Path("hideParticles <type>")
+	void hideParticles(HideParticle type) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner owner = service.get(player());
+		owner.setHideParticle(type);
+		service.save(owner);
+		send(Minigames.PREFIX + "Now hiding "+type.toString().toLowerCase()+" particles");
 	}
 
 	private Match getRunningMatch(Arena arena) {

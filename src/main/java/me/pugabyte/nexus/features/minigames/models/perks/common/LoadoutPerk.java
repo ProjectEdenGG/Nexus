@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.mojang.datafixers.util.Pair;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.utils.MaterialTag;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
@@ -22,6 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class LoadoutPerk extends TickablePerk {
+	@Override
+	public PerkCategory getPerkCategory() {
+		return PerkCategory.HAT;
+	}
+
 	public Map<EnumItemSlot, ItemStack> getLoadout() {
 		try {
 			return basicHatMap();

@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.perks.loadouts;
 
-import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -26,11 +25,6 @@ public class UnicornHorn extends LoadoutPerk {
 		return new String[]{"Become a pretty unicorn",
 		                    "with this glowing horn",
 				            "on top of your head!"};
-	}
-
-	@Override
-	public PerkCategory getPerkCategory() {
-		return PerkCategory.HAT;
 	}
 
 	@Override

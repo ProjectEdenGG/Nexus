@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.perks.loadouts;
 
-import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Material;
@@ -31,11 +30,6 @@ public class DragonSkull extends LoadoutPerk {
 		return new String[]{"Scare your enemies with",
 		                    "the frightening skull",
 				            "of a mighty dragon!"};
-	}
-
-	@Override
-	public PerkCategory getPerkCategory() {
-		return PerkCategory.HAT;
 	}
 
 	@Override

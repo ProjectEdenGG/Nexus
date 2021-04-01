@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.perks.arrowparticles;
 
-import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -29,11 +28,6 @@ public class BasicTrail extends ParticleProjectilePerk {
                 "sparkles with this",
                 "simple trail"
         };
-    }
-
-    @Override
-    public PerkCategory getPerkCategory() {
-        return PerkCategory.ARROW_TRAIL;
     }
 
     @Override

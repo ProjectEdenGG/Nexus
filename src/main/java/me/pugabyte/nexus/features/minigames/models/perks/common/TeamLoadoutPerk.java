@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.perks.common;
 
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.utils.ColorType;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
@@ -12,6 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class TeamLoadoutPerk extends LoadoutPerk {
+	@Override
+	public PerkCategory getPerkCategory() {
+		return PerkCategory.TEAM_HAT;
+	}
+
 	@Override
 	public Map<EnumItemSlot, ItemStack> getLoadout() {
 		return getLoadout(ChatColor.DARK_AQUA);

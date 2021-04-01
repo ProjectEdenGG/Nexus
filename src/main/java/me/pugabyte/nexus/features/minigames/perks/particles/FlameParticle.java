@@ -37,6 +37,6 @@ public class FlameParticle extends TickablePerk {
 
 	@Override
 	public void tick(Player player) {
-		particle(player, Particle.FLAME, 0.002d);
+		particle(player, Particle.FLAME, 0.002d, player.getWorld().getPlayers());
 	}
 }

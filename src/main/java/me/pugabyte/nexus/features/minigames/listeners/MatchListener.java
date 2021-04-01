@@ -332,7 +332,7 @@ public class MatchListener implements Listener {
 		if (!minigamer.isPlaying())
 			return;
 		PerkOwner owner = new PerkOwnerService().get(player);
-		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile));
+		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile, minigamer.getMatch()));
 	}
 
 	@EventHandler(ignoreCancelled = true)
