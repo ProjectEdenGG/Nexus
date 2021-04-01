@@ -24,7 +24,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
 public class EasterCommand extends CustomCommand implements Listener {
@@ -35,7 +38,19 @@ public class EasterCommand extends CustomCommand implements Listener {
 
 	@Path("[player]")
 	void run(@Arg("self") Easter21User user) {
-		send(PREFIX + (isSelf(user) ? "You have found" : user.getNickname() + " has found") + " &e" + user.getFound().size() + plural(" easter egg", user.getFound().size()));
+		send(PREFIX + (isSelf(user) ? "You have found" : user.getNickname() + " has found") + " &e" + user.getFound().size() + "/35" + plural(" easter egg", user.getFound().size()));
+	}
+
+	@Path("top [page]")
+	void top(@Arg("1") int page) {
+		List<Easter21User> all = new Easter21UserService().<Easter21User>getAll().stream()
+				.sorted(Comparator.<Easter21User>comparingInt(user -> user.getFound().size()).reversed())
+				.collect(toList());
+
+		int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
+
+		send(PREFIX + "Top egg hunters  &3|  Total: &e" + sum);
+		paginate(all, (user, index) -> json("&3" + index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/easter top", page);
 	}
 
 	@Path("start")
