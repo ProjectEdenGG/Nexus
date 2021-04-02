@@ -19,7 +19,7 @@ public class NerdListener implements Listener {
 		NerdService service = new NerdService();
 		Nerd nerd = Nerd.of(event.getPlayer());
 
-		if (nerd.getLastQuit().isBefore(nerd.getLastJoin()))
+		if (nerd.getLastQuit() != null && nerd.getLastQuit().isBefore(nerd.getLastJoin()))
 			nerd.setLastQuit(LocalDateTime.now().minusMinutes(1));
 
 		nerd.setLastJoin(LocalDateTime.now());
@@ -42,7 +42,7 @@ public class NerdListener implements Listener {
 	static {
 		Tasks.repeatAsync(0, Time.MINUTE, () -> {
 			for (Nerd recentJoin : new NerdService().<Nerd>getAllSortedByLimit(200, Sort.descending("lastJoin")))
-				if (!recentJoin.isOnline() && recentJoin.getLastQuit().isBefore(recentJoin.getLastJoin()))
+				if (!recentJoin.isOnline() && recentJoin.getNerd().getLastQuit() != null && recentJoin.getLastQuit().isBefore(recentJoin.getLastJoin()))
 					recentJoin.setLastQuit(LocalDateTime.now());
 		});
 	}
