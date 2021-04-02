@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
@@ -132,7 +132,7 @@ public class Fishing implements Listener {
 		String regionCheck = weightedLoot.getRegionCheck();
 		String playerRegion = null;
 		if (regionCheck != null) {
-			Set<ProtectedRegion> regions = WGUtils.getRegionsAt(player.getLocation());
+			Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(player.getLocation());
 			for (ProtectedRegion region : regions) {
 				if (region.getId().equalsIgnoreCase(regionCheck)) {
 					playerRegion = region.getId();

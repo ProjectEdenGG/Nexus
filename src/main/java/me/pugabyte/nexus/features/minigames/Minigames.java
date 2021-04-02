@@ -50,18 +50,6 @@ import java.util.stream.Collectors;
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	@Getter
-	private static final World world = Bukkit.getWorld("gameworld");
-	@Getter
-	private static final Location lobby = new Location(world, 1861.5, 38.1, 247.5, 0, 0);
-	@Getter
-	@Deprecated // Use Match#getWGUtils or Arena#getWGUtils
-	private static final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(world);
-	@Getter
-	@Deprecated // Use Match#getWEUtils or Arena#getWEUtils
-	private static final WorldEditUtils worldEditUtils = new WorldEditUtils(world);
-	@Getter
-	private static final ProtectedRegion lobbyRegion = worldGuardUtils.getProtectedRegion("minigamelobby");
-	@Getter
 	public static final MinigamesMenus menus = new MinigamesMenus();
 	@Getter
 	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
@@ -79,6 +67,28 @@ public class Minigames extends Feature {
 		new ActionBar();
 		new Basketball();
 		new Parkour();
+	}
+
+	public static World getWorld() {
+		return Bukkit.getWorld("gameworld");
+	}
+
+	@Deprecated // Use Match#getWGUtils or Arena#getWGUtils
+	public static WorldGuardUtils getWorldGuardUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	@Deprecated // Use Match#getWEUtils or Arena#getWEUtils
+	public static WorldEditUtils getWorldEditUtils() {
+		return new WorldEditUtils(getWorld());
+	}
+
+	public static Location getLobby() {
+		return new Location(getWorld(), 1861.5, 38.1, 247.5, 0, 0);
+	}
+
+	public static ProtectedRegion getLobbyRegion() {
+		return getWorldGuardUtils().getProtectedRegion("minigamelobby");
 	}
 
 	@Override

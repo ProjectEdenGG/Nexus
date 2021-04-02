@@ -20,6 +20,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
@@ -38,15 +39,24 @@ public class Halloween20 implements Listener {
 	@Getter
 	public static final String region = "halloween20";
 	@Getter
-	public static final World world = Bukkit.getWorld("safepvp");
-	@Getter
 	public static final String PREFIX = StringUtils.getPrefix("Halloween 2020");
-	public WorldGuardUtils utils = new WorldGuardUtils(world);
 
 	public Halloween20() {
 		new LostPumpkins();
 		new ShootingRange();
 		Nexus.registerListener(this);
+	}
+
+	public static World getWorld() {
+		return Bukkit.getWorld("safepvp");
+	}
+
+	public static WorldGuardUtils getWGUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public static WorldEditUtils getWEUtils() {
+		return new WorldEditUtils(getWorld());
 	}
 
 	public static void start(Player player) {
@@ -77,7 +87,7 @@ public class Halloween20 implements Listener {
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (!utils.getPlayersInRegion(region).contains(event.getPlayer())) return;
+		if (!getWGUtils().getPlayersInRegion(region).contains(event.getPlayer())) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		ComboLockNumber number = ComboLockNumber.getByLocation(event.getClickedBlock().getLocation());
 		if (number == null) return;
@@ -89,7 +99,7 @@ public class Halloween20 implements Listener {
 	@EventHandler
 	public void onComboLockInteract(PlayerInteractEvent event) {
 		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (utils.isInRegion(event.getClickedBlock().getLocation(), region + "_combolock"))
+		if (getWGUtils().isInRegion(event.getClickedBlock().getLocation(), region + "_combolock"))
 			Halloween20Menus.openComboLock(event.getPlayer());
 	}
 

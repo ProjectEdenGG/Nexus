@@ -32,8 +32,8 @@ import static me.pugabyte.nexus.features.events.aeveonproject.APUtils.getPlayers
 import static me.pugabyte.nexus.features.events.aeveonproject.APUtils.getPlayersInSet;
 import static me.pugabyte.nexus.features.events.aeveonproject.APUtils.getShipColorRegion;
 import static me.pugabyte.nexus.features.events.aeveonproject.APUtils.isInWorld;
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WEUtils;
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WGUtils;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWEUtils;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
 
 public class ClientsideBlocks implements Listener {
 	private static final AeveonProjectService service = new AeveonProjectService();
@@ -62,8 +62,8 @@ public class ClientsideBlocks implements Listener {
 					continue;
 
 				for (String updateRegion : updateRegions) {
-					Region region = WGUtils.getRegion(updateRegion);
-					Location rgCenter = WEUtils.toLocation(region.getCenter());
+					Region region = getWGUtils().getRegion(updateRegion);
+					Location rgCenter = getWEUtils().toLocation(region.getCenter());
 					double rgBoundary = Math.max(Math.min(Math.max(region.getWidth(), region.getLength()), maxBoundary), minBoundary);
 
 					for (Player player : setPlayers) {
@@ -160,7 +160,7 @@ public class ClientsideBlocks implements Listener {
 
 			}
 
-			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(getShipColorRegion(region)));
+			List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(getShipColorRegion(region)));
 
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WHITE_CONCRETE))
@@ -187,7 +187,7 @@ public class ClientsideBlocks implements Listener {
 
 		// Any Docking Ports Region
 		if (region.contains("dockingport") || region.contains("vent_door")) {
-			List<Block> blocks = WEUtils.getBlocks(WGUtils.getRegion(region));
+			List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(region));
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WATER))
 					player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData());

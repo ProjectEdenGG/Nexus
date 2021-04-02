@@ -74,7 +74,7 @@ public class EventUser extends PlayerOwnedObject {
 		this.tokens += tokens;
 		send(Events.PREFIX + "You have received &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
 
-		if (actionBar)
+		if (isOnline() && actionBar)
 			sendActionBar(getPlayer(), "&e+" + tokens + plural(" event token", tokens));
 	}
 

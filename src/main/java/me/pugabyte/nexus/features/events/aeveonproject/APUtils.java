@@ -14,8 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.APWorld;
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WGUtils;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
 
 public class APUtils {
 
@@ -26,14 +25,14 @@ public class APUtils {
 
 	public static Collection<Player> getPlayersInSet(APSet set) {
 		try {
-			return WGUtils.getPlayersInRegion(set.getRegion());
+			return getWGUtils().getPlayersInRegion(set.getRegion());
 		} catch (Exception ignored) {
 			return null;
 		}
 	}
 
 	public static boolean isInSpace(Player player) {
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(player.getLocation());
+		Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(player.getLocation());
 		Set<ProtectedRegion> spaceRegions = regions.stream()
 				.filter(region -> region.getId().contains("space") || region.getId().contains("night"))
 				.collect(Collectors.toSet());
@@ -42,7 +41,7 @@ public class APUtils {
 	}
 
 	public static boolean isInRegion(Player player, String protectedRegion) {
-		return isInRegion(player, WGUtils.getProtectedRegion(protectedRegion));
+		return isInRegion(player, getWGUtils().getProtectedRegion(protectedRegion));
 	}
 
 	public static boolean isInRegion(Player player, ProtectedRegion protectedRegion) {
@@ -50,7 +49,7 @@ public class APUtils {
 	}
 
 	public static boolean isInRegion(Block block, String protectedRegion) {
-		return isInRegion(block, WGUtils.getProtectedRegion(protectedRegion));
+		return isInRegion(block, getWGUtils().getProtectedRegion(protectedRegion));
 	}
 
 	public static boolean isInRegion(Block block, ProtectedRegion protectedRegion) {
@@ -58,11 +57,11 @@ public class APUtils {
 	}
 
 	public static boolean isInRegion(Location location, String protectedRegion) {
-		return isInRegion(location, WGUtils.getProtectedRegion(protectedRegion));
+		return isInRegion(location, getWGUtils().getProtectedRegion(protectedRegion));
 	}
 
 	public static boolean isInRegion(Location location, ProtectedRegion protectedRegion) {
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
+		Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(location);
 		for (ProtectedRegion region : regions) {
 			if (region.equals(protectedRegion))
 				return true;
@@ -79,15 +78,15 @@ public class APUtils {
 	}
 
 	public static boolean isInWorld(Location location) {
-		return location.getWorld().equals(AeveonProject.getAPWorld());
+		return location.getWorld().equals(AeveonProject.getWorld());
 	}
 
 	public static Location APLoc(double x, double y, double z) {
-		return new Location(APWorld, x, y, z);
+		return new Location(AeveonProject.getWorld(), x, y, z);
 	}
 
 	public static Location APLoc(double x, double y, double z, float yaw, float pitch) {
-		return new Location(APWorld, x, y, z, yaw, pitch);
+		return new Location(AeveonProject.getWorld(), x, y, z, yaw, pitch);
 	}
 
 	public static String getShipColorRegion(String updateRg) {

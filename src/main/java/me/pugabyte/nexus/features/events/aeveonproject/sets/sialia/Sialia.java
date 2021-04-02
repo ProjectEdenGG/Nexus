@@ -13,6 +13,7 @@ import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -25,8 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.ROOT;
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WGUtils;
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getAPWorld;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWorld;
 
 @Region("sialia")
 public class Sialia implements Listener, APSet {
@@ -43,7 +44,7 @@ public class Sialia implements Listener, APSet {
 		new Sounds();
 
 		Tasks.repeat(0, Time.TICK.x(5), () -> {
-			List<Player> nearbyPlayers = new ArrayList<>(WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion()));
+			List<Player> nearbyPlayers = new ArrayList<>(getWGUtils().getPlayersInRegion(APSetType.SIALIA.get().getRegion()));
 			if (nearbyPlayers.size() > 0)
 				nearbyPlayer = nearbyPlayers.get(0);
 		});
@@ -63,16 +64,17 @@ public class Sialia implements Listener, APSet {
 		if (openDoors.contains(doorRg)) return;
 
 		openDoors.add(doorRg);
+		WorldGuardUtils WGUtils = getWGUtils();
 		ProtectedRegion door = WGUtils.getProtectedRegion(doorRg);
 
 		String folder = ROOT + "Bulkhead/";
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getAPWorld().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
+		getWorld().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 0; i <= 2; i++) {
 			int frame = i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
-				AeveonProject.WEUtils.paster().file(file).at(door.getMinimumPoint()).paste();
+				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).paste();
 			});
 		}
 	}
@@ -88,18 +90,19 @@ public class Sialia implements Listener, APSet {
 		ProtectedRegion sensorRg = event.getRegion();
 		String doorRg = sensorRg.getId().replaceAll("_sensor", "");
 		if (!openDoors.contains(doorRg)) return;
+		WorldGuardUtils WGUtils = getWGUtils();
 		if (WGUtils.getPlayersInRegion(sensorRg).size() != 0) return;
 
 		ProtectedRegion door = WGUtils.getProtectedRegion(doorRg);
 		String folder = ROOT + "Bulkhead/";
 
 		Location loc = WGUtils.toLocation(door.getMinimumPoint());
-		getAPWorld().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
+		getWorld().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 2; i >= 0; i--) {
 			int frame = 2 - i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
-				AeveonProject.WEUtils.paster().file(file).at(door.getMinimumPoint()).paste();
+				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).paste();
 				if (frame == 0) {
 					openDoors.remove(doorRg);
 				}

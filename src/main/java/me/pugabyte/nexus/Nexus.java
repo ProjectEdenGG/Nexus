@@ -34,6 +34,7 @@ import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -60,6 +61,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.joining;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
@@ -229,6 +231,8 @@ public class Nexus extends JavaPlugin {
 		Locale.setDefault(Locale.US);
 
 		new Timer("Enable", () -> {
+			Nexus.log("Loaded worlds: " + Bukkit.getWorlds().stream().map(World::getName).collect(joining(", ")));
+
 			new Timer(" Config", this::setupConfig);
 			new Timer(" Databases", this::databases);
 			new Timer(" Hooks", this::hooks);

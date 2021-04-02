@@ -53,7 +53,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
@@ -193,8 +193,8 @@ public class BFQuests implements Listener {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
-		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = getWGUtils().getProtectedRegion(Beehive.beehiveRg);
+		if (getWGUtils().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -217,8 +217,8 @@ public class BFQuests implements Listener {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
-		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = getWGUtils().getProtectedRegion(Beehive.beehiveRg);
+		if (getWGUtils().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -349,7 +349,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
 		Location loc = event.getPlayer().getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
+		if (!getWGUtils().getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}

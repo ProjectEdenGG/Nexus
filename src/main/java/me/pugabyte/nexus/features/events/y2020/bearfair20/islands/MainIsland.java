@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
@@ -403,7 +403,7 @@ public class MainIsland implements Listener, Island {
 	}
 
 	public static void witchQuestCraft() {
-		Collection<Player> players = WGUtils.getPlayersInRegion(witchDwellingRg);
+		Collection<Player> players = getWGUtils().getPlayersInRegion(witchDwellingRg);
 		for (Player player : players) {
 			if (hasAllIngredients(player)) {
 				endMainQuest(player);

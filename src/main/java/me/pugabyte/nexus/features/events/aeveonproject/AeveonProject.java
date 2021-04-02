@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.events.aeveonproject;
 
 import lombok.Data;
-import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.aeveonproject.effects.Effects;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APRegions;
@@ -16,11 +15,6 @@ import org.bukkit.event.Listener;
 
 @Data
 public class AeveonProject implements Listener {
-	public static final World APWorld = Bukkit.getWorld("Aeveon_Project");
-	@Getter
-	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(APWorld);
-	public static final WorldEditUtils WEUtils = new WorldEditUtils(APWorld);
-
 	public static String PREFIX = "&8&l[&eAeveonProject&8&l] &3";
 	public static String ROOT = "Animations/AeveonProject/";
 
@@ -34,9 +28,16 @@ public class AeveonProject implements Listener {
 		new Timer("    Regions", APRegions::new);
 	}
 
+	public static World getWorld() {
+		return Bukkit.getWorld("Aeveon_Project");
+	}
 
-	public static World getAPWorld() {
-		return APWorld;
+	public static WorldGuardUtils getWGUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public static WorldEditUtils getWEUtils() {
+		return new WorldEditUtils(getWorld());
 	}
 
 

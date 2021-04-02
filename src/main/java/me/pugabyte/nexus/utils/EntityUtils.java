@@ -18,11 +18,13 @@ import java.util.stream.Collectors;
 public class EntityUtils {
 
 	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, double radius) {
+		if (location.getWorld() == null) return null;
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
 	}
 
 	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, double radius) {
+		if (location.getWorld() == null) return null;
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
@@ -32,7 +34,7 @@ public class EntityUtils {
 	}
 
 	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
-		if (location == null)
+		if (location == null || location.getWorld() == null)
 			return null;
 
 		List<Entity> entities = getNearbyEntities(location, radius).keySet().stream()

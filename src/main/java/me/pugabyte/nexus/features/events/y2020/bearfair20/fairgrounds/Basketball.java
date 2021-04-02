@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
@@ -103,7 +103,7 @@ public class Basketball implements Listener {
 	}
 
 	private static void removeBasketballEntity(Player player) {
-		Collection<Entity> entities = WGUtils.getEntitiesInRegion(gameRg);
+		Collection<Entity> entities = getWGUtils().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
 			if (entity instanceof Item) {
 				Item item = (Item) entity;
@@ -117,7 +117,7 @@ public class Basketball implements Listener {
 	}
 
 	private static boolean regionContainsBasketball(Player player) {
-		Collection<Entity> entities = WGUtils.getEntitiesInRegion(gameRg);
+		Collection<Entity> entities = getWGUtils().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
 			if (entity instanceof Item) {
 				Item item = (Item) entity;
@@ -154,12 +154,12 @@ public class Basketball implements Listener {
 	}
 
 	private static Collection<Entity> getRegionEntities() {
-		return WGUtils.getEntitiesInRegion(gameRg);
+		return getWGUtils().getEntitiesInRegion(gameRg);
 	}
 
 	private static void cleanupBasketballs() {
 		getRegionEntities().forEach(entity -> {
-			if (!WGUtils.isInRegion(entity.getLocation(), courtRg))
+			if (!getWGUtils().isInRegion(entity.getLocation(), courtRg))
 				if (isBasketball(entity))
 					entity.remove();
 		});
@@ -174,11 +174,11 @@ public class Basketball implements Listener {
 					.collect(Collectors.toList());
 
 			players.forEach(player -> {
-				if (WGUtils.isInRegion(player.getLocation(), courtRg)) {
+				if (getWGUtils().isInRegion(player.getLocation(), courtRg)) {
 					if (!hasBasketball(player)) {
 						boolean found = false;
 						for (Entity entity : getRegionEntities())
-							if (WGUtils.isInRegion(entity.getLocation(), courtRg)) {
+							if (getWGUtils().isInRegion(entity.getLocation(), courtRg)) {
 								found = true;
 								break;
 							}
@@ -209,12 +209,12 @@ public class Basketball implements Listener {
 			taskId = Tasks.repeat(0, 1, () -> {
 				++iteration;
 
-				if (!WGUtils.isInRegion(entity.getLocation(), courtRg)) {
+				if (!getWGUtils().isInRegion(entity.getLocation(), courtRg)) {
 					entity.remove();
 					giveBasketball(player);
 					stop();
-				} else if (WGUtils.isInRegion(entity.getLocation(), hoopRg + "1")
-						|| WGUtils.isInRegion(entity.getLocation(), hoopRg + "2")) {
+				} else if (getWGUtils().isInRegion(entity.getLocation(), hoopRg + "1")
+						|| getWGUtils().isInRegion(entity.getLocation(), hoopRg + "2")) {
 					entity.remove();
 					giveBasketball(player);
 					send("&eTouchdown!!", player);
@@ -225,11 +225,11 @@ public class Basketball implements Listener {
 						new BearFairService().save(user);
 					}
 
-					WGUtils.getPlayersInRegion(courtRg).forEach(loopPlayer ->
+					getWGUtils().getPlayersInRegion(courtRg).forEach(loopPlayer ->
 							loopPlayer.spawnParticle(Particle.LAVA, entity.getLocation(), 50, 2, 2, 2, .01));
 					stop();
-				} else if (WGUtils.isInRegion(entity.getLocation(), backboardRg + "1")
-						|| WGUtils.isInRegion(entity.getLocation(), backboardRg + "2")) {
+				} else if (getWGUtils().isInRegion(entity.getLocation(), backboardRg + "1")
+						|| getWGUtils().isInRegion(entity.getLocation(), backboardRg + "2")) {
 					entity.remove();
 					giveBasketball(player);
 					send("&eSo close...", player);
@@ -237,8 +237,8 @@ public class Basketball implements Listener {
 				}
 
 				if (iteration == 60) {
-					if (WGUtils.isInRegion(entity.getLocation(), stuckRg + "1")
-							|| WGUtils.isInRegion(entity.getLocation(), stuckRg + "2")) {
+					if (getWGUtils().isInRegion(entity.getLocation(), stuckRg + "1")
+							|| getWGUtils().isInRegion(entity.getLocation(), stuckRg + "2")) {
 						entity.remove();
 						giveBasketball(player);
 					}
