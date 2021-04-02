@@ -19,11 +19,11 @@ public class NerdListener implements Listener {
 		NerdService service = new NerdService();
 		Nerd nerd = Nerd.of(event.getPlayer());
 
-		if (nerd.getLastQuit() != null && nerd.getLastQuit().isBefore(nerd.getLastJoin()))
-			nerd.setLastQuit(LocalDateTime.now().minusMinutes(1));
-
 		nerd.setLastJoin(LocalDateTime.now());
 		nerd.getPastNames().add(event.getPlayer().getName());
+
+		if (nerd.getLastQuit() != null && nerd.getLastQuit().isBefore(nerd.getLastJoin()))
+			nerd.setLastQuit(LocalDateTime.now().minusMinutes(1));
 
 		service.save(nerd);
 	}
