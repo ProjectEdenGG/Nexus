@@ -127,6 +127,8 @@ public class StringUtils {
 	}
 
 	// TODO This will break with hex
+	// TODO replace with https://canary.discord.com/channels/132680070480396288/421474915930079232/827394245522096158
+	// 		- needs to strip color when measuring max length and carry colors over to next line
 	public static String loreize(String string) {
 		if (string == null) return null;
 
