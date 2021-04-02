@@ -95,9 +95,9 @@ public class HatCommand extends CustomCommand implements Listener {
 
 		event.setCancelled(true);
 		final PlayerInventory inv = (PlayerInventory) clickedInventory;
-		final ItemStack head = inv.getHelmet();
-		inv.setHelmet(event.getCursor());
-		event.setCurrentItem(head);
+		final ItemStack head = isNullOrAir(inv.getHelmet()) ? new ItemStack(Material.AIR) : inv.getHelmet().clone();
+		inv.setHelmet(event.getCursor().clone());
+		event.setCursor(head);
 	}
 
 	private boolean isPreventBindingHat(Player player, PlayerInventory inventory) {
