@@ -18,14 +18,13 @@ import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -59,11 +58,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 					return;
 				}
 
-				packageType.getPermissions().forEach(permission -> Nexus.getPerms().playerRemove(null, player, permission));
-				packageType.getExpirationCommands().stream()
-						.map(StringUtils::trimFirst)
-						.map(command -> command.replaceAll("\\[player]", player.getName()))
-						.forEach(command -> Tasks.sync(() -> PlayerUtils.runCommandAsConsole(command)));
+				packageType.expire(player);
 
 				service.complete(task);
 			});
@@ -121,18 +116,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 			}
 
-			OfflinePlayer permsUser = PlayerUtils.getPlayer(purchase.getName().length() < 2 ? purchase.getPurchaserName() : purchase.getName());
-			packageType.getPermissions().forEach(permission -> PermissionChange.set().player(permsUser).permission(permission).run());
-
-			packageType.getCommands().stream()
-					.map(command -> command.replaceAll("\\[player]", PlayerUtils.getPlayer(purchase.getUuid()).getName()))
-					.forEach(PlayerUtils::runCommandAsConsole);
-
-			if (packageType.getExpirationDays() > 0)
-				new TaskService().save(new Task("package-expire", new HashMap<String, Object>() {{
-					put("uuid", purchase.getUuid());
-					put("packageId", String.valueOf(purchase.getPackageId()));
-				}}, LocalDateTime.now().plusDays(packageType.getExpirationDays())));
+			OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(purchase.getUuid()));
+			packageType.apply(player);
 
 			discordMessage += "\nPurchase successfully processed.";
 		}

@@ -5,8 +5,10 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -63,6 +65,7 @@ public class StoreCommand extends CustomCommand {
 	@Async
 	@SneakyThrows
 	@Path("createCoupon <player> <amount>")
+	@Permission("group.admin")
 	void createCoupon(OfflinePlayer offlinePlayer, double amount) {
 		Coupon coupon = Coupon.builder()
 				.code(generateCouponCode())
@@ -82,6 +85,20 @@ public class StoreCommand extends CustomCommand {
 		Nexus.getBuycraft().getApiClient().createCoupon(coupon).execute();
 
 		send(json(PREFIX + "Created coupon &e" + coupon.getCode()).insert(coupon.getCode()));
+	}
+
+	@Path("apply <package> [player]")
+	@Permission("group.admin")
+	void apply(Package packageType, @Arg("self") OfflinePlayer player) {
+		packageType.apply(player);
+		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + player.getName());
+	}
+
+	@Path("(expire|remove) <package> [player]")
+	@Permission("group.admin")
+	void expire(Package packageType, @Arg("self") OfflinePlayer player) {
+		packageType.expire(player);
+		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + player.getName());
 	}
 
 }
