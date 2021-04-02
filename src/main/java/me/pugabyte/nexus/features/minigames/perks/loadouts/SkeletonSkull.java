@@ -3,24 +3,24 @@ package me.pugabyte.nexus.features.minigames.perks.loadouts;
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import org.bukkit.Material;
 
-public class DragonSkull extends LoadoutPerk {
+public class SkeletonSkull extends LoadoutPerk {
 	@Override
 	public String getName() {
-		return "Dragon Skull";
+		return "Skeleton Skull";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Scare your enemies with the frightening skull of a mighty dragon!";
+		return "Snipe your foes with the incredible prowess of a skeleton";
 	}
 
 	@Override
 	public int getPrice() {
-		return 100;
+		return 10;
 	}
 
 	@Override
 	public Material getMaterial() {
-		return Material.DRAGON_HEAD;
+		return Material.SKELETON_SKULL;
 	}
 }

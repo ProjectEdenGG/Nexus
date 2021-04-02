@@ -474,6 +474,8 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Path("collectibles")
 	void collectibles() {
+		if (player().getWorld() != Minigames.getWorld())
+			error("You must be in the gameworld to use this command");
 		new PerkMenu().open(player());
 	}
 

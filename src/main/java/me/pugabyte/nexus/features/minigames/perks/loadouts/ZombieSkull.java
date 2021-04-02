@@ -3,24 +3,24 @@ package me.pugabyte.nexus.features.minigames.perks.loadouts;
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import org.bukkit.Material;
 
-public class UnicornHorn extends LoadoutPerk {
+public class ZombieSkull extends LoadoutPerk {
 	@Override
-	public Material getMaterial() {
-		return Material.END_ROD;
+	public String getName() {
+		return "Zombie Skull";
 	}
 
 	@Override
-	public String getName() {
-		return "Unicorn Horn";
+	public Material getMaterial() {
+		return Material.ZOMBIE_HEAD;
 	}
 
 	@Override
 	public String getDescription() {
-		return "Become a pretty unicorn with this glowing horn on top of your head!";
+		return "Eek! A zombie! Oh, no, it's just %s";
 	}
 
 	@Override
 	public int getPrice() {
-		return 25;
+		return 10;
 	}
 }

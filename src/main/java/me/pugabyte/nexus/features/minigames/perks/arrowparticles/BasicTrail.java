@@ -22,17 +22,13 @@ public class BasicTrail extends ParticleProjectilePerk {
     }
 
     @Override
-    public String[] getDescription() {
-        return new String[]{
-                "Give your arrows some",
-                "sparkles with this",
-                "simple trail"
-        };
+    public String getDescription() {
+        return "Give your arrows some sparkles with this simple trail";
     }
 
     @Override
     public int getPrice() {
-        return 2;
+        return 10;
     }
 
     @Override

@@ -12,6 +12,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A perk that gives a user fake armor items specific to their team color. The most basic subclass of this should
+ * just override {@link #getColorMaterial(ColorType)}. More complex loadouts should override {@link #getColorLoadouts()}
+ * and {@link #getMenuItem()}.
+ */
 public abstract class TeamLoadoutPerk extends LoadoutPerk {
 	@Override
 	public PerkCategory getPerkCategory() {
@@ -44,6 +49,11 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 		return Arrays.stream(ColorType.values()).filter(colorType -> color.equals(colorType.getChatColor())).findFirst().orElse(null);
 	}
 
+	@Override
+	public Material getMaterial() {
+		return getColorMaterial(ColorType.CYAN);
+	}
+
 	protected Material getColorMaterial(ColorType color) {
 		return null;
 	}
@@ -71,5 +81,5 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 	/**
 	 * Thrown when a team loadout perk using {@link #basicColorHatMap()} has neglected to override {@link #getColorMaterial(ColorType)}
 	 */
-	protected static class IncompleteTeamLoadout extends Exception {}
+	protected static class IncompleteTeamLoadout extends IncompleteLoadout {}
 }

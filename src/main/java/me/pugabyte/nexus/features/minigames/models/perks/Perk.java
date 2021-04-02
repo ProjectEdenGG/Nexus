@@ -8,7 +8,7 @@ public abstract class Perk implements IHasPerkCategory {
 	@EqualsAndHashCode.Include
 	public abstract String getName();
 	public abstract ItemStack getMenuItem();
-	public abstract String[] getDescription();
+	public abstract String getDescription();
 	@EqualsAndHashCode.Include
 	public abstract PerkCategory getPerkCategory();
 	@EqualsAndHashCode.Include

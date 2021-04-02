@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A perk that gives a user fake armor items. As this is usually used for hats, most subclasses should only need to
+ * override {@link #getMaterial()}. More complex loadouts should override {@link #getLoadout()} and {@link #getMenuItem()}.
+ */
 public abstract class LoadoutPerk extends TickablePerk {
 	@Override
 	public PerkCategory getPerkCategory() {
@@ -48,6 +52,13 @@ public abstract class LoadoutPerk extends TickablePerk {
 
 	public Material getMaterial() {
 		return null;
+	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		if (getMaterial() == null || !getMaterial().isItem())
+			throw new IncompleteLoadout();
+		return new ItemStack(getMaterial());
 	}
 
 	@Override
@@ -114,5 +125,5 @@ public abstract class LoadoutPerk extends TickablePerk {
 	/**
 	 * Thrown when a team loadout perk using {@link #basicHatMap()} has neglected to override {@link #getMaterial()}
 	 */
-	protected static class IncompleteLoadout extends Exception {}
+	public static class IncompleteLoadout extends RuntimeException {}
 }

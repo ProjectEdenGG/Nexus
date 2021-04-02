@@ -19,10 +19,8 @@ public class HeartParticle extends TickablePerk {
 	}
 
 	@Override
-	public String[] getDescription() {
-		return new String[]{"Someone's falling madly",
-							"in love with that",
-							"enemy team..."};
+	public String getDescription() {
+		return "Someone's falling madly in love with that enemy team...";
 	}
 
 	@Override
@@ -32,7 +30,7 @@ public class HeartParticle extends TickablePerk {
 
 	@Override
 	public int getPrice() {
-		return 1;
+		return 15;
 	}
 
 	@Override

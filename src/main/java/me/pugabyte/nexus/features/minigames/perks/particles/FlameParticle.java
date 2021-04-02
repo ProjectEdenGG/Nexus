@@ -19,10 +19,8 @@ public class FlameParticle extends TickablePerk {
 	}
 
 	@Override
-	public String[] getDescription() {
-		return new String[]{"Burn like the fire",
-							"that fuels your",
-							"craving for blood!"};
+	public String getDescription() {
+		return "Burn like the fire that fuels your craving for blood!";
 	}
 
 	@Override
@@ -32,7 +30,7 @@ public class FlameParticle extends TickablePerk {
 
 	@Override
 	public int getPrice() {
-		return 0;
+		return 10;
 	}
 
 	@Override
