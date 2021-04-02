@@ -14,6 +14,7 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.citizensnpcs.api.CitizensAPI;
@@ -39,6 +40,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
@@ -164,17 +166,17 @@ public class ResourceWorld implements Listener {
 	/* Find protections from people being dumb
 
 	select
-		nerd.name,
+		mcmmo_users.user,
 		lwc_blocks.name,
 		CONCAT("/tppos ", x, " ", y, " ", z, " ", world)
 	from bearnation_smp_lwc.lwc_protections
 	inner join bearnation_smp_lwc.lwc_blocks
 		on lwc_blocks.id = lwc_protections.blockId
-	inner join bearnation.nerd
-		on lwc_protections.owner = nerd.uuid
+	inner join bearnation_smp_mcmmo.mcmmo_users
+		on lwc_protections.owner = mcmmo_users.uuid
 	where world in ('resource', 'resource_nether', 'resource_the_end')
 		and lwc_blocks.name not like "%DOOR%"
-		and lwc_blocks.name not like "%GATE%";
+		and lwc_blocks.name not like "%GATE%"
 
 	 */
 
@@ -202,71 +204,87 @@ public class ResourceWorld implements Listener {
 		NPC filid = CitizensAPI.getNPCRegistry().getById(filidId);
 		filid.despawn();
 
-		for (String worldName : Arrays.asList("resource", "resource_nether", "resource_the_end")) {
-			if (test)
-				worldName = "test_" + worldName;
-			final String finalWorldName = worldName;
+		AtomicInteger wait = new AtomicInteger();
+		Tasks.wait(wait.getAndAdd(5), () -> {
+			for (String _worldName : Arrays.asList("resource", "resource_nether", "resource_the_end")) {
+				if (test)
+					_worldName = "test_" + _worldName;
+				final String worldName = _worldName;
 
-			String root = new File(".").getAbsolutePath().replace(".", "");
-			File worldFolder = Paths.get(root + worldName).toFile();
-			File newFolder = Paths.get(root + "old_" + worldName).toFile();
+				String root = new File(".").getAbsolutePath().replace(".", "");
+				File worldFolder = Paths.get(root + worldName).toFile();
+				File newFolder = Paths.get(root + "old_" + worldName).toFile();
 
-			World world = Bukkit.getWorld(worldName);
-			if (world == null) {
-				Nexus.severe("World " + finalWorldName + " not loaded");
-				return;
+				World world = Bukkit.getWorld(worldName);
+				if (world == null) {
+					Nexus.severe("World " + worldName + " not loaded");
+					return;
+				}
+
+				try {
+					Nexus.getMultiverseCore().getMVWorldManager().unloadWorld(worldName);
+				} catch (Exception ex) {
+					Nexus.severe("Error unloading world " + worldName);
+					ex.printStackTrace();
+					return;
+				}
+
+				if (newFolder.exists())
+					if (!newFolder.delete()) {
+						Nexus.severe("Could not delete " + newFolder.getName() + " folder");
+						return;
+					}
+
+				boolean renameSuccess = worldFolder.renameTo(newFolder);
+				if (!renameSuccess) {
+					Nexus.severe("Could not rename " + worldName + " folder");
+					return;
+				}
+
+				boolean deleteSuccess = Paths.get(newFolder.getAbsolutePath() + "/uid.dat").toFile().delete();
+				if (!deleteSuccess) {
+					Nexus.severe("Could not delete " + worldName + " uid.dat file");
+					return;
+				}
+
+				final Environment env;
+				final String seed;
+				if (worldName.contains("nether")) {
+					env = Environment.NETHER;
+					seed = null;
+				} else if (worldName.contains("the_end")) {
+					env = Environment.THE_END;
+					seed = null;
+				} else {
+					env = Environment.NORMAL;
+					seed = "-460015119172653"; // TODO List of approved seeds
+				}
+
+				Tasks.wait(wait.getAndAdd(5), () -> {
+					Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null);
+
+					Tasks.wait(wait.getAndAdd(5), () -> HomesFeature.deleteFromWorld(worldName, null));
+				});
 			}
+		});
 
-			try {
-				Nexus.getMultiverseCore().getMVWorldManager().unloadWorld(worldName);
-			} catch (Exception ex) {
-				Nexus.severe("Error unloading world " + worldName);
-				ex.printStackTrace();
-				return;
-			}
+		Tasks.wait(wait.getAndAdd(20), () -> {
+			String worldName = (test ? "test_" : "") + "resource";
 
-			boolean renameSuccess = worldFolder.renameTo(newFolder);
-			if (!renameSuccess) {
-				Nexus.severe("Could not rename " + finalWorldName + " folder");
-				return;
-			}
+			new WorldEditUtils(worldName).paster()
+					.file("resource-world-spawn")
+					.at(new Location(Bukkit.getWorld(worldName), 0, 150, 0))
+					.air(false)
+					.paste();
 
-			boolean deleteSuccess = Paths.get(newFolder.getAbsolutePath() + "/uid.dat").toFile().delete();
-			if (!deleteSuccess) {
-				Nexus.severe("Could not delete " + finalWorldName + " uid.dat file");
-				return;
-			}
+			Warp warp = new WarpService().get(worldName, WarpType.NORMAL);
+			Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
+			filid.spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
 
-			HomesFeature.deleteFromWorld(worldName, null);
-
-			Environment env = Environment.NORMAL;
-			String seed = null;
-			if (worldName.contains("nether"))
-				env = Environment.NETHER;
-			else if (worldName.contains("the_end"))
-				env = Environment.THE_END;
-			else
-				// TODO List of approved seeds
-				seed = "778704597681231";
-
-			Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null);
-		}
-
-		String worldName = (test ? "test_" : "") + "resource";
-
-		new WorldEditUtils(worldName).paster()
-				.file("resource-world-spawn")
-				.at(new Location(Bukkit.getWorld(worldName), 0, 0, 0))
-				.air(false)
-				.paste();
-
-		Warp warp = new WarpService().get(worldName, WarpType.NORMAL);
-		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
-		filid.spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
-
-		runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
-		runCommandAsConsole("bluemap purge " + worldName);
-		runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle");
+			runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
+			runCommandAsConsole("bluemap purge " + worldName);
+			Tasks.wait(wait.getAndAdd(10), () -> runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle"));
+		});
 	}
 
 }
