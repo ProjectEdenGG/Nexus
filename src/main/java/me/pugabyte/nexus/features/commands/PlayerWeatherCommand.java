@@ -21,6 +21,8 @@ public class PlayerWeatherCommand extends CustomCommand {
 
 	@Path("<weather>")
 	void run(WeatherType type) {
+		if (type == WeatherType.DOWNFALL && !hasPermission("group.staff"))
+			error("Due to an exploit, setting your weather to rain has been disabled");
 		player().setPlayerWeather(type);
 		send(PREFIX + "Weather set to " + camelCase(type));
 	}
