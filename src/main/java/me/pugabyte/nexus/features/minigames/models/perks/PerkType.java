@@ -3,6 +3,8 @@ package me.pugabyte.nexus.features.minigames.models.perks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.perks.arrowparticles.BasicTrail;
+import me.pugabyte.nexus.features.minigames.perks.arrowparticles.GreenTrail;
+import me.pugabyte.nexus.features.minigames.perks.arrowparticles.RainbowTrail;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.CreeperSkull;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.DragonSkull;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.MarksmansHat;
@@ -33,7 +35,9 @@ public enum PerkType implements IHasPerkCategory {
 	BICORN_SIDE_HAT(new BicornSideHat()),
 	CAVALIER_HAT(new CavalierHat()),
 	TRICORN_HAT(new TricornHat()),
-	MARKSMANS_HAT(new MarksmansHat())
+	MARKSMANS_HAT(new MarksmansHat()),
+	GREEN_TRAIL(new GreenTrail()),
+	RAINBOW_TRAIL(new RainbowTrail())
 	;
 
 	private final Perk perk;

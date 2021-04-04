@@ -25,12 +25,16 @@ public abstract class ParticleProjectilePerk extends Perk {
         return PerkCategory.ARROW_TRAIL;
     }
 
-    public void tick(Projectile projectile, List<Player> players) {
+    public void tick(Projectile projectile, List<Player> players, Particle.DustOptions dustOptions) {
         players = players.stream().filter(player -> {
             PerkOwner owner = new PerkOwnerService().get(player);
             return owner.getHideParticle().showParticle(getPerkCategory());
         }).collect(Collectors.toList());
-        new ParticleBuilder(getParticle()).receivers(players).count(2).offset(.02, .02, .02).location(projectile.getLocation()).extra(getSpeed()).spawn();
+        new ParticleBuilder(getParticle()).receivers(players).count(2).offset(.02, .02, .02).location(projectile.getLocation()).extra(getSpeed()).data(dustOptions).spawn();
+    }
+
+    public void tick(Projectile projectile, List<Player> players) {
+        tick(projectile, players, null);
     }
 
     public void tick(Projectile projectile, Match match) {
