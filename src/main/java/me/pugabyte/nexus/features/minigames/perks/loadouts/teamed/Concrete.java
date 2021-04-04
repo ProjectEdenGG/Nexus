@@ -12,7 +12,7 @@ public class Concrete extends TeamLoadoutPerk {
 
 	@Override
 	public String getDescription() {
-		return "Protect your head with a slab of concrete! &oDisclaimer: does not actually protect you.";
+		return "Protect your head with a slab of concrete!||&3Disclaimer: does not actually protect you.";
 	}
 
 	@Override

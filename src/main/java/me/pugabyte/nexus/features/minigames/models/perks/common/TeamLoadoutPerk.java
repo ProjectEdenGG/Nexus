@@ -14,8 +14,8 @@ import java.util.Map;
 
 /**
  * A perk that gives a user fake armor items specific to their team color. The most basic subclass of this should
- * just override {@link #getColorMaterial(ColorType)}. More complex loadouts should override {@link #getColorLoadouts()}
- * and {@link #getMenuItem()}.
+ * just override {@link #getColorMaterial(ColorType)} or {@link #getColorItem(ColorType)}. More complex loadouts should
+ * override {@link #getColorLoadouts()} and {@link #getMenuItem()}.
  */
 public abstract class TeamLoadoutPerk extends LoadoutPerk {
 	@Override
@@ -42,7 +42,7 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 			tick(minigamer.getPlayer());
 			return;
 		}
-		getLoadout(minigamer.getTeam().getColor()).forEach((itemSlot, itemStack) -> sendPackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
+		getLoadout(minigamer.getTeam().getColor()).forEach((itemSlot, itemStack) -> sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
 	}
 
 	public static ColorType getColorType(ChatColor color) {
@@ -58,16 +58,25 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 		return null;
 	}
 
+	@Override
+	public ItemStack getItem() {
+		return getColorItem(ColorType.CYAN);
+	}
+
+	protected ItemStack getColorItem(ColorType color) {
+		Material material = getColorMaterial(color);
+		if (material == null)
+			throw new IncompleteTeamLoadout();
+		return new ItemStack(material);
+	}
+
 	protected Map<ChatColor, Map<EnumItemSlot, ItemStack>> basicColorHatMap() {
 		Map<ChatColor, Map<EnumItemSlot, ItemStack>> loadout = new HashMap<>();
 		Arrays.stream(ColorType.values()).forEach(colorType -> {
 			try {
 				if (colorType.getChatColor() != null) {
-					Material material = getColorMaterial(colorType);
-					if (material == null)
-						throw new IncompleteTeamLoadout();
 					loadout.put(colorType.getChatColor(), new HashMap<EnumItemSlot, ItemStack>() {{
-						put(EnumItemSlot.HEAD, new ItemStack(material));
+						put(EnumItemSlot.HEAD, getColorItem(colorType));
 					}});
 				}
 			} catch (IllegalArgumentException ignored){}
@@ -81,5 +90,5 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 	/**
 	 * Thrown when a team loadout perk using {@link #basicColorHatMap()} has neglected to override {@link #getColorMaterial(ColorType)}
 	 */
-	protected static class IncompleteTeamLoadout extends IncompleteLoadout {}
+	public static class IncompleteTeamLoadout extends IncompleteLoadout {}
 }

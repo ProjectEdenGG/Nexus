@@ -87,7 +87,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			int multiplier = getMultiplier(match, minigamer);
 			if (multiplier == 0)
 				return;
-			if (RandomUtils.randomInt(1, 50 * multiplier) == 1)
+			if (RandomUtils.randomInt(1, 20 * multiplier) == 1)
 				perkOwner.reward(match.getArena());
 		});
 	}
