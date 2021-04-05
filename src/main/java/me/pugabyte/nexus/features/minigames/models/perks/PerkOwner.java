@@ -65,12 +65,19 @@ public class PerkOwner extends PlayerOwnedObject {
 		return uuid.equals(other.getUuid());
 	}
 
+	/**
+	 * Purchases a perk from the store. Specifically, this checks to see if the player doesn't already have the perk and
+	 * has enough tokens to purchase the perk. If it does, it takes the tokens from this player and adds the perk to
+	 * their purchased perks.
+	 * @param perk the perk to purchase
+	 * @return whether or not the purchase was successful
+	 */
 	public boolean purchase(PerkType perk) {
 		if (purchasedPerks.containsKey(perk))
 			return false;
 		if (perk.getPerk().getPrice() > tokens)
 			return false;
-		tokens -= perk.getPerk().getPrice();
+		tokens -= perk.getPrice();
 		purchasedPerks.put(perk, false);
 		service.save(this);
 		return true;
@@ -78,8 +85,9 @@ public class PerkOwner extends PlayerOwnedObject {
 
 	/**
 	 * Rewards the user for winning a minigame
+	 * @return false if the user has reached their max daily earnings
 	 */
-	public void reward(Arena arena) {
+	public boolean reward(Arena arena) {
 		LocalDate date = LocalDate.now();
 		if (date.isAfter(tokenDate)) {
 			tokenDate = date;
@@ -96,11 +104,12 @@ public class PerkOwner extends PlayerOwnedObject {
 				PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");
 		}
 		service.save(this);
+		return amount > 0;
 	}
 
 	/**
 	 * Enables or disables a perk
-	 * @return whether or not the user had the perk
+	 * @return false if the owner doesn't have the perk
 	 */
 	public boolean toggle(PerkType perkType) {
 		if (!purchasedPerks.containsKey(perkType))
