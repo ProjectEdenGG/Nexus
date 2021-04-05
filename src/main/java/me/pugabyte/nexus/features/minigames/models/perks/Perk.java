@@ -5,13 +5,10 @@ import org.bukkit.inventory.ItemStack;
 
 @EqualsAndHashCode
 public abstract class Perk implements IHasPerkCategory {
-	@EqualsAndHashCode.Include
 	public abstract String getName();
 	public abstract ItemStack getMenuItem();
 	public abstract String getDescription();
-	@EqualsAndHashCode.Include
 	public abstract PerkCategory getPerkCategory();
-	@EqualsAndHashCode.Include
 	public abstract int getPrice();
 
 	/**
