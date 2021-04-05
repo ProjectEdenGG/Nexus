@@ -111,13 +111,13 @@ public abstract class MultiplayerMechanic extends Mechanic {
 				unownedPerks.forEach(perkType -> weights.put(perkType, (double) (maxPrice-perkType.getPrice()+minPrice)));
 				PerkType perkType = RandomUtils.getWeightedRandom(weights);
 
-				if (perkType != null) {
-					perkOwner.getPurchasedPerks().put(perkType, false);
-					perkOwner.setRandomGiftDate(LocalDate.now());
-					PerkOwner.service.save(perkOwner);
-					Minigames.broadcast("&e" + minigamer.getNickname() + "&3 randomly won the collectible &e" + perkType.getPerk().getName());
-					break;
-				}
+				if (perkType == null) continue; // failsafe (this shouldn't happen but just in case)
+
+				perkOwner.getPurchasedPerks().put(perkType, false);
+				perkOwner.setRandomGiftDate(LocalDate.now());
+				PerkOwner.service.save(perkOwner);
+				Minigames.broadcast("&e" + minigamer.getNickname() + "&3 randomly won the collectible &e" + perkType.getPerk().getName());
+				break;
 			}
 		}
 
