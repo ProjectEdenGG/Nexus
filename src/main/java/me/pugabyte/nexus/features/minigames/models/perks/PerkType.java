@@ -16,8 +16,11 @@ import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate.BicornH
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate.BicornSideHat;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate.CavalierHat;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate.TricornHat;
+import me.pugabyte.nexus.features.minigames.perks.particles.CloudParticle;
 import me.pugabyte.nexus.features.minigames.perks.particles.FlameParticle;
 import me.pugabyte.nexus.features.minigames.perks.particles.HeartParticle;
+import me.pugabyte.nexus.features.minigames.perks.particles.SoulFlameParticle;
+import me.pugabyte.nexus.features.minigames.perks.particles.SplashParticle;
 
 @AllArgsConstructor
 @Getter
@@ -59,7 +62,10 @@ public enum PerkType implements IHasPerkCategory {
 	SHROOMLIGHT(new ShroomlightHat()),
 	MUSHROOM(new MushroomHat()),
 	NETHERITE(new NetheriteHat()),
-	HONEY(new HoneyHat())
+	HONEY(new HoneyHat()),
+	CLOUD(new CloudParticle()),
+	SPLASH(new SplashParticle()),
+	SOUL_FLAME(new SoulFlameParticle())
 	;
 
 	private final Perk perk;

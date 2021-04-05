@@ -5,20 +5,20 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
-public class FlameParticle extends ParticlePerk {
+public class SoulFlameParticle extends ParticlePerk {
 	@Override
 	public String getName() {
-		return "Flames";
+		return "Soul Flames";
 	}
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.MAGMA_BLOCK);
+		return new ItemStack(Material.SOUL_TORCH);
 	}
 
 	@Override
 	public String getDescription() {
-		return "Burn like the fire that fuels your craving for blood!";
+		return "Burn like the flames of the nether wastes";
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class FlameParticle extends ParticlePerk {
 
 	@Override
 	public Particle getParticle() {
-		return Particle.FLAME;
+		return Particle.SOUL_FIRE_FLAME;
 	}
 
 	@Override

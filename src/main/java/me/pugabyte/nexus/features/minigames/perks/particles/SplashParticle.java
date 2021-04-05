@@ -5,20 +5,20 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
-public class FlameParticle extends ParticlePerk {
+public class SplashParticle extends ParticlePerk {
 	@Override
 	public String getName() {
-		return "Flames";
+		return "Splash";
 	}
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.MAGMA_BLOCK);
+		return new ItemStack(Material.BLUE_GLAZED_TERRACOTTA);
 	}
 
 	@Override
 	public String getDescription() {
-		return "Burn like the fire that fuels your craving for blood!";
+		return "Summon water particles like a fish in water";
 	}
 
 	@Override
@@ -27,12 +27,17 @@ public class FlameParticle extends ParticlePerk {
 	}
 
 	@Override
-	public Particle getParticle() {
-		return Particle.FLAME;
+	public double getSpeed() {
+		return 0.01;
 	}
 
 	@Override
-	public double getSpeed() {
-		return 0.002d;
+	public int getCount() {
+		return 10;
+	}
+
+	@Override
+	public Particle getParticle() {
+		return Particle.WATER_WAKE;
 	}
 }

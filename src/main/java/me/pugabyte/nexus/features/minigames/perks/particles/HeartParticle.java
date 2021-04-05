@@ -23,7 +23,7 @@ public class HeartParticle extends ParticlePerk {
 
 	@Override
 	public int getPrice() {
-		return 15;
+		return 20;
 	}
 
 	@Override

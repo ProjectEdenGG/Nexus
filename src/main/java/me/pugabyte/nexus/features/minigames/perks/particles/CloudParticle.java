@@ -5,34 +5,29 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
-public class FlameParticle extends ParticlePerk {
+public class CloudParticle extends ParticlePerk {
 	@Override
 	public String getName() {
-		return "Flames";
+		return "Clouds";
 	}
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.MAGMA_BLOCK);
+		return new ItemStack(Material.WHITE_CONCRETE_POWDER);
 	}
 
 	@Override
 	public String getDescription() {
-		return "Burn like the fire that fuels your craving for blood!";
+		return "Hide yourself in a cloud of smoke";
 	}
 
 	@Override
 	public int getPrice() {
-		return 10;
+		return 15;
 	}
 
 	@Override
 	public Particle getParticle() {
-		return Particle.FLAME;
-	}
-
-	@Override
-	public double getSpeed() {
-		return 0.002d;
+		return Particle.CLOUD;
 	}
 }
