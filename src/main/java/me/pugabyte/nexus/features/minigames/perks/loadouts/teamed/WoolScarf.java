@@ -4,24 +4,24 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.TeamLoadoutPerk;
 import me.pugabyte.nexus.utils.ColorType;
 import org.bukkit.Material;
 
-public class Concrete extends TeamLoadoutPerk {
+public class WoolScarf extends TeamLoadoutPerk {
 	@Override
 	public String getName() {
-		return "Concrete";
+		return "Wool Scarf";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Protect your head with a slab of concrete!||&3Disclaimer: does not actually protect you.";
+		return "Keep yourself warm and cozy with this wool scarf";
 	}
 
 	@Override
 	public int getPrice() {
-		return 30;
+		return 25;
 	}
 
 	@Override
 	protected Material getColorMaterial(ColorType color) {
-		return color.getConcrete();
+		return color.getCarpet();
 	}
 }

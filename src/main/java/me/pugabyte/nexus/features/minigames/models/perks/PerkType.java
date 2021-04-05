@@ -5,13 +5,13 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.perks.arrowparticles.BasicTrail;
 import me.pugabyte.nexus.features.minigames.perks.arrowparticles.GreenTrail;
 import me.pugabyte.nexus.features.minigames.perks.arrowparticles.RainbowTrail;
-import me.pugabyte.nexus.features.minigames.perks.loadouts.CreeperSkull;
-import me.pugabyte.nexus.features.minigames.perks.loadouts.DragonSkull;
-import me.pugabyte.nexus.features.minigames.perks.loadouts.MarksmansHat;
-import me.pugabyte.nexus.features.minigames.perks.loadouts.SkeletonSkull;
-import me.pugabyte.nexus.features.minigames.perks.loadouts.UnicornHorn;
-import me.pugabyte.nexus.features.minigames.perks.loadouts.ZombieSkull;
-import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.Concrete;
+import me.pugabyte.nexus.features.minigames.perks.loadouts.*;
+import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.ColorfulGlassHat;
+import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.ConcreteHat;
+import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.ConcretePowderHat;
+import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.TerracottaHat;
+import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.WoolHat;
+import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.WoolScarf;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate.BicornHat;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate.BicornSideHat;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate.CavalierHat;
@@ -26,7 +26,7 @@ public enum PerkType implements IHasPerkCategory {
 	HEART_PARTICLE(new HeartParticle()),
 	UNICORN_HORN(new UnicornHorn()),
 	DRAGON_SKULL(new DragonSkull()),
-	CONCRETE(new Concrete()),
+	CONCRETE_HAT(new ConcreteHat()),
 	BASIC_TRAIL(new BasicTrail()),
 	ZOMBIE_SKULL(new ZombieSkull()),
 	SKELETON_SKULL(new SkeletonSkull()),
@@ -37,7 +37,29 @@ public enum PerkType implements IHasPerkCategory {
 	TRICORN_HAT(new TricornHat()),
 	MARKSMANS_HAT(new MarksmansHat()),
 	GREEN_TRAIL(new GreenTrail()),
-	RAINBOW_TRAIL(new RainbowTrail())
+	RAINBOW_TRAIL(new RainbowTrail()),
+	TERRACOTTA_HAT(new TerracottaHat()),
+	WOOL_HAT(new WoolHat()),
+	WOOL_SCARF(new WoolScarf()),
+	COLORFUL_GLASS(new ColorfulGlassHat()),
+	GLASS_HAT(new GlassHat()),
+	CONCRETE_POWDER(new ConcretePowderHat()),
+	GRASS_BLOCK(new GrassBlockHat()),
+	OAK_LEAVES(new OakLeavesHat()),
+	BIRCH_LEAVES(new BirchLeavesHat()),
+	SPRUCE_LEAVES(new SpruceLeavesHat()),
+	JUNGLE_LEAVES(new JungleLeavesHat()),
+	ACACIA_LEAVES(new AcaciaLeavesHat()),
+	DARK_OAK_LEAVES(new DarkOakLeavesHat()),
+	DIAMOND_ORE(new DiamondOreHat()),
+	NOTE_BLOCK(new NoteblockHat()),
+	JACK_O_LANTERN(new JackOLanternHat()),
+	ICE(new IceHat()),
+	SEA_LANTERN(new SeaLanternHat()),
+	SHROOMLIGHT(new ShroomlightHat()),
+	MUSHROOM(new MushroomHat()),
+	NETHERITE(new NetheriteHat()),
+	HONEY(new HoneyHat())
 	;
 
 	private final Perk perk;
