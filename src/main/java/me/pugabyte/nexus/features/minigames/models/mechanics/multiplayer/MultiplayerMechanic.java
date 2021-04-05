@@ -91,7 +91,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	public void giveRewards(Match match) {
-		if (RandomUtils.randomInt(1, 1) == 1) {
+		if (RandomUtils.randomInt(1, 50) == 1) {
 			List<Minigamer> minigamers = new ArrayList<>(match.getMinigamers());
 			Collections.shuffle(minigamers);
 			// iterates until we find a player who is missing at least 1 collectible
