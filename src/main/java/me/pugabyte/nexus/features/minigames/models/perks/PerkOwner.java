@@ -45,6 +45,7 @@ public class PerkOwner extends PlayerOwnedObject {
 	private int tokens = 0;
 	private int dailyTokens = 0;
 	private LocalDate tokenDate = LocalDate.now();
+	private LocalDate randomGiftDate = LocalDate.MIN;
 	private HideParticle hideParticle = HideParticle.NONE;
 
 	public Set<PerkType> getEnabledPerks() {
