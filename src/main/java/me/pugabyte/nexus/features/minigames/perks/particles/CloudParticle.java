@@ -30,4 +30,9 @@ public class CloudParticle extends ParticlePerk {
 	public Particle getParticle() {
 		return Particle.CLOUD;
 	}
+
+	@Override
+	public double getSpeed() {
+		return 0.01;
+	}
 }
