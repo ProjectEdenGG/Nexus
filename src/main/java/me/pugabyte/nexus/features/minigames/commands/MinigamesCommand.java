@@ -480,7 +480,9 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("setTokens <amount>")
-	@Permission("group.seniorstaff")
+	@Permission("group.admin")
+	@HideFromHelp
+	@TabCompleteIgnore
 	void setTokens(int amount) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(player());
