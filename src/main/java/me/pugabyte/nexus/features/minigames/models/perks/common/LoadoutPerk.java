@@ -34,10 +34,6 @@ public abstract class LoadoutPerk extends TickablePerk {
 	}
 
 	public Map<EnumItemSlot, ItemStack> getLoadout() {
-		return basicHatMap();
-	}
-
-	public Map<EnumItemSlot, ItemStack> basicHatMap() {
 		Map<EnumItemSlot, ItemStack> loadout = new HashMap<>();
 		loadout.put(EnumItemSlot.HEAD, getItem());
 		return loadout;
@@ -136,7 +132,7 @@ public abstract class LoadoutPerk extends TickablePerk {
 	}
 
 	/**
-	 * Thrown when a team loadout perk using {@link #basicHatMap()} has neglected to override {@link #getMaterial()}
+	 * Thrown when a team loadout perk using the default {@link #getLoadout()} has neglected to override {@link #getMaterial()}
 	 */
 	public static class IncompleteLoadout extends RuntimeException {}
 }

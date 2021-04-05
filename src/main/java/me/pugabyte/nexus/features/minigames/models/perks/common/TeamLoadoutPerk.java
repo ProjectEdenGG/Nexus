@@ -29,7 +29,17 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 	}
 
 	public Map<ChatColor, Map<EnumItemSlot, ItemStack>> getColorLoadouts() {
-		return basicColorHatMap();
+		Map<ChatColor, Map<EnumItemSlot, ItemStack>> loadout = new HashMap<>();
+		Arrays.stream(ColorType.values()).forEach(colorType -> {
+			try {
+				if (colorType.getChatColor() != null) {
+					loadout.put(colorType.getChatColor(), new HashMap<EnumItemSlot, ItemStack>() {{
+						put(EnumItemSlot.HEAD, getColorItem(colorType));
+					}});
+				}
+			} catch (IllegalArgumentException ignored){}
+		});
+		return loadout;
 	}
 
 	public Map<EnumItemSlot, ItemStack> getLoadout(ChatColor chatColor) {
@@ -70,22 +80,8 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 		return new ItemStack(material);
 	}
 
-	protected Map<ChatColor, Map<EnumItemSlot, ItemStack>> basicColorHatMap() {
-		Map<ChatColor, Map<EnumItemSlot, ItemStack>> loadout = new HashMap<>();
-		Arrays.stream(ColorType.values()).forEach(colorType -> {
-			try {
-				if (colorType.getChatColor() != null) {
-					loadout.put(colorType.getChatColor(), new HashMap<EnumItemSlot, ItemStack>() {{
-						put(EnumItemSlot.HEAD, getColorItem(colorType));
-					}});
-				}
-			} catch (IllegalArgumentException ignored){}
-		});
-		return loadout;
-	}
-
 	/**
-	 * Thrown when a team loadout perk using {@link #basicColorHatMap()} has neglected to override {@link #getColorMaterial(ColorType)}
+	 * Thrown when a team loadout perk using the default {@link #getColorLoadouts()} has neglected to override {@link #getColorMaterial(ColorType)}
 	 */
 	public static class IncompleteTeamLoadout extends IncompleteLoadout {}
 }
