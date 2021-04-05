@@ -19,13 +19,16 @@ public abstract class PlayerParticlePerk extends TickablePerk implements IPartic
 	}
 
 	public abstract Particle getParticle();
+
 	public Particle.DustOptions getDustOptions(@NotNull Player player) {
 		return null;
 	}
+
 	@Override
 	public double getOffsetH() {
 		return .15;
 	}
+
 	@Override
 	public double getOffsetV() {
 		return .7;

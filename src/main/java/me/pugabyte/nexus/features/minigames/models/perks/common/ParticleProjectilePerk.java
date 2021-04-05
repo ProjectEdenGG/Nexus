@@ -24,10 +24,12 @@ public abstract class ParticleProjectilePerk extends Perk implements IParticlePe
     public int getCount() {
         return 2;
     }
+
     @Override
     public double getOffsetH() {
         return .02;
     }
+
     @Override
     public double getOffsetV() {
         return getOffsetH();
