@@ -4,11 +4,9 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjecti
 import me.pugabyte.nexus.features.particles.ParticleUtils;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public class RainbowTrail extends ParticleProjectilePerk {
 	@Override
@@ -42,8 +40,8 @@ public class RainbowTrail extends ParticleProjectilePerk {
 	}
 
 	@Override
-	public void tick(Projectile projectile, List<Player> players) {
+	public Particle.DustOptions getDustOptions(@NotNull Projectile projectile) {
 		int[] rgb = ParticleUtils.incRainbow(projectile.getTicksLived());
-		tick(projectile, players, ParticleUtils.newDustOption(getParticle(), rgb[0], rgb[1], rgb[2]));
+		return ParticleUtils.newDustOption(getParticle(), rgb[0], rgb[1], rgb[2]);
 	}
 }

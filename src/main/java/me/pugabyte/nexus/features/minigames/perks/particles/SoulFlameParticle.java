@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.minigames.perks.particles;
 
-import me.pugabyte.nexus.features.minigames.models.perks.common.ParticlePerk;
+import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
-public class SoulFlameParticle extends ParticlePerk {
+public class SoulFlameParticle extends PlayerParticlePerk {
 	@Override
 	public String getName() {
 		return "Soul Flames";

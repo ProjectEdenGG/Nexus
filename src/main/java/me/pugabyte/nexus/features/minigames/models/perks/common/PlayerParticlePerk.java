@@ -7,25 +7,28 @@ import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ParticlePerk extends TickablePerk {
+public abstract class PlayerParticlePerk extends TickablePerk implements IParticlePerk {
 	@Override
 	public PerkCategory getPerkCategory() {
 		return PerkCategory.PARTICLE;
 	}
 
 	public abstract Particle getParticle();
-	public double getSpeed() {
-		return 1;
-	}
-	public Particle.DustOptions getDustOptions(Player player) {
+	public Particle.DustOptions getDustOptions(@NotNull Player player) {
 		return null;
 	}
-	public int getCount() {
-		return 5;
+	@Override
+	public double getOffsetH() {
+		return .15;
+	}
+	@Override
+	public double getOffsetV() {
+		return .7;
 	}
 
 	@Override
@@ -42,6 +45,6 @@ public abstract class ParticlePerk extends TickablePerk {
 			PerkOwner owner = new PerkOwnerService().get(player);
 			return owner.getHideParticle().showParticle(getPerkCategory());
 		}).collect(Collectors.toList());
-		new ParticleBuilder(getParticle()).receivers(recipients).count(getCount()).offset(.15, .7, .15).location(location).extra(getSpeed()).data(getDustOptions(player)).spawn();
+		new ParticleBuilder(getParticle()).receivers(recipients).count(getCount()).offset(getOffsetH(), getOffsetV(), getOffsetH()).location(location).extra(getSpeed()).data(getDustOptions(player)).spawn();
 	}
 }

@@ -10,14 +10,27 @@ import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ParticleProjectilePerk extends Perk {
-    public abstract Particle getParticle();
-    public double getSpeed() {
-        return 1d;
+public abstract class ParticleProjectilePerk extends Perk implements IParticlePerk {
+    public Particle.DustOptions getDustOptions(@NotNull Projectile projectile) {
+        return null;
+    }
+
+    @Override
+    public int getCount() {
+        return 2;
+    }
+    @Override
+    public double getOffsetH() {
+        return .02;
+    }
+    @Override
+    public double getOffsetV() {
+        return getOffsetH();
     }
 
     @Override
@@ -25,16 +38,12 @@ public abstract class ParticleProjectilePerk extends Perk {
         return PerkCategory.ARROW_TRAIL;
     }
 
-    public void tick(Projectile projectile, List<Player> players, Particle.DustOptions dustOptions) {
+    public void tick(Projectile projectile, List<Player> players) {
         players = players.stream().filter(player -> {
             PerkOwner owner = new PerkOwnerService().get(player);
             return owner.getHideParticle().showParticle(getPerkCategory());
         }).collect(Collectors.toList());
-        new ParticleBuilder(getParticle()).receivers(players).count(2).offset(.02, .02, .02).location(projectile.getLocation()).extra(getSpeed()).data(dustOptions).spawn();
-    }
-
-    public void tick(Projectile projectile, List<Player> players) {
-        tick(projectile, players, null);
+        new ParticleBuilder(getParticle()).receivers(players).count(getCount()).offset(getOffsetH(), getOffsetV(), getOffsetH()).location(projectile.getLocation()).extra(getSpeed()).data(getDustOptions(projectile)).spawn();
     }
 
     public void tick(Projectile projectile, Match match) {
