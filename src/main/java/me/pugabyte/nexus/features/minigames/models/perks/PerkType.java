@@ -74,4 +74,12 @@ public enum PerkType implements IHasPerkCategory {
 	public PerkCategory getPerkCategory() {
 		return perk.getPerkCategory();
 	}
+
+	public String getName() {
+		return perk.getName();
+	}
+
+	public int getPrice() {
+		return perk.getPrice();
+	}
 }

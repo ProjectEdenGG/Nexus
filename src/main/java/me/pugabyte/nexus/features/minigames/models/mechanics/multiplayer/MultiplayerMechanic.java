@@ -17,9 +17,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class MultiplayerMechanic extends Mechanic {
@@ -91,17 +91,25 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	public void giveRewards(Match match) {
-		if (RandomUtils.randomInt(1, 50) == 1) {
+		if (RandomUtils.randomInt(1, 1) == 1) {
 			List<Minigamer> minigamers = new ArrayList<>(match.getMinigamers());
 			Collections.shuffle(minigamers);
 			// iterates until we find a player who is missing at least 1 collectible
 			for (Minigamer minigamer : minigamers) {
 				PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
-				if (perkOwner.getRandomGiftDate().minusWeeks(1).isBefore(LocalDate.now()))
+				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusWeeks(1)))
 					continue;
 
 				// get a random perk the player doesn't own
-				PerkType perkType = RandomUtils.randomElement(Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).collect(Collectors.toList()));
+				Map<PerkType, Double> weights = new HashMap<>();
+				List<PerkType> unownedPerks = Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).collect(Collectors.toList());
+				if (unownedPerks.isEmpty())
+					continue;
+				// weights should be inverse of the cost (i.e. cheapest is most common/highest number)
+				int maxPrice = (int) Utils.getMax(unownedPerks, PerkType::getPrice).getValue();
+				int minPrice = (int) Utils.getMin(unownedPerks, PerkType::getPrice).getValue();
+				unownedPerks.forEach(perkType -> weights.put(perkType, (double) (maxPrice-perkType.getPrice()+minPrice)));
+				PerkType perkType = RandomUtils.getWeightedRandom(weights);
 
 				if (perkType != null) {
 					perkOwner.getPurchasedPerks().put(perkType, false);
