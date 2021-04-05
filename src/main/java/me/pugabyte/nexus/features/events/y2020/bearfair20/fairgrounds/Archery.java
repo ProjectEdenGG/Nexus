@@ -12,7 +12,6 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -34,12 +33,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWEUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 
 public class Archery implements Listener {
-	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
 	private static String gameRg = BearFair20.getRegion() + "_archery";
 	private static String targetsRg = gameRg + "_targets";
 	private static boolean archeryBool = false;
@@ -77,7 +76,7 @@ public class Archery implements Listener {
 	public void onRegionExit(RegionLeftEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (!archeryBool) return;
-		int size = WGUtils.getPlayersInRegion(gameRg).size();
+		int size = getWGUtils().getPlayersInRegion(gameRg).size();
 		if (size == 0) {
 			archeryBool = false;
 			clearTargets();
@@ -108,7 +107,7 @@ public class Archery implements Listener {
 	}
 
 	private List<Location> getTargetLocs() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(targetsRg));
+		List<Block> blocks = BearFair20.getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetsRg));
 		List<Location> locs = new ArrayList<>();
 		for (Block block : blocks) {
 			Location loc = block.getLocation();
@@ -173,7 +172,7 @@ public class Archery implements Listener {
 
 	private void clearTargets() {
 		currentTargets = 0;
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(targetsRg));
+		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.WHITE_CONCRETE))
 				removeTarget(block);

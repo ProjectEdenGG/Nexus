@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.resourcepack;
 
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -137,6 +138,13 @@ public enum CustomModel {
 	ROLLER(Material.STICK, 1, "Roller"),
 	SAUCEPAN(Material.BUCKET, 2, "Saucepan"),
 	SKILLET(Material.BUCKET, 3, "Skillet"),
+
+	GLOWSHROOM_GREEN(Material.BROWN_MUSHROOM, 1, "Green Glowshroom"),
+	GLOWSHROOM_BLUE(Material.BROWN_MUSHROOM, 2, "Blue Glowshroom"),
+	MUSHROOM_TEAL(Material.BROWN_MUSHROOM, 3, "Teal Mushroom"),
+	STRANGE_PLANT_ORANGE(Material.BROWN_MUSHROOM, 4, "Flame Leaf"),
+	STRANGE_PLANT_PURPLE(Material.BROWN_MUSHROOM, 5, "Purple Basil"),
+	STRANGE_PLANT_GREEN(Material.BROWN_MUSHROOM, 6, "Green Hosta"),
 	;
 
 	private final Material material;
@@ -149,6 +157,10 @@ public enum CustomModel {
 		this.data = data;
 		this.name = name;
 		this.lore = Arrays.asList(lore);
+	}
+
+	public static boolean exists(ItemStack cursor) {
+		return new NBTItem(cursor).hasKey("CustomModelData");
 	}
 
 	public ItemStack getItem() {

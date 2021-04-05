@@ -25,7 +25,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collections;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 
@@ -119,8 +119,8 @@ public class Beehive implements Listener {
 	public void onUseFlower(PlayerInteractEntityEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
+		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		ItemStack tool = ItemUtils.getTool(event.getPlayer());
 		if (!BearFair20.isBFItem(tool)) return;

@@ -127,6 +127,8 @@ public class StringUtils {
 	}
 
 	// TODO This will break with hex
+	// TODO replace with https://canary.discord.com/channels/132680070480396288/421474915930079232/827394245522096158
+	// 		- needs to strip color when measuring max length and carry colors over to next line
 	public static String loreize(String string) {
 		if (string == null) return null;
 
@@ -683,15 +685,16 @@ public class StringUtils {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 
-	public static void sendJsonLocation(String message, Location location, Player player) {
-		int x = (int) location.getX();
-		int y = (int) location.getY();
-		int z = (int) location.getZ();
-		double yaw = location.getYaw();
-		double pitch = location.getPitch();
-		String world = location.getWorld().getName();
+	public static String getShorterLocationString(Location loc) {
+		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ();
+	}
 
-		new JsonBuilder().next(message).command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + world).send(player);
+	public static void sendJsonLocation(String message, Location location, Player player) {
+		new JsonBuilder().next(message).command(getTeleportCommand(location)).send(player);
+	}
+
+	public static String getTeleportCommand(Location location) {
+		return "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() + " " + location.getYaw() + " " + location.getPitch() + " " + location.getWorld().getName();
 	}
 
 	private static final String HASTEBIN = "https://paste.bnn.gg/";

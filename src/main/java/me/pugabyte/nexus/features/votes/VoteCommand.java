@@ -64,8 +64,9 @@ public class VoteCommand extends CustomCommand {
 		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://bnn.gg/vote"));
 	}
 
-	@Path("time")
-	void time() {
+	@Path("time [player]")
+	void time(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+		voter = new VoteService().get(player);
 		line();
 		for (VoteSite site : VoteSite.values()) {
 			Optional<Vote> first = voter.getActiveVotes().stream().filter(_vote -> _vote.getSite() == site).findFirst();

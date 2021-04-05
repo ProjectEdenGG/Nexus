@@ -70,7 +70,7 @@ public class LightTheTree implements Listener {
 
 		Entity entity = event.getRightClicked();
 		if (!entity.getType().equals(EntityType.ITEM_FRAME)) return;
-		if (!Pugmas20.WGUtils.isInRegion(entity.getLocation(), lighterRg)) return;
+		if (!Pugmas20.getWGUtils().isInRegion(entity.getLocation(), lighterRg)) return;
 
 		Pugmas20Service service = new Pugmas20Service();
 		Pugmas20User user = service.get(player);
@@ -150,7 +150,7 @@ public class LightTheTree implements Listener {
 
 		Block placed = block.getType() == Material.NETHERRACK ? block.getRelative(event.getBlockFace()) : block;
 
-		Set<ProtectedRegion> regions = Pugmas20.WGUtils.getRegionsLikeAt("pugmas20_torch_[0-9]+", placed.getLocation());
+		Set<ProtectedRegion> regions = Pugmas20.getWGUtils().getRegionsLikeAt("pugmas20_torch_[0-9]+", placed.getLocation());
 		if (regions.isEmpty()) return;
 
 		int torch = Integer.parseInt(regions.iterator().next().getId().split("_")[2]);
@@ -215,8 +215,8 @@ public class LightTheTree implements Listener {
 	}
 
 	public static Location getLocation(String type, int i) {
-		Region region = Pugmas20.WGUtils.getRegion("pugmas20_" + type + "_" + i);
-		return Pugmas20.WGUtils.toLocation(region.getMinimumPoint());
+		Region region = Pugmas20.getWGUtils().getRegion("pugmas20_" + type + "_" + i);
+		return Pugmas20.getWGUtils().toLocation(region.getMinimumPoint());
 	}
 
 	public static void fire(Player player, Location location) {
@@ -280,7 +280,7 @@ public class LightTheTree implements Listener {
 			method.accept(player, getLocation("treetorch", i));
 	}
 
-	private final static Paste treeLightPaster = Pugmas20.WEUtils.paster()
+	private final static Paste treeLightPaster = Pugmas20.getWEUtils().paster()
 			.at(Pugmas20.location(936, 61, 483))
 			.file("pugmas20/tree_light")
 			.duration(Time.SECOND.x(7))

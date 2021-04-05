@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
@@ -150,8 +150,8 @@ public class HalloweenIsland implements Listener, Island {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion skullRegion = WGUtils.getProtectedRegion(basketRg);
-		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
+		ProtectedRegion skullRegion = getWGUtils().getProtectedRegion(basketRg);
+		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
 
 		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
@@ -191,8 +191,8 @@ public class HalloweenIsland implements Listener, Island {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
+		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (event.getClickedBlock() == null) return;
 
@@ -237,8 +237,8 @@ public class HalloweenIsland implements Listener, Island {
 
 		Player player = event.getPlayer();
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
+		if (!getWGUtils().getRegionsAt(player.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 

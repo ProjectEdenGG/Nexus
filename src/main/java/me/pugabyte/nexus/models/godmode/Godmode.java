@@ -10,10 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.afk.AFK;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,12 +29,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters(UUIDConverter.class)
+@Converters({UUIDConverter.class, LocationConverter.class})
 public class Godmode extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = false;
+	private Location loginLocation;
 
 	@Getter
 	private static final List<String> disabledWorlds = new ArrayList<String>(Arrays.asList("gameworld", "deathswap")) {{
@@ -40,6 +44,11 @@ public class Godmode extends PlayerOwnedObject {
 	}};
 
 	public boolean isEnabled() {
+		if (isOnline() && loginLocation != null)
+			if (AFK.isSameLocation(loginLocation, getPlayer().getLocation()))
+				return true;
+			else
+				loginLocation = null;
 		if (isOnline() && !PlayerUtils.isStaffGroup(getPlayer()))
 			return false;
 		if (isOnline() && disabledWorlds.contains(getPlayer().getWorld().getName()))

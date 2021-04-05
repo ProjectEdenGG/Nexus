@@ -18,6 +18,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Time.Timer;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
@@ -48,13 +49,7 @@ import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 @Data
 public class BearFair20 implements Listener {
 	@Getter
-	private static final World world = Bukkit.getWorld("safepvp");
-	@Getter
 	private static final String region = "bearfair2020";
-	@Getter
-	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);
-	@Getter
-	private static final ProtectedRegion protectedRegion = WGUtils.getProtectedRegion(region);
 	@Getter
 	private static final Set<Class<? extends Island>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(Island.class);
 	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
@@ -75,6 +70,22 @@ public class BearFair20 implements Listener {
 			new Timer("    BFQuests", BFQuests::new);
 			new Timer("    EasterEggs", EasterEggs::new);
 		}
+	}
+
+	public static World getWorld() {
+		return Bukkit.getWorld("safepvp");
+	}
+
+	public static WorldGuardUtils getWGUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public static WorldEditUtils getWEUtils() {
+		return new WorldEditUtils(getWorld());
+	}
+
+	public static ProtectedRegion getProtectedRegion() {
+		return getWGUtils().getProtectedRegion(region);
 	}
 
 	@EventHandler
@@ -232,7 +243,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return location.getWorld().equals(BearFair20.getWorld()) && WGUtils.isInRegion(location, region);
+		return location.getWorld().equals(BearFair20.getWorld()) && getWGUtils().isInRegion(location, region);
 	}
 
 	public static boolean isBFItem(ItemStack item) {

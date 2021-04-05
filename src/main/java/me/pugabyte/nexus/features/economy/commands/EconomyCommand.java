@@ -75,21 +75,21 @@ public class EconomyCommand extends CustomCommand {
 	@Path("set <player> <balance> [shopGroup] [cause] [reason...]")
 	@Permission("group.admin")
 	void set(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
-		service.setBalance(banker.getOfflinePlayer(), balance, shopGroup, cause.of(banker.getOfflinePlayer(), balance, shopGroup, reason));
+		service.setBalance(cause.of(banker.getOfflinePlayer(), balance, shopGroup, reason));
 		send(PREFIX + "Set &e" + Nerd.of(banker).getNickname() + "'s &3balance to &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
 	@Path("give <player> <balance> [shopGroup] [cause] [reason...]")
 	@Permission("group.admin")
 	void give(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
-		service.deposit(banker.getOfflinePlayer(), balance, shopGroup, cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
+		service.deposit(cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
 		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + Nerd.of(banker).getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
 	@Path("take <player> <balance> [shopGroup] [cause] [reason...]")
 	@Permission("group.admin")
 	void take(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
-		service.withdraw(banker.getOfflinePlayer(), balance, shopGroup, cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
+		service.withdraw(cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nerd.of(banker).getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
 

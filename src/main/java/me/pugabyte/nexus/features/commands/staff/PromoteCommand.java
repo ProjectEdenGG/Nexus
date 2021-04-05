@@ -22,7 +22,9 @@ public class PromoteCommand extends CustomCommand {
 		if (rank == next)
 			error("User is already max rank");
 
-		runCommandAsConsole("lp user " + nerd.getName() + " parent set " + next.name());
+		for (Rank _rank : Rank.values())
+			runCommandAsConsole("lp user " + nerd.getName() + " parent remove " + _rank.name());
+		runCommandAsConsole("lp user " + nerd.getName() + " parent add " + next.name());
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withColor());
 
 		if (nerd.getOfflinePlayer().isOnline())

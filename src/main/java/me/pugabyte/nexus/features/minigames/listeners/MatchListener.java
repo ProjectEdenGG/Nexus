@@ -35,12 +35,15 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.text.DecimalFormat;
 
@@ -116,13 +119,19 @@ public class MatchListener implements Listener {
 		minigamer.getMatch().getMechanic().onPlayerInteract(minigamer, event);
 	}
 
-	@EventHandler
-	public void onInventoryMove(InventoryInteractEvent event) {
+	@EventHandler(ignoreCancelled = true)
+	public void onInventoryClick(InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player)) return;
 		Minigamer minigamer = PlayerManager.get((Player) event.getWhoClicked());
 		if (!minigamer.isPlaying()) return;
+		Mechanic mechanic = minigamer.getMatch().getMechanic();
 
-		event.setCancelled(true);
+		if (event.getClickedInventory() instanceof PlayerInventory) {
+			if (event.getSlotType() == InventoryType.SlotType.ARMOR && !mechanic.canMoveArmor())
+				event.setCancelled(true);
+		} else if (!mechanic.canOpenInventoryBlocks()) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(ignoreCancelled = true)

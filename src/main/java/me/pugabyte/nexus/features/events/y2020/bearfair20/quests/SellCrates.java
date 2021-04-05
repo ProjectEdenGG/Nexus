@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -43,7 +43,7 @@ public class SellCrates implements Listener {
 
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BearFair20.getProtectedRegion()))
+		if (!getWGUtils().getRegionsAt(loc).contains(BearFair20.getProtectedRegion()))
 			return;
 
 		Block block = event.getClickedBlock();

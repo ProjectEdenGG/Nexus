@@ -46,12 +46,11 @@ public class BirthdaysCommand extends CustomCommand {
 		}
 	}
 
-	@Path("set <birthday>")
-	void set(LocalDate birthday) {
-		Nerd nerd = Nerd.of(player());
+	@Path("set <birthday> [player]")
+	void set(LocalDate birthday, @Arg(value = "self", permission = "group.seniorstaff") Nerd nerd) {
 		nerd.setBirthday(birthday);
 		service.save(nerd);
-		send(PREFIX + "Your birthday has been set to &e" + birthday.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + birthday.getDayOfMonth() + ", " + birthday.getYear());
+		send(PREFIX + (isSelf(nerd) ? "Your" : nerd.getNickname() + "'s") + " birthday has been set to &e" + birthday.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + birthday.getDayOfMonth() + ", " + birthday.getYear());
 	}
 
 	public LocalDate getNextBirthday(Nerd nerd) {

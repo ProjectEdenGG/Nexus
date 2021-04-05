@@ -60,7 +60,7 @@ public class SpeedCommand extends CustomCommand {
 		tellReset(player, "Walk");
 	}
 
-	@Path("reset [player]")
+	@Path("(r|reset) [player]")
 	void reset(@Arg(value = "self", permission = "group.staff") Player player) {
 		resetSpeed(player);
 		tellReset(player, "Fly and walk");

@@ -34,6 +34,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static me.pugabyte.nexus.utils.StringUtils.getTeleportCommand;
+
 @NoArgsConstructor
 @Aliases({"tp", "tppos"})
 @Redirect(from = "/tpo", to = "/tp override")
@@ -52,8 +54,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	@Path("getCoords")
 	void getCoords() {
-		Location location = location();
-		String message = "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() + " " + location.getWorld().getName();
+		String message = getTeleportCommand(location());
 		send(json(message).suggest(message));
 	}
 

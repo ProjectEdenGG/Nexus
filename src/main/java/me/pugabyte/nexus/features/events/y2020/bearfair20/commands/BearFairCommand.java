@@ -63,7 +63,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.islands.HalloweenIsland.atticKey;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.islands.HalloweenIsland.basketItem;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland.ancientPickaxe;
@@ -134,9 +134,9 @@ public class BearFairCommand extends _WarpCommand implements Listener {
 	void questsSwitchQuest(String string) {
 		if (!BearFair20.enableQuests) return;
 
-		ProtectedRegion pugmasRegion = WGUtils.getProtectedRegion(IslandType.PUGMAS.get().getRegion());
-		ProtectedRegion mainRegion = WGUtils.getProtectedRegion(IslandType.MAIN.get().getRegion());
-		if (!WGUtils.getRegionsAt(location()).contains(pugmasRegion) && !WGUtils.getRegionsAt(location()).contains(mainRegion))
+		ProtectedRegion pugmasRegion = getWGUtils().getProtectedRegion(IslandType.PUGMAS.get().getRegion());
+		ProtectedRegion mainRegion = getWGUtils().getProtectedRegion(IslandType.MAIN.get().getRegion());
+		if (!getWGUtils().getRegionsAt(location()).contains(pugmasRegion) && !getWGUtils().getRegionsAt(location()).contains(mainRegion))
 			return;
 		switch (string) {
 			// Main

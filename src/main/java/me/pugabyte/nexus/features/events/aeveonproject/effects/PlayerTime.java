@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.Collection;
 
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.APWorld;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWorld;
 
 public class PlayerTime implements Listener {
 
@@ -37,7 +37,7 @@ public class PlayerTime implements Listener {
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
-		if (event.getFrom().equals(APWorld))
+		if (event.getFrom().equals(getWorld()))
 			event.getPlayer().resetPlayerTime();
 	}
 }

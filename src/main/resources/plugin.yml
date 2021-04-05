@@ -1,8 +1,10 @@
 name: Nexus
 main: me.pugabyte.nexus.Nexus
 version: ${project.version}
-api-version: "1.16"
+api-version: 1.16
 load: POSTWORLD
+depend:
+  - Multiverse-Core
 softdepend:
   - BlueMap
   - BuycraftX
@@ -13,7 +15,6 @@ softdepend:
   - LiteBans
   - LWC
   - mcMMO
-  - Multiverse-Core
   - Multiverse-Inventories
   - NBTAPI
   - NoteBlockAPI

@@ -87,15 +87,18 @@ public abstract class MongoService extends DatabaseService {
 				.find().toList();
 	}
 
+	public <T> List<T> getAllSortedByLimit(int limit, Sort... sorts) {
+		return (List<T>) database.createQuery(getPlayerClass())
+				.order(sorts)
+				.limit(limit)
+				.find().toList();
+	}
+
 	@Override
 	public <T> void saveSync(T object) {
 		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
 		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
 			return;
-
-		String toString = object.toString();
-		boolean hideDebug = toString.length() >= Short.MAX_VALUE;
-		String debug = hideDebug ? "" : ": " + toString;
 
 		try {
 			database.merge(object);
@@ -103,11 +106,13 @@ public abstract class MongoService extends DatabaseService {
 			try {
 				database.save(object);
 			} catch (Exception ex2) {
-				Nexus.log("Error saving " + object.getClass().getSimpleName() + debug);
+				String toString = object.toString();
+				Nexus.log("Error saving " + object.getClass().getSimpleName() + (toString.length() >= Short.MAX_VALUE ? "" : ": " + toString));
 				ex2.printStackTrace();
 			}
 		} catch (Exception ex3) {
-			Nexus.log("Error updating " + object.getClass().getSimpleName() + debug);
+			String toString = object.toString();
+			Nexus.log("Error updating " + object.getClass().getSimpleName() + (toString.length() >= Short.MAX_VALUE ? "" : ": " + toString));
 			ex3.printStackTrace();
 		}
 	}

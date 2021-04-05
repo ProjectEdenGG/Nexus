@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
@@ -70,7 +70,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadLogSpawns() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(logsRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -79,7 +79,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadCarSpawns() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(carsRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(carsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				carSpawnMap.put(block.getLocation(), block.getType());
@@ -274,7 +274,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearLogs() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(logsRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -282,7 +282,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearCars() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(roadRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(roadRg));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);
@@ -339,7 +339,7 @@ public class Frogger implements Listener {
 	public void onRegionExit(RegionLeftEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = WGUtils.getPlayersInRegion(gameRg).size();
+			int size = getWGUtils().getPlayersInRegion(gameRg).size();
 			if (size == 0) {
 				doAnimation = false;
 				stopAnimations();

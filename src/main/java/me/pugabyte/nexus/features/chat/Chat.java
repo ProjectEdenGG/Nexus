@@ -87,7 +87,7 @@ public class Chat extends Feature {
 				.name("Operator")
 				.nickname("O")
 				.rank(Rank.OPERATOR)
-				.discordChannel(Channel.STAFF_OPS_BRIDGE)
+				.discordChannel(Channel.STAFF_OPERATORS)
 				.color(ChatColor.DARK_AQUA)
 				.censor(false)
 				.local(false)

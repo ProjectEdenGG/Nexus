@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -262,7 +262,7 @@ public class PugmasIsland implements Listener, Island {
 
 	private void effectTasks() {
 		Tasks.repeat(0, Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream()
-				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
+				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
 					BearFairService service = new BearFairService();
 					BearFairUser user = service.get(player);
@@ -308,8 +308,8 @@ public class PugmasIsland implements Listener, Island {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
-		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
+		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
@@ -373,8 +373,8 @@ public class PugmasIsland implements Listener, Island {
 	}
 
 	private boolean isTreePresent(Location location) {
-		ProtectedRegion treeRg = WGUtils.getProtectedRegion(presents_treeRg);
-		return WGUtils.getRegionsAt(location).contains(treeRg);
+		ProtectedRegion treeRg = getWGUtils().getProtectedRegion(presents_treeRg);
+		return getWGUtils().getRegionsAt(location).contains(treeRg);
 	}
 
 	private boolean isFoundPresent(Location location, Player player) {

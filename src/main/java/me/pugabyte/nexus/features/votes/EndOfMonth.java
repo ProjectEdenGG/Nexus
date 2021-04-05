@@ -52,10 +52,12 @@ public class EndOfMonth {
 				if (data.getMysteryChestWinner() != null)
 					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getUuid()));
 
-				BankerService bankerService = new BankerService();
-				data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-				data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-				data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+				Tasks.sync(() -> {
+					BankerService bankerService = new BankerService();
+					data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+				});
 			} catch (NexusException ex) {
 				Nexus.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}

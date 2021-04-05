@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -158,8 +158,8 @@ public class Fairgrounds implements Listener {
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
+		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
+		if (getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
 			ItemStack dropped = event.getItemDrop().getItemStack();
 			String droppedName = StringUtils.stripColor(dropped.getItemMeta().getDisplayName());
 			for (BearFairKit kit : BearFairKit.values()) {
