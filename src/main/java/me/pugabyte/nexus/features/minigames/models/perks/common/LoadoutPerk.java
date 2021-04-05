@@ -34,15 +34,10 @@ public abstract class LoadoutPerk extends TickablePerk {
 	}
 
 	public Map<EnumItemSlot, ItemStack> getLoadout() {
-		try {
-			return basicHatMap();
-		} catch (IncompleteLoadout e) {
-			e.printStackTrace();
-			return new HashMap<>();
-		}
+		return basicHatMap();
 	}
 
-	public Map<EnumItemSlot, ItemStack> basicHatMap() throws IncompleteLoadout {
+	public Map<EnumItemSlot, ItemStack> basicHatMap() {
 		Map<EnumItemSlot, ItemStack> loadout = new HashMap<>();
 		loadout.put(EnumItemSlot.HEAD, getItem());
 		return loadout;

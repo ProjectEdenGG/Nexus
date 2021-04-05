@@ -80,9 +80,6 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 					}});
 				}
 			} catch (IllegalArgumentException ignored){}
-			catch (IncompleteTeamLoadout e) {
-				e.printStackTrace();
-			}
 		});
 		return loadout;
 	}
