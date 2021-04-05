@@ -63,7 +63,8 @@ public class TickPerks implements Listener {
 				loadoutUsers.remove(perkOwner);
 				// send true packets
 				Player player = _player.getPlayer();
-				assert player != null;
+				if (player == null)
+					return;
 				ItemStack[] items = player.getInventory().getArmorContents();
 				for (int i = 0; i < player.getInventory().getArmorContents().length; i++) {
 					ItemStack item = items[i];
