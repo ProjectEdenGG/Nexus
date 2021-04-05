@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -87,6 +88,8 @@ public class PerkOwner extends PlayerOwnedObject {
 		if (amount > 0) {
 			tokens += amount;
 			dailyTokens += amount;
+			if (getPlayer() != null)
+				SoundUtils.Jingle.PING.play(getPlayer()); // TODO: unique jingle
 			PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for winning &e" + arena.getName());
 			if (dailyTokens == MAX_DAILY_TOKENS)
 				PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");

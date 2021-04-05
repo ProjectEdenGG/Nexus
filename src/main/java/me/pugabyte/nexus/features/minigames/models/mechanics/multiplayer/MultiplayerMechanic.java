@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.Utils;
 
 public abstract class MultiplayerMechanic extends Mechanic {
 
@@ -72,22 +73,20 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	abstract public void nextTurn(Match match);
 
 	public int getMultiplier(Match match, Minigamer minigamer) {
-		// int winningScore = getWinningScore(match.getMinigamers().stream().map(Minigamer::getScore).collect(Collectors.toList()));
-		// ^ feels like a computational waste to do this
-		int winningScore = match.getWinningScore();
-		if (minigamer.getScore() <= 0 || winningScore <= 0)
+		int maxScore = (int) Utils.getMax(match.getMinigamers(), Minigamer::getContributionScore).getValue();
+		if (minigamer.getContributionScore() <= 0 || maxScore <= 0)
 			return 0;
-		return winningScore - Math.min(winningScore, minigamer.getScore()) + 1;
+		return maxScore - Math.min(maxScore, minigamer.getContributionScore()) + 1;
 	}
 
 	public void giveRewards(Match match) {
 		match.getMinigamers().forEach(minigamer -> {
 			PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
-			// max of 1 in 50 chance of getting a reward (dependant on score)
+			// max of 1 in 20 chance of getting a reward (dependant on score)
 			int multiplier = getMultiplier(match, minigamer);
 			if (multiplier == 0)
 				return;
-			if (RandomUtils.randomInt(1, 20 * multiplier) == 1)
+			if (RandomUtils.randomInt(1, 5 * multiplier) <= 1.001d)
 				perkOwner.reward(match.getArena());
 		});
 	}

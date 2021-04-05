@@ -362,8 +362,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		// ignore losing teams
 		if (team.getScore(match) < winningScore || winningScore <= 0)
 			return 0;
-		// TODO: weighted balancing based on kills, caps, etc
-		return winningScore - Math.min(winningScore, minigamer.getScore()) + 1;
+		return super.getMultiplier(match, minigamer);
 	}
 
 	public boolean basicBalanceCheck(List<Minigamer> minigamers) {
