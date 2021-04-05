@@ -318,6 +318,10 @@ public abstract class Mechanic implements Listener {
 		return false;
 	}
 
+	public boolean canMoveArmor() {
+		return true;
+	}
+
 	public boolean isInRegion(Match match, Block block, String region) {
 		return match.getArena().isInRegion(block, region);
 	}

@@ -101,6 +101,11 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
+	public boolean canMoveArmor() {
+		return false;
+	}
+
+	@Override
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
 		ThimbleArena arena = match.getArena();
