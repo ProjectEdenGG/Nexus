@@ -85,9 +85,9 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	public int getMultiplier(Match match, Minigamer minigamer) {
 		int maxScore = (int) Utils.getMax(match.getMinigamers(), Minigamer::getContributionScore).getValue();
-		if (minigamer.getContributionScore() <= 0 || maxScore <= 0)
+		if (minigamer.getContributionScore() <= 0)
 			return 0;
-		return maxScore - Math.min(maxScore, minigamer.getContributionScore()) + 1;
+		return maxScore - minigamer.getContributionScore() + 1;
 	}
 
 	public void giveRewards(Match match) {
