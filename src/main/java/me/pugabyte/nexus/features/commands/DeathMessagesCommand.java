@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.WorldGroup;
+import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -88,14 +89,14 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
-			Chat.broadcastIngame(output);
+			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT);
 
 			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
 				Chat.broadcastDiscord(discordize(output));
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			Chatter chatter = new ChatService().get(event.getEntity());
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
-				recipient.send(output);
+				recipient.send(event.getEntity(), output, MessageType.CHAT);
 		}
 	}
 

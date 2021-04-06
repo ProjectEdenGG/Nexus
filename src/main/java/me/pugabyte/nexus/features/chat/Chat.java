@@ -12,19 +12,19 @@ import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time.Timer;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identified;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TranslatableComponent;
-import net.kyori.adventure.text.format.Style;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 public class Chat extends Feature {
 
@@ -205,8 +205,60 @@ public class Chat extends Feature {
 		broadcast(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcast(Component message, MessageType type) {
+		broadcast(message, ChatManager.getMainChannel(), type);
+	}
+
 	public static void broadcast(Component message, MuteMenuItem muteMenuItem) {
 		broadcast(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcast(Identity sender, Component message) {
+		broadcast(sender, message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcast(Identified sender, Component message) {
+		broadcast(sender, message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcast(UUID sender, Component message) {
+		broadcast(sender, message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcast(Identity sender, Component message, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcast(Identity sender, Component message, MessageType type) {
+		broadcast(sender, message, ChatManager.getMainChannel(), type);
+	}
+
+	public static void broadcast(Identified sender, Component message, MessageType type) {
+		broadcast(sender, message, ChatManager.getMainChannel(), type);
+	}
+
+	public static void broadcast(UUID sender, Component message, MessageType type) {
+		broadcast(sender, message, ChatManager.getMainChannel(), type);
+	}
+
+	public static void broadcast(Identity sender, Component message, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getMainChannel(), type, muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getMainChannel(), type, muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getMainChannel(), type, muteMenuItem);
 	}
 
 	public static void broadcast(Component message, StaticChannel channel) {
@@ -217,16 +269,188 @@ public class Chat extends Feature {
 		broadcast(message, ChatManager.getChannel(channel.name()), muteMenuItem);
 	}
 
+	public static void broadcast(Component message, StaticChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(Identity.nil(), message, channel, type, muteMenuItem);
+	}
+
+	public static void broadcast(Identity sender, Component message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Component message, StaticChannel channel, MessageType type) {
+		broadcast(Identity.nil(), message, channel, type);
+	}
+
+	public static void broadcast(Identity sender, Component message, StaticChannel channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, null);
+	}
+
+	public static void broadcast(Identified sender, Component message, StaticChannel channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, null);
+	}
+
+	public static void broadcast(UUID sender, Component message, StaticChannel channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, null);
+	}
+
+	public static void broadcast(Identity sender, Component message, StaticChannel channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(Identified sender, Component message, StaticChannel channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(UUID sender, Component message, StaticChannel channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(Identity sender, Component message, StaticChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getChannel(channel.name()), type, muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, StaticChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender.identity(), message, channel, type, muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, StaticChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(AdventureUtils.identityOf(sender), message, channel, type, muteMenuItem);
+	}
+
 	public static void broadcast(Component message, String channel) {
-		broadcast(message, ChatManager.getChannel(channel));
+		broadcast(message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcast(Identity sender, Component message, String channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcast(Identified sender, Component message, String channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcast(UUID sender, Component message, String channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcast(Component message, String channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(Identity.nil(), message, channel, type, muteMenuItem);
+	}
+
+	public static void broadcast(Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcast(Identity.nil(), message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Identity sender, Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Component message, String channel, MessageType type) {
+		broadcast(Identity.nil(), message, channel, type);
+	}
+
+	public static void broadcast(Identity sender, Component message, String channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(Identified sender, Component message, String channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(UUID sender, Component message, String channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(Identity sender, Component message, String channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, ChatManager.getChannel(channel), type, muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, String channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender.identity(), message, channel, type, muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, String channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(AdventureUtils.identityOf(sender), message, channel, type, muteMenuItem);
 	}
 
 	public static void broadcast(Component message, PublicChannel channel) {
-		broadcast(message, channel, null);
+		broadcast(message, channel, MessageType.SYSTEM, null);
+	}
+
+	public static void broadcast(Identity sender, Component message, PublicChannel channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcast(Identified sender, Component message, PublicChannel channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcast(UUID sender, Component message, PublicChannel channel) {
+		broadcast(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcast(Component message, PublicChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(Identity.nil(), message, channel, type, muteMenuItem);
 	}
 
 	public static void broadcast(Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
-		channel.broadcast(message, muteMenuItem);
+		broadcast(Identity.nil(), message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Identity sender, Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcast(Component message, PublicChannel channel, MessageType type) {
+		broadcast(Identity.nil(), message, channel, type);
+	}
+
+	public static void broadcast(Identity sender, Component message, PublicChannel channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(Identified sender, Component message, PublicChannel channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(UUID sender, Component message, PublicChannel channel, MessageType type) {
+		broadcast(sender, message, channel, type, null);
+	}
+
+	public static void broadcast(Identity sender, Component message, PublicChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		channel.broadcast(sender, message, type, muteMenuItem);
+	}
+
+	public static void broadcast(Identified sender, Component message, PublicChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(sender.identity(), message, channel, type, muteMenuItem);
+	}
+
+	public static void broadcast(UUID sender, Component message, PublicChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcast(AdventureUtils.identityOf(sender), message, channel, type, muteMenuItem);
 	}
 
 	public static void broadcastIngame(String message) {
@@ -289,8 +513,48 @@ public class Chat extends Feature {
 		broadcastIngame(message, ChatManager.getMainChannel());
 	}
 
+	public static void broadcastIngame(Identity sender, Component message) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastIngame(Identified sender, Component message) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastIngame(UUID sender, Component message) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel());
+	}
+
 	public static void broadcastIngame(Component message, MuteMenuItem muteMenuItem) {
 		broadcastIngame(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcastIngame(Component message, MessageType type) {
+		broadcastIngame(message, ChatManager.getMainChannel(), type);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, MessageType type) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel(), type);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, MessageType type) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel(), type);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, MessageType type) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel(), type);
 	}
 
 	public static void broadcastIngame(Component message, StaticChannel channel) {
@@ -305,12 +569,120 @@ public class Chat extends Feature {
 		broadcastIngame(message, ChatManager.getChannel(channel));
 	}
 
+	public static void broadcastIngame(Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(Identity.nil(), message, channel, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, String channel) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, String channel) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, String channel) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, String channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Component message, String channel, MessageType type) {
+		broadcastIngame(Identity.nil(), message, channel, type);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, String channel, MessageType type) {
+		broadcastIngame(sender, message, channel, type, null);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, String channel, MessageType type) {
+		broadcastIngame(sender, message, channel, type, null);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, String channel, MessageType type) {
+		broadcastIngame(sender, message, channel, type, null);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, String channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, ChatManager.getChannel(channel), type, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, String channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender.identity(), message, channel, type, muteMenuItem);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, String channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcastIngame(AdventureUtils.identityOf(sender), message, channel, type, muteMenuItem);
+	}
+
 	public static void broadcastIngame(Component message, PublicChannel channel) {
-		broadcastIngame(message, channel, null);
+		broadcastIngame(message, channel, MessageType.SYSTEM);
 	}
 
 	public static void broadcastIngame(Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
-		channel.broadcastIngame(message, muteMenuItem);
+		broadcastIngame(Identity.nil(), message, channel, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, PublicChannel channel) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, PublicChannel channel) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, PublicChannel channel) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, channel, MessageType.SYSTEM, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Component message, PublicChannel channel, MessageType type) {
+		broadcastIngame(Identity.nil(), message, channel, type);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, PublicChannel channel, MessageType type) {
+		broadcastIngame(sender, message, channel, type, null);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, PublicChannel channel, MessageType type) {
+		broadcastIngame(sender, message, channel, type, null);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, PublicChannel channel, MessageType type) {
+		broadcastIngame(sender, message, channel, type, null);
+	}
+
+	public static void broadcastIngame(Identity sender, Component message, PublicChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		channel.broadcastIngame(sender, message, type, muteMenuItem);
+	}
+
+	public static void broadcastIngame(Identified sender, Component message, PublicChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender.identity(), message, channel, type, muteMenuItem);
+	}
+
+	public static void broadcastIngame(UUID sender, Component message, PublicChannel channel, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcastIngame(AdventureUtils.identityOf(sender), message, channel, type, muteMenuItem);
 	}
 
 	public static void broadcastDiscord(String message) {
@@ -359,19 +731,6 @@ public class Chat extends Feature {
 
 	public static void broadcastDiscord(Component message, PublicChannel channel) {
 		channel.broadcastDiscord(message);
-	}
-
-	public static Component stripColor(Component component) {
-		component = component.style(Style.empty());
-		if (component instanceof TranslatableComponent) {
-			TranslatableComponent tComponent = (TranslatableComponent) component;
-			component = tComponent.args(stripColor(tComponent.args()));
-		}
-		return component.children(stripColor(component.children()));
-	}
-
-	public static List<Component> stripColor(Collection<Component> components) {
-		return components.stream().map(Chat::stripColor).collect(Collectors.toList());
 	}
 
 }

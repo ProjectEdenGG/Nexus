@@ -13,10 +13,13 @@ import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -123,11 +126,14 @@ public class ChatManager {
 					.addHover("&cClick to see original message")
 					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
 
+		Component aPlayer = AdventureUtils.fromJson(json);
+		Component aStaff = AdventureUtils.fromJson(staff);
+
 		event.getRecipients().forEach(recipient -> {
 			if (Rank.of(recipient.getPlayer()).isStaff())
-				recipient.send(staff);
+				recipient.send(nerd, aStaff, MessageType.CHAT);
 			else
-				recipient.send(json);
+				recipient.send(nerd, aPlayer, MessageType.CHAT);
 		});
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
@@ -140,6 +146,7 @@ public class ChatManager {
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nerd.of(event.getChatter().getOfflinePlayer()).getNickname() + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
+		Component aFrom = AdventureUtils.fromJson(from);
 
 		int seen = 0;
 		for (Chatter recipient : event.getRecipients()) {
@@ -151,7 +158,7 @@ public class ChatManager {
 				if (!recipient.getOfflinePlayer().isOnline())
 					event.getChatter().send(Chat.PREFIX + notOnline);
 				else {
-					recipient.send(from);
+					recipient.send(event.getChatter(), aFrom, MessageType.CHAT);
 					if (canSee)
 						++seen;
 					else
