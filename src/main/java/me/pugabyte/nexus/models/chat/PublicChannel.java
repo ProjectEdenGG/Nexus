@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+
 @Data
 @Builder
 public class PublicChannel implements Channel {
@@ -160,7 +162,7 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcastIngame(String message, MuteMenuItem muteMenuItem) {
-		broadcastIngame(AdventureUtils.fromLegacyText(message), muteMenuItem);
+		broadcastIngame(AdventureUtils.fromLegacyText(colorize(message)), muteMenuItem);
 	}
 
 	public void broadcastIngame(Component component) {
