@@ -31,7 +31,6 @@ public enum PerkType implements IHasPerkCategory {
 	FLAME_PARTICLE(new FlameParticle()),
 	HEART_PARTICLE(new HeartParticle()),
 	UNICORN_HORN(new UnicornHorn()),
-	DRAGON_SKULL(new DragonSkull()),
 	CONCRETE_HAT(new ConcreteHat()),
 	BASIC_TRAIL(new BasicTrail()),
 	SKELETON_SKULL(new SkeletonSkull()),
