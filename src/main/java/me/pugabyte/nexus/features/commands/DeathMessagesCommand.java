@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -24,6 +25,7 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -50,19 +52,24 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDeath(PlayerDeathEvent event) {
 		final DeathMessagesService service = new DeathMessagesService();
 		DeathMessages deathMessages = service.get(event.getEntity());
 
-		TranslatableComponent deathMessage = (TranslatableComponent) event.deathMessage();
-		TextComponent output;
-		if (deathMessage == null) {
+		Component deathMessageRaw = event.deathMessage();
+
+		TextComponent output = Component.text("☠ ").color(NamedTextColor.RED);
+		if (deathMessageRaw == null) {
 			// failsafe? :P
-			output = Component.text("☠ ").color(NamedTextColor.RED)
+			output = output
 					.append(Component.text(deathMessages.getNickname()).color(NamedTextColor.YELLOW))
 					.append(Component.text(" spontaneously ceased existence").color(NamedTextColor.RED));
+		} else if (!(deathMessageRaw instanceof TranslatableComponent)) {
+			Nexus.warn("Death message is not translatable");
+			output = output.append(deathMessageRaw);
 		} else {
+			TranslatableComponent deathMessage = (TranslatableComponent) deathMessageRaw;
 			List<Component> args = new ArrayList<>();
 			deathMessage.args().forEach(component -> {
 				if (!(component instanceof TextComponent) || component.children().size() != 1 || !(component.children().get(0) instanceof TextComponent)) {
@@ -83,7 +90,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 				args.add(component.children(Collections.singletonList(textComponent)));
 			});
 			deathMessage = deathMessage.args(args);
-			output = Component.text("☠ ").color(NamedTextColor.RED).append(deathMessage);
+			output = output.append(deathMessage);
 		}
 
 		event.deathMessage(null);
