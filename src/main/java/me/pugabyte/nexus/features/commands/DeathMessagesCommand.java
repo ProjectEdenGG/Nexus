@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
@@ -29,9 +30,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.discord.Discord.discordize;
 
@@ -52,6 +53,24 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
 	}
 
+	public static Component formatUsernames(DeathMessages deathMessages, Component component) {
+		if (!(component instanceof TextComponent) || component.children().size() != 1 || !(component.children().get(0) instanceof TextComponent)) {
+			return component;
+		}
+		// this (should) have a text component inside with the name of a player so we are going to color it
+		TextComponent textComponent = ((TextComponent) component.children().get(0)).color(NamedTextColor.YELLOW);
+		// and set their name to their nickname
+		if (textComponent.content().equals(deathMessages.getName()))
+			textComponent = textComponent.content(deathMessages.getNickname());
+		else {
+			try {
+				textComponent = textComponent.content(Nerd.of(textComponent.content()).getNickname());
+			}
+			catch (PlayerNotFoundException|InvalidInputException ignored) {}
+		}
+		return component.children(Collections.singletonList(textComponent));
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDeath(PlayerDeathEvent event) {
 		final DeathMessagesService service = new DeathMessagesService();
@@ -66,29 +85,13 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 					.append(Component.text(deathMessages.getNickname()).color(NamedTextColor.YELLOW))
 					.append(Component.text(" spontaneously ceased existence").color(NamedTextColor.RED));
 		} else if (!(deathMessageRaw instanceof TranslatableComponent)) {
-			Nexus.warn("Death message is not translatable");
+			Nexus.warn("Death message is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
+			List<Component> args = deathMessageRaw.children().stream().map(component -> formatUsernames(deathMessages, component)).collect(Collectors.toList());
+			deathMessageRaw = deathMessageRaw.children(args);
 			output = output.append(deathMessageRaw);
 		} else {
 			TranslatableComponent deathMessage = (TranslatableComponent) deathMessageRaw;
-			List<Component> args = new ArrayList<>();
-			deathMessage.args().forEach(component -> {
-				if (!(component instanceof TextComponent) || component.children().size() != 1 || !(component.children().get(0) instanceof TextComponent)) {
-					args.add(component);
-					return;
-				}
-				// this (should) have a text component inside with the name of a player so we are going to color it
-				TextComponent textComponent = ((TextComponent) component.children().get(0)).color(NamedTextColor.YELLOW);
-				// and set their name to their nickname
-				if (textComponent.content().equals(deathMessages.getName()))
-					textComponent = textComponent.content(deathMessages.getNickname());
-				else {
-					try {
-						textComponent = textComponent.content(Nerd.of(textComponent.content()).getNickname());
-					}
-					catch (PlayerNotFoundException|InvalidInputException ignored) {}
-				}
-				args.add(component.children(Collections.singletonList(textComponent)));
-			});
+			List<Component> args = deathMessage.args().stream().map(component -> formatUsernames(deathMessages, component)).collect(Collectors.toList());
 			deathMessage = deathMessage.args(args);
 			output = output.append(deathMessage);
 		}
