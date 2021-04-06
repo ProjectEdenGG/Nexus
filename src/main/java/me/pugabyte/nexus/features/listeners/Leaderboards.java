@@ -6,7 +6,6 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.HoursCommand.HoursTopArguments;
-import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.features.store.Package;
 import me.pugabyte.nexus.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.nexus.framework.annotations.Environments;
@@ -172,12 +171,6 @@ public class Leaderboards implements Listener {
 	@EventHandler
 	public void onVote(VotifierEvent event) {
 		Tasks.wait(1, Leaderboard.VOTES::update);
-	}
-
-	@EventHandler
-	public void onBalanceChange(BalanceChangeEvent event) {
-		if (event.getNewBalance().doubleValue() >= 1000000 || event.getOldBalance().doubleValue() >= 1000000)
-			Leaderboard.BALANCE.update();
 	}
 
 	@EventHandler
