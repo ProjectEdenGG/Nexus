@@ -105,6 +105,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 			Match match = event.getMatch();
 			flagMessage(match, minigamer.getTeam(), minigamer, minigamer.getColoredName() + " &3dropped " + carriedFlag.getTeam().getColoredName() + "&3's flag", true);
 			flagMessage(match, carriedFlag.getTeam(), event.getAttacker(), minigamer.getColoredName() + "&3 dropped your flag", false);
+			if (event.getAttacker() != null)
+				event.getAttacker().contributionScored(5);
 		}
 		super.onDeath(event);
 	}
@@ -123,6 +125,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Flag flag = matchData.getFlag(minigamer.getTeam());
 		flag.respawn();
 		match.getTasks().cancel(flag.getTaskId());
+
+		minigamer.contributionScored(3);
 	}
 
 	private void captureFlag(Minigamer minigamer, Team team) {
@@ -133,6 +137,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		flagMessage(match, team, minigamer.getColoredName() + "&3 captured your flag", Sound.ENTITY_ENDER_DRAGON_GROWL, 0.4f, false);
 
 		minigamer.scored();
+		minigamer.contributionScored(19); // above line adds 1 so let's add 19 more
 		minigamer.getMatch().scored(minigamer.getTeam());
 
 		matchData.removeFlagCarrier(minigamer);

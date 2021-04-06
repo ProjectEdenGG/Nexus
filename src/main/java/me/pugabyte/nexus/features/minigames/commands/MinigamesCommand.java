@@ -7,12 +7,14 @@ import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.mechanics.Mastermind;
 import me.pugabyte.nexus.features.minigames.mechanics.common.CheckpointMechanic;
+import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData;
+import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -29,6 +31,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
+import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
@@ -468,6 +472,25 @@ public class MinigamesCommand extends CustomCommand {
 			runCommand("rg flag holeinthewall_" + arena.getName() + "_" + regionType + "_" + i + " " + flag + " " + setting);
 	}
 
+	@Path("collectibles")
+	void collectibles() {
+		if (player().getWorld() != Minigames.getWorld())
+			error("You must be in the gameworld to use this command");
+		new PerkMenu().open(player());
+	}
+
+	@Path("setTokens <amount>")
+	@Permission("group.admin")
+	@HideFromHelp
+	@TabCompleteIgnore
+	void setTokens(int amount) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner perkOwner = service.get(player());
+		perkOwner.setTokens(amount);
+		service.save(perkOwner);
+		send(PREFIX + "Tokens set to " + amount);
+	}
+
 	@Path("mastermind showAnswer")
 	@Permission("group.admin")
 	void mastermindShowAnswer() {
@@ -487,6 +510,15 @@ public class MinigamesCommand extends CustomCommand {
 
 		MastermindMatchData matchData = minigamer.getMatch().getMatchData();
 		matchData.reset(minigamer);
+	}
+
+	@Path("hideParticles <type>")
+	void hideParticles(HideParticle type) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner owner = service.get(player());
+		owner.setHideParticle(type);
+		service.save(owner);
+		send(Minigames.PREFIX + "Now hiding "+type.toString().toLowerCase()+" particles");
 	}
 
 	private Match getRunningMatch(Arena arena) {

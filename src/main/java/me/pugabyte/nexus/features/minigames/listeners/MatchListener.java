@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -15,6 +16,10 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
+import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
+import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -28,6 +33,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -327,5 +333,27 @@ public class MatchListener implements Listener {
 
 		if (mechanic.usesAlternativeRegen())
 			event.setCancelled(true);
+	}
+
+	public void onShootProjectile(Player player, Projectile projectile) {
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying())
+			return;
+		PerkOwner owner = new PerkOwnerService().get(player);
+		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile, minigamer.getMatch()));
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onBowShoot(EntityShootBowEvent event) {
+		if (!(event.getEntity() instanceof Player))
+			return;
+		if (!(event.getProjectile() instanceof Projectile))
+			return;
+		onShootProjectile((Player) event.getEntity(), (Projectile) event.getProjectile());
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
+		onShootProjectile(event.getPlayer(), event.getProjectile());
 	}
 }

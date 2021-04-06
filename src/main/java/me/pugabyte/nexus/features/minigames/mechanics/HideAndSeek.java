@@ -330,7 +330,7 @@ public class HideAndSeek extends Infection {
 			SmartInventory.builder()
 					.provider(this)
 					.title(colorize("&3&lSelect your Block"))
-					.size(MenuUtils.getRows(match.getArena().getBlockList().size(), 1), 9)
+					.size(getRows(match.getArena().getBlockList().size(), 1), 9)
 					.build()
 					.open(viewer, page);
 		}

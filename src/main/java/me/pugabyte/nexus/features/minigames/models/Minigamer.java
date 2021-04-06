@@ -49,6 +49,11 @@ public class Minigamer {
 	private Match match;
 	private Team team;
 	private int score = 0;
+	/**
+	 * Number that represents the player's participation in the game. Should be used to track events like kills,
+	 * capturing flags, etc. Mostly used for team games where participation is more complex than just kill counts.
+	 */
+	private int contributionScore = 0;
 	@Accessors(fluent = true)
 	private boolean canTeleport;
 	private boolean respawning = false;
@@ -252,8 +257,13 @@ public class Minigamer {
 		setScore(score + scored);
 	}
 
+	public void contributionScored(int amount) {
+		setContributionScore(contributionScore + amount);
+	}
+
 	public void setScore(int score) {
 		int diff = score - this.score;
+		contributionScored(diff);
 
 		MinigamerScoredEvent event = new MinigamerScoredEvent(this, diff);
 		if (!event.callEvent()) return;
