@@ -38,6 +38,7 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -232,6 +233,8 @@ public abstract class CustomCommand extends ICustomCommand {
 			send(sender(), (String) object);
 		else if (object instanceof JsonBuilder)
 			send(sender(), (JsonBuilder) object);
+		else if (object instanceof Component)
+			send(sender(), (Component) object);
 		else
 			throw new InvalidInputException("Cannot send object: " + object.getClass().getSimpleName());
 	}
@@ -252,12 +255,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		send(sender(), builder);
 	}
 
+	protected void send(Component component) {
+		send(sender(), component);
+	}
+
 	protected void send(BaseComponent... baseComponents) {
 		send(sender(), baseComponents);
 	}
 
 	protected void send(CommandSender sender, JsonBuilder builder) {
 		builder.send(sender);
+	}
+
+	protected void send(CommandSender sender, Component component) {
+		sender.sendMessage(component);
 	}
 
 	protected void send(int delay, String message) {
@@ -994,7 +1005,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		POSSESSIVE_UPPER,
 		POSSESSIVE_LOWER,
 		ACTIONARY_UPPER,
-		ACTIONARY_LOWER;
+		ACTIONARY_LOWER
 	}
 
 }

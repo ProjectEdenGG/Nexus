@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.commands;
 
-import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -9,19 +8,30 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.WorldGroup;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static me.pugabyte.nexus.features.discord.Discord.discordize;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 public class DeathMessagesCommand extends CustomCommand implements Listener {
@@ -45,27 +55,48 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		final DeathMessagesService service = new DeathMessagesService();
 		DeathMessages deathMessages = service.get(event.getEntity());
 
-		String message = "&c☠ " + event.getDeathMessage();
-		message = message.replaceFirst(event.getEntity().getName(), "&e" + event.getEntity().getName() + "&c");
-		if (event.getEntity().getKiller() != null)
-			message = message.replaceFirst(event.getEntity().getKiller().getName(), "&e" + event.getEntity().getKiller().getName() + "&c");
+		TranslatableComponent deathMessage = (TranslatableComponent) event.deathMessage();
+		TextComponent output;
+		if (deathMessage == null) {
+			// failsafe? :P
+			output = Component.text("☠ ").color(NamedTextColor.RED)
+					.append(Component.text(deathMessages.getNickname()).color(NamedTextColor.YELLOW))
+					.append(Component.text(" spontaneously ceased existence").color(NamedTextColor.RED));
+		} else {
+			List<Component> args = new ArrayList<>();
+			deathMessage.args().forEach(component -> {
+				if (!(component instanceof TextComponent) || component.children().size() != 1 || !(component.children().get(0) instanceof TextComponent)) {
+					args.add(component);
+					return;
+				}
+				// this (should) have a text component inside with the name of a player so we are going to color it
+				TextComponent textComponent = ((TextComponent) component.children().get(0)).color(NamedTextColor.YELLOW);
+				// and set their name to their nickname
+				if (textComponent.content().equals(deathMessages.getName()))
+					textComponent = textComponent.content(deathMessages.getNickname());
+				else {
+					try {
+						textComponent = textComponent.content(Nerd.of(textComponent.content()).getNickname());
+					}
+					catch (PlayerNotFoundException|InvalidInputException ignored) {}
+				}
+				args.add(component.children(Collections.singletonList(textComponent)));
+			});
+			deathMessage = deathMessage.args(args);
+			output = Component.text("☠ ").color(NamedTextColor.RED).append(deathMessage);
+		}
 
-		if (deathMessages.getBehavior() == Behavior.HIDDEN)
-			event.setDeathMessage(null);
-
-		if (Strings.isNullOrEmpty(event.getDeathMessage())) return;
-
-		event.setDeathMessage(null);
+		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
-			Chat.broadcastIngame(colorize(message));
+			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT);
 
 			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-				Chat.broadcastDiscord(discordize(message));
+				Chat.broadcastDiscord(discordize(output));
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			Chatter chatter = new ChatService().get(event.getEntity());
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
-				recipient.send(message);
+				recipient.send(event.getEntity(), output, MessageType.CHAT);
 		}
 	}
 
