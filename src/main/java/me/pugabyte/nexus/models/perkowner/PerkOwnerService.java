@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.models.perks;
+package me.pugabyte.nexus.models.perkowner;
 
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;

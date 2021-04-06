@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.models.perks;
+package me.pugabyte.nexus.models.perkowner;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -11,6 +11,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
+import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;

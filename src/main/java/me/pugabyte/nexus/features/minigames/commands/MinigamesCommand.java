@@ -15,8 +15,6 @@ import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData;
 import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -33,6 +31,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
+import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;

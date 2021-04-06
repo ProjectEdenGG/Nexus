@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.minigames.models.perks.common;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
+import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;

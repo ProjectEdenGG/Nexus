@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBeginEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Utils;
 
