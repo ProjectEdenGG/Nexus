@@ -61,6 +61,10 @@ public class PerkOwner extends PlayerOwnedObject {
 		return getEnabledPerks().stream().filter(perkType -> tClass.isInstance(perkType.getPerk())).map(perkType -> tClass.cast(perkType.getPerk())).collect(Collectors.toSet());
 	}
 
+	public Set<? extends Perk> getEnabledPerksByCategory(PerkCategory category) {
+		return getEnabledPerks().stream().filter(perkType -> perkType.getPerkCategory() == category).map(PerkType::getPerk).collect(Collectors.toSet());
+	}
+
 	public boolean equals(PerkOwner other) {
 		return uuid.equals(other.getUuid());
 	}

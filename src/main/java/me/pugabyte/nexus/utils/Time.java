@@ -24,6 +24,10 @@ public enum Time {
 		return value * multiplier;
 	}
 
+	public int x(double multiplier) {
+		return (int) (value * multiplier);
+	}
+
 	public static class Timer {
 		private static final int IGNORE = 2000;
 

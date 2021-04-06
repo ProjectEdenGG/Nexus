@@ -103,6 +103,7 @@ public abstract class LoadoutPerk extends TickablePerk {
 
 		// don't overwrite banners and don't overwrite colored armor (if the current item isn't colorable)
 		if (currentStack != null && (
+				currentStack.getType() == Material.ZOMBIE_HEAD ||
 				MaterialTag.ALL_BANNERS.isTagged(currentStack.getType()) ||
 						(MaterialTag.COLORABLE.isTagged(currentStack.getType()) && !overrideColorables)
 						))

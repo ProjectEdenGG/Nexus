@@ -28,6 +28,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -38,7 +39,7 @@ import java.util.List;
 
 @NoArgsConstructor
 public class DyeBombCommand extends CustomCommand implements Listener {
-	private static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").build();
+	public static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
 
 	public DyeBombCommand(CommandEvent event) {
 		super(event);
@@ -69,8 +70,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 
 		String itemName = StringUtils.stripColor(meta.getDisplayName());
 		if (!"Dye Bomb".equalsIgnoreCase(itemName)) return;
-		if (meta.getLore() == null) return;
-		if (!meta.getLore().contains(StringUtils.colorize("&bEvent Item"))) return;
+		if (!((meta.getLore() != null && meta.getLore().contains(StringUtils.colorize("&bEvent Item"))) || meta.isUnbreakable())) return;
 
 		Player player = event.getPlayer();
 		CooldownService cooldownService = new CooldownService();

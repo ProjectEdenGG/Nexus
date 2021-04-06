@@ -66,19 +66,19 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 				lore.add(2, "");
 
 			ItemStack item = getItem(perk, lore);
-			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType)));
+			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType, contents)));
 		});
 		addPagination(player, contents, clickableItems);
 	}
 
-	protected void buyItem(Player player, PerkType perkType) {
+	protected void buyItem(Player player, PerkType perkType, InventoryContents contents) {
 		Perk perk = perkType.getPerk();
 		PerkOwner perkOwner = service.get(player);
 		if (perkOwner.getPurchasedPerks().containsKey(perkType))
 			error(player, "You already own that item");
 		else if (perkOwner.purchase(perkType)) {
 			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+ plural(" token", perk.getPrice()));
-			open(player);
+			open(player, contents.pagination().getPage());
 		} else
 			error(player, "You don't have enough tokens to purchase that");
 	}

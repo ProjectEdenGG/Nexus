@@ -5,6 +5,9 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.perks.arrowparticles.BasicTrail;
 import me.pugabyte.nexus.features.minigames.perks.arrowparticles.GreenTrail;
 import me.pugabyte.nexus.features.minigames.perks.arrowparticles.RainbowTrail;
+import me.pugabyte.nexus.features.minigames.perks.gadgets.DyeBombGadget;
+import me.pugabyte.nexus.features.minigames.perks.gadgets.SnowballGadget;
+import me.pugabyte.nexus.features.minigames.perks.gadgets.SpringGadget;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.*;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.ColorfulGlassHat;
 import me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.ConcreteHat;
@@ -31,7 +34,6 @@ public enum PerkType implements IHasPerkCategory {
 	DRAGON_SKULL(new DragonSkull()),
 	CONCRETE_HAT(new ConcreteHat()),
 	BASIC_TRAIL(new BasicTrail()),
-	ZOMBIE_SKULL(new ZombieSkull()),
 	SKELETON_SKULL(new SkeletonSkull()),
 	CREEPER_SKULL(new CreeperSkull()),
 	BICORN_HAT(new BicornHat()),
@@ -65,7 +67,10 @@ public enum PerkType implements IHasPerkCategory {
 	HONEY(new HoneyHat()),
 	CLOUD(new CloudParticle()),
 	SPLASH(new SplashParticle()),
-	SOUL_FLAME(new SoulFlameParticle())
+	SOUL_FLAME(new SoulFlameParticle()),
+	SNOWBALLS(new SnowballGadget()),
+	SPRING(new SpringGadget()),
+	DYE_BOMB(new DyeBombGadget())
 	;
 
 	private final Perk perk;

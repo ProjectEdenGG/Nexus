@@ -13,7 +13,7 @@ public class FlameParticle extends PlayerParticlePerk {
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.MAGMA_BLOCK);
+		return new ItemStack(Material.TORCH);
 	}
 
 	@Override
