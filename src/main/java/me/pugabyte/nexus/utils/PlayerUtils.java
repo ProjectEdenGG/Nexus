@@ -89,6 +89,12 @@ public class PlayerUtils {
 				PlayerUtils.send(player.getPlayer(), message);
 		}
 
+		public void send(Component component) {
+			OfflinePlayer player = getOfflinePlayer();
+			if (player.isOnline() && player.getPlayer() != null)
+				PlayerUtils.send(player.getPlayer(), component);
+		}
+
 		public boolean is(OfflinePlayer player) {
 			return uuid.equals(player.getUniqueId());
 		}
