@@ -23,6 +23,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -100,6 +102,10 @@ public class Discord extends Feature {
 			message = message.replaceAll("_", "\\\\_");
 		}
 		return message;
+	}
+
+	public static String discordize(Component message) {
+		return discordize(PlainComponentSerializer.plain().serialize(message));
 	}
 
 	public static Guild getGuild() {

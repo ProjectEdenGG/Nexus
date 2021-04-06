@@ -10,6 +10,10 @@ import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Builder
@@ -86,21 +88,44 @@ public class PublicChannel implements Channel {
 		broadcastDiscord(message);
 	}
 
+	public void broadcast(Component component) {
+		broadcastIngame(component);
+		broadcastDiscord(component);
+	}
+
+	public void broadcast(Component component, MuteMenuItem muteMenuItem) {
+		broadcastIngame(component, muteMenuItem);
+		broadcastDiscord(component);
+	}
+
 	public void broadcastIngame(String message) {
 		broadcastIngame(message, null);
 	}
 
 	public void broadcastIngame(String message, MuteMenuItem muteMenuItem) {
-		Bukkit.getConsoleSender().sendMessage(stripColor(message));
+		// hot take incoming:
+		broadcastIngame(LegacyComponentSerializer.legacySection().deserialize(message), muteMenuItem);
+	}
+
+	public void broadcastIngame(Component component) {
+		broadcastIngame(component, null);
+	}
+
+	public void broadcastIngame(Component component, MuteMenuItem muteMenuItem) {
+		Bukkit.getConsoleSender().sendMessage(Chat.stripColor(component));
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> (Chatter) new ChatService().get(player))
 				.filter(chatter -> chatter.hasJoined(this) && !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), muteMenuItem))
-				.forEach(chatter -> chatter.send(message));
+				.forEach(chatter -> chatter.send(component));
 	}
 
 	public void broadcastDiscord(String message) {
 		if (discordChannel != null)
 			Discord.send(message, discordChannel);
+	}
+
+	public void broadcastDiscord(Component component) {
+		broadcastDiscord(PlainComponentSerializer.plain().serialize(component));
 	}
 
 	public void broadcast(JsonBuilder builder) {
@@ -118,11 +143,7 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcastIngame(JsonBuilder builder, MuteMenuItem muteMenuItem) {
-		Bukkit.getConsoleSender().spigot().sendMessage(builder.build());
-		Bukkit.getOnlinePlayers().stream()
-				.map(player -> (Chatter) new ChatService().get(player))
-				.filter(chatter -> chatter.hasJoined(this) && !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), muteMenuItem))
-				.forEach(chatter -> chatter.send(builder));
+		broadcastIngame(GsonComponentSerializer.gson().deserialize(builder.serialize()), muteMenuItem);
 	}
 
 	public void broadcastIngame(Chatter chatter, JsonBuilder builder) {

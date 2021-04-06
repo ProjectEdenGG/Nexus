@@ -15,10 +15,16 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Time.Timer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.Style;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Chat extends Feature {
 
@@ -195,6 +201,34 @@ public class Chat extends Feature {
 		channel.broadcast(message, muteMenuItem);
 	}
 
+	public static void broadcast(Component message) {
+		broadcast(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcast(Component message, MuteMenuItem muteMenuItem) {
+		broadcast(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcast(Component message, StaticChannel channel) {
+		broadcast(message, ChatManager.getChannel(channel.name()));
+	}
+
+	public static void broadcast(Component message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcast(message, ChatManager.getChannel(channel.name()), muteMenuItem);
+	}
+
+	public static void broadcast(Component message, String channel) {
+		broadcast(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcast(Component message, PublicChannel channel) {
+		broadcast(message, channel, null);
+	}
+
+	public static void broadcast(Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		channel.broadcast(message, muteMenuItem);
+	}
+
 	public static void broadcastIngame(String message) {
 		broadcastIngame(message, ChatManager.getMainChannel());
 	}
@@ -251,6 +285,34 @@ public class Chat extends Feature {
 		channel.broadcastIngame(message, muteMenuItem);
 	}
 
+	public static void broadcastIngame(Component message) {
+		broadcastIngame(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastIngame(Component message, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, ChatManager.getMainChannel(), muteMenuItem);
+	}
+
+	public static void broadcastIngame(Component message, StaticChannel channel) {
+		broadcastIngame(message, ChatManager.getChannel(channel.name()));
+	}
+
+	public static void broadcastIngame(Component message, StaticChannel channel, MuteMenuItem muteMenuItem) {
+		broadcastIngame(message, ChatManager.getChannel(channel.name()), muteMenuItem);
+	}
+
+	public static void broadcastIngame(Component message, String channel) {
+		broadcastIngame(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcastIngame(Component message, PublicChannel channel) {
+		broadcastIngame(message, channel, null);
+	}
+
+	public static void broadcastIngame(Component message, PublicChannel channel, MuteMenuItem muteMenuItem) {
+		channel.broadcastIngame(message, muteMenuItem);
+	}
+
 	public static void broadcastDiscord(String message) {
 		broadcastDiscord(message, ChatManager.getMainChannel());
 	}
@@ -281,6 +343,35 @@ public class Chat extends Feature {
 
 	public static void broadcastDiscord(JsonBuilder message, PublicChannel channel) {
 		channel.broadcastDiscord(message);
+	}
+
+	public static void broadcastDiscord(Component message) {
+		broadcastDiscord(message, ChatManager.getMainChannel());
+	}
+
+	public static void broadcastDiscord(Component message, StaticChannel channel) {
+		broadcastDiscord(message, ChatManager.getChannel(channel.name()));
+	}
+
+	public static void broadcastDiscord(Component message, String channel) {
+		broadcastDiscord(message, ChatManager.getChannel(channel));
+	}
+
+	public static void broadcastDiscord(Component message, PublicChannel channel) {
+		channel.broadcastDiscord(message);
+	}
+
+	public static Component stripColor(Component component) {
+		component = component.style(Style.empty());
+		if (component instanceof TranslatableComponent) {
+			TranslatableComponent tComponent = (TranslatableComponent) component;
+			component = tComponent.args(stripColor(tComponent.args()));
+		}
+		return component.children(stripColor(component.children()));
+	}
+
+	public static List<Component> stripColor(Collection<Component> components) {
+		return components.stream().map(Chat::stripColor).collect(Collectors.toList());
 	}
 
 }
