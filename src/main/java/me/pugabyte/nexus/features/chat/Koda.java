@@ -13,6 +13,7 @@ import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -65,7 +66,7 @@ public class Koda {
 	}
 
 	public static void sayIngame(String message) {
-		Chat.broadcastIngame(globalFormat + message);
+		Chat.broadcastIngame(AdventureUtils.fromLegacyAmpersandText(globalFormat + message));
 	}
 
 	public static void sayDiscord(String message) {

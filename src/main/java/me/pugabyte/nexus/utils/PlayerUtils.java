@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.dv8tion.jda.annotations.ReplaceWith;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -243,6 +244,10 @@ public class PlayerUtils {
 
 	public static void send(CommandSender sender, BaseComponent... baseComponents) {
 		sender.sendMessage(baseComponents);
+	}
+
+	public static void send(CommandSender sender, Component component) {
+		sender.sendMessage(component);
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

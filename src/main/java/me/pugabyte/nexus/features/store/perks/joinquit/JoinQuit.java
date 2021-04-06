@@ -15,11 +15,14 @@ import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -69,16 +72,17 @@ public class JoinQuit extends Feature implements Listener {
 
 		if (player.isOnline()) {
 			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + Nerd.of(player).getNickname() + "&5");
+			final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 
 			Bukkit.getOnlinePlayers().forEach(_player -> {
 				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT))
-					PlayerUtils.send(_player, ingame);
-
-				if (!player.hasPlayedBefore())
-					Jingle.FIRST_JOIN.playAll();
-				else
-					Jingle.JOIN.playAll();
+					_player.sendMessage(player, component, MessageType.CHAT);
 			});
+
+			if (!player.hasPlayedBefore())
+				Jingle.FIRST_JOIN.playAll();
+			else
+				Jingle.JOIN.playAll();
 
 			Tasks.async(() -> {
 				DiscordUser user = new DiscordService().get(player);
@@ -105,16 +109,19 @@ public class JoinQuit extends Feature implements Listener {
 		final String finalMessage = message;
 
 		final String ingame = "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + Nerd.of(player).getNickname() + "&5");
+		final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
+		final Component staffComponent = AdventureUtils.fromLegacyAmpersandText(ingame + " (" + StringUtils.camelCase(reason.name()) + ")");
 
-		// TODO: mutemenu
 		Bukkit.getOnlinePlayers().forEach(_player -> {
-			if (reason != QuitReason.DISCONNECTED && PlayerUtils.isStaffGroup(_player))
-				PlayerUtils.send(_player, ingame + " (" + StringUtils.camelCase(reason.name()) + ")");
-			else
-				PlayerUtils.send(_player, ingame);
-
-			Jingle.QUIT.playAll();
+			if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT)) {
+				if (reason != QuitReason.DISCONNECTED && PlayerUtils.isStaffGroup(_player))
+					_player.sendMessage(player, staffComponent, MessageType.CHAT);
+				else
+					_player.sendMessage(player, component, MessageType.CHAT);
+			}
 		});
+
+		Jingle.QUIT.playAll();
 
 		Tasks.async(() -> {
 			DiscordUser user = new DiscordService().get(player);
@@ -131,7 +138,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		event.setJoinMessage(null);
+		event.joinMessage(null);
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
 			Koda.replyIngame("&lWelcome to Bear Nation, " + Nerd.of(player).getNickname() + "!");
