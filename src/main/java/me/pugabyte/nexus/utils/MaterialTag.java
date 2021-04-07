@@ -216,6 +216,8 @@ public class MaterialTag implements Tag<Material> {
 			.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 
+	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);
+
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {
 		return collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));

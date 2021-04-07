@@ -71,6 +71,10 @@ public abstract class Mechanic implements Listener {
 		return false;
 	}
 
+	public boolean usesLoadoutPerks(Minigamer minigamer) {
+		return true;
+	}
+
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
 		int taskId = match.getTasks().repeat(1, Time.SECOND, () -> {

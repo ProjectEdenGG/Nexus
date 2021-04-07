@@ -20,6 +20,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -124,9 +125,10 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get((Player) event.getWhoClicked());
 		if (!minigamer.isPlaying()) return;
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
+		ItemStack item = event.getCurrentItem();
 
 		if (event.getClickedInventory() instanceof PlayerInventory) {
-			if (event.getSlotType() == InventoryType.SlotType.ARMOR && !mechanic.canMoveArmor())
+			if (event.getSlotType() == InventoryType.SlotType.ARMOR && (!mechanic.canMoveArmor() || (item != null && !MaterialTag.WEARABLE.isTagged(item.getType()))))
 				event.setCancelled(true);
 		} else if (!mechanic.canOpenInventoryBlocks()) {
 			event.setCancelled(true);

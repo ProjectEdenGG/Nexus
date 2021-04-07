@@ -431,6 +431,10 @@ public class Minigamer {
 			player.removePotionEffect(effect.getType());
 	}
 
+	public boolean usesLoadoutPerks() {
+		return match.getMechanic().usesLoadoutPerks(this);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

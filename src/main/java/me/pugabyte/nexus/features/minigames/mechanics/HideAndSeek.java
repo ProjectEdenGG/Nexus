@@ -79,6 +79,16 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
+	public boolean usesLoadoutPerks(Minigamer minigamer) {
+		return isZombie(minigamer);
+	}
+
+	@Override
+	public boolean canMoveArmor() {
+		return false;
+	}
+
+	@Override
 	public void onJoin(MatchJoinEvent event) {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
