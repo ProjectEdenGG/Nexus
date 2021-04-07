@@ -55,7 +55,8 @@ public class VoteCommand extends CustomCommand {
 		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
 				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		line();
-		send(json("&3Server goal: " + progressBar(sum, 4000, NONE, 75) + " &e" + sum + "&3/&e4000")
+		int goal = 6000;
+		send(json("&3Server goal: " + progressBar(sum, goal, NONE, 75) + " &e" + sum + "&3/&e" + goal)
 				.hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");

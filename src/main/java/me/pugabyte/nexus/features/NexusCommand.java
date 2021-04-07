@@ -41,6 +41,7 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
+import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
@@ -122,6 +123,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
 import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
+import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @NoArgsConstructor
@@ -408,6 +410,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void clearCache(MongoService service) {
 		service.clearCache();
 		send(PREFIX + service.getClass().getSimpleName() + " cached cleared");
+	}
+
+	@Path("setFirstJoin <player> <date>")
+	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
+		nerd.setFirstJoin(firstJoin);
+		new NerdService().save(nerd);
+		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(firstJoin));
 	}
 
 	@Async

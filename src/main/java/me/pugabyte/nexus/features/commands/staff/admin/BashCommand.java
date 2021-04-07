@@ -1,11 +1,14 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import com.google.common.base.Strings;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.StringUtils;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -18,13 +21,19 @@ public class BashCommand extends CustomCommand {
 	}
 
 	@Path("<command...>")
+	@Async
 	void run(String command) {
+		send(tryExecute(command));
+	}
+
+	public static String tryExecute(String command) {
+		String PREFIX = StringUtils.getPrefix("Bash");
 		try {
 			String result = execute(command);
-			if (isNullOrEmpty(result))
-				send(PREFIX + "Command executed successfully");
+			if (Strings.isNullOrEmpty(result))
+				return PREFIX + "Command executed successfully";
 			else
-				send(PREFIX + "&7" + result);
+				return PREFIX + "&7" + result;
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

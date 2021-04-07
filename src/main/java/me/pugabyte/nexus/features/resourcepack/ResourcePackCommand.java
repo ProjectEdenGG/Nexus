@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.commands.staff.admin.BashCommand;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -82,6 +83,8 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("update")
 	@Permission("group.admin")
 	void update() {
+		send(BashCommand.tryExecute("/home/minecraft/git/Saturn/deploy.sh"));
+
 		String newHash = Utils.createSha1(URL);
 		if (hash != null && hash.equals(newHash))
 			error("No resource pack update found");

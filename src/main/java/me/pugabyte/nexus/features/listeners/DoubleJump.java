@@ -1,12 +1,10 @@
 package me.pugabyte.nexus.features.listeners;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.Basketball;
+import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,9 +12,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
-
-
+@Disabled
 public class DoubleJump implements Listener {
 	static final int COOLDOWN = 0;
 	static final double VELOCITY = 0.5;
@@ -27,12 +23,14 @@ public class DoubleJump implements Listener {
 
 		if (!canDoubleJump(player)) {
 			// Bear Fair Specific
+			/*
 			Location loc = player.getLocation();
 			ProtectedRegion region = getWGUtils().getProtectedRegion(Basketball.courtRg);
 			if (!getWGUtils().getRegionsAt(loc).contains(region)) return;
 			event.setCancelled(true);
 			player.setFlying(false);
 			player.setAllowFlight(false);
+			*/
 			//
 			return;
 		}
@@ -48,11 +46,12 @@ public class DoubleJump implements Listener {
 			if (player.isOnGround()) {
 
 				// Only enable fly if you're still in the double jump region
+				/*
 				Location loc = player.getLocation();
 				ProtectedRegion region = getWGUtils().getProtectedRegion(Basketball.courtRg);
-				if (getWGUtils().getRegionsAt(loc).contains(region)) {
+				if (getWGUtils().getRegionsAt(loc).contains(region))
 					player.setAllowFlight(true);
-				}
+				*/
 				//
 
 				Tasks.cancel(repeat.get());
