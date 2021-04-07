@@ -6,7 +6,6 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -26,7 +25,8 @@ import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
 
-public class ColorUtilsCommand extends CustomCommand {
+public class
+ColorUtilsCommand extends CustomCommand {
 
 	public ColorUtilsCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -46,21 +46,6 @@ public class ColorUtilsCommand extends CustomCommand {
 	@Path("runSpigotHexCommand <commandNoSlash...>")
 	void runHexCommand(String commandNoSlash) {
 		runCommand(decolorize(commandNoSlash));
-	}
-
-	@Path("setNpcName withPrefix <player>")
-	void setNpcNameWithFormat(Nerd nerd) {
-		runCommand("npc rename " + decolorize("&8&l[" + nerd.getRank().getHex() + "&8&l] " + nerd.getRank().getHex() + nerd.getName()));
-	}
-
-	@Path("setNpcName withColor <player>")
-	void setNpcNameWithColor(Nerd nerd) {
-		runCommand("npc rename " + nerd.getRank().getHex() + nerd.getName());
-	}
-
-	@Path("recreateNpc withColor <player>")
-	void recreateNpcNameWithColor(Nerd nerd) {
-		runCommand("mcmd npc sel ;; npc tp ;; npc remove ;; blockcenter ;; npc create " + nerd.getRank().getHex() + nerd.getName() + " ;; npc skin -l " + nerd.getName());
 	}
 
 	@Description("Get the last color used in a string (including formatting)")

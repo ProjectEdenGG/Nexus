@@ -199,7 +199,7 @@ public class SerializationUtils {
 						return metaValue;
 					}));
 
-			Arrays.asList("enchants", "stored-enchants", "display-map-color").forEach(key ->
+			Arrays.asList("enchants", "stored-enchants", "display-map-color", "LoadstonePos").forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) ->
 							toIntMap((Map<String, Object>) metaValue)));
 		}

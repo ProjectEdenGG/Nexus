@@ -32,7 +32,7 @@ public class MinigameNight {
 		}
 
 		public NextMGN(OfflinePlayer player) {
-			this(ZoneId.of(((GeoIP) new GeoIPService().get(player)).getTimezone().getId()));
+			this(new GeoIPService().<GeoIP>get(player).getTimezone() == null ? ZoneId.systemDefault() : ZoneId.of((new GeoIPService().<GeoIP>get(player).getTimezone().getId())));
 		}
 
 		public NextMGN(ZoneId zoneId) {
