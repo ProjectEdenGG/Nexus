@@ -94,6 +94,24 @@ public class Utils {
 	public static class MinMaxResult<T> {
 		private final T object;
 		private final Number value;
+		public int getInteger() {
+			return value.intValue();
+		}
+		public double getDouble() {
+			return value.doubleValue();
+		}
+		public float getFloat() {
+			return value.floatValue();
+		}
+		public byte getByte() {
+			return value.byteValue();
+		}
+		public short getShort() {
+			return value.shortValue();
+		}
+		public long getLong() {
+			return value.longValue();
+		}
 	}
 
 	@AllArgsConstructor
