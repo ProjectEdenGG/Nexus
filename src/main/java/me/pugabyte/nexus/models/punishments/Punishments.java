@@ -76,7 +76,6 @@ public class Punishments extends PlayerOwnedObject {
 	}
 
 	@Data
-	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Converters({UUIDConverter.class, LocationConverter.class})

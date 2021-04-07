@@ -67,6 +67,9 @@ public class Nerd extends PlayerOwnedObject {
 	private LocalDate promotionDate;
 	private String about;
 	private boolean meetMeVideo;
+
+	private Location teleportOnLogin;
+
 	private Set<String> aliases = new HashSet<>();
 	private Set<String> pastNames = new HashSet<>();
 
