@@ -22,17 +22,19 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.discord.Discord.discordize;
 
@@ -53,24 +55,6 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
 	}
 
-	public static Component formatUsernames(DeathMessages deathMessages, Component component) {
-		if (!(component instanceof TextComponent) || component.children().size() != 1 || !(component.children().get(0) instanceof TextComponent)) {
-			return component;
-		}
-		// this (should) have a text component inside with the name of a player so we are going to color it
-		TextComponent textComponent = ((TextComponent) component.children().get(0)).color(NamedTextColor.YELLOW);
-		// and set their name to their nickname
-		if (textComponent.content().equals(deathMessages.getName()))
-			textComponent = textComponent.content(deathMessages.getNickname());
-		else {
-			try {
-				textComponent = textComponent.content(Nerd.of(textComponent.content()).getNickname());
-			}
-			catch (PlayerNotFoundException|InvalidInputException ignored) {}
-		}
-		return component.children(Collections.singletonList(textComponent));
-	}
-
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDeath(PlayerDeathEvent event) {
 		final DeathMessagesService service = new DeathMessagesService();
@@ -81,16 +65,53 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		TextComponent output = Component.text("☠ ").color(NamedTextColor.RED);
 		if (deathMessageRaw == null) {
 			return;
+		} else if (deathMessageRaw instanceof TextComponent) {
+			// i'm still mad that i have to do this
+			Component deathMessage = deathMessageRaw;
+			TextReplacementConfig replacementConfig1 = TextReplacementConfig.builder()
+					.matchLiteral(event.getEntity().getName())
+					.replacement(
+							Component.text(deathMessages.getNickname()).color(NamedTextColor.YELLOW)
+					).build();
+			deathMessage = deathMessage.replaceText(replacementConfig1);
+
+			if (event.getEntity().getKiller() != null) {
+				Player killer = event.getEntity().getKiller();
+				Nerd nerd = Nerd.of(killer);
+				TextReplacementConfig replacementConfig2 = TextReplacementConfig.builder()
+						.matchLiteral(killer.getName())
+						.replacement(
+								Component.text(nerd.getNickname()).color(NamedTextColor.YELLOW)
+						).build();
+				deathMessage = deathMessage.replaceText(replacementConfig2);
+			}
+
+			output = output.append(deathMessage);
 		} else if (!(deathMessageRaw instanceof TranslatableComponent)) {
-			Nexus.warn("Death message is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
-			List<Component> args = deathMessageRaw.children().stream().map(component -> formatUsernames(deathMessages, component)).collect(Collectors.toList());
-			deathMessageRaw = deathMessageRaw.children(args);
+			Nexus.warn("Death message ("+deathMessageRaw.examinableName()+") is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
 			output = output.append(deathMessageRaw);
 		} else {
 			TranslatableComponent deathMessage = (TranslatableComponent) deathMessageRaw;
-			List<Component> args = deathMessage.args().stream().map(component -> formatUsernames(deathMessages, component)).collect(Collectors.toList());
-			deathMessage = deathMessage.args(args);
-			output = output.append(deathMessage);
+			List<Component> args = new ArrayList<>();
+			deathMessage.args().forEach(component -> {
+				if (!(component instanceof TextComponent) || component.children().size() != 1 || !(component.children().get(0) instanceof TextComponent)) {
+					args.add(component);
+					return;
+				}
+				// this (should) have a text component inside with the name of a player so we are going to color it
+				TextComponent textComponent = ((TextComponent) component.children().get(0)).color(NamedTextColor.YELLOW);
+				// and set their name to their nickname
+				if (textComponent.content().equals(deathMessages.getName()))
+					textComponent = textComponent.content(deathMessages.getNickname());
+				else {
+					try {
+						textComponent = textComponent.content(Nerd.of(textComponent.content()).getNickname());
+					}
+					catch (PlayerNotFoundException|InvalidInputException ignored) {}
+				}
+				args.add(component.children(Collections.singletonList(textComponent)));
+			});
+			output = output.append(deathMessage.args(args));
 		}
 
 		event.deathMessage(null);
