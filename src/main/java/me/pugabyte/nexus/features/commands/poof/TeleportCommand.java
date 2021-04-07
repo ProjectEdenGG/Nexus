@@ -65,7 +65,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.bnn.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){6}.*")) {
+		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.bnn.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){8}.*")) {
 			String[] split = arg1.split("#");
 			String[] coords = split[1].split(":");
 			AtomicReference<String> worldName = new AtomicReference<>(coords[0]);
@@ -76,8 +76,8 @@ public class TeleportCommand extends CustomCommand implements Listener {
 				error("World &e" + worldName + " &cnot found");
 
 			double x = Double.parseDouble(coords[1]);
-			double z = Double.parseDouble(coords[2]);
-			double terrainHeight = Double.parseDouble(coords[6]);
+			double z = Double.parseDouble(coords[3]);
+			double terrainHeight = Double.parseDouble(coords[2]);
 			double aboveGround = Double.parseDouble(coords[4]);
 			double y = terrainHeight + aboveGround;
 			if (y > 275) y = 275;

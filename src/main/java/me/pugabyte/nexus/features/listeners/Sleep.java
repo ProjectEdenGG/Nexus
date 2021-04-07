@@ -82,7 +82,7 @@ public class Sleep implements Listener {
 	}
 
 	protected boolean canSleep(Player player) {
-		return !PlayerUtils.isVanished(player) && !AFK.get(player).isAfk() && player.getGameMode() == GameMode.SURVIVAL;
+		return !PlayerUtils.isVanished(player) && !AFK.get(player).isTimeAfk() && player.getGameMode() == GameMode.SURVIVAL;
 	}
 
 	protected void handle(World world) {
