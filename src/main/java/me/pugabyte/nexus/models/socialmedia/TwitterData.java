@@ -38,8 +38,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -60,6 +62,8 @@ public class TwitterData extends PlayerOwnedObject {
 		put(Role.ADMINS, 3);
 		put(Role.MODERATORS, 3);
 	}};
+
+	private Set<Long> knownTweets = new HashSet<>();
 
 	public void addPendingTweet(Message message) {
 		pendingTweets.add(new PendingTweet(message));
