@@ -29,6 +29,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -632,10 +633,14 @@ public class StringUtils {
 	}
 
 	public static LocalDate parseDate(String input) {
-		return LocalDate.parse(input);
+		try { return parseShortDate(input); } catch (DateTimeParseException ignore) {}
+		try { return parseDate(input); } catch (DateTimeParseException ignore) {}
+		throw new InvalidInputException("Could not parse date, correct format is MM/DD/YYYY");
 	}
+
 	public static LocalDateTime parseDateTime(String input) {
-		return LocalDateTime.parse(input);
+		try { return LocalDateTime.parse(input); } catch (DateTimeParseException ignore) {}
+		throw new InvalidInputException("Could not parse date, correct format is YYYY-MM-DDTHH:MM:SS");
 	}
 
 	public static String getNumberWithSuffix(int number) {

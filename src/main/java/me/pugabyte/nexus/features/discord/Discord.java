@@ -2,10 +2,12 @@ package me.pugabyte.nexus.features.discord;
 
 import joptsimple.internal.Strings;
 import lombok.Getter;
+import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -85,6 +87,10 @@ public class Discord extends Feature {
 		return getName(member, user);
 	}
 
+	public static String getName(User user) {
+		return getName(null, user);
+	}
+
 	public static String getName(Member member, User user) {
 		if (member != null)
 			if (member.getNickname() != null)
@@ -108,8 +114,10 @@ public class Discord extends Feature {
 		return discordize(PlainComponentSerializer.plain().serialize(message));
 	}
 
+	@NonNull
 	public static Guild getGuild() {
-		if (Bot.KODA.jda() == null) return null;
+		if (Bot.KODA.jda() == null)
+			throw new NexusException("Discord is not connected");
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
 	}
 

@@ -24,6 +24,7 @@ public class DiscordId {
 		STAFF_LOG("256866302176526336"),
 		ADMIN_LOG("390751748261937152"),
 
+		STAFF_SOCIAL_MEDIA("525363810811248666"),
 		STAFF_PROMOTIONS("133949148251553792"),
 		STAFF_WATCHLIST("134162415536308224"),
 		STAFF_NICKNAME_QUEUE("824454559756713994"),
@@ -99,6 +100,18 @@ public class DiscordId {
 
 		public net.dv8tion.jda.api.entities.Role get() {
 			return Discord.getGuild().getRoleById(id);
+		}
+
+		public static Role of(net.dv8tion.jda.api.entities.Role role) {
+			return of(role.getId());
+		}
+
+		public static Role of(String id) {
+			for (Role role : values())
+				if (role.getId().equals(id))
+					return role;
+
+			return null;
 		}
 	}
 }

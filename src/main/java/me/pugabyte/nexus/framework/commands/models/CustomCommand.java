@@ -66,7 +66,6 @@ import org.reflections.Reflections;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -84,7 +83,6 @@ import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.parseDate;
 import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
-import static me.pugabyte.nexus.utils.StringUtils.parseShortDate;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 
 @NoArgsConstructor
@@ -818,15 +816,12 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(LocalDate.class)
 	public LocalDate convertToLocalDate(String value) {
-		try { return parseShortDate(value); } catch (DateTimeParseException ignore) {}
-		try { return parseDate(value); } catch (DateTimeParseException ignore) {}
-		throw new InvalidInputException("Could not parse date, correct format is MM/DD/YYYY");
+		return parseDate(value);
 	}
 
 	@ConverterFor(LocalDateTime.class)
 	public LocalDateTime convertToLocalDateTime(String value) {
-		try { return parseDateTime(value); } catch (DateTimeParseException ignore) {}
-		throw new InvalidInputException("Could not parse date, correct format is YYYY-MM-DDTHH:MM:SS.ZZZ");
+		return parseDateTime(value);
 	}
 
 	@ConverterFor(Enchantment.class)

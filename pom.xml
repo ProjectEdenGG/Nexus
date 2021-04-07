@@ -138,11 +138,11 @@
             <url>https://jcenter.bintray.com</url>
         </repository>
         <repository>
-            <id>floodgate-repo</id>
-            <url>https://repo.nukkitx.com/maven-snapshots/</url>
+            <id>jda-repo</id>
+            <url>https://m2.dv8tion.net/releases</url>
         </repository>
         <repository>
-            <id>md_5-public</id>
+            <id>md_5-repo</id>
             <url>https://repo.md-5.net/content/groups/public/</url>
         </repository>
     </repositories>
@@ -225,7 +225,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.0_175</version>
+            <version>4.2.1_255</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>

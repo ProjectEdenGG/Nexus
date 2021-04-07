@@ -170,7 +170,7 @@ public class ChatManager {
 		if (seen > 0)
 			event.getChatter().send(to);
 
-		Bukkit.getConsoleSender().sendMessage(event.getChatter().getOfflinePlayer().getName() + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
+		Bukkit.getConsoleSender().sendMessage(Nerd.of(event.getChatter()).getNickname() + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
 	}
 
 }
