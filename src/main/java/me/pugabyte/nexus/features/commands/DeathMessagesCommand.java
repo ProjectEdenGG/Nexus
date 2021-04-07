@@ -80,10 +80,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		TextComponent output = Component.text("☠ ").color(NamedTextColor.RED);
 		if (deathMessageRaw == null) {
-			// failsafe? :P
-			output = output
-					.append(Component.text(deathMessages.getNickname()).color(NamedTextColor.YELLOW))
-					.append(Component.text(" spontaneously ceased existence").color(NamedTextColor.RED));
+			return;
 		} else if (!(deathMessageRaw instanceof TranslatableComponent)) {
 			Nexus.warn("Death message is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
 			List<Component> args = deathMessageRaw.children().stream().map(component -> formatUsernames(deathMessages, component)).collect(Collectors.toList());
