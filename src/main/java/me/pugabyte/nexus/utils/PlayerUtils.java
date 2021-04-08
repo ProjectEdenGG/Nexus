@@ -164,13 +164,21 @@ public class PlayerUtils {
 			return getPlayer(UUID.fromString(partialName));
 
 		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.getName().equalsIgnoreCase(partialName))
+				return player;
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (Nerd.of(player).getNickname().equalsIgnoreCase((partialName)))
+				return player;
+
+		for (Player player : Bukkit.getOnlinePlayers())
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (player.getName().toLowerCase().contains((partialName)))
-				return player;
-		for (Player player : Bukkit.getOnlinePlayers())
 			if (Nerd.of(player).getNickname().toLowerCase().startsWith((partialName)))
+				return player;
+
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (Nerd.of(player).getNickname().toLowerCase().contains((partialName)))
