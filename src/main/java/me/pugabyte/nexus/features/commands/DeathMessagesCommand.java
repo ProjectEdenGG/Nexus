@@ -16,7 +16,6 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
-import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -26,6 +25,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,8 +36,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static me.pugabyte.nexus.features.discord.Discord.discordize;
 
 @NoArgsConstructor
 public class DeathMessagesCommand extends CustomCommand implements Listener {
@@ -127,7 +125,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT);
 
 			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-				Chat.broadcastDiscord(discordize(output));
+				Chat.broadcastDiscord(LegacyComponentSerializer.legacySection().serialize(output));
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			Chatter chatter = new ChatService().get(event.getEntity());
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
