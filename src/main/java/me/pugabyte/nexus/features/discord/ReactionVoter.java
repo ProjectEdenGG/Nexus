@@ -19,18 +19,23 @@ public class ReactionVoter {
 	private final String channelId;
 	private final String messageId;
 	private final Map<Role, Integer> requiredVotes;
-	private final Consumer<Message> onCancel;
-	private final Consumer<Message> onConfirm;
-	private final Consumer<Throwable> onNotFound;
+	private final Consumer<Message> onDeny;
+	private final Consumer<Message> onAccept;
+	private final Consumer<Throwable> onError;
 
 	@Builder
-	public ReactionVoter(String channelId, String messageId, Map<Role, Integer> requiredVotes, Consumer<Message> onCancel, Consumer<Message> onConfirm, Consumer<Throwable> onNotFound) {
+	public ReactionVoter(String channelId, String messageId, Map<Role, Integer> requiredVotes, Consumer<Message> onDeny, Consumer<Message> onAccept, Consumer<Throwable> onError) {
 		this.channelId = channelId;
 		this.messageId = messageId;
 		this.requiredVotes = requiredVotes;
-		this.onCancel = onCancel;
-		this.onConfirm = onConfirm;
-		this.onNotFound = onNotFound;
+		this.onDeny = onDeny;
+		this.onAccept = onAccept;
+		this.onError = onError;
+	}
+
+	public static void addButtons(Message message) {
+		message.addReaction(EmojiManager.getForAlias("white_check_mark").getUnicode()).queue(success ->
+				message.addReaction(EmojiManager.getForAlias("x").getUnicode()).queue());
 	}
 
 	public void run() {
@@ -53,7 +58,7 @@ public class ReactionVoter {
 			if (x == null) {
 				message.addReaction(unicode_x).queue();
 			} else if (x.getCount() > 1) {
-				onCancel.accept(message);
+				onDeny.accept(message);
 				return;
 			}
 
@@ -86,10 +91,10 @@ public class ReactionVoter {
 					});
 
 					if (passed.get())
-						onConfirm.accept(message);
+						onAccept.accept(message);
 				});
 			}
-		}, onNotFound);
+		}, onError);
 	}
 
 	@NotNull

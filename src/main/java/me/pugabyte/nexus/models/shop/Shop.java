@@ -23,7 +23,7 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -476,7 +476,7 @@ public class Shop extends PlayerOwnedObject {
 				return Arrays.asList(
 						desc,
 						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-						"&7Owner: &e" + Nerd.of(product.getShop().getOfflinePlayer()).getNickname()
+						"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
 				);
 		}
 
@@ -535,7 +535,7 @@ public class Shop extends PlayerOwnedObject {
 				return Arrays.asList(
 						desc,
 						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-						"&7Owner: &e" + Nerd.of(product.getShop().getOfflinePlayer()).getNickname()
+						"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
 				);
 		}
 
@@ -601,7 +601,7 @@ public class Shop extends PlayerOwnedObject {
 				return Arrays.asList(
 						desc,
 						"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false),
-						"&7Owner: &e" + Nerd.of(product.getShop().getOfflinePlayer()).getNickname()
+						"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
 				);
 		}
 

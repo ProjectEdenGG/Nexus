@@ -47,8 +47,4 @@ public class NerdService extends MongoService {
 		return database.createQuery(Nerd.class).filter("aliases", sanitize(alias)).find().tryNext();
 	}
 
-	public Nerd getFromNickname(String nickname) {
-		return database.createQuery(Nerd.class).filter("nickname", sanitize(nickname)).find().tryNext();
-	}
-
 }

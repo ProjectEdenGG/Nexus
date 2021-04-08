@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirec
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.poof.Poof;
 import me.pugabyte.nexus.models.poof.PoofService;
 import me.pugabyte.nexus.models.trust.Trust;
@@ -65,7 +66,7 @@ public class PoofCommand extends CustomCommand {
 		Trust trust = new TrustService().get(target);
 		if (trust.trusts(Type.TELEPORTS, player())) {
 			player().teleportAsync(targetLocation, TeleportCause.COMMAND);
-			send(PREFIX + "Poofing to &e" + Nerd.of(target).getNickname() + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
+			send(PREFIX + "Poofing to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
 			return;
 		}
 
@@ -73,7 +74,7 @@ public class PoofCommand extends CustomCommand {
 
 		Poof request = new Poof(player(), targetPlayer, Poof.PoofType.POOF);
 		service.save(request);
-		send(json("&ePoof &3request sent to " + Nerd.of(targetPlayer).getNickname() + ". ").next("&eClick to cancel").command("poof cancel"));
+		send(json("&ePoof &3request sent to " + Nickname.of(targetPlayer) + ". ").next("&eClick to cancel").command("poof cancel"));
 		send(targetPlayer, "  &e" + nickname() + " &3is asking to poof &eto you&3.");
 		send(targetPlayer, json("&3  Click one  ||  &a&lAccept")
 				.command("/poof accept")
@@ -129,12 +130,12 @@ public class PoofCommand extends CustomCommand {
 			fromPlayer.getPlayer().teleportAsync(request.getTeleportLocation(), TeleportCause.COMMAND);
 
 		if (request.getType() == Poof.PoofType.POOF) {
-			send(toPlayer.getPlayer(), "&3You accepted &e" + Nerd.of(fromPlayer).getNickname() + "'s &3poof request");
-			send(fromPlayer.getPlayer(), "&e" + Nerd.of(toPlayer).getNickname() + " &3accepted your poof request");
+			send(toPlayer.getPlayer(), "&3You accepted &e" + Nickname.of(fromPlayer) + "'s &3poof request");
+			send(fromPlayer.getPlayer(), "&e" + Nickname.of(toPlayer) + " &3accepted your poof request");
 		} else {
-			send(fromPlayer.getPlayer(), "&3You accepted &e" + Nerd.of(toPlayer).getNickname() + "'s &3poof-here request");
+			send(fromPlayer.getPlayer(), "&3You accepted &e" + Nickname.of(toPlayer) + "'s &3poof-here request");
 			if (toPlayer.isOnline())
-				send(toPlayer.getPlayer(), "&e" + Nerd.of(fromPlayer).getNickname() + " &3accepted your poof-here request");
+				send(toPlayer.getPlayer(), "&e" + Nickname.of(fromPlayer) + " &3accepted your poof-here request");
 		}
 	}
 
@@ -159,11 +160,11 @@ public class PoofCommand extends CustomCommand {
 			throw new PlayerNotOnlineException(fromPlayer);
 
 		if (request.getType() == Poof.PoofType.POOF) {
-			send(toPlayer.getPlayer(), "&3You denied &e" + Nerd.of(fromPlayer).getNickname() + "'s &3poof request");
-			send(fromPlayer.getPlayer(), "&e" + Nerd.of(toPlayer).getNickname() + " &3denied your poof request");
+			send(toPlayer.getPlayer(), "&3You denied &e" + Nickname.of(fromPlayer) + "'s &3poof request");
+			send(fromPlayer.getPlayer(), "&e" + Nickname.of(toPlayer) + " &3denied your poof request");
 		} else {
-			send(fromPlayer.getPlayer(), "&3You denied &e" + Nerd.of(toPlayer).getNickname() + "'s &3poof-here request");
-			send(toPlayer.getPlayer(), "&e" + Nerd.of(fromPlayer).getNickname() + " &3denied your poof-here request");
+			send(fromPlayer.getPlayer(), "&3You denied &e" + Nickname.of(toPlayer) + "'s &3poof-here request");
+			send(toPlayer.getPlayer(), "&e" + Nickname.of(fromPlayer) + " &3denied your poof-here request");
 		}
 	}
 
@@ -188,11 +189,11 @@ public class PoofCommand extends CustomCommand {
 			throw new PlayerNotOnlineException(fromPlayer);
 
 		if (request.getType() == Poof.PoofType.POOF) {
-			send(toPlayer.getPlayer(), "&e" + Nerd.of(fromPlayer).getNickname() + " &3canceled their poof request");
-			send(fromPlayer.getPlayer(), "&3You canceled your poof request to &e" + Nerd.of(toPlayer).getNickname());
+			send(toPlayer.getPlayer(), "&e" + Nickname.of(fromPlayer) + " &3canceled their poof request");
+			send(fromPlayer.getPlayer(), "&3You canceled your poof request to &e" + Nickname.of(toPlayer));
 		} else {
-			send(fromPlayer.getPlayer(), "&e" + Nerd.of(toPlayer).getNickname() + " &3canceled their poof-here request");
-			send(toPlayer.getPlayer(), "&3You canceled your poof-here request to &e" + Nerd.of(fromPlayer).getNickname());
+			send(fromPlayer.getPlayer(), "&e" + Nickname.of(toPlayer) + " &3canceled their poof-here request");
+			send(toPlayer.getPlayer(), "&3You canceled your poof-here request to &e" + Nickname.of(fromPlayer));
 		}
 	}
 

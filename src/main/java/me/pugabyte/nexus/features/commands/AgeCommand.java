@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -27,7 +28,7 @@ public class AgeCommand extends CustomCommand {
 		}
 		try {
 			int year = nerd.getBirthday().until(LocalDate.now()).getYears();
-			send(PREFIX + nerd.getNickname() + " is &e" + year + "&3 years old.");
+			send(PREFIX + Nickname.of(nerd) + " is &e" + year + "&3 years old.");
 		} catch (Exception ex) {
 			send(PREFIX + "That player does not have a set birthday");
 		}

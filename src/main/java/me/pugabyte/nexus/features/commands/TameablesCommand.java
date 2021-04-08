@@ -14,7 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.GlowTask;
@@ -215,7 +215,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						checkOwner(player, entity);
 						OfflinePlayer transfer = action.getPlayer();
 						updateOwner(entity, player, transfer);
-						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + Nerd.of(transfer).getNickname());
+						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + Nickname.of(transfer));
 						break;
 					case UNTAME:
 						checkOwner(player, entity);

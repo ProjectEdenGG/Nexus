@@ -14,6 +14,7 @@ import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -106,14 +107,14 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			// Deposit
 			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
-			String toPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + Nerd.of(banker).getNickname();
+			String toPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + Nickname.of(banker);
 			String symbol = "&a+";
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
 			// Withdrawal
 			if (withdrawal) {
 				symbol = "&c-";
-				fromPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + Nerd.of(banker).getNickname();
+				fromPlayer = PlayerUtils.isSelf(player, banker.getOfflinePlayer()) ? "&7&lYOU" : "&7" + Nickname.of(banker);
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), cause);
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
 			}
@@ -150,7 +151,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 		}
 
 		if (StringUtils.isV4Uuid(uuid))
-			return Nerd.of(uuid).getNickname();
+			return Nickname.of(uuid);
 		else if (Nexus.isUUID0(uuid))
 			return "Market";
 		else

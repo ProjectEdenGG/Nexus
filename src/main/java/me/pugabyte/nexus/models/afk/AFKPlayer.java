@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializ
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.afk.events.NowAFKEvent;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -110,7 +110,7 @@ public class AFKPlayer {
 	}
 
 	private void broadcast() {
-		String broadcast = "&7* &e" + Nerd.of(getPlayer()).getNickname() + " &7is " + (isAfk ? "now" : "no longer") + " AFK";
+		String broadcast = "&7* &e" + Nickname.of(getPlayer()) + " &7is " + (isAfk ? "now" : "no longer") + " AFK";
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!PlayerUtils.canSee(_player, getPlayer()))
 				return;

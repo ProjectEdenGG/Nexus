@@ -13,6 +13,7 @@ import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils.Timespan;
@@ -70,7 +71,7 @@ public class SuggestDiscordCommand extends Command {
 
 				String name = nerd.getName();
 				if (nerd.hasNickname())
-					name += " (" + nerd.getNickname() + ")";
+					name += " (" + Nickname.of(nerd) + ")";
 				event.reply(new MessageBuilder()
 						.setContent("@here " + event.getAuthor().getAsMention() + " is suggesting **" + name + "** for **" + camelCase(next.plain()) + "**")
 						.setEmbed(embed.build())

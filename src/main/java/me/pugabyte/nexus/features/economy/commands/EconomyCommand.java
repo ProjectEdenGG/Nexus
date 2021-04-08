@@ -13,7 +13,7 @@ import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
 
@@ -76,21 +76,21 @@ public class EconomyCommand extends CustomCommand {
 	@Permission("group.admin")
 	void set(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
 		service.setBalance(cause.of(banker.getOfflinePlayer(), balance, shopGroup, reason));
-		send(PREFIX + "Set &e" + Nerd.of(banker).getNickname() + "'s &3balance to &e" + banker.getBalanceFormatted(shopGroup));
+		send(PREFIX + "Set &e" + Nickname.of(banker) + "'s &3balance to &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
 	@Path("give <player> <balance> [shopGroup] [cause] [reason...]")
 	@Permission("group.admin")
 	void give(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
 		service.deposit(cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
-		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + Nerd.of(banker).getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
+		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
 	@Path("take <player> <balance> [shopGroup] [cause] [reason...]")
 	@Permission("group.admin")
 	void take(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
 		service.withdraw(cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
-		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nerd.of(banker).getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
+		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
 	@Async

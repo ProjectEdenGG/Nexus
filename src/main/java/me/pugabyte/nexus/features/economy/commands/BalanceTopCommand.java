@@ -9,7 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -44,7 +44,7 @@ public class BalanceTopCommand extends CustomCommand {
 
 		send(PREFIX + "Top " + camelCase(shopGroup) + " balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
 		BiFunction<Banker, String, JsonBuilder> formatter = (banker, index) ->
-				json("&3" + index + " &e" + (banker.getName() == null ? banker.getUuid() : Nerd.of(banker).getNickname()) + " &7- " + banker.getBalanceFormatted(shopGroup));
+				json("&3" + index + " &e" + (banker.getName() == null ? banker.getUuid() : Nickname.of(banker)) + " &7- " + banker.getBalanceFormatted(shopGroup));
 		paginate(bankers, formatter, "/baltop " + shopGroup.name().toLowerCase(), page);
 	}
 

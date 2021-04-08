@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.queup.QueUp;
 import me.pugabyte.nexus.models.queup.QueUpService;
 import me.pugabyte.nexus.utils.Env;
@@ -213,7 +214,7 @@ public class Discord extends Feature {
 
 		String topic = "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = discordize(Nerd.of(player).getNickname());
+					String name = discordize(Nickname.of(player));
 					if (AFK.get(player).isAfk())
 						name += " _[AFK]_";
 					return name.trim();
@@ -244,7 +245,7 @@ public class Discord extends Feature {
 
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = discordize(Nerd.of(player).getNickname());
+					String name = discordize(Nickname.of(player));
 					if (PlayerUtils.isVanished(player))
 						name += " _[V]_";
 					if (AFK.get(player).isAfk())

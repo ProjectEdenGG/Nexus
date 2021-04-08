@@ -13,7 +13,7 @@ import me.pugabyte.nexus.models.afk.AFKSettings;
 import me.pugabyte.nexus.models.afk.AFKSettingsService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -80,7 +80,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 					Tasks.wait(3, () -> {
 						if (!(event.getChatter().getPlayer().isOnline() && to.getPlayer().isOnline())) return;
 
-						String message = "&e* " + Nerd.of(to.getPlayer()).getNickname() + " is AFK";
+						String message = "&e* " + Nickname.of(to.getPlayer()) + " is AFK";
 						if (to.getMessage() != null)
 							message += ": &3" + to.getMessage();
 						send(event.getChatter().getPlayer(), message);

@@ -7,7 +7,7 @@ import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.nickname.NicknameService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -51,7 +51,7 @@ public class IngameBridgeListener implements Listener {
 					continue;
 				}
 
-				Nerd fromNickname = new NerdService().getFromNickname(search);
+				Nerd fromNickname = new NicknameService().getFromNickname(search).getNerd();
 				mentioned = new DiscordService().get(fromNickname.getOfflinePlayer());
 				if (mentioned.getUserId() != null) {
 					message = message.replace(group, "<@" + mentioned.getUserId() + ">");

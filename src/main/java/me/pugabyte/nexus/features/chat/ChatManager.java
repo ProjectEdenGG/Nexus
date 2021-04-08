@@ -13,6 +13,7 @@ import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -144,7 +145,7 @@ public class ChatManager {
 
 		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
-		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nerd.of(event.getChatter().getOfflinePlayer()).getNickname() + " &b&l> ")
+		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nickname.of(event.getChatter()) + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 		Component aFrom = AdventureUtils.fromJson(from);
 
@@ -170,7 +171,7 @@ public class ChatManager {
 		if (seen > 0)
 			event.getChatter().send(to);
 
-		Bukkit.getConsoleSender().sendMessage(Nerd.of(event.getChatter()).getNickname() + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
+		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
 	}
 
 }

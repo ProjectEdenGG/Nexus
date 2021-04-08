@@ -17,7 +17,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -80,7 +80,7 @@ public class Minigamer {
 	 * Returns this minigamer's nickname, or player name if absent
 	 */
 	public String getNickname() {
-		return Nerd.of(player).getNickname();
+		return Nickname.of(player);
 	}
 
 	public String getColoredName() {

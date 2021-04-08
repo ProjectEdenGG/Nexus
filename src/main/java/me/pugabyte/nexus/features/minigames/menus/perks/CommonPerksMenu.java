@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -26,7 +26,7 @@ public abstract class CommonPerksMenu extends MenuUtils {
 	protected static List<String> getLore(Player player, Perk perk) {
 		List<String> lore = new ArrayList<>();
 		lore.add("&e"+perk.getPerkCategory().toString());
-		lore.addAll(splitLore(loreize("&3" + String.format(perk.getDescription(), Nerd.of(player).getNickname()))));
+		lore.addAll(splitLore(loreize("&3" + String.format(perk.getDescription(), Nickname.of(player)))));
 		return lore;
 	}
 

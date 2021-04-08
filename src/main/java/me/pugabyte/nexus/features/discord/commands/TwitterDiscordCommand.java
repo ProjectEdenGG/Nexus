@@ -24,6 +24,7 @@ import twitter4j.Status;
 
 import java.util.List;
 
+import static me.pugabyte.nexus.features.discord.ReactionVoter.addButtons;
 import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -66,15 +67,13 @@ public class TwitterDiscordCommand extends Command {
 							if (args.length < 2)
 								throw new InvalidInputException("Not enough arguments");
 							data.addPendingTweet(event.getMessage());
-							event.getMessage().addReaction(EmojiManager.getForAlias("white_check_mark").getUnicode()).queue(success ->
-									event.getMessage().addReaction(EmojiManager.getForAlias("x").getUnicode()).queue());
+							addButtons(event.getMessage());
 							break;
 						case "scheduleTweet":
 							if (args.length < 3)
 								throw new InvalidInputException("Not enough arguments");
 							data.addPendingTweet(event.getMessage(), parseDateTime(args[1]));
-							event.getMessage().addReaction(EmojiManager.getForAlias("white_check_mark").getUnicode()).queue(success ->
-									event.getMessage().addReaction(EmojiManager.getForAlias("x").getUnicode()).queue());
+							addButtons(event.getMessage());
 							break;
 						case "pending":
 							StringBuilder message = new StringBuilder();
@@ -96,7 +95,7 @@ public class TwitterDiscordCommand extends Command {
 	}
 
 	@NoArgsConstructor
-	public static class TwitterListener extends ListenerAdapter {
+	public static class TweetApprovalListener extends ListenerAdapter {
 
 		@Override
 		public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {

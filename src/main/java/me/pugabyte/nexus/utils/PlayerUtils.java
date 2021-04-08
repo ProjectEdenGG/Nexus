@@ -15,6 +15,8 @@ import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.nickname.NicknameService;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.text.Component;
@@ -168,21 +170,21 @@ public class PlayerUtils {
 			if (player.getName().equalsIgnoreCase(partialName))
 				return player;
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (Nerd.of(player).getNickname().equalsIgnoreCase((partialName)))
+			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (Nerd.of(player).getNickname().toLowerCase().startsWith((partialName)))
+			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
 				return player;
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
 		for (Player player : Bukkit.getOnlinePlayers())
-			if (Nerd.of(player).getNickname().toLowerCase().contains((partialName)))
+			if (Nickname.of(player).toLowerCase().contains((partialName)))
 				return player;
 
 		NerdService nerdService = new NerdService();
@@ -191,7 +193,7 @@ public class PlayerUtils {
 		if (fromAlias != null)
 			return fromAlias.getOfflinePlayer();
 
-		Nerd fromNickname = nerdService.getFromNickname(partialName);
+		Nickname fromNickname = new NicknameService().getFromNickname(partialName);
 		if (fromNickname != null)
 			return fromNickname.getOfflinePlayer();
 

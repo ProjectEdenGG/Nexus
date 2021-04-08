@@ -7,8 +7,9 @@ import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.bridge.DiscordBridgeListener;
+import me.pugabyte.nexus.features.commands.NicknameCommand.NicknameApprovalListener;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
-import me.pugabyte.nexus.features.discord.commands.TwitterDiscordCommand.TwitterListener;
+import me.pugabyte.nexus.features.discord.commands.TwitterDiscordCommand.TweetApprovalListener;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -32,7 +33,7 @@ public enum Bot {
 		@Override
 		JDABuilder build() {
 			return JDABuilder.createDefault(getToken())
-					.addEventListeners(new DiscordListener(), new TwitterListener())
+					.addEventListeners(new DiscordListener(), new TweetApprovalListener(), new NicknameApprovalListener())
 					// .addEventListeners(new DiscordCaptchaListener())
 					.addEventListeners(getCommands().build());
 		}

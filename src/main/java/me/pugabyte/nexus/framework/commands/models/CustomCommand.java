@@ -29,6 +29,7 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -373,15 +374,15 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (!isPlayer())
 			return sender().getName();
 		else
-			return nerd().getNickname();
+			return Nickname.of(player());
 	}
 
 	protected String nickname(OfflinePlayer player) {
-		return Nerd.of(player).getNickname();
+		return Nickname.of(player);
 	}
 
 	protected String nickname(PlayerOwnedObject player) {
-		return Nerd.of(player).getNickname();
+		return Nickname.of(player);
 	}
 
 	protected ConsoleCommandSender console() {
@@ -741,7 +742,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
-				.map(player -> Nerd.of(player).getNickname())
+				.map(player -> Nickname.of(player))
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(toList());
 	}

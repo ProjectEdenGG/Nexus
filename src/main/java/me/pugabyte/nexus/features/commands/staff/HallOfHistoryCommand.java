@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.hallofhistory.HallOfHistoryService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Timespan;
@@ -297,7 +298,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Promotion times  |  Average: " + StringUtils.getNf().format(average.orElse(0)) + " days");
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			String time = Timespan.of(promotionTimeMap.get(uuid) * (Time.DAY.get() / 20)).format();
-			return json("&3" + index + " &e" + Nerd.of(uuid).getNickname() + " &7- " + time);
+			return json("&3" + index + " &e" + Nickname.of(uuid) + " &7- " + time);
 		};
 
 		paginate(new ArrayList<>(Utils.sortByValue(promotionTimeMap).keySet()), formatter, "/hoh promotionTimes", page);

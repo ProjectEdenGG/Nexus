@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
@@ -77,11 +78,10 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 			if (event.getEntity().getKiller() != null) {
 				Player killer = event.getEntity().getKiller();
-				Nerd nerd = Nerd.of(killer);
 				TextReplacementConfig replacementConfig2 = TextReplacementConfig.builder()
 						.matchLiteral(killer.getName())
 						.replacement(
-								Component.text(nerd.getNickname()).color(NamedTextColor.YELLOW)
+								Component.text(Nickname.of(killer)).color(NamedTextColor.YELLOW)
 						).build();
 				deathMessage = deathMessage.replaceText(replacementConfig2);
 			}
@@ -113,9 +113,8 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 					playerComponent = playerComponent.content(deathMessages.getNickname());
 				else {
 					try {
-						playerComponent = playerComponent.content(Nerd.of(playerName).getNickname());
-					}
-					catch (PlayerNotFoundException|InvalidInputException ignored) {}
+						playerComponent = playerComponent.content(Nickname.of(playerName));
+					} catch (PlayerNotFoundException|InvalidInputException ignored) {}
 				}
 				args.add(component.children(Collections.singletonList(playerComponent)));
 			});

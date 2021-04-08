@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Timespan;
@@ -57,7 +58,7 @@ public class WhoIsCommand extends CustomCommand {
 			alts = liteBansService.getAlts(nerd.getUuid().toString());
 		} catch (Exception ignore) {}
 
-		String nickname = nerd.getNickname();
+		String nickname = Nickname.of(nerd);
 		Hours hours = hoursService.get(nerd);
 		String rank = nerd.getRank().withColor();
 		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());

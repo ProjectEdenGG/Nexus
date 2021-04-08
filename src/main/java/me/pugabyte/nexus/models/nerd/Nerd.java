@@ -19,11 +19,11 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.nickname.NicknameService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Utils;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -33,18 +33,13 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.CHECK;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @Data
 @Entity("nerd")
@@ -73,61 +68,6 @@ public class Nerd extends PlayerOwnedObject {
 	private Set<String> aliases = new HashSet<>();
 	private Set<String> pastNames = new HashSet<>();
 
-	private String nickname;
-	private List<NicknameData> pastNicknames = new ArrayList<>();
-
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class NicknameData {
-		private String nickname;
-		private LocalDateTime requestedTimestamp;
-		private String nicknameQueueId;
-		private LocalDateTime responseTimestamp;
-		private boolean pending = true;
-		private boolean accepted;
-		private boolean seenResult;
-		private String response;
-
-		public NicknameData(String nickname) {
-			this(nickname, null);
-		}
-
-		public NicknameData(String nickname, String nicknameQueueId) {
-			this.nickname = nickname;
-			this.requestedTimestamp = LocalDateTime.now();
-			if (isNullOrEmpty(nicknameQueueId)) {
-				pending = false;
-				accepted = true;
-				seenResult = true;
-			} else
-				this.nicknameQueueId = nicknameQueueId;
-		}
-
-		public static MessageBuilder buildQueueMessage(Nerd nerd, String nickname) {
-			EmbedBuilder embed = new EmbedBuilder()
-					.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png")
-					.setColor(nerd.getRank().getDiscordColor());
-
-			if (!nerd.getPastNicknames().isEmpty()) {
-				LocalDateTime lastChange = nerd.getPastNicknames().get(nerd.getPastNicknames().size() - 1).getRequestedTimestamp();
-				embed.appendDescription("**Time since last change:** " + timespanDiff(lastChange) + System.lineSeparator());
-				embed.appendDescription("**Past nick names:**" + System.lineSeparator());
-				nerd.getPastNicknames().forEach(data -> {
-					String timestamp = shortishDateTimeFormat(data.getRequestedTimestamp());
-					String status = data.isPending() ? "Pending" : data.isAccepted() ? "Accepted" : "Denied";
-					embed.appendDescription("\t" + timestamp + " - " + data.getNickname() + " (" + status + ")" + System.lineSeparator());
-				});
-			} else {
-				embed.appendDescription("No past nicknames found");
-			}
-
-			return new MessageBuilder()
-					.setContent("@everyone **" + nerd.getName() + "** has requested a new nickname: **" + nickname + "**")
-					.setEmbed(embed.build());
-		}
-	}
-
 	public static Nerd of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}
@@ -152,38 +92,15 @@ public class Nerd extends PlayerOwnedObject {
 		LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
 		if (firstJoin == null || newFirstJoin.isBefore(firstJoin))
 			firstJoin = newFirstJoin;
-		fixPastNicknames();
+		getNicknameData().fixPastNicknames();
+	}
+
+	private Nickname getNicknameData() {
+		return new NicknameService().get(getUuid());
 	}
 
 	public boolean hasNickname() {
-		return !isNullOrEmpty(nickname);
-	}
-
-	public String getNickname() {
-		fromPlayer(getOfflinePlayer());
-		if (hasNickname())
-			return nickname;
-		return name;
-	}
-
-	public void setNickname(String nickname) {
-		nickname = stripColor(nickname);
-		if (!isNullOrEmpty(nickname)) {
-			this.nickname = nickname;
-			this.pastNicknames.add(new NicknameData(nickname));
-		} else
-			this.nickname = null;
-	}
-
-	public void fixPastNicknames() {
-		pastNicknames.clear();
-		if (hasNickname())
-			if (pastNicknames.isEmpty()) {
-				pastNicknames.add(new NicknameData(nickname));
-				for (NicknameData pastNickname : new ArrayList<>(pastNicknames))
-					if (pastNickname.getRequestedTimestamp() == null)
-						pastNickname.setRequestedTimestamp(LocalDateTime.now());
-			}
+		return !isNullOrEmpty(getNicknameData().getNickname());
 	}
 
 	@ToString.Include
@@ -199,7 +116,7 @@ public class Nerd extends PlayerOwnedObject {
 	public String getNicknameFormat() {
 		if (isKoda())
 			return Koda.getNameFormat();
-		return getRank().getColor() + getNickname();
+		return getRank().getColor() + Nickname.of(getUuid());
 	}
 
 	private boolean isKoda() {
@@ -222,7 +139,7 @@ public class Nerd extends PlayerOwnedObject {
 
 		if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmark)
 			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (rank.getColor() + getNickname()).trim())).trim();
+		return colorize((prefix.trim() + " " + (rank.getColor() + Nickname.of(getOfflinePlayer())).trim())).trim();
 	}
 
 	@ToString.Include

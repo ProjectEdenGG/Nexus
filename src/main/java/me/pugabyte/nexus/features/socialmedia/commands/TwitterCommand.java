@@ -52,7 +52,7 @@ public class TwitterCommand extends CustomCommand {
 					continue;
 
 				EmbedBuilder embed = new EmbedBuilder().setTitle("New tweet! <:twitter:829474002586173460>")
-						.appendDescription(tweet.getText() + System.lineSeparator() + System.lineSeparator() + "[View](" + SocialMedia.getUrl(tweet) + ")");
+						.appendDescription(tweet.getText() + System.lineSeparator() + System.lineSeparator() + "[View on Twitter](" + SocialMedia.getUrl(tweet) + ")");
 
 				MessageBuilder content = new MessageBuilder().setEmbed(embed.build());
 

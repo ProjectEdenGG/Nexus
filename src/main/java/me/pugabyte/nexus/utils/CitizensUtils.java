@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
@@ -32,7 +33,7 @@ public class CitizensUtils {
 	 * @param player a server member
 	 */
 	public static void updateNameAndSkin(NPC npc, OfflinePlayer player) {
-		updateName(npc, Nerd.of(player).getNickname());
+		updateName(npc, Nickname.of(player));
 		updateSkin(npc, player.getName());
 	}
 
@@ -42,7 +43,7 @@ public class CitizensUtils {
 	 * @param nerd a server member
 	 */
 	public static void updateNameAndSkin(NPC npc, Nerd nerd) {
-		updateName(npc, nerd.getNickname());
+		updateName(npc, Nickname.of(nerd));
 		updateSkin(npc, nerd.getOfflinePlayer().getName());
 	}
 

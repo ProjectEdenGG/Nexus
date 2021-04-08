@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -36,7 +36,7 @@ public class PodiumsCommand extends CustomCommand {
 
 	@Path("<position> <player> <title...>")
 	void update(Position position, OfflinePlayer player, String title) {
-		CitizensUtils.updateName(getNpc(position), "&l" + Nerd.of(player).getNickname());
+		CitizensUtils.updateName(getNpc(position), "&l" + Nickname.of(player));
 		CitizensUtils.updateSkin(getNpc(position), player.getName());
 		PlayerUtils.runCommandAsConsole("hd setline podium_" + position + " 1 " + title);
 		send(PREFIX + "Podium updated");

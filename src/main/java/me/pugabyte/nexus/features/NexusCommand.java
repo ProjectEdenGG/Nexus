@@ -42,6 +42,7 @@ import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
@@ -416,7 +417,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
 		nerd.setFirstJoin(firstJoin);
 		new NerdService().save(nerd);
-		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(firstJoin));
+		send(PREFIX + "Set " + Nickname.of(nerd) + "'s first join date to &e" + shortDateTimeFormat(firstJoin));
 	}
 
 	@Async
@@ -967,7 +968,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		OfflinePlayer player = convertToOfflinePlayer(value);
 		Nerd nerd = Nerd.of(player);
 		if (!nerd.getRank().isStaff())
-			error(nerd.getNickname() + " is not staff");
+			error(Nickname.of(nerd) + " is not staff");
 		return new StaffMember(player.getUniqueId());
 	}
 

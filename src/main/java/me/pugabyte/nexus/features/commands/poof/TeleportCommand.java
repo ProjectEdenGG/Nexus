@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
@@ -115,7 +116,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 						return;
 
 					player1.getPlayer().teleportAsync(Nerd.of(player2).getLocation(), TeleportCause.COMMAND);
-					send(PREFIX + "Poofing to &e" + Nerd.of(player2).getNickname() + (player2.isOnline() ? "" : " &3(Offline)"));
+					send(PREFIX + "Poofing to &e" + Nickname.of(player2) + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);
 			} else {
@@ -123,7 +124,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 					return;
 
 				player().teleportAsync(location1, TeleportCause.COMMAND);
-				send(PREFIX + "Poofing to &e" + Nerd.of(player1).getNickname() + (player1.isOnline() ? "" : " &3(Offline)"));
+				send(PREFIX + "Poofing to &e" + Nickname.of(player1) + (player1.isOnline() ? "" : " &3(Offline)"));
 			}
 		} else {
 			send("&c/" + getAliasUsed() + " <player> [player]");

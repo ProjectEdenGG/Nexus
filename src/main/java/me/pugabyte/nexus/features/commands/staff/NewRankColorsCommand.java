@@ -68,7 +68,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	void view() {
 		line(5);
 		Arrays.asList(Rank.values()).forEach(rank -> {
-			if (!rank.isActive()) return;
+			if (!rank.isActive() && rank != Rank.NOBLE) return;
 			String color = decolorize(newRankColors.getColors().getOrDefault(rank, rank.getColor().toString()));
 			String hex;
 			if (StringUtils.getHexPattern().matcher(color).matches()) {

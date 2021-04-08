@@ -33,6 +33,7 @@ public enum Rank {
 	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED, false, false, false, false, true, Color.decode("#ff7069")),
 	ELITE(ChatColor.of("#f5a138"), GlowAPI.Color.GOLD, false, false, false, false, true, Color.decode("#f5a138")),
 	VETERAN(ChatColor.of("#ffff44"), GlowAPI.Color.YELLOW, true, false, false, false, true, Color.decode("#ffff44")),
+	NOBLE(ChatColor.of("#000000"), GlowAPI.Color.BLACK, false, false, false, false, false, Color.decode("#000000")),
 	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.GREEN, true, true, false, false, true, Color.decode("#02883e")),
 	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.DARK_GREEN, true, true, false, false, true, Color.decode("#02c93e")),
 	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA, true, true, false, false, false, Color.decode("#4cc9f0")),

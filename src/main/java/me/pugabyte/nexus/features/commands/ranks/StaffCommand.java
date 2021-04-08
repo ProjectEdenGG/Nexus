@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,7 +41,7 @@ public class StaffCommand extends CustomCommand {
 		line();
 		map.forEach((rank, nerds) -> send(rank.withColor() + " &f(" + nerds.size() + "):&e " + nerds.stream()
 				.sorted(Comparator.comparing(Nerd::getName, String.CASE_INSENSITIVE_ORDER))
-				.map(Nerd::getNickname)
+				.map(Nickname::of)
 				.filter(name -> !name.equals("KodaBear"))
 				.collect(Collectors.joining("&f, &e"))));
 		line();

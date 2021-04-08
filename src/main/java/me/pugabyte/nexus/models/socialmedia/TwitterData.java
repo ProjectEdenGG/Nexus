@@ -92,11 +92,11 @@ public class TwitterData extends PlayerOwnedObject {
 					.channelId(TextChannel.STAFF_SOCIAL_MEDIA.getId())
 					.messageId(messageId)
 					.requiredVotes(TwitterData.getRequiredVotes())
-					.onCancel(message -> {
+					.onDeny(message -> {
 						data.getPendingTweets().remove(this);
 						message.reply("Tweet cancelled").queue();
 					})
-					.onConfirm(message -> {
+					.onAccept(message -> {
 						if (timestamp == null) {
 							tweet();
 						} else {
@@ -109,7 +109,7 @@ public class TwitterData extends PlayerOwnedObject {
 							}
 						}
 					})
-					.onNotFound(error -> {
+					.onError(error -> {
 						data.getPendingTweets().remove(this);
 						service.save(data);
 					});

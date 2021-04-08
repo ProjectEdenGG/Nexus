@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -35,7 +36,7 @@ public class TeleportHereCommand extends CustomCommand implements Listener {
 
 			nerd.setTeleportOnLogin(location());
 			new NerdService().save(nerd);
-			send(PREFIX + nerd.getNickname() + " will be teleported to this location when they log in");
+			send(PREFIX + Nickname.of(nerd) + " will be teleported to this location when they log in");
 		}
 	}
 

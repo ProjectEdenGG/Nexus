@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import net.dv8tion.jda.api.entities.Role;
@@ -33,7 +34,7 @@ public class RoleManager {
 		if (ignore.contains(player.getUniqueId()))
 			return;
 
-		String username = Nerd.of(player).getNickname();
+		String username = Nickname.of(player);
 		Color roleColor = Nerd.of(player).getRank().getDiscordColor();
 
 		if (roleColor == null) {
