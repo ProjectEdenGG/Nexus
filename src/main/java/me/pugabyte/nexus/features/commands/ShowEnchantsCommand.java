@@ -91,7 +91,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 		channel.broadcastIngame(chatter, json);
 
 		// Discord
-		if (channel.getDiscordChannel() != null) {
+		if (channel.getDiscordTextChannel() != null) {
 			getEnchants(item, data);
 			String enchants = getEnchantsDiscord(data);
 
@@ -119,7 +119,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 					.setContent(stripColor(user.getBridgeName() + " **>** " + discordMessage))
 					.setEmbed(embed.build());
 
-			Discord.send(content, channel.getDiscordChannel());
+			Discord.send(content, channel.getDiscordTextChannel());
 		}
 	}
 

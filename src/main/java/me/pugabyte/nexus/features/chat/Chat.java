@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.chat.alerts.AlertsListener;
 import me.pugabyte.nexus.features.chat.bridge.IngameBridgeListener;
 import me.pugabyte.nexus.features.chat.translator.Translator;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
@@ -66,7 +66,7 @@ public class Chat extends Feature {
 		GLOBAL(PublicChannel.builder()
 				.name("Global")
 				.nickname("G")
-				.discordChannel(Channel.BRIDGE)
+				.discordTextChannel(TextChannel.BRIDGE)
 				.discordColor(ChatColor.DARK_PURPLE)
 				.color(ChatColor.DARK_GREEN)
 				.local(false)
@@ -83,7 +83,7 @@ public class Chat extends Feature {
 				.name("Staff")
 				.nickname("S")
 				.rank(Rank.BUILDER)
-				.discordChannel(Channel.STAFF_BRIDGE)
+				.discordTextChannel(TextChannel.STAFF_BRIDGE)
 				.color(ChatColor.BLACK)
 				.censor(false)
 				.local(false)
@@ -93,7 +93,7 @@ public class Chat extends Feature {
 				.name("Operator")
 				.nickname("O")
 				.rank(Rank.OPERATOR)
-				.discordChannel(Channel.STAFF_OPERATORS)
+				.discordTextChannel(TextChannel.STAFF_OPERATORS)
 				.color(ChatColor.DARK_AQUA)
 				.censor(false)
 				.local(false)
@@ -103,7 +103,7 @@ public class Chat extends Feature {
 				.name("Admin")
 				.nickname("A")
 				.rank(Rank.ADMIN)
-				.discordChannel(Channel.STAFF_ADMINS)
+				.discordTextChannel(TextChannel.STAFF_ADMINS)
 				.color(ChatColor.BLUE)
 				.censor(false)
 				.local(false)

@@ -4,7 +4,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -75,7 +75,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 
 			String message = "&a" + name() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup.toString();
 			Chat.broadcast(message, StaticChannel.STAFF);
-			Discord.send(message, DiscordId.Channel.STAFF_BRIDGE, DiscordId.Channel.STAFF_LOG);
+			Discord.send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
 
 			if (player.isOnline() && player.getPlayer() != null)
 				if (WorldGroup.get(player.getPlayer()).equals(worldGroup)) {

@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.discord;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -46,11 +45,11 @@ public class DiscordCommand extends CustomCommand {
 		Guild guild = Discord.getGuild();
 		if (guild == null)
 			error("Discord bot is not connected");
-		TextChannel channel = guild.getTextChannelById(Channel.GENERAL.getId());
-		if (channel == null)
+		TextChannel textChannel = guild.getTextChannelById(DiscordId.TextChannel.GENERAL.getId());
+		if (textChannel == null)
 			error("General channel not found");
 
-		send(json().next("&e" + channel.createInvite().complete().getUrl()));
+		send(json().next("&e" + textChannel.createInvite().complete().getUrl()));
 	}
 
 	@Async

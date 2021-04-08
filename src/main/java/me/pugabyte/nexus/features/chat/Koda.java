@@ -7,8 +7,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.commands.AgeCommand.ServerAge;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
@@ -74,7 +74,7 @@ public class Koda {
 	}
 
 	public static void announce(String message) {
-		Discord.koda(message, Channel.ANNOUNCEMENTS);
+		Discord.koda(message, TextChannel.ANNOUNCEMENTS);
 	}
 
 	public static void console(String message) {

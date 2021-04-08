@@ -5,7 +5,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -57,7 +57,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 		watchlisted.setReason(reason);
 		service.save(watchlisted);
 		send(PREFIX + "Added &e" + watchlisted.getName() + " &3to the watchlist");
-		Discord.send("**" + PREFIX.trim() + "** " + name() + " added " + watchlisted.getName() + " to the watchlist for " + watchlisted.getReason(), Channel.STAFF_WATCHLIST);
+		Discord.send("**" + PREFIX.trim() + "** " + name() + " added " + watchlisted.getName() + " to the watchlist for " + watchlisted.getReason(), TextChannel.STAFF_WATCHLIST);
 	}
 
 	@Path("remove <player>")

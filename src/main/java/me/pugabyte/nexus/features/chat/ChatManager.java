@@ -50,7 +50,7 @@ public class ChatManager {
 	}
 
 	public static Optional<PublicChannel> getChannelByDiscordId(String id) {
-		return channels.stream().filter(_channel -> _channel.getDiscordChannel() != null && _channel.getDiscordChannel().getId().equalsIgnoreCase(id)).findFirst();
+		return channels.stream().filter(_channel -> _channel.getDiscordTextChannel() != null && _channel.getDiscordTextChannel().getId().equalsIgnoreCase(id)).findFirst();
 	}
 
 	public static void addChannel(PublicChannel channel) {

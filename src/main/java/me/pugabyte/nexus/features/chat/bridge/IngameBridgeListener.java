@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.chat.bridge;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -25,8 +25,8 @@ public class IngameBridgeListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChannelChat(PublicChatEvent event) {
-		DiscordId.Channel discordChannel = event.getChannel().getDiscordChannel();
-		if (discordChannel == null) return;
+		TextChannel discordTextChannel = event.getChannel().getDiscordTextChannel();
+		if (discordTextChannel == null) return;
 
 		Player player = event.getChatter().getPlayer();
 		DiscordUser user = new DiscordService().get(player);
@@ -35,7 +35,7 @@ public class IngameBridgeListener implements Listener {
 		String message = event.getMessage();
 		message = discordize(message);
 		message = parseMentions(message);
-		Discord.send(user.getBridgeName() + " **>** " + message, discordChannel);
+		Discord.send(user.getBridgeName() + " **>** " + message, discordTextChannel);
 	}
 
 	public static String parseMentions(String message) {

@@ -4,7 +4,7 @@ import joptsimple.internal.Strings;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
@@ -123,53 +122,53 @@ public class Discord extends Feature {
 	}
 
 	public static void log(String message) {
-		send(message, Channel.STAFF_BRIDGE, Channel.STAFF_LOG);
+		send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
 	}
 
 	public static void staffBridge(String message) {
-		send(message, Channel.STAFF_BRIDGE);
+		send(message, TextChannel.STAFF_BRIDGE);
 	}
 
 	public static void staffLog(String message) {
-		send(message, Channel.STAFF_LOG);
+		send(message, TextChannel.STAFF_LOG);
 	}
 
 	public static void adminLog(String message) {
-		send(message, Channel.ADMIN_LOG);
+		send(message, TextChannel.ADMIN_LOG);
 	}
 
-	public static void send(String message, DiscordId.Channel... targets) {
+	public static void send(String message, TextChannel... targets) {
 		send(new MessageBuilder(stripColor(message)), targets);
 	}
 
-	public static void send(MessageBuilder message, DiscordId.Channel... targets) {
+	public static void send(MessageBuilder message, TextChannel... targets) {
 		send(message, success -> {}, error -> {}, targets);
 	}
 
-	public static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, DiscordId.Channel... targets) {
+	public static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
 		send(message, onSuccess, onError, Bot.RELAY, targets);
 	}
 
-	public static void koda(String message, DiscordId.Channel... targets) {
+	public static void koda(String message, TextChannel... targets) {
 		koda(new MessageBuilder(stripColor(message)), targets);
 	}
-	public static void koda(MessageBuilder message, DiscordId.Channel... targets) {
+	public static void koda(MessageBuilder message, TextChannel... targets) {
 		koda(message, success -> {}, error -> {}, targets);
 	}
 
-	public static void koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, DiscordId.Channel... targets) {
+	public static void koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
 		send(message, onSuccess, onError, Bot.KODA, targets);
 	}
 
-	private static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, DiscordId.Channel... targets) {
+	private static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
 		if (targets == null || targets.length == 0)
-			targets = new Channel[]{ Channel.BRIDGE };
-		for (Channel target : targets) {
+			targets = new TextChannel[]{ TextChannel.BRIDGE };
+		for (TextChannel target : targets) {
 			if (target == null || bot.jda() == null)
 				continue;
-			TextChannel channel = bot.jda().getTextChannelById(target.getId());
-			if (channel != null)
-				channel.sendMessage(message.build()).queue(onSuccess, onError);
+			net.dv8tion.jda.api.entities.TextChannel textChannel = bot.jda().getTextChannelById(target.getId());
+			if (textChannel != null)
+				textChannel.sendMessage(message.build()).queue(onSuccess, onError);
 		}
 	}
 
@@ -232,7 +231,7 @@ public class Discord extends Feature {
 	private static void updateBridgeTopic(String newBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
-		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.BRIDGE.getId());
+		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.BRIDGE.getId());
 		if (channel != null)
 			channel.getManager().setTopic(bridgeTopic).queue();
 	}
@@ -258,7 +257,7 @@ public class Discord extends Feature {
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		staffBridgeTopic = newStaffBridgeTopic;
-		GuildChannel channel = Discord.getGuild().getGuildChannelById(Channel.STAFF_BRIDGE.getId());
+		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.STAFF_BRIDGE.getId());
 		if (channel != null)
 			channel.getManager().setTopic(staffBridgeTopic).queue();
 	}

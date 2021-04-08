@@ -5,8 +5,8 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -122,7 +122,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 			discordMessage += "\nPurchase successfully processed.";
 		}
 
-		Discord.send(discordMessage, Channel.ADMIN_LOG);
+		Discord.send(discordMessage, TextChannel.ADMIN_LOG);
 		new PurchaseService().save(purchase);
 	}
 

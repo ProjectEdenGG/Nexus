@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.commands.staff.admin;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
@@ -50,12 +50,12 @@ public class ChangelogCommand extends CustomCommand {
 	@Confirm
 	@Path("diff [from] [to]")
 	void diff(ChangelogEntry from, ChangelogEntry to) {
-		Discord.send(getMessage(from, to), Channel.CHANGELOG);
+		Discord.send(getMessage(from, to), TextChannel.CHANGELOG);
 	}
 
 	@Path("diff test [from] [to]")
 	void diffTest(ChangelogEntry from, ChangelogEntry to) {
-		Discord.send(getMessage(from, to), Channel.TEST);
+		Discord.send(getMessage(from, to), TextChannel.TEST);
 	}
 
 	private String getMessage(ChangelogEntry from, ChangelogEntry to) {

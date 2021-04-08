@@ -6,8 +6,8 @@ import com.vdurmont.emoji.EmojiManager;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Guild;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -41,7 +41,7 @@ public class TwitterDiscordCommand extends Command {
 			TwitterData data = service.get();
 
 			try {
-				if (!event.getChannel().getId().equals(Channel.STAFF_SOCIAL_MEDIA.getId()))
+				if (!event.getChannel().getId().equals(TextChannel.STAFF_SOCIAL_MEDIA.getId()))
 					throw new InvalidInputException("This command can only be used in #social-media");
 
 				String[] args = event.getArgs().split(" ");
@@ -79,7 +79,7 @@ public class TwitterDiscordCommand extends Command {
 						case "pending":
 							StringBuilder message = new StringBuilder();
 							for (PendingTweet pendingTweet : data.getPendingTweets()) {
-								String link = "https://discord.com/channels/" + Guild.BEAR_NATION.getId() + "/" + Channel.STAFF_SOCIAL_MEDIA.getId() + "/" + pendingTweet.getMessageId();
+								String link = "https://discord.com/channels/" + Guild.BEAR_NATION.getId() + "/" + TextChannel.STAFF_SOCIAL_MEDIA.getId() + "/" + pendingTweet.getMessageId();
 								message.append(link).append(System.lineSeparator());
 							}
 							event.reply(message.toString());

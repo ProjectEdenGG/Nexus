@@ -8,7 +8,7 @@ import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.chat.bridge.RoleManager;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordService;
@@ -89,7 +89,7 @@ public class JoinQuit extends Feature implements Listener {
 				RoleManager.update(user);
 
 				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nerd.of(player).getNickname() + "**"));
-				Discord.send(":arrow_right: " + discord, Channel.BRIDGE);
+				Discord.send(":arrow_right: " + discord, TextChannel.BRIDGE);
 			});
 		}
 	}
@@ -128,7 +128,7 @@ public class JoinQuit extends Feature implements Listener {
 			RoleManager.update(user);
 
 			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nerd.of(player).getNickname() + "**"));
-			Discord.send("<:red_arrow_left:331808021267218432> " + discord, Channel.BRIDGE);
+			Discord.send("<:red_arrow_left:331808021267218432> " + discord, TextChannel.BRIDGE);
 		});
 	}
 

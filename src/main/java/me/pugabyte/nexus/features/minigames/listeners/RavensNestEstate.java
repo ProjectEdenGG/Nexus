@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -32,6 +33,7 @@ import java.util.Set;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 
+@Disabled
 public class RavensNestEstate implements Listener {
 	protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
 	protected WorldEditUtils WEUtils = Minigames.getWorldEditUtils();

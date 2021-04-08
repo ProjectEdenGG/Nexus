@@ -8,7 +8,7 @@ public class DiscordId {
 
 	@Getter
 	@AllArgsConstructor
-	public enum Channel {
+	public enum TextChannel {
 		INFO("819817990249644032"),
 		ANNOUNCEMENTS("133970047382061057"),
 		CHANGELOG("819818214313689098"),
@@ -32,6 +32,22 @@ public class DiscordId {
 		TEST("241774576822910976");
 
 		private final String id;
+
+		public net.dv8tion.jda.api.entities.TextChannel get() {
+			return Discord.getGuild().getTextChannelById(id);
+		}
+
+		public static TextChannel of(net.dv8tion.jda.api.entities.TextChannel textChannel) {
+			return of(textChannel.getId());
+		}
+
+		public static TextChannel of(String id) {
+			for (TextChannel textChannel : values())
+				if (textChannel.getId().equals(id))
+					return textChannel;
+
+			return null;
+		}
 	}
 
 	@Getter

@@ -5,7 +5,7 @@ import lombok.Data;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -34,7 +34,7 @@ public class PublicChannel implements Channel {
 	private String nickname;
 	private ChatColor color;
 	private ChatColor messageColor;
-	private DiscordId.Channel discordChannel;
+	private TextChannel discordTextChannel;
 	private ChatColor discordColor;
 	@Builder.Default
 	private boolean censor = true;
@@ -230,8 +230,8 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcastDiscord(String message) {
-		if (discordChannel != null)
-			Discord.send(message, discordChannel);
+		if (discordTextChannel != null)
+			Discord.send(message, discordTextChannel);
 	}
 
 	public void broadcastDiscord(Component component) {
@@ -262,8 +262,8 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcastDiscord(JsonBuilder builder) {
-		if (discordChannel != null)
-			Discord.send(builder.toString(), discordChannel);
+		if (discordTextChannel != null)
+			Discord.send(builder.toString(), discordTextChannel);
 	}
 
 	public String getPermission() {

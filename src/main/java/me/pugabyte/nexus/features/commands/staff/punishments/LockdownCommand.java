@@ -5,7 +5,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -93,7 +93,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	private void broadcast(String message) {
 		Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
 		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
-		Discord.send(DISCORD_PREFIX + message, Channel.STAFF_LOG);
+		Discord.send(DISCORD_PREFIX + message, TextChannel.STAFF_LOG);
 	}
 
 	public boolean canBypass(UUID player) {

@@ -4,8 +4,8 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.tickets.Tickets;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.discord.DiscordService;
@@ -29,7 +29,7 @@ public class TicketsDiscordCommand extends Command {
 	}
 
 	protected void execute(CommandEvent event) {
-		if (!event.getChannel().getId().equals(Channel.STAFF_BRIDGE.getId()))
+		if (!event.getChannel().getId().equals(TextChannel.STAFF_BRIDGE.getId()))
 			return;
 
 		Tasks.async(() -> {

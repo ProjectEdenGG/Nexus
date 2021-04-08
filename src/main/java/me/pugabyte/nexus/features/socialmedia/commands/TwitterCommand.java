@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.socialmedia.commands;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -56,7 +56,7 @@ public class TwitterCommand extends CustomCommand {
 
 				MessageBuilder content = new MessageBuilder().setEmbed(embed.build());
 
-				Discord.send(content, Channel.GENERAL);
+				Discord.send(content, TextChannel.GENERAL);
 				data.getKnownTweets().add(tweet.getId());
 				service.save(data);
 			}
