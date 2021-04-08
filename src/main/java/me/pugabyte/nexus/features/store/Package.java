@@ -42,11 +42,11 @@ public enum Package {
 	CUSTOM_PREFIX_ONE_MONTH,
 
 	@Id("2019251")
-	@PermissionGroup("store/autosort")
+	@PermissionGroup("store.autosort")
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
-	@PermissionGroup("store/autosort")
+	@PermissionGroup("store.autosort")
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
 
@@ -81,7 +81,7 @@ public enum Package {
 	FIVE_SETHOMES,
 
 	@Id("2559650")
-	@PermissionGroup("store/npc")
+	@PermissionGroup("store.npc")
 	@Command("/permhelper npcs add [player] 1")
 	NPC,
 
@@ -135,42 +135,42 @@ public enum Package {
 
 	@Id("2495867")
 	@Category("Pets")
-	@PermissionGroup("store/pets/farm")
+	@PermissionGroup("store.pets.farm")
 	PETS_FARM,
 
 	@Id("2495869")
 	@Category("Pets")
-	@PermissionGroup("store/pets/cuties")
+	@PermissionGroup("store.pets.cuties")
 	PETS_CUTIES,
 
 	@Id("2495876")
 	@Category("Pets")
-	@PermissionGroup("store/pets/natives")
+	@PermissionGroup("store.pets.natives")
 	PETS_NATIVES,
 
 	@Id("3919092")
 	@Category("Pets")
-	@PermissionGroup("store/pets/aquatic")
+	@PermissionGroup("store.pets.aquatic")
 	PETS_AQUATIC,
 
 	@Id("2495873")
 	@Category("Pets")
-	@PermissionGroup("store/pets/nether")
+	@PermissionGroup("store.pets.nether")
 	PETS_NETHER,
 
 	@Id("2495872")
 	@Category("Pets")
-	@PermissionGroup("store/pets/monsters")
+	@PermissionGroup("store.pets.monsters")
 	PETS_MONSTERS,
 
 	@Id("2495871")
 	@Category("Pets")
-	@PermissionGroup("store/pets/mounts")
+	@PermissionGroup("store.pets.mounts")
 	PETS_MOUNTS,
 
 	@Id("2495870")
 	@Category("Pets")
-	@PermissionGroup("store/pets/other")
+	@PermissionGroup("store.pets.other")
 	PETS_OTHER,
 
 	@Id("2496219")
@@ -251,42 +251,42 @@ public enum Package {
 
 	@Id("2495938")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/farm")
+	@PermissionGroup("store.pets.farm")
 	DISGUISES_FARM,
 
 	@Id("2495940")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/cuties")
+	@PermissionGroup("store.pets.cuties")
 	DISGUISES_CUTIES,
 
 	@Id("2495948")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/natives")
+	@PermissionGroup("store.pets.natives")
 	DISGUISES_NATIVES,
 
 	@Id("3919103")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/aquatic")
+	@PermissionGroup("store.pets.aquatic")
 	DISGUISES_AQUATIC,
 
 	@Id("2495945")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/nether")
+	@PermissionGroup("store.pets.nether")
 	DISGUISES_NETHER,
 
 	@Id("2495944")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/monsters")
+	@PermissionGroup("store.pets.monsters")
 	DISGUISES_MONSTERS,
 
 	@Id("2495942")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/mounts")
+	@PermissionGroup("store.pets.mounts")
 	DISGUISES_MOUNTS,
 
 	@Id("2495941")
 	@Category("Disguises")
-	@PermissionGroup("store/pets/other")
+	@PermissionGroup("store.pets.other")
 	DISGUISES_OTHER;
 
 	@SneakyThrows

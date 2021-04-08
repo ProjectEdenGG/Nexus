@@ -83,7 +83,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("update")
 	@Permission("group.admin")
 	void update() {
-		send(BashCommand.tryExecute("/home/minecraft/git/Saturn/deploy.sh"));
+		send(BashCommand.tryExecute("sudo /home/minecraft/git/Saturn/deploy.sh"));
 
 		String newHash = Utils.createSha1(URL);
 		if (hash != null && hash.equals(newHash))

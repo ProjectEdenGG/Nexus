@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.dailyrewards;
 
-import fr.minuskube.inv.SmartInventory;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
@@ -12,12 +11,12 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
@@ -90,37 +89,27 @@ public class DailyRewardsFeature extends Feature {
 	}
 
 	public static void menu(Player player, DailyReward dailyReward) {
-		SmartInventory inv = SmartInventory.builder()
-				.provider(new DailyRewardsMenu(dailyReward))
-				.size(3, 9)
-				.title(ChatColor.DARK_AQUA + "Daily Rewards")
-				.build();
-
-		inv.open(player);
+		new DailyRewardsMenu(dailyReward).open(player);
 	}
 
 	public static Reward getReward(int day, int option) {
 		switch(option){
 			case 0:
-				return getReward1(day);
+				return rewards1.get(day - 1);
 			case 1:
-				return getReward2(day);
+				return rewards2.get(day - 1);
 			case 2:
-				return getReward3(day);
+				return rewards3.get(day - 1);
 		}
 		return null;
 	}
 
-	public static Reward getReward1(int day) {
-		return rewards1.get(day - 1);
-	}
-
-	public static Reward getReward2(int day) {
-		return rewards2.get(day - 1);
-	}
-
-	public static Reward getReward3(int day) {
-		return rewards3.get(day - 1);
+	public static List<Reward> getRewards(int day) {
+		return Arrays.asList(
+				getReward(day, 1),
+				getReward(day, 2),
+				getReward(day, 3)
+		);
 	}
 
 	// @formatter:off
