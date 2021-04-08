@@ -26,6 +26,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
@@ -216,6 +217,10 @@ public class PlayerUtils {
 			if (!player.getWorld().equals(original.getWorld()) || isSelf(original, player)) return null;
 			return player.getLocation().distance(original.getLocation());
 		});
+	}
+
+	public static boolean hasResourcePack(Player player) {
+		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || Dev.WAKKA.is(player);
 	}
 
 	@SneakyThrows

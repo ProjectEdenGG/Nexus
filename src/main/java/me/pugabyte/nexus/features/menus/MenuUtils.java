@@ -183,14 +183,30 @@ public abstract class MenuUtils {
 		int curPage = page.getPage() + 1;
 
 		String[] lore = {"&f", "&7Right click to jump to a page"};
+		boolean hasResourcePack = PlayerUtils.hasResourcePack(player);
+
+		int prevPage = Math.max(curPage - 1, 1);
+		int nextPage = curPage + 1;
+
+		ItemBuilder prev = new ItemBuilder(Material.ARROW).name("&fPrevious Page").lore(lore);
+		ItemBuilder next = new ItemBuilder(Material.ARROW).name("&fNext Page").lore(lore);
+
+		if (hasResourcePack) {
+			prev.customModelData(4000 + prevPage);
+			next.customModelData(4000 + nextPage);
+		} else {
+			prev.amount(prevPage);
+			next.amount(nextPage);
+		}
+
 		addPagination(contents, items, perPage,
-				ClickableItem.from(new ItemBuilder(Material.ARROW).amount(Math.max(curPage - 1, 1)).name("&fPrevious Page").lore(lore).build(), e -> {
+				ClickableItem.from(prev.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else
 						open(player, page.previous().getPage());
 				}),
-				ClickableItem.from(new ItemBuilder(Material.ARROW).amount(curPage + 1).name("&fNext Page").lore(lore).build(), e -> {
+				ClickableItem.from(next.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else

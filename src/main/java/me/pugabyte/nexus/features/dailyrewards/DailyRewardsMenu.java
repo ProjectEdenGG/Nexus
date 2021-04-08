@@ -20,7 +20,6 @@ import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -58,13 +57,11 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addCloseItem(contents);
 
-		boolean hasResourcePack = player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED;
-
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (int i = 1; i <= MAX_DAY; i++) {
 			final int day = i;
-			if (hasResourcePack) {
+			if (PlayerUtils.hasResourcePack(player)) {
 				if (dailyReward.getStreak() >= day) {
 					if (dailyReward.hasClaimed(day)) {
 						items.add(ClickableItem.empty(new ItemBuilder(Material.ARROW)
@@ -140,7 +137,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			for (int i = 0; i < 3; i++) {
 				int option = i;
 				Reward currentReward = rewards.get(i);
-				String rewardDescription = camelCase("&e" + currentReward.getDescription());
+				String rewardDescription = "&e" + camelCase(currentReward.getDescription());
 
 				ItemStack item;
 				if (currentReward.getItems() != null)
