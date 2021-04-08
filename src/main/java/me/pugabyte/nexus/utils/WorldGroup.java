@@ -21,6 +21,7 @@ public enum WorldGroup {
 	SKYBLOCK("bskyblock_world", "bskyblock_world_nether", "bskyblock_world_the_end"),
 	ONEBLOCK("oneblock_world", "oneblock_world_nether"),
 	ADVENTURE("stranded", "aeveon_project"),
+	EVENTS("bearfair21"),
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 
