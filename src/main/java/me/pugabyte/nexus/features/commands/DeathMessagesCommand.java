@@ -55,9 +55,9 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onDeath(PlayerDeathEvent event) {
-		final DeathMessagesService service = new DeathMessagesService();
+		DeathMessagesService service = new DeathMessagesService();
 		DeathMessages deathMessages = service.get(event.getEntity());
 
 		Component deathMessageRaw = event.deathMessage();
@@ -94,22 +94,30 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			TranslatableComponent deathMessage = (TranslatableComponent) deathMessageRaw;
 			List<Component> args = new ArrayList<>();
 			deathMessage.args().forEach(component -> {
-				if (!(component instanceof TextComponent) || component.children().size() != 1 || !(component.children().get(0) instanceof TextComponent)) {
+				String playerName;
+				if (component.children().size() > 0 && component.children().get(0) instanceof TextComponent)
+					playerName = ((TextComponent) component.children().get(0)).content();
+				else if (component instanceof TextComponent && !((TextComponent) component).content().isEmpty()) {
+					TextComponent textComponent = (TextComponent) component;
+					playerName = textComponent.content();
+					component = textComponent.content("");
+				} else {
 					args.add(component);
 					return;
 				}
-				// this (should) have a text component inside with the name of a player so we are going to color it
-				TextComponent textComponent = ((TextComponent) component.children().get(0)).color(NamedTextColor.YELLOW);
+
+				TextComponent playerComponent = Component.text(playerName).color(NamedTextColor.YELLOW);
+
 				// and set their name to their nickname
-				if (textComponent.content().equals(deathMessages.getName()))
-					textComponent = textComponent.content(deathMessages.getNickname());
+				if (playerName.equals(deathMessages.getName()))
+					playerComponent = playerComponent.content(deathMessages.getNickname());
 				else {
 					try {
-						textComponent = textComponent.content(Nerd.of(textComponent.content()).getNickname());
+						playerComponent = playerComponent.content(Nerd.of(playerName).getNickname());
 					}
 					catch (PlayerNotFoundException|InvalidInputException ignored) {}
 				}
-				args.add(component.children(Collections.singletonList(textComponent)));
+				args.add(component.children(Collections.singletonList(playerComponent)));
 			});
 			output = output.append(deathMessage.args(args));
 		}
