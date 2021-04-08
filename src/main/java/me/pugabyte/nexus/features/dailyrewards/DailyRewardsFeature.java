@@ -93,7 +93,7 @@ public class DailyRewardsFeature extends Feature {
 	}
 
 	public static Reward getReward(int day, int option) {
-		switch(option){
+		switch (option) {
 			case 0:
 				return rewards1.get(day - 1);
 			case 1:
@@ -106,9 +106,9 @@ public class DailyRewardsFeature extends Feature {
 
 	public static List<Reward> getRewards(int day) {
 		return Arrays.asList(
+				getReward(day, 0),
 				getReward(day, 1),
-				getReward(day, 2),
-				getReward(day, 3)
+				getReward(day, 2)
 		);
 	}
 

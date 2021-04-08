@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.socialmedia.commands;
 
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
@@ -9,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.socialmedia.TwitterData;
 import me.pugabyte.nexus.models.socialmedia.TwitterService;
+import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -35,7 +37,8 @@ public class TwitterCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeat(Time.MINUTE, Time.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
+		if (Nexus.getEnv() == Env.PROD)
+			Tasks.repeat(Time.MINUTE, Time.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
 	}
 
 	private static void lookForNewTweets0() {

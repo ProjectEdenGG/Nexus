@@ -76,7 +76,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 								.name("&eDay " + day)
 								.lore("&6&lUnclaimed", "&3Click to select reward.")
 								.customModelData(1000 + day)
-								.build(), e -> new SelectItemMenu(dailyReward, day, contents.pagination().getPage())));
+								.build(), e -> new SelectItemMenu(dailyReward, day, contents.pagination().getPage()).open(player)));
 					}
 				} else {
 					items.add(ClickableItem.empty(new ItemBuilder(Material.ARROW)
@@ -92,7 +92,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 						items.add(ClickableItem.empty(addGlowing(item)));
 					} else {
 						ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lUnclaimed||" + "&3Click to select reward.", day);
-						items.add(ClickableItem.from(item, e -> new SelectItemMenu(dailyReward, day, contents.pagination().getPage())));
+						items.add(ClickableItem.from(item, e -> new SelectItemMenu(dailyReward, day, contents.pagination().getPage()).open(player)));
 					}
 				} else {
 					ItemStack item = nameItem(locked.clone(), "&eDay " + day, "&cLocked" + "", day);
@@ -138,8 +138,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			List<Reward> rewards = DailyRewardsFeature.getRewards(day);
 
 			for (int i = 0; i < 3; i++) {
-				Reward currentReward = rewards.get(i);
 				int option = i;
+				Reward currentReward = rewards.get(i);
 				String rewardDescription = camelCase("&e" + currentReward.getDescription());
 
 				ItemStack item;
