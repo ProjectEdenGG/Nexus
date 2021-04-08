@@ -55,7 +55,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.LOW)
 	public void onDeath(PlayerDeathEvent event) {
 		final DeathMessagesService service = new DeathMessagesService();
 		DeathMessages deathMessages = service.get(event.getEntity());
