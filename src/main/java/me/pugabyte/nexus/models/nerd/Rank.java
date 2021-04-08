@@ -121,10 +121,6 @@ public enum Rank {
 				.collect(Collectors.toList());
 	}
 
-	public static List<Rank> getMods() {
-		return Arrays.stream(Rank.values()).filter(Rank::isMod).filter(Rank::isActive).collect(Collectors.toList());
-	}
-
 	public static List<Nerd> getOnlineMods() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
@@ -189,11 +185,17 @@ public enum Rank {
 	}
 
 	public Rank next() {
-		return EnumUtils.next(Rank.class, this.ordinal());
+		Rank next = EnumUtils.next(Rank.class, this.ordinal());
+		if (!next.isActive)
+			return next();
+		return next;
 	}
 
 	public Rank previous() {
-		return EnumUtils.previous(Rank.class, this.ordinal());
+		Rank previous = EnumUtils.previous(Rank.class, this.ordinal());
+		if (!previous.isActive)
+			return previous();
+		return previous;
 	}
 
 }
