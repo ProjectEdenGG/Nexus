@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.achievements.events.social.poof.PoofToEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import me.pugabyte.nexus.models.achievement.Achievement;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -82,7 +83,7 @@ public class SocialListener implements Listener {
 	}
 
 	private static void checkRank(Player player) {
-		if (player.hasPermission("rank.member"))
+		if (Rank.of(player) != Rank.GUEST)
 			Achievement.MEMBER_OF_SOCIETY.check(player);
 	}
 

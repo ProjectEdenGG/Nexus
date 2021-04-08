@@ -13,6 +13,7 @@ import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -179,7 +180,7 @@ public class Koda {
 			case "canibestaff":
 				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
 					Player player = event.getChatter().getPlayer();
-					if (player.hasPermission("rank.guest")) {
+					if (Rank.of(player) == Rank.GUEST) {
 						String command = "staff";
 						if (event.getMessage().contains("mod")) command = "moderator";
 						if (event.getMessage().contains(" op")) command = "operator";
@@ -210,7 +211,7 @@ public class Koda {
 			case "griefing":
 				if (event.getChatter() != null)
 					if (!(event.getMessage().contains("not allowed") || event.getMessage().contains("isn't") || event.getMessage().contains("isnt")))
-						if (Nexus.getPerms().playerHas(null, event.getChatter().getOfflinePlayer(), "rank.guest"))
+						if (Rank.of(event.getChatter()) == Rank.GUEST)
 							respond(event, "[player], griefing is not allowed. Please take a look at the /rules for more information.");
 				break;
 			case "lag":

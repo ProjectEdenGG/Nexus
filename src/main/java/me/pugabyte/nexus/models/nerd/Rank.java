@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -130,6 +131,10 @@ public enum Rank {
 				.sorted(Comparator.comparing(Player::getName))
 				.map(Nerd::of)
 				.collect(Collectors.toList());
+	}
+
+	public static Rank of(PlayerOwnedObject player) {
+		return of(Bukkit.getOfflinePlayer(player.getUuid()));
 	}
 
 	public static Rank of(Player player) {

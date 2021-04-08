@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -66,7 +67,7 @@ public class WelcomeCommand extends CustomCommand {
 	@Path("[player]")
 	void welcome(Player player) {
 		if (player != null) {
-			if (!player.hasPermission("rank.guest"))
+			if (Rank.of(player) != Rank.GUEST)
 				error("Prevented accidental welcome");
 			if (((Hours) new HoursService().get(player)).getTotal() > (60 * 60))
 				error("Prevented accidental welcome");

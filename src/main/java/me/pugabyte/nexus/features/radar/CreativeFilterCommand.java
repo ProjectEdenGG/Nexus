@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -35,7 +37,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean shouldFilterItems(HumanEntity whoClicked) {
-		return WorldGroup.get(whoClicked.getWorld()) == WorldGroup.CREATIVE && whoClicked.hasPermission("rank.guest");
+		return WorldGroup.get(whoClicked.getWorld()) == WorldGroup.CREATIVE && Rank.of((Player) whoClicked) == Rank.GUEST;
 	}
 
 	private void filter(Supplier<HumanEntity> player, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
