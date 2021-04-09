@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -40,7 +41,19 @@ public class PuttListener implements Listener {
 			return;
 
 		ItemStack item = event.getItem();
-		if (item == null) return;
+		if (ItemUtils.isNullOrAir(item))
+			return;
+
+		// quick fix
+		ItemStack clone = item.clone();
+		clone.setAmount(1);
+		boolean stop = true;
+		for (ItemStack _item : MiniGolf.getKit()) {
+			if (ItemUtils.isFuzzyMatch(clone, _item))
+				stop = false;
+		}
+		if (stop)
+			return;
 
 		// Get info
 		Player player = event.getPlayer();
