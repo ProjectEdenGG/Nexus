@@ -82,10 +82,10 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 @Redirect(from = {"/bfp", "bfpoints", "/bearfairpoints"}, to = "/bearfair points")
-public class BearFairCommand extends _WarpCommand implements Listener {
+public class BearFair20Command extends _WarpCommand implements Listener {
 	private final BearFairService service = new BearFairService();
 
-	public BearFairCommand(CommandEvent event) {
+	public BearFair20Command(CommandEvent event) {
 		super(event);
 	}
 
