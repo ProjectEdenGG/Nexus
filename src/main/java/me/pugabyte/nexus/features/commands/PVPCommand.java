@@ -18,6 +18,7 @@ import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -101,6 +102,10 @@ public class PVPCommand extends CustomCommand implements Listener {
 				if (projectile.getShooter() != null && projectile.getShooter() instanceof Player)
 					attacker = service.get((Player) projectile.getShooter());
 			}
+		} else if (event.getDamager() instanceof TNTPrimed) {
+			TNTPrimed tnt = (TNTPrimed) event.getDamager();
+			if (tnt.getSource() instanceof Player)
+				attacker = service.get((Player) tnt.getSource());
 		}
 
 		if (attacker == null)
