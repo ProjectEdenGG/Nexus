@@ -158,19 +158,19 @@ public enum ColorType {
 	}
 
 	public static ColorType of(String name) {
-		return Arrays.stream(values()).filter(colorType -> name.equals(colorType.getName())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getName().equals(name)).findFirst().orElse(null);
 	}
 
 	public static ColorType of(Color color) {
-		return Arrays.stream(values()).filter(colorType -> color.equals(colorType.getColor())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getColor().equals(color)).findFirst().orElse(null);
 	}
 
 	public static ColorType of(ChatColor chatColor) {
-		return Arrays.stream(values()).filter(colorType -> chatColor.equals(colorType.getChatColor())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getChatColor().equals(chatColor)).findFirst().orElse(null);
 	}
 
 	public static ColorType of(DyeColor dyeColor) {
-		return Arrays.stream(values()).filter(colorType -> dyeColor.equals(colorType.getDyeColor())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getDyeColor().equals(dyeColor)).findFirst().orElse(null);
 	}
 
 	public static ColorType of(Material material) {

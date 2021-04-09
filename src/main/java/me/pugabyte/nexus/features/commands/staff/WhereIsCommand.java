@@ -89,7 +89,7 @@ public class WhereIsCommand extends CustomCommand {
 			return;
 		}
 
-		if (!WorldGroup.STAFF.contains(viewer.getWorld())) {
+		if (!WorldGroup.STAFF.contains(viewer.getWorld()) && !WorldGroup.EVENTS.contains(viewer.getWorld())) {
 			unglow(viewer);
 			return;
 		}

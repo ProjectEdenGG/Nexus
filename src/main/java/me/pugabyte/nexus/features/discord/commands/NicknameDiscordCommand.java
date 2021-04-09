@@ -46,11 +46,13 @@ public class NicknameDiscordCommand extends Command {
 
 							Nerd nerd = Dev.PUGA.getNerd();
 							Nickname nickname = new NicknameService().get(nerd);
-							for (NicknameHistoryEntry pastNickname : nickname.getNicknameHistory()) { // TODO query for correct player
-								if (!event.getMessage().getReferencedMessage().getId().equals(pastNickname.getNicknameQueueId()))
+							for (NicknameHistoryEntry entry : nickname.getNicknameHistory()) { // TODO query for correct player
+								if (!event.getMessage().getReferencedMessage().getId().equals(entry.getNicknameQueueId()))
+									if (event.getMessage().getReferencedMessage().getReferencedMessage() == null ||
+											!event.getMessage().getReferencedMessage().getReferencedMessage().getId().equals(entry.getNicknameQueueId()))
 									continue;
 
-								pastNickname.deny(String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+								entry.deny(String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
 								event.getMessage().reply("Successfully updated reason").queue();
 								new NicknameService().save(nickname);
 							}

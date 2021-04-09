@@ -155,7 +155,7 @@ public class NicknameCommand extends CustomCommand {
 							.requiredVotes(Nickname.getRequiredVotes())
 							.onDeny(message -> {
 								entry.deny();
-								message.reply("Nickname denied. Add a reason by replying with /nickname deny <reason>").queue();
+								message.reply("Nickname denied. Add a reason by replying with `/nickname deny <reason>`").queue();
 							})
 							.onAccept(message -> {
 								entry.accept();
