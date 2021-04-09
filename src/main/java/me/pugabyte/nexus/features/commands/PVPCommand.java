@@ -14,11 +14,14 @@ import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
@@ -72,6 +75,9 @@ public class PVPCommand extends CustomCommand implements Listener {
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
 		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
+		if (!(event.getEntity() instanceof Player)) return;
+		PVP victim = service.get((Player) event.getEntity());
+
 		PVP attacker = null;
 		Projectile projectile;
 		if (event.getDamager() instanceof Player) {
@@ -80,14 +86,27 @@ public class PVPCommand extends CustomCommand implements Listener {
 			projectile = (Projectile) event.getDamager();
 			if (projectile.getShooter() instanceof Player)
 				attacker = service.get((Player) projectile.getShooter());
+		} else if (event.getDamager() instanceof EnderCrystal) {
+			EnderCrystal crystal = (EnderCrystal) event.getDamager();
+			// find last user to damage the end crystal
+			EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
+			if (crystalDamage == null) return;
+			if (!(crystalDamage instanceof EntityDamageByEntityEvent)) return;
+			Entity damager = ((EntityDamageByEntityEvent) crystalDamage).getDamager();
+			if (damager instanceof Player)
+				attacker = service.get((Player) damager);
+			// check if last damager was a projectile shot by a player
+			else if (damager instanceof Projectile) {
+				projectile = (Projectile) damager;
+				if (projectile.getShooter() != null && projectile.getShooter() instanceof Player)
+					attacker = service.get((Player) projectile.getShooter());
+			}
 		}
 
 		if (attacker == null)
 			return;
-
-		if (!(event.getEntity() instanceof Player)) return;
-
-		PVP victim = service.get((Player) event.getEntity());
+		if (victim.getUuid().equals(attacker.getUuid()))
+			return;
 
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
