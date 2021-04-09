@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import org.bukkit.entity.Player;
@@ -93,6 +94,11 @@ public class Alerts extends PlayerOwnedObject {
 		Player player = (Player) PlayerUtils.getPlayer(uuid);
 
 		if (message.toLowerCase().contains(player.getName().toLowerCase())) {
+			playSound();
+			return;
+		}
+
+		if (message.toLowerCase().contains(Nickname.of(player).toLowerCase())) {
 			playSound();
 			return;
 		}
