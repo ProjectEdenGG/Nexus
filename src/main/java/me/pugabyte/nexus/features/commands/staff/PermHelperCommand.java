@@ -5,6 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
@@ -32,9 +33,7 @@ public class PermHelperCommand extends CustomCommand {
 
 	private void modify(String which, OfflinePlayer player, int adding) {
 		String permission = "";
-		String pattern = "([1-9][0-9]{0,3}|10000)";
 		String world = (which.equalsIgnoreCase("plots") ? "creative" : null);
-		int newLimit;
 
 		switch (which) {
 			case "homes":
@@ -51,13 +50,15 @@ public class PermHelperCommand extends CustomCommand {
 				break;
 		}
 
-		newLimit = getNewLimit(player, permission, world) + adding;
+		int oldLimit = getLimit(player, permission, world);
+		int newLimit = oldLimit + adding;
 
-		Nexus.getPerms().playerAdd(null, player, permission + newLimit);
+		PermissionChange.unset().permission(permission + oldLimit).player(player).run();
+		PermissionChange.set().permission(permission + newLimit).player(player).run();
 		send(PREFIX + "New " + which + " limit for " + player.getName() + ": " + newLimit);
 	}
 
-	private static int getNewLimit(OfflinePlayer player, String permission, String world) {
+	private static int getLimit(OfflinePlayer player, String permission, String world) {
 		List<Integer> ints = new ArrayList<>();
 
 		for (int i = 1; i <= 100; i++)
