@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -17,5 +18,12 @@ public class BearFair21Command extends CustomCommand {
 	@Path("kit golf")
 	void golfKit1() {
 		PlayerUtils.giveItems(player(), MiniGolf.getKit());
+	}
+
+	@Path("strengthTest")
+	@Permission("group.admin")
+	void strengthTest() {
+		commandBlock();
+		Interactables.strengthTest();
 	}
 }
