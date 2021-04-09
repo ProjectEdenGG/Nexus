@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -22,13 +22,13 @@ public class Interactables {
 		if (strengthTest_active) return;
 		strengthTest_active = true;
 
-		Location one = new Location(BearFair20.getWorld(), 66, 136, -16);
-		Location two = new Location(BearFair20.getWorld(), 67, 136, -16);
-		Location three = new Location(BearFair20.getWorld(), 69, 138, -16);
-		Location four = new Location(BearFair20.getWorld(), 69, 139, -16);
-		Location five = new Location(BearFair20.getWorld(), 69, 140, -16);
-		Location six = new Location(BearFair20.getWorld(), 69, 141, -16);
-		Location seven = new Location(BearFair20.getWorld(), 69, 142, -16);
+		Location one = new Location(BearFair21.getWorld(), 66, 136, -16);
+		Location two = new Location(BearFair21.getWorld(), 67, 136, -16);
+		Location three = new Location(BearFair21.getWorld(), 69, 138, -16);
+		Location four = new Location(BearFair21.getWorld(), 69, 139, -16);
+		Location five = new Location(BearFair21.getWorld(), 69, 140, -16);
+		Location six = new Location(BearFair21.getWorld(), 69, 141, -16);
+		Location seven = new Location(BearFair21.getWorld(), 69, 142, -16);
 		List<Location> lights = Arrays.asList(one, two, three, four, five, six, seven);
 
 		int max = 7;
