@@ -7,7 +7,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.OfflinePlayer;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -69,7 +68,7 @@ public class CooldownService extends MongoService {
 	public String getDiff(UUID uuid, String type) {
 		Cooldown cooldown = get(uuid);
 		if (cooldown.exists(type))
-			return timespanDiff(LocalDateTime.now(), cooldown.get(type));
+			return timespanDiff(cooldown.get(type));
 
 		return ".0s";
 	}

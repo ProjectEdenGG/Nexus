@@ -112,7 +112,8 @@ public class TwitterData extends PlayerOwnedObject {
 					.onError(error -> {
 						data.getPendingTweets().remove(this);
 						service.save(data);
-					});
+					})
+					.run();
 		}
 
 		public void tweet() {

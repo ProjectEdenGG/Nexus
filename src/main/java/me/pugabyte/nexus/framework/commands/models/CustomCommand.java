@@ -111,6 +111,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return !(event instanceof TabEvent);
 	}
 
+	protected boolean isPlayerCommandEvent() {
+		return !(event instanceof TabEvent) && isPlayer();
+	}
+
 	protected String camelCase(Enum<?> _enum) {
 		if (_enum == null) return null;
 		return camelCase(_enum.name());

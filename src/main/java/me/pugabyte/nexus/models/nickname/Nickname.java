@@ -7,16 +7,17 @@ import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId;
+import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -26,7 +27,10 @@ import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -49,6 +53,11 @@ public class Nickname extends PlayerOwnedObject {
 	private String nickname;
 	private List<NicknameHistoryEntry> nicknameHistory = new ArrayList<>();
 
+	@Getter
+	private static final Map<Role, Integer> requiredVotes = new HashMap<Role, Integer>() {{
+		put(Role.ADMINS, 1);
+	}};
+
 	public static String of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}
@@ -62,9 +71,16 @@ public class Nickname extends PlayerOwnedObject {
 	}
 
 	public static String of(OfflinePlayer player) {
-		String nickname = new NicknameService().<Nickname>get(player).getNickname();
+		return new NicknameService().<Nickname>get(player).getNickname();
+	}
+
+	public String getNickname() {
 		if (isNullOrEmpty(nickname))
-			return player.getName();
+			return getName();
+		return nickname;
+	}
+
+	public String getNicknameRaw() {
 		return nickname;
 	}
 
@@ -75,6 +91,10 @@ public class Nickname extends PlayerOwnedObject {
 			this.nicknameHistory.add(new NicknameHistoryEntry(this, nickname));
 		} else
 			this.nickname = null;
+	}
+
+	public void setNickname(NicknameHistoryEntry entry) {
+		this.nickname = stripColor(entry.getNickname());
 	}
 
 	public boolean hasNickname() {
@@ -89,6 +109,10 @@ public class Nickname extends PlayerOwnedObject {
 					if (pastNickname.getRequestedTimestamp() == null)
 						pastNickname.setRequestedTimestamp(LocalDateTime.now());
 			}
+	}
+
+	public Optional<NicknameHistoryEntry> getPending() {
+		return nicknameHistory.stream().filter(NicknameHistoryEntry::isPending).findAny();
 	}
 
 	@Data
@@ -112,7 +136,7 @@ public class Nickname extends PlayerOwnedObject {
 
 		public NicknameHistoryEntry(Nickname data, String nickname, String nicknameQueueId) {
 			this.uuid = data.getUuid();
-			this.nickname = nickname;
+			this.nickname = stripColor(nickname);
 			this.requestedTimestamp = LocalDateTime.now();
 			if (isNullOrEmpty(nicknameQueueId)) {
 				pending = false;
@@ -122,6 +146,10 @@ public class Nickname extends PlayerOwnedObject {
 				this.nicknameQueueId = nicknameQueueId;
 		}
 
+		private Nickname getData() {
+			return new NicknameService().get(getOfflinePlayer());
+		}
+
 		private void responseReceived() {
 			pending = false;
 			responseTimestamp = LocalDateTime.now();
@@ -129,11 +157,20 @@ public class Nickname extends PlayerOwnedObject {
 
 		public void deny() {
 			responseReceived();
+			accepted = false;
+		}
+
+		public void deny(String response) {
+			deny();
+			this.response = response;
+			// TODO tell player
 		}
 
 		public void accept() {
 			responseReceived();
 			accepted = true;
+			getData().setNickname(this);
+			// TODO tell player
 		}
 
 		public void selfCancel() {
@@ -158,11 +195,10 @@ public class Nickname extends PlayerOwnedObject {
 		}
 
 		public MessageBuilder buildQueueMessage() {
-			Nerd nerd = getNerd();
-			Nickname data = new NicknameService().get(nerd);
+			Nickname data = getData();
 			EmbedBuilder embed = new EmbedBuilder()
-					.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png")
-					.setColor(nerd.getRank().getDiscordColor());
+					.setThumbnail("https://minotar.net/helm/" + getName() + "/100.png")
+					.setColor(getNerd().getRank().getDiscordColor());
 
 			List<NicknameHistoryEntry> nicknameHistory = data.getNicknameHistory();
 			if (!nicknameHistory.isEmpty()) {
@@ -179,7 +215,7 @@ public class Nickname extends PlayerOwnedObject {
 			}
 
 			return new MessageBuilder()
-					.setContent("@everyone **" + nerd.getName() + "** has requested a new nickname: **" + nickname + "**")
+					.setContent("@.everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
 					.setEmbed(embed.build());
 		}
 	}

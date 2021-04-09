@@ -48,7 +48,7 @@ public class TwitterDiscordCommand extends Command {
 				String[] args = event.getArgs().split(" ");
 
 				if (args.length >= 1)
-					switch (args[0]) {
+					switch (args[0].toLowerCase()) {
 						case "clearData":
 							data.getPendingTweets().clear();
 							event.getMessage().addReaction(EmojiManager.getForAlias("thumbsup").getUnicode()).queue();

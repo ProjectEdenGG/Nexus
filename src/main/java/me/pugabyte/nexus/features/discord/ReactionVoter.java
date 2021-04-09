@@ -22,15 +22,18 @@ public class ReactionVoter {
 	private final Consumer<Message> onDeny;
 	private final Consumer<Message> onAccept;
 	private final Consumer<Throwable> onError;
+	private final Runnable onFinally;
 
-	@Builder
-	public ReactionVoter(String channelId, String messageId, Map<Role, Integer> requiredVotes, Consumer<Message> onDeny, Consumer<Message> onAccept, Consumer<Throwable> onError) {
+	@Builder(buildMethodName = "run")
+	public ReactionVoter(String channelId, String messageId, Map<Role, Integer> requiredVotes, Consumer<Message> onDeny, Consumer<Message> onAccept, Consumer<Throwable> onError, Runnable onFinally) {
 		this.channelId = channelId;
 		this.messageId = messageId;
 		this.requiredVotes = requiredVotes;
 		this.onDeny = onDeny;
 		this.onAccept = onAccept;
 		this.onError = onError;
+		this.onFinally = onFinally;
+		run();
 	}
 
 	public static void addButtons(Message message) {
@@ -59,6 +62,7 @@ public class ReactionVoter {
 				message.addReaction(unicode_x).queue();
 			} else if (x.getCount() > 1) {
 				onDeny.accept(message);
+				onFinally.run();
 				return;
 			}
 
@@ -90,11 +94,16 @@ public class ReactionVoter {
 							passed.set(false);
 					});
 
-					if (passed.get())
+					if (passed.get()) {
 						onAccept.accept(message);
+						onFinally.run();
+					}
 				});
 			}
-		}, onError);
+		}, error -> {
+			onError.accept(error);
+			onFinally.run();
+		});
 	}
 
 	@NotNull
