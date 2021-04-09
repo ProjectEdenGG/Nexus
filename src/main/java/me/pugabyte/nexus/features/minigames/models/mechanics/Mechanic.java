@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Time;
@@ -71,8 +72,24 @@ public abstract class Mechanic implements Listener {
 		return false;
 	}
 
-	public boolean usesLoadoutPerks(Minigamer minigamer) {
+	/**
+	 * Determines if a user is allowed to use a perk in a specified minigame.
+	 * @param perk a user's perk
+	 * @param minigamer the user
+	 * @return whether or not to allow the perk
+	 */
+	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
 		return true;
+	}
+
+	/**
+	 * This is an overloaded method, do not override. Override {@link #usesPerk(Class, Minigamer)} instead.
+	 * @param perk a user's perk
+	 * @param minigamer the user
+	 * @return whether or not to allow the perk
+	 */
+	public boolean usesPerk(Perk perk, Minigamer minigamer) {
+		return usesPerk(perk.getClass(), minigamer);
 	}
 
 	public void onInitialize(MatchInitializeEvent event) {

@@ -19,6 +19,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -79,7 +80,7 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public boolean usesLoadoutPerks(Minigamer minigamer) {
+	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
 		return isZombie(minigamer);
 	}
 

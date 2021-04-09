@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -431,8 +432,12 @@ public class Minigamer {
 			player.removePotionEffect(effect.getType());
 	}
 
-	public boolean usesLoadoutPerks() {
-		return match.getMechanic().usesLoadoutPerks(this);
+	public boolean usesPerk(Class<? extends Perk> perk) {
+		return match.getMechanic().usesPerk(perk, this);
+	}
+
+	public boolean usesPerk(Perk perk) {
+		return match.getMechanic().usesPerk(perk, this);
 	}
 
 	@Override
