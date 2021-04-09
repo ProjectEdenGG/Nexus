@@ -147,4 +147,9 @@ public abstract class PlayerOwnedObject implements Identified {
 	public @NonNull Identity identity() {
 		return Identity.identity(getUuid());
 	}
+
+	public boolean equals(Object obj) {
+		if (!this.getClass().equals(obj.getClass())) return false;
+		return getUuid().equals(((PlayerOwnedObject) obj).getUuid());
+	}
 }

@@ -25,4 +25,9 @@ public class PVP extends PlayerOwnedObject {
 	private boolean enabled = false;
 	private boolean keepInventory = true;
 
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
 }
