@@ -7,6 +7,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
@@ -61,7 +62,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 		for (int i = 1; i <= MAX_DAY; i++) {
 			final int day = i;
-			if (PlayerUtils.hasResourcePack(player)) {
+			if (ResourcePack.isEnabledFor(player)) {
 				if (dailyReward.getStreak() >= day) {
 					if (dailyReward.hasClaimed(day)) {
 						items.add(ClickableItem.empty(new ItemBuilder(Material.ARROW)

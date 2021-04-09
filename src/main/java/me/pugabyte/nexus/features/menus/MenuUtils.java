@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -183,7 +184,7 @@ public abstract class MenuUtils {
 		int curPage = page.getPage() + 1;
 
 		String[] lore = {"&f", "&7Right click to jump to a page"};
-		boolean hasResourcePack = PlayerUtils.hasResourcePack(player);
+		boolean hasResourcePack = ResourcePack.isEnabledFor(player);
 
 		int prevPage = Math.max(curPage - 1, 1);
 		int nextPage = curPage + 1;
