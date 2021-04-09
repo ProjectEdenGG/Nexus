@@ -88,6 +88,7 @@ public class MiniGolf {
 	private static final AttributeModifier fastSwing = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed",
 			10, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND);
 
+	// TODO: the longer the ball is hit normally w/ a putter/iron, without anything affecting the ball, the shorter the hit velocity becomes
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
@@ -104,7 +105,7 @@ public class MiniGolf {
 		putter = new ItemBuilder(Material.IRON_HOE)
 				.name("Putter")
 				.customModelData(901)
-				.lore("&8A specialized club", "&8for finishing holes.")
+				.lore("&7A specialized club", "&7for finishing holes.", "")
 				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 				.build();
 		meta = putter.getItemMeta();
@@ -116,7 +117,7 @@ public class MiniGolf {
 		iron = new ItemBuilder(Material.IRON_HOE)
 				.name("Iron")
 				.customModelData(902)
-				.lore("&8A well-rounded club", "&8for longer distances.")
+				.lore("&7A well-rounded club", "&7for longer distances", "")
 				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 				.build();
 		meta = iron.getItemMeta();
@@ -128,7 +129,7 @@ public class MiniGolf {
 		wedge = new ItemBuilder(Material.IRON_HOE)
 				.name("Wedge")
 				.customModelData(903)
-				.lore("&8A specialized club", "&8for tall obstacles.")
+				.lore("&7A specialized club", "&7for tall obstacles", "")
 				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 				.build();
 		meta = wedge.getItemMeta();
@@ -139,7 +140,8 @@ public class MiniGolf {
 
 		whistle = new ItemBuilder(Material.IRON_NUGGET)
 				.name("Golf Whistle")
-				.lore("&8Returns your last", "&8hit golf ball to its", "&8previous location")
+				.lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "")
+				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 				.customModelData(901)
 				.build();
 		meta = whistle.getItemMeta();
@@ -161,6 +163,7 @@ public class MiniGolf {
 	private void ballTask() {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (Snowball ball : new ArrayList<>(golfBalls)) {
+				// TODO: Do differently
 				// Drop if older than 1 minute
 				if (ball.getTicksLived() > Time.MINUTE.get()) {
 					dropBall(ball);

@@ -126,9 +126,9 @@ public class PuttListener implements Listener {
 							world.playSound(entityLoc, Sound.BLOCK_METAL_HIT, crit ? 1f : sneak ? 0.5f : 0.75f, 1.25f);
 
 						} else if (entity.isValid()) {
-							// Drop golf ball
+							// Give golf ball
 							entity.remove();
-							MiniGolf.dropBall((Snowball) entity);
+							MiniGolf.giveBall(player);
 						}
 					}
 				}
