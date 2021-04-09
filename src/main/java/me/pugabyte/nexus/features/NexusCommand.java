@@ -103,6 +103,7 @@ import org.reflections.Reflections;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -418,6 +419,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 		nerd.setFirstJoin(firstJoin);
 		new NerdService().save(nerd);
 		send(PREFIX + "Set " + Nickname.of(nerd) + "'s first join date to &e" + shortDateTimeFormat(firstJoin));
+	}
+
+	@Path("setPromotionDate <player> <date>")
+	void setPromotionDate(Nerd nerd, LocalDate promotionDate) {
+		nerd.setPromotionDate(promotionDate);
+		new NerdService().save(nerd);
+		send(PREFIX + "Set " + Nickname.of(nerd) + "'s promotion date to &e" + shortDateFormat(promotionDate));
 	}
 
 	@Async

@@ -190,16 +190,18 @@ public class SerializationUtils {
 				serialized.computeIfAbsent("amount", $ -> ((ItemStack) value).getAmount());
 		}
 
+		private static final List<String> intKeys = Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "custom-model-data",
+				"effect", "duration", "amplifier", "fish-variant", "LodestonePosX", "LodestonePosY", "LodestonePosZ");
 		// MongoDB deserializes some properties as the wrong class, do conversion
 		private static void fixItemMetaClasses(Map<String, Object> deserialized) {
-			Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "custom-model-data", "effect", "duration", "amplifier", "fish-variant").forEach(key ->
+			intKeys.forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
 						if (metaValue instanceof Number)
 							return ((Number) metaValue).intValue();
 						return metaValue;
 					}));
 
-			Arrays.asList("enchants", "stored-enchants", "display-map-color", "lodestone-pos").forEach(key ->
+			Arrays.asList("enchants", "stored-enchants", "display-map-color").forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) ->
 							toIntMap((Map<String, Object>) metaValue)));
 		}
