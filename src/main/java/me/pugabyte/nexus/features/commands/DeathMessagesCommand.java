@@ -25,7 +25,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -56,6 +55,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onDeath(PlayerDeathEvent event) {
+		String deathString = event.getDeathMessage();
 		DeathMessagesService service = new DeathMessagesService();
 		DeathMessages deathMessages = service.get(event.getEntity());
 
@@ -125,7 +125,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT);
 
 			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-				Chat.broadcastDiscord(Bukkit.getUnsafe().legacyComponentSerializer().serialize(output));
+				Chat.broadcastDiscord(deathString); // dumb fix :(
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			Chatter chatter = new ChatService().get(event.getEntity());
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
