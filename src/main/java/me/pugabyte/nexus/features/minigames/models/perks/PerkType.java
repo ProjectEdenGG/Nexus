@@ -69,7 +69,8 @@ public enum PerkType implements IHasPerkCategory {
 	SOUL_FLAME(new SoulFlameParticle()),
 	SNOWBALLS(new SnowballGadget()),
 	SPRING(new SpringGadget()),
-	DYE_BOMB(new DyeBombGadget())
+	DYE_BOMB(new DyeBombGadget()),
+	TRAFFIC_CONE(new TrafficConeHat())
 	;
 
 	private final Perk perk;

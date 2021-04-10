@@ -65,7 +65,7 @@ public abstract class LoadoutPerk extends TickablePerk {
 	}
 
 	protected boolean isColorable(ItemStack item) {
-		return MaterialTag.COLORABLE.isTagged(item.getType());
+		return false;
 	}
 
 	/**

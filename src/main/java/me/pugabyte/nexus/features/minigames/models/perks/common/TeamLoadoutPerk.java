@@ -48,7 +48,7 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 
 	@Override
 	public void tick(Minigamer minigamer) {
-		if (minigamer.getTeam() == null) {
+		if (minigamer.getTeam() == null || minigamer.getMatch().getMechanic().hideTeamLoadoutColors()) {
 			tick(minigamer.getPlayer());
 			return;
 		}
@@ -78,6 +78,11 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 		if (material == null)
 			throw new IncompleteTeamLoadout();
 		return new ItemStack(material);
+	}
+
+	@Override
+	protected boolean isColorable(ItemStack item) {
+		return true;
 	}
 
 	/**

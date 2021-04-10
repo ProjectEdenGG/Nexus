@@ -92,6 +92,13 @@ public abstract class Mechanic implements Listener {
 		return usesPerk(perk.getClass(), minigamer);
 	}
 
+	/**
+	 * Whether or not to hide the colors of team-colored perks.
+	 */
+	public boolean hideTeamLoadoutColors() {
+		return false;
+	}
+
 	public void onInitialize(MatchInitializeEvent event) {
 		Match match = event.getMatch();
 		int taskId = match.getTasks().repeat(1, Time.SECOND, () -> {

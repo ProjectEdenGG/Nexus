@@ -84,9 +84,4 @@ public abstract class BasePirateHat extends TeamLoadoutPerk {
 	public int getPrice() {
 		return 100;
 	}
-
-	@Override
-	protected boolean isColorable(ItemStack item) {
-		return true;
-	}
 }
