@@ -153,7 +153,11 @@ public class MiniGolf {
 		addKey(meta, getWhistleKey());
 		whistle.setItemMeta(meta);
 
-		golfBall = new ItemBuilder(Material.SNOWBALL).name("Golf Ball").customModelData(1).build();
+		golfBall = new ItemBuilder(Material.SNOWBALL)
+				.name("Golf Ball")
+				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+				.customModelData(1)
+				.build();
 		meta = golfBall.getItemMeta();
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, noDamage);
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, fastSwing);

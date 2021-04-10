@@ -101,11 +101,13 @@ public class ProjectileListener implements Listener {
 
 					case UP:
 					case DOWN:
-						if (loc.getBlock().getType() == Material.WATER) {
+						Material _mat = loc.getBlock().getType();
+						if (_mat == Material.WATER || _mat == Material.LAVA) {
 							// Move ball to last location
 							ball.setVelocity(new Vector(0, 0, 0));
 							ball.teleport(new Location(world, x, y, z));
 							ball.setGravity(false);
+							ball.setFireTicks(0);
 							return;
 						}
 

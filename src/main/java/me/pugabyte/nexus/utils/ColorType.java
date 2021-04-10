@@ -170,6 +170,8 @@ public enum ColorType {
 	}
 
 	public static ColorType of(DyeColor dyeColor) {
+		if (dyeColor == null)
+			return null;
 		return Arrays.stream(values()).filter(colorType -> colorType.getDyeColor().equals(dyeColor)).findFirst().orElse(null);
 	}
 
