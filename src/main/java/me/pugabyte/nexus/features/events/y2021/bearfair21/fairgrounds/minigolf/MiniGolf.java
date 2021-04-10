@@ -88,7 +88,10 @@ public class MiniGolf {
 	private static final AttributeModifier fastSwing = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed",
 			10, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND);
 
-	// TODO: the longer the ball is hit normally w/ a putter/iron, without anything affecting the ball, the shorter the hit velocity becomes
+	// TODO:
+	//  bug: the longer the ball is hit normally w/ a putter/iron, without anything affecting the ball, the shorter the hit velocity becomes
+	//  add a list of out of bounds blocks
+	//  make the pertrified oak slab a green concrete slab
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
@@ -183,6 +186,9 @@ public class MiniGolf {
 						// Check speed
 						if (vel.getY() >= 0 && vel.length() > 0.34)
 							return;
+
+						// Halt velocity
+						ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
 
 						// Spawn firework
 						Tasks.wait(Time.TICK, () -> FireworkLauncher.random(loc).power(0).detonateAfter(Time.SECOND.get()).launch());

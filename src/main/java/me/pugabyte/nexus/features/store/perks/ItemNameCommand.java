@@ -44,6 +44,9 @@ public class ItemNameCommand extends CustomCommand {
 	}
 
 	private void verify(String input) {
+		if (input == null)
+			return;
+
 		int length = StringUtils.stripColor(input).length();
 		if (length > 50)
 			error("Max length is 50, input was " + length);
