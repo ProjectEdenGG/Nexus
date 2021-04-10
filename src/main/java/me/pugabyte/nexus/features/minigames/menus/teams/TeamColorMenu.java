@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.menus.teams;
 
-import com.google.common.collect.ImmutableSet;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
@@ -14,15 +13,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 public class TeamColorMenu extends MenuUtils implements InventoryProvider {
-	public static final Set<ColorType> COLOR_TYPES = ImmutableSet.copyOf(Arrays.stream(ColorType.values()).filter(
+	public static final LinkedHashSet<ColorType> COLOR_TYPES = new LinkedHashSet<>(Arrays.stream(ColorType.values()).filter(
 			colorType -> colorType.getChatColor() != null &&
 					colorType.getDurability() != null &&
 					colorType.getChatColor() != ChatColor.BLACK)
-			.collect(Collectors.toSet()));
+			.collect(Collectors.toList()));
 
 	Arena arena;
 	Team team;
