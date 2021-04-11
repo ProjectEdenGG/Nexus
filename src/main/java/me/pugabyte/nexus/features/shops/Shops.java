@@ -221,6 +221,9 @@ public class Shops extends Feature {
 
 
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
+			// march vote reward boost
+			if (isResourceWorld)
+				price = price * 2;
 			addBuyItem(shopGroup, isResourceWorld, new ItemStack(material, quantity), price);
 		}
 
