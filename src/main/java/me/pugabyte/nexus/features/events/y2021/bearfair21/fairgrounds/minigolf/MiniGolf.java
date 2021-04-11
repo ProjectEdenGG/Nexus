@@ -468,4 +468,35 @@ public class MiniGolf {
 			return;
 		ActionBarUtils.sendActionBar(player, message, Time.SECOND.x(3));
 	}
+
+	private static String getScore(int par, int strokes) {
+		if (strokes == 1)
+			return "Hole In One";
+
+		int diff = strokes - par;
+		switch (diff) {
+			case -4:
+				return "Condor";
+			case -3:
+				return "Albatross";
+			case -2:
+				return "Eagle";
+			case -1:
+				return "Birdie";
+			case 0:
+				return "Par";
+			case 1:
+				return "Bogey";
+			case 2:
+				return "Double Bogey";
+			case 3:
+				return "Triple Bogey";
+			default:
+				if (diff < 4)
+					return "-" + diff;
+				else
+					return "+" + diff;
+
+		}
+	}
 }
