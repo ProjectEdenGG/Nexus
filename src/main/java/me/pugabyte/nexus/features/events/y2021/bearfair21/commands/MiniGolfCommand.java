@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfUser;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.PlayerUtils;
 
 @Permission("group.staff")
 public class MiniGolfCommand extends CustomCommand {
@@ -15,8 +15,29 @@ public class MiniGolfCommand extends CustomCommand {
 	}
 
 	@Path("kit")
-	void kit() {
-		PlayerUtils.giveItems(player(), MiniGolf.getKit());
+	void getKit() {
+		MiniGolf.giveKit(player());
+	}
+
+	@Path("play")
+	void play() {
+		if (MiniGolf.getUser(uuid()) != null)
+			error("already playing");
+
+		MiniGolf.getUsers().add(new MiniGolfUser(uuid()));
+		getKit();
+		send("playing minigolf");
+	}
+
+	@Path("quit")
+	void quit() {
+		MiniGolfUser user = MiniGolf.getUser(uuid());
+		if (user == null)
+			error("not playing");
+
+		MiniGolf.getUsers().remove(user);
+		MiniGolf.takeKit(player());
+		send("quit minigolf");
 	}
 
 

@@ -14,4 +14,15 @@ public class MiniGolfUser {
 	@NonNull UUID uuid;
 	Snowball snowball;
 	ChatColor color;
+	Integer currentHole;
+	int currentStrokes;
+	int totalStrokes;
+
+	public int incrementStrokes() {
+		return this.currentStrokes += 1;
+	}
+
+	public void addTotalStrokes(int strokes) {
+		this.totalStrokes += strokes;
+	}
 }

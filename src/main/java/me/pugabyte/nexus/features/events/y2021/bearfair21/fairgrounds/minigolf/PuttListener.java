@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -36,12 +38,22 @@ public class PuttListener implements Listener {
 
 	@EventHandler
 	public void onPutt(PlayerInteractEvent event) {
-		if (isInteracting(event))
+		if (!EquipmentSlot.HAND.equals(event.getHand()))
 			return;
 
-		ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item))
+		Player player = event.getPlayer();
+		if (!BearFair21.isAtBearFair(event.getPlayer().getLocation())) {
 			return;
+		}
+
+		if (isInteracting(event)) {
+			return;
+		}
+
+		ItemStack item = event.getItem();
+		if (ItemUtils.isNullOrAir(item)) {
+			return;
+		}
 
 		// quick fix
 		ItemStack clone = item.clone();
@@ -51,12 +63,12 @@ public class PuttListener implements Listener {
 			if (ItemUtils.isFuzzyMatch(clone, _item))
 				stop = false;
 		}
-		if (stop)
+		if (stop) {
 			return;
+		}
 		//
 
 		// Get info
-		Player player = event.getPlayer();
 		World world = player.getWorld();
 		Action action = event.getAction();
 		Block block = event.getClickedBlock();
@@ -71,8 +83,10 @@ public class PuttListener implements Listener {
 			// Cancel original tool
 			event.setCancelled(true);
 
-			if (user == null)
+			if (user == null) {
+				player.sendMessage("user is null");
 				return;
+			}
 
 			// Find entities
 			List<Entity> entities = player.getNearbyEntities(5.5, 5.5, 5.5);
@@ -81,19 +95,26 @@ public class PuttListener implements Listener {
 			Vector dir = eye.getDirection();
 			Vector loc = eye.toVector();
 
+			if (user.getSnowball() == null) {
+				player.sendMessage("snowball is null");
+				return;
+			}
+
 			for (Entity entity : entities) {
 				// Look for golf balls
 				PersistentDataContainer c = entity.getPersistentDataContainer();
 
-				if (entity instanceof Snowball && c.has(MiniGolf.getParKey(), PersistentDataType.INTEGER)) {
+				// Are we allowed to hit this ball?
+				if (entity instanceof Snowball) {
+					Snowball ball = (Snowball) entity;
+					if (!user.getSnowball().equals(ball))
+						return;
+
 					// Is golf ball in player's view?
-					Location entityLoc = entity.getLocation();
+					Location entityLoc = ball.getLocation();
 					Vector vec = entityLoc.toVector().subtract(loc);
 
 					if (dir.angle(vec) < 0.15f) {
-						// Are we allowed to hit this ball?
-						if (user.getSnowball() == null || !user.getSnowball().equals(entity))
-							continue;
 
 						// Are we hitting or picking up the golf ball?
 						if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
@@ -118,12 +139,10 @@ public class PuttListener implements Listener {
 
 							DecimalFormat df = new DecimalFormat("#0.00");
 							ActionBarUtils.sendActionBar(player, "&6Power: " + color + df.format(power), Time.SECOND.x(3));
-							entity.setVelocity(dir);
+							ball.setVelocity(dir);
 
 							// Update stroke
-							int stroke = c.get(MiniGolf.getParKey(), PersistentDataType.INTEGER) + 1;
-							c.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, stroke);
-							entity.setCustomName("Stroke " + stroke);
+							ball.setCustomName("Stroke " + user.incrementStrokes());
 
 							// Update last pos
 							c.set(MiniGolf.getXKey(), PersistentDataType.DOUBLE, entityLoc.getX());
@@ -132,13 +151,13 @@ public class PuttListener implements Listener {
 
 							// Add to user
 							user.setSnowball((Snowball) entity);
-							entity.setTicksLived(1);
+							ball.setTicksLived(1);
 
 							world.playSound(entityLoc, Sound.BLOCK_METAL_HIT, 0.75f, 1.25f);
 
-						} else if (entity.isValid()) {
+						} else if (ball.isValid()) {
 							// Give golf ball
-							entity.remove();
+							ball.remove();
 							MiniGolf.giveBall(player);
 							user.setSnowball(null);
 						}
@@ -167,6 +186,16 @@ public class PuttListener implements Listener {
 					return;
 				}
 
+				// Is on a valid hole
+				Integer hole = MiniGolf.getHole(block.getLocation());
+				if (hole == null) {
+					player.sendMessage("That is not a valid hole");
+					return;
+				}
+
+				user.setCurrentHole(hole);
+				user.setCurrentStrokes(0);
+
 				// Get spawn location
 				Location loc;
 				if (MiniGolf.isBottomSlab(block))
@@ -183,9 +212,8 @@ public class PuttListener implements Listener {
 				c.set(MiniGolf.getXKey(), PersistentDataType.DOUBLE, loc.getX());
 				c.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, loc.getY());
 				c.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, loc.getZ());
-				c.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, 0);
 
-				ball.setCustomName("Stroke 0");
+				ball.setCustomName("Stroke " + user.getCurrentStrokes());
 				ball.setCustomNameVisible(true);
 
 				user.setSnowball(ball);
@@ -202,13 +230,16 @@ public class PuttListener implements Listener {
 			// Return ball
 			if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
 				// Get last player ball
-				if (user == null)
+				if (user == null) {
+					player.sendMessage("user is null");
 					return;
+				}
 
 				Snowball ball = user.getSnowball();
 				if (ball == null || !ball.isValid()) {
 					// Clean up
 					MiniGolf.getUsers().remove(user);
+					player.sendMessage("snowball is null");
 					return;
 				}
 

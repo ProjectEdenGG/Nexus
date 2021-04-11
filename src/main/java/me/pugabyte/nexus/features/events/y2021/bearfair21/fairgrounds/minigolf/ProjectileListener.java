@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.BlockUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,13 +25,11 @@ public class ProjectileListener implements Listener {
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event) {
 		Entity entity = event.getEntity();
-		if (entity instanceof Snowball) {
-			// Check if golf ball
-			PersistentDataContainer c = entity.getPersistentDataContainer();
-			if (!c.has(MiniGolf.getParKey(), PersistentDataType.INTEGER)) {
-				return;
-			}
+		if (!BearFair21.isAtBearFair(entity.getLocation()))
+			return;
 
+		// Check if golf ball
+		if (entity instanceof Snowball) {
 			// Get info
 			Location loc = entity.getLocation();
 			Vector vel = entity.getVelocity();
@@ -41,30 +40,34 @@ public class ProjectileListener implements Listener {
 			ball.setGravity(entity.hasGravity());
 
 			// Update last player ball
-			for (MiniGolfUser user : MiniGolf.getUsers()) {
-				if (user.getSnowball() == null)
+			MiniGolfUser user = null;
+			for (MiniGolfUser _user : MiniGolf.getUsers()) {
+				if (_user.getSnowball() == null)
 					continue;
 
-				if (user.getSnowball().equals(entity)) {
-					user.setSnowball(ball);
+				if (_user.getSnowball().equals(entity)) {
+					_user.setSnowball(ball);
+					user = _user;
 					break;
 				}
 			}
 
+			if (user == null)
+				return;
+
 			// Stroke
-			int stroke = c.get(MiniGolf.getParKey(), PersistentDataType.INTEGER);
-			PersistentDataContainer b = ball.getPersistentDataContainer();
-			b.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, stroke);
-			ball.setCustomName("Stroke " + stroke);
+			ball.setCustomName("Stroke " + user.getCurrentStrokes());
 			ball.setCustomNameVisible(true);
 
+			PersistentDataContainer old = entity.getPersistentDataContainer();
+			PersistentDataContainer current = ball.getPersistentDataContainer();
 			// Last pos
-			double x = c.get(MiniGolf.getXKey(), PersistentDataType.DOUBLE);
-			double y = c.get(MiniGolf.getYKey(), PersistentDataType.DOUBLE);
-			double z = c.get(MiniGolf.getZKey(), PersistentDataType.DOUBLE);
-			b.set(MiniGolf.getXKey(), PersistentDataType.DOUBLE, x);
-			b.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, y);
-			b.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, z);
+			double x = old.get(MiniGolf.getXKey(), PersistentDataType.DOUBLE);
+			double y = old.get(MiniGolf.getYKey(), PersistentDataType.DOUBLE);
+			double z = old.get(MiniGolf.getZKey(), PersistentDataType.DOUBLE);
+			current.set(MiniGolf.getXKey(), PersistentDataType.DOUBLE, x);
+			current.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, y);
+			current.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, z);
 
 			// Golf ball hit entity
 			if (event.getHitBlockFace() == null) {
@@ -98,21 +101,25 @@ public class ProjectileListener implements Listener {
 
 					case UP:
 					case DOWN:
-						Material _mat = loc.getBlock().getType();
-						if (mat == Material.CRIMSON_HYPHAE || _mat == Material.WATER || _mat == Material.LAVA) {
-							// Ball hit out of bounds
-							MiniGolf.respawnBall(ball);
-							return;
-						}
+						if (mat == Material.SOUL_SOIL) {
+							vel.setY(0);
+						} else {
+							Material _mat = loc.getBlock().getType();
+							if (mat == Material.CRIMSON_HYPHAE || _mat == Material.WATER || _mat == Material.LAVA) {
+								// Ball hit out of bounds
+								MiniGolf.respawnBall(ball);
+								return;
+							}
 
-						if (vel.getY() >= 0 && vel.length() <= 0.01 && !MiniGolf.getInBounds().contains(mat)) {
-							// Ball stopped in out of bounds
-							MiniGolf.respawnBall(ball);
-							return;
-						}
+							if (vel.getY() >= 0 && vel.length() <= 0.01 && !MiniGolf.getInBounds().contains(mat)) {
+								// Ball stopped in out of bounds
+								MiniGolf.respawnBall(ball);
+								return;
+							}
 
-						vel.setY(-vel.getY());
-						vel.multiply(0.7);
+							vel.setY(-vel.getY());
+							vel.multiply(0.7);
+						}
 
 						if (vel.getY() < 0.1) {
 							vel.setY(0);

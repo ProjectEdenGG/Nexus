@@ -6,6 +6,7 @@ import me.pugabyte.nexus.utils.Time.Timer;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 public class BearFair21 {
@@ -32,5 +33,9 @@ public class BearFair21 {
 
 	public static ProtectedRegion getProtectedRegion() {
 		return getWGUtils().getProtectedRegion(region);
+	}
+
+	public static boolean isAtBearFair(Location location) {
+		return location.getWorld().equals(getWorld());
 	}
 }

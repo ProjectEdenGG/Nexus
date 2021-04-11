@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -50,12 +52,12 @@ public class MiniGolf {
 	@Getter private static List<ItemStack> kit = new ArrayList<>();
 	@Getter private static List<ItemStack> clubs = new ArrayList<>();
 	// Data
-//	@Getter private static final List<Snowball> golfBalls = new ArrayList<>();
 	@Getter private static final Set<MiniGolfUser> users = new HashSet<>();
 	// Constants
 	@Getter private static final double floorOffset = 0.05;
 	@Getter private static final double maxVelLen = 2;
 	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE, Material.PETRIFIED_OAK_SLAB);
+	@Getter private static final String regionHole = "bearfair21_minigolf_hole_.*";
 	// Attributes
 	@Getter private static final AttributeModifier noDamage = new AttributeModifier(UUID.randomUUID(), "generic.attackDamage", -10, Operation.ADD_NUMBER, EquipmentSlot.HAND);
 	@Getter private static final AttributeModifier fastSwing = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed", 10, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND);
@@ -65,21 +67,20 @@ public class MiniGolf {
 	@Getter private static final NamespacedKey putterKey = new NamespacedKey(instance, "putter");
 	@Getter private static final NamespacedKey wedgeKey = new NamespacedKey(instance, "wedge");
 	@Getter private static final NamespacedKey whistleKey = new NamespacedKey(instance, "return_whistle");
-	@Getter private static final NamespacedKey parKey = new NamespacedKey(instance, "par");
 	@Getter private static final NamespacedKey xKey = new NamespacedKey(instance, "x");
 	@Getter private static final NamespacedKey yKey = new NamespacedKey(instance, "y");
 	@Getter private static final NamespacedKey zKey = new NamespacedKey(instance, "z");
 	// @formatter:on
 
 	// TODO:
-	//  add: scorecard
+	//  add: scorecard book item
 
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
 
 		ballTask();
-		playerPowerTask();
+		powerTask();
 	}
 
 	static {
@@ -145,12 +146,21 @@ public class MiniGolf {
 			if (snowball != null) {
 				snowball.remove();
 				user.setSnowball(null);
-				giveBall(user.getUuid());
+				giveBall(user);
 			}
 		}
 	}
 
-	private void playerPowerTask() {
+	public static void giveKit(Player player) {
+		PlayerUtils.giveItems(player, kit);
+	}
+
+	public static void takeKit(Player player) {
+		for (ItemStack item : kit)
+			player.getInventory().remove(item);
+	}
+
+	private void powerTask() {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (MiniGolfUser user : new HashSet<>(users)) {
 				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
@@ -210,15 +220,6 @@ public class MiniGolf {
 					continue;
 				}
 
-				// TODO: Do differently
-				// Drop if older than 1 minute
-				if (ball.getTicksLived() > Time.MINUTE.get()) {
-					dropBall(ball);
-					ball.remove();
-					user.setSnowball(null);
-					continue;
-				}
-
 				// Check block underneath
 				Location loc = ball.getLocation();
 				Block block = loc.subtract(0, 0.1, 0).getBlock();
@@ -226,13 +227,17 @@ public class MiniGolf {
 				// Act upon block type
 				Vector vel = ball.getVelocity();
 				Material type = block.getType();
+				Integer ballHole = getHole(ball.getLocation());
 				switch (type) {
 					case CAULDRON:
 						// Check speed
 						if (vel.getY() >= 0 && vel.length() > 0.34)
 							continue;
 
-						Player player = getPlayer(ball);
+						if (ballHole == null || !ballHole.equals(user.getCurrentHole())) {
+							respawnBall(ball);
+							continue;
+						}
 
 						// Halt velocity
 						ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
@@ -249,8 +254,12 @@ public class MiniGolf {
 								.launch());
 
 						// Send message
-						sendActionBar(player, "&6Stroke: " + getStroke(ball));
-						giveBall(player);
+						sendActionBar(user, "&6Stroke: " + user.getCurrentStrokes());
+						giveBall(user);
+
+						user.addTotalStrokes(user.getCurrentStrokes());
+						user.setCurrentHole(null);
+						user.setCurrentStrokes(0);
 						break;
 					case AIR:
 					case WATER:
@@ -360,9 +369,8 @@ public class MiniGolf {
 						break;
 					default:
 						// Check if floating above slabs
-						if (isBottomSlab(block) && loc.getY() > block.getY() + 0.5) {
+						if (isBottomSlab(block) && loc.getY() > block.getY() + 0.5)
 							ball.setGravity(true);
-						}
 
 						// Stop & respawn ball if slow enough
 						if (vel.getY() >= 0 && vel.length() <= 0.01) {
@@ -370,9 +378,13 @@ public class MiniGolf {
 							ball.teleport(ball.getLocation());
 							ball.setGravity(false);
 
-							if (!inBounds.contains(type)) {
+							if (!inBounds.contains(type))
 								MiniGolf.respawnBall(ball);
+							else {
+								if (!user.getCurrentHole().equals(ballHole))
+									MiniGolf.respawnBall(ball);
 							}
+
 							break;
 						}
 
@@ -385,16 +397,22 @@ public class MiniGolf {
 		});
 	}
 
+	public static Integer getHole(Location location) {
+		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLikeAt(regionHole, location);
+		ProtectedRegion region = regions.stream().findFirst().orElse(null);
+		if (region == null)
+			return null;
+
+		String[] split = region.getId().split("_");
+		return Integer.parseInt(split[3]);
+	}
+
 	public static boolean isBottomSlab(Block block) {
 		return Tag.SLABS.isTagged(block.getType()) && ((Slab) block.getBlockData()).getType() == Slab.Type.BOTTOM;
 	}
 
-	public static void dropBall(Snowball ball) {
-		ball.getWorld().dropItem(ball.getLocation(), golfBall);
-	}
-
-	public static void giveBall(UUID uuid) {
-		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
+	public static void giveBall(MiniGolfUser user) {
+		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
 		if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
 			giveBall(offlinePlayer.getPlayer());
 		}
@@ -414,12 +432,8 @@ public class MiniGolf {
 		return meta.getPersistentDataContainer().has(key, PersistentDataType.BYTE);
 	}
 
-	public static int getStroke(Snowball ball) {
-		return ball.getPersistentDataContainer().get(parKey, PersistentDataType.INTEGER);
-	}
-
 	public static void respawnBall(Snowball ball) {
-		Player player = getPlayer(ball);
+		MiniGolfUser user = getUser(ball);
 		PersistentDataContainer c = ball.getPersistentDataContainer();
 
 		double x = c.get(MiniGolf.getXKey(), PersistentDataType.DOUBLE);
@@ -432,10 +446,10 @@ public class MiniGolf {
 		ball.setFireTicks(0);
 		ball.setTicksLived(1);
 
-		sendActionBar(player, "&cOut of bounds!");
+		sendActionBar(user, "&cOut of bounds!");
 	}
 
-	public static Player getPlayer(Snowball ball) {
+	public static MiniGolfUser getUser(Snowball ball) {
 		for (MiniGolfUser user : new HashSet<>(users)) {
 			if (user == null) {
 				users.remove(null);
@@ -448,7 +462,7 @@ public class MiniGolf {
 			if (user.getSnowball().equals(ball)) {
 				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
 				if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
-					return offlinePlayer.getPlayer();
+					return user;
 				}
 			}
 		}
@@ -463,10 +477,13 @@ public class MiniGolf {
 		return null;
 	}
 
-	public static void sendActionBar(Player player, String message) {
-		if (player == null)
+
+	public static void sendActionBar(MiniGolfUser user, String message) {
+		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
+		if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
 			return;
-		ActionBarUtils.sendActionBar(player, message, Time.SECOND.x(3));
+
+		ActionBarUtils.sendActionBar(offlinePlayer.getPlayer(), message, Time.SECOND.x(3));
 	}
 
 	private static String getScore(int par, int strokes) {
