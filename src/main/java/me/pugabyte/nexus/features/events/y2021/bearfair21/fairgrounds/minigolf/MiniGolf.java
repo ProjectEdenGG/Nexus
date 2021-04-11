@@ -142,9 +142,11 @@ public class MiniGolf {
 	public static void shutdown() {
 		for (MiniGolfUser user : MiniGolf.getUsers()) {
 			Snowball snowball = user.getSnowball();
-			snowball.remove();
-			user.setSnowball(null);
-			giveBall(user.getUuid());
+			if (snowball != null) {
+				snowball.remove();
+				user.setSnowball(null);
+				giveBall(user.getUuid());
+			}
 		}
 	}
 
