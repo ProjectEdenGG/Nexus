@@ -10,12 +10,7 @@ import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
 import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.utils.EnumUtils;
-import me.pugabyte.nexus.utils.Env;
-import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -132,7 +127,19 @@ public class Crates extends Feature implements Listener {
 			throw new CrateOpeningException("Server reboot is queued, cannot open crates");
 
 		CrateType keyType = CrateType.fromKey(event.getItem());
-		if (locationType != keyType && locationType != CrateType.ALL)
+		// temp fix for multiple vote crates
+		if ((locationType == CrateType.VOTE2 || locationType == CrateType.VOTE3) && keyType == CrateType.VOTE) {
+			try {
+				if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
+					keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
+				else
+					keyType.getCrateClass().openCrate(location, event.getPlayer());
+			} catch (CrateOpeningException ex) {
+				if (ex.getMessage() != null)
+					PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
+				keyType.getCrateClass().reset();
+			}
+		} else if (locationType != keyType && locationType != CrateType.ALL)
 			try {
 				if (Crates.getLootByType(locationType).stream().filter(CrateLoot::isActive).toArray().length == 0)
 					throw new CrateOpeningException("&3Coming soon...");
