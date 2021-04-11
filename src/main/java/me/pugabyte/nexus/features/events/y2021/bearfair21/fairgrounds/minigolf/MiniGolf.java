@@ -6,6 +6,7 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
@@ -19,6 +20,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
@@ -42,8 +45,6 @@ import java.util.UUID;
 public class MiniGolf {
 	@Getter
 	private static ItemStack putter;
-	//	@Getter
-//	private static ItemStack iron;
 	@Getter
 	private static ItemStack wedge;
 	@Getter
@@ -65,8 +66,6 @@ public class MiniGolf {
 	private static final NamespacedKey ballKey = new NamespacedKey(instance, "golf_ball");
 	@Getter
 	private static final NamespacedKey putterKey = new NamespacedKey(instance, "putter");
-	//	@Getter
-//	private static final NamespacedKey ironKey = new NamespacedKey(instance, "iron");
 	@Getter
 	private static final NamespacedKey wedgeKey = new NamespacedKey(instance, "wedge");
 	@Getter
@@ -99,7 +98,6 @@ public class MiniGolf {
 			Material.PETRIFIED_OAK_SLAB);
 
 	// TODO:
-	//  bug: the longer the ball is hit normally w/ a putter/iron, without anything affecting the ball, the shorter the hit velocity becomes
 	//  add: scorecard
 
 	public MiniGolf() {
@@ -342,6 +340,25 @@ public class MiniGolf {
 						if (vel.length() < maxVelLen) {
 							// Push ball
 							ball.setVelocity(vel.multiply(9.3).add(newVel).multiply(0.1));
+						}
+
+						break;
+					case DISPENSER:
+						Material below = block.getRelative(BlockFace.DOWN).getType();
+						if (MaterialTag.SIGNS.isTagged(below)) {
+							Sign sign = (Sign) block.getState();
+							String line4 = sign.getLine(4);
+							String[] split = line4.split(",");
+							if (split.length == 3) {
+								try {
+									Location newLoc = new Location(ball.getWorld(),
+											Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+									ball.setVelocity(new Vector(0, 0, 0));
+									ball.teleport(newLoc);
+									ball.setGravity(true);
+								} catch (Exception ignored) {
+								}
+							}
 						}
 
 						break;

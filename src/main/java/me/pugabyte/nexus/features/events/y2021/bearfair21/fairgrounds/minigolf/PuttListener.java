@@ -66,7 +66,6 @@ public class PuttListener implements Listener {
 
 		// Get type of golf club
 		boolean putter = MiniGolf.hasKey(meta, MiniGolf.getPutterKey());
-//		boolean iron = MiniGolf.hasKey(meta, MiniGolf.getIronKey());
 		boolean wedge = MiniGolf.hasKey(meta, MiniGolf.getWedgeKey());
 
 		if (putter || wedge) {
