@@ -269,12 +269,12 @@ public class PixelDrop extends TeamlessMechanic {
 
 		Tasks.sync(() -> {
 			String message = event.getMessage();
-			if (matchData.getGuessed().contains(minigamer)) {
+			if (matchData.getGuessed().contains(minigamer) && !matchData.isRoundOver()) {
 				matchData.getGuessed().forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
 				return;
 			}
 
-			if (!message.equalsIgnoreCase(matchData.getRoundWord())) {
+			if (!message.equalsIgnoreCase(matchData.getRoundWord()) || matchData.isRoundOver()) {
 				match.getMinigamers().forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
 				return;
 			}
