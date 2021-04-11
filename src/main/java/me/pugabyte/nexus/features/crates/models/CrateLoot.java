@@ -13,7 +13,11 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -48,10 +52,14 @@ public class CrateLoot implements ConfigurationSerializable {
 		this.displayItem = itemStack;
 	}
 
+	public List<ItemStack> getItems() {
+		return items.stream().map(ItemStack::clone).collect(Collectors.toList());
+	}
+
 	public ItemStack getDisplayItem() {
 		if (!ItemUtils.isNullOrAir(displayItem)) return displayItem;
 		if (items.size() == 0) return null;
-		return items.get(0);
+		return items.get(0).clone();
 	}
 
 	public ItemStack getDisplayItemWithNull() {
