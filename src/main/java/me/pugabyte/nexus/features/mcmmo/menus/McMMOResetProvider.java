@@ -22,6 +22,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -72,7 +73,11 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A godly rod that increases your catch") {
 				@Override
 				void onClick(Player player) {
-					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.FISHING_ROD.name() + " lure:4 luck:5 unbreaking:3 mending:1");
+					PlayerUtils.giveItem(player, new ItemBuilder(Material.FISHING_ROD)
+							.enchant(Enchantment.LURE, 4)
+							.enchant(Enchantment.LUCK, 5)
+							.enchant(Enchantment.DURABILITY, 3)
+							.enchant(Enchantment.MENDING).build());
 				}
 		},
 		ACROBATICS(3, 3, Material.DIAMOND_BOOTS,
