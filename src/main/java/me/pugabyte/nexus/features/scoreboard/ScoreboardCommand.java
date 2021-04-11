@@ -79,7 +79,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		JsonBuilder json = new JsonBuilder();
 		for (ScoreboardLine line : ScoreboardLine.values()) {
 			if (!line.isOptional()) continue;
-			if (!line.hasPermission(player())) continue;
+			if (!line.hasPermission(player()) && !user.getLines().containsKey(line)) continue;
 			json.next((user.getLines().containsKey(line) && user.getLines().get(line)) ? "&a✔" : "&c✗")
 					.command("/scoreboard edit toggle " + line.name().toLowerCase())
 					.hover("&eClick to toggle")
