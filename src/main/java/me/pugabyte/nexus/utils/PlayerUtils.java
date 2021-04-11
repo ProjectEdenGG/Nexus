@@ -273,7 +273,7 @@ public class PlayerUtils {
 				itemList.add(item);
 		}
 
-		ItemStack[] contents = player.getInventory().getContents();
+		ItemStack[] contents = Arrays.stream(player.getInventory().getContents()).map(itemStack -> itemStack == null ? null : itemStack.clone()).toArray(ItemStack[]::new);
 		List<ItemStack> excess = giveItemsGetExcess(player, itemList);
 		player.getInventory().setContents(contents);
 		return excess.isEmpty();
