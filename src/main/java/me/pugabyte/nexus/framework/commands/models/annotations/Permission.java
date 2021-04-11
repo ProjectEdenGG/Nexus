@@ -22,12 +22,13 @@ public @interface Permission {
 		group.staff         - staff + builders
 		group.nonstaff      - guest - veteran
 
-	Rank Exclusive:
-		rank.<rankname>
+	Ladder: test if someone has a rank or greater, according to the below hierarchy
+	Rank Exclusive: test if someone has specifically the rank <rankname> with rank.<rankname>
 
 	Ex:
 		ladder.trusted = trusted and above
 		ladder.builder = builder, architect, operator, admin, owner
+		rank.trusted = only trusted, not elite or above
 	Rank Ladder:
            ladder.owner
            ladder.admin
@@ -36,6 +37,7 @@ public @interface Permission {
   ladder.moderator   ladder.architect
             |        ladder.builder
              \        /
+           ladder.noble
            ladder.veteran
            ladder.elite
            ladder.trusted
