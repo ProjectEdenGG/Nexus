@@ -15,9 +15,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import java.util.Map.Entry;
-import java.util.UUID;
-
 public class ProjectileListener implements Listener {
 
 	public ProjectileListener() {
@@ -42,23 +39,23 @@ public class ProjectileListener implements Listener {
 			// Spawn new golf ball
 			Snowball ball = (Snowball) world.spawnEntity(loc, EntityType.SNOWBALL);
 			ball.setGravity(entity.hasGravity());
-			MiniGolf.getGolfBalls().add(ball);
 
 			// Update last player ball
-			for (Entry<UUID, Snowball> entry : MiniGolf.getLastPlayerBall().entrySet()) {
-				// If same ball
-				if (entry.getValue().equals(entity)) {
-					// Update to new ball
-					entry.setValue(ball);
+			for (MiniGolfUser user : MiniGolf.getUsers()) {
+				if (user.getSnowball() == null)
+					continue;
+
+				if (user.getSnowball().equals(entity)) {
+					user.setSnowball(ball);
 					break;
 				}
 			}
 
-			// Par
-			int par = c.get(MiniGolf.getParKey(), PersistentDataType.INTEGER);
+			// Stroke
+			int stroke = c.get(MiniGolf.getParKey(), PersistentDataType.INTEGER);
 			PersistentDataContainer b = ball.getPersistentDataContainer();
-			b.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, par);
-			ball.setCustomName("Par " + par);
+			b.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, stroke);
+			ball.setCustomName("Stroke " + stroke);
 			ball.setCustomNameVisible(true);
 
 			// Last pos

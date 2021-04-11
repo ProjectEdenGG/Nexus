@@ -27,8 +27,6 @@ import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 public class PuttListener implements Listener {
 
@@ -63,6 +61,7 @@ public class PuttListener implements Listener {
 		Action action = event.getAction();
 		Block block = event.getClickedBlock();
 		ItemMeta meta = item.getItemMeta();
+		MiniGolfUser user = MiniGolf.getUser(player.getUniqueId());
 
 		// Get type of golf club
 		boolean putter = MiniGolf.hasKey(meta, MiniGolf.getPutterKey());
@@ -71,6 +70,9 @@ public class PuttListener implements Listener {
 		if (putter || wedge) {
 			// Cancel original tool
 			event.setCancelled(true);
+
+			if (user == null)
+				return;
 
 			// Find entities
 			List<Entity> entities = player.getNearbyEntities(5.5, 5.5, 5.5);
@@ -90,15 +92,7 @@ public class PuttListener implements Listener {
 
 					if (dir.angle(vec) < 0.15f) {
 						// Are we allowed to hit this ball?
-						boolean skip = false;
-						for (Entry<UUID, Snowball> entry : MiniGolf.getLastPlayerBall().entrySet()) {
-							// Find the ball and check the owner
-							if (entry.getValue().equals(entity) && !entry.getKey().equals(player.getUniqueId())) {
-								skip = true;
-								break;
-							}
-						}
-						if (skip)
+						if (user.getSnowball() == null || !user.getSnowball().equals(entity))
 							continue;
 
 						// Are we hitting or picking up the golf ball?
@@ -126,18 +120,18 @@ public class PuttListener implements Listener {
 							ActionBarUtils.sendActionBar(player, "&6Power: " + color + df.format(power), Time.SECOND.x(3));
 							entity.setVelocity(dir);
 
-							// Update par
-							int par = c.get(MiniGolf.getParKey(), PersistentDataType.INTEGER) + 1;
-							c.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, par);
-							entity.setCustomName("Par " + par);
+							// Update stroke
+							int stroke = c.get(MiniGolf.getParKey(), PersistentDataType.INTEGER) + 1;
+							c.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, stroke);
+							entity.setCustomName("Stroke " + stroke);
 
 							// Update last pos
 							c.set(MiniGolf.getXKey(), PersistentDataType.DOUBLE, entityLoc.getX());
 							c.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, entityLoc.getY());
 							c.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, entityLoc.getZ());
 
-							// Add to map
-							MiniGolf.getGolfBalls().add((Snowball) entity);
+							// Add to user
+							user.setSnowball((Snowball) entity);
 							entity.setTicksLived(1);
 
 							world.playSound(entityLoc, Sound.BLOCK_METAL_HIT, 0.75f, 1.25f);
@@ -146,6 +140,7 @@ public class PuttListener implements Listener {
 							// Give golf ball
 							entity.remove();
 							MiniGolf.giveBall(player);
+							user.setSnowball(null);
 						}
 					}
 				}
@@ -157,9 +152,20 @@ public class PuttListener implements Listener {
 			// Is player placing golf ball?
 			if (action == Action.RIGHT_CLICK_BLOCK) {
 
-				// Is placing on start position
-				if (BlockUtils.isNullOrAir(block) || block.getType() != Material.GREEN_WOOL)
+				if (user == null)
+					user = new MiniGolfUser(player.getUniqueId());
+
+				// Has already placed a ball
+				if (user.getSnowball() != null) {
+					player.sendMessage("You already have a ball placed");
 					return;
+				}
+
+				// Is placing on start position
+				if (BlockUtils.isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
+					player.sendMessage("You can only place golf balls on green wool");
+					return;
+				}
 
 				// Get spawn location
 				Location loc;
@@ -179,27 +185,30 @@ public class PuttListener implements Listener {
 				c.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, loc.getZ());
 				c.set(MiniGolf.getParKey(), PersistentDataType.INTEGER, 0);
 
-				ball.setCustomName("Par 0");
+				ball.setCustomName("Stroke 0");
 				ball.setCustomNameVisible(true);
 
-				MiniGolf.getGolfBalls().add(ball);
+				user.setSnowball(ball);
 
 				// Remove golf ball from inventory
 				ItemStack itemInHand = event.getItem();
 				itemInHand.setAmount(itemInHand.getAmount() - 1);
 
-				// Add last player ball
-				MiniGolf.getLastPlayerBall().put(player.getUniqueId(), ball);
+				// Add user
+				MiniGolf.getUsers().add(user);
 			}
 		} else if (MiniGolf.hasKey(meta, MiniGolf.getWhistleKey())) {
 			event.setCancelled(true);
 			// Return ball
 			if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
 				// Get last player ball
-				Snowball ball = MiniGolf.getLastPlayerBall().get(player.getUniqueId());
+				if (user == null)
+					return;
+
+				Snowball ball = user.getSnowball();
 				if (ball == null || !ball.isValid()) {
 					// Clean up
-					MiniGolf.getLastPlayerBall().remove(player.getUniqueId());
+					MiniGolf.getUsers().remove(user);
 					return;
 				}
 

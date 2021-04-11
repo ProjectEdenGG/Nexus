@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events;
 
 import me.pugabyte.nexus.features.events.aeveonproject.AeveonProject;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.Env;
@@ -21,6 +22,7 @@ public class Events extends Feature {
 
 	@Override
 	public void onStop() {
+		MiniGolf.shutdown();
 	}
 
 }
