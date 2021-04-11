@@ -127,19 +127,7 @@ public class Crates extends Feature implements Listener {
 			throw new CrateOpeningException("Server reboot is queued, cannot open crates");
 
 		CrateType keyType = CrateType.fromKey(event.getItem());
-		// temp fix for multiple vote crates
-		if ((locationType == CrateType.VOTE2 || locationType == CrateType.VOTE3) && keyType == CrateType.VOTE) {
-			try {
-				if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
-					keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
-				else
-					keyType.getCrateClass().openCrate(location, event.getPlayer());
-			} catch (CrateOpeningException ex) {
-				if (ex.getMessage() != null)
-					PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
-				keyType.getCrateClass().reset();
-			}
-		} else if (locationType != keyType && locationType != CrateType.ALL)
+		if (locationType != keyType && locationType != CrateType.ALL)
 			try {
 				if (Crates.getLootByType(locationType).stream().filter(CrateLoot::isActive).toArray().length == 0)
 					throw new CrateOpeningException("&3Coming soon...");

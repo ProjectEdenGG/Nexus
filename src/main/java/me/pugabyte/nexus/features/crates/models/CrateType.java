@@ -20,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 public enum CrateType {
 	ALL(null, null),
 	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8.00, 15.00, 11.00, .00F, .00F)),
-	VOTE2(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 10.00, 14.00, 11.00, .00F, .00F)),
-	VOTE3(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 6.00, 15.00, 11.00, .00F, .00F)),
 	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11.00, 15.00, 8.00, .00F, .00F)),
 	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15.00, 15.00, -8.00, .00F, .00F)),
 	FEB_VOTE_REWARD(new FebVoteRewardCrate(), new Location(Bukkit.getWorld("survival"), -12.00, 15.00, 9.00, .00F, .00F)),
