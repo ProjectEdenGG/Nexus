@@ -4,7 +4,9 @@ import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
@@ -59,5 +61,13 @@ public class AdventureUtils {
 
 	public static Identity identityOf(OfflinePlayer player) {
 		return identityOf(player.getUniqueId());
+	}
+
+	public static Component getPrefix(String prefix) {
+		return Component.text("").color(NamedTextColor.DARK_AQUA)
+				.append(Component.text("[").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD))
+				.append(Component.text(prefix).color(NamedTextColor.YELLOW))
+				.append(Component.text("]").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD))
+				.append(Component.text(" ").color(NamedTextColor.DARK_AQUA));
 	}
 }

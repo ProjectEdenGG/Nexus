@@ -96,6 +96,11 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
+	public boolean hideTeamLoadoutColors() {
+		return true;
+	}
+
+	@Override
 	public void onStart(MatchStartEvent event) {
 		super.onStart(event);
 

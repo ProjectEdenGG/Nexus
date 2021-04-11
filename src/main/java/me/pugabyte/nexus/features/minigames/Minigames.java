@@ -21,6 +21,7 @@ import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -29,6 +30,7 @@ import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -51,6 +53,7 @@ import java.util.stream.Collectors;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
+	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
 	public static final int PERK_TICK_DELAY = 4;
 	@Getter
 	public static final MinigamesMenus menus = new MinigamesMenus();
@@ -121,6 +124,10 @@ public class Minigames extends Feature {
 		getPlayers().forEach(player -> PlayerUtils.send(player, Minigames.PREFIX + announcement));
 
 		// TODO: If arena is public, announce to discord and whole server
+	}
+
+	public static void broadcast(Component component) {
+		getPlayers().forEach(player -> player.sendMessage(Minigames.COMPONENT_PREFIX.append(component)));
 	}
 
 	// Registration

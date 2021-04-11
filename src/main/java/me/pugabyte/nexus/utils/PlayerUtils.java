@@ -442,8 +442,10 @@ public class PlayerUtils {
 	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> items) {
 		List<ItemStack> excess = new ArrayList<>();
 		for (ItemStack item : items)
-			if (!isNullOrAir(item))
+			if (!isNullOrAir(item)) {
+				Nexus.debug("Giving " + item.getType().name() + " x" + item.getAmount() + " to " + player.getName());
 				excess.addAll(player.getInventory().addItem(item).values());
+			}
 
 		return excess;
 	}

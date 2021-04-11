@@ -31,6 +31,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.models.warps.WarpService;
@@ -479,16 +480,41 @@ public class MinigamesCommand extends CustomCommand {
 		new PerkMenu().open(player());
 	}
 
-	@Path("setTokens <amount>")
-	@Permission("group.admin")
-	@HideFromHelp
-	@TabCompleteIgnore
-	void setTokens(int amount) {
+	@Path("tokens [user]")
+	@Permission("group.seniorstaff")
+	void getTokens(@Arg("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
-		PerkOwner perkOwner = service.get(player());
+		PerkOwner perkOwner = service.get(nerd);
+		String username = nerd.getUuid().equals(player().getUniqueId()) ? "You have" : (perkOwner.getNickname() + " has");
+		send(PREFIX + username + " " + perkOwner.getTokens() + plural(" token", perkOwner.getTokens()));
+	}
+
+	@Path("tokens set <amount> [user]")
+	@Permission("group.seniorstaff")
+	void setTokens(int amount, @Arg("self") Nerd nerd) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner perkOwner = service.get(nerd);
 		perkOwner.setTokens(amount);
 		service.save(perkOwner);
-		send(PREFIX + "Tokens set to " + amount);
+		String username = nerd.getUuid().equals(player().getUniqueId()) ? "Your" : (perkOwner.getNickname() + "'s");
+		send(PREFIX + username + " tokens were set to " + amount);
+	}
+
+	@Path("tokens add <amount> [user]")
+	@Permission("group.seniorstaff")
+	void addTokens(int amount, @Arg("self") Nerd nerd) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner perkOwner = service.get(nerd);
+		perkOwner.setTokens(amount + perkOwner.getTokens());
+		service.save(perkOwner);
+		String username = nerd.getUuid().equals(player().getUniqueId()) ? "You now have" : (perkOwner.getNickname() + " now has");
+		send(PREFIX + username + " " + perkOwner.getTokens() + plural(" token", perkOwner.getTokens()));
+	}
+
+	@Path("tokens remove <amount> [user]")
+	@Permission("group.seniorstaff")
+	void removeTokens(int amount, @Arg("self") Nerd nerd) {
+		addTokens(-1 * amount, nerd);
 	}
 
 	@Path("mastermind showAnswer")

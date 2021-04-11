@@ -117,7 +117,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		JsonBuilder voiceMessageBuilder = new JsonBuilder();
 		if (vcEnum != null) {
-			voiceMessageBuilder.next("&e&lClick here&f&3 to join your team's voice channel").command("voicechannel " + vcEnum.getId()).newline();
+			voiceMessageBuilder.newline().next("&e&lClick here&f&3 to join your team's voice channel").command("voicechannel " + vcEnum.getId());
 			voiceMessageBuilder.initialize();
 		} else return;
 
