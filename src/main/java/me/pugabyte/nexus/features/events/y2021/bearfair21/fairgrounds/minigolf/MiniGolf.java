@@ -2,17 +2,19 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
@@ -40,8 +42,8 @@ import java.util.UUID;
 public class MiniGolf {
 	@Getter
 	private static ItemStack putter;
-	@Getter
-	private static ItemStack iron;
+	//	@Getter
+//	private static ItemStack iron;
 	@Getter
 	private static ItemStack wedge;
 	@Getter
@@ -50,6 +52,8 @@ public class MiniGolf {
 	private static ItemStack golfBall;
 	@Getter
 	private static List<ItemStack> kit = new ArrayList<>();
+	@Getter
+	private static List<ItemStack> clubs = new ArrayList<>();
 	//
 	@Getter
 	private static final List<Snowball> golfBalls = new ArrayList<>();
@@ -61,8 +65,8 @@ public class MiniGolf {
 	private static final NamespacedKey ballKey = new NamespacedKey(instance, "golf_ball");
 	@Getter
 	private static final NamespacedKey putterKey = new NamespacedKey(instance, "putter");
-	@Getter
-	private static final NamespacedKey ironKey = new NamespacedKey(instance, "iron");
+	//	@Getter
+//	private static final NamespacedKey ironKey = new NamespacedKey(instance, "iron");
 	@Getter
 	private static final NamespacedKey wedgeKey = new NamespacedKey(instance, "wedge");
 	@Getter
@@ -87,16 +91,23 @@ public class MiniGolf {
 	@Getter
 	private static final AttributeModifier fastSwing = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed",
 			10, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND);
+	// In Bounds whitelist materials
+	@Getter
+	private static final List<Material> inBounds = Arrays.asList(
+			Material.GREEN_WOOL,
+			Material.GREEN_CONCRETE,
+			Material.PETRIFIED_OAK_SLAB);
 
 	// TODO:
 	//  bug: the longer the ball is hit normally w/ a putter/iron, without anything affecting the ball, the shorter the hit velocity becomes
-	//  add a list of out of bounds blocks
-	//  make the pertrified oak slab a green concrete slab
+	//  add: scorecard
+
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
 
 		ballTask();
+		playerPowerTask();
 	}
 
 	static {
@@ -116,18 +127,6 @@ public class MiniGolf {
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, fastSwing);
 		addKey(meta, getPutterKey());
 		putter.setItemMeta(meta);
-
-		iron = new ItemBuilder(Material.IRON_HOE)
-				.name("Iron")
-				.customModelData(902)
-				.lore("&7A well-rounded club", "&7for longer distances", "")
-				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
-				.build();
-		meta = iron.getItemMeta();
-		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, noDamage);
-		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, fastSwing);
-		addKey(meta, getIronKey());
-		iron.setItemMeta(meta);
 
 		wedge = new ItemBuilder(Material.IRON_HOE)
 				.name("Wedge")
@@ -164,7 +163,45 @@ public class MiniGolf {
 		addKey(meta, getBallKey());
 		golfBall.setItemMeta(meta);
 
-		kit = Arrays.asList(getPutter(), getIron(), getWedge(), getWhistle(), getGolfBall());
+		kit = Arrays.asList(getPutter(), getWedge(), getWhistle(), getGolfBall());
+		clubs = Arrays.asList(getPutter(), getWedge());
+	}
+
+	private void playerPowerTask() {
+		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
+			for (UUID uuid : new ArrayList<>(lastPlayerBall.keySet())) {
+				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
+				if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
+					continue;
+
+				Player player = offlinePlayer.getPlayer();
+				ItemStack tool = ItemUtils.getTool(player);
+				if (ItemUtils.isNullOrAir(tool))
+					continue;
+
+				// quick fix
+				ItemStack clone = tool.clone();
+				clone.setAmount(1);
+				boolean stop = true;
+				for (ItemStack _item : MiniGolf.getClubs()) {
+					if (ItemUtils.isFuzzyMatch(clone, _item))
+						stop = false;
+				}
+				if (stop)
+					continue;
+				//
+
+				if (player.getLevel() != 0)
+					player.setLevel(0);
+
+				double exp = player.getExp() + 0.04;
+				if (exp > 1.00) {
+					exp = 0.00;
+				}
+
+				player.setExp((float) exp);
+			}
+		});
 	}
 
 	private void ballTask() {
@@ -185,7 +222,8 @@ public class MiniGolf {
 
 				// Act upon block type
 				Vector vel = ball.getVelocity();
-				switch (block.getType()) {
+				Material type = block.getType();
+				switch (type) {
 					case CAULDRON:
 						// Check speed
 						if (vel.getY() >= 0 && vel.length() > 0.34)
@@ -194,12 +232,16 @@ public class MiniGolf {
 						// Halt velocity
 						ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
 
-						// Spawn firework
-						Tasks.wait(Time.TICK, () -> FireworkLauncher.random(loc).power(0).detonateAfter(Time.SECOND.get()).launch());
-
 						// Remove ball
 						golfBalls.remove(ball);
 						ball.remove();
+
+						// Spawn firework
+						Tasks.wait(Time.TICK, () -> FireworkLauncher.random(loc)
+								.power(0)
+								.detonateAfter(Time.TICK.x(2))
+								.type(Type.BURST)
+								.launch());
 
 						// Send message
 						for (Entry<UUID, Snowball> entry : lastPlayerBall.entrySet()) {
@@ -207,7 +249,7 @@ public class MiniGolf {
 								OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(entry.getKey());
 								if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
 									Player player = offlinePlayer.getPlayer();
-									player.sendMessage("par: " + getPar(ball));
+									ActionBarUtils.sendActionBar(player, "&6Par: " + getPar(ball), Time.SECOND.x(3));
 									giveBall(player);
 								}
 								break;
@@ -215,22 +257,10 @@ public class MiniGolf {
 						}
 
 						break;
-					case CRIMSON_HYPHAE:
-						// Halt velocity
-						ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
-
-						PersistentDataContainer c = ball.getPersistentDataContainer();
-						// Last pos
-						double x = c.get(MiniGolf.getXKey(), PersistentDataType.DOUBLE);
-						double y = c.get(MiniGolf.getYKey(), PersistentDataType.DOUBLE);
-						double z = c.get(MiniGolf.getZKey(), PersistentDataType.DOUBLE);
-						World world = ball.getWorld();
-
-						ball.teleport(new Location(world, x, y, z));
-						ball.setGravity(false);
-						return;
 					case AIR:
 					case WATER:
+					case LAVA:
+					case CRIMSON_HYPHAE:
 						// Fall
 						ball.setGravity(true);
 						break;
@@ -320,12 +350,23 @@ public class MiniGolf {
 							ball.setGravity(true);
 						}
 
+						// Stop & respawn ball if slow enough
+						if (vel.getY() >= 0 && vel.length() <= 0.01) {
+							ball.setVelocity(new Vector(0, 0, 0));
+							ball.teleport(ball.getLocation());
+							ball.setGravity(false);
+
+							if (!inBounds.contains(type)) {
+								MiniGolf.respawnBall(ball);
+							}
+							break;
+						}
+
 						// Slight friction
 						vel.multiply(0.975);
 						ball.setVelocity(vel);
 						break;
 				}
-
 			}
 		});
 	}
@@ -352,5 +393,19 @@ public class MiniGolf {
 
 	public static int getPar(Snowball ball) {
 		return ball.getPersistentDataContainer().get(parKey, PersistentDataType.INTEGER);
+	}
+
+	public static void respawnBall(Snowball ball) {
+		PersistentDataContainer c = ball.getPersistentDataContainer();
+
+		double x = c.get(MiniGolf.getXKey(), PersistentDataType.DOUBLE);
+		double y = c.get(MiniGolf.getYKey(), PersistentDataType.DOUBLE);
+		double z = c.get(MiniGolf.getZKey(), PersistentDataType.DOUBLE);
+
+		ball.setVelocity(new Vector(0, 0, 0));
+		ball.teleport(new Location(ball.getWorld(), x, y, z));
+		ball.setGravity(false);
+		ball.setFireTicks(0);
+		ball.setTicksLived(1);
 	}
 }

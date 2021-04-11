@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
-import org.bukkit.GameMode;
+import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -25,6 +25,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -54,6 +55,7 @@ public class PuttListener implements Listener {
 		}
 		if (stop)
 			return;
+		//
 
 		// Get info
 		Player player = event.getPlayer();
@@ -64,10 +66,10 @@ public class PuttListener implements Listener {
 
 		// Get type of golf club
 		boolean putter = MiniGolf.hasKey(meta, MiniGolf.getPutterKey());
-		boolean iron = MiniGolf.hasKey(meta, MiniGolf.getIronKey());
+//		boolean iron = MiniGolf.hasKey(meta, MiniGolf.getIronKey());
 		boolean wedge = MiniGolf.hasKey(meta, MiniGolf.getWedgeKey());
 
-		if (putter || iron || wedge) {
+		if (putter || wedge) {
 			// Cancel original tool
 			event.setCancelled(true);
 
@@ -105,17 +107,24 @@ public class PuttListener implements Listener {
 							// Hit golf ball
 							dir.setY(0).normalize();
 
-							boolean sneak = player.isSneaking();
-							boolean crit = player.getVelocity().getY() < -0.08;
-							if (iron)
-								dir.multiply(crit ? 1 : sneak ? 0.6666 : 0.8333);
-							else if (putter)
-								dir.multiply(crit ? 0.5 : sneak ? 0.1666 : 0.3333);
-							else {
-								dir.multiply(crit ? 0.35 : sneak ? 0.125 : 0.25);
-								dir.setY(0.20);
-							}
+							double power = player.getExp();
+							if (power >= 0.90)
+								power = 1.0;
+							else if (power < 0.16)
+								power = 0.16;
 
+							dir.multiply(power);
+							if (wedge)
+								dir.setY(0.25);
+
+							String color = "&a";
+							if (power >= 0.7)
+								color = "&c";
+							else if (power >= 0.5)
+								color = "&e";
+
+							DecimalFormat df = new DecimalFormat("#0.00");
+							ActionBarUtils.sendActionBar(player, "&6Power: " + color + df.format(power), Time.SECOND.x(3));
 							entity.setVelocity(dir);
 
 							// Update par
@@ -132,11 +141,7 @@ public class PuttListener implements Listener {
 							MiniGolf.getGolfBalls().add((Snowball) entity);
 							entity.setTicksLived(1);
 
-							// Effects
-							if (crit)
-								world.spawnParticle(Particle.CRIT, entityLoc, 15, 0, 0, 0, 0.25);
-
-							world.playSound(entityLoc, Sound.BLOCK_METAL_HIT, crit ? 1f : sneak ? 0.5f : 0.75f, 1.25f);
+							world.playSound(entityLoc, Sound.BLOCK_METAL_HIT, 0.75f, 1.25f);
 
 						} else if (entity.isValid()) {
 							// Give golf ball
@@ -181,15 +186,14 @@ public class PuttListener implements Listener {
 				MiniGolf.getGolfBalls().add(ball);
 
 				// Remove golf ball from inventory
-				if (player.getGameMode() != GameMode.CREATIVE) {
-					ItemStack itemInHand = event.getItem();
-					itemInHand.setAmount(itemInHand.getAmount() - 1);
-				}
+				ItemStack itemInHand = event.getItem();
+				itemInHand.setAmount(itemInHand.getAmount() - 1);
 
 				// Add last player ball
 				MiniGolf.getLastPlayerBall().put(player.getUniqueId(), ball);
 			}
 		} else if (MiniGolf.hasKey(meta, MiniGolf.getWhistleKey())) {
+			event.setCancelled(true);
 			// Return ball
 			if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
 				// Get last player ball

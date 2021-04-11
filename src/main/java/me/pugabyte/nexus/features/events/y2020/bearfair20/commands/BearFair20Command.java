@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.commands;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.warps.commands._WarpCommand;
@@ -16,10 +14,6 @@ import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @NoArgsConstructor
 @Redirect(from = {"/bfp", "bfpoints", "/bearfairpoints"}, to = "/bearfair points")
@@ -441,14 +435,14 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //				.collect(Collectors.toList());
 //	}
 
-	@Data
-	@AllArgsConstructor
-	private static class BearFairStoreMap {
-		private String id;
-		private ItemStack splatterMap;
-	}
-
-	private static final Map<String, BearFairStoreMap> maps = new HashMap<>();
+//	@Data
+//	@AllArgsConstructor
+//	private static class BearFairStoreMap {
+//		private String id;
+//		private ItemStack splatterMap;
+//	}
+//
+//	private static final Map<String, BearFairStoreMap> maps = new HashMap<>();
 
 //	static {
 //		reloadMaps();

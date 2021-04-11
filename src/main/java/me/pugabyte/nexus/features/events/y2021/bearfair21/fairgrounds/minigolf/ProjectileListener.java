@@ -102,12 +102,15 @@ public class ProjectileListener implements Listener {
 					case UP:
 					case DOWN:
 						Material _mat = loc.getBlock().getType();
-						if (_mat == Material.WATER || _mat == Material.LAVA) {
-							// Move ball to last location
-							ball.setVelocity(new Vector(0, 0, 0));
-							ball.teleport(new Location(world, x, y, z));
-							ball.setGravity(false);
-							ball.setFireTicks(0);
+						if (mat == Material.CRIMSON_HYPHAE || _mat == Material.WATER || _mat == Material.LAVA) {
+							// Ball hit out of bounds
+							MiniGolf.respawnBall(ball);
+							return;
+						}
+
+						if (vel.getY() >= 0 && vel.length() <= 0.01 && !MiniGolf.getInBounds().contains(mat)) {
+							// Ball stopped in out of bounds
+							MiniGolf.respawnBall(ball);
 							return;
 						}
 
