@@ -2,7 +2,6 @@ package me.pugabyte.nexus.models.nerd;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
 
-@RequiredArgsConstructor
 @AllArgsConstructor
 public enum Rank {
 	GUEST(ChatColor.of("#aaaaaa"), GlowAPI.Color.GRAY, false, false, false, true),
