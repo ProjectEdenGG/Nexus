@@ -81,7 +81,7 @@ public enum Rank {
 	}
 
 	public String withColor() {
-		return color + StringUtils.camelCase(name());
+		return color + plain();
 	}
 
 	public String getHex() {

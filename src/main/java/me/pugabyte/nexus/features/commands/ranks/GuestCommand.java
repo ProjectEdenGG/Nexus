@@ -14,7 +14,7 @@ public class GuestCommand extends CustomCommand {
 	@Path
 	void guest() {
 		line(5);
-		send(Rank.GUEST.getColor() + "Guest &3is the rank &eeveryone &3starts out as. Guests have all &ebasic &3permissions, nothing special.");
+		send(Rank.GUEST.withColor() + " &3is the rank &eeveryone &3starts out as. Guests have all &ebasic &3permissions, nothing special.");
 		line();
 		RanksCommand.ranksReturn(player());
 	}
