@@ -44,10 +44,25 @@ public class SuggestDiscordCommand extends Command {
 			try {
 				String[] args = event.getArgs().split(" ");
 				if (args.length == 0)
-					throw new InvalidInputException("Correct usage: `/suggest <player>`");
+					throw new InvalidInputException("Correct usage: `/suggest <player> [rank]`");
 
 				Nerd nerd = Nerd.of(PlayerUtils.getPlayer(args[0]));
-				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED).contains(nerd.getRank()))
+
+				Rank next;
+				if (args.length >= 2) {
+					try {
+						next = Rank.valueOf(args[1].toUpperCase());
+					} catch (IllegalArgumentException e) {
+						throw new InvalidInputException("Rank `" + args[1] + "` not found.");
+					}
+				}
+				// this avoids trying to promote them to veteran
+				else if (nerd.getRank() == Rank.ELITE)
+					next = Rank.NOBLE;
+				else
+					next = nerd.getRank().next();
+
+				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED, Rank.ELITE, Rank.VETERAN).contains(nerd.getRank()))
 					throw new InvalidInputException(nerd.getName() + " is not eligible for promotion (They are " + nerd.getRank().plain() + ")");
 
 				Hours hours = new HoursService().get(nerd);
@@ -60,13 +75,13 @@ public class SuggestDiscordCommand extends Command {
 					 history = "[View](https://bans.bnn.gg/history.php?uuid=" + nerd.getUuid() + ")";
 
 				EmbedBuilder embed = new EmbedBuilder()
+						.appendDescription("\n:information_source: **Rank**: " + nerd.getRank().plain())
 						.appendDescription("\n:calendar_spiral: **First join**: " + firstJoin)
 						.appendDescription("\n:clock" + RandomUtils.randomInt(1, 12) + ": **Hours (Total)**: " + hoursTotal)
 						.appendDescription("\n:clock" + RandomUtils.randomInt(1, 12) + ": **Hours (Monthly)**: " + hoursMonthly)
 						.appendDescription("\n:scroll: **History**: " + history)
 						.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png");
 
-				Rank next = nerd.getRank().next();
 				embed.setColor(next.getDiscordColor());
 
 				String name = nerd.getName();
