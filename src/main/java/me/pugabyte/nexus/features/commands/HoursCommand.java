@@ -268,7 +268,8 @@ public class HoursCommand extends CustomCommand {
 
 						if (hours.getTotal() > DAY) {
 							Tasks.sync(() -> {
-								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent set " + Rank.MEMBER.name());
+								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent remove " + Rank.GUEST.name());
+								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent add " + Rank.MEMBER.name());
 								Koda.say("Congrats on Member rank, " + Nickname.of(player) + "!");
 								Jingle.RANKUP.play(player);
 								PlayerUtils.send(player, "");
