@@ -21,7 +21,8 @@ public class RoleManager {
 			Dev.WAKKA.getUuid(),
 			Dev.FILID.getUuid(),
 			Dev.BLAST.getUuid(),
-			Dev.KODA.getUuid()
+			Dev.KODA.getUuid(),
+			Dev.LEXI.getUuid()
 	);
 
 	public static void update(DiscordUser user) {

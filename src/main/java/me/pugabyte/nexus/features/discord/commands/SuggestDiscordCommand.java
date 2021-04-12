@@ -55,12 +55,8 @@ public class SuggestDiscordCommand extends Command {
 					} catch (IllegalArgumentException e) {
 						throw new InvalidInputException("Rank `" + args[1] + "` not found.");
 					}
-				}
-				// this avoids trying to promote them to veteran
-				else if (nerd.getRank() == Rank.ELITE)
-					next = Rank.NOBLE;
-				else
-					next = nerd.getRank().next();
+				} else
+					next = nerd.getRank().getPromotion();
 
 				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED, Rank.ELITE, Rank.VETERAN).contains(nerd.getRank()))
 					throw new InvalidInputException(nerd.getName() + " is not eligible for promotion (They are " + nerd.getRank().plain() + ")");

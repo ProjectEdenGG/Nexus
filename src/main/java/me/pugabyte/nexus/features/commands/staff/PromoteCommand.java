@@ -7,6 +7,9 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 @Permission("group.seniorstaff")
 public class PromoteCommand extends CustomCommand {
@@ -18,7 +21,7 @@ public class PromoteCommand extends CustomCommand {
 	@Path("<player>")
 	void promote(Nerd nerd) {
 		Rank rank = nerd.getRank();
-		Rank next = rank.next();
+		Rank next = rank.getPromotion();
 		if (rank == next)
 			error("User is already max rank");
 
@@ -27,8 +30,14 @@ public class PromoteCommand extends CustomCommand {
 		runCommandAsConsole("lp user " + nerd.getName() + " parent add " + next.name());
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withColor());
 
-		if (nerd.getOfflinePlayer().isOnline())
+		if (nerd.getOfflinePlayer().isOnline()) {
+			nerd.getPlayer().sendMessage(Component.text("\n").color(NamedTextColor.DARK_AQUA)
+				.append(Component.text("Congratulations!").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
+				.append(Component.text("You've been promoted to ")).append(next.asComponent())
+				.append(Component.text("!")));
+
 			Jingle.RANKUP.play(nerd.getPlayer());
+		}
 	}
 
 }

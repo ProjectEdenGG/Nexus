@@ -2,12 +2,15 @@ package me.pugabyte.nexus.models.nerd;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -26,21 +29,22 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
 
+@RequiredArgsConstructor
 @AllArgsConstructor
 public enum Rank {
 	GUEST(ChatColor.of("#aaaaaa"), GlowAPI.Color.GRAY, false, false, false, true),
 	MEMBER(ChatColor.of("#ffffff"), GlowAPI.Color.WHITE, false, false, false, true),
-	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED, false, false, false, false, true, Color.decode("#ff7069")),
-	ELITE(ChatColor.of("#f5a138"), GlowAPI.Color.GOLD, false, false, false, false, true, Color.decode("#f5a138")),
-	VETERAN(ChatColor.of("#ffff44"), GlowAPI.Color.YELLOW, true, false, false, false, true, Color.decode("#ffff44")),
-	NOBLE(ChatColor.of("#abd923"), GlowAPI.Color.YELLOW, false, false, false, false, false, Color.decode("#abd923")),
-	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.GREEN, true, true, false, false, true, Color.decode("#02883e")),
-	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.DARK_GREEN, true, true, false, false, true, Color.decode("#02c93e")),
-	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA, true, true, false, false, false, Color.decode("#4cc9f0")),
-	MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA, true, true, true, false, true, Color.decode("#4cc9f0")),
-	OPERATOR(ChatColor.of("#07a8a8"), GlowAPI.Color.DARK_AQUA, true, true, true, true, true, Color.decode("#07a8a8")),
-	ADMIN(ChatColor.of("#3080ff"), GlowAPI.Color.BLUE, true, true, true, true, true, Color.decode("#1687d3")),
-	OWNER(ChatColor.of("#915bf5"), GlowAPI.Color.DARK_PURPLE, true, true, true, true, true, Color.decode("#915bf5"));
+	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED, false, false, false, false, true, false, Color.decode("#ff7069")),
+	ELITE(ChatColor.of("#f5a138"), GlowAPI.Color.GOLD, false, false, false, false, true, false, Color.decode("#f5a138")),
+	VETERAN(ChatColor.of("#ffff44"), GlowAPI.Color.YELLOW, true, false, false, false, true, true, Color.decode("#ffff44")),
+	NOBLE(ChatColor.of("#abd923"), GlowAPI.Color.YELLOW, false, false, false, false, true, false, Color.decode("#abd923")),
+	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.GREEN, true, true, false, false, true, false, Color.decode("#02883e")),
+	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.DARK_GREEN, true, true, false, false, true, false, Color.decode("#02c93e")),
+	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA, true, true, false, false, false, false, Color.decode("#4cc9f0")),
+	MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA, true, true, true, false, true, false, Color.decode("#4cc9f0")),
+	OPERATOR(ChatColor.of("#07a8a8"), GlowAPI.Color.DARK_AQUA, true, true, true, true, true, false, Color.decode("#07a8a8")),
+	ADMIN(ChatColor.of("#3080ff"), GlowAPI.Color.BLUE, true, true, true, true, true, false, Color.decode("#1687d3")),
+	OWNER(ChatColor.of("#915bf5"), GlowAPI.Color.DARK_PURPLE, true, true, true, true, true, false, Color.decode("#915bf5"));
 
 	@Getter
 	private final ChatColor color;
@@ -57,12 +61,15 @@ public enum Rank {
 	private final boolean isMod;
 	@Getter
 	@Accessors(fluent = true)
-	private boolean isSeniorStaff;
+	private final boolean isSeniorStaff;
 	@Getter
 	@Accessors(fluent = true)
 	private final boolean isActive;
 	@Getter
-	private Color discordColor;
+	@Accessors(fluent = true)
+	private final boolean skipsPromotion;
+	@Getter
+	private final Color discordColor;
 
 	Rank(ChatColor color, GlowAPI.Color glowColor, boolean hasPrefix, boolean isStaff, boolean isMod, boolean isActive) {
 		this.color = color;
@@ -70,7 +77,10 @@ public enum Rank {
 		this.hasPrefix = hasPrefix;
 		this.isStaff = isStaff;
 		this.isMod = isMod;
+		isSeniorStaff = false;
 		this.isActive = isActive;
+		skipsPromotion = false;
+		discordColor = null;
 	}
 
 	public String getPrefix() {
@@ -78,6 +88,10 @@ public enum Rank {
 			return withColor();
 
 		return "";
+	}
+
+	public Component asComponent() {
+		return Component.text(plain()).color(TextColor.color(color.getColor().getRGB()));
 	}
 
 	public String withColor() {
@@ -187,16 +201,29 @@ public enum Rank {
 
 	public Rank next() {
 		Rank next = EnumUtils.next(Rank.class, this.ordinal());
+		if (next == this)
+			return next;
 		if (!next.isActive)
-			return next();
+			next = next.next();
 		return next;
 	}
 
 	public Rank previous() {
 		Rank previous = EnumUtils.previous(Rank.class, this.ordinal());
+		if (previous == this)
+			return previous;
 		if (!previous.isActive)
-			return previous();
+			previous = previous.previous();
 		return previous;
+	}
+
+	public Rank getPromotion() {
+		Rank next = next();
+		if (next == this)
+			return next;
+		if (next.skipsPromotion())
+			next = next.getPromotion();
+		return next;
 	}
 
 }
