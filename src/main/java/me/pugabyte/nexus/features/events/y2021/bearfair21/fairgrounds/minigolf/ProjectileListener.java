@@ -105,7 +105,7 @@ public class ProjectileListener implements Listener {
 							vel.setY(0);
 						} else {
 							Material _mat = loc.getBlock().getType();
-							if (mat == Material.CRIMSON_HYPHAE || _mat == Material.WATER || _mat == Material.LAVA) {
+							if (mat == Material.CRIMSON_HYPHAE || mat == Material.PURPLE_STAINED_GLASS || _mat == Material.WATER || _mat == Material.LAVA) {
 								// Ball hit out of bounds
 								MiniGolf.respawnBall(ball);
 								return;

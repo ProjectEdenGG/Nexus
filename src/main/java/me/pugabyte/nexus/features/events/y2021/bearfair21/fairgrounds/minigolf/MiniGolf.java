@@ -8,6 +8,7 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -265,6 +266,7 @@ public class MiniGolf {
 					case WATER:
 					case LAVA:
 					case CRIMSON_HYPHAE:
+					case PURPLE_STAINED_GLASS:
 						// Fall
 						ball.setGravity(true);
 						break;
@@ -279,16 +281,15 @@ public class MiniGolf {
 						vel.setY(0.30);
 						ball.setVelocity(vel);
 						break;
-					case SOUL_SOIL:
-						// Stop bouncing, with no friction
-						vel.setY(0);
-						ball.setVelocity(vel);
-						break;
 					case REDSTONE_BLOCK:
 						// Boost
 						if (vel.length() < maxVelLen)
 							ball.setVelocity(vel.multiply(1.3));
 						break;
+					case SOUL_SOIL:
+						// Stop bouncing
+						vel.setY(0);
+						ball.setVelocity(vel);
 					case SAND:
 					case RED_SAND:
 						// Friction
@@ -359,7 +360,7 @@ public class MiniGolf {
 									Location newLoc = new Location(ball.getWorld(),
 											Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
 									ball.setVelocity(new Vector(0, 0, 0));
-									ball.teleport(newLoc);
+									ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 									ball.setGravity(true);
 								} catch (Exception ignored) {
 								}
@@ -434,6 +435,9 @@ public class MiniGolf {
 
 	public static void respawnBall(Snowball ball) {
 		MiniGolfUser user = getUser(ball);
+		if (user == null)
+			return;
+
 		PersistentDataContainer c = ball.getPersistentDataContainer();
 
 		double x = c.get(MiniGolf.getXKey(), PersistentDataType.DOUBLE);

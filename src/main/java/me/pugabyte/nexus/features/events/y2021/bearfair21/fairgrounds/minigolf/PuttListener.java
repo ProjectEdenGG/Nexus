@@ -27,7 +27,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class PuttListener implements Listener {
@@ -84,7 +83,7 @@ public class PuttListener implements Listener {
 			event.setCancelled(true);
 
 			if (user == null) {
-				player.sendMessage("user is null");
+				player.sendMessage("Error: User is null 1");
 				return;
 			}
 
@@ -96,19 +95,22 @@ public class PuttListener implements Listener {
 			Vector loc = eye.toVector();
 
 			if (user.getSnowball() == null) {
-				player.sendMessage("snowball is null");
+				player.sendMessage("Error: Snowball is null 1");
 				return;
 			}
 
 			for (Entity entity : entities) {
-				// Look for golf balls
-				PersistentDataContainer c = entity.getPersistentDataContainer();
 
 				// Are we allowed to hit this ball?
 				if (entity instanceof Snowball) {
 					Snowball ball = (Snowball) entity;
-					if (!user.getSnowball().equals(ball))
+
+					// Check this again, cuz NPE for some reason
+					if (user.getSnowball() == null)
 						return;
+
+					if (!user.getSnowball().equals(ball))
+						continue;
 
 					// Is golf ball in player's view?
 					Location entityLoc = ball.getLocation();
@@ -131,20 +133,14 @@ public class PuttListener implements Listener {
 							if (wedge)
 								dir.setY(0.25);
 
-							String color = "&a";
-							if (power >= 0.7)
-								color = "&c";
-							else if (power >= 0.5)
-								color = "&e";
-
-							DecimalFormat df = new DecimalFormat("#0.00");
-							ActionBarUtils.sendActionBar(player, "&6Power: " + color + df.format(power), Time.SECOND.x(3));
+							ActionBarUtils.sendActionBar(player, "&6Power: " + getPowerDisplay(power), Time.SECOND.x(3));
 							ball.setVelocity(dir);
 
 							// Update stroke
 							ball.setCustomName("Stroke " + user.incrementStrokes());
 
 							// Update last pos
+							PersistentDataContainer c = entity.getPersistentDataContainer();
 							c.set(MiniGolf.getXKey(), PersistentDataType.DOUBLE, entityLoc.getX());
 							c.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, entityLoc.getY());
 							c.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, entityLoc.getZ());
@@ -176,20 +172,20 @@ public class PuttListener implements Listener {
 
 				// Has already placed a ball
 				if (user.getSnowball() != null) {
-					player.sendMessage("You already have a ball placed");
+					player.sendMessage("Error: You already have a ball placed");
 					return;
 				}
 
 				// Is placing on start position
 				if (BlockUtils.isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
-					player.sendMessage("You can only place golf balls on green wool");
+					player.sendMessage("Error: You can only place golf balls on green wool");
 					return;
 				}
 
 				// Is on a valid hole
 				Integer hole = MiniGolf.getHole(block.getLocation());
 				if (hole == null) {
-					player.sendMessage("That is not a valid hole");
+					player.sendMessage("Error: That is not a valid hole");
 					return;
 				}
 
@@ -231,7 +227,7 @@ public class PuttListener implements Listener {
 			if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
 				// Get last player ball
 				if (user == null) {
-					player.sendMessage("user is null");
+					player.sendMessage("Error: User is null 2");
 					return;
 				}
 
@@ -239,7 +235,7 @@ public class PuttListener implements Listener {
 				if (ball == null || !ball.isValid()) {
 					// Clean up
 					MiniGolf.getUsers().remove(user);
-					player.sendMessage("snowball is null");
+					player.sendMessage("Error: Snowball is null 2");
 					return;
 				}
 
@@ -260,6 +256,18 @@ public class PuttListener implements Listener {
 			}
 		}
 
+	}
+
+	private String getPowerDisplay(double power) {
+		int result = (int) (power * 100);
+
+		String color = "&a";
+		if (result >= 70)
+			color = "&c";
+		else if (result >= 50)
+			color = "&e";
+
+		return color + result;
 	}
 
 	// TODO: better way?
