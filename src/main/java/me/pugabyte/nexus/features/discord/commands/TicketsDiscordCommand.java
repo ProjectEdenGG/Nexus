@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.tickets.Tickets;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -35,7 +35,7 @@ public class TicketsDiscordCommand extends Command {
 		Tasks.async(() -> {
 			final String PREFIX = "**[Tickets]** ";
 			try {
-				DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
+				DiscordUser user = new DiscordUserService().checkVerified(event.getAuthor().getId());
 				OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
 				String[] args = event.getArgs().split(" ");

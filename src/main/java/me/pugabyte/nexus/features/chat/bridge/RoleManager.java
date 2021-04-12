@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.chat.bridge;
 
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -29,7 +29,7 @@ public class RoleManager {
 		if (Discord.getGuild() == null)
 			return;
 
-		DiscordService service = new DiscordService();
+		DiscordUserService service = new DiscordUserService();
 		OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
 		if (ignore.contains(player.getUniqueId()))
@@ -57,7 +57,6 @@ public class RoleManager {
 				Discord.getGuild().createRole()
 						.setName(username)
 						.setColor(Nerd.of(player).getRank().getDiscordColor())
-						.setMentionable(true)
 						.queue();
 		} else {
 			if (role.getColor() != roleColor)

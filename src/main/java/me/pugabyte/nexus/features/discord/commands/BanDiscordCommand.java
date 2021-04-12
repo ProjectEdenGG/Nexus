@@ -7,8 +7,8 @@ import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 
@@ -30,7 +30,7 @@ public class BanDiscordCommand extends Command {
 			return;
 
 		Tasks.async(() -> {
-			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
+			DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
 			if (!Strings.isNullOrEmpty(user.getUserId()))
 				Tasks.sync(() ->
 						runCommandAsConsole(trimFirst(event.getMessage().getContentRaw() + " --sender=" + PlayerUtils.getPlayer(user.getUuid()).getName())));

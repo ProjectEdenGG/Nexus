@@ -10,8 +10,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
@@ -261,7 +261,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 				return voter.getActiveVotes().size() < VoteSite.values().length - 2;
 			}),
 			DISCORD_LINK(player -> {
-				DiscordUser user = new DiscordService().get(player);
+				DiscordUser user = new DiscordUserService().get(player);
 				return user.getUserId() == null;
 			}),
 			WALLS_OF_GRACE(player -> {

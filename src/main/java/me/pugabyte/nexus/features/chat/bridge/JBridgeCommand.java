@@ -8,8 +8,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import org.bukkit.OfflinePlayer;
 
@@ -18,11 +18,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class JBridgeCommand extends CustomCommand {
-	private final DiscordService service;
+	private final DiscordUserService service;
 
 	public JBridgeCommand(CommandEvent event) {
 		super(event);
-		service = new DiscordService();
+		service = new DiscordUserService();
 		if (isCommandEvent())
 			if (Discord.getGuild() == null)
 				error("Not connected to Discord");
@@ -52,7 +52,7 @@ public class JBridgeCommand extends CustomCommand {
 	@Path("updateRoleColors <rank>")
 	void updateRoleColors(Rank rank) {
 		int updated = 0;
-		for (DiscordUser user : service.getAll()) {
+		for (DiscordUser user : service.<DiscordUser>getAll()) {
 			if (user.getRoleId() == null || user.getUuid() == null)
 				continue;
 
@@ -69,6 +69,29 @@ public class JBridgeCommand extends CustomCommand {
 		}
 
 		send("Updated " + updated + " roles");
+	}
+
+	@Async
+	@Path("getFirstBridgeRolePosition")
+	void getFirstBridgeRolePosition() {
+		int position = Discord.getGuild().getRoleById("331279736691228676").getPosition();
+		send(json("Position: " + position).copy("" + position));
+	}
+
+	@Async
+	@Path("setMentionableFalse [test]")
+	void setMentionableFalse(boolean test) {
+		int startingPosition = 186;
+		int count = 0;
+		for (net.dv8tion.jda.api.entities.Role role : Discord.getGuild().getRoles()) {
+			if (role.getPosition() <= startingPosition && role.isMentionable()) {
+				++count;
+				if (!test)
+					role.getManager().setMentionable(false).queue();
+			}
+		}
+
+		send(PREFIX + (test ? "Will update" : "Updated") + " " + count + " roles");
 	}
 
 }

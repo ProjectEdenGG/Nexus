@@ -11,8 +11,8 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
@@ -85,7 +85,7 @@ public class JoinQuit extends Feature implements Listener {
 				Jingle.JOIN.playAll();
 
 			Tasks.async(() -> {
-				DiscordUser user = new DiscordService().get(player);
+				DiscordUser user = new DiscordUserService().get(player);
 				RoleManager.update(user);
 
 				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**"));
@@ -124,7 +124,7 @@ public class JoinQuit extends Feature implements Listener {
 		Jingle.QUIT.playAll();
 
 		Tasks.async(() -> {
-			DiscordUser user = new DiscordService().get(player);
+			DiscordUser user = new DiscordUserService().get(player);
 			RoleManager.update(user);
 
 			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**"));

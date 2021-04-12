@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.discord;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +8,8 @@ import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.setting.Setting;
@@ -28,7 +27,6 @@ import okhttp3.Response;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -66,11 +64,11 @@ public class DiscordListener extends ListenerAdapter {
 			else {
 				Tasks.waitAsync(5, () -> {
 					Discord.addRole(event.getUser().getId(), Role.NERD);
-					DiscordUser user = new DiscordService().getFromUserId(event.getUser().getId());
-					if (user != null && !Strings.isNullOrEmpty(user.getUuid())) {
+					DiscordUser user = new DiscordUserService().getFromUserId(event.getUser().getId());
+					if (user != null) {
 						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
 
-						if (Nerd.of(UUID.fromString(user.getUuid())).getRank() == Rank.VETERAN)
+						if (Nerd.of(user.getUuid()).getRank() == Rank.VETERAN)
 							Discord.addRole(event.getUser().getId(), Role.VETERAN);
 
 						if (Nexus.getPerms().playerHas(null, user.getOfflinePlayer(), "donated"))

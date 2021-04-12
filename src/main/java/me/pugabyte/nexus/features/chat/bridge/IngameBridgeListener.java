@@ -4,8 +4,8 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.NicknameService;
 import org.bukkit.Bukkit;
@@ -29,7 +29,7 @@ public class IngameBridgeListener implements Listener {
 		if (discordTextChannel == null) return;
 
 		Player player = event.getChatter().getPlayer();
-		DiscordUser user = new DiscordService().get(player);
+		DiscordUser user = new DiscordUserService().get(player);
 		RoleManager.update(user);
 
 		String message = event.getMessage();
@@ -45,14 +45,14 @@ public class IngameBridgeListener implements Listener {
 				String group = matcher.group();
 				String search = group.replace("@", "");
 				OfflinePlayer player = Bukkit.getOfflinePlayer(search);
-				DiscordUser mentioned = new DiscordService().get(player);
+				DiscordUser mentioned = new DiscordUserService().get(player);
 				if (mentioned.getUserId() != null) {
 					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
 					continue;
 				}
 
 				Nerd fromNickname = new NicknameService().getFromNickname(search).getNerd();
-				mentioned = new DiscordService().get(fromNickname.getOfflinePlayer());
+				mentioned = new DiscordUserService().get(fromNickname.getOfflinePlayer());
 				if (mentioned.getUserId() != null) {
 					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
 					continue;

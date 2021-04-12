@@ -7,10 +7,9 @@ import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.models.chat.PublicChannel;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
@@ -19,9 +18,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
@@ -47,11 +44,11 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 			content = discordChatEvent.getMessage();
 
-			DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
+			DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
 			JsonBuilder builder = new JsonBuilder(channel.get().getDiscordColor() + "[D] ");
 
-			if (user != null && !isNullOrEmpty(user.getUuid()))
-				builder.next(new NerdService().<Nerd>get(UUID.fromString(user.getUuid())).getChatFormat());
+			if (user != null)
+				builder.next(Nerd.of(user.getUuid()).getChatFormat());
 			else
 				builder.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
 

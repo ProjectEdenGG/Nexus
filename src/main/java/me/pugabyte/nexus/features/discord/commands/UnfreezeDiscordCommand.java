@@ -13,8 +13,8 @@ import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -43,7 +43,7 @@ public class UnfreezeDiscordCommand extends Command {
 				if (Strings.isNullOrEmpty(event.getArgs()))
 					throw new InvalidInputException("Correct usage: /unfreeze <players...>");
 
-				DiscordUser user = new DiscordService().getFromUserId(event.getAuthor().getId());
+				DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
 				if (user.getUuid() == null)
 					throw new NoPermissionException();
 

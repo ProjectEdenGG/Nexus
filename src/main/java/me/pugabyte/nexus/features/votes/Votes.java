@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
@@ -88,7 +88,7 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private void sendVoteReminder(Vote vote) {
-		DiscordUser discordUser = new DiscordService().get(vote.getUuid());
+		DiscordUser discordUser = new DiscordUserService().get(UUID.fromString(vote.getUuid()));
 		if (discordUser.getUserId() == null)
 			return;
 

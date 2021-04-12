@@ -1,34 +1,43 @@
 package me.pugabyte.nexus.models.discord;
 
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.features.discord.Discord.discordize;
 
 @Data
+@Builder
+@Entity("discord_user")
 @NoArgsConstructor
+@AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "discord_user")
-public class DiscordUser {
+@Converters(UUIDConverter.class)
+public class DiscordUser extends PlayerOwnedObject {
 	@Id
 	@NonNull
-	private String uuid;
+	private UUID uuid;
 	private String userId;
 	private String roleId;
 
-	public DiscordUser(@NonNull String uuid, String userId) {
+	public DiscordUser(@NonNull UUID uuid, String userId) {
 		this.uuid = uuid;
 		this.userId = userId;
 	}

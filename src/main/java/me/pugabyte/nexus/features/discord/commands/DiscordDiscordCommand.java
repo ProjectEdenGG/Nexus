@@ -11,8 +11,8 @@ import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -54,12 +54,12 @@ public class DiscordDiscordCommand extends Command {
 					case "link":
 						if (args.length < 2)
 							throw new InvalidInputException("Correct usage: `/discord link <name>`");
-						DiscordUser author = new DiscordService().getFromUserId(event.getAuthor().getId());
+						DiscordUser author = new DiscordUserService().getFromUserId(event.getAuthor().getId());
 
 						OfflinePlayer player = PlayerUtils.getPlayer(args[1]);
-						DiscordUser fromInput = new DiscordService().get(player);
+						DiscordUser fromInput = new DiscordUserService().get(player);
 
-						if (author != null && !Strings.isNullOrEmpty(author.getUuid()))
+						if (author != null)
 							// Author already linked
 							if (!Strings.isNullOrEmpty(fromInput.getUserId()))
 								if (author.getUserId().equals(fromInput.getUserId()))
@@ -76,7 +76,7 @@ public class DiscordDiscordCommand extends Command {
 								throw new InvalidInputException("That minecraft account is already linked to a different discord account. Type `/discord unlink` in-game to remove the link.");
 
 						String code = RandomStringUtils.randomAlphabetic(6);
-						Discord.getCodes().put(code, new DiscordUser(player.getUniqueId().toString(), event.getAuthor().getId()));
+						Discord.getCodes().put(code, new DiscordUser(player.getUniqueId(), event.getAuthor().getId()));
 						String name = Discord.getName(event.getMember().getId());
 						Koda.console("Generated key " + code + " for " + name);
 

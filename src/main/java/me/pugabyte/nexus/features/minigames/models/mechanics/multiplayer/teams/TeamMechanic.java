@@ -18,8 +18,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Time;
@@ -73,7 +73,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Guild guild = Discord.getGuild();
 		if (guild == null) return null;
 
-		DiscordUser discordUser = new DiscordService().get(player);
+		DiscordUser discordUser = new DiscordUserService().get(player);
 		Member member = discordUser.getMember();
 		if (member == null) {
 			// user has no linked account, find a disc account with matching (nick)name

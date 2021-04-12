@@ -11,8 +11,8 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.models.delayedban.DelayedBan;
 import me.pugabyte.nexus.models.delayedban.DelayedBanService;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -83,7 +83,7 @@ public class LiteBans implements Listener {
 					Nerd nerd = Nerd.of(player);
 					Hours hours = new HoursService().get(nerd);
 					if (hours.getTotal() >= Time.HOUR.get() / 20) {
-						DiscordUser discordUser = new DiscordService().get(executor);
+						DiscordUser discordUser = new DiscordUserService().get(executor);
 						if (!Strings.isNullOrEmpty(discordUser.getUserId()))
 							Discord.staffLog("<@" + discordUser.getUserId() + "> Please include any additional information about the " +
 									"ban here, such as screenshots, chat log, and any other information that will help us understand the ban.");

@@ -14,8 +14,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Time;
@@ -110,7 +110,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 			if (!durability.equals("0/0"))
 				embed.setFooter(durability);
 
-			DiscordUser user = new DiscordService().get(player);
+			DiscordUser user = new DiscordUserService().get(player);
 
 			String discordMessage = discordize(message);
 			discordMessage = IngameBridgeListener.parseMentions(discordMessage);

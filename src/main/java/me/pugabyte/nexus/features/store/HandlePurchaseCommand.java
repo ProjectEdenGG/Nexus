@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.purchase.Purchase;
 import me.pugabyte.nexus.models.purchase.PurchaseService;
 import me.pugabyte.nexus.models.task.Task;
@@ -108,7 +108,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 				if (purchase.getPurchaserUuid().length() == 36) {
 					PermissionChange.set().uuid(purchase.getPurchaserUuid()).permission("donated").run();
 
-					DiscordUser user = new DiscordService().get(purchase.getPurchaserUuid());
+					DiscordUser user = new DiscordUserService().get(UUID.fromString(purchase.getPurchaserUuid()));
 					if (user.getUserId() != null)
 						Discord.addRole(user.getUserId(), Role.SUPPORTER);
 					else

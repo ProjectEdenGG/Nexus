@@ -13,8 +13,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.discord.DiscordCaptcha;
 import me.pugabyte.nexus.models.discord.DiscordCaptchaService;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DiscordCommand extends CustomCommand {
-	DiscordService service = new DiscordService();
+	DiscordUserService service = new DiscordUserService();
 	DiscordUser user;
 
 	public DiscordCommand(@NonNull CommandEvent event) {
@@ -83,8 +83,8 @@ public class DiscordCommand extends CustomCommand {
 	@Permission("group.seniorstaff")
 	void updateRoles() {
 		int errors = 0;
-		Role verified = Discord.getGuild().getRoleById(DiscordId.Role.VERIFIED.getId());
-		for (DiscordUser discordUser : new DiscordService().getAll()) {
+		Role verified = DiscordId.Role.VERIFIED.get();
+		for (DiscordUser discordUser : new DiscordUserService().<DiscordUser>getAll()) {
 			if (!isNullOrEmpty(discordUser.getUserId())) {
 				try {
 					Member member = discordUser.getMember();
@@ -106,7 +106,7 @@ public class DiscordCommand extends CustomCommand {
 	@Async
 	@Path("forceLink <player> <id>")
 	void forceLink(OfflinePlayer player, String id) {
-		DiscordService service = new DiscordService();
+		DiscordUserService service = new DiscordUserService();
 		DiscordUser user = service.get(player);
 		user.setUserId(id);
 		if (user.getName() == null)
@@ -322,8 +322,8 @@ public class DiscordCommand extends CustomCommand {
 	@ConverterFor(DiscordUser.class)
 	DiscordUser convertToDiscordUser(String value) {
 		if (value.length() == 18)
-			return new DiscordService().getFromUserId(value);
-		return new DiscordService().get(convertToOfflinePlayer(value));
+			return new DiscordUserService().getFromUserId(value);
+		return new DiscordUserService().get(convertToOfflinePlayer(value));
 	}
 
 	@TabCompleterFor(DiscordUser.class)
