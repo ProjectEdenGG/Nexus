@@ -11,10 +11,12 @@ import me.pugabyte.nexus.utils.StringUtils;
 
 @Permission("group.staff")
 public class MiniGolfCommand extends CustomCommand {
-	MiniGolfUser user = MiniGolf.getUser(uuid());
+	MiniGolfUser user;
 
 	public MiniGolfCommand(CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			user = MiniGolf.getUser(uuid());
 	}
 
 	@Path("kit")

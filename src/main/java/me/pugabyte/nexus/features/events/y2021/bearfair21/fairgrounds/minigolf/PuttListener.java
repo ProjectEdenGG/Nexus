@@ -67,12 +67,17 @@ public class PuttListener implements Listener {
 		}
 		//
 
+		MiniGolfUser user = MiniGolf.getUser(player.getUniqueId());
+		if (user == null) {
+			MiniGolf.error(player, "User is null");
+			return;
+		}
+
 		// Get info
 		World world = player.getWorld();
 		Action action = event.getAction();
 		Block block = event.getClickedBlock();
 		ItemMeta meta = item.getItemMeta();
-		MiniGolfUser user = MiniGolf.getUser(player.getUniqueId());
 
 		// Get type of golf club
 		boolean putter = MiniGolf.hasKey(meta, MiniGolf.getPutterKey());
@@ -82,11 +87,6 @@ public class PuttListener implements Listener {
 			// Cancel original tool
 			event.setCancelled(true);
 
-			if (user == null) {
-				player.sendMessage("Error: User is null 1");
-				return;
-			}
-
 			// Find entities
 			List<Entity> entities = player.getNearbyEntities(5.5, 5.5, 5.5);
 
@@ -95,7 +95,7 @@ public class PuttListener implements Listener {
 			Vector loc = eye.toVector();
 
 			if (user.getSnowball() == null) {
-				player.sendMessage("Error: Snowball is null 1");
+				MiniGolf.error(player, "Ball is null (1)");
 				return;
 			}
 
@@ -166,26 +166,22 @@ public class PuttListener implements Listener {
 
 			// Is player placing golf ball?
 			if (action == Action.RIGHT_CLICK_BLOCK) {
-
-				if (user == null)
-					user = new MiniGolfUser(player.getUniqueId());
-
 				// Has already placed a ball
 				if (user.getSnowball() != null) {
-					player.sendMessage("Error: You already have a ball placed");
+					MiniGolf.error(player, "You already have a ball placed");
 					return;
 				}
 
 				// Is placing on start position
 				if (BlockUtils.isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
-					player.sendMessage("Error: You can only place golf balls on green wool");
+					MiniGolf.error(player, "You can only place golf balls on green wool");
 					return;
 				}
 
 				// Is on a valid hole
 				Integer hole = MiniGolf.getHole(block.getLocation());
 				if (hole == null) {
-					player.sendMessage("Error: That is not a valid hole");
+					MiniGolf.error(player, "That is not a valid hole");
 					return;
 				}
 
@@ -219,23 +215,16 @@ public class PuttListener implements Listener {
 				itemInHand.setAmount(itemInHand.getAmount() - 1);
 
 				// Add user
-				MiniGolf.getUsers().add(user);
+//				MiniGolf.getUsers().add(user);
 			}
 		} else if (MiniGolf.hasKey(meta, MiniGolf.getWhistleKey())) {
 			event.setCancelled(true);
 			// Return ball
 			if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
 				// Get last player ball
-				if (user == null) {
-					player.sendMessage("Error: User is null 2");
-					return;
-				}
-
 				Snowball ball = user.getSnowball();
 				if (ball == null || !ball.isValid()) {
-					// Clean up
-					MiniGolf.getUsers().remove(user);
-					player.sendMessage("Error: Snowball is null 2");
+					MiniGolf.error(player, "Ball is null (3)");
 					return;
 				}
 

@@ -11,6 +11,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
 import org.bukkit.FireworkEffect.Type;
@@ -53,8 +54,9 @@ public class MiniGolf {
 	@Getter private static List<ItemStack> kit = new ArrayList<>();
 	@Getter private static List<ItemStack> clubs = new ArrayList<>();
 	// Data
-	@Getter private static Set<MiniGolfUser> users = new HashSet<>();
+	@Getter private static final Set<MiniGolfUser> users = new HashSet<>();
 	// Constants
+	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
 	@Getter private static final double floorOffset = 0.05;
 	@Getter private static final double maxVelLen = 2;
 	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE, Material.PETRIFIED_OAK_SLAB);
@@ -75,6 +77,7 @@ public class MiniGolf {
 
 	// TODO:
 	//  add: scorecard book item
+	//  add: firework color from user color
 
 	public MiniGolf() {
 		new ProjectileListener();
@@ -456,7 +459,6 @@ public class MiniGolf {
 	public static MiniGolfUser getUser(Snowball ball) {
 		for (MiniGolfUser user : new HashSet<>(users)) {
 			if (user == null) {
-				users.remove(null);
 				continue;
 			}
 
@@ -488,6 +490,10 @@ public class MiniGolf {
 			return;
 
 		ActionBarUtils.sendActionBar(offlinePlayer.getPlayer(), message, Time.SECOND.x(3));
+	}
+
+	public static void error(Player player, String message) {
+		player.sendMessage(PREFIX + "&c" + message);
 	}
 
 	private static String getScore(int par, int strokes) {
