@@ -61,8 +61,10 @@ public class ReactionVoter {
 			if (x == null) {
 				message.addReaction(unicode_x).queue();
 			} else if (x.getCount() > 1) {
-				onDeny.accept(message);
-				onFinally.run();
+				if (onDeny != null)
+					onDeny.accept(message);
+				if (onFinally != null)
+					onFinally.run();
 				return;
 			}
 
@@ -95,14 +97,18 @@ public class ReactionVoter {
 					});
 
 					if (passed.get()) {
-						onAccept.accept(message);
-						onFinally.run();
+						if (onAccept != null)
+							onAccept.accept(message);
+						if (onFinally != null)
+							onFinally.run();
 					}
 				});
 			}
 		}, error -> {
-			onError.accept(error);
-			onFinally.run();
+			if (onError != null)
+				onError.accept(error);
+			if (onFinally != null)
+				onFinally.run();
 		});
 	}
 
