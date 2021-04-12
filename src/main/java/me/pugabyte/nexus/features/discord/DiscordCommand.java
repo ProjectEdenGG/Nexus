@@ -140,7 +140,7 @@ public class DiscordCommand extends CustomCommand {
 		} else {
 			if (Discord.getCodes().containsKey(code)) {
 				DiscordUser newUser = Discord.getCodes().get(code);
-				if (!uuid().toString().equals(newUser.getUuid()))
+				if (!uuid().equals(newUser.getUuid()))
 					error("There is no pending confirmation with this account");
 
 				user.setUserId(newUser.getUserId());
