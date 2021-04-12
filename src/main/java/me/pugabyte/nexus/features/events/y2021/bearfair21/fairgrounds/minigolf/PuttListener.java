@@ -137,7 +137,7 @@ public class PuttListener implements Listener {
 							ball.setVelocity(dir);
 
 							// Update stroke
-							ball.setCustomName("Stroke " + user.incrementStrokes());
+							ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.incrementStrokes());
 
 							// Update last pos
 							PersistentDataContainer c = entity.getPersistentDataContainer();
@@ -209,7 +209,7 @@ public class PuttListener implements Listener {
 				c.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, loc.getY());
 				c.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, loc.getZ());
 
-				ball.setCustomName("Stroke " + user.getCurrentStrokes());
+				ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.getCurrentStrokes());
 				ball.setCustomNameVisible(true);
 
 				user.setSnowball(ball);

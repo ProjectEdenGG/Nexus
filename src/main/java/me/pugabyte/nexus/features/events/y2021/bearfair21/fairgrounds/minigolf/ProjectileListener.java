@@ -56,7 +56,7 @@ public class ProjectileListener implements Listener {
 				return;
 
 			// Stroke
-			ball.setCustomName("Stroke " + user.getCurrentStrokes());
+			ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.getCurrentStrokes());
 			ball.setCustomNameVisible(true);
 
 			PersistentDataContainer old = entity.getPersistentDataContainer();
