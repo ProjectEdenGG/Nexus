@@ -103,6 +103,8 @@ public class ProjectileListener implements Listener {
 					case DOWN:
 						if (mat == Material.SOUL_SOIL) {
 							vel.setY(0);
+						} else if (mat == Material.SLIME_BLOCK) {
+							vel.setY(0.30);
 						} else {
 							Material _mat = loc.getBlock().getType();
 							if (mat == Material.CRIMSON_HYPHAE || mat == Material.PURPLE_STAINED_GLASS || _mat == Material.WATER || _mat == Material.LAVA) {
