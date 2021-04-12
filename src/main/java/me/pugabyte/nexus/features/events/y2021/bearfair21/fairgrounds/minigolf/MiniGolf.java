@@ -53,7 +53,7 @@ public class MiniGolf {
 	@Getter private static List<ItemStack> kit = new ArrayList<>();
 	@Getter private static List<ItemStack> clubs = new ArrayList<>();
 	// Data
-	@Getter private static final Set<MiniGolfUser> users = new HashSet<>();
+	@Getter private static Set<MiniGolfUser> users = new HashSet<>();
 	// Constants
 	@Getter private static final double floorOffset = 0.05;
 	@Getter private static final double maxVelLen = 2;
