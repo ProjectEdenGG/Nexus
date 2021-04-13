@@ -89,6 +89,7 @@ public enum Bot {
 
 	void shutdown() {
 		if (jda != null) {
+			jda.cancelRequests();
 			jda.shutdown();
 			jda = null;
 		}

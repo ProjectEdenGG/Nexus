@@ -22,18 +22,24 @@ import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.utils.TimeUtil;
 import org.apache.commons.io.FileUtils;
+import org.bukkit.OfflinePlayer;
 
 import java.awt.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -162,8 +168,9 @@ public class BridgeCommand extends CustomCommand {
 
 		BiFunction<String, String, JsonBuilder> formatter = (roleId, index) -> {
 			Role role = Discord.getGuild().getRoleById(roleId);
-			String name = role == null ? roleId : role.getName();
-			boolean tied = new DiscordUserService().getFromRoleId(roleId) != null;
+			DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
+			boolean tied = user != null;
+			String name = user == null ? role == null ? roleId : role.getName() : user.getIngameName();
 			int size = archive.getRoleMap().get(roleId).size();
 			return json("&3" + index + " " + (tied ? "&e" : "&c") + name + " &7- " + size + " messages")
 					.insert(roleId)
@@ -217,20 +224,71 @@ public class BridgeCommand extends CustomCommand {
 		Discord.getGuild().getRoleById(roleId).delete().queue(success -> send(PREFIX + "Deleted"), this::rethrow);
 	}
 
+	@Async
+	@Path("archive findDuplicateRoles [page]")
+	void archive_findDuplicateRoles(@Arg("1") int page) {
+		Map<UUID, List<String>> duplicates = new HashMap<UUID, List<String>>() {{
+			for (String roleId : archive.getRoleMap().keySet()) {
+				Role role = Discord.getGuild().getRoleById(roleId);
+				DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
+				String name = user == null ? role == null ? null : role.getName() : user.getIngameName();
+				if (!isNullOrEmpty(name)) {
+					UUID uuid = PlayerUtils.getPlayer(name).getUniqueId();
+					List<String> roleIds = getOrDefault(uuid, new ArrayList<>());
+					roleIds.add(roleId);
+					put(uuid, roleIds);
+				}
+			}
+		}};
+
+		for (UUID uuid : new HashSet<>(duplicates.keySet())) {
+			if (duplicates.get(uuid).size() == 1)
+				duplicates.remove(uuid);
+		}
+
+		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
+			OfflinePlayer player = PlayerUtils.getPlayer(uuid);
+			int size = duplicates.get(uuid).size();
+			JsonBuilder json = json("&3" + index + " &e" + player.getName() + " &7- " + size + " roles")
+					.newline();
+
+			for (String roleId : duplicates.get(uuid))
+				json.next("    &7" + roleId + " - " + archive.getRoleMap().get(roleId).size() + " messages");
+
+			return json;
+		};
+
+		paginate(new ArrayList<>(Utils.sortByValue(new HashMap<UUID, Integer>() {{
+			duplicates.forEach((k, v) -> put(k, v.size()));
+		}}).keySet()), formatter, "/bridge archive findDuplicateRoles", page);
+	}
+
+	private static final OffsetDateTime grandfather = TimeUtil.getTimeCreated(Long.parseLong("352232748955729930"));
+
 	private void executeOnMessage(String messageId, Consumer<Message> consumer) {
-		loadedChannel.getTextChannel().get(Bot.RELAY).retrieveMessageById(messageId).queue(message -> {
-			if (message.getAuthor().getId().equals(Bot.RELAY.getId()))
+		Bot botGuess = TimeUtil.getTimeCreated(Long.parseLong(messageId)).isAfter(grandfather) ? Bot.RELAY : Bot.KODA;
+		Bot otherBot = botGuess == Bot.KODA ? Bot.RELAY : Bot.KODA;
+
+		loadedChannel.getTextChannel().get(botGuess).retrieveMessageById(messageId).queue(message -> {
+			if (message.getAuthor().getId().equals(botGuess.getId()))
 				consumer.accept(message);
 			else
-				loadedChannel.getTextChannel().get(Bot.KODA).retrieveMessageById(messageId).queue(consumer);
+				loadedChannel.getTextChannel().get(otherBot).retrieveMessageById(messageId).queue(consumer);
 		});
 	}
 
 	private void updateRoleMention(String oldRoleId, String newRoleId, String messageId) {
-		executeOnMessage(messageId, message -> message.editMessage(new MessageBuilder(message)
-				.setContent(message.getContentRaw().replaceFirst("<@&" + oldRoleId + ">", "<@&" + newRoleId + ">"))
-				.build()
-		).queue());
+		executeOnMessage(messageId, message -> {
+			String oldContent = message.getContentRaw();
+			String newContent = oldContent.replaceFirst("<@&" + oldRoleId + ">", "<@&" + newRoleId + ">");
+			if (oldContent.equals(newContent))
+				return;
+
+			message.editMessage(new MessageBuilder(message)
+					.setContent(newContent)
+					.build()
+			).queue();
+		});
 	}
 
 	@Data
