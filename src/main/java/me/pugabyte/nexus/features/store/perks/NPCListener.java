@@ -31,7 +31,7 @@ public class NPCListener implements Listener {
 		if (Rank.of(owner).gte(Rank.NOBLE))
 			return;
 
-		if (isNpcAllowedAt(event.getNPC().getStoredLocation()))
+		if (isNpcAllowedAt(owner.getLocation()))
 			return;
 
 		event.getNPC().destroy();

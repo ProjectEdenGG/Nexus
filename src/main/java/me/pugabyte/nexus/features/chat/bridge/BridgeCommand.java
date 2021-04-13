@@ -280,7 +280,7 @@ public class BridgeCommand extends CustomCommand {
 	private void updateRoleMention(String oldRoleId, String newRoleId, String messageId) {
 		executeOnMessage(messageId, message -> {
 			String oldContent = message.getContentRaw();
-			String newContent = oldContent.replaceFirst("<@&" + oldRoleId + ">", "<@&" + newRoleId + ">");
+			String newContent = oldContent.replaceFirst("<@&" + oldRoleId + ">", newRoleId);
 			if (oldContent.equals(newContent))
 				return;
 
