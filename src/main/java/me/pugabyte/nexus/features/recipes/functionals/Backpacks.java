@@ -24,7 +24,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
@@ -212,19 +216,13 @@ public class Backpacks extends FunctionalRecipe {
 		// Cancel Moving Shulker Boxes While backpack is open
 		@EventHandler
 		public void onClickBackPack(InventoryClickEvent event) {
-			Nexus.debug("Clicked Backpack");
 			if (player != event.getWhoClicked()) return;
-			Nexus.debug("Backpack player ==");
 			if (event.getClickedInventory() == null) return;
-			Nexus.debug("Clicked Ivnentory Not Null");
 			ItemStack item = event.getClickedInventory().getItem(event.getSlot());
 			if (event.getClick() == ClickType.NUMBER_KEY)
 				item = player.getInventory().getContents()[event.getHotbarButton()];
 			if (ItemUtils.isNullOrAir(item)) return;
-			Nexus.debug("Item Not Null");
 			if (!MaterialTag.SHULKER_BOXES.isTagged(item.getType())) return;
-			Nexus.debug("Is Shulker Box");
-			Nexus.debug("Cancelling");
 			event.setCancelled(true);
 		}
 

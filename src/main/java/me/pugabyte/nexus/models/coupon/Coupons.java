@@ -4,8 +4,12 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import lombok.*;
-import me.pugabyte.nexus.Nexus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -61,18 +65,12 @@ public class Coupons extends PlayerOwnedObject {
 			if (couponLore.size() != itemLore.size()) continue;
 
 			for (int i = 0; i < couponLore.size(); i++) {
-				Nexus.debug(couponLore.get(i));
-				Nexus.debug(itemLore.get(i));
 				if (couponLore.get(i).equals(itemLore.get(i))) {
 					similarLore += 1;
-					Nexus.debug("Incrementing similarLore - " + (similarLore));
 				}
 			}
 
-			Nexus.debug("couponLore size: " + couponLore.size());
-			Nexus.debug("similarLore size:" + similarLore);
 			if (couponLore.size() == (similarLore + 1)) {
-				Nexus.debug("Returning " + coupon.getId());
 				return coupon;
 			}
 		}

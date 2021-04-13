@@ -104,10 +104,8 @@ public abstract class Crate implements Listener {
 		this.player = player;
 		inUse = true;
 		pickCrateLoot();
-		if (!canHoldItems(player)) {
-			Nexus.debug(player.getName() + " cannot hold the loot");
+		if (!canHoldItems(player))
 			return;
-		}
 
 		takeKey();
 		hideHologram();
@@ -214,7 +212,6 @@ public abstract class Crate implements Listener {
 			throw new CrateOpeningException("&3Coming soon...");
 
 		loot = RandomUtils.getWeightedRandom(original);
-		Nexus.debug(loot.getTitle());
 	}
 
 	public Particle getParticleType() {

@@ -4,7 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.recipes.menu.CustomRecipesMenu;
 import me.pugabyte.nexus.features.recipes.models.RecipeType;
@@ -14,7 +13,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
@@ -82,9 +80,7 @@ public class CustomRecipesCommand extends CustomCommand {
 					return;
 				}
 				Tasks.wait(2, () -> {
-					Nexus.debug("Getting recipes for " + StringUtils.camelCase(clickEvent.getWhoClicked().getItemOnCursor().getType()));
 					List<List<ItemStack>> recipes = uncraft(clickEvent.getWhoClicked().getItemOnCursor());
-					Nexus.debug("Found " + recipes.size() + " recipes");
 					clickEvent.getWhoClicked().setItemOnCursor(null);
 					getIndex(recipes, 0, contents);
 				});
@@ -101,14 +97,11 @@ public class CustomRecipesCommand extends CustomCommand {
 
 			if (items.size() == 0) return;
 
-			Nexus.debug("Uncrafting index " + index + " with " + items.get(index).size() + " items");
-
 			for (int i = 0; i < items.get(index).size(); i++) {
 				ItemStack item = items.get(index).get(i);
 				if (ItemUtils.isNullOrAir(item))
 					item = new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Air").build();
 				contents.set(uncraftingSlots[i], ClickableItem.empty(item));
-				Nexus.debug("Adding " + StringUtils.camelCase(item.getType()));
 			}
 
 			if (index != 0) {
