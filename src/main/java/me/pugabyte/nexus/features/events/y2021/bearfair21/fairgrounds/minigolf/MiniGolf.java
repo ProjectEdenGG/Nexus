@@ -493,7 +493,7 @@ public class MiniGolf {
 	}
 
 	public static void error(Player player, String message) {
-		player.sendMessage(PREFIX + "&c" + message);
+		player.sendMessage(PREFIX + StringUtils.colorize("&c" + message));
 	}
 
 	private static String getScore(int par, int strokes) {

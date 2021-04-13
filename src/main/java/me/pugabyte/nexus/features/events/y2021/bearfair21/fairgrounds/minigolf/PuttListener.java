@@ -67,6 +67,8 @@ public class PuttListener implements Listener {
 		}
 		//
 
+		event.setCancelled(true);
+
 		MiniGolfUser user = MiniGolf.getUser(player.getUniqueId());
 		if (user == null) {
 			MiniGolf.error(player, "User is null");
@@ -84,9 +86,6 @@ public class PuttListener implements Listener {
 		boolean wedge = MiniGolf.hasKey(meta, MiniGolf.getWedgeKey());
 
 		if (putter || wedge) {
-			// Cancel original tool
-			event.setCancelled(true);
-
 			// Find entities
 			List<Entity> entities = player.getNearbyEntities(5.5, 5.5, 5.5);
 
@@ -161,9 +160,6 @@ public class PuttListener implements Listener {
 				}
 			}
 		} else if (MiniGolf.hasKey(meta, MiniGolf.getBallKey())) {
-			// Cancel original tool
-			event.setCancelled(true);
-
 			// Is player placing golf ball?
 			if (action == Action.RIGHT_CLICK_BLOCK) {
 				// Has already placed a ball
@@ -218,7 +214,6 @@ public class PuttListener implements Listener {
 //				MiniGolf.getUsers().add(user);
 			}
 		} else if (MiniGolf.hasKey(meta, MiniGolf.getWhistleKey())) {
-			event.setCancelled(true);
 			// Return ball
 			if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
 				// Get last player ball
