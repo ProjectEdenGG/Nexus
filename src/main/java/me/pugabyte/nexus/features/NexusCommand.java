@@ -934,6 +934,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		runCommand("rg flag -w \"world\" spawn nexus-greeting-subtitle &eEntering &6Spawn");
 	}
 
+	@Path("testNewHasRoomFor")
+	void hasRoomFor() {
+		send("" + PlayerUtils.hasRoomFor(player(), new ItemStack(Material.DIRT, 64), new ItemStack(Material.SNOWBALL, 8)));
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return Nerd.of(convertToOfflinePlayer(value));

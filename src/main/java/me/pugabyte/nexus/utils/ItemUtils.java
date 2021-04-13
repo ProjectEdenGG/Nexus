@@ -185,4 +185,29 @@ public class ItemUtils {
 
 		return result.getType().name();
 	}
+
+	public static boolean isSimilar(ItemStack item1, ItemStack item2) {
+		if (isNullOrAir(item1) || isNullOrAir(item2))
+			return false;
+
+		if (item1.getType() != item2.getType())
+			return false;
+
+		if (!MaterialTag.SHULKER_BOXES.isTagged(item1.getType()))
+			return item1.isSimilar(item2);
+
+		List<ItemStack> contents1 = getRawShulkerContents(item1);
+		List<ItemStack> contents2 = getRawShulkerContents(item2);
+		if (contents1.isEmpty() && contents2.isEmpty())
+			return true;
+
+		for (int i = 0; i < contents1.size(); i++) {
+			if (contents1.get(i) == null && contents2.get(i) == null)
+				continue;
+			if (contents1.get(i) == null || !contents1.get(i).isSimilar(contents2.get(i)))
+				return false;
+		}
+
+		return true;
+	}
 }

@@ -267,16 +267,31 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
-		List<ItemStack> itemList = new ArrayList<>();
-		for (ItemStack item : Arrays.asList(items)) {
-			if (!isNullOrAir(item))
-				itemList.add(item);
+		int usedSlots = 0;
+		int openSlots = 0;
+		boolean[] fullSlot = new boolean[36];
+		ItemStack[] inv = player.getInventory().getContents();
+		for (ItemStack item : items) {
+			int maxStack = item.getMaxStackSize();
+			int needed = item.getAmount();
+			for (int i = 0; i < 36; i++) {
+				if (fullSlot[i]) continue;
+				ItemStack invItem = inv[i];
+				if (isNullOrAir(invItem)) {
+					openSlots++;
+					continue;
+				}
+				if (invItem.isSimilar(item)) {
+					int available = maxStack - invItem.getAmount();
+					needed -= available;
+					if (needed > 0)
+						fullSlot[i] = true;
+				}
+			}
+			if (needed > 0)
+				usedSlots += Math.ceil((double) needed / (double) maxStack);
 		}
-
-		ItemStack[] contents = Arrays.stream(player.getInventory().getContents()).map(itemStack -> itemStack == null ? null : itemStack.clone()).toArray(ItemStack[]::new);
-		List<ItemStack> excess = giveItemsGetExcess(player, itemList);
-		player.getInventory().setContents(contents);
-		return excess.isEmpty();
+		return openSlots >= usedSlots;
 	}
 
 	public static boolean playerHas(Player player, ItemStack itemStack) {

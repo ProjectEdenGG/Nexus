@@ -30,7 +30,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
-import static me.pugabyte.nexus.features.shops.ShopUtils.isSimilar;
+import static me.pugabyte.nexus.utils.ItemUtils.isSimilar;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 
