@@ -19,10 +19,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.reflections.Reflections;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.EnumSet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -118,9 +114,4 @@ public enum Bot {
 		return commands;
 	}
 
-	@Target({ElementType.TYPE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface HandledBy {
-		Bot value();
-	}
 }

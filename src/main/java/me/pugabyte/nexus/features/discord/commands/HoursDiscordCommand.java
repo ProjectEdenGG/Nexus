@@ -5,7 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import joptsimple.internal.Strings;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
-import me.pugabyte.nexus.features.discord.Bot.HandledBy;
+import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.discord.DiscordUser;

@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.discord.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.nexus.features.discord.Bot;
-import me.pugabyte.nexus.features.discord.Bot.HandledBy;
+import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
