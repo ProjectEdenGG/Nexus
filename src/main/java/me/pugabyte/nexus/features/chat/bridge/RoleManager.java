@@ -5,7 +5,6 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.OfflinePlayer;
@@ -30,12 +29,15 @@ public class RoleManager {
 			return;
 
 		DiscordUserService service = new DiscordUserService();
-		OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
+		OfflinePlayer player = user.getOfflinePlayer();
+
+		if (player == null || player.getName() == null)
+			return;
 
 		if (ignore.contains(player.getUniqueId()))
 			return;
 
-		String username = Nickname.of(player);
+		String nickname = Nickname.of(player);
 		Color roleColor = Nerd.of(player).getRank().getDiscordColor();
 
 		if (roleColor == null) {
@@ -49,20 +51,26 @@ public class RoleManager {
 			role = Discord.getGuild().getRoleById(user.getRoleId());
 
 		if (user.getRoleId() == null || role == null) {
-			List<Role> rolesByName = Discord.getGuild().getRolesByName(username, true);
+			List<Role> rolesByName = Discord.getGuild().getRolesByName(player.getName(), true);
 			if (rolesByName.size() > 0) {
 				user.setRoleId(rolesByName.get(0).getId());
 				service.save(user);
-			} else
-				Discord.getGuild().createRole()
-						.setName(username)
+			} else {
+				List<Role> rolesByNickname = Discord.getGuild().getRolesByName(nickname, true);
+				if (rolesByNickname.size() > 0) {
+					user.setRoleId(rolesByNickname.get(0).getId());
+					service.save(user);
+				} else
+					Discord.getGuild().createRole()
+						.setName(nickname)
 						.setColor(Nerd.of(player).getRank().getDiscordColor())
 						.queue();
+			}
 		} else {
 			if (role.getColor() != roleColor)
 				role.getManager().setColor(roleColor).queue();
-			if (!role.getName().equals(username))
-				role.getManager().setName(username).queue();
+			if (!role.getName().equals(nickname))
+				role.getManager().setName(nickname).queue();
 		}
 	}
 

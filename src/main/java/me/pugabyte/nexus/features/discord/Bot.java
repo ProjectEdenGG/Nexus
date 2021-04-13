@@ -37,6 +37,11 @@ public enum Bot {
 					// .addEventListeners(new DiscordCaptchaListener())
 					.addEventListeners(getCommands().build());
 		}
+
+		@Override
+		public String getId() {
+			return User.KODA.getId();
+		}
 	},
 
 	RELAY {
@@ -45,6 +50,11 @@ public enum Bot {
 			return JDABuilder.createDefault(getToken())
 					.addEventListeners(new DiscordBridgeListener())
 					.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build());
+		}
+
+		@Override
+		public String getId() {
+			return User.RELAY.getId();
 		}
 	};
 
@@ -87,6 +97,8 @@ public enum Bot {
 	protected String getToken() {
 		return Nexus.getInstance().getConfig().getString("tokens.discord." + name().toLowerCase(), "");
 	}
+
+	public abstract String getId();
 
 	@SneakyThrows
 	protected CommandClientBuilder getCommands() {

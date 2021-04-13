@@ -55,10 +55,7 @@ public class DiscordUser extends PlayerOwnedObject {
 	}
 
 	public String getIngameName() {
-		OfflinePlayer player = getOfflinePlayer();
-		if (player == null)
-			return null;
-		return player.getName();
+		return super.getName();
 	}
 
 	public String getName() {

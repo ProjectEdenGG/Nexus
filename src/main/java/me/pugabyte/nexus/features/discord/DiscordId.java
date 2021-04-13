@@ -34,7 +34,11 @@ public class DiscordId {
 		private final String id;
 
 		public net.dv8tion.jda.api.entities.TextChannel get() {
-			return Discord.getGuild().getTextChannelById(id);
+			return get(Bot.KODA);
+		}
+
+		public net.dv8tion.jda.api.entities.TextChannel get(Bot bot) {
+			return bot.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId()).getTextChannelById(id);
 		}
 
 		public static TextChannel of(net.dv8tion.jda.api.entities.TextChannel textChannel) {

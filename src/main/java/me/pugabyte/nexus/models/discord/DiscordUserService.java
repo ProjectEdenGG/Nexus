@@ -33,4 +33,10 @@ public class DiscordUserService extends MongoService {
 		return query.find().tryNext();
 	}
 
+	public DiscordUser getFromRoleId(String roleId) {
+		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
+		query.and(query.criteria("roleId").equal(roleId));
+		return query.find().tryNext();
+	}
+
 }
