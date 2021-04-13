@@ -140,6 +140,9 @@ public class NicknameCommand extends CustomCommand {
 			Tasks.async(() -> {
 				NicknameService service = new NicknameService();
 				Nickname data = service.getFromQueueId(event.getMessageId());
+				if (data == null)
+					return;
+
 				for (NicknameHistoryEntry entry : data.getNicknameHistory()) {
 					if (!event.getMessageId().equals(entry.getNicknameQueueId()))
 						continue;

@@ -136,7 +136,10 @@ public class BridgeCommand extends CustomCommand {
 	@AllArgsConstructor
 	private enum BridgeChannel {
 		BRIDGE(TextChannel.BRIDGE),
-		STAFF_BRIDGE(TextChannel.BRIDGE);
+		STAFF_BRIDGE(TextChannel.STAFF_BRIDGE),
+		OPS_BRIDGE(TextChannel.ARCHIVED_OPS_BRIDGE),
+		OPERATORS(TextChannel.STAFF_OPERATORS),
+		ADMINS(TextChannel.STAFF_ADMINS);
 
 		private final TextChannel textChannel;
 	}
@@ -149,7 +152,7 @@ public class BridgeCommand extends CustomCommand {
 			error("Archive is already loaded. &3Use &c/bridge archive reload &3to reload");
 
 		loadedChannel = channel;
-		String data = FileUtils.readFileToString(Nexus.getFile(channel.name().toLowerCase().replace("_", "-") + "-role-archive.json"));
+		String data = "{\"roleMap\":" + FileUtils.readFileToString(Nexus.getFile("role-archives/" + channel.getTextChannel().getId() + ".json")) + "}";
 		archive = new Gson().fromJson(data, BridgeArchive.class);
 		send(PREFIX + "Loaded " + archive.getRoleMap().size() + " roles from the archive");
 	}
@@ -220,6 +223,13 @@ public class BridgeCommand extends CustomCommand {
 	@Path("archive deleteRole <roleId>")
 	void archive_deleteRole(String roleId) {
 		Discord.getGuild().getRoleById(roleId).delete().queue(success -> send(PREFIX + "Deleted"), this::rethrow);
+	}
+
+	@Async
+	@Confirm
+	@Path("archive setContent <messageId> <content...>")
+	void archive_setContent(String messageId, String content) {
+		executeOnMessage(messageId, message -> message.editMessage(content).queue());
 	}
 
 	@Async
