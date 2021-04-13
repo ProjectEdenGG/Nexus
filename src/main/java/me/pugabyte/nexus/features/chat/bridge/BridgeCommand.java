@@ -170,7 +170,7 @@ public class BridgeCommand extends CustomCommand {
 			Role role = Discord.getGuild().getRoleById(roleId);
 			DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
 			boolean tied = user != null;
-			String name = user == null ? role == null ? roleId : role.getName() : user.getIngameName();
+			String name = role == null ? roleId : user == null ? role.getName() : user.getIngameName();
 			int size = archive.getRoleMap().get(roleId).size();
 			return json("&3" + index + " " + (tied ? "&e" : "&c") + name + " &7- " + size + " messages")
 					.insert(roleId)
@@ -194,12 +194,10 @@ public class BridgeCommand extends CustomCommand {
 			else
 				name = Nerd.of(user).getName();
 
-		final String username = "**" + name + "**";
-
 		List<String> messageIds = archive.getRoleMap().get(roleId);
 		send(PREFIX + "Editing " + messageIds.size() + " messages for user " + name);
 		for (String messageId : messageIds)
-			updateRoleMention(roleId, username, messageId);
+			updateRoleMention(roleId, "**" + name + "**", messageId);
 
 		send(json(PREFIX + "Done. Click here to remove the role").command("/bridge archive deleteRole " + roleId));
 	}
@@ -253,7 +251,8 @@ public class BridgeCommand extends CustomCommand {
 					.newline();
 
 			for (String roleId : duplicates.get(uuid))
-				json.next("    &7" + roleId + " - " + archive.getRoleMap().get(roleId).size() + " messages");
+				json.next("    &7" + roleId + " - " + archive.getRoleMap().get(roleId).size() + " messages")
+						.newline();
 
 			return json;
 		};
@@ -266,7 +265,8 @@ public class BridgeCommand extends CustomCommand {
 	private static final OffsetDateTime grandfather = TimeUtil.getTimeCreated(Long.parseLong("352232748955729930"));
 
 	private void executeOnMessage(String messageId, Consumer<Message> consumer) {
-		Bot botGuess = TimeUtil.getTimeCreated(Long.parseLong(messageId)).isAfter(grandfather) ? Bot.RELAY : Bot.KODA;
+		OffsetDateTime timeCreated = TimeUtil.getTimeCreated(Long.parseLong(messageId));
+		Bot botGuess = timeCreated.isAfter(grandfather) ? Bot.RELAY : Bot.KODA;
 		Bot otherBot = botGuess == Bot.KODA ? Bot.RELAY : Bot.KODA;
 
 		loadedChannel.getTextChannel().get(botGuess).retrieveMessageById(messageId).queue(message -> {
@@ -277,10 +277,10 @@ public class BridgeCommand extends CustomCommand {
 		});
 	}
 
-	private void updateRoleMention(String oldRoleId, String newRoleId, String messageId) {
+	private void updateRoleMention(String oldRoleId, String replacement, String messageId) {
 		executeOnMessage(messageId, message -> {
 			String oldContent = message.getContentRaw();
-			String newContent = oldContent.replaceFirst("<@&" + oldRoleId + ">", newRoleId);
+			String newContent = oldContent.replaceFirst("<@&" + oldRoleId + ">", replacement);
 			if (oldContent.equals(newContent))
 				return;
 

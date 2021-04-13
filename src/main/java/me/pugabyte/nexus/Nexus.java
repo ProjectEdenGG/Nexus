@@ -32,6 +32,7 @@ import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
+import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -109,7 +110,7 @@ public class Nexus extends JavaPlugin {
 
 	public static void debug(String message) {
 		if (debug)
-			getInstance().getLogger().info("[DEBUG] " + stripColor(message));
+			getInstance().getLogger().info("[DEBUG] " + ChatColor.stripColor(message));
 	}
 
 	public static void log(String message) {
