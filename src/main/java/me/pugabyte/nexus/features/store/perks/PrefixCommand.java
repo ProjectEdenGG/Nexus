@@ -11,7 +11,6 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.OfflinePlayer;
 
 import java.util.regex.Matcher;
 
@@ -46,12 +45,12 @@ public class PrefixCommand extends CustomCommand {
 	}
 
 	@Path("expire <player>")
-	void expire(OfflinePlayer player) {
+	@Permission("group.admin")
+	void expire(Nerd nerd) {
 		console();
-		nerd = Nerd.of(player);
 		nerd.setPrefix(null);
 		service.save(nerd);
-		send(PREFIX + "Reset prefix");
+		send(PREFIX + "Reset prefix of " + nerd.getNickname());
 	}
 
 	@Path("<prefix...>")

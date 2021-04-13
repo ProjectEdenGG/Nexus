@@ -38,7 +38,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Async
 	@Path("<nickname> [override]")
-	void run(@Arg(min = 3, max = 16, regex = "[A-Za-z0-9_]+") String nickname, String cancel) {
+	void run(@Arg(min = 2, max = 16, regex = "[A-Za-z0-9_]+") String nickname, String cancel) {
 		player();
 		checkExisting(nickname);
 
@@ -101,7 +101,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Permission(value = "group.staff", absolute = true)
 	@Path("set <player> <nickname>")
-	void set(Nickname player, @Arg(min = 3, max = 16, regex = "[A-Za-z0-9_]+") String nickname) {
+	void set(Nickname player, @Arg(min = 2, max = 16, regex = "[A-Za-z0-9_]+") String nickname) {
 		player.setNickname(nickname);
 		service.save(player);
 		send(PREFIX + player.getName() + "'s nickname set to &e" + player.getNickname());
@@ -115,6 +115,14 @@ public class NicknameCommand extends CustomCommand {
 		player.setNickname((String) null);
 		service.save(player);
 		send(PREFIX + (isSelf(player) ? "Nickname" : player.getName() + "'s nickname") + " reset");
+	}
+
+	@Path("expire <player>")
+	@Permission(value = "group.admin", absolute = true)
+	void expire(Nickname nickname) {
+		console();
+		nickname.resetNickname();
+		send(PREFIX + "Reset nickname of " + nickname.getNickname());
 	}
 
 	@Permission(value = "group.admin", absolute = true)

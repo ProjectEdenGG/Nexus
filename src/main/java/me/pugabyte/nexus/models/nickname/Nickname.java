@@ -85,6 +85,10 @@ public class Nickname extends PlayerOwnedObject {
 		return nickname;
 	}
 
+	public void resetNickname() {
+		setNickname((String) null);
+	}
+
 	public void setNickname(String nickname) {
 		nickname = stripColor(nickname);
 		if (!isNullOrEmpty(nickname)) {

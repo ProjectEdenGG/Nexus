@@ -31,6 +31,16 @@ public enum Package {
 	@Id("2589641")
 	CUSTOM_DONATION,
 
+	@Id("4425727")
+	@Permission("nickname.use")
+	NICKNAME_LIFETIME,
+
+	@Id("4425728")
+	@Permission("nickname.use")
+	@ExpirationDays(30)
+	@ExpirationCommand("nickname expire [player]")
+	NICKNAME_ONE_MONTH,
+
 	@Id("1922887")
 	@Permission("set.my.prefix")
 	CUSTOM_PREFIX_LIFETIME,
