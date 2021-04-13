@@ -7,6 +7,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCCreateEvent;
+import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.trait.trait.Owner;
 import org.bukkit.Location;
@@ -78,6 +79,23 @@ public class NPCListener implements Listener {
 			event.setCancelled(true);
 			PlayerUtils.send(owner, "&cNPCs cannot be teleported across worlds");
 		}
+	}
+
+	@EventHandler
+	public void onNpcSpawn(NPCSpawnEvent event) {
+		UUID uuid = event.getNPC().getTrait(Owner.class).getOwnerId();
+		if (uuid == null)
+			return;
+
+		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
+		if (Rank.of(owner).gte(Rank.NOBLE))
+			return;
+
+		if (isNpcAllowedAt(event.getLocation()))
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
 	}
 
 }
