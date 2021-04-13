@@ -143,8 +143,7 @@ public class Votes extends Feature implements Listener {
 		if (player != null) {
 			int points = vote.getExtra() + basePoints;
 			new Voter(player).givePoints(points);
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), VPS.PREFIX + "You have received " + points + plural(" point", points));
+			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
 
 		Tasks.async(Votes::write);

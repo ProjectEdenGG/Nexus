@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -20,7 +21,6 @@ import me.pugabyte.nexus.models.nickname.NicknameService;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -244,26 +244,22 @@ public class PlayerUtils {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
-	public static void send(UUID uuid, String message) {
-		OfflinePlayer player = getPlayer(uuid);
-		if (player.isOnline() && player.getPlayer() != null)
-			send(player.getPlayer(), message);
-	}
-
-	public static void send(CommandSender sender, String message) {
-		sender.sendMessage(colorize(message));
-	}
-
-	public static void send(CommandSender sender, JsonBuilder builder) {
-		sender.sendMessage(builder.build());
-	}
-
-	public static void send(CommandSender sender, BaseComponent... baseComponents) {
-		sender.sendMessage(baseComponents);
-	}
-
-	public static void send(CommandSender sender, Component component) {
-		sender.sendMessage(component);
+	public static void send(Object sender, Object message) {
+		if (sender instanceof CommandSender) {
+			if (message instanceof String)
+				((CommandSender) sender).sendMessage(colorize((String) message));
+			else if (message instanceof JsonBuilder)
+				((CommandSender) sender).sendMessage(((JsonBuilder) message).build());
+			else if (message instanceof Component)
+				((CommandSender) sender).sendMessage(((Component) message));
+		} else if (sender instanceof OfflinePlayer) {
+			OfflinePlayer player = (OfflinePlayer) sender;
+			if (player.getPlayer() != null)
+				send(player.getPlayer(), message);
+		} else if (sender instanceof UUID) {
+			send(getPlayer((UUID) sender), message);
+		} else if (sender instanceof PlayerOwnedObject)
+			send(((PlayerOwnedObject) sender).getOfflinePlayer(), message);
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

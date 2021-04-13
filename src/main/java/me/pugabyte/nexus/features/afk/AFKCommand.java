@@ -83,7 +83,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 						String message = "&e* " + Nickname.of(to.getPlayer()) + " is AFK";
 						if (to.getMessage() != null)
 							message += ": &3" + to.getMessage();
-						send(event.getChatter().getPlayer(), message);
+						send(event.getChatter(), message);
 					});
 				}
 			}

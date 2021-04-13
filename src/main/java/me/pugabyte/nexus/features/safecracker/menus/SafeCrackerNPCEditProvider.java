@@ -53,7 +53,7 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 				.lore("&3" + npc.getQuestion()).build(), e -> {
 			player.closeInventory();
 			SafeCracker.adminQuestionMap.put(player, npc.getName());
-			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set " + npc.getName() + "'s question").suggest("/safecracker question ").build());
+			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set " + npc.getName() + "'s question").suggest("/safecracker question "));
 		}));
 
 		ItemBuilder builder = new ItemBuilder(Material.PAPER).name("&eAnswers:");

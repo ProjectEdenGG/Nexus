@@ -10,10 +10,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.vote.Voter;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
@@ -103,20 +102,15 @@ public class InviteRewardsCommand extends CustomCommand {
 
 		// Invited player
 		send(invited, "");
-		send(invited, new ComponentBuilder("")
-				.append("  Did ").color(ChatColor.DARK_AQUA)
-				.append(inviter.getName()).color(ChatColor.YELLOW)
-				.append(" invite you to Bear Nation?").color(ChatColor.DARK_AQUA)
-				.create());
+		send(invited, json("  &3Did &e" + Nickname.of(inviter) + " &3invite you to Bear Nation?"));
 
-		send(invited, new ComponentBuilder("")
-				.append("  Click one  ||").color(ChatColor.DARK_AQUA)
-				.append("  Yes  ").color(ChatColor.GREEN).bold(true)
-				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ("/invited confirm " + inviter.getName())))
-				.append("||").color(ChatColor.DARK_AQUA).bold(false)
-				.append("  No  ").color(ChatColor.RED).bold(true)
-				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ("/invited deny " + inviter.getName())))
-				.create());
+		send(invited, json()
+				.next("  &3Click one  ||").color(ChatColor.DARK_AQUA)
+				.next("  &a&lYes  ").command("/invited confirm " + inviter.getName())
+				.group()
+				.next("&3||")
+				.group()
+				.next("  &c&lNo  ").command("/invited deny " + inviter.getName()));
 	}
 
 	static void saveInvitation(Player invitee, Player inviter) {

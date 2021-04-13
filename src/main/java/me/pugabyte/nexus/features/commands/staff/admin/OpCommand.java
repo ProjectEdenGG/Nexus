@@ -40,8 +40,7 @@ public class OpCommand extends CustomCommand {
 		else
 			Chat.broadcastIngame(PREFIX + oper + " opped " + opee, StaticChannel.ADMIN);
 
-		if (player.isOnline() && !player.equals(player()))
-			send(player.getPlayer(), PREFIX + "You are now op");
+		send(player, PREFIX + "You are now op");
 
 	}
 

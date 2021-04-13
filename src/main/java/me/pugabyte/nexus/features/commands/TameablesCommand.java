@@ -230,7 +230,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						}
 						checkOwner(player, entity);
 						moveQueue.put(player.getUniqueId(), event.getEntity());
-						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
+						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here"));
 						break;
 					case INFO:
 						String owner = getOwner(entity);

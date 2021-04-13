@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.shops;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -11,8 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.utils.ItemUtils.getRawShulkerContents;
-import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 
 public class ShopUtils {
@@ -27,8 +24,7 @@ public class ShopUtils {
 			List<ItemStack> excess = PlayerUtils.giveItemsGetExcess(player.getPlayer(), items);
 			shop.addHolding(excess);
 			if (!excess.isEmpty())
-				if (player.isOnline() && player.getPlayer() != null)
-					PlayerUtils.send(player.getPlayer(), new JsonBuilder(Shops.PREFIX + "Excess items added to item collection menu, click to view").command("/shops collect"));
+				PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Excess items added to item collection menu, click to view").command("/shops collect"));
 		} else
 			shop.addHolding(items);
 	}

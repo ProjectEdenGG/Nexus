@@ -30,7 +30,7 @@ public class AchievementListener implements Listener {
 		Player player = achievementPlayer.getPlayer();
 		if (player.isOnline()) {
 			String message = StringUtils.getPrefix("Achievements") + "You have completed the &e" + achievement.toString() + " &3achievement!";
-			PlayerUtils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()).build());
+			PlayerUtils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()));
 		}
 
 	}

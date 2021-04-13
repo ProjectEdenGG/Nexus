@@ -62,8 +62,7 @@ public class PayDiscordCommand extends Command {
 				}
 
 				String formatted = prettyMoney(amount);
-				if (target.isOnline() && target.getPlayer() != null)
-					PlayerUtils.send(target.getPlayer(), "&a" + formatted + " has been received from " + player.getName());
+				PlayerUtils.send(target, "&a" + formatted + " has been received from " + player.getName());
 
 				event.reply("Successfully sent " + formatted + " to " + target.getName());
 			} catch (Exception ex) {

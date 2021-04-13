@@ -37,7 +37,6 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
@@ -242,16 +241,12 @@ public abstract class CustomCommand extends ICustomCommand {
 			throw new InvalidInputException("Cannot send object: " + object.getClass().getSimpleName());
 	}
 
-	protected void send(CommandSender sender, int delay, String message) {
-		Tasks.wait(delay, () -> send(sender, message));
-	}
-
 	protected void send() {
-		send("");
+		send(sender(), "");
 	}
 
 	protected void send(String message) {
-		send(json(message));
+		send(sender(), json(message));
 	}
 
 	protected void send(JsonBuilder builder) {
@@ -262,20 +257,8 @@ public abstract class CustomCommand extends ICustomCommand {
 		send(sender(), component);
 	}
 
-	protected void send(BaseComponent... baseComponents) {
-		send(sender(), baseComponents);
-	}
-
-	protected void send(CommandSender sender, JsonBuilder builder) {
-		builder.send(sender);
-	}
-
-	protected void send(CommandSender sender, Component component) {
-		sender.sendMessage(component);
-	}
-
-	protected void send(int delay, String message) {
-		Tasks.wait(delay, () -> event.reply(message));
+	protected void send(Object sender, Object message) {
+		PlayerUtils.send(sender, message);
 	}
 
 	protected void line() {

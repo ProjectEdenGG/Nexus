@@ -380,8 +380,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 					Tasks.wait(Time.MINUTE.x(2), () -> {
 						Map<String, Object> data = task.getJson();
 						OfflinePlayer player = PlayerUtils.getPlayer((String) data.get("uuid"));
-						if (player.isOnline() && player.getPlayer() != null)
-							PlayerUtils.send(player.getPlayer(), (String) data.get("message"));
+						PlayerUtils.send(player, data.get("message"));
 						service.complete(task);
 					}));
 		});
