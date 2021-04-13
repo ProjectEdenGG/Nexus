@@ -32,6 +32,7 @@ public class MiniGolfCommand extends CustomCommand {
 		MiniGolf.getUsers().add(new MiniGolfUser(uuid()));
 		getKit();
 		send("playing minigolf");
+		send("Users: " + MiniGolf.getUsers().toString());
 	}
 
 	@Path("quit")
@@ -42,6 +43,7 @@ public class MiniGolfCommand extends CustomCommand {
 		MiniGolf.getUsers().remove(user);
 		MiniGolf.takeKit(player());
 		send("quit minigolf");
+		send("Users: " + MiniGolf.getUsers().toString());
 	}
 
 	@Path("color <colorType>")
