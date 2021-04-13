@@ -9,16 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@PlayerClass(BearFairUser.class)
-public class BearFairService extends MongoService {
-	private final static Map<UUID, BearFairUser> cache = new HashMap<>();
+@PlayerClass(BearFairUser20.class)
+public class BearFairUserService20 extends MongoService {
+	private final static Map<UUID, BearFairUser20> cache = new HashMap<>();
 
-	public Map<UUID, BearFairUser> getCache() {
+	public Map<UUID, BearFairUser20> getCache() {
 		return cache;
 	}
 
-	public List<BearFairUser> getTopPoints(int page) {
-		return database.createQuery(BearFairUser.class)
+	public List<BearFairUser20> getTopPoints(int page) {
+		return database.createQuery(BearFairUser20.class)
 				.order(Sort.descending("totalPoints"))
 				.limit(10)
 				.offset((page - 1) * 10)

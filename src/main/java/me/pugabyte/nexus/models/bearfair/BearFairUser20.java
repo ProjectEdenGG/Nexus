@@ -27,18 +27,18 @@ import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 @Data
-@Entity("bearfair_user")
+@Entity("bearfair20_user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
-public class BearFairUser extends PlayerOwnedObject {
+public class BearFairUser20 extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	// Points
 	public transient static final int DAILY_SOURCE_POINTS = 5;
 	public transient static final int DAILY_SOURCE_MAX = 5;
-	private Map<BFPointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
+	private Map<BF20PointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
 	private int totalPoints;
 	// First Visit
 	private boolean firstVisit = true;
@@ -84,7 +84,7 @@ public class BearFairUser extends PlayerOwnedObject {
 	private List<Location> presentLocs = new ArrayList<>();
 	//
 
-	public BearFairUser(UUID uuid) {
+	public BearFairUser20(UUID uuid) {
 		this.uuid = uuid;
 	}
 
@@ -102,7 +102,7 @@ public class BearFairUser extends PlayerOwnedObject {
 		totalPoints -= points;
 	}
 
-	public void giveDailyPoints(BFPointSource source) {
+	public void giveDailyPoints(BF20PointSource source) {
 		pointsReceivedToday.putIfAbsent(source, new HashMap<LocalDate, Integer>() {{
 			put(LocalDate.now(), 0);
 		}});
@@ -121,7 +121,7 @@ public class BearFairUser extends PlayerOwnedObject {
 		sendActionBar(getPlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
 	}
 
-	public enum BFPointSource {
+	public enum BF20PointSource {
 		ARCHERY,
 		BASKETBALL,
 		FROGGER,
