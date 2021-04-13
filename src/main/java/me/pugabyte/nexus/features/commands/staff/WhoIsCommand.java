@@ -124,6 +124,8 @@ public class WhoIsCommand extends CustomCommand {
 				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup));
 
 		if (offlinePlayer.isOnline() && player != null) {
+			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName());
+
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode()));
 
 			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw());

@@ -143,6 +143,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	public void _shutdown() {
 		shutdownBossBars();
 	}
+
 	@Path("cancelReload")
 	@Cooldown(@Part(value = Time.SECOND, x = 15))
 	void cancelReload() {
@@ -446,6 +447,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("getPlayer [player]")
 	void getPlayer(@Arg("self") OfflinePlayer player) {
 		send(player.getName());
+	}
+
+	@Path("getClientBrandName <player>")
+	void getClientBrandName(@Arg("self") Player player) {
+		send(player.getClientBrandName());
 	}
 
 	@Description("Generate an sample exp bar countdown")
