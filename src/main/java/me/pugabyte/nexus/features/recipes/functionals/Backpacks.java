@@ -24,11 +24,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
@@ -101,6 +97,7 @@ public class Backpacks extends FunctionalRecipe {
 	public void onClickBackpack(InventoryClickEvent event) {
 		if (!isBackpack(event.getCurrentItem())) return;
 		if (!event.getClick().isRightClick()) return;
+		if (!(event.getClickedInventory() instanceof PlayerInventory)) return;
 		event.setCancelled(true);
 		event.getWhoClicked().closeInventory();
 		openBackpack((Player) event.getWhoClicked(), event.getCurrentItem());
