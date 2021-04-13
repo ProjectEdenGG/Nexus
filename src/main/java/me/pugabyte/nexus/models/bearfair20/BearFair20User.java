@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.models.bearfair;
+package me.pugabyte.nexus.models.bearfair20;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;

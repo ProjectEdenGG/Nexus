@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFair20User;
-import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Sound;

@@ -9,8 +9,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightI
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
-import me.pugabyte.nexus.models.bearfair.BearFair20User;
-import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;

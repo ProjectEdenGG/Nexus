@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClas
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland.MainNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFair20User;
-import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;

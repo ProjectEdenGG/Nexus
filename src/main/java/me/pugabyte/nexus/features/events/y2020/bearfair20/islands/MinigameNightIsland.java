@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClas
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.arcademachine.ArcadeMachineMenu;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFair20User;
-import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
