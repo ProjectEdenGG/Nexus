@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.store;
 import com.google.common.collect.ImmutableList;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.store.perks.NPCListener;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -12,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.Utils;
 import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.data.Coupon.Discount;
 import net.buycraft.plugin.data.Coupon.Effective;
@@ -27,6 +29,10 @@ public class StoreCommand extends CustomCommand {
 
 	public StoreCommand(CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		Utils.tryRegisterListener(new NPCListener());
 	}
 
 	@Path
