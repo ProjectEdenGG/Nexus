@@ -80,6 +80,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
+		event.getPlayer().closeInventory();
 		if (event.getFrom().getWorld().getEnvironment() == Environment.THE_END || event.getTo().getWorld().getEnvironment() != Environment.THE_END)
 			return;
 
