@@ -60,6 +60,7 @@ public class AnimalTeleportPens {
 				case RABBIT:
 				case POLAR_BEAR:
 				case VILLAGER:
+				case MUSHROOM_COW:
 					finalEntities.add(entity);
 					break;
 				default:
@@ -80,6 +81,7 @@ public class AnimalTeleportPens {
 					break;
 				case COW:
 				case SHEEP:
+				case MUSHROOM_COW:
 				case POLAR_BEAR:
 				case PANDA:
 					price += 150;
