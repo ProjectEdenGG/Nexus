@@ -50,7 +50,7 @@ import static me.pugabyte.nexus.utils.Utils.getMin;
 public class PlayerUtils {
 
 	public enum Dev {
-		PUGA("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
+		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),

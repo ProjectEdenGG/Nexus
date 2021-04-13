@@ -13,11 +13,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownException;
-import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.Nickname.NicknameHistoryEntry;
 import me.pugabyte.nexus.models.nickname.NicknameService;
-import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -140,9 +138,9 @@ public class NicknameCommand extends CustomCommand {
 		@Override
 		public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
 			Tasks.async(() -> {
-				Nerd nerd = Dev.PUGA.getNerd();
-				Nickname nickname = new NicknameService().get(nerd);
-				for (NicknameHistoryEntry entry : nickname.getNicknameHistory()) { // TODO query for correct player
+				NicknameService service = new NicknameService();
+				Nickname data = service.getFromQueueId(event.getMessageId());
+				for (NicknameHistoryEntry entry : data.getNicknameHistory()) {
 					if (!event.getMessageId().equals(entry.getNicknameQueueId()))
 						continue;
 
@@ -162,7 +160,7 @@ public class NicknameCommand extends CustomCommand {
 								message.reply("Nickname accepted").queue();
 							})
 							.onError(error -> entry.cancel())
-							.onFinally(() -> new NicknameService().save(nickname))
+							.onFinally(() -> service.save(data))
 							.run();
 				}
 			});

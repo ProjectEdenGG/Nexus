@@ -1,11 +1,15 @@
 package me.pugabyte.nexus.models;
 
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.nexus.models.delivery.DeliveryService;
+import me.pugabyte.nexus.models.delivery.DeliveryUser;
+import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -51,6 +55,17 @@ public abstract class PlayerOwnedObject implements Identified {
 
 	public void send(String message) {
 		send(new JsonBuilder(message));
+	}
+
+	public void sendOrMail(String message) {
+		if (isOnline())
+			send(new JsonBuilder(message));
+		else {
+			DeliveryService service = new DeliveryService();
+			DeliveryUser deliveryUser = service.get(getUuid());
+			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.serverDelivery(message));
+			service.save(deliveryUser);
+		}
 	}
 
 	public void send(JsonBuilder message) {

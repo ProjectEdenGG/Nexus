@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class RoleManager {
 	public static final List<UUID> ignore = Arrays.asList(
-			Dev.PUGA.getUuid(),
+			Dev.GRIFFIN.getUuid(),
 			Dev.WAKKA.getUuid(),
 			Dev.FILID.getUuid(),
 			Dev.BLAST.getUuid(),

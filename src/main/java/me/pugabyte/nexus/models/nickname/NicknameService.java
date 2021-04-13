@@ -16,7 +16,15 @@ public class NicknameService extends MongoService {
 	}
 
 	public Nickname getFromNickname(String nickname) {
-		return database.createQuery(Nickname.class).filter("nickname", sanitize(nickname)).find().tryNext();
+		Nickname data = database.createQuery(Nickname.class).filter("nickname", sanitize(nickname)).find().tryNext();
+		cache(data);
+		return data;
+	}
+
+	public Nickname getFromQueueId(String queueId) {
+		Nickname data = database.createQuery(Nickname.class).filter("nicknameHistory.nicknameQueueId", sanitize(queueId)).find().tryNext();
+		cache(data);
+		return data;
 	}
 
 }

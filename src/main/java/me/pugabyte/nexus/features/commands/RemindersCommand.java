@@ -342,7 +342,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		Tasks.cancel(taskId);
 		taskId = Tasks.repeatAsync(interval, interval, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!Dev.PUGA.is(player))
+				if (!Dev.GRIFFIN.is(player))
 					continue;
 
 				Utils.attempt(100, () -> {

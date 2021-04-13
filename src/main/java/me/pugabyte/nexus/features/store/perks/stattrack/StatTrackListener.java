@@ -41,7 +41,7 @@ public class StatTrackListener implements Listener {
 	}
 
 	private void checkStats(Player player, Block block, Stat... stats) {
-		if (!Dev.PUGA.is(player)) return;
+		if (!Dev.GRIFFIN.is(player)) return;
 		if (player.getGameMode() != GameMode.SURVIVAL) return;
 		final ItemStack tool = ItemUtils.getTool(player);
 		if (tool == null || !new StatItem(tool).isEnabled()) return;

@@ -8,11 +8,9 @@ import me.pugabyte.nexus.features.discord.Bot.HandledBy;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.Nickname.NicknameHistoryEntry;
 import me.pugabyte.nexus.models.nickname.NicknameService;
-import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Tasks;
 
 import java.util.Arrays;
@@ -44,17 +42,21 @@ public class NicknameDiscordCommand extends Command {
 							if (event.getMessage().getReferencedMessage() == null)
 								throw new InvalidInputException("You must reply to the original message");
 
-							Nerd nerd = Dev.PUGA.getNerd();
-							Nickname nickname = new NicknameService().get(nerd);
-							for (NicknameHistoryEntry entry : nickname.getNicknameHistory()) { // TODO query for correct player
-								if (!event.getMessage().getReferencedMessage().getId().equals(entry.getNicknameQueueId()))
-									if (event.getMessage().getReferencedMessage().getReferencedMessage() == null ||
-											!event.getMessage().getReferencedMessage().getReferencedMessage().getId().equals(entry.getNicknameQueueId()))
+							String referencedId = event.getMessage().getReferencedMessage().getId();
+
+							NicknameService service = new NicknameService();
+							Nickname data = service.getFromQueueId(referencedId);
+
+							if (data == null)
+								throw new InvalidInputException("No nickname queue found, did you reply to the original message?");
+
+							for (NicknameHistoryEntry entry : data.getNicknameHistory()) {
+								if (!referencedId.equals(entry.getNicknameQueueId()))
 									continue;
 
 								entry.deny(String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
 								event.getMessage().reply("Successfully updated reason").queue();
-								new NicknameService().save(nickname);
+								service.save(data);
 							}
 					}
 			} catch (Exception ex) {

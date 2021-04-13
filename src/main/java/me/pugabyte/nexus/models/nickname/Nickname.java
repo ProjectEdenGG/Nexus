@@ -19,6 +19,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConver
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -163,14 +164,14 @@ public class Nickname extends PlayerOwnedObject {
 		public void deny(String response) {
 			deny();
 			this.response = response;
-			// TODO tell player
+			sendOrMail(StringUtils.getPrefix("Nickname") + "&cYour nickname &e" + nickname + " &chas been denied: &3" + response);
 		}
 
 		public void accept() {
 			responseReceived();
 			accepted = true;
 			getData().setNickname(this);
-			// TODO tell player
+			sendOrMail(StringUtils.getPrefix("Nickname") + "&3Your nickname &e" + this.nickname + " &3has been &aaccepted");
 		}
 
 		public void selfCancel() {
