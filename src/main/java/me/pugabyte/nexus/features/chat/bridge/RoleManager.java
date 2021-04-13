@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.chat.bridge;
 
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
@@ -46,32 +47,61 @@ public class RoleManager {
 			return;
 		}
 
-		Role role = null;
-		if (user.getRoleId() != null)
-			role = Discord.getGuild().getRoleById(user.getRoleId());
-
-		if (user.getRoleId() == null || role == null) {
+		debug("Updating role for " + user.getNickname());
+		if (user.getRoleId() == null) {
+			debug("  No role found, searching");
 			List<Role> rolesByName = Discord.getGuild().getRolesByName(player.getName(), true);
 			if (rolesByName.size() > 0) {
+				debug("    Found matching username role");
 				user.setRoleId(rolesByName.get(0).getId());
 				service.save(user);
 			} else {
 				List<Role> rolesByNickname = Discord.getGuild().getRolesByName(nickname, true);
 				if (rolesByNickname.size() > 0) {
+					debug("    Found matching nickname role");
 					user.setRoleId(rolesByNickname.get(0).getId());
 					service.save(user);
-				} else
+				} else {
+					debug("    No matching role found, creating a new one");
 					Discord.getGuild().createRole()
-						.setName(nickname)
-						.setColor(Nerd.of(player).getRank().getDiscordColor())
-						.queue();
+							.setName(nickname)
+							.setColor(Nerd.of(player).getRank().getDiscordColor())
+							.queue();
+					return;
+				}
 			}
-		} else {
-			if (role.getColor() != roleColor)
-				role.getManager().setColor(roleColor).queue();
-			if (!role.getName().equals(nickname))
-				role.getManager().setName(nickname).queue();
 		}
+
+		Role role = Discord.getGuild().getRoleById(user.getRoleId());
+		if (role == null) {
+			debug("  Unable to retrieve role, deleted?");
+			return;
+		}
+
+		debug("  Role found, checking for updates");
+		boolean update = false;
+		net.dv8tion.jda.api.managers.RoleManager manager = role.getManager();
+		if (!roleColor.equals(role.getColor())) {
+			debug("    Updating color to " + roleColor);
+			update = true;
+			manager.setColor(roleColor);
+		}
+		if (!role.getName().equals(nickname)) {
+			debug("    Updating nickname to " + nickname);
+			update = true;
+			manager.setName(nickname);
+		}
+
+		if (update)
+			manager.queue(success -> Nexus.debug("      Updated role"), error -> { throw new RuntimeException(error); });
+		else {
+			debug("    No updates needed");
+		}
+	}
+
+	private static void debug(String message) {
+		if (false)
+			Nexus.debug(message);
 	}
 
 }
