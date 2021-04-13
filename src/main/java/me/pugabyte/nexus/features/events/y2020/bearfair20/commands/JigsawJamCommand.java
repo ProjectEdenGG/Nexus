@@ -15,8 +15,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.bearfair.BearFairUser20;
-import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
+import me.pugabyte.nexus.models.bearfair.BearFair20User;
+import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJamService;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJammer;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -409,8 +409,8 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (correct == totalMaps) {
 			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
 
-			BearFairUserService20 bearFairService = new BearFairUserService20();
-			BearFairUser20 user = bearFairService.get(player);
+			BearFair20UserService bearFairService = new BearFair20UserService();
+			BearFair20User user = bearFairService.get(player);
 
 			if (!jammer.hasPlayed()) {
 				user.givePoints(50);

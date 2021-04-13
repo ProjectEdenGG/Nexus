@@ -31,7 +31,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
-public class BearFairUser20 extends PlayerOwnedObject {
+public class BearFair20User extends PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -84,7 +84,7 @@ public class BearFairUser20 extends PlayerOwnedObject {
 	private List<Location> presentLocs = new ArrayList<>();
 	//
 
-	public BearFairUser20(UUID uuid) {
+	public BearFair20User(UUID uuid) {
 		this.uuid = uuid;
 	}
 

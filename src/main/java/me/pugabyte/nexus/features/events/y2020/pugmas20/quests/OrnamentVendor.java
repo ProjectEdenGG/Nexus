@@ -11,8 +11,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -140,7 +140,7 @@ public class OrnamentVendor implements Listener {
 
 		event.setCancelled(true);
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		if (user.getOrnamentVendorStage() == QuestStage.NOT_STARTED)
@@ -430,7 +430,7 @@ public class OrnamentVendor implements Listener {
 		if (event.isShiftClick())
 			resultAmount = source.getAmount() / Ornament.logsPerOrnament;
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		user.getOrnamentTradeCount().put(ornament, user.getOrnamentTradeCount().getOrDefault(ornament, 0) + resultAmount);

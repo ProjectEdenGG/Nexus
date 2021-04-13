@@ -9,8 +9,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -72,7 +72,7 @@ public class LightTheTree implements Listener {
 		if (!entity.getType().equals(EntityType.ITEM_FRAME)) return;
 		if (!Pugmas20.getWGUtils().isInRegion(entity.getLocation(), lighterRg)) return;
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		event.setCancelled(true);
@@ -97,7 +97,7 @@ public class LightTheTree implements Listener {
 	static {
 		// Cleanup
 		Tasks.async(() -> {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			List<Pugmas20User> users = service.getAll();
 			users.stream().filter(user -> user.isLightingTorches() && user.getLightTreeStage() == QuestStage.STEPS_DONE).forEach(user -> {
 				service.cache(user);
@@ -108,7 +108,7 @@ public class LightTheTree implements Listener {
 	}
 
 	public static void startTimer(Player player) {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		Countdown timer = Countdown.builder()
@@ -141,7 +141,7 @@ public class LightTheTree implements Listener {
 		if (!isAtPugmas(player)) return;
 		if (block == null) return;
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 		if (!user.getLightTreeStage().equals(QuestStage.STEPS_DONE)) return;
 		if (!lighter.equals(player.getInventory().getItemInMainHand())) return;
@@ -229,7 +229,7 @@ public class LightTheTree implements Listener {
 
 	static {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(2), () -> {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (!isAtPugmas(player))
@@ -317,7 +317,7 @@ public class LightTheTree implements Listener {
 
 		event.setCancelled(true);
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		if (Arrays.asList(QuestStage.NOT_STARTED, QuestStage.STARTED, QuestStage.STEP_ONE, QuestStage.STEP_TWO).contains(user.getLightTreeStage()))

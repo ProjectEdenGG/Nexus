@@ -4,9 +4,9 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairUser20;
-import me.pugabyte.nexus.models.bearfair.BearFairUser20.BF20PointSource;
-import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
+import me.pugabyte.nexus.models.bearfair.BearFair20User;
+import me.pugabyte.nexus.models.bearfair.BearFair20User.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -110,9 +110,9 @@ public class PugDunk implements Listener {
 		BearFair20.getWorld().playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 		if (giveDailyPoints) {
-			BearFairUser20 user = new BearFairUserService20().get(player);
+			BearFair20User user = new BearFair20UserService().get(player);
 			user.giveDailyPoints(SOURCE);
-			new BearFairUserService20().save(user);
+			new BearFair20UserService().save(user);
 		}
 
 		dropNPC();

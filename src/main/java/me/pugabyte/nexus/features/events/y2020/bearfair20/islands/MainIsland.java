@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClas
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland.MainNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairUser20;
-import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
+import me.pugabyte.nexus.models.bearfair.BearFair20User;
+import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -147,8 +147,8 @@ public class MainIsland implements Listener, Island {
 						script.add("It should only be one more day before we find what we are looking for.");
 						break;
 					case 5:
-						BearFairUserService20 service = new BearFairUserService20();
-						BearFairUser20 user = service.get(player);
+						BearFair20UserService service = new BearFair20UserService();
+						BearFair20User user = service.get(player);
 						int wait = 0;
 
 						if (!user.isSafeCracker_talkedWith_Supervisor()) {
@@ -178,8 +178,8 @@ public class MainIsland implements Listener, Island {
 		Miner(2743) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairUserService20 service = new BearFairUserService20();
-				BearFairUser20 user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				if (user.isQuest_talkedWith_Miner())
 					return null;
 				user.setQuest_talkedWith_Miner(true);
@@ -195,8 +195,8 @@ public class MainIsland implements Listener, Island {
 		Collector(2750) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairUserService20 service = new BearFairUserService20();
-				BearFairUser20 user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				if (user.isQuest_talkedWith_Collector())
 					return null;
 				user.setQuest_talkedWith_Collector(true);
@@ -232,8 +232,8 @@ public class MainIsland implements Listener, Island {
 		Witch(2670) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairUserService20 service = new BearFairUserService20();
-				BearFairUser20 user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_Main_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -378,8 +378,8 @@ public class MainIsland implements Listener, Island {
 	}
 
 	public static void acceptWitchQuest(Player player) {
-		BearFairUserService20 service = new BearFairUserService20();
-		BearFairUser20 user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		if (user.getQuest_Main_Step() == 0) {
 			nextStep(player); // 1
 			Talkers.startScript(player, 2670);
@@ -388,15 +388,15 @@ public class MainIsland implements Listener, Island {
 	}
 
 	public static void setStep(Player player, int step) {
-		BearFairUserService20 service = new BearFairUserService20();
-		BearFairUser20 user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		user.setQuest_Main_Step(step);
 		service.save(user);
 	}
 
 	public static void nextStep(Player player) {
-		BearFairUserService20 service = new BearFairUserService20();
-		BearFairUser20 user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		int step = user.getQuest_Main_Step() + 1;
 		user.setQuest_Main_Step(step);
 		service.save(user);
@@ -446,8 +446,8 @@ public class MainIsland implements Listener, Island {
 			player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
 		});
 
-		BearFairUserService20 service = new BearFairUserService20();
-		BearFairUser20 user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		user.setQuest_Main_Finish(true);
 		service.save(user);
 	}
@@ -464,8 +464,8 @@ public class MainIsland implements Listener, Island {
 		event.getItem().setAmount(event.getItem().getAmount() - 1);
 
 		Player player = event.getPlayer();
-		BearFairUserService20 service = new BearFairUserService20();
-		BearFairUser20 user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 
 		user.givePoints(500);
 		service.save(user);
@@ -497,8 +497,8 @@ public class MainIsland implements Listener, Island {
 				break;
 			case 2:
 				reward = "50 Bear Fair Points";
-				BearFairUserService20 BFService = new BearFairUserService20();
-				BearFairUser20 user = BFService.get(player);
+				BearFair20UserService BFService = new BearFair20UserService();
+				BearFair20User user = BFService.get(player);
 				user.givePoints(50);
 				BFService.save(user);
 				break;

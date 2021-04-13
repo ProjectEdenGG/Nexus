@@ -5,9 +5,9 @@ import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairUser20;
-import me.pugabyte.nexus.models.bearfair.BearFairUser20.BF20PointSource;
-import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
+import me.pugabyte.nexus.models.bearfair.BearFair20User;
+import me.pugabyte.nexus.models.bearfair.BearFair20User.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -326,9 +326,9 @@ public class Frogger implements Listener {
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 
 			if (giveDailyPoints) {
-				BearFairUser20 user = new BearFairUserService20().get(player);
+				BearFair20User user = new BearFair20UserService().get(player);
 				user.giveDailyPoints(SOURCE);
-				new BearFairUserService20().save(user);
+				new BearFair20UserService().save(user);
 			}
 
 			checkpointList.remove(player);

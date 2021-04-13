@@ -12,8 +12,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	@NonNull
 	private LocalDate date;
-	private final Pugmas20Service service = new Pugmas20Service();
+	private final Pugmas20UserService service = new Pugmas20UserService();
 	private Pugmas20User user;
 	private AdventChest adventChest;
 	private boolean located;

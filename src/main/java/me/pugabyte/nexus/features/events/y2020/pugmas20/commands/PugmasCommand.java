@@ -32,8 +32,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -65,7 +65,7 @@ import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 @Redirect(from = "/waypoint", to = "/pugmas waypoint")
 public class PugmasCommand extends CustomCommand implements Listener {
 	private final String timeLeft = timespanDiff(Pugmas20.openingDay);
-	private final Pugmas20Service pugmasService = new Pugmas20Service();
+	private final Pugmas20UserService pugmasService = new Pugmas20UserService();
 	private Pugmas20User pugmasUser;
 	private final EventUserService eventUserService = new EventUserService();
 	private EventUser eventUser;

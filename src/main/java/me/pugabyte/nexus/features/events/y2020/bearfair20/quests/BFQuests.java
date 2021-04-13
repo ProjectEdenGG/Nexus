@@ -9,8 +9,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightI
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
-import me.pugabyte.nexus.models.bearfair.BearFairUser20;
-import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
+import me.pugabyte.nexus.models.bearfair.BearFair20User;
+import me.pugabyte.nexus.models.bearfair.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
@@ -321,8 +321,8 @@ public class BFQuests implements Listener {
 		Player player = (Player) event.getPlayer();
 		if (!isAtBearFair(player)) return;
 
-		BearFairUserService20 service = new BearFairUserService20();
-		BearFairUser20 user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		if (player.getInventory().contains(MinigameNightIsland.joystick.clone().build())) {
 			MinigameNightIsland.foundPiece(player, MinigameNightIsland.joystick.clone().build());
 			service.save(user);

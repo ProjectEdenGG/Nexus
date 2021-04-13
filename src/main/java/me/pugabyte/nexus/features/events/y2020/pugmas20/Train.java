@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -391,7 +391,7 @@ public class Train {
 	}
 
 	private static boolean isTrainMuted(Player player) {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User pugmasUser = service.get(player);
 		return pugmasUser.isMuteTrain();
 	}

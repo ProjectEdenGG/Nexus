@@ -14,8 +14,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -135,7 +135,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	private void npcParticles() {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Particle particle = Particle.VILLAGER_HAPPY;
 
 		Tasks.repeatAsync(0, Time.SECOND.x(2), () -> {
@@ -258,7 +258,7 @@ public class Pugmas20 implements Listener {
 
 //	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 
 		if (isAtPugmas(event.getFrom()) && !isAtPugmas(event.getTo())) {
 			Pugmas20User user = service.get(event.getPlayer());

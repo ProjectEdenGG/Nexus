@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -90,7 +90,7 @@ public class ToyTesting implements Listener {
 			}
 		}
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		String lore = null;
@@ -135,7 +135,7 @@ public class ToyTesting implements Listener {
 	}
 
 	private void setPlayedGame(List<Player> players, Toy toy) {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		for (Player player : players) {
 			Pugmas20User user = service.get(player);
 			if (user.getToyTestingStage().equals(QuestStage.STARTED)) {
