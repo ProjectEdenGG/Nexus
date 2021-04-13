@@ -4,9 +4,9 @@ import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -37,7 +37,7 @@ public class PugDunk implements Listener {
 	private static Location buttonLoc = new Location(BearFair20.getWorld(), -960, 139, -1594);
 	private static Location dropBlock = new Location(BearFair20.getWorld(), -963, 142, -1588);
 	private static Location delArrowsLoc = new Location(BearFair20.getWorld(), -961, 135, -1594);
-	private BFPointSource SOURCE = BFPointSource.PUGDUNK;
+	private BF20PointSource SOURCE = BF20PointSource.PUGDUNK;
 	private static String gameRg = BearFair20.getRegion() + "_pugdunk";
 	private static String targetRg = gameRg + "_target";
 
@@ -110,9 +110,9 @@ public class PugDunk implements Listener {
 		BearFair20.getWorld().playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 		if (giveDailyPoints) {
-			BearFairUser user = new BearFairService().get(player);
+			BearFairUser20 user = new BearFairUserService20().get(player);
 			user.giveDailyPoints(SOURCE);
-			new BearFairService().save(user);
+			new BearFairUserService20().save(user);
 		}
 
 		dropNPC();

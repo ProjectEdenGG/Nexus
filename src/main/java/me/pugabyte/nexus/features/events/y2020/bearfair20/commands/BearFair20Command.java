@@ -9,7 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
@@ -18,7 +18,7 @@ import org.bukkit.event.Listener;
 @NoArgsConstructor
 @Redirect(from = {"/bfp", "bfpoints", "/bearfairpoints"}, to = "/bearfair points")
 public class BearFair20Command extends _WarpCommand implements Listener {
-	private final BearFairService service = new BearFairService();
+	private final BearFairUserService20 service = new BearFairUserService20();
 
 	public BearFair20Command(CommandEvent event) {
 		super(event);

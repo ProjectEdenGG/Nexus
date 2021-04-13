@@ -5,8 +5,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -51,8 +51,8 @@ public class Beehive implements Listener {
 		Player player = event.getPlayer();
 
 		if (id.equalsIgnoreCase(enterRg)) {
-			BearFairService service = new BearFairService();
-			BearFairUser user = service.get(player);
+			BearFairUserService20 service = new BearFairUserService20();
+			BearFairUser20 user = service.get(player);
 			if (user.isQuest_Hive_Access())
 				allowed(player);
 			else {
@@ -101,8 +101,8 @@ public class Beehive implements Listener {
 						"You've shown yourself to be a benefactor in the ways of the golden nectar.", player);
 				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				user.setQuest_Hive_Access(true);
 				MainIsland.setStep(player, 3);
 				service.save(user);

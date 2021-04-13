@@ -8,9 +8,9 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.Fairgrounds;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -52,7 +52,7 @@ public class Basketball implements Listener {
 	private static String stuckRg = gameRg + "_stuck_";
 	private static String backboardRg = gameRg + "_backboard_";
 	private static String hoopRg = gameRg + "_hoop_";
-	private BFPointSource SOURCE = BFPointSource.BASKETBALL;
+	private BF20PointSource SOURCE = BF20PointSource.BASKETBALL;
 
 	static {
 		// TODO BEARFAIR
@@ -220,9 +220,9 @@ public class Basketball implements Listener {
 					send("&eTouchdown!!", player);
 
 					if (giveDailyPoints) {
-						BearFairUser user = new BearFairService().get(player);
+						BearFairUser20 user = new BearFairUserService20().get(player);
 						user.giveDailyPoints(SOURCE);
-						new BearFairService().save(user);
+						new BearFairUserService20().save(user);
 					}
 
 					getWGUtils().getPlayersInRegion(courtRg).forEach(loopPlayer ->

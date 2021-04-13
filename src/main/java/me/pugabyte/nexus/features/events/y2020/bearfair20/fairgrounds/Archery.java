@@ -5,9 +5,9 @@ import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -43,7 +43,7 @@ public class Archery implements Listener {
 	private static String targetsRg = gameRg + "_targets";
 	private static boolean archeryBool = false;
 	private static int currentTargets = 0;
-	private BFPointSource SOURCE = BFPointSource.ARCHERY;
+	private BF20PointSource SOURCE = BF20PointSource.ARCHERY;
 
 	public Archery() {
 		Nexus.registerListener(this);
@@ -100,9 +100,9 @@ public class Archery implements Listener {
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 		if (giveDailyPoints) {
-			BearFairUser user = new BearFairService().get(player);
+			BearFairUser20 user = new BearFairUserService20().get(player);
 			user.giveDailyPoints(SOURCE);
-			new BearFairService().save(user);
+			new BearFairUserService20().save(user);
 		}
 	}
 

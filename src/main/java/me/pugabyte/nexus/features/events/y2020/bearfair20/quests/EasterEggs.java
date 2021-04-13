@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -23,7 +23,7 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAt
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
 
 public class EasterEggs implements Listener {
-	BearFairService service = new BearFairService();
+	BearFairUserService20 service = new BearFairUserService20();
 	private static final String easterEgg = "ba3b7698-589c-3326-90ff-4862853a5c24";
 	private static final int total = 15;
 	private static String foundOne = PREFIX + "You found a secret treasure chest! There are still more to find throughout the islands.";
@@ -51,7 +51,7 @@ public class EasterEggs implements Listener {
 
 		Location playerLoc = player.getLocation();
 		Location blockLoc = block.getLocation();
-		BearFairUser bfUser = service.get(player);
+		BearFairUser20 bfUser = service.get(player);
 		List<Location> foundLocs = bfUser.getEasterEggsLocs();
 		if (foundLocs.contains(blockLoc)) {
 			send(duplicate, player);

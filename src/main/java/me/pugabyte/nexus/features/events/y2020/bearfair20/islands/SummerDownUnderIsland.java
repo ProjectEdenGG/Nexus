@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.SummerDownUnderIsland.SummerDownUnderNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -68,8 +68,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		ROLEX(2907) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -96,8 +96,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		SIR_JACK(2908) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -151,8 +151,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		LACHLAN(2747) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -202,8 +202,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		ROBERT_MENZIES(2911) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -229,8 +229,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		BRI(2744) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -305,8 +305,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		MANAGER(2745) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -333,8 +333,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		PROSPECTOR(2753) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -394,8 +394,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 	}
 
 	private static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		int step = user.getQuest_SDU_Step() + 1;
 		user.setQuest_SDU_Step(step);
 		service.save(user);
@@ -488,8 +488,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		if (!under.equals(Material.EMERALD_BLOCK)) return;
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		int step = user.getQuest_SDU_Step();
 
 		if (step == 3 && !player.getInventory().contains(greatNortherns)) {

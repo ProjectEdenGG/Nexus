@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClas
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.arcademachine.ArcadeMachineMenu;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -87,8 +87,8 @@ public class MinigameNightIsland implements Listener, Island {
 		AXEL(2755) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 				int step = user.getQuest_MGN_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -182,8 +182,8 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	public static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		int step = user.getQuest_MGN_Step() + 1;
 		user.setQuest_MGN_Step(step);
 		service.save(user);
@@ -202,8 +202,8 @@ public class MinigameNightIsland implements Listener, Island {
 		if (!BearFair20.enableQuests) return;
 		event.setCancelled(true);
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 
 		if (!user.isQuest_MGN_Start()) return;
 
@@ -263,8 +263,8 @@ public class MinigameNightIsland implements Listener, Island {
 		}
 
 		if (piece == null) return;
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		ItemStack arcadePiece = getArcadePiece(piece);
 		if (!user.isQuest_MGN_Start()) return;
 		if (getFoundPieces(player).contains(arcadePiece)) return;
@@ -282,8 +282,8 @@ public class MinigameNightIsland implements Listener, Island {
 		if (!BearFair20.enableQuests) return;
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 
 		if (user.isQuest_MGN_Start() && player.getInventory().contains(solderingIron)) return;
 
@@ -305,8 +305,8 @@ public class MinigameNightIsland implements Listener, Island {
 
 		event.setCancelled(true);
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 
 		if (!user.isQuest_MGN_Start()) return;
 
@@ -342,8 +342,8 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	private static List<ItemStack> getFoundPieces(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		List<ItemStack> foundPieces = new ArrayList<>();
 		if (user.isQuest_MGN_hasCPU())
 			foundPieces.add(cpu.build());
@@ -367,8 +367,8 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	public static void foundPiece(Player player, ItemStack piece) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		Material pieceType = piece.getType();
 		switch (pieceType) {
 			case IRON_TRAPDOOR:
@@ -440,8 +440,8 @@ public class MinigameNightIsland implements Listener, Island {
 
 	private static void playArcadeEffects(Player player) {
 		int ran;
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		boolean completedQuest = user.isQuest_MGN_Finish();
 		int step = user.getQuest_MGN_Step();
 

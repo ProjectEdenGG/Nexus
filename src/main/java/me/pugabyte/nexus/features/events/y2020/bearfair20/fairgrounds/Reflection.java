@@ -6,9 +6,9 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.models.Laser;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -59,7 +59,7 @@ public class Reflection implements Listener {
 	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
 	private String gameRg = BearFair20.getRegion() + "_reflection";
 	private String powderRg = gameRg + "_powder";
-	private BFPointSource SOURCE = BFPointSource.REFLECTION;
+	private BF20PointSource SOURCE = BF20PointSource.REFLECTION;
 	//
 	private boolean active = false;
 	private boolean prototypeActive = false;
@@ -298,9 +298,9 @@ public class Reflection implements Listener {
 			send(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!", player);
 
 		if (giveDailyPoints) {
-			BearFairUser user = new BearFairService().get(buttonPresser);
+			BearFairUser20 user = new BearFairUserService20().get(buttonPresser);
 			user.giveDailyPoints(SOURCE);
-			new BearFairService().save(user);
+			new BearFairUserService20().save(user);
 		}
 
 		Tasks.wait(Time.SECOND.x(3), () -> {

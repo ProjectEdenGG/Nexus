@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.HalloweenIsland.HalloweenNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair.BearFairUser20;
+import me.pugabyte.nexus.models.bearfair.BearFairUserService20;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -74,8 +74,8 @@ public class HalloweenIsland implements Listener, Island {
 		TOUR_GUIDE(2675) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFairUserService20 service = new BearFairUserService20();
+				BearFairUser20 user = service.get(player);
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hey there! Welcome to the historic Ravens' Nest Estate Museum!");
@@ -136,8 +136,8 @@ public class HalloweenIsland implements Listener, Island {
 	}
 
 	private static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		int step = user.getQuest_Halloween_Step() + 1;
 		user.setQuest_Halloween_Step(step);
 		service.save(user);
@@ -157,8 +157,8 @@ public class HalloweenIsland implements Listener, Island {
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 
 		if (!user.isQuest_Halloween_Start() || user.getQuest_Halloween_Step() != 1) return;
 
@@ -250,8 +250,8 @@ public class HalloweenIsland implements Listener, Island {
 
 		if (!item.equals(atticKey)) return;
 
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFairUserService20 service = new BearFairUserService20();
+		BearFairUser20 user = service.get(player);
 		if (user.isQuest_Halloween_Key()) return;
 
 		user.setQuest_Halloween_Key(true);
