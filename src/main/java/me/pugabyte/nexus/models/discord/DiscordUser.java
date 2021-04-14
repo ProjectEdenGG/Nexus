@@ -13,6 +13,7 @@ import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -44,7 +45,7 @@ public class DiscordUser extends PlayerOwnedObject {
 
 	public String getBridgeName() {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-		String name = "**" + discordize(player.getName()) + "**";
+		String name = "**" + discordize(Nickname.of(player)) + "**";
 		if (roleId != null)
 			name = "<@&&f" + roleId + ">";
 		return name;
