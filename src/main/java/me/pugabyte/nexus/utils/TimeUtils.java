@@ -137,6 +137,12 @@ public class TimeUtils {
 				return label.getShortLabel();
 			}
 		},
+		MEDIUM {
+			@Override
+			public String get(TimespanElement label, int value) {
+				return StringUtils.plural(label.getMediumLabel() == null ? label.getLongLabel() : label.getMediumLabel(), value);
+			}
+		},
 		LONG {
 			@Override
 			public String get(TimespanElement label, int value) {
@@ -146,7 +152,6 @@ public class TimeUtils {
 
 		abstract String get(TimespanElement label, int value);
 	}
-
 
 	public static class Timespan {
 		private final int original;
@@ -179,20 +184,7 @@ public class TimeUtils {
 		}
 
 		public static Timespan find(String input) {
-			String[] split = input.split(" ");
-			for (int i = split.length; i > 0; i--) {
-				String timespan = String.join(" ", Arrays.copyOfRange(split, 0, i));
-				if (TimespanElement.getAllPattern().matcher(timespan).matches())
-					return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, i, split.length))).build();
-			}
-
-			for (int i = 1; i < split.length; i++) {
-				String timespan = String.join(" ", Arrays.copyOfRange(split, i, split.length));
-				if (TimespanElement.getAllPattern().matcher(timespan).matches())
-					return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, 0, i))).build();
-			}
-
-			return null;
+			return TimespanBuilder.find(input).build();
 		}
 
 		public static class TimespanBuilder {
@@ -214,6 +206,23 @@ public class TimeUtils {
 						seconds += element.of(matcher.group());
 				}
 				return of(seconds / Time.SECOND.get());
+			}
+
+			public static TimespanBuilder find(String input) {
+				String[] split = input.split(" ");
+				for (int i = split.length; i > 0; i--) {
+					String timespan = String.join(" ", Arrays.copyOfRange(split, 0, i));
+					if (TimespanElement.getAllPattern().matcher(timespan).matches())
+						return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, i, split.length)));
+				}
+
+				for (int i = 1; i < split.length; i++) {
+					String timespan = String.join(" ", Arrays.copyOfRange(split, i, split.length));
+					if (TimespanElement.getAllPattern().matcher(timespan).matches())
+						return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, 0, i)));
+				}
+
+				return TimespanBuilder.of(0).rest(input);
 			}
 
 		}
