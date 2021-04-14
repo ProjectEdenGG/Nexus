@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.Particle;
 
 @Permission("group.staff")
 public class MiniGolfCommand extends CustomCommand {
@@ -66,6 +67,25 @@ public class MiniGolfCommand extends CustomCommand {
 
 		ColorType color = user.getColor();
 		send(PREFIX + "Set color to: " + StringUtils.colorize(color.getChatColor() + StringUtils.camelCase(color)));
+	}
+
+	@Path("particle <particle>")
+	void particle(Particle particle) {
+		if (particle == null)
+			error("Unknown particle");
+
+		user.setParticle(particle);
+		service.save(user);
+
+		send(PREFIX + "Set particle to: " + StringUtils.camelCase(user.getParticle()));
+	}
+
+	@Path("rainbow <boolean>")
+	void rainbow(boolean bool) {
+		user.setRainbow(bool);
+		service.save(user);
+
+		send(PREFIX + "Set rainbow to: " + bool);
 	}
 
 

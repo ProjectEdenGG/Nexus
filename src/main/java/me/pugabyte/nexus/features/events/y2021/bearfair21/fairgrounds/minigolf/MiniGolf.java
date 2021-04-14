@@ -1,9 +1,11 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -22,6 +24,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.Tag;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -58,14 +62,13 @@ public class MiniGolf {
 	@Getter private static List<ItemStack> kit = new ArrayList<>();
 	@Getter private static List<ItemStack> clubs = new ArrayList<>();
 	// Data
-//	@Getter private static final Set<MiniGolfUser> users = new HashSet<>();
 	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
 	// Constants
 	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
 	@Getter private static final double floorOffset = 0.05;
 	@Getter private static final double maxVelLen = 2;
 	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE, Material.PETRIFIED_OAK_SLAB);
-	@Getter private static final String regionHole = "bearfair21_minigolf_hole_.*";
+	@Getter private static final String regionHole = "bearfair21_minigolf_hole_";
 	// Attributes
 	@Getter private static final AttributeModifier noDamage = new AttributeModifier(UUID.randomUUID(), "generic.attackDamage", -10, Operation.ADD_NUMBER, EquipmentSlot.HAND);
 	@Getter private static final AttributeModifier fastSwing = new AttributeModifier(UUID.randomUUID(), "generic.attackSpeed", 10, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND);
@@ -82,7 +85,6 @@ public class MiniGolf {
 
 	// TODO:
 	//  add: scorecard book item
-	//  add: firework color from user color
 
 	public MiniGolf() {
 		new ProjectileListener();
@@ -90,6 +92,7 @@ public class MiniGolf {
 
 		ballTask();
 		powerTask();
+		redstoneTask();
 	}
 
 	static {
@@ -168,6 +171,19 @@ public class MiniGolf {
 			player.getInventory().remove(item);
 	}
 
+	private void redstoneTask() {
+		String hole13 = regionHole + "13_activate";
+		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -27);
+		//
+		// ...
+
+
+		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
+			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
+				hole13Loc.getBlock().setType(Material.REDSTONE_BLOCK);
+		});
+	}
+
 	private void powerTask() {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
@@ -212,12 +228,6 @@ public class MiniGolf {
 	private void ballTask() {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
-//				if (user == null) {
-//					Nexus.log("Removing null user");
-//					service.remove(null);
-//					continue;
-//				}
-
 				Snowball ball = user.getSnowball();
 				if (ball == null)
 					continue;
@@ -231,8 +241,27 @@ public class MiniGolf {
 				Location loc = ball.getLocation();
 				Block block = loc.subtract(0, 0.1, 0).getBlock();
 
-				// Act upon block type
 				Vector vel = ball.getVelocity();
+
+				// Particles
+				Particle particle = user.getParticle();
+				if (particle != null && vel.length() > 0.01) {
+					try {
+						ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(ball.getLocation()).count(1).extra(0);
+						if (particle.equals(Particle.REDSTONE)) {
+							if (user.isRainbow()) {
+								int[] rgb = ParticleUtils.incRainbow(ball.getTicksLived());
+								DustOptions dustOptions = ParticleUtils.newDustOption(particle, rgb[0], rgb[1], rgb[2]);
+								particleBuilder.data(dustOptions);
+							} else
+								particleBuilder.color(user.getColor().getColor());
+						}
+						particleBuilder.spawn();
+					} catch (Exception ignored) {
+					}
+				}
+
+				// Act upon block type
 				Material type = block.getType();
 				Integer ballHole = getHole(ball.getLocation());
 				switch (type) {
@@ -406,7 +435,7 @@ public class MiniGolf {
 	}
 
 	public static Integer getHole(Location location) {
-		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLikeAt(regionHole, location);
+		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLikeAt(regionHole + ".*", location);
 		ProtectedRegion region = regions.stream().findFirst().orElse(null);
 		if (region == null)
 			return null;

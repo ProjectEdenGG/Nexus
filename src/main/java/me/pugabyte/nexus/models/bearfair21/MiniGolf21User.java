@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.ColorType;
+import org.bukkit.Particle;
 import org.bukkit.entity.Snowball;
 
 import java.util.UUID;
@@ -29,6 +30,8 @@ public class MiniGolf21User extends PlayerOwnedObject {
 	@EqualsAndHashCode.Include
 	private UUID uuid;
 	private ColorType color = ColorType.WHITE;
+	private Particle particle = null;
+	private boolean rainbow = false;
 	private boolean playing = false;
 	//
 	private transient Snowball snowball = null;
