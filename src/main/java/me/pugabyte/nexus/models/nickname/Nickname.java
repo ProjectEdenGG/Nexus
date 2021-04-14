@@ -56,7 +56,7 @@ public class Nickname extends PlayerOwnedObject {
 
 	@Getter
 	private static final Map<Role, Integer> requiredVotes = new HashMap<Role, Integer>() {{
-		put(Role.ADMINS, 1);
+		put(Role.ADMINS, 3);
 	}};
 
 	public static String of(String name) {
