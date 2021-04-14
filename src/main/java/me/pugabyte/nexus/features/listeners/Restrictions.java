@@ -21,6 +21,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +66,15 @@ public class Restrictions implements Listener {
 
 		event.setCancelled(true);
 		Koda.dm(player, PREFIX + "Sorry, but you can't place beds above y=20");
+	}
+
+	@EventHandler
+	public void onEndPortalCreate(PortalCreateEvent event) {
+		if (event.getReason() != CreateReason.END_PLATFORM)
+			return;
+
+		if (WorldGroup.get(event.getWorld()) != WorldGroup.SURVIVAL)
+			event.setCancelled(true);
 	}
 
 	@EventHandler
