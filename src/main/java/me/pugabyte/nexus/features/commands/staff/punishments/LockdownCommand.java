@@ -13,6 +13,11 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -21,6 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -33,21 +39,38 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 public class LockdownCommand extends CustomCommand implements Listener {
 	private static boolean lockdown = false;
 	private static String reason = null;
-	private static Set<UUID> bypass = new HashSet<>();
+	private static LocalDateTime end = null;
+	private static final Set<UUID> bypass = new HashSet<>();
 
 	public LockdownCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("start <reason...>")
-	void start(String reason) {
-		if (lockdown)
+	static {
+		Tasks.repeat(Time.SECOND, Time.SECOND, () -> {
+			if (!lockdown || LockdownCommand.end == null)
+				return;
+
+			if (LockdownCommand.end.isBefore(LocalDateTime.now()))
+				PlayerUtils.runCommandAsConsole("lockdown end");
+		});
+	}
+
+	@Path("start <time/reason...>")
+	void start(String input) {
+		if (lockdown) {
 			send(PREFIX + "Overriding previous lockdown: &c" + LockdownCommand.reason);
+			reason = null;
+			end = null;
+		}
 
 		lockdown = true;
-		LockdownCommand.reason = reason;
+		Timespan timespan = Timespan.find(input);
+		LockdownCommand.reason = timespan.getRest();
+		if (timespan.getSeconds() > 0)
+			LockdownCommand.end = timespan.fromNow();
 
-		String message = name() + " initiated lockdown: &c" + reason;
+		String message = "&c" + name() + " initiated lockdown for &e" + (timespan.isNull() ? "" : timespan.format(FormatType.LONG) + "&c for &e") + timespan.getRest();
 		broadcast(message);
 
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -64,9 +87,13 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 		lockdown = false;
 		reason = null;
+		end = null;
 		bypass.clear();
 
-		broadcast(name() + " ended lockdown");
+		if (isPlayer())
+			broadcast(name() + " ended lockdown");
+		else
+			broadcast("Lockdown expired");
 	}
 
 	@Path("bypass add <player>")
