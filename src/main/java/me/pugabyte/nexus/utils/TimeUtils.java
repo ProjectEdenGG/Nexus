@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,8 +124,8 @@ public class TimeUtils {
 		public static Pattern getAllPattern() {
 			StringBuilder regex = new StringBuilder();
 			for (TimespanElement element : values())
-				regex.append("(").append(element.getPattern().pattern()).append("( )?)?");
-			return Pattern.compile(regex.toString());
+				regex.append("(").append(element.getPattern().pattern()).append("( )?){0,}");
+			return Pattern.compile("^" + regex.toString() + "$");
 		}
 	}
 
@@ -209,17 +208,11 @@ public class TimeUtils {
 			}
 
 			public static TimespanBuilder find(String input) {
-				String[] split = input.split(" ");
-				for (int i = split.length; i > 0; i--) {
-					String timespan = String.join(" ", Arrays.copyOfRange(split, 0, i));
-					if (TimespanElement.getAllPattern().matcher(timespan).matches())
-						return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, i, split.length)));
-				}
-
-				for (int i = 1; i < split.length; i++) {
-					String timespan = String.join(" ", Arrays.copyOfRange(split, i, split.length));
-					if (TimespanElement.getAllPattern().matcher(timespan).matches())
-						return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, 0, i)));
+				Matcher matcher = TimespanElement.getAllPattern().matcher(input);
+				while (matcher.find()) {
+					String group = matcher.group().trim();
+					if (group.length() == 0) continue;
+					return TimespanBuilder.of(group).rest(input.replaceFirst(group, "").trim());
 				}
 
 				return TimespanBuilder.of(0).rest(input);
