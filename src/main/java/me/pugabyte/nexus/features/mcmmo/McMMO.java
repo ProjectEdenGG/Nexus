@@ -5,7 +5,7 @@ import com.gmail.nossr50.util.MaterialMapStore;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;

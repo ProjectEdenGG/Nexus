@@ -30,7 +30,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Bukkit;

@@ -15,7 +15,7 @@ import me.pugabyte.nexus.models.socialmedia.TwitterData;
 import me.pugabyte.nexus.models.socialmedia.TwitterData.PendingTweet;
 import me.pugabyte.nexus.models.socialmedia.TwitterService;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;

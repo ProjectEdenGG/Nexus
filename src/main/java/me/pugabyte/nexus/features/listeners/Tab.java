@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.models.afk.events.AFKEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

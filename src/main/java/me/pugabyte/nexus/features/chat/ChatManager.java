@@ -18,7 +18,7 @@ import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

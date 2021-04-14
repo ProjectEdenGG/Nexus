@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.framework.commands.models.annotations;
 
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;

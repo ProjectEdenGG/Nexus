@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
-import me.pugabyte.nexus.utils.Time.Timer;
+import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;

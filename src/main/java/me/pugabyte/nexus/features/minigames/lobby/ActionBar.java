@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.minigames.commands.PodiumsCommand.Position;
 import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;

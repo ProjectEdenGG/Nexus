@@ -12,7 +12,7 @@ import me.pugabyte.nexus.models.socialmedia.TwitterData;
 import me.pugabyte.nexus.models.socialmedia.TwitterService;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import twitter4j.Query;

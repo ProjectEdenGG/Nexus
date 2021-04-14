@@ -26,7 +26,7 @@ import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time.Timer;
+import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;

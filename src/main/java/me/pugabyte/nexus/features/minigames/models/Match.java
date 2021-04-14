@@ -28,11 +28,11 @@ import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboar
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.TimespanFormatType;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;

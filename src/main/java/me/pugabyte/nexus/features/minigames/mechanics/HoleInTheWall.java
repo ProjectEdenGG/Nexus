@@ -17,7 +17,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamles
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

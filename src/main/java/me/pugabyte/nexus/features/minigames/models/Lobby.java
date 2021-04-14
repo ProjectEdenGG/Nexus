@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.nexus.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

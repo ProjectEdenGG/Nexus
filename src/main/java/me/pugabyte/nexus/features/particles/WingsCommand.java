@@ -14,7 +14,7 @@ import me.pugabyte.nexus.models.particle.ParticleSetting;
 import me.pugabyte.nexus.models.particle.ParticleType;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

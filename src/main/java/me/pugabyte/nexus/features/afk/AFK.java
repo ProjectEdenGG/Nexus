@@ -6,7 +6,7 @@ import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.afk.AFKService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

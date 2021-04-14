@@ -24,7 +24,7 @@ import me.pugabyte.nexus.models.modreview.ModReview.ModReviewRequest;
 import me.pugabyte.nexus.models.modreview.ModReviewService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 
 import java.util.HashSet;
 import java.util.List;

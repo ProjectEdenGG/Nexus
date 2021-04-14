@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.events.aeveonproject.effects;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.aeveonproject.APUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

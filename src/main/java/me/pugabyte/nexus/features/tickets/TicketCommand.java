@@ -16,7 +16,7 @@ import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 
 import java.util.Arrays;

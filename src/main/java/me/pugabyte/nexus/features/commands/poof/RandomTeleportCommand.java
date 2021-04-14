@@ -12,7 +12,7 @@ import me.pugabyte.nexus.models.lwc.LWCProtection;
 import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;

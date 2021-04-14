@@ -11,7 +11,7 @@ import me.pugabyte.nexus.models.aeveonproject.AeveonProjectService;
 import me.pugabyte.nexus.models.aeveonproject.AeveonProjectUser;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;

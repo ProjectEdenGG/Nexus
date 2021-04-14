@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.damagetracker;
 
 import me.pugabyte.nexus.features.damagetracker.models.DamageEvent;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.entity.LivingEntity;
 
 import java.time.LocalDateTime;

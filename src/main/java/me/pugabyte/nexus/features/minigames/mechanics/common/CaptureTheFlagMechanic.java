@@ -9,7 +9,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTick
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TitleUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;

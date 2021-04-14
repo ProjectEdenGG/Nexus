@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.events.y2020.halloween20.quest;
 
 import me.pugabyte.nexus.features.events.y2020.halloween20.Halloween20;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;

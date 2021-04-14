@@ -9,7 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;

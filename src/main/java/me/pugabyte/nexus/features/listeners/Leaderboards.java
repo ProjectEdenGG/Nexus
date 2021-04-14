@@ -22,7 +22,7 @@ import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

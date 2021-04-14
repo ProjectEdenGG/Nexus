@@ -12,7 +12,7 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.HoliSpleggMatchData
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
