@@ -20,7 +20,7 @@ import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -213,7 +213,7 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			Hours hours = new HoursService().get(player);
 			int seconds = hours == null ? 0 : hours.getTotal();
-			return "&3Hours: &e" + Timespan.of(seconds).noneDisplay(true).format();
+			return "&3Hours: &e" + TimespanBuilder.of(seconds).noneDisplay(true).format();
 		}
 	},
 

@@ -14,7 +14,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -48,10 +48,10 @@ public class HoursDiscordCommand extends Command {
 				Hours hours = service.get(player);
 
 				String message = "**[Hours]** " + hours.getName() + "'s in-game playtime";
-				message += System.lineSeparator() + "Total: **" + Timespan.of(hours.getTotal()).noneDisplay(true).format() + "**";
-				message += System.lineSeparator() + "- Today: **" + Timespan.of(hours.getDaily()).noneDisplay(true).format() + "**";
-				message += System.lineSeparator() + "- This month: **" + Timespan.of(hours.getMonthly()).noneDisplay(true).format() + "**";
-				message += System.lineSeparator() + "- This year: **" + Timespan.of(hours.getYearly()).noneDisplay(true).format() + "**";
+				message += System.lineSeparator() + "Total: **" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format() + "**";
+				message += System.lineSeparator() + "- Today: **" + TimespanBuilder.of(hours.getDaily()).noneDisplay(true).format() + "**";
+				message += System.lineSeparator() + "- This month: **" + TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format() + "**";
+				message += System.lineSeparator() + "- This year: **" + TimespanBuilder.of(hours.getYearly()).noneDisplay(true).format() + "**";
 
 				event.reply(message);
 			} catch (Exception ex) {

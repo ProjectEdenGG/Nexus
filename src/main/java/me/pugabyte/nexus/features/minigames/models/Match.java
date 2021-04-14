@@ -474,7 +474,7 @@ public class Match {
 		}
 
 		public void broadcastTimeLeft(int time) {
-			match.broadcast("&e" + TimespanBuilder.of(time).formatType(TimespanFormatType.LONG).build().format() + " &7left...");
+			match.broadcast("&e" + TimespanBuilder.of(time).formatType(TimespanFormatType.LONG).format() + " &7left...");
 		}
 
 		void stop() {

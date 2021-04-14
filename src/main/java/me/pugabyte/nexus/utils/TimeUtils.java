@@ -218,6 +218,10 @@ public class TimeUtils {
 				return TimespanBuilder.of(0).rest(input);
 			}
 
+			public String format() {
+				return build().format();
+			}
+
 		}
 
 		private void calculate() {

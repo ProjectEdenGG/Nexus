@@ -27,6 +27,7 @@ import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -59,10 +60,10 @@ public class HoursCommand extends CustomCommand {
 
 		send("");
 		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
-		send("&3Total: &e" + Timespan.of(hours.getTotal()).noneDisplay(true).format());
-		send("&7- &3Today: &e" + Timespan.of(hours.getDaily()).noneDisplay(true).format());
-		send("&7- &3This month: &e" + Timespan.of(hours.getMonthly()).noneDisplay(true).format());
-		send("&7- &3This year: &e" + Timespan.of(hours.getYearly()).noneDisplay(true).format());
+		send("&3Total: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
+		send("&7- &3Today: &e" + TimespanBuilder.of(hours.getDaily()).noneDisplay(true).format());
+		send("&7- &3This month: &e" + TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format());
+		send("&7- &3This year: &e" + TimespanBuilder.of(hours.getYearly()).noneDisplay(true).format());
 
 		if (Rank.of(player) == Rank.GUEST) {
 
