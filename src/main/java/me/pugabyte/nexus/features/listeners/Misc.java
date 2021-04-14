@@ -308,6 +308,15 @@ public class Misc implements Listener {
 			player.setFlying(false);
 		}
 
+		if (WorldGroup.get(event.getFrom()) == WorldGroup.CREATIVE) {
+			if (Nerd.of(player).isVanished())
+				if (player.hasPermission("essentials.fly")) {
+					player.setFallDistance(0f);
+					player.setAllowFlight(true);
+					player.setFlying(true);
+				}
+		}
+
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
 			Tasks.wait(20, () -> {
 				PlayerUtils.send(player, "Removing pets, disguises and ptime changes");
