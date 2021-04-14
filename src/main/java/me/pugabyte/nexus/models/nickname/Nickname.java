@@ -220,7 +220,7 @@ public class Nickname extends PlayerOwnedObject {
 			}
 
 			return new MessageBuilder()
-					.setContent("@.everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
+					.setContent("@everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
 					.setEmbed(embed.build());
 		}
 	}
