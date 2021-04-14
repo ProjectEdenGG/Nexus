@@ -118,7 +118,7 @@ public class TimeUtils {
 		}
 
 		public Pattern getPattern() {
-			return Pattern.compile("\\d+(\\.\\d+)?( )?(" + longLabel + "|" + (mediumLabel == null ? "" : mediumLabel + "|") + shortLabel + ")(s)?");
+			return Pattern.compile("(?i)\\d+(\\.\\d+)?( )?(" + longLabel + "(s)?|" + (mediumLabel == null ? "" : mediumLabel + "(s)?|") + shortLabel + ")");
 		}
 
 		public static Pattern getAllPattern() {
