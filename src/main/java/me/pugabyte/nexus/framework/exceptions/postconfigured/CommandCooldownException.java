@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 public class CommandCooldownException extends PostConfiguredException {
 

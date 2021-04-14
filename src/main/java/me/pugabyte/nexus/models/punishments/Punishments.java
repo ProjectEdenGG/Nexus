@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Data
 @Builder

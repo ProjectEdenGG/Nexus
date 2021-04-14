@@ -56,7 +56,7 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPu
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Aliases("pugmas")
 @NoArgsConstructor

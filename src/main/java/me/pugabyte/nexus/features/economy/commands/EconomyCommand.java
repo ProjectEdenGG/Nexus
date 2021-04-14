@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Aliases("eco")
 public class EconomyCommand extends CustomCommand {

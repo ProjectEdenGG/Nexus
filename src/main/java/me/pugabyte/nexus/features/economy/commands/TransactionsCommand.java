@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 import static me.pugabyte.nexus.models.banker.Transaction.combine;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
-import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @NoArgsConstructor
 @Aliases({"transaction", "txn"})

@@ -19,7 +19,6 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
@@ -29,6 +28,7 @@ import java.util.Optional;
 
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static me.pugabyte.nexus.utils.StringUtils.progressBar;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Aliases("votes")
 public class VoteCommand extends CustomCommand {
@@ -73,7 +73,7 @@ public class VoteCommand extends CustomCommand {
 			Optional<Vote> first = voter.getActiveVotes().stream().filter(_vote -> _vote.getSite() == site).findFirst();
 			if (first.isPresent()) {
 				LocalDateTime expirationTime = first.get().getTimestamp().plusHours(site.getExpirationHours());
-				send("&e" + site.name() + " &7- &3You can vote in &e" + StringUtils.timespanDiff(expirationTime));
+				send("&e" + site.name() + " &7- &3You can vote in &e" + timespanDiff(expirationTime));
 			} else {
 				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(Nerd.of(player()).getName())));
 			}

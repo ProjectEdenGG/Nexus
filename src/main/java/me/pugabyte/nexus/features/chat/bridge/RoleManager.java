@@ -94,9 +94,8 @@ public class RoleManager {
 
 		if (update)
 			manager.queue(success -> Nexus.debug("      Updated role"), error -> { throw new RuntimeException(error); });
-		else {
+		else
 			debug("    No updates needed");
-		}
 	}
 
 	private static void debug(String message) {

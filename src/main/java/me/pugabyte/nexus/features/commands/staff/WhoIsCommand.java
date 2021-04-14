@@ -20,7 +20,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Set;
 
 import static me.pugabyte.nexus.utils.StringUtils.getLocationString;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Aliases({"whotf", "whothefuck"})
 @Permission("group.staff")

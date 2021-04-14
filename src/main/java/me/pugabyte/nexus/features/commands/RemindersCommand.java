@@ -38,7 +38,7 @@ import java.util.function.BiFunction;
 
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @NoArgsConstructor
 @Aliases("reminder")

@@ -44,6 +44,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
+
 @NoArgsConstructor
 @Disabled
 public class SafeCrackerCommand extends CustomCommand implements Listener {
@@ -206,7 +208,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 				safeCrackerPlayer.getGames().get(game.getName()).setScore(score);
 				playerService.save(safeCrackerPlayer);
 				Tasks.wait(Time.SECOND.x(10), () -> safeCrackerPlayer.send(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + safeCrackerPlayer.getGames().get(game.getName()).getScore()));
-				Discord.staffLog("```[SafeCracker] " + player.getName() + " - " + StringUtils.timespanDiff(safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted(), LocalDateTime.now()) + "```");
+				Discord.staffLog("```[SafeCracker] " + player.getName() + " - " + timespanDiff(safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted(), LocalDateTime.now()) + "```");
 				player.closeInventory();
 				complete(player);
 			} else {

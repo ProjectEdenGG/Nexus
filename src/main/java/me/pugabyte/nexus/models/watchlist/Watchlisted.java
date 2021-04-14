@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 
 @Data
 @Builder

@@ -57,11 +57,11 @@ import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
-import me.pugabyte.nexus.utils.StringUtils.TimespanFormatType;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.TimespanFormatType;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
@@ -124,9 +124,9 @@ import static me.pugabyte.nexus.utils.BlockUtils.getDirection;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")

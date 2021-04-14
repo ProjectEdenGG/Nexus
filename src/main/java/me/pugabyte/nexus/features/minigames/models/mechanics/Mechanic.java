@@ -19,6 +19,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -361,7 +362,7 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void sendBarWithTimer(Minigamer minigamer, String message) {
-		sendActionBar(minigamer.getPlayer(), message + "&r (" + StringUtils.Timespan.of(minigamer.getMatch().getTimer().getTime()).format()+")");
+		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.of(minigamer.getMatch().getTimer().getTime()).format() + ")");
 	}
 
 }

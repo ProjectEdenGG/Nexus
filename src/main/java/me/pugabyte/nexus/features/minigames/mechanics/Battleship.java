@@ -30,9 +30,9 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
@@ -64,7 +64,7 @@ import java.util.function.Consumer;
 import static me.pugabyte.nexus.utils.ItemUtils.getTool;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 import static me.pugabyte.nexus.utils.Utils.attempt;
 
 /*

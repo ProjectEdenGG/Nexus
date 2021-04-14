@@ -81,9 +81,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.StringUtils.parseDate;
-import static me.pugabyte.nexus.utils.StringUtils.parseDateTime;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
+import static me.pugabyte.nexus.utils.TimeUtils.parseDate;
+import static me.pugabyte.nexus.utils.TimeUtils.parseDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor

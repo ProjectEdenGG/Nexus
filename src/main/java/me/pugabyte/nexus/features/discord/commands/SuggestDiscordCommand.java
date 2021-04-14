@@ -16,8 +16,8 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 

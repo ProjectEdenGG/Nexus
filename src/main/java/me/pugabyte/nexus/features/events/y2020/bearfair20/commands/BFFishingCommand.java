@@ -12,7 +12,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -31,6 +30,7 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing.weightedList;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Permission("group.staff")
 public class BFFishingCommand extends CustomCommand {
@@ -72,7 +72,7 @@ public class BFFishingCommand extends CustomCommand {
 			error("You're aren't fishing!");
 
 		LocalDateTime then = timestamps.get(uuid());
-		String timeSpan = StringUtils.timespanDiff(then);
+		String timeSpan = timespanDiff(then);
 		timestamps.remove(uuid());
 
 		String region = getIslandRegion(location());

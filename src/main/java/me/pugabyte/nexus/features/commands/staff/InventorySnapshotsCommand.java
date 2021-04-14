@@ -46,9 +46,9 @@ import java.util.function.BiFunction;
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")

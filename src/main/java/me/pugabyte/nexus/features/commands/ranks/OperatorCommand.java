@@ -5,7 +5,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.StringUtils;
+
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 
 public class OperatorCommand extends CustomCommand {
 
@@ -32,7 +33,7 @@ public class OperatorCommand extends CustomCommand {
 		line();
 		send("&3All current " + Rank.OPERATOR.getColor() + "Operators &3and the date they were promoted:");
 		Rank.OPERATOR.getNerds().forEach(nerd ->
-				send(nerd.getNicknameFormat() + " &7-&e " + StringUtils.shortDateFormat(nerd.getPromotionDate())));
+				send(nerd.getNicknameFormat() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Permission("group.admin")
 public class ChangelogCommand extends CustomCommand {

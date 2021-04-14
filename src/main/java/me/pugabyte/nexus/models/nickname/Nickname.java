@@ -35,9 +35,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Data
 @Builder

@@ -11,10 +11,11 @@ import me.pugabyte.nexus.models.safecracker.SafeCrackerPlayer;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerPlayerService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Disabled
 public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProvider {
@@ -38,7 +39,7 @@ public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProv
 				++found;
 				SafeCrackerPlayer.SafeCrackerPlayerNPC playerNPC = safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(npc.getName());
 				item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(PlayerUtils.getPlayer(npc.getName())).name("&e" + npc.getName())
-						.lore("&3Found: &e" + StringUtils.shortDateTimeFormat(playerNPC.getFound()))
+						.lore("&3Found: &e" + shortDateTimeFormat(playerNPC.getFound()))
 						.lore("&3Question: &e" + npc.getQuestion())
 						.lore("&3Answer: &e" + playerNPC.getAnswer())
 						.lore("")

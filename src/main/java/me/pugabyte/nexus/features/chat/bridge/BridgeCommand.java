@@ -142,6 +142,10 @@ public class BridgeCommand extends CustomCommand {
 		ADMINS(TextChannel.STAFF_ADMINS);
 
 		private final TextChannel textChannel;
+
+		protected net.dv8tion.jda.api.entities.TextChannel getTextChannel(Bot bot) {
+			return getTextChannel().get(bot);
+		}
 	}
 
 	@Async
@@ -279,11 +283,11 @@ public class BridgeCommand extends CustomCommand {
 		Bot botGuess = timeCreated.isAfter(grandfather) ? Bot.RELAY : Bot.KODA;
 		Bot otherBot = botGuess == Bot.KODA ? Bot.RELAY : Bot.KODA;
 
-		loadedChannel.getTextChannel().get(botGuess).retrieveMessageById(messageId).queue(message -> {
+		loadedChannel.getTextChannel(botGuess).retrieveMessageById(messageId).queue(message -> {
 			if (message.getAuthor().getId().equals(botGuess.getId()))
 				consumer.accept(message);
 			else
-				loadedChannel.getTextChannel().get(otherBot).retrieveMessageById(messageId).queue(consumer);
+				loadedChannel.getTextChannel(otherBot).retrieveMessageById(messageId).queue(consumer);
 		});
 	}
 

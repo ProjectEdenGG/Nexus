@@ -19,9 +19,9 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
@@ -36,9 +36,9 @@ import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-import static me.pugabyte.nexus.utils.StringUtils.dateFormat;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static me.pugabyte.nexus.utils.TimeUtils.dateFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 
 @Aliases("hoh")
 public class HallOfHistoryCommand extends CustomCommand {

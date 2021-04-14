@@ -18,7 +18,6 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConver
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.commands.staff.InventorySnapshotsCommand.PREFIX;
 import static me.pugabyte.nexus.utils.ItemUtils.isInventoryEmpty;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Data
 @Builder
@@ -54,7 +54,7 @@ public class InventoryHistory extends PlayerOwnedObject {
 	public InventorySnapshot getSnapshot(LocalDateTime timestamp) {
 		Optional<InventorySnapshot> snapshot = snapshots.stream().filter(_snapshot -> _snapshot.getTimestamp().equals(timestamp)).findFirst();
 		if (!snapshot.isPresent())
-			throw new InvalidInputException("Snapshot from timestamp &e" + StringUtils.shortDateTimeFormat(timestamp) + " &3not found");
+			throw new InvalidInputException("Snapshot from timestamp &e" + shortDateTimeFormat(timestamp) + " &3not found");
 		return snapshot.get();
 	}
 

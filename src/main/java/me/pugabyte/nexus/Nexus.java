@@ -25,7 +25,6 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time.Timer;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
@@ -64,6 +63,8 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.joining;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortTimeFormat;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -184,7 +185,7 @@ public class Nexus extends JavaPlugin {
 			if (!path.toFile().exists())
 				path.toFile().createNewFile();
 			try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-				writer.append(System.lineSeparator()).append("[").append(StringUtils.shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
+				writer.append(System.lineSeparator()).append("[").append(shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -275,7 +276,7 @@ public class Nexus extends JavaPlugin {
 					GeoIP geoIp = new GeoIPService().get(player);
 					String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
 					if (geoIp != null && geoIp.getTimezone() != null) {
-						String timestamp = StringUtils.shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId())));
+						String timestamp = shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId())));
 						PlayerUtils.send(player, "&7 " + timestamp + message);
 					} else
 						PlayerUtils.send(player, message);

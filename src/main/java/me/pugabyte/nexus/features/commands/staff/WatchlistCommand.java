@@ -33,8 +33,8 @@ import java.util.function.BiFunction;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.ellipsis;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateFormat;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @NoArgsConstructor
 @Permission("group.staff")
@@ -81,7 +81,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 	void info(Watchlisted watchlisted) {
 		String playerName = watchlisted.getOfflinePlayer().getName();
 		String active = StringUtils.bool(watchlisted.isActive());
-		String date = watchlisted.getWatchlistedOn() == null ? "null" : StringUtils.shortDateTimeFormat(watchlisted.getWatchlistedOn());
+		String date = watchlisted.getWatchlistedOn() == null ? "null" : shortDateTimeFormat(watchlisted.getWatchlistedOn());
 		List<Note> notes = watchlisted.getNotes();
 
 		line();

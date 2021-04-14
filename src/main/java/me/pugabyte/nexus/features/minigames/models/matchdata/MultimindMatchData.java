@@ -11,7 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 
 import java.util.Set;
 

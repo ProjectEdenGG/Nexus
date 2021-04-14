@@ -17,7 +17,6 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
-import me.pugabyte.nexus.utils.StringUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -28,6 +27,8 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 public class DiscordCommand extends CustomCommand {
 	DiscordUserService service = new DiscordUserService();
@@ -315,7 +316,7 @@ public class DiscordCommand extends CustomCommand {
 
 		captcha.getUnconfirmed().forEach((id, date) -> {
 			String name = Discord.getName(id);
-			send("ID: " + name + " / Date: " + StringUtils.shortDateTimeFormat(date));
+			send("ID: " + name + " / Date: " + shortDateTimeFormat(date));
 		});
 	}
 
