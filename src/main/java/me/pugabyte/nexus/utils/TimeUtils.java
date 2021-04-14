@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,8 +118,15 @@ public class TimeUtils {
 			}
 		}
 
-		public String getRegex() {
-			return "\\d+(\\.\\d+)?( )?(" + shortLabel + "|" + (mediumLabel == null ? "" : mediumLabel + "|") + longLabel + ")";
+		public Pattern getPattern() {
+			return Pattern.compile("\\d+(\\.\\d+)?( )?(" + longLabel + "|" + (mediumLabel == null ? "" : mediumLabel + "|") + shortLabel + ")(s)?");
+		}
+
+		public static Pattern getAllPattern() {
+			StringBuilder regex = new StringBuilder();
+			for (TimespanElement element : values())
+				regex.append("(").append(element.getPattern().pattern()).append("( )?)?");
+			return Pattern.compile(regex.toString());
 		}
 	}
 
@@ -138,49 +147,73 @@ public class TimeUtils {
 		abstract String get(TimespanElement label, int value);
 	}
 
+
 	public static class Timespan {
 		private final int original;
 		private final boolean noneDisplay;
 		private final TimespanFormatType formatType;
 		private int years, days, hours, minutes, seconds;
+		@Getter
+		private final String rest;
 
-		@lombok.Builder(buildMethodName = "_build")
-		public Timespan(int seconds, boolean noneDisplay, TimespanFormatType formatType) {
+		@Builder
+		public Timespan(int seconds, boolean noneDisplay, TimespanFormatType formatType, String rest) {
 			this.original = seconds;
 			this.seconds = seconds;
 			this.noneDisplay = noneDisplay;
 			this.formatType = formatType == null ? TimespanFormatType.SHORT : formatType;
+			this.rest = rest;
 			calculate();
 		}
 
-		public static TimespanBuilder of(long seconds) {
-			return of(Long.valueOf(seconds).intValue());
+		public static Timespan of(long seconds) {
+			return TimespanBuilder.of(seconds).build();
 		}
 
-		public static TimespanBuilder of(int seconds) {
-			return Timespan.builder().seconds(seconds);
+		public static Timespan of(int seconds) {
+			return TimespanBuilder.of(seconds).build();
 		}
 
-		public static TimespanBuilder of(String input) {
-			int seconds = 0;
-			for (TimespanElement element : TimespanElement.values()) {
-				Matcher matcher = Pattern.compile(element.getRegex()).matcher(input);
+		public static Timespan of(String input) {
+			return TimespanBuilder.of(input).build();
+		}
 
-				while (matcher.find())
-					seconds += element.of(matcher.group());
+		public static Timespan find(String input) {
+			String[] split = input.split(" ");
+			for (int i = split.length; i > 0; i--) {
+				String timespan = String.join(" ", Arrays.copyOfRange(split, 0, i));
+				if (TimespanElement.getAllPattern().matcher(timespan).matches())
+					return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, i, split.length))).build();
 			}
-			return of(seconds / Time.SECOND.get());
+
+			for (int i = 1; i < split.length; i++) {
+				String timespan = String.join(" ", Arrays.copyOfRange(split, i, split.length));
+				if (TimespanElement.getAllPattern().matcher(timespan).matches())
+					return TimespanBuilder.of(timespan).rest(String.join(" ", Arrays.copyOfRange(split, 0, i))).build();
+			}
+
+			return null;
 		}
 
 		public static class TimespanBuilder {
 
-			public String format() {
-				return _build().format();
+			public static TimespanBuilder of(long seconds) {
+				return of(Long.valueOf(seconds).intValue());
 			}
 
-			@Deprecated
-			public Timespan build() {
-				throw new UnsupportedOperationException("Use format()");
+			public static TimespanBuilder of(int seconds) {
+				return Timespan.builder().seconds(seconds);
+			}
+
+			public static TimespanBuilder of(String input) {
+				int seconds = 0;
+				for (TimespanElement element : TimespanElement.values()) {
+					Matcher matcher = element.getPattern().matcher(input);
+
+					while (matcher.find())
+						seconds += element.of(matcher.group());
+				}
+				return of(seconds / Time.SECOND.get());
 			}
 
 		}
