@@ -39,7 +39,9 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -96,7 +98,12 @@ public class ResourceWorld implements Listener {
 
 			rejectedMaterials.clear();
 
-			ItemStack[] items = player.getInventory().getContents();
+			Set<ItemStack> items = new HashSet<>();
+			items.addAll(Arrays.asList(player.getInventory().getContents()));
+			items.addAll(Arrays.asList(player.getInventory().getArmorContents()));
+			items.addAll(Arrays.asList(player.getInventory().getExtraContents()));
+			items.addAll(Arrays.asList(player.getInventory().getItemInOffHand()));
+
 			for (ItemStack item : items)
 				for (ItemStack content : getShulkerContents(item))
 					if (materials.contains(content.getType())) {
