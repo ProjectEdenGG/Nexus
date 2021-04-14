@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,6 +17,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 
 public class ProjectileListener implements Listener {
 
@@ -40,8 +43,9 @@ public class ProjectileListener implements Listener {
 			ball.setGravity(entity.hasGravity());
 
 			// Update last player ball
-			MiniGolfUser user = null;
-			for (MiniGolfUser _user : MiniGolf.getUsers()) {
+			MiniGolf21UserService service = new MiniGolf21UserService();
+			MiniGolf21User user = null;
+			for (MiniGolf21User _user : service.getUsers()) {
 				if (_user.getSnowball() == null)
 					continue;
 
@@ -54,6 +58,8 @@ public class ProjectileListener implements Listener {
 
 			if (user == null)
 				return;
+
+			GlowAPI.setGlowing(user.getSnowball(), user.getColor().getGlowColor(), user.getPlayer());
 
 			// Stroke
 			ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.getCurrentStrokes());

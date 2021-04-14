@@ -4,6 +4,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -14,6 +16,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Time;
+import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,6 +43,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +58,8 @@ public class MiniGolf {
 	@Getter private static List<ItemStack> kit = new ArrayList<>();
 	@Getter private static List<ItemStack> clubs = new ArrayList<>();
 	// Data
-	@Getter private static final Set<MiniGolfUser> users = new HashSet<>();
+//	@Getter private static final Set<MiniGolfUser> users = new HashSet<>();
+	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
 	// Constants
 	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
 	@Getter private static final double floorOffset = 0.05;
@@ -145,11 +150,10 @@ public class MiniGolf {
 	}
 
 	public static void shutdown() {
-		for (MiniGolfUser user : MiniGolf.getUsers()) {
+		for (MiniGolf21User user : service.getUsers()) {
 			Snowball snowball = user.getSnowball();
 			if (snowball != null) {
-				snowball.remove();
-				user.setSnowball(null);
+				user.removeBall();
 				giveBall(user);
 			}
 		}
@@ -166,7 +170,7 @@ public class MiniGolf {
 
 	private void powerTask() {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
-			for (MiniGolfUser user : new HashSet<>(users)) {
+			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
 				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
 				if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
 					continue;
@@ -207,20 +211,19 @@ public class MiniGolf {
 
 	private void ballTask() {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
-			for (MiniGolfUser user : new HashSet<>(users)) {
-				if (user == null) {
-					users.remove(null);
-					continue;
-				}
+			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
+//				if (user == null) {
+//					Nexus.log("Removing null user");
+//					service.remove(null);
+//					continue;
+//				}
 
 				Snowball ball = user.getSnowball();
-
 				if (ball == null)
 					continue;
 
 				if (!ball.isValid()) {
-					ball.remove();
-					user.setSnowball(null);
+					user.removeBall();
 					continue;
 				}
 
@@ -247,21 +250,22 @@ public class MiniGolf {
 						ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
 
 						// Remove ball
-						user.setSnowball(null);
-						ball.remove();
+						user.removeBall();
 
 						// Spawn firework
-						Tasks.wait(Time.TICK, () -> FireworkLauncher.random(loc)
+						Tasks.wait(Time.TICK, () -> new FireworkLauncher(loc)
 								.power(0)
 								.detonateAfter(Time.TICK.x(2))
 								.type(Type.BURST)
+								.colors(Collections.singletonList(user.getColor().getColor()))
+								.fadeColors(Collections.singletonList(Color.WHITE))
 								.launch());
 
 						// Send message
 						sendActionBar(user, "&6Stroke: " + user.getCurrentStrokes());
 						giveBall(user);
 
-						user.addTotalStrokes(user.getCurrentStrokes());
+						user.incTotalStrokes();
 						user.setCurrentHole(null);
 						user.setCurrentStrokes(0);
 						break;
@@ -415,7 +419,7 @@ public class MiniGolf {
 		return Tag.SLABS.isTagged(block.getType()) && ((Slab) block.getBlockData()).getType() == Slab.Type.BOTTOM;
 	}
 
-	public static void giveBall(MiniGolfUser user) {
+	public static void giveBall(MiniGolf21User user) {
 		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
 		if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
 			giveBall(offlinePlayer.getPlayer());
@@ -437,7 +441,7 @@ public class MiniGolf {
 	}
 
 	public static void respawnBall(Snowball ball) {
-		MiniGolfUser user = getUser(ball);
+		MiniGolf21User user = getUser(ball);
 		if (user == null)
 			return;
 
@@ -456,40 +460,32 @@ public class MiniGolf {
 		sendActionBar(user, "&cOut of bounds!");
 	}
 
-	public static MiniGolfUser getUser(Snowball ball) {
-		for (MiniGolfUser user : new HashSet<>(users)) {
-			if (user == null) {
-				continue;
-			}
-
+	public static MiniGolf21User getUser(Snowball ball) {
+		for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
 			if (user.getSnowball() == null)
 				continue;
 
-			if (user.getSnowball().equals(ball)) {
-				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
-				if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
-					return user;
-				}
+			if (!user.isOnline()) {
+				user.removeBall();
+				continue;
 			}
-		}
-		return null;
-	}
 
-	public static MiniGolfUser getUser(UUID uuid) {
-		for (MiniGolfUser user : getUsers()) {
-			if (user.getUuid().equals(uuid))
+			if (user.getSnowball().equals(ball))
 				return user;
 		}
 		return null;
 	}
 
+	public static MiniGolf21User getUser(UUID uuid) {
+		return service.get(uuid);
+	}
 
-	public static void sendActionBar(MiniGolfUser user, String message) {
-		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
-		if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
+
+	public static void sendActionBar(MiniGolf21User user, String message) {
+		if (!user.isOnline())
 			return;
 
-		ActionBarUtils.sendActionBar(offlinePlayer.getPlayer(), message, Time.SECOND.x(3));
+		ActionBarUtils.sendActionBar(user.getPlayer(), message, Time.SECOND.x(3));
 	}
 
 	public static void error(Player player, String message) {

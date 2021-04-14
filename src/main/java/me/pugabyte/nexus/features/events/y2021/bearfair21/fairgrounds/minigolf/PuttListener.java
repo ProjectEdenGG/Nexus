@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -26,6 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 
 import java.util.List;
 
@@ -69,11 +71,11 @@ public class PuttListener implements Listener {
 
 		event.setCancelled(true);
 
-		MiniGolfUser user = MiniGolf.getUser(player.getUniqueId());
-		if (user == null) {
-			MiniGolf.error(player, "User is null");
-			return;
-		}
+		MiniGolf21User user = MiniGolf.getUser(player.getUniqueId());
+//		if (user == null) {
+//			MiniGolf.error(player, "User is null");
+//			return;
+//		}
 
 		// Get info
 		World world = player.getWorld();
@@ -105,8 +107,10 @@ public class PuttListener implements Listener {
 					Snowball ball = (Snowball) entity;
 
 					// Check this again, cuz NPE for some reason
-					if (user.getSnowball() == null)
+					if (user.getSnowball() == null) {
+						MiniGolf.error(player, "Ball is null (2)");
 						return;
+					}
 
 					if (!user.getSnowball().equals(ball))
 						continue;
@@ -136,7 +140,7 @@ public class PuttListener implements Listener {
 							ball.setVelocity(dir);
 
 							// Update stroke
-							ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.incrementStrokes());
+							ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.incStrokes());
 
 							// Update last pos
 							PersistentDataContainer c = entity.getPersistentDataContainer();
@@ -152,9 +156,8 @@ public class PuttListener implements Listener {
 
 						} else if (ball.isValid()) {
 							// Give golf ball
-							ball.remove();
+							user.removeBall();
 							MiniGolf.giveBall(player);
-							user.setSnowball(null);
 						}
 					}
 				}
@@ -205,6 +208,7 @@ public class PuttListener implements Listener {
 				ball.setCustomNameVisible(true);
 
 				user.setSnowball(ball);
+				GlowAPI.setGlowing(user.getSnowball(), user.getColor().getGlowColor(), user.getPlayer());
 
 				// Remove golf ball from inventory
 				ItemStack itemInHand = event.getItem();
