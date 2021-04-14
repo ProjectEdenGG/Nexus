@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TimeUtils {
 
@@ -96,16 +98,27 @@ public class TimeUtils {
 	@Getter
 	@AllArgsConstructor
 	public enum TimespanElement {
-		YEAR("y", "year"),
-		MONTH("mo", "month"),
-		WEEK("w", "week"),
-		DAY("d", "day"),
-		HOUR("h", "hour"),
-		MINUTE("m", "minute"),
-		SECOND("s", "second"),
-		TICK("t", "tick");
+		YEAR("y", "yr", "year"),
+		WEEK("w", null, "week"),
+		DAY("d", null, "day"),
+		HOUR("h", "hr", "hour"),
+		MINUTE("m", "min", "minute"),
+		SECOND("s", "sec", "second");
 
-		private final String shortLabel, longLabel;
+		private final String shortLabel, mediumLabel, longLabel;
+
+		public int of(String input) {
+			try {
+				double multiplier = Double.parseDouble(input.replaceAll("[^\\d.]+", ""));
+				return Time.valueOf(name()).x(multiplier);
+			} catch (NumberFormatException ex) {
+				throw new InvalidInputException("Invalid " + name().toLowerCase() + ": &e" + input);
+			}
+		}
+
+		public String getRegex() {
+			return "\\d+(\\.\\d+)?( )?(" + shortLabel + "|" + (mediumLabel == null ? "" : mediumLabel + "|") + longLabel + ")";
+		}
 	}
 
 	public enum TimespanFormatType {
@@ -146,6 +159,17 @@ public class TimeUtils {
 
 		public static TimespanBuilder of(int seconds) {
 			return Timespan.builder().seconds(seconds);
+		}
+
+		public static TimespanBuilder of(String input) {
+			int seconds = 0;
+			for (TimespanElement element : TimespanElement.values()) {
+				Matcher matcher = Pattern.compile(element.getRegex()).matcher(input);
+
+				while (matcher.find())
+					seconds += element.of(matcher.group());
+			}
+			return of(seconds / Time.SECOND.get());
 		}
 
 		public static class TimespanBuilder {
