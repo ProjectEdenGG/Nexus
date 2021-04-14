@@ -173,7 +173,7 @@ public class MiniGolf {
 
 	private void redstoneTask() {
 		String hole13 = regionHole + "13_activate";
-		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -27);
+		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
 		//
 		// ...
 
