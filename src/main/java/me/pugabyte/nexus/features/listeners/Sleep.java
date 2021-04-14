@@ -41,8 +41,10 @@ public class Sleep implements Listener {
 		long sleeping = players.stream().filter(player -> player.isSleeping() && this.canSleep(player)).count();
 		long active = players.stream().filter(this::canSleep).count();
 
-		if (sleeping == 0)
+		if (sleeping == 0) {
+			lastCalculatedSleeping = sleeping;
 			return;
+		}
 
 		int needed = (int) Math.ceil(active / 2d);
 
