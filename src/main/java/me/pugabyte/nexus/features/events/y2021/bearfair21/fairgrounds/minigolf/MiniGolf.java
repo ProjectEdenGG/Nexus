@@ -177,6 +177,7 @@ public class MiniGolf {
 		//
 		// ...
 
+		if (true) return;
 
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
 			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)

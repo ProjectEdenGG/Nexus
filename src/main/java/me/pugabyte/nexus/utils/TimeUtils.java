@@ -129,43 +129,21 @@ public class TimeUtils {
 		}
 	}
 
-	public enum TimespanFormatType {
-		SHORT {
-			@Override
-			public String get(TimespanElement label, int value) {
-				return label.getShortLabel();
-			}
-		},
-		MEDIUM {
-			@Override
-			public String get(TimespanElement label, int value) {
-				return StringUtils.plural(label.getMediumLabel() == null ? label.getLongLabel() : label.getMediumLabel(), value);
-			}
-		},
-		LONG {
-			@Override
-			public String get(TimespanElement label, int value) {
-				return StringUtils.plural(label.getLongLabel(), value);
-			}
-		};
-
-		abstract String get(TimespanElement label, int value);
-	}
-
 	public static class Timespan {
 		private final int original;
 		private final boolean noneDisplay;
-		private final TimespanFormatType formatType;
+		private final FormatType formatType;
+		@Getter
 		private int years, days, hours, minutes, seconds;
 		@Getter
 		private final String rest;
 
 		@Builder
-		public Timespan(int seconds, boolean noneDisplay, TimespanFormatType formatType, String rest) {
+		public Timespan(int seconds, boolean noneDisplay, FormatType formatType, String rest) {
 			this.original = seconds;
 			this.seconds = seconds;
 			this.noneDisplay = noneDisplay;
-			this.formatType = formatType == null ? TimespanFormatType.SHORT : formatType;
+			this.formatType = formatType == null ? FormatType.SHORT : formatType;
 			this.rest = rest;
 			calculate();
 		}
@@ -210,8 +188,8 @@ public class TimeUtils {
 			public static TimespanBuilder find(String input) {
 				Matcher matcher = TimespanElement.getAllPattern().matcher(input);
 				while (matcher.find()) {
-					String group = matcher.group().trim();
-					if (group.length() == 0) continue;
+					String group = matcher.group();
+					if (group.trim().length() == 0) continue;
 					return TimespanBuilder.of(group).rest(input.replaceFirst(group, "").trim());
 				}
 
@@ -219,7 +197,11 @@ public class TimeUtils {
 			}
 
 			public String format() {
-				return build().format();
+				return format(formatType);
+			}
+
+			public String format(FormatType formatType) {
+				return build().format(formatType);
 			}
 
 		}
@@ -237,19 +219,32 @@ public class TimeUtils {
 			seconds -= minutes * 60;
 		}
 
+		public LocalDateTime fromNow() {
+			return LocalDateTime.now().plusSeconds(seconds);
+		}
+
+		public boolean isNull() {
+			return seconds == 0;
+		}
+
 		public String format() {
+			return format(formatType);
+		}
+
+		public String format(FormatType formatType) {
+			formatType = formatType == null ? FormatType.SHORT : formatType;
 			if (original == 0 && noneDisplay)
 				return "None";
 
 			String result = "";
 			if (years > 0)
-				result += years + formatType.get(TimespanElement.YEAR, years) + " ";
+				result += years + formatType.get(TimespanElement.YEAR, years);
 			if (days > 0)
-				result += days + formatType.get(TimespanElement.DAY, days) + " ";
+				result += days + formatType.get(TimespanElement.DAY, days);
 			if (hours > 0)
-				result += hours + formatType.get(TimespanElement.HOUR, hours) + " ";
+				result += hours + formatType.get(TimespanElement.HOUR, hours);
 			if (minutes > 0)
-				result += minutes + formatType.get(TimespanElement.MINUTE, minutes) + " ";
+				result += minutes + formatType.get(TimespanElement.MINUTE, minutes);
 			if (years == 0 && days == 0 && hours == 0 && minutes > 0 && seconds > 0)
 				result += seconds + formatType.get(TimespanElement.SECOND, seconds);
 
@@ -259,6 +254,28 @@ public class TimeUtils {
 			return result.trim();
 		}
 
+		public enum FormatType {
+			SHORT {
+				@Override
+				public String get(TimespanElement label, int value) {
+					return label.getShortLabel() + " ";
+				}
+			},
+			MEDIUM {
+				@Override
+				public String get(TimespanElement label, int value) {
+					return " " + StringUtils.plural(label.getMediumLabel() == null ? label.getLongLabel() : label.getMediumLabel(), value) + " ";
+				}
+			},
+			LONG {
+				@Override
+				public String get(TimespanElement label, int value) {
+					return " " + StringUtils.plural(label.getLongLabel(), value) + " ";
+				}
+			};
+
+			abstract String get(TimespanElement label, int value);
+		}
 	}
 
 	@AllArgsConstructor

@@ -100,7 +100,7 @@ public class Nerd extends PlayerOwnedObject {
 	}
 
 	public boolean hasNickname() {
-		return !isNullOrEmpty(getNicknameData().getNickname());
+		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
 	}
 
 	@ToString.Include

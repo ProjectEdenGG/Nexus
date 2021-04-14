@@ -32,8 +32,8 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.TimespanFormatType;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -474,7 +474,7 @@ public class Match {
 		}
 
 		public void broadcastTimeLeft(int time) {
-			match.broadcast("&e" + TimespanBuilder.of(time).formatType(TimespanFormatType.LONG).format() + " &7left...");
+			match.broadcast("&e" + TimespanBuilder.of(time).format(FormatType.LONG) + " &7left...");
 		}
 
 		void stop() {

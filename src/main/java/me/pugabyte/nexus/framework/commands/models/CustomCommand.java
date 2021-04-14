@@ -352,7 +352,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected String name() {
 		if (!isPlayer())
-			return sender().getName();
+			return camelCase(sender().getName());
 		else
 			return nerd().getName();
 	}
