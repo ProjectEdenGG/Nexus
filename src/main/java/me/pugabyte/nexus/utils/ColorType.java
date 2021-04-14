@@ -6,6 +6,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.inventivetalent.glow.GlowAPI;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public enum ColorType {
 			Color.WHITE,
 			ChatColor.WHITE,
 			DyeColor.WHITE,
+			GlowAPI.Color.WHITE,
 			0
 	),
 	LIGHT_GRAY(
@@ -28,6 +30,7 @@ public enum ColorType {
 			Color.SILVER,
 			ChatColor.GRAY,
 			DyeColor.LIGHT_GRAY,
+			GlowAPI.Color.GRAY,
 			8
 	),
 	GRAY(
@@ -35,6 +38,7 @@ public enum ColorType {
 			Color.GRAY,
 			ChatColor.DARK_GRAY,
 			DyeColor.GRAY,
+			GlowAPI.Color.DARK_GRAY,
 			7
 	),
 	BLACK(
@@ -42,6 +46,7 @@ public enum ColorType {
 			Color.BLACK,
 			ChatColor.BLACK,
 			DyeColor.BLACK,
+			GlowAPI.Color.BLACK,
 			15
 	),
 	BROWN(
@@ -49,6 +54,7 @@ public enum ColorType {
 			Color.fromRGB(139, 69, 42),
 			null,
 			DyeColor.BROWN,
+			null,
 			12
 	),
 	RED(
@@ -56,6 +62,7 @@ public enum ColorType {
 			Color.RED,
 			ChatColor.DARK_RED,
 			DyeColor.RED,
+			GlowAPI.Color.DARK_RED,
 			14
 	),
 	LIGHT_RED(
@@ -64,6 +71,7 @@ public enum ColorType {
 			ChatColor.RED,
 			null,
 			DyeColor.RED,
+			GlowAPI.Color.RED,
 			14
 	),
 	ORANGE(
@@ -71,6 +79,7 @@ public enum ColorType {
 			Color.ORANGE,
 			ChatColor.GOLD,
 			DyeColor.ORANGE,
+			GlowAPI.Color.GOLD,
 			1
 	),
 	YELLOW(
@@ -78,6 +87,7 @@ public enum ColorType {
 			Color.YELLOW,
 			ChatColor.YELLOW,
 			DyeColor.YELLOW,
+			GlowAPI.Color.YELLOW,
 			4
 	),
 	LIGHT_GREEN(
@@ -85,6 +95,7 @@ public enum ColorType {
 			Color.LIME,
 			ChatColor.GREEN,
 			DyeColor.LIME,
+			GlowAPI.Color.GREEN,
 			5
 	),
 	GREEN(
@@ -92,6 +103,7 @@ public enum ColorType {
 			Color.GREEN,
 			ChatColor.DARK_GREEN,
 			DyeColor.GREEN,
+			GlowAPI.Color.DARK_GREEN,
 			13
 	),
 	CYAN(
@@ -99,6 +111,7 @@ public enum ColorType {
 			Color.TEAL,
 			ChatColor.DARK_AQUA,
 			DyeColor.CYAN,
+			GlowAPI.Color.DARK_AQUA,
 			9
 	),
 	LIGHT_BLUE(
@@ -106,6 +119,7 @@ public enum ColorType {
 			Color.AQUA,
 			ChatColor.AQUA,
 			DyeColor.LIGHT_BLUE,
+			GlowAPI.Color.AQUA,
 			3
 	),
 	BLUE(
@@ -113,6 +127,7 @@ public enum ColorType {
 			Color.BLUE,
 			ChatColor.BLUE,
 			DyeColor.BLUE,
+			GlowAPI.Color.BLUE,
 			11
 	),
 	PURPLE(
@@ -120,6 +135,7 @@ public enum ColorType {
 			Color.PURPLE,
 			ChatColor.DARK_PURPLE,
 			DyeColor.PURPLE,
+			GlowAPI.Color.DARK_PURPLE,
 			10
 	),
 	MAGENTA(
@@ -127,6 +143,7 @@ public enum ColorType {
 			Color.FUCHSIA,
 			null,
 			DyeColor.MAGENTA,
+			GlowAPI.Color.PURPLE,
 			2
 	),
 	PINK(
@@ -134,6 +151,7 @@ public enum ColorType {
 			Color.fromRGB(255, 105, 180),
 			ChatColor.LIGHT_PURPLE,
 			DyeColor.PINK,
+			GlowAPI.Color.PURPLE,
 			6
 	);
 
@@ -142,18 +160,20 @@ public enum ColorType {
 	private final ChatColor chatColor;
 	private final DyeColor dyeColor;
 	private final DyeColor similarDyeColor;
+	private final GlowAPI.Color glowColor;
 	private final Integer durability;
 
-	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, int durability) {
-		this(name, color, chatColor, dyeColor, dyeColor, durability);
+	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, GlowAPI.Color glowColor, int durability) {
+		this(name, color, chatColor, dyeColor, dyeColor, glowColor, durability);
 	}
 
-	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, DyeColor similarDyeColor, int durability) {
+	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, DyeColor similarDyeColor, GlowAPI.Color glowColor, int durability) {
 		this.name = name;
 		this.color = color;
 		this.chatColor = chatColor;
 		this.dyeColor = dyeColor;
 		this.similarDyeColor = similarDyeColor;
+		this.glowColor = glowColor;
 		this.durability = durability;
 	}
 
@@ -171,6 +191,10 @@ public enum ColorType {
 
 	public static ColorType of(DyeColor dyeColor) {
 		return Arrays.stream(values()).filter(colorType -> colorType.getDyeColor() != null && colorType.getDyeColor().equals(dyeColor)).findFirst().orElse(null);
+	}
+
+	public static ColorType of(GlowAPI.Color glowColor) {
+		return Arrays.stream(values()).filter(colorType -> colorType.getGlowColor() != null && colorType.getGlowColor().equals(glowColor)).findFirst().orElse(null);
 	}
 
 	public static ColorType of(Material material) {
