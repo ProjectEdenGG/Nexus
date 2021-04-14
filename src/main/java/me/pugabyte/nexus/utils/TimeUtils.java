@@ -125,7 +125,7 @@ public class TimeUtils {
 			StringBuilder regex = new StringBuilder();
 			for (TimespanElement element : values())
 				regex.append("(").append(element.getPattern().pattern()).append("( )?){0,}");
-			return Pattern.compile("^" + regex.toString() + "$");
+			return Pattern.compile(regex.toString());
 		}
 	}
 
