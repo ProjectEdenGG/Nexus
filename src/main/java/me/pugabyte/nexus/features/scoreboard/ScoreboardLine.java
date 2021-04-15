@@ -20,6 +20,7 @@ import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,7 +41,6 @@ import static me.pugabyte.nexus.utils.PlayerUtils.isStaffGroup;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.left;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 public enum ScoreboardLine {
 	ONLINE {
@@ -231,7 +231,7 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			AFKPlayer afkPlayer = me.pugabyte.nexus.features.afk.AFK.get(player);
 			if (afkPlayer.isAfk())
-				return "&3AFK for: &e" + timespanDiff(afkPlayer.getTime());
+				return "&3AFK for: &e" + Timespan.of(afkPlayer.getTime()).format();
 			return null;
 		}
 	};

@@ -25,6 +25,7 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -48,7 +49,6 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")
@@ -72,7 +72,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String worldName = snapshot.getLocation().getWorld().getName();
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
 			return json("&3" + index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
-					.addHover("&3Time since: &e" + timespanDiff(snapshot.getTimestamp()))
+					.addHover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
 					.addHover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
 		};
@@ -119,7 +119,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		BiFunction<InventorySnapshot, String, JsonBuilder> function = (snapshot, index) -> {
 			String name = getPlayer(snapshot.getUuid()).getName();
 			int distance = nearbyDeaths.get(snapshot).intValue();
-			String timeSince = timespanDiff(snapshot.getTimestamp());
+			String timeSince = Timespan.of(snapshot.getTimestamp()).format();
 			return json("&3" + index + " &e" + name + " &7- " + distance + "m / " + timeSince + " ago")
 					.hover("&eClick to teleport")
 					.command("/tppos " + getShortLocationString(snapshot.getLocation()));

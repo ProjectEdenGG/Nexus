@@ -64,7 +64,6 @@ import java.util.function.Consumer;
 import static me.pugabyte.nexus.utils.ItemUtils.getTool;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 import static me.pugabyte.nexus.utils.Utils.attempt;
 
 /*
@@ -150,7 +149,8 @@ public class Battleship extends TeamMechanic {
 		if (matchData.isPlacingKits()) {
 			lines.add("&cPlace your kits!");
 		} else {
-			lines.add("&cTime: &e" + timespanDiff(matchData.getStart(), matchData.getEnd() == null ? LocalDateTime.now() : matchData.getEnd()));
+			LocalDateTime to = matchData.getEnd() == null ? LocalDateTime.now() : matchData.getEnd();
+			lines.add("&cTime: &e" + Timespan.of(matchData.getStart(), to).format());
 
 			if (matchData.isEnding()) {
 				lines.add("&cWinner: " + matchData.getWinnerTeam().getColoredName());

@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
-
 @Aliases({"list", "ls", "who", "players", "eonline", "elist", "ewho", "eplayers"})
 public class OnlineCommand extends CustomCommand {
 
@@ -96,7 +94,7 @@ public class OnlineCommand extends CustomCommand {
 		Hours hours = new HoursService().get(player);
 
 		int ping = PlayerUtils.getPing(player);
-		String onlineFor = timespanDiff(nerd.getLastJoin());
+		String onlineFor = Timespan.of(nerd.getLastJoin()).format();
 		WorldGroup world = WorldGroup.get(player);
 		ShopGroup shopGroup = ShopGroup.get(player);
 		if (shopGroup == null)
@@ -107,7 +105,7 @@ public class OnlineCommand extends CustomCommand {
 
 		if (modifiers.contains("AFK")) {
 			AFKPlayer afkPlayer = AFK.get(player);
-			String timeAFK = timespanDiff(afkPlayer.getTime());
+			String timeAFK = Timespan.of(afkPlayer.getTime()).format();
 			afk = "&3AFK for: &e" + timeAFK + "\n \n";
 		}
 

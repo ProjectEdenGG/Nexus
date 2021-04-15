@@ -16,12 +16,12 @@ import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Aliases("eco")
 public class EconomyCommand extends CustomCommand {
@@ -111,7 +111,7 @@ public class EconomyCommand extends CustomCommand {
 				total = total.add(transaction.getAmount());
 			}
 
-		send(PREFIX + "Total volume" + (startTime != null ? " for " + timespanDiff(startTime, endTime) : "") + ": &e" + prettyMoney(total));
+		send(PREFIX + "Total volume" + (startTime != null ? " for " + Timespan.of(startTime, endTime).format() : "") + ": &e" + prettyMoney(total));
 	}
 
 //	@Async

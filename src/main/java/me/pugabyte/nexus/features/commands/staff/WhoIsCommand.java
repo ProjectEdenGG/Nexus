@@ -20,6 +20,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -30,7 +31,6 @@ import java.util.Set;
 
 import static me.pugabyte.nexus.utils.StringUtils.getLocationString;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Aliases({"whotf", "whothefuck"})
 @Permission("group.staff")
@@ -72,12 +72,12 @@ public class WhoIsCommand extends CustomCommand {
 			if (nerd.getLastQuit() != null) {
 				lastJoinQuitLabel = "Last Quit";
 				lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
-				lastJoinQuitDiff = timespanDiff(nerd.getLastQuit());
+				lastJoinQuitDiff = Timespan.of(nerd.getLastQuit()).format();
 			}
 		} else {
 			lastJoinQuitLabel = "Last Join";
 			lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
-			lastJoinQuitDiff = timespanDiff(nerd.getLastJoin());
+			lastJoinQuitDiff = Timespan.of(nerd.getLastJoin()).format();
 		}
 		Set<String> pastNames = nerd.getPastNames();
 		Godmode godmode = new GodmodeService().get(nerd);

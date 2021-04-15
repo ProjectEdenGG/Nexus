@@ -7,8 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
-
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 
 @Aliases("lastquit")
 public class LastLogoutCommand extends CustomCommand {
@@ -19,6 +18,6 @@ public class LastLogoutCommand extends CustomCommand {
 
 	@Path("[player]")
 	void lastLogout(@Arg("self") Nerd nerd) {
-		send("&e&l" + Nickname.of(nerd) + " &3last logged out &e" + timespanDiff(nerd.getLastQuit()) + " &3ago");
+		send("&e&l" + Nickname.of(nerd) + " &3last logged out &e" + Timespan.of(nerd.getLastQuit()).format() + " &3ago");
 	}
 }

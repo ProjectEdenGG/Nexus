@@ -60,6 +60,7 @@ import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import me.pugabyte.nexus.utils.Utils;
@@ -126,7 +127,6 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.paste;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")
@@ -277,7 +277,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("lastReload")
 	void lastReload() {
-		send(PREFIX + "Last reloaded &e" + timespanDiff(lastReload) + " ago");
+		send(PREFIX + "Last reloaded &e" + Timespan.of(lastReload).format() + " ago");
 	}
 
 	@Path("gc")

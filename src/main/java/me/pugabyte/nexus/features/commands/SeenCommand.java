@@ -7,8 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.TimeUtils;
-
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 
 public class SeenCommand extends CustomCommand {
 
@@ -19,8 +18,8 @@ public class SeenCommand extends CustomCommand {
 	@Path("<player>")
 	public void seen(Nerd nerd) {
 		if (nerd.getOfflinePlayer().isOnline())
-			send(PREFIX + "&e" + Nickname.of(nerd) + " &3has been &aonline &3for &e" + timespanDiff(nerd.getLastJoin()) + " &3(" + TimeUtils.longDateTimeFormat(nerd.getLastJoin()) + ")");
+			send(PREFIX + "&e" + Nickname.of(nerd) + " &3has been &aonline &3for &e" + Timespan.of(nerd.getLastJoin()).format() + " &3(" + TimeUtils.longDateTimeFormat(nerd.getLastJoin()) + ")");
 		else
-			send(PREFIX + "&e" + Nickname.of(nerd) + " &3has been &coffline &3for &e" + timespanDiff(nerd.getLastQuit()) + " &3(" + TimeUtils.longDateTimeFormat(nerd.getLastQuit()) + ")");
+			send(PREFIX + "&e" + Nickname.of(nerd) + " &3has been &coffline &3for &e" + Timespan.of(nerd.getLastQuit()).format() + " &3(" + TimeUtils.longDateTimeFormat(nerd.getLastQuit()) + ")");
 	}
 }

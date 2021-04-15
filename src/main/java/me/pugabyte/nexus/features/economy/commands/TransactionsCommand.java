@@ -21,6 +21,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,7 +38,6 @@ import static me.pugabyte.nexus.models.banker.Transaction.TransactionCause.shopC
 import static me.pugabyte.nexus.models.banker.Transaction.combine;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @NoArgsConstructor
 @Aliases({"transaction", "txn"})
@@ -124,7 +124,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			JsonBuilder jsonBuilder = new JsonBuilder("&3" + index + " &7" + timestamp + "  " + newBalance + "  &7|  " +
 					fromPlayer + " &3→ " + toPlayer + "  " + amount + "  " + description)
-					.addHover("&3Time since: &e" + timespanDiff(transaction.getTimestamp()));
+					.addHover("&3Time since: &e" + Timespan.of(transaction.getTimestamp()).format());
 
 			if (PlayerUtils.isAdminGroup(player) && Nexus.isDebug())
 				jsonBuilder

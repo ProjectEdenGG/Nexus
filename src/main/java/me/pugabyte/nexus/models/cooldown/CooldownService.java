@@ -5,13 +5,12 @@ import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 /*
 	Returns true, if cooldown has expired/is bypassed
@@ -68,7 +67,7 @@ public class CooldownService extends MongoService {
 	public String getDiff(UUID uuid, String type) {
 		Cooldown cooldown = get(uuid);
 		if (cooldown.exists(type))
-			return timespanDiff(cooldown.get(type));
+			return Timespan.of(cooldown.get(type)).format();
 
 		return ".0s";
 	}

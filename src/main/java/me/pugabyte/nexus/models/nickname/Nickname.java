@@ -20,6 +20,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -37,7 +38,6 @@ import java.util.UUID;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Data
 @Builder
@@ -208,7 +208,7 @@ public class Nickname extends PlayerOwnedObject {
 			List<NicknameHistoryEntry> nicknameHistory = data.getNicknameHistory();
 			if (!nicknameHistory.isEmpty()) {
 				LocalDateTime lastChange = nicknameHistory.get(nicknameHistory.size() - 1).getRequestedTimestamp(); // TODO wrong
-				embed.appendDescription("**Time since last change:** " + timespanDiff(lastChange) + System.lineSeparator());
+				embed.appendDescription("**Time since last change:** " + Timespan.of(lastChange).format() + System.lineSeparator());
 				embed.appendDescription("**Past nick names:**" + System.lineSeparator());
 				nicknameHistory.forEach(entry -> {
 					String timestamp = shortishDateTimeFormat(entry.getRequestedTimestamp());

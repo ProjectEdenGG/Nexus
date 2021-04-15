@@ -37,6 +37,7 @@ import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
@@ -56,7 +57,6 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPu
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Aliases("pugmas")
 @NoArgsConstructor
@@ -64,7 +64,7 @@ import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 @Redirect(from = "/district", to = "/pugmas district")
 @Redirect(from = "/waypoint", to = "/pugmas waypoint")
 public class PugmasCommand extends CustomCommand implements Listener {
-	private final String timeLeft = timespanDiff(Pugmas20.openingDay);
+	private final String timeLeft = Timespan.of(Pugmas20.openingDay).format();
 	private final Pugmas20UserService pugmasService = new Pugmas20UserService();
 	private Pugmas20User pugmasUser;
 	private final EventUserService eventUserService = new EventUserService();
@@ -207,7 +207,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 
 		line();
 		if (day < 25) {
-			send("&3Next day begins in &e" + timespanDiff(now.plusDays(1)));
+			send("&3Next day begins in &e" + Timespan.of(now.plusDays(1)).format());
 			line();
 		}
 	}

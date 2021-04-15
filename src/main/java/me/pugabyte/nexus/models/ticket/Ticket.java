@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.conversations.Conversable;
@@ -14,8 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
 
 @Data
 @NoArgsConstructor
@@ -72,7 +71,7 @@ public class Ticket {
 	}
 
 	public String getTimespan() {
-		return timespanDiff(timeOpened);
+		return Timespan.of(timeOpened).format();
 	}
 
 }

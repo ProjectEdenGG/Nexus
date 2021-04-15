@@ -7,8 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
-
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 
 @Aliases("lastjoin")
 public class LastLoginCommand extends CustomCommand {
@@ -19,6 +18,6 @@ public class LastLoginCommand extends CustomCommand {
 
 	@Path("[player]")
 	void lastLogin(@Arg("self") Nerd nerd) {
-		send("&e&l" + Nickname.of(nerd) + " &3last logged in &e" + timespanDiff(nerd.getLastJoin()) + " &3ago");
+		send("&e&l" + Nickname.of(nerd) + " &3last logged in &e" + Timespan.of(nerd.getLastJoin()).format() + " &3ago");
 	}
 }
