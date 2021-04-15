@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.commands.staff.punishments;
 
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -11,12 +10,10 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 import me.pugabyte.nexus.utils.Env;
-import org.bukkit.event.Listener;
 
 @Environments(Env.DEV)
-@NoArgsConstructor
 @Permission("group.moderator")
-public class NexusKickCommand extends CustomCommand implements Listener {
+public class NexusKickCommand extends CustomCommand {
 
 	public NexusKickCommand(@NonNull CommandEvent event) {
 		super(event);
