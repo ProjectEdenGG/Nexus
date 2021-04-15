@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -44,6 +45,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,15 +54,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MiniGolf {
 	// @formatter:off
 	@Getter private static ItemStack putter;
 	@Getter private static ItemStack wedge;
 	@Getter private static ItemStack whistle;
-	@Getter private static ItemStack golfBall;
-	@Getter private static List<ItemStack> kit = new ArrayList<>();
+	@Getter private static ItemBuilder golfBall;
 	@Getter private static List<ItemStack> clubs = new ArrayList<>();
+	@Getter private static List<ItemStack> kit = new ArrayList<>();
 	// Data
 	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
 	// Constants
@@ -140,16 +144,17 @@ public class MiniGolf {
 		golfBall = new ItemBuilder(Material.SNOWBALL)
 				.name("Golf Ball")
 				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
-				.customModelData(901)
-				.build();
-		meta = golfBall.getItemMeta();
+				.customModelData(901);
+		ItemStack clone = golfBall.clone().build();
+		meta = clone.getItemMeta();
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, noDamage);
 		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, fastSwing);
 		addKey(meta, getBallKey());
-		golfBall.setItemMeta(meta);
+		clone.setItemMeta(meta);
+		golfBall = new ItemBuilder(clone);
 
-		kit = Arrays.asList(getPutter(), getWedge(), getWhistle(), getGolfBall());
 		clubs = Arrays.asList(getPutter(), getWedge());
+		kit = Arrays.asList(getPutter(), getWedge(), getWhistle(), getGolfBall().build());
 	}
 
 	public static void shutdown() {
@@ -162,22 +167,36 @@ public class MiniGolf {
 		}
 	}
 
-	public static void giveKit(Player player) {
-		PlayerUtils.giveItems(player, kit);
+	public static void giveKit(MiniGolf21User user) {
+		List<ItemStack> kit = Arrays.asList(getPutter(), getWedge(), getWhistle(),
+				getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+
+		PlayerUtils.giveItems(user.getPlayer(), kit);
 	}
 
-	public static void takeKit(Player player) {
-		for (ItemStack item : kit)
-			player.getInventory().remove(item);
+	public static void takeKit(MiniGolf21User user) {
+		user.getPlayer().getInventory().remove(getPutter());
+		user.getPlayer().getInventory().remove(getWedge());
+		user.getPlayer().getInventory().remove(getWhistle());
+		user.getPlayer().getInventory().remove(getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+	}
+
+	public static String getStrokeString(MiniGolf21User user) {
+		String strokes = "Stroke " + user.getCurrentStrokes();
+		if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
+			return StringUtils.Rainbow.apply(strokes);
+		else
+			return user.getChatColor() + strokes;
 	}
 
 	private void redstoneTask() {
+		if (!Nexus.getEnv().equals(Env.PROD))
+			return;
+
 		String hole13 = regionHole + "13_activate";
 		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
 		//
 		// ...
-
-		if (true) return;
 
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
 			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
@@ -227,7 +246,24 @@ public class MiniGolf {
 	}
 
 	private void ballTask() {
+		AtomicInteger i = new AtomicInteger(1);
+		AtomicReference<MiniGolfColor> color = new AtomicReference<>(MiniGolfColor.RED);
+
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
+			boolean updateRainbow = false;
+			i.getAndIncrement();
+			if (i.getAndIncrement() % 20 == 0) {
+
+				int ndx = color.get().ordinal();
+				if (ndx < (MiniGolfColor.values().length - 2))
+					ndx += 1;
+				else
+					ndx = 2;
+
+				color.set(MiniGolfColor.values()[ndx]);
+				updateRainbow = true;
+			}
+
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
 				Snowball ball = user.getSnowball();
 				if (ball == null)
@@ -250,16 +286,22 @@ public class MiniGolf {
 					try {
 						ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(ball.getLocation()).count(1).extra(0);
 						if (particle.equals(Particle.REDSTONE)) {
-							if (user.isRainbow()) {
+							if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
 								int[] rgb = ParticleUtils.incRainbow(ball.getTicksLived());
 								DustOptions dustOptions = ParticleUtils.newDustOption(particle, rgb[0], rgb[1], rgb[2]);
 								particleBuilder.data(dustOptions);
 							} else
-								particleBuilder.color(user.getColor().getColor());
+								particleBuilder.color(user.getColor());
 						}
 						particleBuilder.spawn();
 					} catch (Exception ignored) {
 					}
+				}
+
+				// Rainbow Glow
+				if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
+					if (updateRainbow)
+						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getPlayer());
 				}
 
 				// Act upon block type
@@ -287,12 +329,12 @@ public class MiniGolf {
 								.power(0)
 								.detonateAfter(Time.TICK.x(2))
 								.type(Type.BURST)
-								.colors(Collections.singletonList(user.getColor().getColor()))
+								.colors(user.getFireworkColor())
 								.fadeColors(Collections.singletonList(Color.WHITE))
 								.launch());
 
 						// Send message
-						sendActionBar(user, "&6Stroke: " + user.getCurrentStrokes());
+						sendActionBar(user, "&6Stroke: " + user.getCurrentStrokes() + " (" + getScore(user) + ")");
 						giveBall(user);
 
 						user.incTotalStrokes();
@@ -450,16 +492,8 @@ public class MiniGolf {
 	}
 
 	public static void giveBall(MiniGolf21User user) {
-		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
-		if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
-			giveBall(offlinePlayer.getPlayer());
-		}
-	}
-
-	public static void giveBall(Player player) {
-		if (player == null)
-			return;
-		PlayerUtils.giveItem(player, golfBall.clone());
+		if (user.getPlayer().isOnline())
+			PlayerUtils.giveItem(user.getPlayer(), golfBall.clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
 	}
 
 	public static void addKey(ItemMeta meta, NamespacedKey key) {
@@ -510,7 +544,6 @@ public class MiniGolf {
 		return service.get(uuid);
 	}
 
-
 	public static void sendActionBar(MiniGolf21User user, String message) {
 		if (!user.isOnline())
 			return;
@@ -522,11 +555,19 @@ public class MiniGolf {
 		player.sendMessage(PREFIX + StringUtils.colorize("&c" + message));
 	}
 
-	private static String getScore(int par, int strokes) {
+	private static int getPar(int hole) {
+		int[] par = {1, 1, 2, 2, 3, 3, 2, 2, 3, 2, 3, 2, 3, -1, -1, -1, -1, -1};
+		return par[hole - 1];
+	}
+
+	private static String getScore(MiniGolf21User user) {
+		int strokes = user.getCurrentStrokes();
+		int hole = user.getCurrentHole();
+
 		if (strokes == 1)
 			return "Hole In One";
 
-		int diff = strokes - par;
+		int diff = strokes - getPar(hole);
 		switch (diff) {
 			case -4:
 				return "Condor";

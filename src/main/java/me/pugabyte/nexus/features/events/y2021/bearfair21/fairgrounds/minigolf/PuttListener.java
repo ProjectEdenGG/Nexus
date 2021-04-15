@@ -140,7 +140,8 @@ public class PuttListener implements Listener {
 							ball.setVelocity(dir);
 
 							// Update stroke
-							ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.incStrokes());
+							user.incStrokes();
+							ball.setCustomName(MiniGolf.getStrokeString(user));
 
 							// Update last pos
 							PersistentDataContainer c = entity.getPersistentDataContainer();
@@ -157,7 +158,7 @@ public class PuttListener implements Listener {
 						} else if (ball.isValid()) {
 							// Give golf ball
 							user.removeBall();
-							MiniGolf.giveBall(player);
+							MiniGolf.giveBall(user);
 						}
 					}
 				}
@@ -196,6 +197,7 @@ public class PuttListener implements Listener {
 
 				// Spawn golf ball and set data
 				Snowball ball = (Snowball) world.spawnEntity(loc, EntityType.SNOWBALL);
+				ball.setItem(MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
 
 				ball.setGravity(false);
 
@@ -204,18 +206,16 @@ public class PuttListener implements Listener {
 				c.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, loc.getY());
 				c.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, loc.getZ());
 
-				ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.getCurrentStrokes());
+				ball.setCustomName(MiniGolf.getStrokeString(user));
 				ball.setCustomNameVisible(true);
 
 				user.setSnowball(ball);
-				GlowAPI.setGlowing(user.getSnowball(), user.getColor().getGlowColor(), user.getPlayer());
+				if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
+					GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getPlayer());
 
 				// Remove golf ball from inventory
 				ItemStack itemInHand = event.getItem();
 				itemInHand.setAmount(itemInHand.getAmount() - 1);
-
-				// Add user
-//				MiniGolf.getUsers().add(user);
 			}
 		} else if (MiniGolf.hasKey(meta, MiniGolf.getWhistleKey())) {
 			// Return ball

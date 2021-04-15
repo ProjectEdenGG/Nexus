@@ -1,13 +1,14 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfColor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
-import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Particle;
 
@@ -24,7 +25,7 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("kit")
 	void getKit() {
-		MiniGolf.giveKit(player());
+		MiniGolf.giveKit(user);
 	}
 
 	@Path("play")
@@ -35,7 +36,9 @@ public class MiniGolfCommand extends CustomCommand {
 		user.setPlaying(true);
 		service.save(user);
 
-		MiniGolf.takeKit(player());
+		player().setCollidable(false);
+
+		MiniGolf.takeKit(user);
 		getKit();
 		send(PREFIX + "You are now playing");
 	}
@@ -53,20 +56,28 @@ public class MiniGolfCommand extends CustomCommand {
 			user.setSnowball(null);
 		}
 
-		MiniGolf.takeKit(player());
+		player().setCollidable(true);
+
+		MiniGolf.takeKit(user);
 		send(PREFIX + "You have quit playing");
 	}
 
-	@Path("color <colorType>")
-	void color(ColorType colorType) {
-		if (colorType == null)
+	@Path("color <color>")
+	void color(MiniGolfColor color) {
+		if (color == null)
 			error("Unknown color");
 
-		user.setColor(colorType);
+		user.setMiniGolfColor(color);
 		service.save(user);
 
-		ColorType color = user.getColor();
-		send(PREFIX + "Set color to: " + StringUtils.colorize(color.getChatColor() + StringUtils.camelCase(color)));
+		MiniGolfColor _color = user.getMiniGolfColor();
+		String message = PREFIX + "Set color to: ";
+		String colorName = StringUtils.camelCase(_color);
+
+		if (_color.equals(MiniGolfColor.RAINBOW))
+			send(message + StringUtils.Rainbow.apply(colorName));
+		else
+			send(message + _color.getColorType().getChatColor() + colorName);
 	}
 
 	@Path("particle <particle>")
@@ -80,12 +91,12 @@ public class MiniGolfCommand extends CustomCommand {
 		send(PREFIX + "Set particle to: " + StringUtils.camelCase(user.getParticle()));
 	}
 
-	@Path("rainbow <boolean>")
-	void rainbow(boolean bool) {
-		user.setRainbow(bool);
-		service.save(user);
-
-		send(PREFIX + "Set rainbow to: " + bool);
+	@Path("clearDatabase")
+	@Confirm
+	void resetData() {
+		service.clearCache();
+		service.deleteAll();
+		service.clearCache();
 	}
 
 

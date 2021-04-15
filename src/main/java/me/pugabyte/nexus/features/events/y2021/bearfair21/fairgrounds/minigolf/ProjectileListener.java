@@ -56,14 +56,17 @@ public class ProjectileListener implements Listener {
 				}
 			}
 
-			if (user == null)
+			if (user == null || !user.isPlaying())
 				return;
 
-			GlowAPI.setGlowing(user.getSnowball(), user.getColor().getGlowColor(), user.getPlayer());
+			ball.setItem(MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+			if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
+				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getPlayer());
 
 			// Stroke
-			ball.setCustomName(user.getColor().getChatColor() + "Stroke " + user.getCurrentStrokes());
+			ball.setCustomName(MiniGolf.getStrokeString(user));
 			ball.setCustomNameVisible(true);
+			ball.setTicksLived(entity.getTicksLived());
 
 			PersistentDataContainer old = entity.getPersistentDataContainer();
 			PersistentDataContainer current = ball.getPersistentDataContainer();
@@ -78,6 +81,9 @@ public class ProjectileListener implements Listener {
 			// Golf ball hit entity
 			if (event.getHitBlockFace() == null) {
 				event.setCancelled(true);
+				Material _mat = loc.getBlock().getType();
+				if (_mat == Material.WATER || _mat == Material.LAVA)
+					MiniGolf.respawnBall(ball);
 				return;
 			}
 
