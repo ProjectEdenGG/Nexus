@@ -16,18 +16,17 @@ import org.bukkit.event.Listener;
 @Environments(Env.DEV)
 @NoArgsConstructor
 @Permission("group.moderator")
-//@Aliases("banip")
-public class NexusIPBanCommand extends CustomCommand implements Listener {
+public class NexusKickCommand extends CustomCommand implements Listener {
 
-	public NexusIPBanCommand(@NonNull CommandEvent event) {
+	public NexusKickCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Punishments.PREFIX;
 		DISCORD_PREFIX = Punishments.DISCORD_PREFIX;
 	}
 
-	@Path("<player> <time/reason...>")
+	@Path("<player> <reason...>")
 	void ban(Punishments punishments, String input) {
-		punishments.add(Punishment.ofType(PunishmentType.IP_BAN)
+		punishments.add(Punishment.ofType(PunishmentType.KICK)
 				.uuid(punishments.getUuid())
 				.punisher(uuid())
 				.input(input));

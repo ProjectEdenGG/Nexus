@@ -10,24 +10,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentBuilder;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.TimeUtils.timespanDiff;
+import static java.util.stream.Collectors.toList;
+import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Builder
@@ -46,33 +51,46 @@ public class Punishments extends PlayerOwnedObject {
 	public static transient final String PREFIX = StringUtils.getPrefix("Punishments");
 	public static transient final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Punishments");
 
+	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getActiveBan() {
-		return punishments.stream()
-				.filter(punishment -> punishment.isActive() && punishment.getType() == PunishmentType.BAN || punishment.getType() == PunishmentType.IP_BAN)
+		return getActivePunishments(PunishmentType.BAN, PunishmentType.IP_BAN).stream()
 				.max(Comparator.comparing(Punishment::getTimestamp));
 	}
 
 	public Optional<Punishment> getActiveMute() {
-		return punishments.stream()
-				.filter(punishment -> punishment.isActive() && punishment.getType() == PunishmentType.MUTE)
+		return getActivePunishments(PunishmentType.MUTE).stream()
 				.max(Comparator.comparing(Punishment::getTimestamp));
 	}
 
 	public List<Punishment> getNewWarnings() {
-		return punishments.stream()
-				.filter(punishment -> punishment.isActive() && punishment.getType() == PunishmentType.WARN && punishment.getReceived() == null)
-				.collect(Collectors.toList());
+		return getActivePunishments(PunishmentType.WARN).stream()
+				.filter(punishment -> !punishment.hasBeenReceived())
+				.collect(toList());
 	}
 
-	public void add(Punishment punishment) {
+	private List<Punishment> getActivePunishments(PunishmentType... types) {
+		return punishments.stream()
+				.filter(punishment -> punishment.isActive() && Arrays.asList(types).contains(punishment.getType()))
+				.collect(toList());
+	}
+
+	public void add(PunishmentBuilder builder) {
+		Punishment punishment = builder.build();
 		punishments.add(punishment);
+		save();
+
 		punishment.getType().action(punishment);
-		String message = "&e" + punishment.getPunisher().getName() + " &c" + punishment.getType().getEnglish() + " &e" + punishment.getName() + " &ffor ";
-		if (punishment.getExpiration() != null)
-			message += "&e" + punishment.getTimeLeft() + " &ffor ";
-		message += "&7" + punishment.getReason();
+		String message = "&e" + punishment.getPunisher().getName() + " &c" + punishment.getType().getEnglish() + " &e" + punishment.getName();
+		if (punishment.getSeconds() > 0)
+			message += " &ffor &e" + punishment.getTimeLeft();
+
+		message += " &ffor &7" + punishment.getReason();
 		Chat.broadcastIngame(PREFIX + message);
 		Chat.broadcastDiscord(DISCORD_PREFIX + message);
+	}
+
+	private void save() {
+		new PunishmentsService().save(this);
 	}
 
 	@Data
@@ -87,6 +105,7 @@ public class Punishments extends PlayerOwnedObject {
 		private String reason;
 		private boolean active;
 		private LocalDateTime timestamp;
+		private long seconds;
 		private LocalDateTime expiration;
 		private LocalDateTime received;
 		private UUID replacedBy;
@@ -98,9 +117,17 @@ public class Punishments extends PlayerOwnedObject {
 			this.type = type;
 			this.punisher = punisher;
 			this.timestamp = LocalDateTime.now();
-			// TODO parse from input
-			this.reason = reason;
-			this.expiration = expiration;
+
+			if (type.hasTimespan()) {
+				Timespan timespan = Timespan.find(input);
+				this.reason = timespan.getRest();
+				this.seconds = timespan.getSeconds();
+			} else
+				this.reason = input;
+		}
+
+		public static PunishmentBuilder ofType(PunishmentType type) {
+			return builder().type(type);
 		}
 
 		public OfflinePlayer getPunisher() {
@@ -112,22 +139,42 @@ public class Punishments extends PlayerOwnedObject {
 			return active && (timestamp == null || timestamp.isBefore(now)) && (expiration == null || expiration.isAfter(now));
 		}
 
-		// TODO
-		public String getDisconnectMessage() {
-			return getType().getDisconnectMessage(this);
+		private boolean hasBeenReceived() {
+			return received != null;
+		}
+
+		public void received() {
+			if (hasBeenReceived())
+				return;
+			this.received = LocalDateTime.now();
+			if (this.type.hasTimespan())
+				this.expiration = Timespan.of(seconds).fromNow();
+		}
+
+		public Component getDisconnectMessage() {
+			return Component.text(getType().getDisconnectMessage(this));
 		}
 
 		public String getTimeLeft() {
-			return timespanDiff(expiration);
+			if (expiration == null)
+				if (seconds > 0)
+					return Timespan.of(seconds).format();
+				else
+					return "forever";
+			else
+				return Timespan.of(expiration).format();
+		}
+
+		public String getTimeSince() {
+			return Timespan.of(timestamp, LocalDateTime.now()).format() + " ago";
 		}
 
 		@Getter
 		public enum PunishmentType {
-			BAN("banned") {
+			BAN("banned", true) {
 				@Override
 				public void action(Punishment punishment) {
-					if (punishment.isOnline())
-						punishment.getPlayer().kickPlayer(punishment.getDisconnectMessage());
+					kick(punishment);
 				}
 
 				@Override
@@ -135,11 +182,10 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			IP_BAN("ip-banned") {
+			IP_BAN("ip-banned", true) {
 				@Override
 				public void action(Punishment punishment) {
-					if (punishment.isOnline())
-						punishment.getPlayer().kickPlayer(punishment.getDisconnectMessage());
+					kick(punishment);
 					// TODO look for alts, kick
 				}
 
@@ -148,11 +194,10 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			KICK("kicked") {
+			KICK("kicked", false) {
 				@Override
 				public void action(Punishment punishment){
-					if (punishment.isOnline())
-						punishment.getPlayer().kickPlayer(punishment.getDisconnectMessage());
+					kick(punishment);
 				}
 
 				@Override
@@ -160,31 +205,50 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			MUTE("muted") {
-				@Override
-				public void action(Punishment punishment){
-					// TODO send message
-				}
-			},
-			WARN("warned") {
+			MUTE("muted", true) {
 				@Override
 				public void action(Punishment punishment) {
-					// TODO send message
+					if (punishment.isOnline()) {
+						punishment.received();
+
+						punishment.send("You have been muted"); // TODO
+					}
+				}
+			},
+			WARN("warned", false) {
+				@Override
+				public void action(Punishment punishment) {
+					if (punishment.isOnline()) {
+						punishment.received();
+
+						punishment.send("You have been warned"); // TODO
+					}
 				}
 			};
 
 			private final String english;
+			@Accessors(fluent = true)
+			private final boolean hasTimespan;
 
-			PunishmentType(String english) {
+			PunishmentType(String english, boolean hasTimespan) {
 				this.english = english;
+				this.hasTimespan = hasTimespan;
 			}
 
 			public abstract void action(Punishment punishment);
 
 			public String getDisconnectMessage(Punishment punishment) {
-				return punishment.getReason();
+				throw new UnsupportedOperationException("Punishment type " + camelCase(this) + " does not have a disconnect message");
+			}
+
+			void kick(Punishment punishment) {
+				if (punishment.isOnline()) {
+					punishment.getPlayer().kick(punishment.getDisconnectMessage());
+					punishment.received();
+				}
 			}
 		}
+
 	}
 
 }
