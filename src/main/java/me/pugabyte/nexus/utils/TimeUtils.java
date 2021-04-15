@@ -80,22 +80,6 @@ public class TimeUtils {
 		throw new InvalidInputException("Could not parse date, correct format is YYYY-MM-DDTHH:MM:SS");
 	}
 
-	public static String timespanDiff(LocalDate from) {
-		return timespanDiff(from.atStartOfDay());
-	}
-
-	public static String timespanDiff(LocalDateTime from) {
-		LocalDateTime now = LocalDateTime.now();
-		if (from.isBefore(now))
-			return timespanDiff(from, now);
-		else
-			return timespanDiff(now, from);
-	}
-
-	public static String timespanDiff(LocalDateTime from, LocalDateTime to) {
-		return Timespan.of(Long.valueOf(from.until(to, ChronoUnit.SECONDS)).intValue()).format();
-	}
-
 	@Getter
 	@AllArgsConstructor
 	public enum TimespanElement {
@@ -146,6 +130,22 @@ public class TimeUtils {
 			this.formatType = formatType == null ? FormatType.SHORT : formatType;
 			this.rest = rest;
 			calculate();
+		}
+
+		public static Timespan of(LocalDate from) {
+			return of(from.atStartOfDay());
+		}
+
+		public static Timespan of(LocalDateTime from) {
+			LocalDateTime now = LocalDateTime.now();
+			if (from.isBefore(now))
+				return of(from, now);
+			else
+				return of(now, from);
+		}
+
+		public static Timespan of(LocalDateTime from, LocalDateTime to) {
+			return of(Long.valueOf(from.until(to, ChronoUnit.SECONDS)).intValue());
 		}
 
 		public static Timespan of(long seconds) {
