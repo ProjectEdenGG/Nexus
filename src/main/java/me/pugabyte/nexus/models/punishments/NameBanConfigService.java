@@ -1,5 +1,6 @@
-package me.pugabyte.nexus.models.nameban;
+package me.pugabyte.nexus.models.punishments;
 
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
@@ -13,6 +14,10 @@ public class NameBanConfigService extends MongoService {
 
 	public Map<UUID, NameBanConfig> getCache() {
 		return cache;
+	}
+
+	public NameBanConfig get() {
+		return get(Nexus.getUUID0());
 	}
 
 }

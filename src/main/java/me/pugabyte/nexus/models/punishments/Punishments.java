@@ -82,9 +82,9 @@ public class Punishments extends PlayerOwnedObject {
 		punishment.getType().action(punishment);
 		String message = "&e" + punishment.getPunisher().getName() + " &c" + punishment.getType().getEnglish() + " &e" + punishment.getName();
 		if (punishment.getSeconds() > 0)
-			message += " &ffor &e" + punishment.getTimeLeft();
+			message += " &cfor &e" + punishment.getTimeLeft();
 
-		message += " &ffor &7" + punishment.getReason();
+		message += " &cfor &7" + punishment.getReason();
 		Chat.broadcastIngame(PREFIX + message);
 		Chat.broadcastDiscord(DISCORD_PREFIX + message);
 	}
