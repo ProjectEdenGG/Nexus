@@ -55,6 +55,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 		send("&3If they are &enot active &3when you find reason to ban, make sure to send a &c/warning &3too/instead so they will receive the message instead of not knowing they were banned at all.");
 	}
 
+	// Ban
 	@EventHandler
 	public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
 		final PunishmentsService service = new PunishmentsService();
@@ -63,6 +64,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 		banMaybe.ifPresent(ban -> {
 			event.disallow(Result.KICK_BANNED, ban.getDisconnectMessage());
 			ban.received();
+			service.save(punishments);
 
 			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(&e" + ban.getTimeLeft() + "&c)";
 
@@ -75,6 +77,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	// Mute
 	@EventHandler
 	public void onChat(ChatEvent event) {
 		Chatter chatter = event.getChatter();
@@ -87,6 +90,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 		muteMaybe.ifPresent(mute -> {
 			event.setCancelled(true);
 			mute.received();
+			service.save(punishments);
 
 			String message = "&e" + punishments.getName() + " &cspoke while muted: &7" + mute.getReason() + " &c(&e" + mute.getTimeLeft() + "&c)";
 
@@ -99,6 +103,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	// Warning
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Tasks.wait(Time.SECOND.x(5), () -> {
