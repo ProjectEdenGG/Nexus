@@ -67,8 +67,14 @@ public class MiniGolfCommand extends CustomCommand {
 		if (color == null)
 			error("Unknown color");
 
+		if (user.getSnowball() == null)
+			MiniGolf.takeKit(user);
+
 		user.setMiniGolfColor(color);
 		service.save(user);
+
+		if (user.getSnowball() == null)
+			MiniGolf.giveKit(user);
 
 		MiniGolfColor _color = user.getMiniGolfColor();
 		String message = PREFIX + "Set color to: ";

@@ -89,6 +89,8 @@ public class MiniGolf {
 
 	// TODO:
 	//  add: scorecard book item
+	// 	add: record player most recent score per hole
+	//	add: make the rainbow ball, only obtainable after getting a hole in one on all holes
 
 	public MiniGolf() {
 		new ProjectileListener();
