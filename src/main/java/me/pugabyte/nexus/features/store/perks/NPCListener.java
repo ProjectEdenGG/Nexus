@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -19,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
+
 @NoArgsConstructor
 public class NPCListener implements Listener {
 	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE,
@@ -36,6 +39,7 @@ public class NPCListener implements Listener {
 
 		event.getNPC().destroy();
 		PlayerUtils.send(owner, "&cYou cannot create NPCs here");
+		Nexus.warn("Preventing NPC create: " + event.getNPC().getId() + " from " + owner.getName());
 	}
 
 	private boolean isNpcAllowedAt(Location location) {
@@ -70,9 +74,13 @@ public class NPCListener implements Listener {
 
 			event.setCancelled(true);
 			PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
+			Nexus.warn("Preventing NPC teleport: " + event.getNPC().getId() + " from "
+					+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
 		} else {
 			event.setCancelled(true);
 			PlayerUtils.send(owner, "&cNPCs cannot be teleported across worlds");
+			Nexus.warn("Preventing NPC teleport: " + event.getNPC().getId() + " from "
+					+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
 		}
 	}
 
@@ -91,6 +99,8 @@ public class NPCListener implements Listener {
 
 		event.setCancelled(true);
 		PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
+		Nexus.warn("Preventing NPC spawn: " + event.getNPC().getId() + " from "
+				+ getShortLocationString(event.getNPC().getStoredLocation()) + " to " + getShortLocationString(event.getLocation()));
 	}
 
 }
