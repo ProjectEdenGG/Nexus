@@ -108,7 +108,7 @@ public class TimeUtils {
 		public static Pattern getAllPattern() {
 			StringBuilder regex = new StringBuilder();
 			for (TimespanElement element : values())
-				regex.append("(").append(element.getPattern().pattern()).append("( )?){0,}");
+				regex.append("(t:)?(").append(element.getPattern().pattern()).append("( )?){0,}");
 			return Pattern.compile(regex.toString());
 		}
 	}
@@ -175,6 +175,7 @@ public class TimeUtils {
 			}
 
 			public static TimespanBuilder of(String input) {
+				input = input.replaceFirst("[tT]:", "");
 				int seconds = 0;
 				for (TimespanElement element : TimespanElement.values()) {
 					Matcher matcher = element.getPattern().matcher(input);

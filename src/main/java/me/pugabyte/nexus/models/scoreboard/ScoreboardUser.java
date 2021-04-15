@@ -125,6 +125,9 @@ public class ScoreboardUser extends PlayerOwnedObject {
 	}
 
 	public void render(ScoreboardLine line) {
+		if (scoreboard == null)
+			return;
+
 		if (!getOfflinePlayer().isOnline()) {
 			pause();
 			return;
