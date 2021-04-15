@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -51,11 +51,13 @@ public class IngameBridgeListener implements Listener {
 					continue;
 				}
 
-				Nerd fromNickname = new NicknameService().getFromNickname(search).getNerd();
-				mentioned = new DiscordUserService().get(fromNickname.getOfflinePlayer());
-				if (mentioned.getUserId() != null) {
-					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
-					continue;
+				Nickname fromNickname = new NicknameService().getFromNickname(search);
+				if (fromNickname != null) {
+					mentioned = new DiscordUserService().get(fromNickname.getOfflinePlayer());
+					if (mentioned.getUserId() != null) {
+						message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+						continue;
+					}
 				}
 			}
 		}
