@@ -35,7 +35,7 @@ public class HistoryDiscordCommand extends Command {
 					player = PlayerUtils.getPlayer(args[0]);
 
 				if (new LiteBansService().getHistory(player.getUniqueId().toString()) > 0)
-					event.reply("https://bans.bnn.gg/history.php?uuid=" + player.getUniqueId().toString());
+					event.reply("<https://bans.bnn.gg/history.php?uuid=" + player.getUniqueId().toString() + ">");
 				else
 					event.reply("No history found");
 			} catch (Exception ex) {

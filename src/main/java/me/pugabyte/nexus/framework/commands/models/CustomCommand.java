@@ -347,7 +347,9 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected UUID uuid() {
-		return player().getUniqueId();
+		if (isPlayer())
+			return player().getUniqueId();
+		return Nexus.getUUID0();
 	}
 
 	protected String name() {
