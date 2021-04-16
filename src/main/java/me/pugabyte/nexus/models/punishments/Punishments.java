@@ -23,6 +23,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,8 +71,18 @@ public class Punishments extends PlayerOwnedObject {
 	}
 
 	// TODO Other player IP Ban check - service query IP history
-	public Optional<Punishment> getActiveBan() {
+	public Optional<Punishment> getAnyActiveBan() {
 		return getActive(PunishmentType.BAN, PunishmentType.IP_BAN).stream()
+				.max(Comparator.comparing(Punishment::getTimestamp));
+	}
+
+	public Optional<Punishment> getActiveBan() {
+		return getActive(PunishmentType.BAN).stream()
+				.max(Comparator.comparing(Punishment::getTimestamp));
+	}
+
+	public Optional<Punishment> getActiveIPBan() {
+		return getActive(PunishmentType.IP_BAN).stream()
 				.max(Comparator.comparing(Punishment::getTimestamp));
 	}
 
@@ -82,6 +93,11 @@ public class Punishments extends PlayerOwnedObject {
 
 	public Optional<Punishment> getActiveFreeze() {
 		return getActive(PunishmentType.FREEZE).stream()
+				.max(Comparator.comparing(Punishment::getTimestamp));
+	}
+
+	public Optional<Punishment> getLastWarn() {
+		return getActive(PunishmentType.WARN).stream()
 				.max(Comparator.comparing(Punishment::getTimestamp));
 	}
 
@@ -100,10 +116,18 @@ public class Punishments extends PlayerOwnedObject {
 	public void add(PunishmentBuilder builder) {
 		Punishment punishment = builder.uuid(uuid).build();
 		punishments.add(punishment);
-		save();
-
 		punishment.getType().action(punishment);
 		punishment.announceStart();
+
+		save();
+	}
+
+	public void remove(Punishment punishment) {
+		punishments.remove(punishment);
+		punishment.announceEnd();
+		punishment.getType().onExpire(punishment);
+
+		save();
 	}
 
 	private static void broadcast(String message) {
@@ -139,7 +163,7 @@ public class Punishments extends PlayerOwnedObject {
 		private UUID replacedBy;
 
 		@Builder
-		public Punishment(UUID uuid, UUID punisher, PunishmentType type, String input) {
+		public Punishment(@NotNull UUID uuid, @NotNull UUID punisher, @NotNull PunishmentType type, String input) {
 			this.id = UUID.randomUUID();
 			this.uuid = uuid;
 			this.type = type;
@@ -165,9 +189,9 @@ public class Punishments extends PlayerOwnedObject {
 				return false;
 
 			if (type.hasTimespan()) {
-				if (timestamp != null && !timestamp.isBefore(now))
+				if (timestamp != null && timestamp.isAfter(now))
 					return false;
-				if (expiration != null && !expiration.isAfter(now))
+				if (expiration != null && expiration.isBefore(now))
 					return false;
 			}
 
@@ -224,12 +248,13 @@ public class Punishments extends PlayerOwnedObject {
 		}
 
 		public String getTimeSince() {
-			return Timespan.of(timestamp, LocalDateTime.now()).format() + " ago";
+			return Timespan.of(timestamp).format() + " ago";
 		}
 
 		@Getter
+		@AllArgsConstructor
 		public enum PunishmentType {
-			BAN("banned", true) {
+			BAN("banned", true, true) {
 				@Override
 				public void action(Punishment punishment) {
 					kick(punishment);
@@ -240,7 +265,7 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			IP_BAN("ip-banned", true) {
+			IP_BAN("ip-banned", true, false) { // TODO onlyOneActive ?
 				@Override
 				public void action(Punishment punishment) {
 					kick(punishment);
@@ -252,7 +277,7 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			KICK("kicked", false) {
+			KICK("kicked", false, false) {
 				@Override
 				public void action(Punishment punishment){
 					kick(punishment);
@@ -263,7 +288,7 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			MUTE("muted", true) {
+			MUTE("muted", true, true) {
 				@Override
 				public void action(Punishment punishment) {
 					if (punishment.isOnline()) {
@@ -278,7 +303,7 @@ public class Punishments extends PlayerOwnedObject {
 					punishment.send("Your mute has expired");
 				}
 			},
-			WARN("warned", false) {
+			WARN("warned", false, false) {
 				@Override
 				public void action(Punishment punishment) {
 					if (punishment.isOnline()) {
@@ -288,7 +313,7 @@ public class Punishments extends PlayerOwnedObject {
 					}
 				}
 			},
-			FREEZE("froze", false) {
+			FREEZE("froze", false, true) {
 				@Override
 				public void action(Punishment punishment) {
 					if (punishment.isOnline()) {
@@ -307,11 +332,7 @@ public class Punishments extends PlayerOwnedObject {
 			private final String pastTense;
 			@Accessors(fluent = true)
 			private final boolean hasTimespan;
-
-			PunishmentType(String pastTense, boolean hasTimespan) {
-				this.pastTense = pastTense;
-				this.hasTimespan = hasTimespan;
-			}
+			private final boolean onlyOneActive;
 
 			public abstract void action(Punishment punishment);
 

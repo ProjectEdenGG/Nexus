@@ -14,6 +14,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public class TimeUtils {
 
 	public static String longDateTimeFormat(LocalDateTime dateTime) {
@@ -175,23 +177,29 @@ public class TimeUtils {
 			}
 
 			public static TimespanBuilder of(String input) {
-				input = input.replaceFirst("[tT]:", "");
-				int seconds = 0;
-				for (TimespanElement element : TimespanElement.values()) {
-					Matcher matcher = element.getPattern().matcher(input);
+				if (!isNullOrEmpty(input)) {
+					input = input.replaceFirst("[tT]:", "");
+					int seconds = 0;
+					for (TimespanElement element : TimespanElement.values()) {
+						Matcher matcher = element.getPattern().matcher(input);
 
-					while (matcher.find())
-						seconds += element.of(matcher.group());
+						while (matcher.find())
+							seconds += element.of(matcher.group());
+					}
+					return of(seconds / Time.SECOND.get());
 				}
-				return of(seconds / Time.SECOND.get());
+
+				return of(0);
 			}
 
 			public static TimespanBuilder find(String input) {
-				Matcher matcher = TimespanElement.getAllPattern().matcher(input);
-				while (matcher.find()) {
-					String group = matcher.group();
-					if (group.trim().length() == 0) continue;
-					return TimespanBuilder.of(group).rest(input.replaceFirst(group, "").trim());
+				if (!isNullOrEmpty(input)) {
+					Matcher matcher = TimespanElement.getAllPattern().matcher(input);
+					while (matcher.find()) {
+						String group = matcher.group();
+						if (group.trim().length() == 0) continue;
+						return TimespanBuilder.of(group).rest(input.replaceFirst(group, "").trim());
+					}
 				}
 
 				return TimespanBuilder.of(0).rest(input);

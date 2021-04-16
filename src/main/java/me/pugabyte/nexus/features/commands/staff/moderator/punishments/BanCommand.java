@@ -14,20 +14,20 @@ import java.util.List;
 
 @Environments(Env.DEV)
 @Permission("group.moderator")
-public class NexusWarnCommand extends _PunishmentCommand {
+public class BanCommand extends _PunishmentCommand {
 
-	public NexusWarnCommand(@NonNull CommandEvent event) {
+	public BanCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("<player> <reason...>")
+	@Path("<players> <time/reason...>")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
 		punish(players, input);
 	}
 
 	@Override
 	protected PunishmentType getType() {
-		return PunishmentType.WARN;
+		return PunishmentType.BAN;
 	}
 
 }

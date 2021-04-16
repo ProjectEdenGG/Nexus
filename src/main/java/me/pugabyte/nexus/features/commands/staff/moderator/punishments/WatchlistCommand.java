@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff;
+package me.pugabyte.nexus.features.commands.staff.moderator.punishments;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

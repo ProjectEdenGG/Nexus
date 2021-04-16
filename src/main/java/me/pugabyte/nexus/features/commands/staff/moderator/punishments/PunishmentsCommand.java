@@ -60,7 +60,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 	public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getUniqueId());
-		Optional<Punishment> banMaybe = punishments.getActiveBan();
+		Optional<Punishment> banMaybe = punishments.getAnyActiveBan();
 		banMaybe.ifPresent(ban -> {
 			event.disallow(Result.KICK_BANNED, ban.getDisconnectMessage());
 			ban.received();

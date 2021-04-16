@@ -14,7 +14,7 @@ public class CalcBanCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<pastbans> <blocksgriefed>")
+	@Path("<pastBans> <blocksGriefed>")
 	void run(int bans, int blocksGriefed) {
 		double hours = 0;
 		if (++bans < 2)
