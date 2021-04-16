@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -63,19 +64,19 @@ public class Infection extends TeamMechanic {
 	}
 
 	public List<Minigamer> getZombies(Match match) {
-		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() == ChatColor.RED).collect(Collectors.toList());
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() == ChatColor.RED).collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getHumans(Match match) {
-		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() != ChatColor.RED).collect(Collectors.toList());
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() != ChatColor.RED).collect(Collectors.toList());
 	}
 
 	public boolean isZombie(Minigamer minigamer) {
-		return minigamer.getTeam().getColor() == ChatColor.RED;
+		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() == ChatColor.RED;
 	}
 
 	public boolean isHuman(Minigamer minigamer) {
-		return !isZombie(minigamer);
+		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() != ChatColor.RED;
 	}
 
 	@Override
@@ -88,16 +89,11 @@ public class Infection extends TeamMechanic {
 	public void announceWinners(Match match) {
 		boolean humansAlive = getHumans(match).size() > 0;
 
-		String broadcast;
-		if (!humansAlive)
-			broadcast = String.format("The %s &3have won", getZombieTeam(match).getColoredName());
-		else
-			if (match.getTimer().getTime() != 0)
-				broadcast = String.format("The %s &3have won", getZombieTeam(match).getColoredName());
-			else
-				broadcast = String.format("The %s &3have won", getHumanTeam(match).getColoredName());
+		Team winningTeam = !humansAlive || match.getTimer().getTime() != 0 ? getZombieTeam(match) : getHumanTeam(match);
+		Component broadcast = Component.text("The ").append(winningTeam.getComponentName())
+				.append(Component.text(" have won "));
 
-		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
+		Minigames.broadcast(Minigames.COMPONENT_PREFIX.append(broadcast.append(getArenaComponent(match))));
 	}
 
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)
