@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
+import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Utils;
 
@@ -91,12 +92,14 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	public void giveRewards(Match match) {
+		PerkOwnerService service = new PerkOwnerService();
+
 		if (RandomUtils.randomInt(1, 50) == 1) {
 			List<Minigamer> minigamers = new ArrayList<>(match.getMinigamers());
 			Collections.shuffle(minigamers);
 			// iterates until we find a player who is missing at least 1 collectible
 			for (Minigamer minigamer : minigamers) {
-				PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
+				PerkOwner perkOwner = service.get(minigamer.getPlayer());
 				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusWeeks(1)))
 					continue;
 
@@ -115,14 +118,14 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 				perkOwner.getPurchasedPerks().put(perkType, false);
 				perkOwner.setRandomGiftDate(LocalDate.now());
-				PerkOwner.service.save(perkOwner);
+				service.save(perkOwner);
 				Minigames.broadcast("&e" + minigamer.getNickname() + "&3 randomly won the collectible &e" + perkType.getPerk().getName());
 				break;
 			}
 		}
 
 		match.getMinigamers().forEach(minigamer -> {
-			PerkOwner perkOwner = PerkOwner.service.get(minigamer.getPlayer());
+			PerkOwner perkOwner = new PerkOwnerService().get(minigamer.getPlayer());
 			// max of 1 in 2 chance of getting a reward (dependant on score)
 			int multiplier = getMultiplier(match, minigamer);
 			if (multiplier == 0)

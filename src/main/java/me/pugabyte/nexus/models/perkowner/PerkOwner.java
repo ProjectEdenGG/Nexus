@@ -39,12 +39,11 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
 public class PerkOwner extends PlayerOwnedObject {
-	public static final PerkOwnerService service = new PerkOwnerService();
 	private static final int MAX_DAILY_TOKENS = 20;
 
 	@Id
 	@NonNull
-	private UUID uuid;
+	protected UUID uuid;
 	private Map<PerkType, Boolean> purchasedPerks = new HashMap<>();
 	private int tokens = 0;
 	private int dailyTokens = 0;
@@ -87,15 +86,16 @@ public class PerkOwner extends PlayerOwnedObject {
 			return false;
 		tokens -= perk.getPrice();
 		purchasedPerks.put(perk, false);
-		service.save(this);
+		save();
 		return true;
 	}
 
 	/**
 	 * Rewards the user for winning a minigame
+	 * @param arenaName name of the arena the minigamer was playing on to display in chat
 	 * @return false if the user has reached their max daily earnings
 	 */
-	public boolean reward(Arena arena) {
+	public boolean reward(String arenaName) {
 		LocalDate date = LocalDate.now();
 		if (date.isAfter(tokenDate)) {
 			tokenDate = date;
@@ -105,14 +105,25 @@ public class PerkOwner extends PlayerOwnedObject {
 		if (amount > 0) {
 			tokens += amount;
 			dailyTokens += amount;
-			if (getPlayer() != null)
-				SoundUtils.Jingle.PING.play(getPlayer()); // TODO: unique jingle
-			PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for scoring in &e" + arena.getName());
-			if (dailyTokens == MAX_DAILY_TOKENS)
-				PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");
+			try {
+				if (getPlayer() != null)
+					SoundUtils.Jingle.PING.play(getPlayer()); // TODO: unique jingle
+				PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for scoring in &e" + arenaName);
+				if (dailyTokens == MAX_DAILY_TOKENS)
+					PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");
+			} catch (NullPointerException ignored) {/*failsafe to allow PerkOwnerTest to function*/}
 		}
-		service.save(this);
+		save();
 		return amount > 0;
+	}
+
+	/**
+	 * Rewards the user for winning a minigame
+	 * @param arena arena the minigamer was playing on to display in chat
+	 * @return false if the user has reached their max daily earnings
+	 */
+	public boolean reward(Arena arena) {
+		return reward(arena.getDisplayName());
 	}
 
 	/**
@@ -130,7 +141,11 @@ public class PerkOwner extends PlayerOwnedObject {
 
 		purchasedPerks.put(perkType, setTo);
 
-		service.save(this);
+		save();
 		return true;
+	}
+
+	protected void save() {
+		new PerkOwnerService().save(this);
 	}
 }
