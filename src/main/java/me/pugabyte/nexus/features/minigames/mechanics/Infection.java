@@ -90,10 +90,10 @@ public class Infection extends TeamMechanic {
 		boolean humansAlive = getHumans(match).size() > 0;
 
 		Team winningTeam = !humansAlive || match.getTimer().getTime() != 0 ? getZombieTeam(match) : getHumanTeam(match);
-		Component broadcast = Component.text("The ").append(winningTeam.getComponentName())
+		Component broadcast = Component.text("The ").append(winningTeam.getComponent())
 				.append(Component.text(" have won "));
 
-		Minigames.broadcast(broadcast.append(getArenaComponent(match)));
+		Minigames.broadcast(broadcast.append(match.getArena().getComponent()));
 	}
 
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)

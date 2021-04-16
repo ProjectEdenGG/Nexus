@@ -31,9 +31,9 @@ public class PromoteCommand extends CustomCommand {
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withColor());
 
 		if (nerd.getOfflinePlayer().isOnline()) {
-			nerd.getPlayer().sendMessage(Component.text("\n").color(NamedTextColor.DARK_AQUA)
-				.append(Component.text("Congratulations!").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD))
-				.append(Component.text("You've been promoted to ")).append(next.asComponent())
+			nerd.getPlayer().sendMessage(Component.text("\n", NamedTextColor.DARK_AQUA)
+				.append(Component.text("Congratulations!", NamedTextColor.YELLOW, TextDecoration.BOLD))
+				.append(Component.text("You've been promoted to ")).append(next.getComponent())
 				.append(Component.text("!")));
 
 			Jingle.RANKUP.play(nerd.getPlayer());

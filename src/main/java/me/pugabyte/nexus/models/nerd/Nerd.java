@@ -16,15 +16,17 @@ import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.models.nickname.NicknameService;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Utils;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -50,7 +52,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends PlayerOwnedObject {
+public class Nerd extends PlayerOwnedObject implements IHasTextComponent {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -71,6 +73,7 @@ public class Nerd extends PlayerOwnedObject {
 
 	static {
 		PRONOUN_WHITELIST.forEach(string -> {
+			PRONOUN_ALIASES.put(string, string);
 			for (String alias : string.split(" ")[0].split("/"))
 				PRONOUN_ALIASES.put(alias, string);
 		});
@@ -108,14 +111,6 @@ public class Nerd extends PlayerOwnedObject {
 		getNicknameData().fixPastNicknames();
 	}
 
-	private Nickname getNicknameData() {
-		return new NicknameService().get(getUuid());
-	}
-
-	public boolean hasNickname() {
-		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
-	}
-
 	@ToString.Include
 	public Rank getRank() {
 		return Rank.of(getOfflinePlayer());
@@ -135,6 +130,10 @@ public class Nerd extends PlayerOwnedObject {
 		if (isKoda())
 			return Koda.getNameFormat();
 		return getRank().getColor() + Nickname.of(getUuid());
+	}
+
+	public TextComponent getComponent() {
+		return AdventureUtils.colorText(getRank().getColor(), getNickname());
 	}
 
 	private boolean isKoda() {
@@ -219,9 +218,14 @@ public class Nerd extends PlayerOwnedObject {
 		}
 	}
 
-	public void addPronouns(String string) {
-		string = string.toLowerCase();
+	public void addPronouns(String pronoun) {
+		pronoun = PRONOUN_ALIASES.getOrDefault(pronoun, pronoun);
+		pronouns.add(pronoun);
+		pronounUpdate();
+	}
 
+	public void pronounUpdate() {
+		// TODO
 	}
 
 	@Data

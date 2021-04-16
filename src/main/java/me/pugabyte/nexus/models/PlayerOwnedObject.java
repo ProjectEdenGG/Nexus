@@ -6,6 +6,7 @@ import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.nickname.NicknameService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -21,6 +22,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.AdventureUtils.identityOf;
 
 /**
@@ -54,6 +56,14 @@ public abstract class PlayerOwnedObject implements Identified {
 
 	public String getNickname() {
 		return Nickname.of(getOfflinePlayer());
+	}
+
+	protected Nickname getNicknameData() {
+		return new NicknameService().get(getUuid());
+	}
+
+	public boolean hasNickname() {
+		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
 	}
 
 	public void send(String message) {

@@ -25,6 +25,8 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
@@ -186,43 +188,27 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	@Override
 	public void announceWinners(Match match) {
 		Arena arena = match.getArena();
-		Map<ChatColor, Integer> scoreList = new HashMap<>();
 		Map<Team, Integer> scores = match.getScores();
 
 		int winningScore = getWinningScore(scores.values());
-		List<Team> winners = getWinners(winningScore, scores);
-		scores.keySet().forEach(team -> scoreList.put(team.getColor(), scores.get(team)));
+		List<Team> winners = getWinningTeams(winningScore, scores);
 
-		String announcement;
-		if (winningScore == 0) {
-			announcement = "No teams scored in &e" + arena.getDisplayName();
-			Minigames.broadcast(announcement);
-		} else {
-			if (arena.getTeams().size() == winners.size()) {
-				announcement = "All teams tied in &e" + arena.getDisplayName();
-			} else {
-				announcement = getWinnersString(winners) + "&e" + arena.getDisplayName();
-			}
-			Minigames.broadcast(announcement + getScoreList(scoreList));
-		}
+		String announcement = null;
+		if (winningScore == 0)
+			announcement = "No teams scored in ";
+		else if (arena.getTeams().size() == winners.size())
+			announcement = "All teams tied in ";
+
+		TextComponent.Builder builder = Component.text();
+		builder.append(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
+		builder.append(arena.getComponent());
+		if (winningScore != 0)
+			builder.append(Component.text(" (" + winningScore + ")"));
+
+		Minigames.broadcast(builder.build());
 	}
 
-	private String getWinnersString(List<Team> winners) {
-		if (winners.size() > 1) {
-			String result = winners.stream()
-					.map(team -> team.getColoredName() + ChatColor.DARK_AQUA)
-					.collect(Collectors.joining(", "));
-			int lastCommaIndex = result.lastIndexOf(", ");
-			if (lastCommaIndex >= 0) {
-				result = new StringBuilder(result).replace(lastCommaIndex, lastCommaIndex + 2, " and ").toString();
-			}
-			return result + " tied in ";
-		} else {
-			return winners.get(0).getColoredName() + " &3won ";
-		}
-	}
-
-	private List<Team> getWinners(int winningScore, Map<Team, Integer> scores) {
+	protected List<Team> getWinningTeams(int winningScore, Map<Team, Integer> scores) {
 		List<Team> winners = new ArrayList<>();
 
 		for (Team team : scores.keySet())

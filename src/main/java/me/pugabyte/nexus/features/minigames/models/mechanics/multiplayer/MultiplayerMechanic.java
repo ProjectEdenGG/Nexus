@@ -9,10 +9,14 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
+import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -139,5 +143,54 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	public void onEnd(MatchEndEvent event) {
 		super.onEnd(event);
 		giveRewards(event.getMatch());
+	}
+
+	// moved this here because it's used by a couple "team" games (juggernaut) and copy-pasting was kinda icky
+	protected void announceTeamlessWinners(Match match) {
+		Arena arena = match.getArena();
+		Map<Minigamer, Integer> scores = new HashMap<>();
+
+		match.getAliveMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
+		if (scores.size() == 0) return;
+		int winningScore = getWinningScore(scores.values());
+		List<Minigamer> winners = getWinners(winningScore, scores);
+
+		String announcement = null;
+		if (winningScore == 0 && winners.size() != 1)
+			announcement = "No players scored in ";
+		else if (match.getAliveMinigamers().size() == winners.size() && match.getAliveMinigamers().size() > 1)
+			announcement = "All players tied in ";
+
+		TextComponent.Builder builder = Component.text();
+		builder.append(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
+		builder.append(arena.getComponent());
+		if (winningScore != 0)
+			builder.append(Component.text(" (" + winningScore + ")"));
+
+		Minigames.broadcast(builder.build());
+	}
+
+	protected List<Minigamer> getWinners(int winningScore, Map<Minigamer, Integer> scores) {
+		List<Minigamer> winners = new ArrayList<>();
+
+		for (Minigamer minigamer : scores.keySet()) {
+			if (scores.get(minigamer).equals(winningScore)) {
+				winners.add(minigamer);
+			}
+		}
+
+		return winners;
+	}
+
+	protected TextComponent getWinnersComponent(List<? extends IHasTextComponent> winners) {
+		TextComponent component = AdventureUtils.commaJoinText(winners.stream().map(IHasTextComponent::getComponent).collect(Collectors.toList()));
+		if (winners.size() == 1)
+			return component.append(Component.text(" has won "));
+		else
+			return component.append(Component.text(" have tied on "));
+	}
+
+	protected TextComponent getWinnersComponent(IHasTextComponent... components) {
+		return getWinnersComponent(Arrays.asList(components));
 	}
 }

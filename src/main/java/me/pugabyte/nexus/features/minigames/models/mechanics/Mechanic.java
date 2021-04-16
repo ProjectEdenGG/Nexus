@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
@@ -23,7 +24,6 @@ import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -45,13 +45,18 @@ import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
-public abstract class Mechanic implements Listener {
+public abstract class Mechanic implements Listener, IHasTextComponent {
 
 	public Mechanic() {
 		Nexus.registerListener(this);
 	}
 
 	public abstract String getName();
+
+	@Override
+	public TextComponent getComponent() {
+		return Component.text(getName(), NamedTextColor.YELLOW);
+	}
 
 	public String getPrefix() {
 		return StringUtils.getPrefix(this.getClass());
@@ -232,11 +237,6 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public abstract void announceWinners(Match match);
-
-	public static TextComponent getArenaComponent(Match match) {
-		return Component.text(match.getArena().getDisplayName()).color(NamedTextColor.YELLOW)
-				.hoverEvent(HoverEvent.showText(Component.text(match.getMechanic().getName()).color(NamedTextColor.DARK_AQUA)));
-	}
 
 	public int getWinningScore(Collection<Integer> scores) {
 		if (scores.size() == 0)

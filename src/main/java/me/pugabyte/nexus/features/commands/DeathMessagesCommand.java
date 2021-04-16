@@ -61,7 +61,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		Component deathMessageRaw = event.deathMessage();
 
-		TextComponent output = Component.text("☠ ").color(NamedTextColor.RED);
+		TextComponent output = Component.text("☠ ", NamedTextColor.RED);
 		if (deathMessageRaw == null) {
 			return;
 		} else if (deathMessageRaw instanceof TextComponent) {
@@ -70,7 +70,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			TextReplacementConfig replacementConfig1 = TextReplacementConfig.builder()
 					.matchLiteral(event.getEntity().getName())
 					.replacement(
-							Component.text(deathMessages.getNickname()).color(NamedTextColor.YELLOW)
+							Component.text(deathMessages.getNickname(), NamedTextColor.YELLOW)
 					).build();
 			deathMessage = deathMessage.replaceText(replacementConfig1);
 
@@ -79,7 +79,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 				TextReplacementConfig replacementConfig2 = TextReplacementConfig.builder()
 						.matchLiteral(killer.getName())
 						.replacement(
-								Component.text(Nickname.of(killer)).color(NamedTextColor.YELLOW)
+								Component.text(Nickname.of(killer), NamedTextColor.YELLOW)
 						).build();
 				deathMessage = deathMessage.replaceText(replacementConfig2);
 			}
@@ -104,7 +104,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 					return;
 				}
 
-				TextComponent playerComponent = Component.text(playerName).color(NamedTextColor.YELLOW);
+				TextComponent playerComponent = Component.text(playerName, NamedTextColor.YELLOW);
 
 				// and set their name to their nickname
 				if (playerName.equals(deathMessages.getName()))

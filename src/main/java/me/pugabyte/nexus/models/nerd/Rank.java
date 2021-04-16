@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
 
 @AllArgsConstructor
-public enum Rank {
+public enum Rank implements IHasTextComponent {
 	GUEST(ChatColor.of("#aaaaaa"), GlowAPI.Color.GRAY, false, false, false, true),
 	MEMBER(ChatColor.of("#ffffff"), GlowAPI.Color.WHITE, false, false, false, true),
 	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED, false, false, false, false, true, false, Color.decode("#ff7069")),
@@ -88,8 +89,8 @@ public enum Rank {
 		return "";
 	}
 
-	public Component asComponent() {
-		return Component.text(plain()).color(TextColor.color(color.getColor().getRGB()));
+	public TextComponent getComponent() {
+		return AdventureUtils.colorText(color, plain());
 	}
 
 	public String withColor() {

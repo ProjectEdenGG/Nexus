@@ -1,8 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.minigames.Minigames;
-import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Loadout;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -17,11 +15,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class Juggernaut extends TeamMechanic {
 	private static final String TEAM_NAME = "Juggernaut";
@@ -142,52 +137,6 @@ public class Juggernaut extends TeamMechanic {
 
 	@Override
 	public void announceWinners(Match match) {
-		Arena arena = match.getArena();
-		Map<Minigamer, Integer> scores = new HashMap<>();
-
-		match.getAliveMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
-		if (scores.size() == 0) return;
-		int winningScore = getWinningScore(scores.values());
-		List<Minigamer> winners = getWinners(winningScore, scores);
-
-		String announcement;
-		if (winningScore == 0 && winners.size() != 1)
-			announcement = "No players scored in " + arena.getDisplayName();
-		else {
-			if (match.getAliveMinigamers().size() == winners.size() && match.getAliveMinigamers().size() > 1)
-				announcement = "All players tied in " + arena.getDisplayName();
-			else
-				announcement = getWinnersString(winners) + "&e" + arena.getDisplayName();
-			if (winningScore != 0)
-				announcement += " (" + winningScore + ")";
-		}
-		Minigames.broadcast(announcement);
-	}
-
-	private String getWinnersString(List<Minigamer> winners) {
-		if (winners.size() > 1) {
-			String result = winners.stream()
-					.map(minigamer -> minigamer.getColoredName() + "&3")
-					.collect(Collectors.joining(", "));
-			int lastCommaIndex = result.lastIndexOf(", ");
-			if (lastCommaIndex >= 0) {
-				result = new StringBuilder(result).replace(lastCommaIndex, lastCommaIndex + 2, " and ").toString();
-			}
-			return result + " have tied in ";
-		} else {
-			return winners.get(0).getColoredName() + " &3has won ";
-		}
-	}
-
-	private List<Minigamer> getWinners(int winningScore, Map<Minigamer, Integer> scores) {
-		List<Minigamer> winners = new ArrayList<>();
-
-		for (Minigamer minigamer : scores.keySet()) {
-			if (scores.get(minigamer).equals(winningScore)) {
-				winners.add(minigamer);
-			}
-		}
-
-		return winners;
+		announceTeamlessWinners(match);
 	}
 }

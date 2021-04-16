@@ -8,12 +8,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -39,7 +40,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @AllArgsConstructor
 @SerializableAs("Team")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Team implements ConfigurationSerializable {
+public class Team implements ConfigurationSerializable, IHasTextComponent {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private String name = "Default";
@@ -97,7 +98,7 @@ public class Team implements ConfigurationSerializable {
 		return color + name;
 	}
 
-	public Component getComponentName() {
+	public TextComponent getComponent() {
 		return AdventureUtils.colorText(color, name);
 	}
 

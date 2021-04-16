@@ -18,12 +18,16 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -43,7 +47,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer {
+public class Minigamer implements IHasTextComponent {
 	@NonNull
 	private Player player;
 	@ToString.Exclude
@@ -88,6 +92,15 @@ public class Minigamer {
 		if (team == null)
 			return getNickname();
 		return team.getColor() + getNickname();
+	}
+
+	/**
+	 * Returns the player's (nick)name, colored with their team color.
+	 */
+	public TextComponent getComponent() {
+		if (team == null)
+			return Component.text(getNickname());
+		return AdventureUtils.colorText(team.getColor(), getNickname());
 	}
 
 	public void join(String name) {

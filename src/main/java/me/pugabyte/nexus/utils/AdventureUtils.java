@@ -14,6 +14,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -67,18 +69,76 @@ public class AdventureUtils {
 	}
 
 	public static TextComponent getPrefix(String prefix) {
-		return Component.text("").color(NamedTextColor.DARK_AQUA)
-				.append(Component.text("[").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD))
-				.append(Component.text(prefix).color(NamedTextColor.YELLOW))
-				.append(Component.text("]").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD))
-				.append(Component.text(" ").color(NamedTextColor.DARK_AQUA));
+		return Component.text("", NamedTextColor.DARK_AQUA)
+				.append(Component.text("[", NamedTextColor.DARK_GRAY, TextDecoration.BOLD))
+				.append(Component.text(prefix, NamedTextColor.YELLOW))
+				.append(Component.text("]", NamedTextColor.DARK_GRAY, TextDecoration.BOLD))
+				.append(Component.text(" ", NamedTextColor.DARK_AQUA));
 	}
 
-	public static TextComponent colorText(ChatColor color, String text) {
-		return Component.text(text).color(TextColor.color(color.getColor().getRGB()));
+	public static TextComponent colorText(@Nullable ChatColor color, @NotNull String text) {
+		if (color == null)
+			return Component.text(text);
+		return Component.text(text, TextColor.color(color.getColor().getRGB()));
 	}
 
-	public static TextComponent colorText(ColorType color, String text) {
-		return Component.text(text).color(TextColor.color(color.getColor().getRed()));
+	public static TextComponent colorText(@Nullable ColorType color, @NotNull String text) {
+		if (color == null || color.getColor() == null)
+			return Component.text(text);
+		return Component.text(text, TextColor.color(color.getColor().getRed()));
+	}
+
+	/**
+	 * Returns a component that has separated the input list of components with commas.
+	 * <p>
+	 * If the input list is empty, a blank component will be returned.
+	 * <br>
+	 * If the list has one item, it will be returned.
+	 * <br>
+	 * If the list has two items, "[component1] and [component2]" will be returned.
+	 * <br>
+	 * Else, "[component1], [component2], [...], and [componentX]" will be returned.
+	 * @param components components to separate by commas.
+	 * @param color optional color to use for the commas
+	 * @return a formatted TextComponent
+	 */
+	public static TextComponent commaJoinText(List<Component> components, @Nullable TextColor color) {
+		TextComponent component = Component.text("", color);
+
+		if (components.isEmpty())
+			return component;
+		if (components.size() == 1)
+			return component.append(components.get(0));
+		if (components.size() == 2)
+			return component.append(components.get(0))
+				    .append(Component.text(" and "))
+					.append(components.get(1));
+
+		TextComponent.Builder builder = component.toBuilder();
+		for (int i = 0; i < components.size(); i++) {
+			builder.append(components.get(i));
+			if (i < components.size()-2)
+				builder.append(Component.text(", "));
+			else if (i == components.size()-2)
+				builder.append(Component.text(", and "));
+		}
+		return builder.build();
+	}
+
+	/**
+	 * Returns a component that has separated the input list of components with commas.
+	 * <p>
+	 * If the input list is empty, a blank component will be returned.
+	 * <br>
+	 * If the list has one item, it will be returned.
+	 * <br>
+	 * If the list has two items, "[component1] and [component2]" will be returned.
+	 * <br>
+	 * Else, "[component1], [component2], [...], and [componentX]" will be returned.
+	 * @param components components to separate by commas.
+	 * @return a formatted TextComponent
+	 */
+	public static TextComponent commaJoinText(List<Component> components) {
+		return commaJoinText(components, null);
 	}
 }
