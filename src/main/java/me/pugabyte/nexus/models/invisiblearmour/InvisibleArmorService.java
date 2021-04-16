@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(InvisibleArmor.class)
-public class InvisibleArmorService extends MongoService {
+public class InvisibleArmorService extends MongoService<InvisibleArmor> {
 	private final static Map<UUID, InvisibleArmor> cache = new HashMap<>();
 
 	public Map<UUID, InvisibleArmor> getCache() {

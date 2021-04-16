@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @PlayerClass(Back.class)
-public class BackService extends MongoService {
+public class BackService extends MongoService<Back> {
 	private final static Map<UUID, Back> cache = new HashMap<>();
 
 	public Map<UUID, Back> getCache() {

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(WhereIs.class)
-public class WhereIsService extends MongoService {
+public class WhereIsService extends MongoService<WhereIs> {
 	private final static Map<UUID, WhereIs> cache = new HashMap<>();
 
 	public Map<UUID, WhereIs> getCache() {

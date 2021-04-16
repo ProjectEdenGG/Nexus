@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(GeoIP.class)
-public class GeoIPService extends MongoService {
+public class GeoIPService extends MongoService<GeoIP> {
 	private final static Map<UUID, GeoIP> cache = new HashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {

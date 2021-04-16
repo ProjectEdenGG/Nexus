@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(DiscordUser.class)
-public class DiscordUserService extends MongoService {
+public class DiscordUserService extends MongoService<DiscordUser> {
 	private final static Map<UUID, DiscordUser> cache = new HashMap<>();
 
 	public Map<UUID, DiscordUser> getCache() {

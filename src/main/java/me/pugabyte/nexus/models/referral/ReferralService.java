@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Referral.class)
-public class ReferralService extends MongoService {
+public class ReferralService extends MongoService<Referral> {
 	private final static Map<UUID, Referral> cache = new HashMap<>();
 
 	public Map<UUID, Referral> getCache() {

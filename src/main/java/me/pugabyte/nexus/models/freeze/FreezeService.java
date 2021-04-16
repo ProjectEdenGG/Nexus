@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Freeze.class)
-public class FreezeService extends MongoService {
+public class FreezeService extends MongoService<Freeze> {
 	private final static Map<UUID, Freeze> cache = new HashMap<>();
 
 	public Map<UUID, Freeze> getCache() {

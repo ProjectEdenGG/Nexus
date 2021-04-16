@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @PlayerClass(SafeCrackerEvent.class)
 @Disabled
-public class SafeCrackerEventService extends MongoService {
+public class SafeCrackerEventService extends MongoService<SafeCrackerEvent> {
 
 	private final static Map<UUID, SafeCrackerEvent> cache = new HashMap<>();
 

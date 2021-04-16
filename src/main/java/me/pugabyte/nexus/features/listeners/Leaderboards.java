@@ -12,7 +12,6 @@ import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -65,7 +64,7 @@ public class Leaderboards implements Listener {
 				return service.getPage(new HoursTopArguments("monthly")).subList(0, 3).stream()
 						.collect(Collectors.toMap(
 								PageResult::getUuid,
-								hours -> Timespan.of(service.<Hours>get(hours.getUuid()).getMonthly()).format(),
+								hours -> Timespan.of(service.get(hours.getUuid()).getMonthly()).format(),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}
@@ -84,7 +83,7 @@ public class Leaderboards implements Listener {
 		BALANCE(2703, 2702, 2701) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new BankerService().<Banker>getAll().stream()
+				return new BankerService().getAll().stream()
 						.sorted(Comparator.comparing(banker -> banker.getBalance(ShopGroup.SURVIVAL), Comparator.reverseOrder()))
 						.collect(toList())
 						.subList(0, 3).stream()

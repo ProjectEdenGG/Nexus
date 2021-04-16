@@ -72,7 +72,7 @@ public class Nickname extends PlayerOwnedObject {
 	}
 
 	public static String of(OfflinePlayer player) {
-		return new NicknameService().<Nickname>get(player).getNickname();
+		return new NicknameService().get(player).getNickname();
 	}
 
 	public String getNickname() {

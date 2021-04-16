@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(InteractionCommandConfig.class)
-public class InteractionCommandConfigService extends MongoService {
+public class InteractionCommandConfigService extends MongoService<InteractionCommandConfig> {
 	private final static Map<UUID, InteractionCommandConfig> cache = new HashMap<>();
 
 	public Map<UUID, InteractionCommandConfig> getCache() {

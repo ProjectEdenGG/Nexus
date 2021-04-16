@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(AFKSettings.class)
-public class AFKSettingsService extends MongoService {
+public class AFKSettingsService extends MongoService<AFKSettings> {
 	private final static Map<UUID, AFKSettings> cache = new HashMap<>();
 
 	public Map<UUID, AFKSettings> getCache() {

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(InventoryHistory.class)
-public class InventoryHistoryService extends MongoService {
+public class InventoryHistoryService extends MongoService<InventoryHistory> {
 	private final static Map<UUID, InventoryHistory> cache = new HashMap<>();
 
 	public Map<UUID, InventoryHistory> getCache() {
@@ -18,10 +18,9 @@ public class InventoryHistoryService extends MongoService {
 	}
 
 	@Override
-	public <T> void saveSync(T object) {
-		InventoryHistory history = (InventoryHistory) object;
+	public void saveSync(InventoryHistory history) {
 		history.getSnapshots().sort(Comparator.comparing(InventorySnapshot::getTimestamp).reversed());
-		super.saveSync(object);
+		super.saveSync(history);
 	}
 
 }

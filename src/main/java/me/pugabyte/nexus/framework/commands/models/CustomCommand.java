@@ -234,9 +234,9 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (object instanceof String)
 			send(sender(), (String) object);
 		else if (object instanceof JsonBuilder)
-			send(sender(), (JsonBuilder) object);
+			send(sender(), object);
 		else if (object instanceof Component)
-			send(sender(), (Component) object);
+			send(sender(), object);
 		else
 			throw new InvalidInputException("Cannot send object: " + object.getClass().getSimpleName());
 	}
@@ -679,7 +679,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	private static final Map<Class<? extends PlayerOwnedObject>, Class<? extends MongoService>> serviceMap = new HashMap<>();
 
 	static {
-		for (Class<? extends MongoService> service : services) {
+		for (Class<? extends MongoService<?>> service : services) {
 			PlayerClass annotation = service.getAnnotation(PlayerClass.class);
 			if (annotation == null) {
 				Nexus.warn(service.getSimpleName() + " does not have @PlayerClass annotation");
@@ -691,7 +691,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	@SneakyThrows
-	protected <T extends PlayerOwnedObject> T convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
+	protected PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
 		if (serviceMap.containsKey(type))
 			return serviceMap.get(type).newInstance().get(convertToOfflinePlayer(value));
 		return null;

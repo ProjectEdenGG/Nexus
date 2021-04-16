@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(DelayedBan.class)
-public class DelayedBanService extends MongoService {
+public class DelayedBanService extends MongoService<DelayedBan> {
 	private final static Map<UUID, DelayedBan> cache = new HashMap<>();
 
 	@Override

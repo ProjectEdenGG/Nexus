@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Watchlisted.class)
-public class WatchlistedService extends MongoService {
+public class WatchlistedService extends MongoService<Watchlisted> {
 	private final static Map<UUID, Watchlisted> cache = new HashMap<>();
 
 	public Map<UUID, Watchlisted> getCache() {

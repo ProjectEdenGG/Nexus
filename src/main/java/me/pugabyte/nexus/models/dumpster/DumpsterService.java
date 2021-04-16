@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Dumpster.class)
-public class DumpsterService extends MongoService {
+public class DumpsterService extends MongoService<Dumpster> {
 	private final static Map<UUID, Dumpster> cache = new HashMap<>();
 
 	public Map<UUID, Dumpster> getCache() {

@@ -283,7 +283,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	void adventFoundAll() {
 		send(PREFIX + "Found counts:");
 		new HashMap<Integer, List<String>>() {{
-			pugmasService.<Pugmas20User>getAll().forEach(user -> {
+			pugmasService.getAll().forEach(user -> {
 				List<String> names = getOrDefault(user.getLocatedDays().size(), new ArrayList<>());
 				names.add(user.getName());
 				put(user.getLocatedDays().size(), names);

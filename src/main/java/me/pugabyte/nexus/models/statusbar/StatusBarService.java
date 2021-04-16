@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(StatusBar.class)
-public class StatusBarService extends MongoService {
+public class StatusBarService extends MongoService<StatusBar> {
 	private final static Map<UUID, StatusBar> cache = new HashMap<>();
 
 	public Map<UUID, StatusBar> getCache() {

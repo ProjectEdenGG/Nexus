@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @PlayerClass(Shop.class)
-public class ShopService extends MongoService {
+public class ShopService extends MongoService<Shop> {
 	private final static Map<UUID, Shop> cache = new HashMap<>();
 
 	public Map<UUID, Shop> getCache() {

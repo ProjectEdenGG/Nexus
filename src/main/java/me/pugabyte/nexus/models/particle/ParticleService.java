@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(ParticleOwner.class)
-public class ParticleService extends MongoService {
+public class ParticleService extends MongoService<ParticleOwner> {
 	public static final Map<UUID, ParticleOwner> cache = new HashMap<>();
 
 	public Map<UUID, ParticleOwner> getCache() {
@@ -16,9 +16,9 @@ public class ParticleService extends MongoService {
 	}
 
 	@Override
-	public <T> void saveSync(T object) {
-		database.delete(object);
-		database.save(object);
+	public void saveSync(ParticleOwner particleOwner) {
+		database.delete(particleOwner);
+		database.save(particleOwner);
 	}
 
 }

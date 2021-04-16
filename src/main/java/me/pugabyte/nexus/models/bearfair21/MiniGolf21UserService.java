@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(MiniGolf21User.class)
-public class MiniGolf21UserService extends MongoService {
+public class MiniGolf21UserService extends MongoService<MiniGolf21User> {
 	private final static Map<UUID, MiniGolf21User> cache = new HashMap<>();
 
 	public Map<UUID, MiniGolf21User> getCache() {

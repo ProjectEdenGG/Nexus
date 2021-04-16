@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(StripLogs.class)
-public class StripLogsService extends MongoService {
+public class StripLogsService extends MongoService<StripLogs> {
 	private final static Map<UUID, StripLogs> cache = new HashMap<>();
 
 	public Map<UUID, StripLogs> getCache() {

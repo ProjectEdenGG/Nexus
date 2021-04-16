@@ -17,7 +17,7 @@ import java.util.UUID;
 	Returns false, if cooldown is still in effect
  */
 @PlayerClass(Cooldown.class)
-public class CooldownService extends MongoService {
+public class CooldownService extends MongoService<Cooldown> {
 
 	private final static Map<UUID, Cooldown> cache = new HashMap<>();
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(VotePoints.class)
-public class VotePointsService extends MongoService {
+public class VotePointsService extends MongoService<VotePoints> {
 	private final static Map<UUID, VotePoints> cache = new HashMap<>();
 
 	public Map<UUID, VotePoints> getCache() {

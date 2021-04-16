@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @PlayerClass(SafeCrackerPlayer.class)
 @Disabled
-public class SafeCrackerPlayerService extends MongoService {
+public class SafeCrackerPlayerService extends MongoService<SafeCrackerPlayer> {
 	private final static Map<UUID, SafeCrackerPlayer> cache = new HashMap<>();
 
 	public Map<UUID, SafeCrackerPlayer> getCache() {

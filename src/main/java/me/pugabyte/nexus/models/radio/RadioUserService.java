@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(RadioUser.class)
-public class RadioUserService extends MongoService {
+public class RadioUserService extends MongoService<RadioUser> {
 
 	public static Map<UUID, RadioUser> cache = new HashMap<>();
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(NewRankColors.class)
-public class NewRankColorsService extends MongoService {
+public class NewRankColorsService extends MongoService<NewRankColors> {
 	private final static Map<UUID, NewRankColors> cache = new HashMap<>();
 
 	public Map<UUID, NewRankColors> getCache() {

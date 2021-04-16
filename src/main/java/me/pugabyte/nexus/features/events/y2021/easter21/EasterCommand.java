@@ -51,7 +51,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 
 	@Path("top [page]")
 	void top(@Arg("1") int page) {
-		List<Easter21User> all = new Easter21UserService().<Easter21User>getAll().stream()
+		List<Easter21User> all = new Easter21UserService().getAll().stream()
 				.sorted(Comparator.<Easter21User>comparingInt(user -> user.getFound().size()).reversed())
 				.collect(toList());
 
@@ -65,7 +65,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	void topLocations(@Arg("1") int page) {
 		Map<Location, Integer> counts = new HashMap<Location, Integer>() {{
-			for (Easter21User user : new Easter21UserService().<Easter21User>getAll())
+			for (Easter21User user : new Easter21UserService().getAll())
 				for (Location location : user.getFound())
 					put(location, getOrDefault(location, 0) + 1);
 		}};

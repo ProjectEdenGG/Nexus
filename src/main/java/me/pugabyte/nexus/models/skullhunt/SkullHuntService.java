@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(SkullHunter.class)
-public class SkullHuntService extends MongoService {
+public class SkullHuntService extends MongoService<SkullHunter> {
 	private final static Map<UUID, SkullHunter> cache = new HashMap<>();
 
 	public Map<UUID, SkullHunter> getCache() {

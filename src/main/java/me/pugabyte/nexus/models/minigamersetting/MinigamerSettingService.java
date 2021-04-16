@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(MinigamerSetting.class)
-public class MinigamerSettingService extends MongoService {
+public class MinigamerSettingService extends MongoService<MinigamerSetting> {
 	private final static Map<UUID, MinigamerSetting> cache = new HashMap<>();
 
 	public Map<UUID, MinigamerSetting> getCache() {

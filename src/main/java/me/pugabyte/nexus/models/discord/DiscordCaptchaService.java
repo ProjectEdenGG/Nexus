@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(DiscordCaptcha.class)
-public class DiscordCaptchaService extends MongoService {
+public class DiscordCaptchaService extends MongoService<DiscordCaptcha> {
 	private final static Map<UUID, DiscordCaptcha> cache = new HashMap<>();
 
 	public Map<UUID, DiscordCaptcha> getCache() {
@@ -21,9 +21,9 @@ public class DiscordCaptchaService extends MongoService {
 	}
 
 	@Override
-	public <T> void saveSync(T object) {
-		database.delete(object);
-		database.save(object);
+	public void saveSync(DiscordCaptcha captcha) {
+		database.delete(captcha);
+		database.save(captcha);
 	}
 
 }

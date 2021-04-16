@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(BuildContest.class)
-public class BuildContestService extends MongoService {
+public class BuildContestService extends MongoService<BuildContest> {
 	private final static Map<UUID, BuildContest> cache = new HashMap<>();
 
 	public Map<UUID, BuildContest> getCache() {

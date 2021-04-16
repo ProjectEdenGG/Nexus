@@ -146,11 +146,11 @@ public class Chat extends Feature {
 	}
 
 	public static void setActiveChannel(Player player, StaticChannel channel) {
-		new ChatService().<Chatter>get(player).setActiveChannel(channel.getChannel());
+		new ChatService().get(player).setActiveChannel(channel.getChannel());
 	}
 
 	public static void setActiveChannel(PlayerOwnedObject player, StaticChannel channel) {
-		new ChatService().<Chatter>get(player).setActiveChannel(channel.getChannel());
+		new ChatService().get(player).setActiveChannel(channel.getChannel());
 	}
 
 	// Broadcasts

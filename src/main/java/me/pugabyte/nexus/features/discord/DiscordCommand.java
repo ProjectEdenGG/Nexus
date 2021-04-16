@@ -85,7 +85,7 @@ public class DiscordCommand extends CustomCommand {
 	void updateRoles() {
 		int errors = 0;
 		Role verified = DiscordId.Role.VERIFIED.get();
-		for (DiscordUser discordUser : new DiscordUserService().<DiscordUser>getAll()) {
+		for (DiscordUser discordUser : new DiscordUserService().getAll()) {
 			if (!isNullOrEmpty(discordUser.getUserId())) {
 				try {
 					Member member = discordUser.getMember();

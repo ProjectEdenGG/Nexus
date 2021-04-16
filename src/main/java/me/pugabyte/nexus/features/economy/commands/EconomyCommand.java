@@ -101,7 +101,7 @@ public class EconomyCommand extends CustomCommand {
 
 		BigDecimal total = BigDecimal.valueOf(0);
 
-		for (Banker banker : service.<Banker>getAll())
+		for (Banker banker : service.getAll())
 			for (Transaction transaction : banker.getTransactions()) {
 				if (startTime != null && !transaction.getTimestamp().isAfter(startTime))
 					continue;

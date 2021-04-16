@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Compass.class)
-public class CompassService extends MongoService {
+public class CompassService extends MongoService<Compass> {
 	private final static Map<UUID, Compass> cache = new HashMap<>();
 
 	public Map<UUID, Compass> getCache() {

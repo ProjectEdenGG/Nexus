@@ -41,7 +41,7 @@ public class NerdListener implements Listener {
 
 	static {
 		Tasks.repeatAsync(0, Time.MINUTE, () -> {
-			for (Nerd recentJoin : new NerdService().<Nerd>getAllSortedByLimit(200, Sort.descending("lastJoin")))
+			for (Nerd recentJoin : new NerdService().getAllSortedByLimit(200, Sort.descending("lastJoin")))
 				if (!recentJoin.isOnline() && recentJoin.getNerd().getLastQuit() != null && recentJoin.getLastQuit().isBefore(recentJoin.getLastJoin()))
 					recentJoin.setLastQuit(LocalDateTime.now());
 		});

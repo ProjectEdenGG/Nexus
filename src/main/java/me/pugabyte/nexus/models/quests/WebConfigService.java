@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(WebConfig.class)
-public class WebConfigService extends MongoService {
+public class WebConfigService extends MongoService<WebConfig> {
 	private final static Map<UUID, WebConfig> cache = new HashMap<>();
 
 	public Map<UUID, WebConfig> getCache() {

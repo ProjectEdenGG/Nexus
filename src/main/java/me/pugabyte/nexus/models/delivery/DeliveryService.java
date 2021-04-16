@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(DeliveryUser.class)
-public class DeliveryService extends MongoService {
+public class DeliveryService extends MongoService<DeliveryUser> {
 	private final static Map<UUID, DeliveryUser> cache = new HashMap<>();
 
 	public Map<UUID, DeliveryUser> getCache() {
@@ -16,12 +16,11 @@ public class DeliveryService extends MongoService {
 	}
 
 	@Override
-	public <T> void saveSync(T object) {
-		DeliveryUser user = (DeliveryUser) object;
+	public void saveSync(DeliveryUser user) {
 		if (!user.getDeliveries().isEmpty())
-			super.saveSync(object);
+			super.saveSync(user);
 		else
-			super.delete(object);
+			super.delete(user);
 	}
 
 }

@@ -66,13 +66,13 @@ public class Transaction {
 	public Transaction(OfflinePlayer sender, OfflinePlayer receiver, BigDecimal amount, ShopGroup shopGroup, String description, TransactionCause cause) {
 		if (receiver != null && !Nexus.isUUID0(receiver.getUniqueId())) {
 			this.receiver = receiver.getUniqueId();
-			this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance(shopGroup));
+			this.receiverOldBalance = rounded(new BankerService().get(receiver).getBalance(shopGroup));
 			this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
 		}
 
 		if (sender != null && !Nexus.isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
-			this.senderOldBalance = rounded(new BankerService().<Banker>get(sender).getBalance(shopGroup));
+			this.senderOldBalance = rounded(new BankerService().get(sender).getBalance(shopGroup));
 			this.senderNewBalance = rounded(this.senderOldBalance.subtract(amount));
 		}
 
@@ -92,7 +92,7 @@ public class Transaction {
 
 	public Transaction(OfflinePlayer receiver, BigDecimal newBalance, ShopGroup shopGroup, String description, TransactionCause cause) {
 		this.receiver = receiver.getUniqueId();
-		this.receiverOldBalance = rounded(new BankerService().<Banker>get(receiver).getBalance(shopGroup));
+		this.receiverOldBalance = rounded(new BankerService().get(receiver).getBalance(shopGroup));
 		this.receiverNewBalance = rounded(newBalance);
 
 		this.amount = rounded(this.receiverNewBalance.subtract(receiverOldBalance));

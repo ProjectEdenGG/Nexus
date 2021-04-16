@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(TwitterData.class)
-public class TwitterService extends MongoService {
+public class TwitterService extends MongoService<TwitterData> {
 	private final static Map<UUID, TwitterData> cache = new HashMap<>();
 
 	public Map<UUID, TwitterData> getCache() {

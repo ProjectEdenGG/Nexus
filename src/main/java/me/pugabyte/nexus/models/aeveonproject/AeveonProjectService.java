@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(AeveonProjectUser.class)
-public class AeveonProjectService extends MongoService {
+public class AeveonProjectService extends MongoService<AeveonProjectUser> {
 	private final static Map<UUID, AeveonProjectUser> cache = new HashMap<>();
 
 	public Map<UUID, AeveonProjectUser> getCache() {

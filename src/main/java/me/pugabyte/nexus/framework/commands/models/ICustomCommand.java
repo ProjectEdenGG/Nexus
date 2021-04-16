@@ -482,7 +482,7 @@ public abstract class ICustomCommand {
 		}
 	}
 
-	protected abstract <T extends PlayerOwnedObject> T convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
+	protected abstract PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
 
 	@SneakyThrows
 	protected Enum<?> convertToEnum(String filter, Class<? extends Enum<?>> clazz) {

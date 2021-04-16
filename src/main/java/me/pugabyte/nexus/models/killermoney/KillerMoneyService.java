@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(KillerMoney.class)
-public class KillerMoneyService extends MongoService {
+public class KillerMoneyService extends MongoService<KillerMoney> {
 
 	@Getter
 	private final static Map<UUID, KillerMoney> cache = new HashMap<>();

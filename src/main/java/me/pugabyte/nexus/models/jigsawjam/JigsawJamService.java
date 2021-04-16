@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(JigsawJammer.class)
-public class JigsawJamService extends MongoService {
+public class JigsawJamService extends MongoService<JigsawJammer> {
 	private final static Map<UUID, JigsawJammer> cache = new HashMap<>();
 
 	public Map<UUID, JigsawJammer> getCache() {

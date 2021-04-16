@@ -239,7 +239,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> staffTimeMap = new HashMap<>();
 
-		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
+		for (HallOfHistory hallOfHistory : service.getAll()) {
 			long days = 0;
 			days: for (LocalDate date = ServerAge.getEpoch().toLocalDate(); date.isBefore(now); date = date.plusDays(1)) {
 				for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
@@ -279,7 +279,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();
 
-		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
+		for (HallOfHistory hallOfHistory : service.getAll()) {
 			Nerd nerd = Nerd.of(hallOfHistory.getUuid());
 			List<RankHistory> history = hallOfHistory.getRankHistory();
 			history.sort(Comparator.comparing(RankHistory::getPromotionDate));

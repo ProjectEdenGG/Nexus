@@ -5,9 +5,16 @@ import dev.morphia.query.Sort;
 import dev.morphia.query.UpdateException;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.MongoDBDatabase;
 import me.pugabyte.nexus.framework.persistence.MongoDBPersistence;
+import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.Tasks;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
@@ -15,10 +22,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static me.pugabyte.nexus.utils.StringUtils.isV4Uuid;
 
-public abstract class MongoService extends DatabaseService {
+public abstract class MongoService<T extends PlayerOwnedObject> {
 	protected static Datastore database;
 	protected static String _id = "_id";
 
@@ -28,28 +36,84 @@ public abstract class MongoService extends DatabaseService {
 			database.ensureIndexes();
 	}
 
-	public abstract <T> Map<UUID, T> getCache();
+	public abstract Map<UUID, T> getCache();
 
 	public void clearCache() {
 		getCache().clear();
 	}
 
-	public <T extends PlayerOwnedObject> void cache(T object) {
+	public void cache(T object) {
 		if (object != null)
 			getCache().put(object.getUuid(), object);
 	}
 
-	@Override
+	public Class<T> getPlayerClass() {
+		PlayerClass annotation = getClass().getAnnotation(PlayerClass.class);
+		return annotation == null ? null : (Class<T>) annotation.value();
+	}
+
+	public T get(Player player) {
+		return get(player.getUniqueId());
+	}
+
+	public T get(OfflinePlayer player) {
+		return get(player.getUniqueId());
+	}
+
+	public T get(Nerd nerd) {
+		return get(nerd.getOfflinePlayer().getUniqueId());
+	}
+
+	public T get(PlayerOwnedObject player) {
+		return get(player.getUuid());
+	}
+
 	@NotNull
-	public <T> T get(UUID uuid) {
+	public T get(UUID uuid) {
 //		if (isEnableCache())
-			return (T) getCache(uuid);
+		return (T) getCache(uuid);
 //		else
 //			return getNoCache(uuid);
 	}
 
+	public void save(T object) {
+		checkType(object);
+		if (Bukkit.isPrimaryThread())
+			Tasks.async(() -> saveSync(object));
+		else
+			saveSync(object);
+	}
+
+	private void checkType(T object) {
+		if (getPlayerClass() == null) return;
+		if (!object.getClass().isAssignableFrom(getPlayerClass()))
+			throw new InvalidInputException(this.getClass().getSimpleName() + " received wrong class type, expected "
+					+ getPlayerClass().getSimpleName() + ", found " + object.getClass().getSimpleName());
+	}
+
+	public void delete(T object) {
+		checkType(object);
+		if (Bukkit.isPrimaryThread())
+			Tasks.async(() -> deleteSync(object));
+		else
+			deleteSync(object);
+	}
+
+	public void deleteAll() {
+		if (Bukkit.isPrimaryThread())
+			Tasks.async(this::deleteAllSync);
+		else
+			deleteAllSync();
+	}
+
+	public String sanitize(String input) {
+		if (Pattern.compile("[\\w\\d\\s]+").matcher(input).matches())
+			return input;
+		throw new InvalidInputException("Unsafe argument");
+	}
+
 	@NotNull
-	protected <T extends PlayerOwnedObject> T getCache(UUID uuid) {
+	protected T getCache(UUID uuid) {
 		Validate.notNull(getPlayerClass(), "You must provide a player owned class or override get(UUID)");
 		if (getCache().containsKey(uuid) && getCache().get(uuid) == null)
 			getCache().remove(uuid);
@@ -57,48 +121,45 @@ public abstract class MongoService extends DatabaseService {
 		return (T) getCache().get(uuid);
 	}
 
-	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
-		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
+	protected T getNoCache(UUID uuid) {
+		T object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
 		if (object == null)
 			object = createPlayerObject(uuid);
 		if (object == null)
 			Nexus.log("New instance of " + getPlayerClass().getSimpleName() + " is null");
-		return (T) object;
+		return object;
 	}
 
-	protected Object createPlayerObject(UUID uuid) {
+	protected T createPlayerObject(UUID uuid) {
 		try {
 			Constructor<? extends PlayerOwnedObject> constructor = getPlayerClass().getDeclaredConstructor(UUID.class);
 			constructor.setAccessible(true);
-			return constructor.newInstance(uuid);
+			return (T) constructor.newInstance(uuid);
 		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
 			ex.printStackTrace();
 			throw new NexusException(this.getClass().getSimpleName() + " not implemented correctly");
 		}
 	}
 
-	@Override
-	public <T> List<T> getAll() {
+	public List<T> getAll() {
 		return (List<T>) database.createQuery(getPlayerClass()).find().toList();
 	}
 
-	public <T> List<T> getAllSortedBy(Sort... sorts) {
+	public List<T> getAllSortedBy(Sort... sorts) {
 		return (List<T>) database.createQuery(getPlayerClass())
 				.order(sorts)
 				.find().toList();
 	}
 
-	public <T> List<T> getAllSortedByLimit(int limit, Sort... sorts) {
+	public List<T> getAllSortedByLimit(int limit, Sort... sorts) {
 		return (List<T>) database.createQuery(getPlayerClass())
 				.order(sorts)
 				.limit(limit)
 				.find().toList();
 	}
 
-	@Override
-	public <T> void saveSync(T object) {
-		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
-		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
+	public void saveSync(T object) {
+		if (!isV4Uuid(object.getUuid()) && !object.getUuid().equals(Nexus.getUUID0()))
 			return;
 
 		try {
@@ -118,18 +179,14 @@ public abstract class MongoService extends DatabaseService {
 		}
 	}
 
-	@Override
-	public <T> void deleteSync(T object) {
-		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
-
-		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
+	public void deleteSync(T object) {
+		if (!isV4Uuid(object.getUuid()) && !object.getUuid().equals(Nexus.getUUID0()))
 			return;
 
 		database.delete(object);
-		getCache().remove(playerOwnedObject.getUuid());
+		getCache().remove(object.getUuid());
 	}
 
-	@Override
 	public void deleteAllSync() {
 		database.getCollection(getPlayerClass()).drop();
 		clearCache();

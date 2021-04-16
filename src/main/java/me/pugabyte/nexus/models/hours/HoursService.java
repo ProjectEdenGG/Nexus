@@ -42,27 +42,27 @@ import static com.mongodb.client.model.Projections.computed;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @PlayerClass(Hours.class)
-public class HoursService extends MongoService {
+public class HoursService extends MongoService<Hours> {
 	private final static Map<UUID, Hours> cache = new HashMap<>();
 
 	public Map<UUID, Hours> getCache() {
 		return cache;
 	}
 
-	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
-		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
-		if (object == null) {
-			object = createPlayerObject(uuid);
-			save(object);
+	protected Hours getNoCache(UUID uuid) {
+		Hours hours = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
+		if (hours == null) {
+			hours = createPlayerObject(uuid);
+			save(hours);
 		}
-		return (T) object;
+		return hours;
 	}
 
 	private static final MongoCollection<Document> collection = database.getDatabase().getCollection("hours");
 
 	@Override
 	@Deprecated // Use HoursService#update to increment daily counter
-	public <T> void save(T object) {
+	public void save(Hours object) {
 		super.save(object);
 	}
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(HasReadRules.class)
-public class HasReadRulesService extends MongoService {
+public class HasReadRulesService extends MongoService<HasReadRules> {
 	private final static Map<UUID, HasReadRules> cache = new HashMap<>();
 
 	public Map<UUID, HasReadRules> getCache() {

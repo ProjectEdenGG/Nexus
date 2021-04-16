@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(WallsOfGrace.class)
-public class WallsOfGraceService extends MongoService {
+public class WallsOfGraceService extends MongoService<WallsOfGrace> {
 	private final static Map<UUID, WallsOfGrace> cache = new HashMap<>();
 
 	public Map<UUID, WallsOfGrace> getCache() {

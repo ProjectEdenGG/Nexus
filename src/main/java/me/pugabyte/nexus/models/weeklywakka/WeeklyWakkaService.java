@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(WeeklyWakka.class)
-public class WeeklyWakkaService extends MongoService {
+public class WeeklyWakkaService extends MongoService<WeeklyWakka> {
 
 	public static Map<UUID, WeeklyWakka> cache = new HashMap<>();
 

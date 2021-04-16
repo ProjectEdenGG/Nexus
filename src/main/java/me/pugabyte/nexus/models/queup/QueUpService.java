@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(QueUp.class)
-public class QueUpService extends MongoService {
+public class QueUpService extends MongoService<QueUp> {
 	private final static Map<UUID, QueUp> cache = new HashMap<>();
 
 	public Map<UUID, QueUp> getCache() {

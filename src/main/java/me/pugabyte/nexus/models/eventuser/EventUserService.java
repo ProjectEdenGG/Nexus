@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(EventUser.class)
-public class EventUserService extends MongoService {
+public class EventUserService extends MongoService<EventUser> {
 	private final static Map<UUID, EventUser> cache = new HashMap<>();
 
 	public Map<UUID, EventUser> getCache() {
