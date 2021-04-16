@@ -9,7 +9,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
@@ -20,7 +19,6 @@ import java.util.List;
 @Aliases("ymc")
 @Permission("group.moderator")
 public class YouMayContinueCommand extends CustomCommand {
-	private final ChatService chatService = new ChatService();
 
 	public YouMayContinueCommand(CommandEvent event) {
 		super(event);

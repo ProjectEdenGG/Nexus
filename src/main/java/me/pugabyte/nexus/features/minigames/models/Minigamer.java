@@ -200,7 +200,7 @@ public class Minigamer {
 		boolean staff = PlayerUtils.isStaffGroup(player);
 
 		player.setGameMode(GameMode.SURVIVAL);
-		player.setFallDistance(0f);
+		player.setFallDistance(0);
 		player.setAllowFlight(staff);
 		player.setFlying(staff);
 
@@ -417,7 +417,7 @@ public class Minigamer {
 		player.setLevel(0);
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
-		player.setFallDistance(0f);
+		player.setFallDistance(0);
 		player.setAllowFlight(mechanic.allowFly());
 		player.setFlying(mechanic.allowFly());
 		if (VanishAPI.isInvisible(player))

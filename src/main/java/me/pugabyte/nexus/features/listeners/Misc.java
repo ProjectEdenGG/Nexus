@@ -311,7 +311,7 @@ public class Misc implements Listener {
 		if (WorldGroup.get(event.getFrom()) == WorldGroup.CREATIVE) {
 			if (Nerd.of(player).isVanished())
 				if (player.hasPermission("essentials.fly")) {
-					player.setFallDistance(0f);
+					player.setFallDistance(0);
 					player.setAllowFlight(true);
 					player.setFlying(true);
 				}
