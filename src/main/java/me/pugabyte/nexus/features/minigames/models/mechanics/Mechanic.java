@@ -21,6 +21,10 @@ import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
@@ -228,6 +232,11 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public abstract void announceWinners(Match match);
+
+	public static TextComponent getArenaComponent(Match match) {
+		return Component.text(match.getArena().getDisplayName()).color(NamedTextColor.YELLOW)
+				.hoverEvent(HoverEvent.showText(Component.text(match.getMechanic().getName()).color(NamedTextColor.DARK_AQUA)));
+	}
 
 	public int getWinningScore(Collection<Integer> scores) {
 		if (scores.size() == 0)

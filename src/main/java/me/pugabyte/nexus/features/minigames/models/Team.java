@@ -10,8 +10,10 @@ import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -93,6 +95,10 @@ public class Team implements ConfigurationSerializable {
 
 	public String getColoredName() {
 		return color + name;
+	}
+
+	public Component getComponentName() {
+		return AdventureUtils.colorText(color, name);
 	}
 
 	public void spawn(Match match) {

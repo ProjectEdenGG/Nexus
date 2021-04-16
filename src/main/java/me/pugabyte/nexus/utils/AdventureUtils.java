@@ -3,13 +3,16 @@ package me.pugabyte.nexus.utils;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;
@@ -63,11 +66,19 @@ public class AdventureUtils {
 		return identityOf(player.getUniqueId());
 	}
 
-	public static Component getPrefix(String prefix) {
+	public static TextComponent getPrefix(String prefix) {
 		return Component.text("").color(NamedTextColor.DARK_AQUA)
 				.append(Component.text("[").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD))
 				.append(Component.text(prefix).color(NamedTextColor.YELLOW))
 				.append(Component.text("]").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD))
 				.append(Component.text(" ").color(NamedTextColor.DARK_AQUA));
+	}
+
+	public static TextComponent colorText(ChatColor color, String text) {
+		return Component.text(text).color(TextColor.color(color.getColor().getRGB()));
+	}
+
+	public static TextComponent colorText(ColorType color, String text) {
+		return Component.text(text).color(TextColor.color(color.getColor().getRed()));
 	}
 }

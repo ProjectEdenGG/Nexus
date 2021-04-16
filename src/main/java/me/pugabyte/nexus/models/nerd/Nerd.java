@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.nerd;
 
+import com.google.common.collect.ImmutableSet;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
@@ -33,7 +34,9 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -62,6 +65,16 @@ public class Nerd extends PlayerOwnedObject {
 	private LocalDate promotionDate;
 	private String about;
 	private boolean meetMeVideo;
+	private Set<String> pronouns = new HashSet<>();
+	private static final Set<String> PRONOUN_WHITELIST = ImmutableSet.of("she/her", "they/them", "he/him", "it/its", "xe/xem", "no pronouns", "any pronouns");
+	private static final Map<String, String> PRONOUN_ALIASES = new HashMap<>();
+
+	static {
+		PRONOUN_WHITELIST.forEach(string -> {
+			for (String alias : string.split(" ")[0].split("/"))
+				PRONOUN_ALIASES.put(alias, string);
+		});
+	}
 
 	private Location teleportOnLogin;
 
@@ -108,7 +121,12 @@ public class Nerd extends PlayerOwnedObject {
 		return Rank.of(getOfflinePlayer());
 	}
 
+	/**
+	 * Returns the user's name formatted with a color formatting code
+	 * @deprecated you're probably looking for {@link #getNicknameFormat()}
+	 */
 	@ToString.Include
+	@Deprecated
 	public String getNameFormat() {
 		return getRank().getColor() + getName();
 	}
@@ -199,6 +217,11 @@ public class Nerd extends PlayerOwnedObject {
 		} catch (Exception ex) {
 			throw new InvalidInputException("Could not get location of offline player: " + ex.getMessage());
 		}
+	}
+
+	public void addPronouns(String string) {
+		string = string.toLowerCase();
+
 	}
 
 	@Data
