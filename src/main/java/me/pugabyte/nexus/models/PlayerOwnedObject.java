@@ -23,6 +23,9 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.AdventureUtils.identityOf;
 
+/**
+ * A mongo database object owned by a player
+ */
 public abstract class PlayerOwnedObject implements Identified {
 
 	public abstract UUID getUuid();
