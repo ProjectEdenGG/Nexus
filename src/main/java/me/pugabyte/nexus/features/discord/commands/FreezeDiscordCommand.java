@@ -3,9 +3,6 @@ package me.pugabyte.nexus.features.discord.commands;
 import com.google.common.base.Strings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.features.commands.staff.freeze.FreezeCommand;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
@@ -16,8 +13,9 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
-import me.pugabyte.nexus.models.freeze.Freeze;
-import me.pugabyte.nexus.models.freeze.FreezeService;
+import me.pugabyte.nexus.models.punishments.Punishments;
+import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -48,35 +46,13 @@ public class FreezeDiscordCommand extends Command {
 				if (user.getUuid() == null)
 					throw new NoPermissionException();
 
-				FreezeService service = new FreezeService();
-				OfflinePlayer executor = PlayerUtils.getPlayer(user.getUuid());
-
 				for (String arg : event.getArgs().split(" ")) {
 					try {
 						OfflinePlayer player = PlayerUtils.getPlayer(arg);
 						if (!player.isOnline() || player.getPlayer() == null)
 							throw new PlayerNotOnlineException(player);
 
-						Freeze freeze = service.get(player);
-						if (freeze.isFrozen()) {
-							if (player.getPlayer().getVehicle() != null) {
-								freeze.setFrozen(false);
-								service.save(freeze);
-								if (player.getPlayer().getVehicle() != null)
-									player.getPlayer().getVehicle().remove();
-								freeze.send("&cYou have been unfrozen.");
-								Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
-							} else
-								FreezeCommand.freezePlayer(player.getPlayer());
-							continue;
-						}
-
-						FreezeCommand.freezePlayer(player.getPlayer());
-						freeze.setFrozen(true);
-						service.save(freeze);
-
-						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has frozen &e" + player.getName(), StaticChannel.STAFF);
-						freeze.send("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+						Punishments.of(player).add(Punishment.ofType(PunishmentType.FREEZE).punisher(user.getUuid()));
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));
 						if (!(ex instanceof NexusException))

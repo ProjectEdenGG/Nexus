@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentBuilder;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -51,40 +53,60 @@ public class Punishments extends PlayerOwnedObject {
 	public static transient final String PREFIX = StringUtils.getPrefix("Punishments");
 	public static transient final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Punishments");
 
+	public static Punishments of(String name) {
+		return of(PlayerUtils.getPlayer(name));
+	}
+
+	public static Punishments of(UUID uuid) {
+		return of(PlayerUtils.getPlayer(uuid));
+	}
+
+	public static Punishments of(PlayerOwnedObject player) {
+		return of(player.getUuid());
+	}
+
+	public static Punishments of(OfflinePlayer player) {
+		return new PunishmentsService().get(player);
+	}
+
 	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getActiveBan() {
-		return getActivePunishments(PunishmentType.BAN, PunishmentType.IP_BAN).stream()
+		return getActive(PunishmentType.BAN, PunishmentType.IP_BAN).stream()
 				.max(Comparator.comparing(Punishment::getTimestamp));
 	}
 
 	public Optional<Punishment> getActiveMute() {
-		return getActivePunishments(PunishmentType.MUTE).stream()
+		return getActive(PunishmentType.MUTE).stream()
+				.max(Comparator.comparing(Punishment::getTimestamp));
+	}
+
+	public Optional<Punishment> getActiveFreeze() {
+		return getActive(PunishmentType.FREEZE).stream()
 				.max(Comparator.comparing(Punishment::getTimestamp));
 	}
 
 	public List<Punishment> getNewWarnings() {
-		return getActivePunishments(PunishmentType.WARN).stream()
+		return getActive(PunishmentType.WARN).stream()
 				.filter(punishment -> !punishment.hasBeenReceived())
 				.collect(toList());
 	}
 
-	private List<Punishment> getActivePunishments(PunishmentType... types) {
+	private List<Punishment> getActive(PunishmentType... types) {
 		return punishments.stream()
 				.filter(punishment -> punishment.isActive() && Arrays.asList(types).contains(punishment.getType()))
 				.collect(toList());
 	}
 
 	public void add(PunishmentBuilder builder) {
-		Punishment punishment = builder.build();
+		Punishment punishment = builder.uuid(uuid).build();
 		punishments.add(punishment);
 		save();
 
 		punishment.getType().action(punishment);
-		String message = "&e" + punishment.getPunisher().getName() + " &c" + punishment.getType().getEnglish() + " &e" + punishment.getName();
-		if (punishment.getSeconds() > 0)
-			message += " &cfor &e" + punishment.getTimeLeft();
+		punishment.announceStart();
+	}
 
-		message += " &cfor &7" + punishment.getReason();
+	private static void broadcast(String message) {
 		Chat.broadcastIngame(PREFIX + message);
 		Chat.broadcastDiscord(DISCORD_PREFIX + message);
 	}
@@ -101,13 +123,19 @@ public class Punishments extends PlayerOwnedObject {
 		private UUID id;
 		private UUID uuid;
 		private UUID punisher;
+
 		private PunishmentType type;
 		private String reason;
 		private boolean active;
+
 		private LocalDateTime timestamp;
 		private long seconds;
 		private LocalDateTime expiration;
 		private LocalDateTime received;
+
+		private UUID remover;
+		private LocalDateTime removed;
+
 		private UUID replacedBy;
 
 		@Builder
@@ -117,6 +145,7 @@ public class Punishments extends PlayerOwnedObject {
 			this.type = type;
 			this.punisher = punisher;
 			this.timestamp = LocalDateTime.now();
+			this.active = true;
 
 			if (type.hasTimespan()) {
 				Timespan timespan = Timespan.find(input);
@@ -130,13 +159,19 @@ public class Punishments extends PlayerOwnedObject {
 			return builder().type(type);
 		}
 
-		public OfflinePlayer getPunisher() {
-			return PlayerUtils.getPlayer(punisher);
-		}
-
 		public boolean isActive() {
 			LocalDateTime now = LocalDateTime.now();
-			return active && (timestamp == null || timestamp.isBefore(now)) && (expiration == null || expiration.isAfter(now));
+			if (!active)
+				return false;
+
+			if (type.hasTimespan()) {
+				if (timestamp != null && !timestamp.isBefore(now))
+					return false;
+				if (expiration != null && !expiration.isAfter(now))
+					return false;
+			}
+
+			return true;
 		}
 
 		private boolean hasBeenReceived() {
@@ -149,6 +184,29 @@ public class Punishments extends PlayerOwnedObject {
 			this.received = LocalDateTime.now();
 			if (this.type.hasTimespan())
 				this.expiration = Timespan.of(seconds).fromNow();
+		}
+
+		public void deactivate(UUID remover) {
+			this.active = false;
+			this.remover = remover;
+			announceEnd();
+			getType().onExpire(this);
+		}
+
+		private void announceStart() {
+			String message = "&e" + Nickname.of(punisher) + " &c" + type.getPastTense() + " &e" + getNickname();
+			if (seconds > 0)
+				message += " &cfor &e" + getTimeLeft();
+
+			if (!isNullOrEmpty(reason))
+				message += " &cfor &7" + reason;
+
+			broadcast(message);
+		}
+
+		private void announceEnd() {
+			if (remover != null)
+				broadcast("&e" + Nickname.of(remover) + " &3un" + type.getPastTense() + " &e" + getNickname());
 		}
 
 		public Component getDisconnectMessage() {
@@ -214,6 +272,11 @@ public class Punishments extends PlayerOwnedObject {
 						punishment.send("You have been muted"); // TODO
 					}
 				}
+
+				@Override
+				public void onExpire(Punishment punishment) {
+					punishment.send("Your mute has expired");
+				}
 			},
 			WARN("warned", false) {
 				@Override
@@ -224,18 +287,35 @@ public class Punishments extends PlayerOwnedObject {
 						punishment.send("You have been warned"); // TODO
 					}
 				}
+			},
+			FREEZE("froze", false) {
+				@Override
+				public void action(Punishment punishment) {
+					if (punishment.isOnline()) {
+						punishment.received();
+
+						punishment.send("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+					}
+				}
+
+				@Override
+				public void onExpire(Punishment punishment) {
+					punishment.send("&cYou have been unfrozen");
+				}
 			};
 
-			private final String english;
+			private final String pastTense;
 			@Accessors(fluent = true)
 			private final boolean hasTimespan;
 
-			PunishmentType(String english, boolean hasTimespan) {
-				this.english = english;
+			PunishmentType(String pastTense, boolean hasTimespan) {
+				this.pastTense = pastTense;
 				this.hasTimespan = hasTimespan;
 			}
 
 			public abstract void action(Punishment punishment);
+
+			public void onExpire(Punishment punishment) {}
 
 			public String getDisconnectMessage(Punishment punishment) {
 				throw new UnsupportedOperationException("Punishment type " + camelCase(this) + " does not have a disconnect message");

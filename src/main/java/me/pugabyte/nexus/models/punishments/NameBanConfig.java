@@ -69,7 +69,7 @@ public class NameBanConfig extends PlayerOwnedObject {
 			throw new InvalidInputException(name + " is already name banned");
 
 		addToBanList(uuid, name);
-		warn(executor, uuid);
+		warn(executor, uuid, name);
 
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 		if (player.isOnline() && player.getPlayer() != null)
@@ -83,13 +83,11 @@ public class NameBanConfig extends PlayerOwnedObject {
 		bannedNames.put(uuid, names);
 	}
 
-	private void warn(UUID executor, UUID uuid) {
-		Punishments player = new PunishmentsService().get(uuid);
-		player.add(Punishment.ofType(PunishmentType.WARN)
-				.uuid(uuid)
+	private void warn(UUID executor, UUID uuid, String name) {
+		Punishments.of(uuid).add(Punishment.ofType(PunishmentType.WARN)
 				.punisher(executor)
 				// TODO improve
-				.input("The name " + player.getName() + " is not allowed on this server"));
+				.input("The name " + name + " is not allowed on this server"));
 	}
 
 	public void unban(String name) {

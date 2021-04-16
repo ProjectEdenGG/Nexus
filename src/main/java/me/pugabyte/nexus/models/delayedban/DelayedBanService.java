@@ -2,10 +2,8 @@ package me.pugabyte.nexus.models.delayedban;
 
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import org.bukkit.OfflinePlayer;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,12 +16,4 @@ public class DelayedBanService extends MongoService {
 		return cache;
 	}
 
-	public boolean hasQueuedBan(OfflinePlayer player) {
-		List<DelayedBan> delayedBans = getAll();
-		for (DelayedBan delayedBan : delayedBans) {
-			if (delayedBan.getUuid().equals(player.getUniqueId()))
-				return true;
-		}
-		return false;
-	}
 }

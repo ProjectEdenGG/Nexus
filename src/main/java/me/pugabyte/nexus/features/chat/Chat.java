@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.chat.translator.Translator;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
@@ -22,6 +23,7 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -141,6 +143,14 @@ public class Chat extends Feature {
 
 	public static int getLocalRadius() {
 		return Nexus.getInstance().getConfig().getInt("localRadius");
+	}
+
+	public static void setActiveChannel(Player player, StaticChannel channel) {
+		new ChatService().<Chatter>get(player).setActiveChannel(channel.getChannel());
+	}
+
+	public static void setActiveChannel(PlayerOwnedObject player, StaticChannel channel) {
+		new ChatService().<Chatter>get(player).setActiveChannel(channel.getChannel());
 	}
 
 	// Broadcasts
