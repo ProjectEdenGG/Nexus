@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentBuilder;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
@@ -72,39 +73,27 @@ public class Punishments extends PlayerOwnedObject {
 
 	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getAnyActiveBan() {
-		return getActive(PunishmentType.BAN, PunishmentType.IP_BAN).stream()
-				.max(Comparator.comparing(Punishment::getTimestamp));
+		return getLastActive(PunishmentType.BAN, PunishmentType.IP_BAN);
 	}
 
 	public Optional<Punishment> getActiveBan() {
-		return getActive(PunishmentType.BAN).stream()
-				.max(Comparator.comparing(Punishment::getTimestamp));
+		return getLastActive(PunishmentType.BAN);
 	}
 
 	public Optional<Punishment> getActiveIPBan() {
-		return getActive(PunishmentType.IP_BAN).stream()
-				.max(Comparator.comparing(Punishment::getTimestamp));
+		return getLastActive(PunishmentType.IP_BAN);
 	}
 
 	public Optional<Punishment> getActiveMute() {
-		return getActive(PunishmentType.MUTE).stream()
-				.max(Comparator.comparing(Punishment::getTimestamp));
+		return getLastActive(PunishmentType.MUTE);
 	}
 
 	public Optional<Punishment> getActiveFreeze() {
-		return getActive(PunishmentType.FREEZE).stream()
-				.max(Comparator.comparing(Punishment::getTimestamp));
+		return getLastActive(PunishmentType.FREEZE);
 	}
 
 	public Optional<Punishment> getLastWarn() {
-		return getActive(PunishmentType.WARN).stream()
-				.max(Comparator.comparing(Punishment::getTimestamp));
-	}
-
-	public List<Punishment> getNewWarnings() {
-		return getActive(PunishmentType.WARN).stream()
-				.filter(punishment -> !punishment.hasBeenReceived())
-				.collect(toList());
+		return getLastActive(PunishmentType.WARN);
 	}
 
 	private List<Punishment> getActive(PunishmentType... types) {
@@ -113,13 +102,37 @@ public class Punishments extends PlayerOwnedObject {
 				.collect(toList());
 	}
 
+	private Optional<Punishment> getLastActive(PunishmentType... types) {
+		return getActive(types).stream().max(Comparator.comparing(Punishment::getTimestamp));
+	}
+
+	public List<Punishment> getNewWarnings() {
+		return getActive(PunishmentType.WARN).stream()
+				.filter(punishment -> !punishment.hasBeenReceived())
+				.collect(toList());
+	}
+
 	public void add(PunishmentBuilder builder) {
 		Punishment punishment = builder.uuid(uuid).build();
+
+		if (punishment.getType().isOnlyOneActive())
+			deactivatePrevious(punishment);
+
 		punishments.add(punishment);
 		punishment.getType().action(punishment);
 		punishment.announceStart();
 
 		save();
+	}
+
+	private void deactivatePrevious(Punishment punishment) {
+		for (Punishment old : getActive(punishment.getType())) {
+			old.setReplacedBy(punishment.getPunisher());
+			old.setActive(false);
+			String typeName = old.getType().name().toLowerCase().replace("_", "-");
+			Nerd.of(punishment.getPunisher()).send(PREFIX + "Replacing previous " + typeName + " for "
+					+ Nickname.of(punishment.getUuid()) + ": " + old.getReason() + " (" + old.getTimeSince() + ")");
+		}
 	}
 
 	public void remove(Punishment punishment) {
@@ -161,6 +174,8 @@ public class Punishments extends PlayerOwnedObject {
 		private LocalDateTime removed;
 
 		private UUID replacedBy;
+		// TODO: For ip bans?
+		//  private Set<UUID> related = new HashSet<>();
 
 		@Builder
 		public Punishment(@NotNull UUID uuid, @NotNull UUID punisher, @NotNull PunishmentType type, String input) {
@@ -265,7 +280,7 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			IP_BAN("ip-banned", true, false) { // TODO onlyOneActive ?
+			IP_BAN("ip-banned", true, true) { // TODO onlyOneActive ?
 				@Override
 				public void action(Punishment punishment) {
 					kick(punishment);
