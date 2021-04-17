@@ -24,6 +24,9 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +52,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +70,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 public class Murder extends TeamMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Murder";
 	}
 
@@ -165,15 +169,20 @@ public class Murder extends TeamMechanic {
 		Minigamer murderer = getMurderer(match);
 		Minigamer hero = matchData.getHero();
 
-		String broadcast;
+		TextComponent.Builder builder = Component.text();
 		if (!murderer.isAlive())
-			broadcast = murderer.getColoredName() + "&3 has been stopped by " + hero.getColoredName() + "&3 on";
+			builder.append(murderer.getComponent())
+					.append(Component.text(" has been stopped by "))
+					.append(hero.getComponent())
+					.append(Component.text(" on "));
 		else if (match.getTimer().getTime() != 0)
-			broadcast = murderer.getColoredName() + "&3 has won";
+			builder.append(murderer.getComponent()).append(Component.text(" has won on "));
 		else
-			broadcast = "The &9innocents &3have won";
+			builder.content("The ")
+					.append(Component.text("innocents", NamedTextColor.BLUE))
+					.append(Component.text(" have won"));
 
-		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
+		Minigames.broadcast(builder.append(match.getArena().getComponent()).build());
 	}
 
 	@Override

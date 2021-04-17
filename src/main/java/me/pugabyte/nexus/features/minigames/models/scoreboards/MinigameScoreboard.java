@@ -84,8 +84,8 @@ public interface MinigameScoreboard {
 		public ScoreboardTeam getScoreboardTeam(Team team) {
 			scoreboardTeams.computeIfAbsent(team, $ -> {
 				ScoreboardTeam scoreboardTeam = Minigames.getScoreboard().createTeam(match.getArena().getName() + "-" + team.getColoredName(), false);
-				scoreboardTeam.setColor(ColorType.toBukkit(team.getColor()));
-				scoreboardTeam.setPrefix(team.getColor().toString());
+				scoreboardTeam.setColor(ColorType.toBukkit(team.getChatColor()));
+				scoreboardTeam.setPrefix(team.getChatColor().toString());
 				scoreboardTeam.setNameTagVisibility(team.getNameTagVisibility());
 				return scoreboardTeam;
 			});

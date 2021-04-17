@@ -72,7 +72,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			})));
 
 		contents.set(1, 4, ClickableItem.from(nameItem(
-				ColorType.of(team.getColor()).getWool(),
+				ColorType.of(team.getChatColor()).getWool(),
 				"&eTeam Color",
 				"&7Set the color of the team"
 			),

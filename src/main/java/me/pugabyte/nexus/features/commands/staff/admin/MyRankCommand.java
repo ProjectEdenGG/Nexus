@@ -19,7 +19,7 @@ public class MyRankCommand extends CustomCommand {
 		for (Rank _rank : Rank.values())
 			runCommandAsConsole("lp user " + name() + " parent remove " + _rank.name());
 		runCommandAsConsole("lp user " + name() + " parent add " + rank.name());
-		send(PREFIX + "Set your rank to " + rank.withColor());
+		send(PREFIX + "Set your rank to " + rank.getColoredName());
 	}
 
 }

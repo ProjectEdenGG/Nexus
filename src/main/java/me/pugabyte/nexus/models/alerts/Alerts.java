@@ -11,10 +11,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,9 +61,6 @@ public class Alerts extends PlayerOwnedObject {
 	}
 
 	public boolean has(String highlight) {
-		if (highlights == null)
-			highlights = new ArrayList<>();
-
 		return get(highlight).isPresent();
 	}
 
@@ -74,7 +69,7 @@ public class Alerts extends PlayerOwnedObject {
 	}
 
 	public void clear() {
-		highlights = new ArrayList<>();
+		highlights.clear();
 	}
 
 	public boolean isMuted() {
@@ -91,18 +86,6 @@ public class Alerts extends PlayerOwnedObject {
 	}
 
 	public void tryAlerts(String message) {
-		Player player = (Player) PlayerUtils.getPlayer(uuid);
-
-		if (message.toLowerCase().contains(player.getName().toLowerCase())) {
-			playSound();
-			return;
-		}
-
-		if (message.toLowerCase().contains(Nickname.of(player).toLowerCase())) {
-			playSound();
-			return;
-		}
-
 		for (Highlight highlight : getHighlights())
 			if (highlight.test(message)) {
 				playSound();

@@ -18,6 +18,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -34,6 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.Objects;
 
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
@@ -43,7 +45,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer {
+public class Minigamer implements ColoredAndNicknamed {
 	@NonNull
 	private Player player;
 	@ToString.Exclude
@@ -80,14 +82,14 @@ public class Minigamer {
 	/**
 	 * Returns this minigamer's nickname, or player name if absent
 	 */
-	public String getNickname() {
+	public @NotNull String getNickname() {
 		return Nickname.of(player);
 	}
 
-	public String getColoredName() {
+	public @NotNull Color getColor() {
 		if (team == null)
-			return getNickname();
-		return team.getColor() + getNickname();
+			return Color.WHITE;
+		return team.getChatColor().getColor();
 	}
 
 	public void join(String name) {

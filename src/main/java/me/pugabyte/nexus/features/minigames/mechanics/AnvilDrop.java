@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ public class AnvilDrop extends TeamlessMechanic {
 	);
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Anvil Drop";
 	}
 

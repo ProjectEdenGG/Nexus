@@ -60,7 +60,7 @@ public class WhoIsCommand extends CustomCommand {
 
 		String nickname = Nickname.of(nerd);
 		Hours hours = hoursService.get(nerd);
-		String rank = nerd.getRank().withColor();
+		String rank = nerd.getRank().getColoredName();
 		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());
 		String lastJoinQuitLabel = null;
 		String lastJoinQuitDate = null;

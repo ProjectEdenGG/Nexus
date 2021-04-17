@@ -44,7 +44,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
 		int row = 1;
 		int column = 0;
 		for (Team team : arena.getTeams()) {
-			ItemStack item = new ItemStack(ColorType.of(team.getColor()).getWool());
+			ItemStack item = new ItemStack(ColorType.of(team.getChatColor()).getWool());
 			contents.set(row, column, ClickableItem.from(nameItem(item, "&e" + team.getColoredName()),
 					e -> menus.getTeamMenus().openTeamsEditorMenu(player, arena, team)));
 

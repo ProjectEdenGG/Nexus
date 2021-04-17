@@ -3,11 +3,12 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 import me.pugabyte.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class Maze extends CheckpointMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Maze";
 	}
 

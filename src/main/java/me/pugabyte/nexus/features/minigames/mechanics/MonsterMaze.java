@@ -26,6 +26,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	// MatchData
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Monster Maze";
 	}
 

@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ public class DiscordUser extends PlayerOwnedObject {
 		return super.getName();
 	}
 
-	public String getName() {
+	public @NotNull String getName() {
 		return Discord.getName(userId);
 	}
 

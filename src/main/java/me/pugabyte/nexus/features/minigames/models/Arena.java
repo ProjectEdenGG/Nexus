@@ -16,14 +16,20 @@ import me.pugabyte.nexus.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.interfaces.Named;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +48,7 @@ import static me.pugabyte.nexus.utils.SerializationUtils.YML.serializeMaterialSe
 @AllArgsConstructor
 @SerializableAs("Arena")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Arena implements ConfigurationSerializable {
+public class Arena implements ConfigurationSerializable, Named {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private int id = ArenaManager.getNextId();
@@ -137,6 +143,11 @@ public class Arena implements ConfigurationSerializable {
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 		}};
+	}
+
+	public @NotNull TextComponent getComponent() {
+		return Component.text(getDisplayName(), NamedTextColor.YELLOW)
+				.hoverEvent(HoverEvent.showText(Component.text(getMechanic().getName(), NamedTextColor.DARK_AQUA)));
 	}
 
 	public World getWorld() {

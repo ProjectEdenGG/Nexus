@@ -31,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ import java.util.Map;
 public final class HoliSplegg extends TeamlessMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Holi Splegg";
 	}
 

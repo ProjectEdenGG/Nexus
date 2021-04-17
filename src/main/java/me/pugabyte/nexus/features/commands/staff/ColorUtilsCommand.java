@@ -40,7 +40,7 @@ ColorUtilsCommand extends CustomCommand {
 
 	@Path("getRankHex <color>")
 	void getHex(Rank rank) {
-		getHex(rank.getColor());
+		getHex(rank.getChatColor());
 	}
 
 	@Path("runSpigotHexCommand <commandNoSlash...>")

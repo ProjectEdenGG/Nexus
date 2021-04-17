@@ -20,7 +20,7 @@ public class SetRankCommand extends CustomCommand {
 		for (Rank _rank : Rank.values())
 			runCommandAsConsole("lp user " + player.getName() + " parent remove " + _rank.name());
 		runCommandAsConsole("lp user " + player.getName() + " parent add " + rank.name());
-		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.withColor());
+		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.getColoredName());
 	}
 
 }

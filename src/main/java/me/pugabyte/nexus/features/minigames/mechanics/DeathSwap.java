@@ -34,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 
 public final class DeathSwap extends TeamlessMechanic {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Death Swap";
 	}
 

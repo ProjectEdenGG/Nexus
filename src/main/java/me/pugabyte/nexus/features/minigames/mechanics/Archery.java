@@ -38,6 +38,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Archery extends TeamlessMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Archery";
 	}
 

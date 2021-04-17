@@ -24,7 +24,7 @@ public class DemoteCommand extends CustomCommand {
 		for (Rank _rank : Rank.values())
 			runCommandAsConsole("lp user " + nerd.getName() + " parent remove " + _rank.name());
 		runCommandAsConsole("lp user " + nerd.getName() + " parent add " + previous.name());
-		send(PREFIX + "Demoted " + nerd.getName() + " to " + previous.withColor());
+		send(PREFIX + "Demoted " + nerd.getName() + " to " + previous.getColoredName());
 	}
 
 }

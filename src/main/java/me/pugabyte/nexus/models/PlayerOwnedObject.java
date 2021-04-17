@@ -1,11 +1,13 @@
 package me.pugabyte.nexus.models;
 
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import me.pugabyte.nexus.framework.interfaces.Nicknamed;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.nickname.NicknameService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -18,12 +20,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.AdventureUtils.identityOf;
 
-public abstract class PlayerOwnedObject implements Identified {
+/**
+ * A mongo database object owned by a player
+ */
+public abstract class PlayerOwnedObject implements Identified, Nicknamed {
 
 	public abstract UUID getUuid();
 
@@ -45,12 +52,24 @@ public abstract class PlayerOwnedObject implements Identified {
 		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
 	}
 
-	public String getName() {
-		return getOfflinePlayer().getName();
+	public @NotNull String getName() {
+		// silly failsafe for deleted users ig
+		String name = getOfflinePlayer().getName();
+		if (name == null)
+			name = getUuid().toString();
+		return name;
 	}
 
-	public String getNickname() {
+	public @NotNull String getNickname() {
 		return Nickname.of(getOfflinePlayer());
+	}
+
+	protected Nickname getNicknameData() {
+		return new NicknameService().get(getUuid());
+	}
+
+	public boolean hasNickname() {
+		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
 	}
 
 	public void send(String message) {

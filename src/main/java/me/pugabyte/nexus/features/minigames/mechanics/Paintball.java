@@ -16,12 +16,13 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 @Regenerating("regen")
 public final class Paintball extends TeamMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Paintball";
 	}
 
@@ -78,7 +79,7 @@ public final class Paintball extends TeamMechanic {
 	}
 
 	public void changeBlockColor(Minigamer minigamer, Block block) {
-		ColorType colorType = ColorType.of(minigamer.getTeam().getColor());
+		ColorType colorType = ColorType.of(minigamer.getTeam().getChatColor());
 		Material type = block.getType();
 		if (MaterialTag.COLORABLE.isTagged(type))
 			block.setType(colorType.switchColor(type));

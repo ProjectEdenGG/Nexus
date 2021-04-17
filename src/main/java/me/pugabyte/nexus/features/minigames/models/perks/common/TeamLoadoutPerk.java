@@ -52,7 +52,7 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 			tick(minigamer.getPlayer());
 			return;
 		}
-		getLoadout(minigamer.getTeam().getColor()).forEach((itemSlot, itemStack) -> sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
+		getLoadout(minigamer.getTeam().getChatColor()).forEach((itemSlot, itemStack) -> sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
 	}
 
 	public static ColorType getColorType(ChatColor color) {

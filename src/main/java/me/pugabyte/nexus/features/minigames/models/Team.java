@@ -8,10 +8,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Utils.MinMaxResult;
+import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -19,6 +22,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,13 +41,13 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @AllArgsConstructor
 @SerializableAs("Team")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Team implements ConfigurationSerializable {
+public class Team implements ConfigurationSerializable, ColoredAndNamed {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private String name = "Default";
 	@NonNull
 	@EqualsAndHashCode.Include
-	private ChatColor color = ChatColor.WHITE;
+	private ChatColor chatColor = ChatColor.WHITE;
 	private String objective;
 	private Loadout loadout = new Loadout();
 	private List<Location> spawnpoints = new ArrayList<>();
@@ -63,7 +67,7 @@ public class Team implements ConfigurationSerializable {
 
 	public Team(Map<String, Object> map) {
 		this.name = (String) map.getOrDefault("name", name);
-		this.color = ChatColor.valueOf(((String) map.getOrDefault("color", color.name())).toUpperCase());
+		this.chatColor = ChatColor.valueOf(((String) map.getOrDefault("color", chatColor.name())).toUpperCase());
 		this.objective = (String) map.get("objective");
 		this.loadout = (Loadout) map.getOrDefault("loadout", loadout);
 		this.spawnpoints = (List<Location>) map.getOrDefault("spawnpoints", spawnpoints);
@@ -79,7 +83,7 @@ public class Team implements ConfigurationSerializable {
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<String, Object>() {{
 			put("name", stripColor(getName()));
-			put("color", getColor().name());
+			put("color", getChatColor().name());
 			put("objective", getObjective());
 			put("loadout", getLoadout());
 			put("spawnpoints", getSpawnpoints());
@@ -91,8 +95,16 @@ public class Team implements ConfigurationSerializable {
 		}};
 	}
 
-	public String getColoredName() {
-		return color + name;
+	public @NotNull Color getColor() {
+		return chatColor.getColor();
+	}
+
+	public @NotNull String getColoredName() {
+		return chatColor + name;
+	}
+
+	public @NotNull TextComponent getComponent() {
+		return AdventureUtils.colorText(chatColor, name);
 	}
 
 	public void spawn(Match match) {
@@ -181,9 +193,9 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public ColorType getColorType() {
-		ColorType colorType = COLOR_TYPES.stream().filter(colorType1 -> getColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
+		ColorType colorType = COLOR_TYPES.stream().filter(colorType1 -> getChatColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
 		if (colorType == null)
-			Nexus.warn("Could not find a matching color type for team "+getName()+" (Color: "+getColor().getName()+")");
+			Nexus.warn("Could not find a matching color type for team "+getName()+" (Color: "+ getChatColor().getName()+")");
 		return colorType;
 	}
 

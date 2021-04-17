@@ -31,6 +31,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class PixelPainters extends TeamlessMechanic {
 	private final int ROUND_COUNTDOWN = 45 * 20;
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Pixel Painters";
 	}
 

@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Capture the Flag";
 	}
 

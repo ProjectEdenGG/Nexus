@@ -6,7 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.warps.WarpType;
 
 @Aliases("staffwarp")
-@Permission("group.staff")
+@Permission("ladder.noble")
 public class StaffWarpsCommand extends _WarpCommand {
 
 	public StaffWarpsCommand(CommandEvent event) {

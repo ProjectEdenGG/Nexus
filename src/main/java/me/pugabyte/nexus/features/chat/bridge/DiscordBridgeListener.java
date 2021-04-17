@@ -10,11 +10,14 @@ import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -66,7 +69,8 @@ public class DiscordBridgeListener extends ListenerAdapter {
 							.next(" &f&l[View Attachment]")
 							.url(attachment.getUrl());
 
-				channel.get().broadcastIngame(builder);
+				Identity identity = user == null ? Identity.nil() : user.identity();
+				channel.get().broadcastIngame(identity, AdventureUtils.fromJson(builder), MessageType.CHAT);
 			}
 		});
 	}

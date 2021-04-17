@@ -36,7 +36,7 @@ public class OnlineStaffCommand extends CustomCommand {
 			List<Nerd> nerds = rank.getOnlineNerds();
 			if (nerds.size() == 0) return;
 
-			send(rank.withColor() + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
+			send(rank.getColoredName() + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
 		});
 		line();
 		send("&3View a full list of staff members with &c/staff");
@@ -61,6 +61,6 @@ public class OnlineStaffCommand extends CustomCommand {
 		else if (afk)
 			modifiers = "&7[AFK] ";
 
-		return modifiers + nerd.getRank().getColor() + nerd.getName();
+		return modifiers + nerd.getRank().getChatColor() + nerd.getName();
 	}
 }
