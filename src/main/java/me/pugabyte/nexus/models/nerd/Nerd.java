@@ -70,6 +70,7 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 	private Set<String> pronouns = new HashSet<>();
 	private static final Set<String> PRONOUN_WHITELIST = ImmutableSet.of("she/her", "they/them", "he/him", "it/its", "xe/xem", "no pronouns", "any pronouns");
 	private static final Map<String, String> PRONOUN_ALIASES = new HashMap<>();
+	private static final LocalDateTime EARLIEST_JOIN = LocalDateTime.of(2015, 1, 1, 0, 0);
 
 	static {
 		PRONOUN_WHITELIST.forEach(string -> {
@@ -105,9 +106,12 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 	public void fromPlayer(OfflinePlayer player) {
 		uuid = player.getUniqueId();
 		name = player.getName();
-		LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
-		if (firstJoin == null || newFirstJoin.isBefore(firstJoin))
-			firstJoin = newFirstJoin;
+		if (player.getFirstPlayed() > 0) {
+			LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
+			if (firstJoin == null || firstJoin.isBefore(EARLIEST_JOIN) || newFirstJoin.isBefore(firstJoin))
+				firstJoin = newFirstJoin;
+		} else if (firstJoin == null)
+			firstJoin = LocalDateTime.now();
 		getNicknameData().fixPastNicknames();
 	}
 
@@ -118,7 +122,7 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 
 	/**
 	 * Returns the user's name formatted with a color formatting code
-	 * @deprecated you're probably looking for {@link #getColoredName()}
+	 * @deprecated you're probably looking for {@link Nerd#getColoredName()}
 	 */
 	@ToString.Include
 	@Deprecated
@@ -133,7 +137,7 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 	public @NotNull String getColoredName() {
 		if (isKoda())
 			return Koda.getColoredName();
-		return getRank().getChatColor() + getNickname();
+		return getChatColor() + getNickname();
 	}
 
 	public @NotNull Color getColor() {
