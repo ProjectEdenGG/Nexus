@@ -7,9 +7,12 @@ import me.pugabyte.nexus.models.alerts.Alerts;
 import me.pugabyte.nexus.models.alerts.AlertsService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
+import me.pugabyte.nexus.models.nickname.Nickname;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -43,6 +46,16 @@ public class AlertsListener implements Listener {
 	public void tryAlerts(Set<Chatter> recipients, String message) {
 		AlertsService service = new AlertsService();
 		recipients.forEach(chatter -> service.<Alerts>get(chatter.getUuid()).tryAlerts(message));
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		final AlertsService service = new AlertsService();
+		final Alerts alerts = service.get(player);
+		alerts.add(player.getName());
+		alerts.add(Nickname.of(player));
+		service.save(alerts);
 	}
 
 }

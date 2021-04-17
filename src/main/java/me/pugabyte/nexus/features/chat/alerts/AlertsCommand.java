@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.Optional;
 
 public class AlertsCommand extends CustomCommand {
-	private AlertsService service = new AlertsService();
+	private final AlertsService service = new AlertsService();
 	private Alerts alerts;
 
 	public AlertsCommand(CommandEvent event) {
@@ -71,6 +71,8 @@ public class AlertsCommand extends CustomCommand {
 	void add(String highlight) {
 		if (highlight.equalsIgnoreCase(name()))
 			error("Your name is automatically included in your alerts list");
+		if (highlight.equalsIgnoreCase(nickname()))
+			error("Your nickname is automatically included in your alerts list");
 
 		if (!alerts.add(highlight))
 			error("You already had &e" + highlight + " &3in your alerts list");
