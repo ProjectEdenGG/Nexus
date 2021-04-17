@@ -38,6 +38,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +46,7 @@ import java.util.List;
 public final class InvertoInferno extends TeamlessMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Inverto Inferno";
 	}
 

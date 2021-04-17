@@ -34,6 +34,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -42,7 +43,7 @@ import java.util.Map;
 
 public class UncivilEngineers extends TeamlessMechanic {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Uncivil Engineers";
 	}
 

@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class Infection extends TeamMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Infection";
 	}
 
@@ -46,12 +47,12 @@ public class Infection extends TeamMechanic {
 	}
 
 	public Team getZombieTeam(Arena arena) {
-		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getColor() == ChatColor.RED).findFirst();
+		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getChatColor() == ChatColor.RED).findFirst();
 		return teamOptional.orElse(null);
 	}
 
 	public Team getHumanTeam(Arena arena) {
-		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getColor() != ChatColor.RED).findFirst();
+		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getChatColor() != ChatColor.RED).findFirst();
 		return teamOptional.orElse(null);
 	}
 
@@ -64,19 +65,19 @@ public class Infection extends TeamMechanic {
 	}
 
 	public List<Minigamer> getZombies(Match match) {
-		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() == ChatColor.RED).collect(Collectors.toList());
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() == ChatColor.RED).collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getHumans(Match match) {
-		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() != ChatColor.RED).collect(Collectors.toList());
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() != ChatColor.RED).collect(Collectors.toList());
 	}
 
 	public boolean isZombie(Minigamer minigamer) {
-		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() == ChatColor.RED;
+		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() == ChatColor.RED;
 	}
 
 	public boolean isHuman(Minigamer minigamer) {
-		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getColor() != ChatColor.RED;
+		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() != ChatColor.RED;
 	}
 
 	@Override

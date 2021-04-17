@@ -16,7 +16,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
-import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
+import me.pugabyte.nexus.framework.interfaces.Named;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
@@ -30,6 +30,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -45,16 +46,16 @@ import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
-public abstract class Mechanic implements Listener, IHasTextComponent {
+public abstract class Mechanic implements Listener, Named {
 
 	public Mechanic() {
 		Nexus.registerListener(this);
 	}
 
-	public abstract String getName();
+	public abstract @NotNull String getName();
 
 	@Override
-	public TextComponent getComponent() {
+	public @NotNull TextComponent getComponent() {
 		return Component.text(getName(), NamedTextColor.YELLOW);
 	}
 

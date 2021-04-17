@@ -9,7 +9,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
-import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
+import me.pugabyte.nexus.framework.interfaces.Named;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.AdventureUtils;
@@ -182,15 +182,15 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		return winners;
 	}
 
-	protected TextComponent getWinnersComponent(List<? extends IHasTextComponent> winners) {
-		TextComponent component = AdventureUtils.commaJoinText(winners.stream().map(IHasTextComponent::getComponent).collect(Collectors.toList()));
+	protected TextComponent getWinnersComponent(List<? extends Named> winners) {
+		TextComponent component = AdventureUtils.commaJoinText(winners.stream().map(Named::getComponent).collect(Collectors.toList()));
 		if (winners.size() == 1)
 			return component.append(Component.text(" has won "));
 		else
 			return component.append(Component.text(" have tied on "));
 	}
 
-	protected TextComponent getWinnersComponent(IHasTextComponent... components) {
+	protected TextComponent getWinnersComponent(Named... components) {
 		return getWinnersComponent(Arrays.asList(components));
 	}
 }

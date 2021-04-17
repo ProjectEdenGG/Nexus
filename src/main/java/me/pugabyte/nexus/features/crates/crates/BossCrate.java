@@ -18,7 +18,7 @@ public class BossCrate extends Crate {
 	public List<String> getCrateHologramLines() {
 		return new ArrayList<String>() {{
 			add("&f&l--=[+]=--");
-			add("&f&k[+] " + Rank.OWNER.getColor() + "&lBoss Crate &f&k[+]");
+			add("&f&k[+] " + Rank.OWNER.getChatColor() + "&lBoss Crate &f&k[+]");
 			add("&f&l--=[+]=--");
 			add("&cComing Soon...");
 		}};

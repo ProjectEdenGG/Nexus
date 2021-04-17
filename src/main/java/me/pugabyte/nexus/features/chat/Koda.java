@@ -20,28 +20,37 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class Koda {
 	@Getter
 	private static final String PREFIX = StringUtils.getPrefix("KodaBear");
 	@Getter
-	private static final String nameFormat = "&5KodaBear";
+	private static final String name = "KodaBear";
 	@Getter
-	private static final String globalFormat = "&2[G] " + nameFormat + " &2&l> &f";
+	private static final ChatColor chatColor = ChatColor.DARK_PURPLE;
 	@Getter
-	private static final String localFormat = "&e[L] " + nameFormat + " &e&l> &f";
+	private static final Color color = chatColor.getColor();
 	@Getter
-	private static final String dmFormat = "&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e";
+	private static final String coloredName = chatColor + name;
+	@Getter
+	private static final String globalFormat = "&2[G] " + coloredName + " &2&l> &f";
+	@Getter
+	private static final String localFormat = "&e[L] " + coloredName + " &e&l> &f";
+	@Getter
+	private static final String dmFormat = colorize("&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e");
 	@Getter
 	private static final String discordFormat = "<@&&f" + Role.KODA.getId() + "> **>** ";
 	@Getter

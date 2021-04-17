@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +47,7 @@ public class PixelDrop extends TeamlessMechanic {
 	private final int ROUND_COUNTDOWN = Time.SECOND.x(45);
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Pixel Drop";
 	}
 

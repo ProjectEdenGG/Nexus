@@ -42,7 +42,7 @@ public class BrowseShopsProvider extends _ShopProvider {
 			int outOfStock = shop.getOutOfStock(shopGroup).size();
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop.getOfflinePlayer())
-					.name(Nerd.of(shop.getOfflinePlayer()).getNicknameFormat())
+					.name(Nerd.of(shop.getOfflinePlayer()).getColoredName())
 					.lore((inStock == 0 ? "&c" : "&a") + inStock + " " + plural("product", inStock) + " in stock")
 					.lore((outOfStock == 0 ? "&a" : "&c") + outOfStock + " " + plural("product", outOfStock) + " out of stock");
 

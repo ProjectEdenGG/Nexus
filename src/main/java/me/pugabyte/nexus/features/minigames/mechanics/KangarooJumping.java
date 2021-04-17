@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
 public final class KangarooJumping extends TeamlessMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Kangaroo Jumping";
 	}
 

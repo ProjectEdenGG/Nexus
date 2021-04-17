@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.T
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,7 @@ public class Juggernaut extends TeamMechanic {
 	private static final String TEAM_NAME = "Juggernaut";
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Juggernaut";
 	}
 

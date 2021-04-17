@@ -39,7 +39,7 @@ public class StaffCommand extends CustomCommand {
 
 		send(PREFIX + "Total: &e" + total);
 		line();
-		map.forEach((rank, nerds) -> send(rank.withColor() + " &f(" + nerds.size() + "):&e " + nerds.stream()
+		map.forEach((rank, nerds) -> send(rank.getColoredName() + " &f(" + nerds.size() + "):&e " + nerds.stream()
 				.sorted(Comparator.comparing(Nerd::getName, String.CASE_INSENSITIVE_ORDER))
 				.map(Nickname::of)
 				.filter(name -> !name.equals("KodaBear"))

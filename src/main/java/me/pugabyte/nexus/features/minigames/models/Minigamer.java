@@ -18,16 +18,13 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -38,6 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.Objects;
 
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
@@ -47,7 +45,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer implements IHasTextComponent {
+public class Minigamer implements ColoredAndNicknamed {
 	@NonNull
 	private Player player;
 	@ToString.Exclude
@@ -84,23 +82,14 @@ public class Minigamer implements IHasTextComponent {
 	/**
 	 * Returns this minigamer's nickname, or player name if absent
 	 */
-	public String getNickname() {
+	public @NotNull String getNickname() {
 		return Nickname.of(player);
 	}
 
-	public String getColoredName() {
+	public @NotNull Color getColor() {
 		if (team == null)
-			return getNickname();
-		return team.getColor() + getNickname();
-	}
-
-	/**
-	 * Returns the player's (nick)name, colored with their team color.
-	 */
-	public TextComponent getComponent() {
-		if (team == null)
-			return Component.text(getNickname());
-		return AdventureUtils.colorText(team.getColor(), getNickname());
+			return Color.WHITE;
+		return team.getChatColor().getColor();
 	}
 
 	public void join(String name) {

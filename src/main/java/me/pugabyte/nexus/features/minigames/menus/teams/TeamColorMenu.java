@@ -41,11 +41,11 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 		for (ColorType colorType : COLOR_TYPES) {
 			ItemStack item = nameItem(colorType.getWool(), colorType.getDisplayName());
 
-			if (colorType.getChatColor() == team.getColor())
+			if (colorType.getChatColor() == team.getChatColor())
 				addGlowing(item);
 
 			contents.set(row, column, ClickableItem.from(item, e -> {
-				team.setColor(colorType.getChatColor());
+				team.setChatColor(colorType.getChatColor());
 				arena.write();
 				teamMenus.openTeamsColorMenu(player, arena, team);
 			}));

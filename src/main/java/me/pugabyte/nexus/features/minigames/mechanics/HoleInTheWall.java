@@ -32,6 +32,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +43,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class HoleInTheWall extends TeamlessMechanic {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Hole in the Wall";
 	}
 

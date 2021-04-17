@@ -10,11 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public final class OneInTheQuiver extends TeamlessMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "One in the Quiver";
 	}
 

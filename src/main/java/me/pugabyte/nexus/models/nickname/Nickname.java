@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class Nickname extends PlayerOwnedObject {
 		return new NicknameService().<Nickname>get(player).getNickname();
 	}
 
-	public String getNickname() {
+	public @NotNull String getNickname() {
 		if (isNullOrEmpty(nickname))
 			return getName();
 		return nickname;

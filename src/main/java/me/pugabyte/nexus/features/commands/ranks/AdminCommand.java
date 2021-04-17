@@ -17,11 +17,11 @@ public class AdminCommand extends CustomCommand {
 	@Path
 	void admin() {
 		line(5);
-		send(Rank.ADMIN.getColor() + "Administrator &3is the highest possible rank to achieve on the server. They are in charge of the &eentire &3server and staff, " +
+		send(Rank.ADMIN.getChatColor() + "Administrator &3is the highest possible rank to achieve on the server. They are in charge of the &eentire &3server and staff, " +
 				"and making sure everything is running as it should.");
 		line();
 		send("&3[+] &eSenior Staff rank");
-		send("&3[+] &eHow to achieve&3: &3Promoted from " + Rank.OPERATOR.getColor() + "Operator &3by existing Admins");
+		send("&3[+] &eHow to achieve&3: &3Promoted from " + Rank.OPERATOR.getChatColor() + "Operator &3by existing Admins");
 		send(json("&3[+] &eClick here &3for a list of admins").command("/admin list"));
 		line();
 		RanksCommand.ranksReturn(player());
@@ -31,9 +31,9 @@ public class AdminCommand extends CustomCommand {
 	@Path("list")
 	void list() {
 		line();
-		send("&3All current " + Rank.ADMIN.getColor() + "Admins &3and the date they were promoted:");
+		send("&3All current " + Rank.ADMIN.getChatColor() + "Admins &3and the date they were promoted:");
 		Rank.ADMIN.getNerds().forEach(nerd ->
-				send(nerd.getNicknameFormat() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
+				send(nerd.getColoredName() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
 		line();
 		RanksCommand.ranksReturn(player());
 	}

@@ -43,6 +43,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class HideAndSeek extends Infection {
 	private static final int SOLIDIFY_PLAYER_AT = Time.SECOND.x(5);
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Hide and Seek";
 	}
 

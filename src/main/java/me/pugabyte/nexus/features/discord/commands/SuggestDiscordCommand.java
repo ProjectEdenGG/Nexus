@@ -59,7 +59,7 @@ public class SuggestDiscordCommand extends Command {
 					next = nerd.getRank().getPromotion();
 
 				if (!Arrays.asList(Rank.MEMBER, Rank.TRUSTED, Rank.ELITE, Rank.VETERAN).contains(nerd.getRank()))
-					throw new InvalidInputException(nerd.getName() + " is not eligible for promotion (They are " + nerd.getRank().plain() + ")");
+					throw new InvalidInputException(nerd.getName() + " is not eligible for promotion (They are " + nerd.getRank().getName() + ")");
 
 				Hours hours = new HoursService().get(nerd);
 
@@ -71,7 +71,7 @@ public class SuggestDiscordCommand extends Command {
 					 history = "[View](https://bans.bnn.gg/history.php?uuid=" + nerd.getUuid() + ")";
 
 				EmbedBuilder embed = new EmbedBuilder()
-						.appendDescription("\n:information_source: **Rank**: " + nerd.getRank().plain())
+						.appendDescription("\n:information_source: **Rank**: " + nerd.getRank().getName())
 						.appendDescription("\n:calendar_spiral: **First join**: " + firstJoin)
 						.appendDescription("\n:clock" + RandomUtils.randomInt(1, 12) + ": **Hours (Total)**: " + hoursTotal)
 						.appendDescription("\n:clock" + RandomUtils.randomInt(1, 12) + ": **Hours (Monthly)**: " + hoursMonthly)
@@ -84,7 +84,7 @@ public class SuggestDiscordCommand extends Command {
 				if (nerd.hasNickname())
 					name += " (" + Nickname.of(nerd) + ")";
 				event.reply(new MessageBuilder()
-						.setContent("@here " + event.getAuthor().getAsMention() + " is suggesting **" + name + "** for **" + camelCase(next.plain()) + "**")
+						.setContent("@here " + event.getAuthor().getAsMention() + " is suggesting **" + name + "** for **" + camelCase(next.getName()) + "**")
 						.setEmbed(embed.build())
 						.build());
 			} catch (Exception ex) {

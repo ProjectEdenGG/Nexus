@@ -101,7 +101,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			return;
 		}
 
-		ChatColor chatColor = team.getColor();
+		ChatColor chatColor = team.getChatColor();
 		DiscordId.VoiceChannel vcEnum;
 
 		if (chatColor == ChatColor.RED || chatColor == ChatColor.DARK_RED)

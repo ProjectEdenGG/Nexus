@@ -52,6 +52,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 public class Murder extends TeamMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Murder";
 	}
 

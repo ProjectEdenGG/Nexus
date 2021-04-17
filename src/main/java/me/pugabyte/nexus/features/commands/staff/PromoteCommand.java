@@ -28,7 +28,7 @@ public class PromoteCommand extends CustomCommand {
 		for (Rank _rank : Rank.values())
 			runCommandAsConsole("lp user " + nerd.getName() + " parent remove " + _rank.name());
 		runCommandAsConsole("lp user " + nerd.getName() + " parent add " + next.name());
-		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.withColor());
+		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.getColoredName());
 
 		if (nerd.getOfflinePlayer().isOnline()) {
 			nerd.getPlayer().sendMessage(Component.text("\n", NamedTextColor.DARK_AQUA)

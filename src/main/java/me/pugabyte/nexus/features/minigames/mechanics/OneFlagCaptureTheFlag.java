@@ -12,13 +12,14 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "One Flag Capture the Flag";
 	}
 

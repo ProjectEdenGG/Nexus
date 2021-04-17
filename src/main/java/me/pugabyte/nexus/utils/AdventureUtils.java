@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.utils;
 
+import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -17,6 +19,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -85,7 +88,29 @@ public class AdventureUtils {
 	public static TextComponent colorText(@Nullable ColorType color, @NotNull String text) {
 		if (color == null || color.getColor() == null)
 			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getColor().getRed()));
+		return Component.text(text, TextColor.color(color.getColor().asRGB()));
+	}
+
+	public static TextComponent colorText(@Nullable Color color, @NotNull String text) {
+		if (color == null)
+			return Component.text(text);
+		return Component.text(text, TextColor.color(color.getRGB()));
+	}
+
+	public static TextComponent colorText(@Nullable org.bukkit.Color color, @NotNull String text) {
+		if (color == null)
+			return Component.text(text);
+		return Component.text(text, TextColor.color(color.asRGB()));
+	}
+
+	public static TextComponent colorText(@Nullable Colored color, @NotNull String text) {
+		if (color == null)
+			return Component.text(text);
+		return Component.text(text, color.getTextColor());
+	}
+
+	public static TextComponent colorText(@NotNull ColoredAndNamed coloredAndNamed) {
+		return Component.text(coloredAndNamed.getName(), coloredAndNamed.getTextColor());
 	}
 
 	/**

@@ -14,6 +14,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import static me.pugabyte.nexus.utils.Utils.getMax;
 public final class Siege extends OneFlagCaptureTheFlag {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Siege";
 	}
 

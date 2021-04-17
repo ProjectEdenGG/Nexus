@@ -16,22 +16,22 @@ import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.interfaces.IHasTextComponent;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Utils;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -52,7 +52,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends PlayerOwnedObject implements IHasTextComponent {
+public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -118,22 +118,26 @@ public class Nerd extends PlayerOwnedObject implements IHasTextComponent {
 
 	/**
 	 * Returns the user's name formatted with a color formatting code
-	 * @deprecated you're probably looking for {@link #getNicknameFormat()}
+	 * @deprecated you're probably looking for {@link #getColoredName()}
 	 */
 	@ToString.Include
 	@Deprecated
 	public String getNameFormat() {
-		return getRank().getColor() + getName();
+		return getRank().getChatColor() + getName();
 	}
 
-	public String getNicknameFormat() {
+	/**
+	 * Returns the user's nickname with their rank color prefixed. Formerly known as getNicknameFormat.
+	 */
+	@Override
+	public @NotNull String getColoredName() {
 		if (isKoda())
-			return Koda.getNameFormat();
-		return getRank().getColor() + Nickname.of(getUuid());
+			return Koda.getColoredName();
+		return getRank().getChatColor() + getNickname();
 	}
 
-	public TextComponent getComponent() {
-		return AdventureUtils.colorText(getRank().getColor(), getNickname());
+	public @NotNull Color getColor() {
+		return getRank().getColor();
 	}
 
 	private boolean isKoda() {
@@ -143,7 +147,7 @@ public class Nerd extends PlayerOwnedObject implements IHasTextComponent {
 	@ToString.Include
 	public String getChatFormat() {
 		if (isKoda())
-			return Koda.getNameFormat();
+			return Koda.getColoredName();
 
 		Rank rank = getRank();
 
@@ -156,7 +160,7 @@ public class Nerd extends PlayerOwnedObject implements IHasTextComponent {
 
 		if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmark)
 			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (rank.getColor() + Nickname.of(getOfflinePlayer())).trim())).trim();
+		return colorize((prefix.trim() + " " + (rank.getChatColor() + Nickname.of(getOfflinePlayer())).trim())).trim();
 	}
 
 	@ToString.Include

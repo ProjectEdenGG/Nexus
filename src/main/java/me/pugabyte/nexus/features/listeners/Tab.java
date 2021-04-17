@@ -49,7 +49,7 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		Nerd nerd = Nerd.of(player);
-		String name = nerd.getNicknameFormat();
+		String name = nerd.getColoredName();
 		if (AFK.get(player).isAfk())
 			name += " &7&o[AFK]";
 		if (nerd.isVanished())

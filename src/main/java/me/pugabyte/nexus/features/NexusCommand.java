@@ -441,7 +441,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("getRank <player>")
 	void getRank(Nerd player) {
-		send(player.getRank().withColor());
+		send(player.getRank().getColoredName());
 	}
 
 	@Path("getPlayer [player]")

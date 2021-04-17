@@ -18,13 +18,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
 
 public final class Splegg extends SpleefMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Splegg";
 	}
 

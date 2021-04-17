@@ -15,7 +15,7 @@ public class OwnerCommand extends CustomCommand {
 	@Path
 	void owner() {
 		line(5);
-		send(Dev.GRIFFIN.getNerd().getNicknameFormat() + "&3, &efounder &3of the server. Along with the " + Rank.ADMIN.withColor() + " &3duties, he does most of the &eplugin &3management, " +
+		send(Dev.GRIFFIN.getNerd().getColoredName() + "&3, &efounder &3of the server. Along with the " + Rank.ADMIN.getColoredName() + " &3duties, he does most of the &eplugin &3management, " +
 				"&edevelops &3new aspects of the server, and uses donations to buy cool new things for the server.");
 		line();
 		send("&3[+] &eSenior Staff rank");

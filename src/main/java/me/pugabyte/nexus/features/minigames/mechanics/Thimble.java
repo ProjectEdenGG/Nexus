@@ -47,6 +47,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,7 +82,7 @@ public final class Thimble extends TeamlessMechanic {
 	private final int MAX_TURNS = 49;
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Thimble";
 	}
 

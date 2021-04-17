@@ -33,12 +33,12 @@ public class NPCUtilsCommand extends CustomCommand {
 
 	@Path("create <player>")
 	void create(@Arg("self") Nerd nerd) {
-		runCommand("mcmd npc create " + nerd.getNicknameFormat() + " ;; npc skin -l " + nerd.getName());
+		runCommand("mcmd npc create " + nerd.getColoredName() + " ;; npc skin -l " + nerd.getName());
 	}
 
 	@Path("setName withPrefix <player>")
 	void setNameWithFormat(Nerd nerd) {
-		runCommand("npc rename " + decolorize("&8&l[" + nerd.getRank().withColor() + "&8&l] " + nerd.getNameFormat()));
+		runCommand("npc rename " + decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getNameFormat()));
 	}
 
 	@Path("setName withColor <player>")
@@ -48,12 +48,12 @@ public class NPCUtilsCommand extends CustomCommand {
 
 	@Path("setNickname withPrefix <player>")
 	void setNicknameWithFormat(Nerd nerd) {
-		runCommand("npc rename " + decolorize("&8&l[" + nerd.getRank().withColor() + "&8&l] " + nerd.getNicknameFormat()));
+		runCommand("npc rename " + decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getColoredName()));
 	}
 
 	@Path("setNickname withColor <player>")
 	void setNicknameWithColor(Nerd nerd) {
-		runCommand("npc rename " + nerd.getNicknameFormat());
+		runCommand("npc rename " + nerd.getColoredName());
 	}
 
 	@Path("recreateNpc withColor <player>")

@@ -49,7 +49,7 @@ public class OnlineCommand extends CustomCommand {
 			List<Nerd> nerds = rank.getOnlineNerds().stream().filter(this::canSee).collect(Collectors.toList());
 			if (nerds.size() == 0) return;
 
-			JsonBuilder builder = new JsonBuilder(rank.withColor() + "s&f: ");
+			JsonBuilder builder = new JsonBuilder(rank.getColoredName() + "s&f: ");
 
 			nerds.forEach(nerd -> getNameWithModifiers(nerd, builder));
 
@@ -83,7 +83,7 @@ public class OnlineCommand extends CustomCommand {
 		else
 			builder.next("&f, ").group();
 
-		builder.next(modifiers + nerd.getNicknameFormat())
+		builder.next(modifiers + nerd.getColoredName())
 				.command("/quickaction " + nerd.getName())
 				.hover(getInfo(nerd, modifiers))
 				.group();
