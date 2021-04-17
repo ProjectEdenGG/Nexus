@@ -123,8 +123,8 @@ public class ChatManager {
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")
-					.addHover("&cChat message was filtered")
-					.addHover("&cClick to see original message")
+					.hover("&cChat message was filtered")
+					.hover("&cClick to see original message")
 					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
 
 		Component aPlayer = AdventureUtils.fromJson(json);

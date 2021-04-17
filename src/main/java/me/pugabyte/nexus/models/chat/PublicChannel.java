@@ -257,7 +257,7 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcastIngame(Chatter chatter, JsonBuilder builder) {
-		Bukkit.getConsoleSender().spigot().sendMessage(builder.build());
+		Bukkit.getConsoleSender().sendMessage(builder.build());
 		getRecipients(chatter).forEach(_chatter -> _chatter.send(builder));
 	}
 

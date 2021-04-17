@@ -33,7 +33,7 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 	}
 
 	public T addPage(JsonBuilder builder) {
-		meta.spigot().addPage(builder.build());
+		meta.addPages(builder.build());
 		return self();
 	}
 

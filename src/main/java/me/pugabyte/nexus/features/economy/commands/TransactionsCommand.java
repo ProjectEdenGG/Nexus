@@ -124,12 +124,12 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			JsonBuilder jsonBuilder = new JsonBuilder("&3" + index + " &7" + timestamp + "  " + newBalance + "  &7|  " +
 					fromPlayer + " &3→ " + toPlayer + "  " + amount + "  " + description)
-					.addHover("&3Time since: &e" + Timespan.of(transaction.getTimestamp()).format());
+					.hover("&3Time since: &e" + Timespan.of(transaction.getTimestamp()).format());
 
 			if (PlayerUtils.isAdminGroup(player) && Nexus.isDebug())
 				jsonBuilder
-					.addHover("")
-					.addHover(transaction.toString());
+					.hover("")
+					.hover(transaction.toString());
 
 			return jsonBuilder;
 		};

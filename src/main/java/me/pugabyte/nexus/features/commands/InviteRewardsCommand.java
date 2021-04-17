@@ -12,7 +12,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.vote.Voter;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
@@ -105,7 +105,7 @@ public class InviteRewardsCommand extends CustomCommand {
 		send(invited, json("  &3Did &e" + Nickname.of(inviter) + " &3invite you to Bear Nation?"));
 
 		send(invited, json()
-				.next("  &3Click one  ||").color(ChatColor.DARK_AQUA)
+				.next("  &3Click one  ||").color(NamedTextColor.DARK_AQUA)
 				.next("  &a&lYes  ").command("/invited confirm " + inviter.getName())
 				.group()
 				.next("&3||")

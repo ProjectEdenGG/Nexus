@@ -72,8 +72,8 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String worldName = snapshot.getLocation().getWorld().getName();
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
 			return json("&3" + index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
-					.addHover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
-					.addHover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
+					.hover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
+					.hover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
 		};
 		paginate(history.getSnapshots(), formatter, "/inventorysnapshots " + history.getName(), page);

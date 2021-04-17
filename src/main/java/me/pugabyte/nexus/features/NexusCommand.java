@@ -874,19 +874,19 @@ public class NexusCommand extends CustomCommand implements Listener {
 			AdvancementProgress progress = player.getAdvancementProgress(advancement);
 			json.next((progress.isDone() ? "&e" : "&c") + advancement.getKey().getKey());
 
-			json.addHover("&eAwarded Criteria:");
+			json.hover("&eAwarded Criteria:");
 			for (String criteria : progress.getAwardedCriteria()) {
 				String text = "&7- &e" + criteria;
 				Date dateAwarded = progress.getDateAwarded(criteria);
 				if (dateAwarded != null)
 					text += " &7- " + shortDateFormat(dateAwarded.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-				json.addHover(text);
+				json.hover(text);
 			}
 
-			json.addHover(" ");
-			json.addHover("&cRemaining Criteria:");
+			json.hover(" ");
+			json.hover("&cRemaining Criteria:");
 			for (String criteria : progress.getRemainingCriteria())
-				json.addHover("&7- &c" + criteria);
+				json.hover("&7- &c" + criteria);
 
 			return json;
 		};

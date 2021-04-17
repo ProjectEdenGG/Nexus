@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +46,7 @@ import java.util.stream.Collectors;
 public abstract class TeamMechanic extends MultiplayerMechanic {
 	public static final Set<String> TEAM_VOICE_CHANNELS;
 	public static final Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
-	private static final BaseComponent[] RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
+	private static final Component RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
 
 	static {
 		Set<String> channels = new HashSet<>();
@@ -125,11 +124,11 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 //		if (teamChannel == null && !voiceMessageBuilder.isInitialized()) return;
 
-		BaseComponent[] message;
+		Component message;
 		if (voiceMessageBuilder.isInitialized())
 			message = voiceMessageBuilder.build();
 		else
-			message = new BaseComponent[]{}; // not rly necessary but it makes IDE stop yelling that it's not initialized
+			message = Component.text().asComponent(); // not rly necessary but it makes IDE stop yelling that it's not initialized
 
 		teamMembers.forEach(minigamer -> {
 			// add voice channel text if present and if user is in voice

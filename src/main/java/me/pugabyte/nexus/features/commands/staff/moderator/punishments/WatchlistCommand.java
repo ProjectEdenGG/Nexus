@@ -109,7 +109,7 @@ public class WatchlistCommand extends CustomCommand implements Listener {
 		BiFunction<Watchlisted, String, JsonBuilder> formatter = (watchlisted, index) ->
 				json("&3" + index + " &7" + shortDateFormat(watchlisted.getWatchlistedOn().toLocalDate()) + " &e"
 						+ watchlisted.getName() + " &7- " + ellipsis(watchlisted.getReason(), 50))
-						.addHover("&7" + watchlisted.getReason())
+						.hover("&7" + watchlisted.getReason())
 						.command("/watchlist info " + watchlisted.getName());
 		paginate(watchlistedPlayers, formatter, "/watchlist list", page);
 	}
