@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.canSee;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
@@ -113,13 +114,21 @@ public class ChatManager {
 		JsonBuilder staff = new JsonBuilder(chatterFormat);
 
 		Nerd nerd = Nerd.of(event.getChatter());
-		if (nerd.hasNickname()) {
-			json.hover("&3Real name: &e" + nerd.getName()).group();
-			staff.hover("&3Real name: &e" + nerd.getName()).group();
+
+		List<String> hoverLines = new ArrayList<>();
+		if (nerd.hasNickname())
+			hoverLines.add("&3Real name: &e" + nerd.getName());
+		if (!nerd.getPronouns().isEmpty())
+			hoverLines.add("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e"+pronoun+"&3").collect(Collectors.joining(", ")));
+
+		if (!hoverLines.isEmpty()) {
+			String hover = String.join("\n", hoverLines);
+			json.hover(hover).group();
+			staff.hover(hover).group();
 		}
 
-		json.next(event.getMessage());
-		staff.next(event.getMessage());
+		json.hover("").next(event.getMessage());
+		staff.hover("").next(event.getMessage());
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")

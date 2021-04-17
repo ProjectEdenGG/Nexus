@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.models.nerd;
 
-import com.google.common.collect.ImmutableSet;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
@@ -15,12 +14,16 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
+import me.pugabyte.nexus.features.commands.PronounsCommand;
+import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
@@ -36,9 +39,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -68,17 +69,7 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 	private String about;
 	private boolean meetMeVideo;
 	private Set<String> pronouns = new HashSet<>();
-	private static final Set<String> PRONOUN_WHITELIST = ImmutableSet.of("she/her", "they/them", "he/him", "it/its", "xe/xem", "no pronouns", "any pronouns");
-	private static final Map<String, String> PRONOUN_ALIASES = new HashMap<>();
 	private static final LocalDateTime EARLIEST_JOIN = LocalDateTime.of(2015, 1, 1, 0, 0);
-
-	static {
-		PRONOUN_WHITELIST.forEach(string -> {
-			PRONOUN_ALIASES.put(string, string);
-			for (String alias : string.split(" ")[0].split("/"))
-				PRONOUN_ALIASES.put(alias, string);
-		});
-	}
 
 	private Location teleportOnLogin;
 
@@ -110,8 +101,7 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 			LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
 			if (firstJoin == null || firstJoin.isBefore(EARLIEST_JOIN) || newFirstJoin.isBefore(firstJoin))
 				firstJoin = newFirstJoin;
-		} else if (firstJoin == null)
-			firstJoin = LocalDateTime.now();
+		}
 		getNicknameData().fixPastNicknames();
 	}
 
@@ -226,14 +216,23 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 		}
 	}
 
-	public void addPronouns(String pronoun) {
-		pronoun = PRONOUN_ALIASES.getOrDefault(pronoun, pronoun);
+	public void addPronoun(String pronoun) {
+		pronoun = PronounsCommand.getPronoun(pronoun);
 		pronouns.add(pronoun);
-		pronounUpdate();
+		Discord.staffLog(getNickname() + " added the pronoun `" + pronoun + "`");
+		updatePronouns();
 	}
 
-	public void pronounUpdate() {
-		// TODO
+	public void removePronoun(String pronoun) {
+		pronoun = PronounsCommand.getPronoun(pronoun);
+		pronouns.remove(pronoun);
+		Discord.staffLog(getNickname() + " removed the pronoun `" + pronoun + "`");
+		updatePronouns();
+	}
+
+	public void updatePronouns() {
+		new DiscordUserService().<DiscordUser>get(this).updatePronouns(pronouns);
+		new NerdService().save(this);
 	}
 
 	@Data
