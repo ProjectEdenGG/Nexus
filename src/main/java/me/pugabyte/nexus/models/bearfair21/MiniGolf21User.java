@@ -9,18 +9,25 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfColor;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Particle;
+import org.bukkit.Location;
 import org.bukkit.entity.Snowball;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -28,7 +35,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters(UUIDConverter.class)
+@Converters({UUIDConverter.class, LocationConverter.class})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MiniGolf21User extends PlayerOwnedObject {
 	@Id
@@ -36,28 +43,31 @@ public class MiniGolf21User extends PlayerOwnedObject {
 	@EqualsAndHashCode.Include
 	private UUID uuid;
 	private MiniGolfColor miniGolfColor = MiniGolfColor.WHITE;
-	private Particle particle = null;
+	private MiniGolfParticle miniGolfParticle = null;
 	private boolean playing = false;
+	private boolean rainbow = false;
+	//
+	private Set<MiniGolfHole> holeInOne = new HashSet<>();
+	private Map<MiniGolfHole, Integer> score = new HashMap<>();
+	private MiniGolfHole currentHole = null;
+	private int currentStrokes = 0;
 	//
 	private transient Snowball snowball = null;
-	private transient Integer currentHole = null;
-	private transient int currentStrokes = 0;
-	private transient int totalStrokes = 0;
+	private transient Location ballLocation = null;
 
-	public int incStrokes() {
-		return this.currentStrokes += 1;
-	}
-
-	public void incTotalStrokes() {
-		this.totalStrokes += this.currentStrokes;
+	public void incStrokes() {
+		this.currentStrokes += 1;
 	}
 
 	public void removeBall() {
 		if (snowball != null) {
 			snowball.remove();
 			snowball = null;
+			ballLocation = null;
 		}
 	}
+
+	// Color
 
 	public Color getColor() {
 		return this.miniGolfColor.getColorType().getColor();

@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

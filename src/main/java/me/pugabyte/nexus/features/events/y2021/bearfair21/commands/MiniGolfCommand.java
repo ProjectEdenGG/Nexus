@@ -1,7 +1,11 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfColor;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfUtils;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.menus.MiniGolfColorMenu;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.menus.MiniGolfParticleMenu;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
+import me.pugabyte.nexus.features.menus.BookBuilder;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -9,8 +13,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
-import me.pugabyte.nexus.utils.StringUtils;
-import org.bukkit.Particle;
+import me.pugabyte.nexus.utils.JsonBuilder;
+
+import java.util.Map;
 
 @Permission("group.staff")
 public class MiniGolfCommand extends CustomCommand {
@@ -20,12 +25,7 @@ public class MiniGolfCommand extends CustomCommand {
 	public MiniGolfCommand(CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			user = MiniGolf.getUser(uuid());
-	}
-
-	@Path("kit")
-	void getKit() {
-		MiniGolf.giveKit(user);
+			user = MiniGolfUtils.getUser(uuid());
 	}
 
 	@Path("play")
@@ -34,12 +34,13 @@ public class MiniGolfCommand extends CustomCommand {
 			error("You are already playing");
 
 		user.setPlaying(true);
+		user.getScore().clear();
 		service.save(user);
 
 		player().setCollidable(false);
 
 		MiniGolf.takeKit(user);
-		getKit();
+		MiniGolf.giveKit(user);
 		send(PREFIX + "You are now playing");
 	}
 
@@ -62,39 +63,67 @@ public class MiniGolfCommand extends CustomCommand {
 		send(PREFIX + "You have quit playing");
 	}
 
-	@Path("color <color>")
-	void color(MiniGolfColor color) {
-		if (color == null)
-			error("Unknown color");
+	@Path("score <page>")
+	void getScore(int page) {
+		BookBuilder.WrittenBookMenu builder = new BookBuilder.WrittenBookMenu();
+		JsonBuilder json = new JsonBuilder();
+		Map<MiniGolfHole, Integer> score = user.getScore();
 
-		if (user.getSnowball() == null)
-			MiniGolf.takeKit(user);
+		json.next(" ## |  Par | Strokes").newline();
+		json.next("------------------").newline();
 
-		user.setMiniGolfColor(color);
-		service.save(user);
+		int count = 0;
+		int holeNdx = page == 1 ? 1 : 10;
 
-		if (user.getSnowball() == null)
-			MiniGolf.giveKit(user);
+		//  01 |  05   |     5
+		for (MiniGolfHole hole : MiniGolfHole.getHoles()) {
+			if (hole.ordinal() < holeNdx - 1) {
+				continue;
+			}
 
-		MiniGolfColor _color = user.getMiniGolfColor();
-		String message = PREFIX + "Set color to: ";
-		String colorName = StringUtils.camelCase(_color);
+			String holeNumber = String.valueOf(holeNdx);
+			if (holeNdx < 10)
+				holeNumber = "0" + holeNdx;
 
-		if (_color.equals(MiniGolfColor.RAINBOW))
-			send(message + StringUtils.Rainbow.apply(colorName));
+			String strokes = " ?";
+			if (score.containsKey(hole)) {
+				int strokeCount = score.get(hole);
+				strokes = " " + strokeCount;
+				if (strokeCount > 9)
+					strokes = String.valueOf(strokeCount);
+			}
+
+			json.next(" " + holeNumber + " |   " + hole.getPar() + "   |   " + strokes).newline();
+
+			holeNdx++;
+			if (++count >= 9)
+				break;
+		}
+
+		json.newline().group();
+
+		if (page == 1)
+			json.next("      &3----> ").hover("&eNext").command("/minigolf score 2");
 		else
-			send(message + _color.getColorType().getChatColor() + colorName);
+			json.next("      &3<---- ").hover("&eBack").command("/minigolf score 1");
+
+		builder.addPage(json).open(player());
 	}
 
-	@Path("particle <particle>")
-	void particle(Particle particle) {
-		if (particle == null)
-			error("Unknown particle");
+	@Path("kit")
+	void getKit() {
+		MiniGolf.takeKit(user);
+		MiniGolf.giveKit(user);
+	}
 
-		user.setParticle(particle);
-		service.save(user);
+	@Path("color")
+	void color() {
+		MiniGolfColorMenu.getInv().open(player());
+	}
 
-		send(PREFIX + "Set particle to: " + StringUtils.camelCase(user.getParticle()));
+	@Path("particle")
+	void particle() {
+		MiniGolfParticleMenu.getInv().open(player());
 	}
 
 	@Path("clearDatabase")

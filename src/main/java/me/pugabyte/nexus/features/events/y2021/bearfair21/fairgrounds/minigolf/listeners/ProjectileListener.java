@@ -1,7 +1,10 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfUtils;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -14,8 +17,6 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
@@ -64,26 +65,16 @@ public class ProjectileListener implements Listener {
 				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getPlayer());
 
 			// Stroke
-			ball.setCustomName(MiniGolf.getStrokeString(user));
+			ball.setCustomName(MiniGolfUtils.getStrokeString(user));
 			ball.setCustomNameVisible(true);
 			ball.setTicksLived(entity.getTicksLived());
-
-			PersistentDataContainer old = entity.getPersistentDataContainer();
-			PersistentDataContainer current = ball.getPersistentDataContainer();
-			// Last pos
-			double x = old.get(MiniGolf.getXKey(), PersistentDataType.DOUBLE);
-			double y = old.get(MiniGolf.getYKey(), PersistentDataType.DOUBLE);
-			double z = old.get(MiniGolf.getZKey(), PersistentDataType.DOUBLE);
-			current.set(MiniGolf.getXKey(), PersistentDataType.DOUBLE, x);
-			current.set(MiniGolf.getYKey(), PersistentDataType.DOUBLE, y);
-			current.set(MiniGolf.getZKey(), PersistentDataType.DOUBLE, z);
 
 			// Golf ball hit entity
 			if (event.getHitBlockFace() == null) {
 				event.setCancelled(true);
 				Material _mat = loc.getBlock().getType();
 				if (_mat == Material.WATER || _mat == Material.LAVA)
-					MiniGolf.respawnBall(ball);
+					MiniGolfUtils.respawnBall(ball);
 				return;
 			}
 
@@ -121,13 +112,13 @@ public class ProjectileListener implements Listener {
 							Material _mat = loc.getBlock().getType();
 							if (mat == Material.CRIMSON_HYPHAE || mat == Material.PURPLE_STAINED_GLASS || _mat == Material.WATER || _mat == Material.LAVA) {
 								// Ball hit out of bounds
-								MiniGolf.respawnBall(ball);
+								MiniGolfUtils.respawnBall(ball);
 								return;
 							}
 
 							if (vel.getY() >= 0 && vel.length() <= 0.01 && !MiniGolf.getInBounds().contains(mat)) {
 								// Ball stopped in out of bounds
-								MiniGolf.respawnBall(ball);
+								MiniGolfUtils.respawnBall(ball);
 								return;
 							}
 
@@ -137,8 +128,7 @@ public class ProjectileListener implements Listener {
 
 						if (vel.getY() < 0.1) {
 							vel.setY(0);
-							loc.setY(Math.floor(loc.getY() * 2) / 2 + MiniGolf.getFloorOffset());
-							ball.teleport(loc);
+							ball.teleport(loc.add(0, MiniGolf.getFloorOffset(), 0));
 							ball.setGravity(false);
 						}
 						break;
