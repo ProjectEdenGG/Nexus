@@ -75,7 +75,6 @@ public class MiniGolfCommand extends CustomCommand {
 		int count = 0;
 		int holeNdx = page == 1 ? 1 : 10;
 
-		//  01 |  05   |     5
 		for (MiniGolfHole hole : MiniGolfHole.getHoles()) {
 			if (hole.ordinal() < holeNdx - 1) {
 				continue;
@@ -133,6 +132,4 @@ public class MiniGolfCommand extends CustomCommand {
 		service.deleteAll();
 		service.clearCache();
 	}
-
-
 }

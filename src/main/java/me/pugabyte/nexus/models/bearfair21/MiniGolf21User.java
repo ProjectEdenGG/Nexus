@@ -67,8 +67,6 @@ public class MiniGolf21User extends PlayerOwnedObject {
 		}
 	}
 
-	// Color
-
 	public Color getColor() {
 		return this.miniGolfColor.getColorType().getColor();
 	}
