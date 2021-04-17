@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.chat.alerts;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
 import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
+import me.pugabyte.nexus.models.alerts.Alerts;
 import me.pugabyte.nexus.models.alerts.AlertsService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;

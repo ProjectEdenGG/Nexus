@@ -679,7 +679,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	private static final Map<Class<? extends PlayerOwnedObject>, Class<? extends MongoService>> serviceMap = new HashMap<>();
 
 	static {
-		for (Class<? extends MongoService<?>> service : services) {
+		for (Class<? extends MongoService> service : services) {
 			PlayerClass annotation = service.getAnnotation(PlayerClass.class);
 			if (annotation == null) {
 				Nexus.warn(service.getSimpleName() + " does not have @PlayerClass annotation");
