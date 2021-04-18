@@ -37,6 +37,7 @@ public class NPCListener implements Listener {
 		if (isNpcAllowedAt(owner.getLocation()))
 			return;
 
+		event.getNPC().despawn();
 		event.getNPC().destroy();
 		PlayerUtils.send(owner, "&cYou cannot create NPCs here");
 		Nexus.warn("Preventing NPC create: " + event.getNPC().getId() + " from " + owner.getName());

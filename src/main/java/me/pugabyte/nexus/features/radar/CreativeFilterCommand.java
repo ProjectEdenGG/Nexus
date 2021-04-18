@@ -6,11 +6,10 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -24,10 +23,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static me.pugabyte.nexus.utils.Utils.getMax;
 
 @NoArgsConstructor
 public class CreativeFilterCommand extends CustomCommand implements Listener {
@@ -87,14 +87,25 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	private void limitDrops(Location location) {
 		Collection<Item> entities = location.getNearbyEntitiesByType(Item.class, RADIUS);
 
-		while (entities.size() > MAX_DROPPED_ENTITIES) {
-			MinMaxResult<Item> oldest = getMax(entities, Entity::getTicksLived);
+		if (entities.size() <= MAX_DROPPED_ENTITIES)
+			return;
 
-			if (oldest.getObject() == null)
+		Map<Item, Integer> ticksLived = new HashMap<Item, Integer>() {{
+			for (Item entity : entities)
+				put(entity, entity.getTicksLived());
+		}};
+
+		Map<Item, Integer> sorted = Utils.sortByValueReverse(ticksLived);
+		Iterator<Item> iterator = sorted.keySet().iterator();
+
+		while (iterator.hasNext() && entities.size() > MAX_DROPPED_ENTITIES) {
+			Item oldest = iterator.next();
+
+			if (oldest == null)
 				break;
 
-			oldest.getObject().remove();
-			entities.remove(oldest.getObject());
+			oldest.remove();
+			entities.remove(oldest);
 		}
 	}
 

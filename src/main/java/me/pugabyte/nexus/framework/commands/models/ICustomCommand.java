@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.framework.commands.models;
 
-import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -54,6 +53,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
 import static me.pugabyte.nexus.utils.StringUtils.asParsableDecimal;
@@ -177,14 +177,14 @@ public abstract class ICustomCommand {
 			Object contextArg = (contextArgIndex > 0 && objects.length >= contextArgIndex) ? objects[contextArgIndex - 1] : null;
 
 			if (args.size() >= pathIndex) {
-				if (annotation == null || Strings.isNullOrEmpty(annotation.permission()) || event.getSender().hasPermission(annotation.permission()))
+				if (annotation == null || isNullOrEmpty(annotation.permission()) || event.getSender().hasPermission(annotation.permission()))
 					if (pathArg.contains("..."))
 						value = String.join(" ", args.subList(pathIndex - 1, args.size()));
 					else
 						value = args.get(pathIndex - 1);
 			}
 
-			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !Strings.isNullOrEmpty(value)));
+			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !isNullOrEmpty(value)));
 			try {
 				objects[i - 1] = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
 			} catch (MissingArgumentException ex) {
@@ -214,21 +214,22 @@ public abstract class ICustomCommand {
 					throw new InvalidInputException(camelCase(name) + " must match regex " + annotation.regex());
 
 			if (!isNumber(type)) {
-				if (value.length() < annotation.min() || value.length() > annotation.max()) {
-					DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
-					String min = formatter.format(annotation.min());
-					String max = formatter.format(annotation.max());
-					double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
-					double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
+				if (isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass()))
+					if (value.length() < annotation.min() || value.length() > annotation.max()) {
+						DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
+						String min = formatter.format(annotation.min());
+						String max = formatter.format(annotation.max());
+						double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
+						double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
-					String error = camelCase(name) + " length must be ";
-					if (annotation.min() == minDefault && annotation.max() != maxDefault)
-						throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter");
-					else if (annotation.min() != minDefault && annotation.max() == maxDefault)
-						throw new InvalidInputException(error + "&e" + min + " &ccharacters or longer");
-					else
-						throw new InvalidInputException(error + "between &e" + min + " &cand &e" + max + " &ccharacters");
-				}
+						String error = camelCase(name) + " length must be ";
+						if (annotation.min() == minDefault && annotation.max() != maxDefault)
+							throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter");
+						else if (annotation.min() != minDefault && annotation.max() == maxDefault)
+							throw new InvalidInputException(error + "&e" + min + " &ccharacters or longer");
+						else
+							throw new InvalidInputException(error + "between &e" + min + " &cand &e" + max + " &ccharacters");
+					}
 			}
 		}
 
@@ -260,7 +261,7 @@ public abstract class ICustomCommand {
 			}
 		} catch (InvocationTargetException ex) {
 			if (required)
-				if (!Strings.isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
+				if (!isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
 					throw ex;
 				else
 					throw new MissingArgumentException();
@@ -268,7 +269,7 @@ public abstract class ICustomCommand {
 				return null;
 		}
 
-		if (Strings.isNullOrEmpty(value))
+		if (isNullOrEmpty(value))
 			if (required)
 				throw new MissingArgumentException();
 			else
@@ -293,38 +294,39 @@ public abstract class ICustomCommand {
 
 			if (number != null) {
 				if (annotation != null) {
+					if (isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass())) {
+						double annotationDefaultMin = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
+						double annotationDefaultMax = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
-					double annotationDefaultMin = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
-					double annotationDefaultMax = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
+						double annotationConfiguredMin = annotation.min();
+						double annotationConfiguredMax = annotation.max();
 
-					double annotationConfiguredMin = annotation.min();
-					double annotationConfiguredMax = annotation.max();
+						Number classDefaultMin = getMinValue(type);
+						Number classDefaultMax = getMaxValue(type);
 
-					Number classDefaultMin = getMinValue(type);
-					Number classDefaultMax = getMaxValue(type);
+						BigDecimal min = (annotationConfiguredMin != annotationDefaultMin ? BigDecimal.valueOf(annotationConfiguredMin) : new BigDecimal(classDefaultMin.toString()));
+						BigDecimal max = (annotationConfiguredMax != annotationDefaultMax ? BigDecimal.valueOf(annotationConfiguredMax) : new BigDecimal(classDefaultMax.toString()));
 
-					BigDecimal min = (annotationConfiguredMin != annotationDefaultMin ? BigDecimal.valueOf(annotationConfiguredMin) : new BigDecimal(classDefaultMin.toString()));
-					BigDecimal max = (annotationConfiguredMax != annotationDefaultMax ? BigDecimal.valueOf(annotationConfiguredMax) : new BigDecimal(classDefaultMax.toString()));
+						int minComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(min);
+						int maxComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(max);
 
-					int minComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(min);
-					int maxComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(max);
+						if (minComparison < 0 || maxComparison > 0) {
+							DecimalFormat formatter = StringUtils.getFormatter(type);
 
-					if (minComparison < 0 || maxComparison > 0) {
-						DecimalFormat formatter = StringUtils.getFormatter(type);
+							boolean usingDefaultMin = annotationDefaultMin == annotationConfiguredMin;
+							boolean usingDefaultMax = annotationDefaultMax == annotationConfiguredMax;
 
-						boolean usingDefaultMin = annotationDefaultMin == annotationConfiguredMin;
-						boolean usingDefaultMax = annotationDefaultMax == annotationConfiguredMax;
+							String minFormatted = formatter.format(annotation.min());
+							String maxFormatted = formatter.format(annotation.max());
 
-						String minFormatted = formatter.format(annotation.min());
-						String maxFormatted = formatter.format(annotation.max());
-
-						String error = camelCase(name) + " must be ";
-						if (usingDefaultMin && !usingDefaultMax)
-							throw new InvalidInputException(error + "&e" + maxFormatted + " &cor less");
-						else if (!usingDefaultMin && usingDefaultMax)
-							throw new InvalidInputException(error + "&e" + minFormatted + " &cor greater");
-						else
-							throw new InvalidInputException(error + "between &e" + minFormatted + " &cand &e" + maxFormatted);
+							String error = camelCase(name) + " must be ";
+							if (usingDefaultMin && !usingDefaultMax)
+								throw new InvalidInputException(error + "&e" + maxFormatted + " &cor less");
+							else if (!usingDefaultMin && usingDefaultMax)
+								throw new InvalidInputException(error + "&e" + minFormatted + " &cor greater");
+							else
+								throw new InvalidInputException(error + "between &e" + minFormatted + " &cand &e" + maxFormatted);
+						}
 					}
 				}
 
@@ -405,11 +407,11 @@ public abstract class ICustomCommand {
 		methods.sort(
 				Comparator.comparing(method ->
 						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-								.filter(path -> !Strings.isNullOrEmpty(path))
+								.filter(path -> !isNullOrEmpty(path))
 								.count())
 				.thenComparing(method ->
 						Arrays.stream(getPathString((Method) method).split(" "))
-								.filter(path -> !Strings.isNullOrEmpty(path))
+								.filter(path -> !isNullOrEmpty(path))
 								.count()));
 
 		List<Method> filtered = methods.stream().filter(method -> hasPermission(event.getSender(), method)).collect(Collectors.toList());
