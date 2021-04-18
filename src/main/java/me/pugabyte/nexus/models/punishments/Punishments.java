@@ -229,6 +229,10 @@ public class Punishments extends PlayerOwnedObject {
 				if (isOnline() && AFK.get(getPlayer()).isAfk())
 					return;
 
+			actuallyReceived();
+		}
+
+		public void actuallyReceived() {
 			received = LocalDateTime.now();
 			if (type.hasTimespan() && seconds > 0)
 				expiration = Timespan.of(seconds).fromNow();

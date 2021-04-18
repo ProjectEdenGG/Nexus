@@ -156,15 +156,15 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 	// Warning
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		showWarns(event.getPlayer());
+		tryShowWarns(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onNotAFK(NotAFKEvent event) {
-		showWarns(event.getPlayer().getPlayer());
+		tryShowWarns(event.getPlayer().getPlayer());
 	}
 
-	private void showWarns(Player player) {
+	private void tryShowWarns(Player player) {
 		Tasks.wait(Time.SECOND.x(5), () -> {
 			if (!player.isOnline())
 				return;
@@ -172,24 +172,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 			final PunishmentsService service = new PunishmentsService();
 			final Punishments punishments = service.get(player);
 			List<Punishment> warnings = punishments.getNewWarnings();
-			if (!warnings.isEmpty()) {
-				// TODO Not sure I like this formatting
-				punishments.send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
-				for (Punishment warning : warnings) {
-					punishments.send(" &7- &e" + warning.getReason() + " &c(" + warning.getTimeSince() + ")");
-
-					String message = "&e" + punishments.getName() + " &chas received their warning for &7" + warning.getReason();
-
-					JsonBuilder ingame = json(PREFIX + message)
-							.hover("&eClick for more information")
-							.command("/history " + punishments.getName());
-
-					Chat.broadcastIngame(ingame, StaticChannel.STAFF);
-					Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
-				}
-				punishments.send("");
-				punishments.send("&cPlease make sure to read the /rules to avoid future punishments");
-			}
+			showWarns(warnings);
 
 			// Try to be more sure they actually saw the warning
 			Tasks.wait(Time.SECOND.x(5), () -> {
@@ -202,6 +185,29 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 				service.save(punishments);
 			});
 		});
+	}
+
+	private void showWarns(List<Punishment> warnings) {
+		if (warnings.isEmpty())
+			return;
+
+		Punishment punishment = warnings.get(0);
+		// TODO Not sure I like this formatting
+		punishment.send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
+		for (Punishment warning : warnings) {
+			punishment.send(" &7- &e" + warning.getReason() + " &c(" + warning.getTimeSince() + ")");
+
+			String message = "&e" + punishment.getName() + " &chas received their warning for &7" + warning.getReason();
+
+			JsonBuilder ingame = json(PREFIX + message)
+					.hover("&eClick for more information")
+					.command("/history " + punishment.getName());
+
+			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
+			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+		}
+		punishment.send("");
+		punishment.send("&cPlease make sure to read the /rules to avoid future punishments");
 	}
 
 }
