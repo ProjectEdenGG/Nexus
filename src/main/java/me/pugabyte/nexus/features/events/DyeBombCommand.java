@@ -119,7 +119,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		ColorType[] colorTypes = ColorType.values();
 		List<Color> colors = new ArrayList<>();
 		for (ColorType colortype : colorTypes) {
-			colors.add(colortype.getColor());
+			colors.add(colortype.getBukkitColor());
 		}
 		return RandomUtils.randomElement(removeUglies(colors));
 	}

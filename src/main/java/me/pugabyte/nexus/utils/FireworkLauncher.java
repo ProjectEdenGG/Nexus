@@ -61,15 +61,15 @@ public class FireworkLauncher {
 		List<Color> colorList = new ArrayList<>();
 		for (ColorType colorType : colorTypes)
 			if (RandomUtils.chanceOf(40))
-				colorList.add(colorType.getColor());
+				colorList.add(colorType.getBukkitColor());
 		if (colorList.size() == 0)
-			colorList.add(RandomUtils.randomElement(Arrays.asList(colorTypes)).getColor());
+			colorList.add(RandomUtils.randomElement(Arrays.asList(colorTypes)).getBukkitColor());
 
 		// Get Random Fade Colors
 		List<Color> fadeColorList = new ArrayList<>();
 		for (ColorType colorType : colorTypes)
 			if (RandomUtils.chanceOf(40))
-				fadeColorList.add(colorType.getColor());
+				fadeColorList.add(colorType.getBukkitColor());
 
 		// Get Random Type
 		FireworkEffect.Type type = RandomUtils.randomElement(Arrays.asList(FireworkEffect.Type.values()));

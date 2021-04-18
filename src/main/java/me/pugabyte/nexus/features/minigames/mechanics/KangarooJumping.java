@@ -84,7 +84,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,
-			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getColor()).glow().build(),
+			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getBukkitColor()).glow().build(),
 			minigamer -> {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
 					if (_minigamer != minigamer) {
@@ -94,7 +94,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			});
 
 	PowerUpUtils.PowerUp NEGATIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", false,
-			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getColor()).build(),
+			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getBukkitColor()).build(),
 			minigamer -> minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1)));
 
 	PowerUpUtils.PowerUp SNOWBALL = new PowerUpUtils.PowerUp("Snowball", true, Material.SNOWBALL,

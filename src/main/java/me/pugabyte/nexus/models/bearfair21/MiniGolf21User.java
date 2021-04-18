@@ -68,18 +68,18 @@ public class MiniGolf21User extends PlayerOwnedObject {
 	}
 
 	public Color getColor() {
-		return this.miniGolfColor.getColorType().getColor();
+		return this.miniGolfColor.getColorType().getBukkitColor();
 	}
 
 	public List<Color> getFireworkColor() {
 		if (miniGolfColor.equals(MiniGolfColor.RAINBOW)) {
 			List<Color> rainbow = new ArrayList<>();
 			for (MiniGolfColor color : MiniGolfColor.values())
-				rainbow.add(color.getColorType().getColor());
+				rainbow.add(color.getColorType().getBukkitColor());
 			return rainbow;
 		}
 
-		return Collections.singletonList(this.miniGolfColor.getColorType().getColor());
+		return Collections.singletonList(this.miniGolfColor.getColorType().getBukkitColor());
 	}
 
 	public ChatColor getChatColor() {

@@ -26,6 +26,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class AdventureUtils {
+	private AdventureUtils(){} // prevent instantiation
+
 	public static Component stripColor(Component component) {
 		component = component.style(Style.empty());
 		if (component instanceof TranslatableComponent) {
@@ -100,11 +102,6 @@ public class AdventureUtils {
 	}
 
 	@NotNull
-	public static TextColor textColorOf(@NotNull ColorType color) {
-		return textColorOf(color.getColor());
-	}
-
-	@NotNull
 	public static TextComponent colorText(@Nullable ChatColor color, @NotNull String text) {
 		if (color == null)
 			return Component.text(text);
@@ -127,13 +124,6 @@ public class AdventureUtils {
 
 	@NotNull
 	public static TextComponent colorText(@Nullable Colored color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, textColorOf(color));
-	}
-
-	@NotNull
-	public static TextComponent colorText(@Nullable ColorType color, @NotNull String text) {
 		if (color == null)
 			return Component.text(text);
 		return Component.text(text, textColorOf(color));

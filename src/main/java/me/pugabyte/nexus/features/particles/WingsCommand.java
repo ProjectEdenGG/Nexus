@@ -63,7 +63,7 @@ public class WingsCommand extends CustomCommand implements Listener {
 		wingSettings.put(ParticleSetting.WINGS_STYLE, wingStyle);
 		wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, Color.YELLOW);
 		wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, Color.BLACK);
-		wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, ColorType.CYAN.getColor());
+		wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, ColorType.CYAN.getBukkitColor());
 		wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, false);
 		wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, false);
 		wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, false);

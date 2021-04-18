@@ -125,7 +125,7 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 				.location(getCenteredLocation(block.getLocation().add(0, 1, 0)).add(0, .5, 0))
 				.speed(0.1)
 				.ticks(Time.SECOND.x(5))
-				.color(EnumUtils.random(ColorType.class).getColor())
+				.color(EnumUtils.random(ColorType.class).getBukkitColor())
 				.start();
 	}
 

@@ -118,10 +118,6 @@ public class JsonBuilder {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
-	public JsonBuilder color(ColorType color) {
-		return color(AdventureUtils.textColorOf(color));
-	}
-
 	public JsonBuilder url(String url) {
 		builder.clickEvent(ClickEvent.openUrl(url));
 		return this;

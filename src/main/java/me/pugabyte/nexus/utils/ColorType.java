@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.framework.interfaces.Colored;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
-public enum ColorType {
+public enum ColorType implements Colored {
 
 	WHITE(
 			"white",
@@ -143,14 +144,20 @@ public enum ColorType {
 	);
 
 	private final @NotNull String name;
-	private final @NotNull Color color;
+	private final @NotNull Color bukkitColor;
 	private final @Nullable ChatColor chatColor;
 	private final @Nullable DyeColor dyeColor;
 	private final @NotNull DyeColor similarDyeColor;
 	private final @Nullable GlowAPI.Color glowColor;
 
-	ColorType(@NotNull String name, @NotNull Color color, @Nullable ChatColor chatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
-		this(name, color, chatColor, dyeColor, dyeColor, glowColor);
+	ColorType(@NotNull String name, @NotNull Color bukkitColor, @Nullable ChatColor chatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
+		this(name, bukkitColor, chatColor, dyeColor, dyeColor, glowColor);
+	}
+
+	@Override
+	@NotNull
+	public java.awt.Color getColor() {
+		return new java.awt.Color(bukkitColor.asRGB());
 	}
 
 	@Nullable
@@ -162,7 +169,7 @@ public enum ColorType {
 	@Nullable
 	public static ColorType of(@Nullable Color color) {
 		if (color == null) return null;
-		return Arrays.stream(values()).filter(colorType -> colorType.getColor().equals(color)).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getBukkitColor().equals(color)).findFirst().orElse(null);
 	}
 
 	@Nullable

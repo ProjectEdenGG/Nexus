@@ -62,7 +62,7 @@ public class Particles {
 							.density(0.1)
 							.count(15)
 							.maxLength(3.5)
-							.color(ColorType.LIGHT_BLUE.getColor())
+							.color(ColorType.LIGHT_BLUE.getBukkitColor())
 							.ticks(-1)
 							.start()
 							.getTaskId();
