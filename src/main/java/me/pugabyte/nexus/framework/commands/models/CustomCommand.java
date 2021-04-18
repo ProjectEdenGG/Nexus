@@ -23,7 +23,6 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeCommandBlockEx
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -62,7 +61,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -70,10 +68,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
@@ -674,26 +669,11 @@ public abstract class CustomCommand extends ICustomCommand {
 			throw new InvalidInputException("Nothing to fallback to");
 	}
 
-	// TODO Don't hardcode model path
-	private static final Set<Class<? extends MongoService>> services = new Reflections("me.pugabyte.nexus.models").getSubTypesOf(MongoService.class);
-	private static final Map<Class<? extends PlayerOwnedObject>, Class<? extends MongoService>> serviceMap = new HashMap<>();
-
-	static {
-		for (Class<? extends MongoService> service : services) {
-			PlayerClass annotation = service.getAnnotation(PlayerClass.class);
-			if (annotation == null) {
-				Nexus.warn(service.getSimpleName() + " does not have @PlayerClass annotation");
-				continue;
-			}
-
-			serviceMap.put(annotation.value(), service);
-		}
-	}
-
 	@SneakyThrows
 	protected PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
-		if (serviceMap.containsKey(type))
-			return serviceMap.get(type).newInstance().get(convertToOfflinePlayer(value));
+		Class<? extends MongoService> service = MongoService.ofObject(type);
+		if (service != null)
+			service.newInstance().get(convertToOfflinePlayer(value));
 		return null;
 	}
 

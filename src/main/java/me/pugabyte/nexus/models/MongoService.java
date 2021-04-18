@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models;
 import dev.morphia.Datastore;
 import dev.morphia.query.Sort;
 import dev.morphia.query.UpdateException;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -16,11 +17,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -29,6 +33,42 @@ import static me.pugabyte.nexus.utils.StringUtils.isV4Uuid;
 public abstract class MongoService<T extends PlayerOwnedObject> {
 	protected static Datastore database;
 	protected static String _id = "_id";
+
+	@Getter
+	private static final Set<Class<? extends MongoService>> services = new Reflections(MongoService.class.getPackage().getName()).getSubTypesOf(MongoService.class);
+	@Getter
+	private static final Map<Class<? extends PlayerOwnedObject>, Class<? extends MongoService>> objectToServiceMap = new HashMap<>();
+	@Getter
+	private static final Map<Class<? extends MongoService>, Class<? extends PlayerOwnedObject>> serviceToObjectMap = new HashMap<>();
+
+	static {
+		for (Class<? extends MongoService> service : services) {
+			PlayerClass annotation = service.getAnnotation(PlayerClass.class);
+			if (annotation == null) {
+				Nexus.warn(service.getSimpleName() + " does not have @PlayerClass annotation");
+				continue;
+			}
+
+			objectToServiceMap.put(annotation.value(), service);
+			serviceToObjectMap.put(service, annotation.value());
+		}
+	}
+
+	public static Class<? extends PlayerOwnedObject> ofService(MongoService mongoService) {
+		return ofService(mongoService.getClass());
+	}
+
+	public static Class<? extends PlayerOwnedObject> ofService(Class<? extends MongoService> mongoService) {
+		return serviceToObjectMap.get(mongoService);
+	}
+
+	public static Class<? extends MongoService> ofObject(PlayerOwnedObject playerOwnedObject) {
+		return ofObject(playerOwnedObject.getClass());
+	}
+
+	public static Class<? extends MongoService> ofObject(Class<? extends PlayerOwnedObject> playerOwnedObject) {
+		return objectToServiceMap.get(playerOwnedObject);
+	}
 
 	static {
 		database = MongoDBPersistence.getConnection(MongoDBDatabase.BEARNATION);
