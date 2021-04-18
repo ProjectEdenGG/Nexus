@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.punishments;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;

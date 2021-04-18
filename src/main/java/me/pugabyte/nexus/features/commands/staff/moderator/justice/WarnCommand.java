@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.punishments;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.annotations.Environments;
@@ -14,21 +14,20 @@ import java.util.List;
 
 @Environments(Env.DEV)
 @Permission("group.moderator")
-//@Aliases("banip")
-public class IPBanCommand extends _PunishmentCommand {
+public class WarnCommand extends _PunishmentCommand {
 
-	public IPBanCommand(@NonNull CommandEvent event) {
+	public WarnCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("<player> [time/reason...]")
+	@Path("<player> <reason...>")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
 		punish(players, input);
 	}
 
 	@Override
 	protected PunishmentType getType() {
-		return PunishmentType.IP_BAN;
+		return PunishmentType.WARN;
 	}
 
 }

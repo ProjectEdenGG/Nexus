@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.punishments;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.annotations.Environments;

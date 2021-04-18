@@ -50,8 +50,8 @@ public class Punishments extends PlayerOwnedObject {
 	private List<Punishment> punishments = new ArrayList<>();
 	private List<String> ipHistory = new ArrayList<>();
 
-	public static transient final String PREFIX = StringUtils.getPrefix("Punishments");
-	public static transient final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Punishments");
+	public static transient final String PREFIX = StringUtils.getPrefix("Justice");
+	public static transient final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Justice");
 
 	public static Punishments of(String name) {
 		return of(PlayerUtils.getPlayer(name));

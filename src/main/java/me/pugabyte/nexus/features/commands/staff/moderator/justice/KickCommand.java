@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.punishments;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.annotations.Environments;
@@ -14,20 +14,20 @@ import java.util.List;
 
 @Environments(Env.DEV)
 @Permission("group.moderator")
-public class WarnCommand extends _PunishmentCommand {
+public class KickCommand extends _PunishmentCommand {
 
-	public WarnCommand(@NonNull CommandEvent event) {
+	public KickCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("<player> <reason...>")
+	@Path("<player> [reason...]")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
 		punish(players, input);
 	}
 
 	@Override
 	protected PunishmentType getType() {
-		return PunishmentType.WARN;
+		return PunishmentType.KICK;
 	}
 
 }

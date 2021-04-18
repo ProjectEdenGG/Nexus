@@ -1,7 +1,6 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.punishments;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
@@ -14,10 +13,8 @@ import me.pugabyte.nexus.features.economy.commands.PayCommand;
 import me.pugabyte.nexus.features.tickets.ReportCommand;
 import me.pugabyte.nexus.features.tickets.TicketCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
+import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.punishments.Punishment;
@@ -36,35 +33,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
-@Permission("group.moderator")
-public class PunishmentsCommand extends CustomCommand implements Listener {
-
-	public PunishmentsCommand(@NonNull CommandEvent event) {
-		super(event);
-	}
-
-	@Path
-	void run() {
-		send("&eGriefing");
-		send("    &c/calcban <# of past griefing bans> <# of blocks griefed>");
-		line();
-		send("&eChat");
-		send("    &3Try to keep it to &cmutes &3for established members of the community. Give them time to cool down. Otherwise short bans");
-		line();
-		send("&eHacks / death traps / obscene structures/skins");
-		send("    &cMax of 3 days&3, then permanent");
-		line();
-		send("&eBan evasions");
-		send("    &cMatch original ban&3, add a little to both if it was malicious");
-		line();
-		send("&eOther assholery");
-		send("    &3Generally &c1 day&3, max of 3 days for first ban");
-		line();
-		send("&3If they are &enot active &3when you find reason to ban, make sure to send a &c/warning &3too/instead so they will receive the message instead of not knowing they were banned at all.");
-	}
+public class Justice extends Feature implements Listener {
 
 	// Ban
 	@EventHandler
@@ -79,7 +52,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 
 			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(" + ban.getTimeLeft() + ")";
 
-			JsonBuilder ingame = json(PREFIX + message)
+			JsonBuilder ingame = new JsonBuilder(PREFIX + message)
 					.hover("&eClick for more information")
 					.command("/history " + punishments.getName());
 
@@ -110,7 +83,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 
 			String message = "&e" + punishments.getName() + " &cspoke while muted: &7" + originalMessage + " &c(" + mute.getTimeLeft() + ")";
 
-			JsonBuilder ingame = json(PREFIX + message)
+			JsonBuilder ingame = new JsonBuilder(PREFIX + message)
 					.hover("&eClick for more information")
 					.command("/history " + punishments.getName());
 
@@ -141,7 +114,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 			event.setCancelled(true);
 			String message = "&e" + punishments.getName() + " &cused a blacklisted command while muted: &7" + event.getOriginalMessage() + " &c(" + mute.getTimeLeft() + ")";
 
-			JsonBuilder ingame = json(PREFIX + message)
+			JsonBuilder ingame = new JsonBuilder(PREFIX + message)
 					.hover("&eClick for more information")
 					.command("/history " + punishments.getName());
 

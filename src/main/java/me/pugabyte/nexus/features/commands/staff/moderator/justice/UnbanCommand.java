@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.punishments;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.annotations.Environments;
@@ -14,9 +14,9 @@ import java.util.List;
 
 @Environments(Env.DEV)
 @Permission("group.moderator")
-public class UnipbanCommand extends _PunishmentCommand {
+public class UnbanCommand extends _PunishmentCommand {
 
-	public UnipbanCommand(@NonNull CommandEvent event) {
+	public UnbanCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -27,7 +27,7 @@ public class UnipbanCommand extends _PunishmentCommand {
 
 	@Override
 	protected PunishmentType getType() {
-		return PunishmentType.IP_BAN;
+		return PunishmentType.BAN;
 	}
 
 }

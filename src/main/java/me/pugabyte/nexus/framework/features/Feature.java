@@ -4,6 +4,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 
 public abstract class Feature {
 	public String PREFIX = StringUtils.getPrefix(getName());
+	public String DISCORD_PREFIX = StringUtils.getDiscordPrefix(getName());
 
 	public String getName() {
 		return Features.prettyName(this);

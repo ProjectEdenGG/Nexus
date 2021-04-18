@@ -264,7 +264,7 @@ public abstract class ICustomCommand {
 		return objects;
 	}
 
-	List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
+	private static final List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
 			InvalidInputException.class,
 			PlayerNotFoundException.class,
 			PlayerNotOnlineException.class
@@ -282,7 +282,7 @@ public abstract class ICustomCommand {
 				if (!value.matches(annotation.regex()))
 					throw new InvalidInputException(camelCase(name) + " must match regex " + annotation.regex());
 
-			if (!isNumber(type)) {
+			if (!isNumber(type))
 				if (isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass()))
 					if (value.length() < annotation.min() || value.length() > annotation.max()) {
 						DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
@@ -299,10 +299,12 @@ public abstract class ICustomCommand {
 						else
 							throw new InvalidInputException(error + "between &e" + min + " &cand &e" + max + " &ccharacters");
 					}
-			}
 		}
 
 		if (Collection.class.isAssignableFrom(type)) {
+			if (annotation == null)
+				throw new InvalidInputException("Collection parameter must define concrete type with @Arg");
+
 			List<Object> values = new ArrayList<>();
 			for (String index : value.split(","))
 				values.add(convert(index, context, annotation.type(), parameter, name, event, required));
