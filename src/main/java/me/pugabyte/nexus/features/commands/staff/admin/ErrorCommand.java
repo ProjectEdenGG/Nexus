@@ -29,22 +29,39 @@ public class ErrorCommand extends CustomCommand {
 		throw new Exception("Test exception");
 	}
 
-	@SneakyThrows
 	@Path("runtime")
 	void runtime() {
 		throw new RuntimeException("Test exception");
 	}
 
-	@SneakyThrows
 	@Path("nexus")
 	void nexus() {
 		throw new NexusException("Test exception");
 	}
 
-	@SneakyThrows
 	@Path("invalidInput")
 	void invalidInput() {
 		throw new InvalidInputException("Test exception");
+	}
+
+	@Path("framework text")
+	void framework_text() {
+		error("Test exception");
+	}
+
+	@Path("framework json")
+	void framework_json() {
+		error(json("Test exception"));
+	}
+
+	@Path("framework text withColor")
+	void framework_text_withColor() {
+		error("Test &eexception");
+	}
+
+	@Path("framework json withColor")
+	void framework_json_withColor() {
+		error(json("Test &eexception"));
 	}
 
 }
