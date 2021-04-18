@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.canSee;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
@@ -117,9 +118,8 @@ public class ChatManager {
 		List<String> hoverLines = new ArrayList<>();
 		if (nerd.hasNickname())
 			hoverLines.add("&3Real name: &e" + nerd.getName());
-		// disabled until pride month
-//		if (!nerd.getPronouns().isEmpty())
-//			hoverLines.add("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e"+pronoun+"&3").collect(Collectors.joining(", ")));
+		if (!nerd.getPronouns().isEmpty())
+			hoverLines.add("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
 
 		if (!hoverLines.isEmpty()) {
 			String hover = String.join("\n", hoverLines);

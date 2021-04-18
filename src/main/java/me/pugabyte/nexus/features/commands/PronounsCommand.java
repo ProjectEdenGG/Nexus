@@ -3,11 +3,13 @@ package me.pugabyte.nexus.features.commands;
 import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Nerd;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PronounsCommand extends CustomCommand {
 	public static final Set<String> PRONOUN_WHITELIST = ImmutableSet.of("she/her", "they/them", "he/him", "it/its", "xe/xem", "no pronouns", "any pronouns");
@@ -25,8 +27,6 @@ public class PronounsCommand extends CustomCommand {
 		super(event);
 	}
 
-	/* disabled until pride month */
-	/*
 	@Path("toggle <pronoun>")
 	void toggle(String pronoun) {
 		pronoun = pronoun.toLowerCase().trim();
@@ -60,7 +60,6 @@ public class PronounsCommand extends CustomCommand {
 			error((isSelf ? "You have" : nerd.getNickname()+" has") + " no saved pronouns");
 		send(PREFIX + (isSelf ? "Your" : nerd.getNickname()+"'s") + " pronouns are " + pronouns.stream().map(pronoun -> "&e"+pronoun+"&3").collect(Collectors.joining(", ")));
 	}
-	*/
 
 	public static String getPronoun(String pronoun) {
 		pronoun = pronoun.toLowerCase().trim();
