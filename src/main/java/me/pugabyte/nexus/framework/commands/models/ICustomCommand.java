@@ -171,14 +171,10 @@ public abstract class ICustomCommand {
 		Object[] convertedSwitches = convertSwitches(method, event, doValidation, switches);
 		Object[] convertedParameters = convertParameters(method, event, doValidation, parameters);
 
-		ArrayList<Object> objects = new ArrayList<Object>() {{
+		return new ArrayList<Object>() {{
 			addAll(Arrays.asList(convertedParameters));
 			addAll(Arrays.asList(convertedSwitches));
-		}};
-
-		Nexus.log("Objects: " + objects);
-		Nexus.log("Args: " + event.getArgsString());
-		return objects.toArray(new Object[0]);
+		}}.toArray(new Object[0]);
 	}
 
 	private Object[] convertSwitches(Method method, CommandEvent event, boolean doValidation, List<Parameter> switches) {
@@ -276,7 +272,6 @@ public abstract class ICustomCommand {
 
 	@SneakyThrows
 	private Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
-		Nexus.log("Converting " + value + " to " + type.getSimpleName());
 		Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 
 		double argMinDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
