@@ -55,7 +55,8 @@ public class MiniGolfUtils {
 		ProtectedRegion region = regions.stream().findFirst().orElse(null);
 		if (region != null) {
 			for (MiniGolfHole minigolfHole : MiniGolfHole.values()) {
-				if (region.getId().contains(minigolfHole.getRegionId()))
+				String[] regionSplit = region.getId().replace(MiniGolf.getRegionHole(), "").split("_");
+				if (regionSplit[0].equalsIgnoreCase(String.valueOf(minigolfHole.getHole())))
 					return minigolfHole;
 			}
 		}

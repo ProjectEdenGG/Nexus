@@ -104,7 +104,7 @@ public class ProjectileListener implements Listener {
 
 					case UP:
 					case DOWN:
-						if (mat == Material.SOUL_SOIL) {
+						if (mat == Material.SOUL_SOIL || mat == Material.SMOKER) {
 							vel.setY(0);
 						} else if (mat == Material.SLIME_BLOCK) {
 							vel.setY(0.30);
