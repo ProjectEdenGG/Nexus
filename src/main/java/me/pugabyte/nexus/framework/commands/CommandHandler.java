@@ -2,9 +2,8 @@ package me.pugabyte.nexus.framework.commands;
 
 import com.google.common.base.Strings;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,13 +22,9 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 		this.customCommand = customCommand;
 	}
 
-	private void call(CommandEvent event) {
-		Bukkit.getServer().getPluginManager().callEvent(event);
-	}
-
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, @NotNull String[] args) {
-		CommandEvent event = new CommandEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
+		CommandRunEvent event = new CommandRunEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
 		if (event.callEvent())
 			customCommand.execute(event);
 
@@ -41,7 +36,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 //		if (sender.getName().equals("Pugabyte"))
 //			return null;
 
-		TabEvent event = new TabEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
+		CommandTabEvent event = new CommandTabEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
 
 		// Remove any empty args except the last one
 		boolean lastIndexIsEmpty = Strings.isNullOrEmpty(event.getArgs().get(event.getArgs().size() - 1));

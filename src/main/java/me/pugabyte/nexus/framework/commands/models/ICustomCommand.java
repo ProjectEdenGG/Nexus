@@ -15,7 +15,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -63,7 +64,7 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {
 
-	public void execute(CommandEvent event) {
+	public void execute(CommandRunEvent event) {
 		try {
 			CustomCommand command = getCommand(event);
 			Method method = getMethod(event);
@@ -79,7 +80,7 @@ public abstract class ICustomCommand {
 		}
 	}
 
-	public List<String> tabComplete(TabEvent event) {
+	public List<String> tabComplete(CommandTabEvent event) {
 		try {
 			getCommand(event);
 			return new PathParser(event).tabComplete(event);
@@ -124,7 +125,7 @@ public abstract class ICustomCommand {
 		return null;
 	}
 
-	protected void invoke(Method method, CommandEvent event) {
+	protected void invoke(Method method, CommandRunEvent event) {
 		Runnable function = () -> {
 			try {
 				Object[] objects = getMethodParameters(method, event, true);
@@ -382,7 +383,7 @@ public abstract class ICustomCommand {
 	@SneakyThrows
 	CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
 		CustomCommand customCommand = new ObjenesisStd().newInstance((Class<? extends CustomCommand>) clazz);
-		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>());
+		CommandRunEvent newEvent = new CommandRunEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>());
 		return getCommand(newEvent);
 	}
 
@@ -418,8 +419,7 @@ public abstract class ICustomCommand {
 		return filtered;
 	}
 
-	// TODO: Use same methods as tab complete
-	private Method getMethod(CommandEvent event) {
+	private Method getMethod(CommandRunEvent event) {
 		Method method = new PathParser(event).match(event.getArgs());
 
 		if (method == null) {
@@ -455,8 +455,9 @@ public abstract class ICustomCommand {
 	}
 
 	private void checkCooldown(CustomCommand command) {
+		Method method = ((CommandRunEvent) command.getEvent()).getMethod();
 		checkCooldown(command, command.getClass().getAnnotation(Cooldown.class), command.getName());
-		checkCooldown(command, command.getEvent().getMethod().getAnnotation(Cooldown.class), command.getName() + "#" + command.getEvent().getMethod().getName());
+		checkCooldown(command, method.getAnnotation(Cooldown.class), command.getName() + "#" + method.getName());
 	}
 
 	private void checkCooldown(CustomCommand command, Cooldown cooldown, String commandId) {

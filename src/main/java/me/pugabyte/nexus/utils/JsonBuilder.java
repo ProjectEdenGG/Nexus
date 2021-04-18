@@ -4,7 +4,7 @@ import me.pugabyte.nexus.Nexus;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
@@ -94,7 +94,7 @@ public class JsonBuilder {
 		return this;
 	}
 
-	public JsonBuilder color(NamedTextColor color) {
+	public JsonBuilder color(TextColor color) {
 		builder.color(color);
 		return this;
 	}

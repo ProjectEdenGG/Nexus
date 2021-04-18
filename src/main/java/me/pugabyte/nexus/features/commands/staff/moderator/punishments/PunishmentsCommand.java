@@ -13,11 +13,11 @@ import me.pugabyte.nexus.features.commands.poof.PoofHereCommand;
 import me.pugabyte.nexus.features.economy.commands.PayCommand;
 import me.pugabyte.nexus.features.tickets.ReportCommand;
 import me.pugabyte.nexus.features.tickets.TicketCommand;
-import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
@@ -32,7 +32,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,13 +120,6 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	private static List<String> aliases(Class<? extends CustomCommand> clazz) {
-		CustomCommand customCommand = Commands.get(clazz);
-		if (customCommand != null)
-			return customCommand.getAliases();
-		return Collections.emptyList();
-	}
-
 	private static final List<Class<? extends CustomCommand>> muteCommandBlacklist = Arrays.asList(
 			PoofCommand.class,
 			PoofHereCommand.class,
@@ -138,7 +130,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 	);
 
 	@EventHandler
-	public void onCommand(CommandEvent event) {
+	public void onCommand(CommandRunEvent event) {
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getPlayer());
 		punishments.getActiveMute().ifPresent(mute -> {

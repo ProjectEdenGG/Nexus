@@ -12,7 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
@@ -35,9 +35,9 @@ import static me.pugabyte.nexus.utils.StringUtils.left;
 @Data
 class PathParser {
 	@NonNull
-	CommandEvent event;
-	CustomCommand command;
-	List<Method> methods;
+	private final CommandEvent event;
+	private final CustomCommand command;
+	private final List<Method> methods;
 
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
@@ -255,7 +255,7 @@ class PathParser {
 
 	}
 
-	List<String> tabComplete(TabEvent event) {
+	List<String> tabComplete(CommandTabEvent event) {
 		List<String> completions = new ArrayList<>();
 
 		for (Method method : methods) {

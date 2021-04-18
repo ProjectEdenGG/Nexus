@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class TabEvent extends CommandEvent {
+public class CommandTabEvent extends CommandEvent {
 
-	public TabEvent(CommandSender sender, CustomCommand command, String aliasUsed, List<String> args) {
+	public CommandTabEvent(CommandSender sender, CustomCommand command, String aliasUsed, List<String> args) {
 		super(sender, command, aliasUsed, args);
 	}
 

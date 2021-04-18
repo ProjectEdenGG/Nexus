@@ -5,7 +5,7 @@ import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,7 +55,7 @@ public class CommandListener implements Listener {
 		args.removeIf(Strings::isNullOrEmpty);
 		if (lastIndexIsEmpty) args.add("");
 
-		TabEvent tabEvent = new TabEvent(event.getSender(), customCommand, alias, args);
+		CommandTabEvent tabEvent = new CommandTabEvent(event.getSender(), customCommand, alias, args);
 //		if (tabEvent.callEvent()) {
 			List<String> completions = customCommand.tabComplete(tabEvent);
 			if (completions != null) {
