@@ -18,6 +18,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
+import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
@@ -25,6 +26,7 @@ import me.pugabyte.nexus.models.punishments.PunishmentsService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -154,18 +156,27 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 	// Warning
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
+		showWarns(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onNotAFK(NotAFKEvent event) {
+		showWarns(event.getPlayer().getPlayer());
+	}
+
+	private void showWarns(Player player) {
 		Tasks.wait(Time.SECOND.x(5), () -> {
-			if (!event.getPlayer().isOnline())
+			if (!player.isOnline())
 				return;
 
 			final PunishmentsService service = new PunishmentsService();
-			final Punishments punishments = service.get(event.getPlayer());
+			final Punishments punishments = service.get(player);
 			List<Punishment> warnings = punishments.getNewWarnings();
 			if (!warnings.isEmpty()) {
 				// TODO Not sure I like this formatting
-				punishments.send("&cYou received a warning while you were offline:");
+				punishments.send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
 				for (Punishment warning : warnings) {
-					punishments.send(" &7- &c" + warning.getReason() + " (" + warning.getTimeSince() + ")");
+					punishments.send(" &7- &e" + warning.getReason() + " &c(" + warning.getTimeSince() + ")");
 
 					String message = "&e" + punishments.getName() + " &chas received their warning for &7" + warning.getReason();
 
@@ -182,7 +193,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 
 			// Try to be more sure they actually saw the warning
 			Tasks.wait(Time.SECOND.x(5), () -> {
-				if (!event.getPlayer().isOnline())
+				if (!player.isOnline())
 					return;
 
 				for (Punishment warning : warnings)
@@ -191,7 +202,6 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 				service.save(punishments);
 			});
 		});
-
 	}
 
 }

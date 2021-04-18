@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -224,6 +225,10 @@ public class Punishments extends PlayerOwnedObject {
 			if (hasBeenReceived())
 				return;
 
+			if (!type.isReceivedIfAfk())
+				if (isOnline() && AFK.get(getPlayer()).isAfk())
+					return;
+
 			received = LocalDateTime.now();
 			if (type.hasTimespan() && seconds > 0)
 				expiration = Timespan.of(seconds).fromNow();
@@ -273,7 +278,7 @@ public class Punishments extends PlayerOwnedObject {
 		@Getter
 		@AllArgsConstructor
 		public enum PunishmentType {
-			BAN("banned", true, true) {
+			BAN("banned", true, true, true) {
 				@Override
 				public void action(Punishment punishment) {
 					kick(punishment);
@@ -284,7 +289,7 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			IP_BAN("ip-banned", true, true) { // TODO onlyOneActive ?
+			IP_BAN("ip-banned", true, true, true) { // TODO onlyOneActive ?
 				@Override
 				public void action(Punishment punishment) {
 					kick(punishment);
@@ -296,7 +301,7 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			KICK("kicked", false, false) {
+			KICK("kicked", false, false, true) {
 				@Override
 				public void action(Punishment punishment){
 					kick(punishment);
@@ -307,7 +312,7 @@ public class Punishments extends PlayerOwnedObject {
 					return punishment.getReason();
 				}
 			},
-			MUTE("muted", true, true) {
+			MUTE("muted", true, true, false) {
 				@Override
 				public void action(Punishment punishment) {
 					punishment.send("You have been muted"); // TODO
@@ -318,13 +323,13 @@ public class Punishments extends PlayerOwnedObject {
 					punishment.send("Your mute has expired");
 				}
 			},
-			WARN("warned", false, false) {
+			WARN("warned", false, false, false) {
 				@Override
 				public void action(Punishment punishment) {
 					punishment.send("You have been warned"); // TODO
 				}
 			},
-			FREEZE("froze", false, true) {
+			FREEZE("froze", false, true, true) {
 				@Override
 				public void action(Punishment punishment) {
 					punishment.send("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
@@ -340,6 +345,7 @@ public class Punishments extends PlayerOwnedObject {
 			@Accessors(fluent = true)
 			private final boolean hasTimespan;
 			private final boolean onlyOneActive;
+			private final boolean receivedIfAfk;
 
 			public abstract void action(Punishment punishment);
 
