@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 	public static final LinkedHashSet<ColorType> COLOR_TYPES = new LinkedHashSet<>(Arrays.stream(ColorType.values()).filter(
 			colorType -> colorType.getChatColor() != null &&
-					colorType.getDurability() != null &&
 					colorType.getChatColor() != ChatColor.BLACK)
 			.collect(Collectors.toList()));
 

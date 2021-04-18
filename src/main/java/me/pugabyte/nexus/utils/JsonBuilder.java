@@ -1,15 +1,18 @@
 package me.pugabyte.nexus.utils;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.interfaces.Colored;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -97,6 +100,26 @@ public class JsonBuilder {
 	public JsonBuilder color(TextColor color) {
 		builder.color(color);
 		return this;
+	}
+
+	public JsonBuilder color(Colored color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	public JsonBuilder color(ChatColor color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	public JsonBuilder color(Color color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	public JsonBuilder color(org.bukkit.Color color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	public JsonBuilder color(ColorType color) {
+		return color(AdventureUtils.textColorOf(color));
 	}
 
 	public JsonBuilder url(String url) {

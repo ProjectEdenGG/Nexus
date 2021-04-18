@@ -79,36 +79,67 @@ public class AdventureUtils {
 				.append(Component.text(" ", NamedTextColor.DARK_AQUA));
 	}
 
+	@NotNull
+	public static TextColor textColorOf(@NotNull Color color) {
+		return TextColor.color(color.getRGB());
+	}
+
+	@NotNull
+	public static TextColor textColorOf(@NotNull org.bukkit.Color color) {
+		return TextColor.color(color.asRGB());
+	}
+
+	@NotNull
+	public static TextColor textColorOf(@NotNull ChatColor color) {
+		return textColorOf(color.getColor());
+	}
+
+	@NotNull
+	public static TextColor textColorOf(@NotNull Colored color) {
+		return color.getTextColor();
+	}
+
+	@NotNull
+	public static TextColor textColorOf(@NotNull ColorType color) {
+		return textColorOf(color.getColor());
+	}
+
+	@NotNull
 	public static TextComponent colorText(@Nullable ChatColor color, @NotNull String text) {
 		if (color == null)
 			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getColor().getRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
-	public static TextComponent colorText(@Nullable ColorType color, @NotNull String text) {
-		if (color == null || color.getColor() == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getColor().asRGB()));
-	}
-
+	@NotNull
 	public static TextComponent colorText(@Nullable Color color, @NotNull String text) {
 		if (color == null)
 			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
+	@NotNull
 	public static TextComponent colorText(@Nullable org.bukkit.Color color, @NotNull String text) {
 		if (color == null)
 			return Component.text(text);
-		return Component.text(text, TextColor.color(color.asRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
+	@NotNull
 	public static TextComponent colorText(@Nullable Colored color, @NotNull String text) {
 		if (color == null)
 			return Component.text(text);
-		return Component.text(text, color.getTextColor());
+		return Component.text(text, textColorOf(color));
 	}
 
+	@NotNull
+	public static TextComponent colorText(@Nullable ColorType color, @NotNull String text) {
+		if (color == null)
+			return Component.text(text);
+		return Component.text(text, textColorOf(color));
+	}
+
+	@NotNull
 	public static TextComponent colorText(@NotNull ColoredAndNamed coloredAndNamed) {
 		return Component.text(coloredAndNamed.getName(), coloredAndNamed.getTextColor());
 	}
