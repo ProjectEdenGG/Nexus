@@ -4,9 +4,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 
 import java.util.List;
 import java.util.Optional;

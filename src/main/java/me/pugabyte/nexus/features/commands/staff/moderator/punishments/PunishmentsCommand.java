@@ -20,13 +20,12 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.Punishments;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.PunishmentsService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -156,58 +155,12 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 	// Warning
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		tryShowWarns(event.getPlayer());
+		Tasks.wait(Time.SECOND.x(5), () -> Punishments.of(event.getPlayer()).tryShowWarns());
 	}
 
 	@EventHandler
 	public void onNotAFK(NotAFKEvent event) {
-		tryShowWarns(event.getPlayer().getPlayer());
-	}
-
-	private void tryShowWarns(Player player) {
-		Tasks.wait(Time.SECOND.x(5), () -> {
-			if (!player.isOnline())
-				return;
-
-			final PunishmentsService service = new PunishmentsService();
-			final Punishments punishments = service.get(player);
-			List<Punishment> warnings = punishments.getNewWarnings();
-			showWarns(warnings);
-
-			// Try to be more sure they actually saw the warning
-			Tasks.wait(Time.SECOND.x(5), () -> {
-				if (!player.isOnline())
-					return;
-
-				for (Punishment warning : warnings)
-					warning.received();
-
-				service.save(punishments);
-			});
-		});
-	}
-
-	private void showWarns(List<Punishment> warnings) {
-		if (warnings.isEmpty())
-			return;
-
-		Punishment punishment = warnings.get(0);
-		// TODO Not sure I like this formatting
-		punishment.send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
-		for (Punishment warning : warnings) {
-			punishment.send(" &7- &e" + warning.getReason() + " &c(" + warning.getTimeSince() + ")");
-
-			String message = "&e" + punishment.getName() + " &chas received their warning for &7" + warning.getReason();
-
-			JsonBuilder ingame = json(PREFIX + message)
-					.hover("&eClick for more information")
-					.command("/history " + punishment.getName());
-
-			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
-			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
-		}
-		punishment.send("");
-		punishment.send("&cPlease make sure to read the /rules to avoid future punishments");
+		Tasks.wait(Time.SECOND.x(2), () -> Punishments.of(event.getPlayer().getPlayer()).tryShowWarns());
 	}
 
 }

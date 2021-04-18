@@ -6,27 +6,23 @@ import dev.morphia.annotations.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentBuilder;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
+import me.pugabyte.nexus.models.punishments.Punishment.PunishmentBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
-import net.kyori.adventure.text.Component;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,7 +34,7 @@ import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
-import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Builder
@@ -145,228 +141,56 @@ public class Punishments extends PlayerOwnedObject {
 		save();
 	}
 
-	private static void broadcast(String message) {
+	static void broadcast(String message) {
 		Chat.broadcastIngame(PREFIX + message);
 		Chat.broadcastDiscord(DISCORD_PREFIX + message);
 	}
 
-	private void save() {
-		new PunishmentsService().save(this);
+	public List<Punishment> showWarns() {
+		List<Punishment> warnings = getNewWarnings();
+		if (warnings.isEmpty())
+			return warnings;
+
+		// TODO Not sure I like this formatting
+		send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
+		for (Punishment warning : warnings) {
+			boolean showTimeSince = warning.getTimestamp().isBefore(LocalDateTime.now().minusMinutes(1));
+			send(" &7- &e" + warning.getReason() + (showTimeSince ? " &c(" + warning.getTimeSince() + ")" : ""));
+
+			String message = "&e" + getName() + " &chas received their warning for &7" + warning.getReason();
+
+			JsonBuilder ingame = json(PREFIX + message)
+					.hover("&eClick for more information")
+					.command("/history " + getName());
+
+			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
+			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+		}
+		send("");
+		send("&cPlease make sure to read the /rules to avoid future punishments");
+		return warnings;
 	}
 
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	@Converters({UUIDConverter.class, LocationConverter.class})
-	public static class Punishment extends PlayerOwnedObject {
-		private UUID id;
-		private UUID uuid;
-		private UUID punisher;
+	public void tryShowWarns() {
+		if (!isOnline())
+			return;
 
-		private PunishmentType type;
-		private String reason;
-		private boolean active;
+		List<Punishment> warnings = showWarns();
 
-		private LocalDateTime timestamp;
-		private int seconds;
-		private LocalDateTime expiration;
-		private LocalDateTime received;
-
-		private UUID remover;
-		private LocalDateTime removed;
-
-		private UUID replacedBy;
-		// TODO: For ip bans?
-		//  private Set<UUID> related = new HashSet<>();
-
-		@Builder
-		public Punishment(@NotNull UUID uuid, @NotNull UUID punisher, @NotNull PunishmentType type, String input) {
-			this.id = UUID.randomUUID();
-			this.uuid = uuid;
-			this.type = type;
-			this.punisher = punisher;
-			this.timestamp = LocalDateTime.now();
-			this.active = true;
-
-			if (type.hasTimespan()) {
-				Timespan timespan = Timespan.find(input);
-				this.reason = timespan.getRest();
-				this.seconds = timespan.getOriginal();
-				if (isOnline())
-					received();
-			} else
-				this.reason = input;
-		}
-
-		public static PunishmentBuilder ofType(PunishmentType type) {
-			return builder().type(type);
-		}
-
-		public boolean isActive() {
-			LocalDateTime now = LocalDateTime.now();
-			if (!active)
-				return false;
-
-			if (type.hasTimespan()) {
-				if (timestamp != null && timestamp.isAfter(now))
-					return false;
-				if (expiration != null && expiration.isBefore(now))
-					return false;
-			}
-
-			return true;
-		}
-
-		private boolean hasBeenReceived() {
-			return received != null;
-		}
-
-		public void received() {
-			if (hasBeenReceived())
+		// Try to be more sure they actually saw the warning
+		Tasks.wait(Time.SECOND.x(5), () -> {
+			if (!isOnline())
 				return;
 
-			if (!type.isReceivedIfAfk())
-				if (isOnline() && AFK.get(getPlayer()).isAfk())
-					return;
+			for (Punishment warning : warnings)
+				warning.received();
 
-			actuallyReceived();
-		}
+			save();
+		});
+	}
 
-		public void actuallyReceived() {
-			received = LocalDateTime.now();
-			if (type.hasTimespan() && seconds > 0)
-				expiration = Timespan.of(seconds).fromNow();
-		}
-
-		public void deactivate(UUID remover) {
-			this.active = false;
-			this.remover = remover;
-			announceEnd();
-			getType().onExpire(this);
-		}
-
-		private void announceStart() {
-			String message = "&e" + Nickname.of(punisher) + " &c" + type.getPastTense() + " &e" + getNickname();
-			if (seconds > 0)
-				message += " &cfor &e" + Timespan.of(seconds).format(FormatType.LONG);
-
-			if (!isNullOrEmpty(reason))
-				message += " &cfor &7" + reason;
-
-			broadcast(message);
-		}
-
-		private void announceEnd() {
-			if (remover != null)
-				broadcast("&e" + Nickname.of(remover) + " &3un" + type.getPastTense() + " &e" + getNickname());
-		}
-
-		public Component getDisconnectMessage() {
-			return Component.text(getType().getDisconnectMessage(this));
-		}
-
-		public String getTimeLeft() {
-			if (expiration == null)
-				if (seconds > 0)
-					return Timespan.of(seconds).format() + " left";
-				else
-					return "forever";
-			else
-				return Timespan.of(expiration).format() + " left";
-		}
-
-		public String getTimeSince() {
-			return Timespan.of(timestamp).format() + " ago";
-		}
-
-		@Getter
-		@AllArgsConstructor
-		public enum PunishmentType {
-			BAN("banned", true, true, true) {
-				@Override
-				public void action(Punishment punishment) {
-					kick(punishment);
-				}
-
-				@Override
-				public String getDisconnectMessage(Punishment punishment) {
-					return punishment.getReason();
-				}
-			},
-			IP_BAN("ip-banned", true, true, true) { // TODO onlyOneActive ?
-				@Override
-				public void action(Punishment punishment) {
-					kick(punishment);
-					// TODO look for alts, kick
-				}
-
-				@Override
-				public String getDisconnectMessage(Punishment punishment) {
-					return punishment.getReason();
-				}
-			},
-			KICK("kicked", false, false, true) {
-				@Override
-				public void action(Punishment punishment){
-					kick(punishment);
-				}
-
-				@Override
-				public String getDisconnectMessage(Punishment punishment) {
-					return punishment.getReason();
-				}
-			},
-			MUTE("muted", true, true, false) {
-				@Override
-				public void action(Punishment punishment) {
-					punishment.send("You have been muted"); // TODO
-				}
-
-				@Override
-				public void onExpire(Punishment punishment) {
-					punishment.send("Your mute has expired");
-				}
-			},
-			WARN("warned", false, false, false) {
-				@Override
-				public void action(Punishment punishment) {
-					punishment.send("You have been warned"); // TODO
-				}
-			},
-			FREEZE("froze", false, true, true) {
-				@Override
-				public void action(Punishment punishment) {
-					punishment.send("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
-				}
-
-				@Override
-				public void onExpire(Punishment punishment) {
-					punishment.send("&cYou have been unfrozen");
-				}
-			};
-
-			private final String pastTense;
-			@Accessors(fluent = true)
-			private final boolean hasTimespan;
-			private final boolean onlyOneActive;
-			private final boolean receivedIfAfk;
-
-			public abstract void action(Punishment punishment);
-
-			public void onExpire(Punishment punishment) {}
-
-			public String getDisconnectMessage(Punishment punishment) {
-				throw new UnsupportedOperationException("Punishment type " + camelCase(this) + " does not have a disconnect message");
-			}
-
-			void kick(Punishment punishment) {
-				if (punishment.isOnline()) {
-					punishment.getPlayer().kick(punishment.getDisconnectMessage());
-					punishment.received();
-				}
-			}
-		}
-
+	private void save() {
+		new PunishmentsService().save(this);
 	}
 
 }

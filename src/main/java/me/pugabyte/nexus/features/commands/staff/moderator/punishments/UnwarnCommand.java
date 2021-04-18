@@ -6,9 +6,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 import me.pugabyte.nexus.utils.Env;
 
 import java.util.List;
