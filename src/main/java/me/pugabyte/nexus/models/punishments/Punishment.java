@@ -46,7 +46,7 @@ public class Punishment extends PlayerOwnedObject {
 	//  private Set<UUID> related = new HashSet<>();
 
 	@Builder
-	public Punishment(@NotNull UUID uuid, @NotNull UUID punisher, @NotNull PunishmentType type, String input) {
+	public Punishment(@NotNull UUID uuid, @NotNull UUID punisher, @NotNull PunishmentType type, String input, boolean now) {
 		this.id = UUID.randomUUID();
 		this.uuid = uuid;
 		this.type = type;
@@ -59,6 +59,8 @@ public class Punishment extends PlayerOwnedObject {
 			this.reason = timespan.getRest();
 			this.seconds = timespan.getOriginal();
 			if (isOnline() && type.isAutomaticallyReceived())
+				received();
+			if (now)
 				received();
 		} else
 			this.reason = input;

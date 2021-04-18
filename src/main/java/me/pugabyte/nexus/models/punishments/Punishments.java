@@ -154,8 +154,15 @@ public class Punishments extends PlayerOwnedObject {
 		// TODO Not sure I like this formatting
 		send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
 		for (Punishment warning : warnings) {
-			boolean showTimeSince = warning.getTimestamp().isBefore(LocalDateTime.now().minusMinutes(1));
-			send(" &7- &e" + warning.getReason() + (showTimeSince ? " &c(" + warning.getTimeSince() + ")" : ""));
+			boolean recent = warning.getTimestamp().isAfter(LocalDateTime.now().minusMinutes(1));
+			String reason = " &7- &e" + warning.getReason();
+
+			if (recent) {
+				send(reason);
+				continue;
+			}
+
+			send(reason + " &c(" + warning.getTimeSince() + ")");
 
 			String message = "&e" + getName() + " &chas received their warning for &7" + warning.getReason();
 

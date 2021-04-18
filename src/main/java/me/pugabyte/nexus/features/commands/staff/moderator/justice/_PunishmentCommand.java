@@ -25,11 +25,16 @@ public abstract class _PunishmentCommand extends CustomCommand {
 	}
 
 	protected void punish(List<Punishments> players, String input) {
+		punish(players, input, false);
+	}
+
+	protected void punish(List<Punishments> players, String input, boolean now) {
 		for (Punishments punishments : players) {
 			try {
 				punishments.add(Punishment.ofType(getType())
 						.punisher(uuid())
-						.input(input));
+						.input(input)
+						.now(now));
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}
