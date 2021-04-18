@@ -21,7 +21,7 @@ public class IPBanCommand extends _PunishmentCommand {
 		super(event);
 	}
 
-	@Path("<player> <time/reason...>")
+	@Path("<player> [time/reason...]")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
 		punish(players, input);
 	}

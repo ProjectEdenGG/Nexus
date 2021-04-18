@@ -20,7 +20,7 @@ public class BanCommand extends _PunishmentCommand {
 		super(event);
 	}
 
-	@Path("<players> <time/reason...>")
+	@Path("<players> [time/reason...]")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
 		punish(players, input);
 	}

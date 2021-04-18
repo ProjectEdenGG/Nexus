@@ -141,9 +141,7 @@ public class ChatManager {
 	}
 
 	public static void process(PrivateChatEvent event) {
-		Set<String> othersNames = event.getChannel().getOthersNames(event.getChatter());
-
-		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> ")
+		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + event.getRecipientNames() + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nickname.of(event.getChatter()) + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
@@ -171,7 +169,7 @@ public class ChatManager {
 		if (seen > 0)
 			event.getChatter().send(to);
 
-		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
+		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + event.getRecipientNames() + ": " + event.getMessage());
 	}
 
 }

@@ -27,8 +27,15 @@ public class UnwarnCommand extends _PunishmentCommand {
 	@Path("<player>")
 	void run(@Arg(type = Punishments.class) List<Punishments> players) {
 		for (Punishments player : players) {
-			Optional<Punishment> lastWarn = player.getLastWarn();
-			lastWarn.ifPresent(player::remove);
+			try {
+				Optional<Punishment> lastWarn = player.getLastWarn();
+				if (lastWarn.isPresent())
+					player.remove(lastWarn.get());
+				else
+					error(player.getNickname() + " does not have any warnings");
+			} catch (Exception ex) {
+				event.handleException(ex);
+			}
 		}
 	}
 

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 
@@ -115,11 +116,12 @@ public class TimeUtils {
 		}
 	}
 
+	@ToString
 	public static class Timespan {
+		@Getter
 		private final int original;
 		private final boolean noneDisplay;
 		private final FormatType formatType;
-		@Getter
 		private int years, days, hours, minutes, seconds;
 		@Getter
 		private final String rest;
@@ -179,6 +181,9 @@ public class TimeUtils {
 			public static TimespanBuilder of(String input) {
 				if (!isNullOrEmpty(input)) {
 					input = input.replaceFirst("[tT]:", "");
+					if (Utils.isLong(input))
+						return of(Long.parseLong(input));
+
 					int seconds = 0;
 					for (TimespanElement element : TimespanElement.values()) {
 						Matcher matcher = element.getPattern().matcher(input);
@@ -202,9 +207,10 @@ public class TimeUtils {
 					}
 				}
 
-				return TimespanBuilder.of(0).rest(input);
+				return of(0).rest(input);
 			}
 
+			@ToString.Include
 			public String format() {
 				return format(formatType);
 			}
@@ -229,7 +235,7 @@ public class TimeUtils {
 		}
 
 		public LocalDateTime fromNow() {
-			return LocalDateTime.now().plusSeconds(seconds);
+			return LocalDateTime.now().plusSeconds(original);
 		}
 
 		public boolean isNull() {

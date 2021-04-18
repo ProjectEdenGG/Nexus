@@ -20,7 +20,7 @@ public class KickCommand extends _PunishmentCommand {
 		super(event);
 	}
 
-	@Path("<player> <reason...>")
+	@Path("<player> [reason...]")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
 		punish(players, input);
 	}

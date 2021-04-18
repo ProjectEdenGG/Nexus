@@ -332,6 +332,15 @@ public class Utils {
 
 	public static final String ALPHANUMERICS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+	public static boolean isLong(String text) {
+		try {
+			Long.parseLong(text);
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
 	public static boolean isInt(String text) {
 		try {
 			Integer.parseInt(text);

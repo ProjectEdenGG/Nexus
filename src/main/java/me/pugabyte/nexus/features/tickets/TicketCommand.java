@@ -5,7 +5,6 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -24,9 +23,8 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-@Aliases({"helpop", "report"})
 public class TicketCommand extends CustomCommand {
-	private TicketService service = new TicketService();
+	private final TicketService service = new TicketService();
 
 	public TicketCommand(CommandEvent event) {
 		super(event);

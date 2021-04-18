@@ -10,6 +10,7 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 
 import java.util.Set;
@@ -64,6 +65,10 @@ public class DiscordChatEvent extends ChatEvent {
 		if (getChatter() != null)
 			return getChatter().getOfflinePlayer().getName();
 		return Discord.getName(member);
+	}
+
+	public TextChannel getDiscordTextChannel() {
+		return channel.getDiscordTextChannel().get();
 	}
 
 	@Override

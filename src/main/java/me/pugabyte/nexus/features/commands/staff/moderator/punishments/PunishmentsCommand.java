@@ -5,6 +5,15 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
+import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
+import me.pugabyte.nexus.features.chat.events.PrivateChatEvent;
+import me.pugabyte.nexus.features.commands.BoopCommand;
+import me.pugabyte.nexus.features.commands.poof.PoofCommand;
+import me.pugabyte.nexus.features.commands.poof.PoofHereCommand;
+import me.pugabyte.nexus.features.economy.commands.PayCommand;
+import me.pugabyte.nexus.features.tickets.ReportCommand;
+import me.pugabyte.nexus.features.tickets.TicketCommand;
+import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -20,8 +29,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +79,7 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 			ban.received();
 			service.save(punishments);
 
-			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(&e" + ban.getTimeLeft() + "&c)";
+			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(" + ban.getTimeLeft() + ")";
 
 			JsonBuilder ingame = json(PREFIX + message)
 					.hover("&eClick for more information")
@@ -86,13 +99,18 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(chatter);
-		Optional<Punishment> muteMaybe = punishments.getActiveMute();
-		muteMaybe.ifPresent(mute -> {
+		punishments.getActiveMute().ifPresent(mute -> {
 			event.setCancelled(true);
 			mute.received();
 			service.save(punishments);
 
-			String message = "&e" + punishments.getName() + " &cspoke while muted: &7" + mute.getReason() + " &c(&e" + mute.getTimeLeft() + "&c)";
+			String originalMessage = event.getOriginalMessage();
+			if (event instanceof PrivateChatEvent)
+				originalMessage = "To " + ((PrivateChatEvent) event).getRecipientNames() + ": " + originalMessage;
+			else if (event instanceof DiscordChatEvent)
+				originalMessage = "#" + ((DiscordChatEvent) event).getDiscordTextChannel().getName() + ": " + originalMessage;
+
+			String message = "&e" + punishments.getName() + " &cspoke while muted: &7" + originalMessage + " &c(" + mute.getTimeLeft() + ")";
 
 			JsonBuilder ingame = json(PREFIX + message)
 					.hover("&eClick for more information")
@@ -100,6 +118,51 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 
 			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
 			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+
+			punishments.send("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " (" + mute.getTimeLeft() + ")");
+		});
+	}
+
+	private static List<String> aliases(Class<? extends CustomCommand> clazz) {
+		CustomCommand customCommand = Commands.get(clazz);
+		if (customCommand != null)
+			return customCommand.getAliases();
+		return Collections.emptyList();
+	}
+
+	private static final List<String> muteCommandBlacklist = new ArrayList<>();
+
+	static {
+		Tasks.wait(1, () -> new ArrayList<String>() {{
+			addAll(aliases(PoofCommand.class));
+			addAll(aliases(PoofHereCommand.class));
+			addAll(aliases(BoopCommand.class));
+			addAll(aliases(PayCommand.class));
+			addAll(aliases(TicketCommand.class));
+			addAll(aliases(ReportCommand.class));
+			addAll(Arrays.asList("tp", "qm")); // redirects
+		}}.forEach(command -> muteCommandBlacklist.add("/" + command)));
+	}
+
+	@EventHandler
+	public void onCommand(PlayerCommandPreprocessEvent event) {
+		final PunishmentsService service = new PunishmentsService();
+		final Punishments punishments = service.get(event.getPlayer());
+		punishments.getActiveMute().ifPresent(mute -> {
+			if (!muteCommandBlacklist.contains(event.getMessage().split(" ")[0]))
+				return;
+
+			event.setCancelled(true);
+			String message = "&e" + punishments.getName() + " &cused a blacklisted command while muted: &7" + event.getMessage() + " &c(" + mute.getTimeLeft() + ")";
+
+			JsonBuilder ingame = json(PREFIX + message)
+					.hover("&eClick for more information")
+					.command("/history " + punishments.getName());
+
+			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
+			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+
+			punishments.send("&cYou cannot use this command while muted (" + mute.getTimeLeft() + ")");
 		});
 	}
 

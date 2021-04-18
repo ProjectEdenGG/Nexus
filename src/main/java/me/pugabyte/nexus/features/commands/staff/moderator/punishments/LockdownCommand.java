@@ -13,11 +13,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -30,8 +32,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Aliases("ld")
 @NoArgsConstructor
@@ -67,7 +67,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		lockdown = true;
 		Timespan timespan = Timespan.find(input);
 		LockdownCommand.reason = timespan.getRest();
-		if (timespan.getSeconds() > 0)
+		if (timespan.getOriginal() > 0)
 			LockdownCommand.end = timespan.fromNow();
 
 		String message = "&c" + name() + " initiated lockdown for &e" + (timespan.isNull() ? "" : timespan.format(FormatType.LONG) + "&c for &e") + timespan.getRest();
@@ -75,7 +75,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 		for (Player player : Bukkit.getOnlinePlayers())
 			if (!canBypass(player.getUniqueId())) {
-				player.kickPlayer(getLockdownReason());
+				player.kick(getLockdownReason());
 				broadcast("Removed " + player.getName() + " from server");
 			}
 	}
@@ -131,8 +131,16 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		return hours.getTotal() > (30 * 60);
 	}
 
-	private String getLockdownReason() {
-		return colorize("&e&lBear Nation &3&lis in &4&llockdown &3&lmode.\n\n&eReason: &c" + reason + "\n\n&3Please check back soon!");
+	private Component getLockdownReason() {
+		return new JsonBuilder()
+				.next("&e&lBear Nation &3&lis in &4&llockdown &3&lmode")
+				.newline()
+				.newline()
+				.next("&eReason: &c" + reason)
+				.newline()
+				.newline()
+				.next("&3Please check back soon!")
+				.build();
 	}
 
 }

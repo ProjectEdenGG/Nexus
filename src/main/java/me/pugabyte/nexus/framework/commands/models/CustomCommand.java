@@ -321,7 +321,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	public void showUsage() {
-		throw new InvalidInputException(event.getUsageMessage());
+		error(event.getUsageMessage());
 	}
 
 	protected CommandSender sender() {
@@ -700,7 +700,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(OfflinePlayer.class)
 	public OfflinePlayer convertToOfflinePlayer(String value) {
 		if ("self".equalsIgnoreCase(value)) value = uuid().toString();
-		return PlayerUtils.getPlayer(value);
+		return PlayerUtils.getPlayer(value.replaceFirst("[pP]:", ""));
 	}
 
 	@ConverterFor(Player.class)
@@ -731,8 +731,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
-				.map(player -> Nickname.of(player))
-				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+				.map(Nickname::of)
+				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
 				.collect(toList());
 	}
 
@@ -744,7 +744,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		return new NerdService().find(filter).stream()
 				.map(Nerd::getName)
-				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
 				.collect(toList());
 	}
 

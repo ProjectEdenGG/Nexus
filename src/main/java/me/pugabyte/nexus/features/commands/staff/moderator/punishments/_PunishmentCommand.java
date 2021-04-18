@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 public abstract class _PunishmentCommand extends CustomCommand {
@@ -29,6 +30,20 @@ public abstract class _PunishmentCommand extends CustomCommand {
 				punishments.add(Punishment.ofType(getType())
 						.punisher(uuid())
 						.input(input));
+			} catch (Exception ex) {
+				event.handleException(ex);
+			}
+		}
+	}
+
+	protected void deactivate(List<Punishments> players) {
+		for (Punishments player : players) {
+			try {
+				Optional<Punishment> punishment = player.getLastActive(getType());
+				if (punishment.isPresent())
+					punishment.get().deactivate(uuid());
+				else
+					error(player.getNickname() + " is not " + getType().getPastTense());
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}
