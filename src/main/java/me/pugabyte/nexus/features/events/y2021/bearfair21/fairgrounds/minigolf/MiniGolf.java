@@ -6,6 +6,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.ProjectileListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.PuttListener;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.RegionListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
@@ -72,6 +73,7 @@ public class MiniGolf {
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
+		new RegionListener();
 
 		ballTask();
 		powerTask();
@@ -279,6 +281,7 @@ public class MiniGolf {
 					case LAVA:
 					case CRIMSON_HYPHAE:
 					case PURPLE_STAINED_GLASS:
+					case BARRIER:
 						// Fall
 						ball.setGravity(true);
 						break;
@@ -385,6 +388,11 @@ public class MiniGolf {
 						// Check if floating above slabs
 						if (MiniGolfUtils.isBottomSlab(block) && loc.getY() > block.getY() + 0.5)
 							ball.setGravity(true);
+
+						if (ball.getLocation().getY() < 0) {
+							MiniGolfUtils.respawnBall(ball);
+							break;
+						}
 
 						// Stop & respawn ball if slow enough
 						if (vel.getY() >= 0 && vel.length() <= 0.01) {
