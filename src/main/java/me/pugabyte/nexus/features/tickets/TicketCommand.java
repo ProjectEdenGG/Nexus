@@ -59,8 +59,9 @@ public class TicketCommand extends CustomCommand {
 			send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
 
 			List<Nerd> onlineMods = Rank.getOnlineMods();
-			Discord.staffLog("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription());
-			Discord.staffBridge("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription() + (onlineMods.size() == 0 ? " [ @here ]" : ""));
+			String message = "**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription();
+			Discord.staffLog(message);
+			Discord.staffBridge(message + (onlineMods.size() == 0 ? " [ @here ]" : ""));
 
 			onlineMods.forEach(mod -> Jingle.PING.play(mod.getPlayer()));
 			Chat.broadcastIngame("", StaticChannel.STAFF);
