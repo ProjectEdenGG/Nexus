@@ -20,7 +20,7 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("<type> [amount] [nbt...]")
-	void run(Material material, @Arg(value = "64", min = 1) int amount, @Arg(permission = "group.staff") String nbt) {
+	void run(Material material, @Arg(value = "64", min = 1, max = 2304, minMaxBypass = "group.staff") int amount, @Arg(permission = "group.staff") String nbt) {
 		PlayerUtils.giveItem(player(), material, amount, nbt);
 	}
 

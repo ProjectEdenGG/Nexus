@@ -489,7 +489,7 @@ public class PlayerUtils {
 	public static void dropExcessItems(Player player, List<ItemStack> excess) {
 		if (!excess.isEmpty())
 			for (ItemStack itemStack : excess)
-				if (!isNullOrAir(itemStack))
+				if (!isNullOrAir(itemStack) && itemStack.getAmount() > 0)
 					player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
 	}
 
