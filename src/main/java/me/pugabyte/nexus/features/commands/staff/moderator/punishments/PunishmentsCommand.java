@@ -29,10 +29,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -130,30 +128,25 @@ public class PunishmentsCommand extends CustomCommand implements Listener {
 		return Collections.emptyList();
 	}
 
-	private static final List<String> muteCommandBlacklist = new ArrayList<>();
-
-	static {
-		Tasks.wait(1, () -> new ArrayList<String>() {{
-			addAll(aliases(PoofCommand.class));
-			addAll(aliases(PoofHereCommand.class));
-			addAll(aliases(BoopCommand.class));
-			addAll(aliases(PayCommand.class));
-			addAll(aliases(TicketCommand.class));
-			addAll(aliases(ReportCommand.class));
-			addAll(Arrays.asList("tp", "qm")); // redirects
-		}}.forEach(command -> muteCommandBlacklist.add("/" + command)));
-	}
+	private static final List<Class<? extends CustomCommand>> muteCommandBlacklist = Arrays.asList(
+			PoofCommand.class,
+			PoofHereCommand.class,
+			BoopCommand.class,
+			PayCommand.class,
+			TicketCommand.class,
+			ReportCommand.class
+	);
 
 	@EventHandler
-	public void onCommand(PlayerCommandPreprocessEvent event) {
+	public void onCommand(CommandEvent event) {
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getPlayer());
 		punishments.getActiveMute().ifPresent(mute -> {
-			if (!muteCommandBlacklist.contains(event.getMessage().split(" ")[0]))
+			if (!muteCommandBlacklist.contains(event.getCommand().getClass()))
 				return;
 
 			event.setCancelled(true);
-			String message = "&e" + punishments.getName() + " &cused a blacklisted command while muted: &7" + event.getMessage() + " &c(" + mute.getTimeLeft() + ")";
+			String message = "&e" + punishments.getName() + " &cused a blacklisted command while muted: &7" + event.getOriginalMessage() + " &c(" + mute.getTimeLeft() + ")";
 
 			JsonBuilder ingame = json(PREFIX + message)
 					.hover("&eClick for more information")

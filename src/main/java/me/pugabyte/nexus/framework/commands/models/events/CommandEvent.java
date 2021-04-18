@@ -61,6 +61,10 @@ public class CommandEvent extends Event implements Cancellable {
 		return aliasUsed.replace("nexus:", "");
 	}
 
+	public String getOriginalMessage() {
+		return getAliasUsed() + " " + getArgsString();
+	}
+
 	public String getArgsString() {
 		return String.join(" ", args);
 	}
