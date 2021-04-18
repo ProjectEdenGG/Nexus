@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -58,6 +60,7 @@ import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralW
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
 import static me.pugabyte.nexus.utils.StringUtils.asParsableDecimal;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.Utils.getDefaultPrimitiveValue;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -154,15 +157,86 @@ public abstract class ICustomCommand {
 	}
 
 	Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
+		Parameter[] allParameters = method.getParameters();
+
+		List<Parameter> switches = new ArrayList<>();
+		List<Parameter> parameters = new ArrayList<>();
+
+		for (Parameter parameter : allParameters)
+			if (parameter.getDeclaredAnnotation(Switch.class) != null)
+				switches.add(parameter);
+			else
+				parameters.add(parameter);
+
+		Object[] convertedSwitches = convertSwitches(method, event, doValidation, switches);
+		Object[] convertedParameters = convertParameters(method, event, doValidation, parameters);
+
+		ArrayList<Object> objects = new ArrayList<Object>() {{
+			addAll(Arrays.asList(convertedParameters));
+			addAll(Arrays.asList(convertedSwitches));
+		}};
+
+		Nexus.log("Objects: " + objects);
+		Nexus.log("Args: " + event.getArgsString());
+		return objects.toArray(new Object[0]);
+	}
+
+	private Object[] convertSwitches(Method method, CommandEvent event, boolean doValidation, List<Parameter> switches) {
+		Object[] objects = new Object[switches.size()];
+
+		List<String> args = new ArrayList<>(event.getArgs());
+
+		if (args.isEmpty())
+			return objects;
+
+		int i = 0;
+		for (Parameter parameter : switches) {
+			Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
+			String regex = "(?i)^(--" + parameter.getName();
+			char shorthand = annotation.shorthand();
+			if (shorthand != '-')
+				regex += "|-" + shorthand;
+			regex += ")(=[^\\s]+)?$";
+
+			Pattern pattern = Pattern.compile(regex);
+
+			boolean found = false;
+			for (String arg : args) {
+				Matcher matcher = pattern.matcher(arg);
+
+				if (matcher.find()) {
+					found = true;
+					String group = matcher.group();
+					String value = isNullOrEmpty(annotation.value()) ? null : annotation.value();
+					if (group.contains("="))
+						value = group.split("=", 2)[1];
+					if (value == null && isBoolean(parameter))
+						value = "true";
+
+					objects[i] = convert(value, null, parameter.getType(), parameter, parameter.getName(), event, false);
+
+					event.getArgs().remove(arg);
+				}
+			}
+
+			if (objects[i] == null && parameter.getType().isPrimitive())
+				objects[i] = getDefaultPrimitiveValue(parameter.getType());
+
+			if (!found && !isNullOrEmpty(annotation.value()))
+				objects[i] = convert(annotation.value(), null, parameter.getType(), parameter, parameter.getName(), event, false);
+		}
+		return objects;
+	}
+
+	private Object[] convertParameters(Method method, CommandEvent event, boolean doValidation, List<Parameter> parameters) {
+		Object[] objects = new Object[parameters.size()];
 		List<String> args = event.getArgs();
-		List<Parameter> parameters = Arrays.asList(method.getParameters());
 		String pathValue = method.getAnnotation(Path.class).value();
 		Iterator<String> path = Arrays.asList(pathValue.split(" ")).iterator();
-		Object[] objects = new Object[parameters.size()];
 
 		// TODO: Validate params and path have same args
 
-		int i = 1;
+		int i = 0;
 		int pathIndex = 0;
 		for (Parameter parameter : parameters) {
 			String pathArg = "";
@@ -186,11 +260,10 @@ public abstract class ICustomCommand {
 
 			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !isNullOrEmpty(value)));
 			try {
-				objects[i - 1] = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
+				objects[i++] = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
 			} catch (MissingArgumentException ex) {
 				event.getCommand().showUsage();
 			}
-			++i;
 		}
 		return objects;
 	}
@@ -203,6 +276,7 @@ public abstract class ICustomCommand {
 
 	@SneakyThrows
 	private Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
+		Nexus.log("Converting " + value + " to " + type.getSimpleName());
 		Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 
 		double argMinDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
@@ -260,6 +334,8 @@ public abstract class ICustomCommand {
 				return convertToPlayerOwnedObject(value, (Class<? extends PlayerOwnedObject>) type);
 			}
 		} catch (InvocationTargetException ex) {
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 			if (required)
 				if (!isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
 					throw ex;
@@ -273,8 +349,8 @@ public abstract class ICustomCommand {
 			if (required)
 				throw new MissingArgumentException();
 			else
-				if (isPrimitiveNumber(type))
-					return 0;
+				if (type.isPrimitive())
+					return getDefaultPrimitiveValue(type);
 				else
 					return null;
 
@@ -342,6 +418,10 @@ public abstract class ICustomCommand {
 		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
 	}
 
+	private boolean isBoolean(Parameter parameter) {
+		return parameter.getType() == Boolean.class || parameter.getType() == Boolean.TYPE;
+	}
+
 	@SneakyThrows
 	private Number getMaxValue(Class<?> type) {
 		return (Number) getMinMaxHolder(type).getDeclaredField("MAX_VALUE").get(null);
@@ -385,7 +465,7 @@ public abstract class ICustomCommand {
 	@SneakyThrows
 	CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
 		CustomCommand customCommand = new ObjenesisStd().newInstance((Class<? extends CustomCommand>) clazz);
-		CommandRunEvent newEvent = new CommandRunEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>());
+		CommandRunEvent newEvent = new CommandRunEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>(), new ArrayList<>());
 		return getCommand(newEvent);
 	}
 

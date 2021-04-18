@@ -30,6 +30,8 @@ public abstract class CommandEvent extends Event implements Cancellable {
 	protected String aliasUsed;
 	@NonNull
 	protected List<String> args;
+	@NonNull
+	protected List<String> originalArgs;
 
 	protected boolean cancelled = false;
 	protected static final HandlerList handlers = new HandlerList();
@@ -54,11 +56,15 @@ public abstract class CommandEvent extends Event implements Cancellable {
 	}
 
 	public String getOriginalMessage() {
-		return "/" + getAliasUsed() + " " + getArgsString();
+		return "/" + getAliasUsed() + " " + getOriginalArgsString();
 	}
 
 	public String getArgsString() {
 		return String.join(" ", args);
+	}
+
+	public String getOriginalArgsString() {
+		return String.join(" ", originalArgs);
 	}
 
 	@Override

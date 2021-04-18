@@ -24,7 +24,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, @NotNull String[] args) {
-		CommandRunEvent event = new CommandRunEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
+		CommandRunEvent event = new CommandRunEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)), Arrays.asList(args));
 		if (event.callEvent())
 			customCommand.execute(event);
 
@@ -36,7 +36,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 //		if (sender.getName().equals("Pugabyte"))
 //			return null;
 
-		CommandTabEvent event = new CommandTabEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)));
+		CommandTabEvent event = new CommandTabEvent(sender, customCommand, alias, new ArrayList<>(Arrays.asList(args)), Arrays.asList(args));
 
 		// Remove any empty args except the last one
 		boolean lastIndexIsEmpty = Strings.isNullOrEmpty(event.getArgs().get(event.getArgs().size() - 1));

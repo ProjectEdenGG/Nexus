@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.objenesis.ObjenesisStd;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -406,6 +407,10 @@ public class Utils {
 		for (byte b : hash)
 			formatter.format("%02x", b);
 		return formatter.toString();
+	}
+
+	public static <T> T getDefaultPrimitiveValue(Class<T> clazz) {
+		return (T) Array.get(Array.newInstance(clazz, 1), 0);
 	}
 
 }

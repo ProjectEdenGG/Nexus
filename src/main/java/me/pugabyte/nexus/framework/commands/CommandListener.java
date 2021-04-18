@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ public class CommandListener implements Listener {
 		args.removeIf(Strings::isNullOrEmpty);
 		if (lastIndexIsEmpty) args.add("");
 
-		CommandTabEvent tabEvent = new CommandTabEvent(event.getSender(), customCommand, alias, args);
+		CommandTabEvent tabEvent = new CommandTabEvent(event.getSender(), customCommand, alias, args, Collections.unmodifiableList(args));
 //		if (tabEvent.callEvent()) {
 			List<String> completions = customCommand.tabComplete(tabEvent);
 			if (completions != null) {
