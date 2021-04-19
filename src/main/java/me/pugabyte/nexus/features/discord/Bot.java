@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.discord;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.vdurmont.emoji.EmojiManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -103,6 +104,7 @@ public enum Bot {
 				.setPrefix("/")
 				.setAlternativePrefix("!")
 				.setOwnerId(User.PUGABYTE.getId())
+				.setEmojis(EmojiManager.getForAlias("white_check_mark").getUnicode(), EmojiManager.getForAlias("warning").getUnicode(), EmojiManager.getForAlias("x").getUnicode())
 				.setActivity(Activity.playing("Minecraft"));
 
 		Reflections reflections = new Reflections(getClass().getPackage().getName());

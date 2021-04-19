@@ -25,6 +25,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -34,6 +35,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Objects;
@@ -49,7 +51,9 @@ public class Minigamer implements ColoredAndNicknamed {
 	@NonNull
 	private Player player;
 	@ToString.Exclude
+	@Nullable
 	private Match match;
+	@Nullable
 	private Team team;
 	private int score = 0;
 	/**
@@ -90,6 +94,11 @@ public class Minigamer implements ColoredAndNicknamed {
 		if (team == null)
 			return Color.WHITE;
 		return team.getChatColor().getColor();
+	}
+
+	@Override
+	public @NotNull ChatColor getChatColor() {
+		return team == null ? ChatColor.WHITE : team.getChatColor();
 	}
 
 	public void join(String name) {

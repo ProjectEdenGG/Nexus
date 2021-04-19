@@ -147,7 +147,7 @@ public class MiniGolfUtils {
 				return "Triple Bogey";
 			default:
 				if (diff < 4)
-					return "-" + diff;
+					return "" + diff;
 				else
 					return "+" + diff;
 
