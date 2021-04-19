@@ -6,6 +6,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
@@ -17,6 +18,7 @@ import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.Permission;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.OfflinePlayer;
@@ -38,15 +40,18 @@ public class DiscordDiscordCommand extends Command {
 				if (args.length == 0)
 					throw new InvalidInputException("Correct usage: `/discord link <name>`");
 
+				DiscordUserService service = new DiscordUserService();
+				DiscordUser author = service.getFromUserId(event.getAuthor().getId());
+
 				switch (args[0].toLowerCase()) {
 					case "lockdown":
 						if (!event.getMember().hasPermission(Permission.KICK_MEMBERS))
 							throw new NoPermissionException();
 
-						SettingService service = new SettingService();
-						Setting setting = service.get("discord", "lockdown");
+						SettingService settingService = new SettingService();
+						Setting setting = settingService.get("discord", "lockdown");
 						setting.setBoolean(!setting.getBoolean());
-						service.save(setting);
+						settingService.save(setting);
 
 						event.reply("Discord lockdown " + (setting.getBoolean() ? "enabled, new members will be automatically kicked" : "disabled"));
 
@@ -54,10 +59,9 @@ public class DiscordDiscordCommand extends Command {
 					case "link":
 						if (args.length < 2)
 							throw new InvalidInputException("Correct usage: `/discord link <name>`");
-						DiscordUser author = new DiscordUserService().getFromUserId(event.getAuthor().getId());
 
 						OfflinePlayer player = PlayerUtils.getPlayer(args[1]);
-						DiscordUser fromInput = new DiscordUserService().get(player);
+						DiscordUser fromInput = service.get(player);
 
 						if (author != null)
 							// Author already linked
@@ -85,6 +89,20 @@ public class DiscordDiscordCommand extends Command {
 								"```/discord link " + code + "```").queue();
 						if (event.getMessage().getChannel().getType().isGuild())
 							event.reply(event.getAuthor().getAsMention() + " Check your direct messages with " + Bot.KODA.jda().getSelfUser().getAsMention() + " for a confirmation code! (top left of the screen)");
+						break;
+
+					case "forcelink":
+						if (args.length < 3)
+							throw new InvalidInputException("Correct usage: `/discord forceLink <name> <mention>`");
+
+						DiscordUser discordUser = service.get(PlayerUtils.getPlayer(args[1]));
+						String id = event.getMessage().getMentionedMembers().get(0).getUser().getId();
+						discordUser.setUserId(id);
+						service.save(discordUser);
+						event.reactSuccess();
+						Tasks.wait(Time.SECOND.x(5), () -> event.getMessage().delete().queue());
+						Discord.addRole(id, DiscordId.Role.VERIFIED);
+						Discord.staffLog("**" + discordUser.getNickname() + "** Discord account force linked to **" + discordUser.getNameAndDiscrim() +  "** by " + author.getNickname() + " via Discord");
 						break;
 				}
 			} catch (Exception ex) {

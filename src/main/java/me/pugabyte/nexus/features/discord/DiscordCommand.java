@@ -106,11 +106,12 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("forceLink <player> <id>")
+	@Permission("group.staff")
 	void forceLink(OfflinePlayer player, String id) {
 		DiscordUserService service = new DiscordUserService();
 		DiscordUser user = service.get(player);
 		user.setUserId(id);
-		if (user.getName() == null)
+		if (user.getUser() == null)
 			error("Could not find user from userId &e" + id);
 		service.save(user);
 		send("Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
