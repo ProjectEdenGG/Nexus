@@ -92,6 +92,10 @@ public class Punishments extends PlayerOwnedObject {
 		return getLastActive(PunishmentType.FREEZE);
 	}
 
+	public Optional<Punishment> getActiveWatchlist() {
+		return getLastActive(PunishmentType.WATCHLIST);
+	}
+
 	public Optional<Punishment> getLastWarn() {
 		return getLastActive(PunishmentType.WARN);
 	}

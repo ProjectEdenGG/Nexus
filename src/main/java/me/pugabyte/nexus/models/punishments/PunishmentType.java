@@ -71,6 +71,12 @@ public enum PunishmentType {
 		public void onExpire(Punishment punishment) {
 			punishment.send("&cYou have been unfrozen");
 		}
+	},
+	WATCHLIST("watchlisted", false, true, true, true) {
+		@Override
+		public void action(Punishment punishment) {
+
+		}
 	};
 
 	private final String pastTense;
