@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands;
+package me.pugabyte.nexus.features.commands.staff.operator;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

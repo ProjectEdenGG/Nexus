@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff;
+package me.pugabyte.nexus.features.commands.staff.admin;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-@Permission("group.seniorstaff")
+@Permission("group.admin")
 public class DropAllCommand extends CustomCommand {
 
 	public DropAllCommand(@NonNull CommandEvent event) {

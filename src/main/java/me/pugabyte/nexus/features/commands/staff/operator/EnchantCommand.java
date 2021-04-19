@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands;
+package me.pugabyte.nexus.features.commands.staff.operator;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
