@@ -28,7 +28,7 @@ public abstract class MongoService extends DatabaseService {
 			database.ensureIndexes();
 	}
 
-	public abstract <T> Map<UUID, T> getCache();
+	public abstract <T extends PlayerOwnedObject> Map<UUID, T> getCache();
 
 	public void clearCache() {
 		getCache().clear();

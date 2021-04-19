@@ -29,15 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -258,6 +250,9 @@ public class PlayerUtils {
 		return excess.isEmpty();
 	}
 
+	/**
+	 * Tests if a player has an item in their inventory
+	 */
 	public static boolean playerHas(Player player, ItemStack itemStack) {
 		PlayerInventory inventory = player.getInventory();
 		if (inventory.contains(itemStack))
