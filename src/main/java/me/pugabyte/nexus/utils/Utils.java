@@ -24,6 +24,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -411,6 +412,10 @@ public class Utils {
 
 	public static <T> T getDefaultPrimitiveValue(Class<T> clazz) {
 		return (T) Array.get(Array.newInstance(clazz, 1), 0);
+	}
+
+	public static boolean isBoolean(Parameter parameter) {
+		return parameter.getType() == Boolean.class || parameter.getType() == Boolean.TYPE;
 	}
 
 }

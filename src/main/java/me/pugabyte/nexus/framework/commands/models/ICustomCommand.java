@@ -56,11 +56,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
 import static me.pugabyte.nexus.utils.StringUtils.asParsableDecimal;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.Utils.getDefaultPrimitiveValue;
+import static me.pugabyte.nexus.utils.Utils.isBoolean;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -188,13 +190,8 @@ public abstract class ICustomCommand {
 		int i = 0;
 		for (Parameter parameter : switches) {
 			Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
-			String regex = "(?i)^(--" + parameter.getName();
-			char shorthand = annotation.shorthand();
-			if (shorthand != '-')
-				regex += "|-" + shorthand;
-			regex += ")(=[^\\s]+)?$";
 
-			Pattern pattern = Pattern.compile(regex);
+			Pattern pattern = getSwitchPattern(parameter);
 
 			boolean found = false;
 			for (String arg : args) {
@@ -413,10 +410,6 @@ public abstract class ICustomCommand {
 
 	private boolean isPrimitiveNumber(Class<?> type) {
 		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
-	}
-
-	private boolean isBoolean(Parameter parameter) {
-		return parameter.getType() == Boolean.class || parameter.getType() == Boolean.TYPE;
 	}
 
 	@SneakyThrows

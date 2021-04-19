@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
@@ -62,6 +63,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Parameter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -72,6 +74,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -971,6 +974,16 @@ public abstract class CustomCommand extends ICustomCommand {
 		POSSESSIVE_LOWER,
 		ACTIONARY_UPPER,
 		ACTIONARY_LOWER
+	}
+
+	public static Pattern getSwitchPattern(Parameter parameter) {
+		Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
+		String regex = "(?i)^(--" + parameter.getName();
+		char shorthand = annotation.shorthand();
+		if (shorthand != '-')
+			regex += "|-" + shorthand;
+
+		return Pattern.compile(regex + ")(=[^\\s]+)?$");
 	}
 
 }
