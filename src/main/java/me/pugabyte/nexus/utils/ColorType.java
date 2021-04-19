@@ -53,7 +53,7 @@ public enum ColorType implements Colored {
 	BROWN(
 			"brown",
 			Color.fromRGB(139, 69, 42),
-			null,
+			ChatColor.of(new java.awt.Color(139, 69, 42)),
 			DyeColor.BROWN,
 			null
 	),
@@ -131,7 +131,7 @@ public enum ColorType implements Colored {
 	MAGENTA(
 			"magenta",
 			Color.FUCHSIA,
-			null,
+			ChatColor.of(new java.awt.Color(0xFF, 0, 0xFF)),
 			DyeColor.MAGENTA,
 			GlowAPI.Color.PURPLE
 	),
@@ -145,12 +145,12 @@ public enum ColorType implements Colored {
 
 	private final @NotNull String name;
 	private final @NotNull Color bukkitColor;
-	private final @Nullable ChatColor chatColor;
+	private final @NotNull ChatColor chatColor;
 	private final @Nullable DyeColor dyeColor;
 	private final @NotNull DyeColor similarDyeColor;
 	private final @Nullable GlowAPI.Color glowColor;
 
-	ColorType(@NotNull String name, @NotNull Color bukkitColor, @Nullable ChatColor chatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
+	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
 		this(name, bukkitColor, chatColor, dyeColor, dyeColor, glowColor);
 	}
 
@@ -175,7 +175,7 @@ public enum ColorType implements Colored {
 	@Nullable
 	public static ColorType of(@Nullable ChatColor chatColor) {
 		if (chatColor == null) return null;
-		return Arrays.stream(values()).filter(colorType -> colorType.getChatColor() != null && colorType.getChatColor().equals(chatColor)).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getChatColor().equals(chatColor)).findFirst().orElse(null);
 	}
 
 	@Nullable
@@ -351,13 +351,11 @@ public enum ColorType implements Colored {
 
 	@NotNull
 	public String getDisplayName() {
-		return (chatColor == null ? "" : chatColor) + StringUtils.camelCase(name);
+		return chatColor + StringUtils.camelCase(name);
 	}
 
-	@Nullable
+	@NotNull
 	public org.bukkit.ChatColor toBukkit() {
-		if (getChatColor() == null)
-			return null;
 		return toBukkit(getChatColor());
 	}
 

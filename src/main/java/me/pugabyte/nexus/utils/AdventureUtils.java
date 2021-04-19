@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.experimental.UtilityClass;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import net.kyori.adventure.identity.Identified;
@@ -25,9 +26,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class AdventureUtils {
-	private AdventureUtils(){} // prevent instantiation
-
 	public static Component stripColor(Component component) {
 		component = component.style(Style.empty());
 		if (component instanceof TranslatableComponent) {
@@ -101,6 +101,23 @@ public class AdventureUtils {
 		return color.getTextColor();
 	}
 
+	/**
+	 * Parses a hexadecimal number
+	 * @param string number in the format "#FFFFFF" (# optional)
+	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 * @return corresponding text color
+	 */
+	@NotNull
+	public static TextColor textColorOf(@NotNull String string) throws IllegalArgumentException {
+		if (string.startsWith("#"))
+			string = string.substring(1);
+		try {
+			return TextColor.color(Integer.parseInt(string, 16));
+		} catch ( NumberFormatException ex ) {
+			throw new IllegalArgumentException("Illegal hex string " + string);
+		}
+	}
+
 	@NotNull
 	public static TextComponent colorText(@Nullable ChatColor color, @NotNull String text) {
 		if (color == null)
@@ -124,6 +141,13 @@ public class AdventureUtils {
 
 	@NotNull
 	public static TextComponent colorText(@Nullable Colored color, @NotNull String text) {
+		if (color == null)
+			return Component.text(text);
+		return Component.text(text, textColorOf(color));
+	}
+
+	@NotNull
+	public static TextComponent colorText(@Nullable String color, @NotNull String text) {
 		if (color == null)
 			return Component.text(text);
 		return Component.text(text, textColorOf(color));

@@ -5,6 +5,7 @@ import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -47,6 +48,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
+@UtilityClass
 public class PlayerUtils {
 
 	public enum Dev {
@@ -244,22 +246,22 @@ public class PlayerUtils {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
-	public static void send(Object sender, Object message) {
-		if (sender instanceof CommandSender) {
+	public static void send(Object recipient, Object message) {
+		if (recipient instanceof CommandSender) {
 			if (message instanceof String)
-				((CommandSender) sender).sendMessage(colorize((String) message));
+				((CommandSender) recipient).sendMessage(colorize((String) message));
 			else if (message instanceof JsonBuilder)
-				((CommandSender) sender).sendMessage(((JsonBuilder) message).build());
+				((CommandSender) recipient).sendMessage(((JsonBuilder) message).build());
 			else if (message instanceof Component)
-				((CommandSender) sender).sendMessage(((Component) message));
-		} else if (sender instanceof OfflinePlayer) {
-			OfflinePlayer player = (OfflinePlayer) sender;
+				((CommandSender) recipient).sendMessage(((Component) message));
+		} else if (recipient instanceof OfflinePlayer) {
+			OfflinePlayer player = (OfflinePlayer) recipient;
 			if (player.getPlayer() != null)
 				send(player.getPlayer(), message);
-		} else if (sender instanceof UUID) {
-			send(getPlayer((UUID) sender), message);
-		} else if (sender instanceof PlayerOwnedObject)
-			send(((PlayerOwnedObject) sender).getOfflinePlayer(), message);
+		} else if (recipient instanceof UUID) {
+			send(getPlayer((UUID) recipient), message);
+		} else if (recipient instanceof PlayerOwnedObject)
+			send(((PlayerOwnedObject) recipient).getOfflinePlayer(), message);
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

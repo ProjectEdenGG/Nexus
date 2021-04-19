@@ -8,7 +8,6 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.utils.ColorType;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,8 +17,7 @@ import java.util.stream.Collectors;
 
 public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 	public static final LinkedHashSet<ColorType> COLOR_TYPES = new LinkedHashSet<>(Arrays.stream(ColorType.values()).filter(
-			colorType -> colorType.getChatColor() != null &&
-					colorType.getChatColor() != ChatColor.BLACK)
+			colorType -> colorType != ColorType.BLACK)
 			.collect(Collectors.toList()));
 
 	Arena arena;
@@ -52,7 +50,7 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 			if (column != 8) {
 				column++;
 			} else {
-				column = 2;
+				column = 1;
 				row++;
 			}
 		}
