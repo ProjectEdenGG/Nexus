@@ -95,6 +95,9 @@ public class DiscordDiscordCommand extends Command {
 						if (args.length < 3)
 							throw new InvalidInputException("Correct usage: `/discord forceLink <name> <mention>`");
 
+						if (!event.getMember().hasPermission(Permission.MANAGE_ROLES))
+							throw new NoPermissionException();
+
 						DiscordUser discordUser = service.get(PlayerUtils.getPlayer(args[1]));
 						String id = event.getMessage().getMentionedMembers().get(0).getUser().getId();
 						discordUser.setUserId(id);
