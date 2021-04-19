@@ -58,7 +58,7 @@ public class Punishment extends PlayerOwnedObject {
 			Timespan timespan = Timespan.find(input);
 			this.reason = timespan.getRest();
 			this.seconds = timespan.getOriginal();
-			if (isOnline() && type.isAutomaticallyReceived())
+			if (type.isAutomaticallyReceived())
 				received();
 			if (now)
 				received();
@@ -85,8 +85,20 @@ public class Punishment extends PlayerOwnedObject {
 		return true;
 	}
 
+	public boolean hasReason() {
+		return !isNullOrEmpty(reason);
+	}
+
+	boolean hasBeenRemoved() {
+		return removed != null;
+	}
+
 	boolean hasBeenReceived() {
 		return received != null;
+	}
+
+	boolean hasBeenReplaced() {
+		return replacedBy != null;
 	}
 
 	public void received() {
@@ -108,9 +120,11 @@ public class Punishment extends PlayerOwnedObject {
 
 	public void deactivate(UUID remover) {
 		this.active = false;
+		this.removed = LocalDateTime.now();
 		this.remover = remover;
 		announceEnd();
 		getType().onExpire(this);
+		save();
 	}
 
 	void announceStart() {
@@ -130,7 +144,10 @@ public class Punishment extends PlayerOwnedObject {
 	}
 
 	public Component getDisconnectMessage() {
-		return Component.text(getType().getDisconnectMessage(this));
+		String message = getType().getDisconnectMessage(this);
+		if (isNullOrEmpty(message))
+			return null;
+		return Component.text(message);
 	}
 
 	public String getTimeLeft() {
@@ -140,11 +157,25 @@ public class Punishment extends PlayerOwnedObject {
 			else
 				return "forever";
 		else
-			return Timespan.of(expiration).format() + " left";
+			if (hasBeenRemoved())
+				return "removed";
+			else
+				if (expiration.isBefore(LocalDateTime.now()))
+					return "expired";
+				else
+					return Timespan.of(expiration).format() + " left";
 	}
 
 	public String getTimeSince() {
 		return Timespan.of(timestamp).format() + " ago";
+	}
+
+	public String getTimeSinceRemoved() {
+		return Timespan.of(removed).format() + " ago";
+	}
+
+	void save() {
+		Punishments.of(uuid).save();
 	}
 
 }

@@ -115,6 +115,9 @@ public class Justice extends Feature implements Listener {
 
 	@EventHandler
 	public void mute_onCommand(CommandRunEvent event) {
+		if (!(event.getSender() instanceof Player))
+			return;
+
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getPlayer());
 		punishments.getActiveMute().ifPresent(mute -> {

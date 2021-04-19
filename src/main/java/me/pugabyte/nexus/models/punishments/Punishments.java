@@ -71,6 +71,10 @@ public class Punishments extends PlayerOwnedObject {
 		return new PunishmentsService().get(player);
 	}
 
+	public Punishment getById(UUID id) {
+		return punishments.stream().filter(punishment -> punishment.getId().equals(id)).findFirst().orElse(null);
+	}
+
 	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getAnyActiveBan() {
 		return getLastActive(PunishmentType.BAN, PunishmentType.IP_BAN);
@@ -131,7 +135,7 @@ public class Punishments extends PlayerOwnedObject {
 
 	private void deactivatePrevious(Punishment punishment) {
 		for (Punishment old : getActive(punishment.getType())) {
-			old.setReplacedBy(punishment.getPunisher());
+			old.setReplacedBy(punishment.getId());
 			old.setActive(false);
 			String typeName = old.getType().name().toLowerCase().replace("_", "-");
 			Nerd.of(punishment.getPunisher()).send(PREFIX + "Replacing previous " + typeName + " for &e"
@@ -202,7 +206,7 @@ public class Punishments extends PlayerOwnedObject {
 		});
 	}
 
-	private void save() {
+	void save() {
 		new PunishmentsService().save(this);
 	}
 
