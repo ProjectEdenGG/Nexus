@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.m
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User.BF21PointSource;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.Env;
@@ -71,8 +72,12 @@ public class MiniGolf {
 			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
 			Material.REDSTONE_BLOCK);
 	@Getter private static final String regionHole = "bearfair21_minigolf_hole_";
+	//
+	private BF21PointSource SOURCE = BF21PointSource.MINIGOLF;
 	// @formatter:on
 
+	// TODO BF21:
+	//  - Give points for playing
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
