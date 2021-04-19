@@ -45,7 +45,7 @@ public class PuttListener implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(event.getPlayer().getLocation())) {
+		if (!BearFair21.isAtBearFair(event.getPlayer())) {
 			return;
 		}
 

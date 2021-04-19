@@ -6,6 +6,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.ProjectileListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.PuttListener;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.RegionListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
@@ -19,6 +20,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
@@ -29,6 +31,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -70,6 +73,7 @@ public class MiniGolf {
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
+		new RegionListener();
 
 		ballTask();
 		powerTask();
@@ -261,10 +265,12 @@ public class MiniGolf {
 
 						if (user.getScore().containsKey(ballHole)) {
 							int score = user.getScore().get(ballHole);
-							if (strokes < score)
+							if (strokes < score) {
 								user.getScore().put(ballHole, strokes);
-						} else
+							}
+						} else {
 							user.getScore().put(ballHole, strokes);
+						}
 
 						user.setCurrentHole(null);
 						user.setCurrentStrokes(0);
@@ -275,6 +281,7 @@ public class MiniGolf {
 					case LAVA:
 					case CRIMSON_HYPHAE:
 					case PURPLE_STAINED_GLASS:
+					case BARRIER:
 						// Fall
 						ball.setGravity(true);
 						break;
@@ -308,52 +315,24 @@ public class MiniGolf {
 						// Get Direction
 						Directional directional = (Directional) block.getBlockData();
 
-						Vector newVel;
-						switch (directional.getFacing()) {
-							case NORTH:
-								newVel = new Vector(0, 0, 0.1);
-								break;
-							case SOUTH:
-								newVel = new Vector(0, 0, -0.1);
-								break;
-							case EAST:
-								newVel = new Vector(-0.1, 0, 0);
-								break;
-							case WEST:
-								newVel = new Vector(0.1, 0, 0);
-								break;
-							default:
-								continue;
-						}
+						Vector dir = getDirection(directional.getFacing(), 0.1);
+						if (dir == null)
+							continue;
 
 						// Push ball
-						ball.setVelocity(vel.multiply(9.0).add(newVel).multiply(0.1)); // 9.0
+						ball.setVelocity(vel.multiply(9.0).add(dir).multiply(0.1)); // 9.0
 
 						break;
 					case OBSERVER:
 						// Get Direction
 						directional = (Directional) block.getBlockData();
-
-						switch (directional.getFacing()) {
-							case NORTH:
-								newVel = new Vector(0, 0, 0.5);
-								break;
-							case SOUTH:
-								newVel = new Vector(0, 0, -0.5);
-								break;
-							case EAST:
-								newVel = new Vector(-0.5, 0, 0);
-								break;
-							case WEST:
-								newVel = new Vector(0.5, 0, 0);
-								break;
-							default:
-								continue;
-						}
+						dir = getDirection(directional.getFacing(), 0.5);
+						if (dir == null)
+							continue;
 
 						if (vel.length() < maxVelLen) {
 							// Push ball
-							ball.setVelocity(vel.multiply(9.3).add(newVel).multiply(0.1));
+							ball.setVelocity(vel.multiply(9.3).add(dir).multiply(0.1));
 						}
 
 						break;
@@ -365,8 +344,10 @@ public class MiniGolf {
 							String[] split = line4.split(",");
 							if (split.length == 3) {
 								try {
-									Location newLoc = new Location(ball.getWorld(),
-											Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+									int x = Integer.parseInt(split[0]);
+									int y = Integer.parseInt(split[1]);
+									int z = Integer.parseInt(split[2]);
+									Location newLoc = new Location(ball.getWorld(), x, y, z);
 									ball.setVelocity(new Vector(0, 0, 0));
 									ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 									ball.setGravity(true);
@@ -376,10 +357,42 @@ public class MiniGolf {
 						}
 
 						break;
+					case SMOKER:
+						// Get Direction
+						directional = (Directional) block.getBlockData();
+						BlockFace facing = directional.getFacing();
+						below = block.getRelative(facing.getOppositeFace());
+						if (MaterialTag.SIGNS.isTagged(below.getType())) {
+							Sign sign = (Sign) below.getState();
+							String heightStr = sign.getLine(2).replaceAll("height", "");
+							String powerStr = sign.getLine(3).replaceAll("power", "");
+							try {
+								Location newLoc = LocationUtils.getCenteredLocation(block.getRelative(facing).getLocation());
+								ball.setVelocity(new Vector(0, 0, 0));
+								ball.teleport(LocationUtils.getCenteredLocation(newLoc));
+								ball.setGravity(true);
+
+								double height = Double.parseDouble(heightStr);
+								double power = Double.parseDouble(powerStr);
+								Vector newVel = getDirection(facing.getOppositeFace(), power);
+
+								ball.setVelocity(ball.getVelocity().multiply(9.3).add(newVel).setY(height));
+								SoundUtils.playSound(ball.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 3, 1);
+								new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(ball.getLocation()).count(25).spawn();
+							} catch (Exception ignored) {
+
+							}
+						}
+						break;
 					default:
 						// Check if floating above slabs
 						if (MiniGolfUtils.isBottomSlab(block) && loc.getY() > block.getY() + 0.5)
 							ball.setGravity(true);
+
+						if (ball.getLocation().getY() < 0) {
+							MiniGolfUtils.respawnBall(ball);
+							break;
+						}
 
 						// Stop & respawn ball if slow enough
 						if (vel.getY() >= 0 && vel.length() <= 0.01) {
@@ -400,6 +413,26 @@ public class MiniGolf {
 				}
 			}
 		});
+	}
+
+	private Vector getDirection(BlockFace face, double power) {
+		Vector vector = null;
+		switch (face) {
+			case NORTH:
+				vector = new Vector(0, 0, power);
+				break;
+			case SOUTH:
+				vector = new Vector(0, 0, -power);
+				break;
+			case EAST:
+				vector = new Vector(-power, 0, 0);
+				break;
+			case WEST:
+				vector = new Vector(power, 0, 0);
+				break;
+		}
+
+		return vector;
 	}
 
 }

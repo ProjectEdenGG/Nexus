@@ -87,9 +87,11 @@ public class MiniGolfCommand extends CustomCommand {
 			String strokes = " ?";
 			if (score.containsKey(hole)) {
 				int strokeCount = score.get(hole);
-				strokes = " " + strokeCount;
+				String space = " ";
 				if (strokeCount > 9)
-					strokes = String.valueOf(strokeCount);
+					space = "";
+
+				strokes = space + strokeCount;
 			}
 
 			json.next(" " + holeNumber + " |   " + hole.getPar() + "   |   " + strokes).newline();
@@ -131,5 +133,14 @@ public class MiniGolfCommand extends CustomCommand {
 		service.clearCache();
 		service.deleteAll();
 		service.clearCache();
+	}
+
+	@Path("clearUser <user>")
+	@Confirm
+	void resetData(MiniGolf21User _user) {
+		if (!isSelf(_user.getPlayer()))
+			user = _user;
+
+		service.delete(user);
 	}
 }

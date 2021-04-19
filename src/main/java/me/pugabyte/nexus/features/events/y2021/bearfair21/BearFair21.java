@@ -8,6 +8,8 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class BearFair21 {
 	@Getter
@@ -33,6 +35,14 @@ public class BearFair21 {
 
 	public static ProtectedRegion getProtectedRegion() {
 		return getWGUtils().getProtectedRegion(region);
+	}
+
+	public static boolean isAtBearFair(Entity entity) {
+		return isAtBearFair(entity.getLocation());
+	}
+
+	public static boolean isAtBearFair(Player player) {
+		return isAtBearFair(player.getLocation());
 	}
 
 	public static boolean isAtBearFair(Location location) {
