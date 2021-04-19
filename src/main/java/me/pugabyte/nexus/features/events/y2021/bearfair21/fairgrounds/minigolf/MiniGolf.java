@@ -66,7 +66,10 @@ public class MiniGolf {
 	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
 	@Getter private static final double floorOffset = 0.05;
 	@Getter private static final double maxVelLen = 2;
-	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE, Material.PETRIFIED_OAK_SLAB);
+	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
+			Material.PETRIFIED_OAK_SLAB, Material.SAND, Material.RED_SAND, Material.SOUL_SOIL, Material.BLUE_ICE,
+			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
+			Material.REDSTONE_BLOCK);
 	@Getter private static final String regionHole = "bearfair21_minigolf_hole_";
 	// @formatter:on
 
