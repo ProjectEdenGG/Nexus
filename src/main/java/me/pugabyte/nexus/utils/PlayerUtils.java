@@ -30,18 +30,20 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -296,14 +298,17 @@ public class PlayerUtils {
 	}
 
 	public static boolean playerHas(Player player, ItemStack itemStack) {
-		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(itemStack))
-			return true;
-		if (Arrays.asList(inventory.getStorageContents()).contains(itemStack))
-			return true;
-		if (Arrays.asList(inventory.getArmorContents()).contains(itemStack))
-			return true;
-		return Arrays.asList(inventory.getExtraContents()).contains(itemStack);
+		return getAllInventoryContents(player).contains(itemStack);
+	}
+
+	@NotNull
+	public static Set<ItemStack> getAllInventoryContents(Player player) {
+		Set<ItemStack> items = new HashSet<>();
+		items.addAll(Arrays.asList(player.getInventory().getContents()));
+		items.addAll(Arrays.asList(player.getInventory().getArmorContents()));
+		items.addAll(Arrays.asList(player.getInventory().getExtraContents()));
+		items.addAll(Arrays.asList(player.getInventory().getItemInOffHand()));
+		return items;
 	}
 
 	@Deprecated
