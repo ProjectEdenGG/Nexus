@@ -1,6 +1,7 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.add;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;

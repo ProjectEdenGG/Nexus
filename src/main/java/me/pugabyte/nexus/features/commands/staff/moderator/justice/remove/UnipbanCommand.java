@@ -1,6 +1,7 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.remove;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -11,20 +12,20 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import java.util.List;
 
 @Permission("group.moderator")
-public class WarnCommand extends _PunishmentCommand {
+public class UnipbanCommand extends _PunishmentCommand {
 
-	public WarnCommand(@NonNull CommandEvent event) {
+	public UnipbanCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("<player> <reason...>")
-	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
-		punish(players, input);
+	@Path("<player>")
+	void run(@Arg(type = Punishments.class) List<Punishments> players) {
+		deactivate(players);
 	}
 
 	@Override
 	protected PunishmentType getType() {
-		return PunishmentType.WARN;
+		return PunishmentType.IP_BAN;
 	}
 
 }

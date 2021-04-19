@@ -419,21 +419,19 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSelf(PlayerOwnedObject object) {
-		return isSelf(object.getOfflinePlayer());
+		return isPlayer() && isSelf(object.getOfflinePlayer());
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {
-		return isSelf(player(), player);
+		return isPlayer() && isSelf(player(), player);
 	}
 
 	protected boolean isSelf(Player player) {
-		return isSelf(player(), player);
+		return isPlayer() && isSelf(player(), player);
 	}
 
 	protected boolean isSelf(OfflinePlayer self, OfflinePlayer player) {
-		if (!isPlayer())
-			return false;
-		return self.getUniqueId().equals(player.getUniqueId());
+		return isPlayer() && self.getUniqueId().equals(player.getUniqueId());
 	}
 
 	protected boolean isStaff() {
@@ -497,8 +495,9 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void checkPermission(String permission) {
-		if (!sender().hasPermission(permission))
-			throw new NoPermissionException();
+		if (isPlayer())
+			if (!sender().hasPermission(permission))
+				throw new NoPermissionException();
 	}
 
 	protected String argsString() {

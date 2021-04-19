@@ -1,9 +1,9 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.freeze;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.add;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.features.commands.staff.moderator.justice._PunishmentCommand;
+import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;

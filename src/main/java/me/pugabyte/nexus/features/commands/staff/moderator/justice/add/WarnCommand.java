@@ -1,6 +1,7 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.add;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -11,9 +12,9 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import java.util.List;
 
 @Permission("group.moderator")
-public class WatchlistCommand extends _PunishmentCommand {
+public class WarnCommand extends _PunishmentCommand {
 
-	public WatchlistCommand(@NonNull CommandEvent event) {
+	public WarnCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -24,7 +25,7 @@ public class WatchlistCommand extends _PunishmentCommand {
 
 	@Override
 	protected PunishmentType getType() {
-		return PunishmentType.WATCHLIST;
+		return PunishmentType.WARN;
 	}
 
 }
