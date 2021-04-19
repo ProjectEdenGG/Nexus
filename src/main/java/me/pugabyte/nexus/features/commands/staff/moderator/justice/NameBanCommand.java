@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -11,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.punishments.NameBanConfig;
 import me.pugabyte.nexus.models.punishments.NameBanConfigService;
 import me.pugabyte.nexus.models.punishments.Punishments;
-import me.pugabyte.nexus.utils.Env;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -23,7 +21,6 @@ import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 
 // TODO All messaging
 
-@Environments(Env.DEV)
 @NoArgsConstructor
 @Permission("group.moderator")
 public class NameBanCommand extends CustomCommand implements Listener {

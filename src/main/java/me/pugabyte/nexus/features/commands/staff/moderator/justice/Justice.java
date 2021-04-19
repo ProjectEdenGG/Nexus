@@ -17,12 +17,17 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.PunishmentsService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -32,16 +37,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
 public class Justice extends Feature implements Listener {
 
 	// Ban
 	@EventHandler
-	public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
+	public void ban_onPlayerLogin(AsyncPlayerPreLoginEvent event) {
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getUniqueId());
 		punishments.getIpHistory().add(event.getAddress().getHostAddress());
@@ -66,7 +73,7 @@ public class Justice extends Feature implements Listener {
 
 	// Mute
 	@EventHandler
-	public void onChat(ChatEvent event) {
+	public void mute_onChat(ChatEvent event) {
 		Chatter chatter = event.getChatter();
 		if (chatter == null)
 			return;
@@ -107,7 +114,7 @@ public class Justice extends Feature implements Listener {
 	);
 
 	@EventHandler
-	public void onCommand(CommandRunEvent event) {
+	public void mute_onCommand(CommandRunEvent event) {
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getPlayer());
 		punishments.getActiveMute().ifPresent(mute -> {
@@ -130,13 +137,37 @@ public class Justice extends Feature implements Listener {
 
 	// Warning
 	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
+	public void warning_onJoin(PlayerJoinEvent event) {
 		Tasks.wait(Time.SECOND.x(5), () -> Punishments.of(event.getPlayer()).tryShowWarns());
 	}
 
 	@EventHandler
-	public void onNotAFK(NotAFKEvent event) {
+	public void warning_onNotAFK(NotAFKEvent event) {
 		Tasks.wait(Time.SECOND.x(2), () -> Punishments.of(event.getPlayer().getPlayer()).tryShowWarns());
+	}
+
+	// Watchlist
+	@EventHandler
+	public void watchlist_onJoin(PlayerJoinEvent event) {
+		final Player player = event.getPlayer();
+		Tasks.waitAsync(Time.SECOND, () -> {
+			if (!player.isOnline())
+				return;
+
+			Function<Punishment, JsonBuilder> notification = watchlist ->
+					new JsonBuilder("&e" + getName() + " &cwas watchlisted for &e" + watchlist.getReason() + " &cby &e"
+							+ Nickname.of(watchlist.getPunisher()) + " &con &e" + shortDateFormat(watchlist.getTimestamp().toLocalDate()))
+							.hover("&eClick for more information")
+							.command("/history " + watchlist.getName());
+
+			if (Nerd.of(player).getRank().isMod())
+				for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+					Punishments.of(onlinePlayer).getActiveWatchlist().ifPresent(watchlist ->
+							PlayerUtils.send(player, new JsonBuilder(PREFIX).next(notification.apply(watchlist))));
+
+			Punishments.of(player).getActiveWatchlist().ifPresent(watchlist ->
+					Chat.broadcastIngame(new JsonBuilder(PREFIX).next(notification.apply(watchlist)), StaticChannel.STAFF));
+		});
 	}
 
 }

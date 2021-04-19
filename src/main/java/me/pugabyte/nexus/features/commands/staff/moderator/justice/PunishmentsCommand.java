@@ -1,16 +1,13 @@
 package me.pugabyte.nexus.features.commands.staff.moderator.justice;
 
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import org.bukkit.event.Listener;
 
-@NoArgsConstructor
 @Permission("group.moderator")
-public class PunishmentsCommand extends CustomCommand implements Listener {
+public class PunishmentsCommand extends CustomCommand {
 
 	public PunishmentsCommand(@NonNull CommandEvent event) {
 		super(event);
