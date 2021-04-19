@@ -13,11 +13,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
-import me.pugabyte.nexus.models.punishments.Punishment;
-import me.pugabyte.nexus.models.punishments.PunishmentType;
-import me.pugabyte.nexus.models.punishments.Punishments;
+import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 
@@ -25,7 +22,6 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
 public class FreezeDiscordCommand extends Command {
-	public static final String PREFIX = StringUtils.getPrefix("Freeze");
 
 	public FreezeDiscordCommand() {
 		this.name = "freeze";
@@ -46,13 +42,15 @@ public class FreezeDiscordCommand extends Command {
 				if (user.getUuid() == null)
 					throw new NoPermissionException();
 
+				FreezeService service = new FreezeService();
+
 				for (String arg : event.getArgs().split(" ")) {
 					try {
 						OfflinePlayer player = PlayerUtils.getPlayer(arg);
 						if (!player.isOnline() || player.getPlayer() == null)
 							throw new PlayerNotOnlineException(player);
 
-						Punishments.of(player).add(Punishment.ofType(PunishmentType.FREEZE).punisher(user.getUuid()));
+						service.get(player).punish(user.getUuid());
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));
 						if (!(ex instanceof NexusException))

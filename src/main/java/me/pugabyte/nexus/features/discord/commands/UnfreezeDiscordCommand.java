@@ -3,8 +3,6 @@ package me.pugabyte.nexus.features.discord.commands;
 import com.google.common.base.Strings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
@@ -15,10 +13,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
-import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 
@@ -26,7 +22,6 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
 public class UnfreezeDiscordCommand extends Command {
-	public static final String PREFIX = StringUtils.getPrefix("Freeze");
 
 	public UnfreezeDiscordCommand() {
 		this.name = "unfreeze";
@@ -48,7 +43,6 @@ public class UnfreezeDiscordCommand extends Command {
 					throw new NoPermissionException();
 
 				FreezeService service = new FreezeService();
-				OfflinePlayer executor = PlayerUtils.getPlayer(user.getUuid());
 
 				for (String arg : event.getArgs().split(" ")) {
 					try {
@@ -56,18 +50,7 @@ public class UnfreezeDiscordCommand extends Command {
 						if (!player.isOnline() || player.getPlayer() == null)
 							throw new PlayerNotOnlineException(player);
 
-						Freeze freeze = service.get(player);
-						if (!freeze.isFrozen())
-							throw new InvalidInputException(player.getName() + " is not frozen");
-
-						freeze.setFrozen(false);
-						service.save(freeze);
-
-						if (player.getPlayer().getVehicle() != null)
-							player.getPlayer().getVehicle().remove();
-
-						freeze.send("&cYou have been unfrozen.");
-						Chat.broadcast(PREFIX + "&e" + executor.getName() + " &3has unfrozen &e" + player.getName(), StaticChannel.STAFF);
+						service.get(player).deactivate(user.getUuid());
 					} catch (Exception ex) {
 						event.reply(stripColor(ex.getMessage()));
 						if (!(ex instanceof NexusException))
