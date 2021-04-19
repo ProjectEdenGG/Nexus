@@ -78,7 +78,7 @@ public class DiscordUser extends PlayerOwnedObject {
 		return getName() + "#" + getDiscrim();
 	}
 
-	private User getUser() {
+	public User getUser() {
 		return Bot.RELAY.jda().retrieveUserById(userId).complete();
 	}
 
