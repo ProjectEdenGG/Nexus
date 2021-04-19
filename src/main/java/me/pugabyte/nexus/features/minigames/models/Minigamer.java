@@ -82,9 +82,6 @@ public class Minigamer implements ColoredAndNicknamed {
 		return player.getName();
 	}
 
-	/**
-	 * Returns this minigamer's nickname, or player name if absent
-	 */
 	public @NotNull String getNickname() {
 		return Nickname.of(player);
 	}

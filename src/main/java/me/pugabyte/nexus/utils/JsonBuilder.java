@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import net.kyori.adventure.text.Component;
@@ -14,6 +15,8 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -24,6 +27,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -36,37 +40,50 @@ public class JsonBuilder {
 	private final List<String> lore = new ArrayList<>();
 	private boolean loreize = true;
 
-	// Helper boolean for loops and stuff
-	private boolean initialized;
+	/**
+	 * Helper boolean that does not affect anything within the builder itself.
+	 * Can be used by external methods to determine if the builder has been setup.
+	 * To set this boolean to true, use {@link #initialize()}
+	 */
+	@Getter
+	private boolean initialized = false;
 
 	public JsonBuilder() {
 		this("");
 	}
 
-	public JsonBuilder(String text) {
+	public JsonBuilder(@Nullable String text) {
 		next(text);
 	}
 
-	public JsonBuilder(JsonBuilder json) {
+	public JsonBuilder(@NotNull JsonBuilder json) {
 		next(json);
 		loreize = json.loreize;
 		initialized = json.initialized;
 	}
 
-	private void debug(String message) {
+	private void debug(@NotNull String message) {
 		Nexus.debug(message);
 	}
 
-	public JsonBuilder next(String text) {
-		builder.append(AdventureUtils.fromLegacyText(getColoredWords(colorize(text))));
+	@NotNull
+	public JsonBuilder next(@Nullable String text) {
+		if (text != null)
+			builder.append(AdventureUtils.fromLegacyText(getColoredWords(colorize(text))));
 		return this;
 	}
 
-	public JsonBuilder next(JsonBuilder json) {
+	@NotNull
+	public JsonBuilder next(@NotNull JsonBuilder json) {
 		builder.append(json.build());
 		return this;
 	}
 
+	/**
+	 * Applies saved hover text, appends the current working Component to the output Component, and resets the working
+	 * component to default.
+	 */
+	@NotNull
 	public JsonBuilder group() {
 		if (!lore.isEmpty()) {
 			List<String> lines = new ArrayList<>();
@@ -94,95 +111,129 @@ public class JsonBuilder {
 		return this;
 	}
 
+	@NotNull
 	public JsonBuilder newline() {
 		builder.append(Component.text(System.lineSeparator()));
 		group();
 		return this;
 	}
 
+	/**
+	 * Creates an empty line (two newlines)
+	 */
+	@NotNull
 	public JsonBuilder line() {
 		newline();
 		newline();
 		return this;
 	}
 
-	public JsonBuilder color(TextColor color) {
+	@NotNull
+	public JsonBuilder color(@Nullable TextColor color) {
 		builder.color(color);
 		return this;
 	}
 
-	public JsonBuilder color(Colored color) {
+	@NotNull
+	public JsonBuilder color(@Nullable Colored color) {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
-	public JsonBuilder color(ChatColor color) {
+	@NotNull
+	public JsonBuilder color(@Nullable ChatColor color) {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
-	public JsonBuilder color(Color color) {
+	@NotNull
+	public JsonBuilder color(@Nullable Color color) {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
-	public JsonBuilder color(org.bukkit.Color color) {
+	@NotNull
+	public JsonBuilder color(@Nullable org.bukkit.Color color) {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
-	public JsonBuilder color(String color) {
+	/**
+	 * Parses a hexadecimal number
+	 * @param color number in the format "#FFFFFF" (# optional)
+	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 */
+	@NotNull
+	public JsonBuilder color(@Nullable String color) throws IllegalArgumentException {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
+	@NotNull
 	private static TextDecoration.State stateOf(boolean bool) {
 		return bool ? TextDecoration.State.TRUE : TextDecoration.State.FALSE;
 	}
 
-	public JsonBuilder decorate(TextDecoration... decorations) {
+	@NotNull
+	public JsonBuilder decorate(@NotNull TextDecoration... decorations) {
 		return decorate(true, decorations);
 	}
 
-	public JsonBuilder decorate(boolean state, TextDecoration... decorations) {
+	@NotNull
+	public JsonBuilder decorate(boolean state, @NotNull TextDecoration... decorations) {
 		return decorate(state, Arrays.asList(decorations));
 	}
 
-	public JsonBuilder decorate(TextDecoration.State state, TextDecoration... decorations) {
+	@NotNull
+	public JsonBuilder decorate(@NotNull TextDecoration.State state, @NotNull TextDecoration... decorations) {
 		return decorate(state, Arrays.asList(decorations));
 	}
 
-	public JsonBuilder decorate(boolean state, Collection<TextDecoration> decorations) {
+	@NotNull
+	public JsonBuilder decorate(boolean state, @NotNull Collection<TextDecoration> decorations) {
 		return decorate(stateOf(state), new HashSet<>(decorations));
 	}
 
-	public JsonBuilder decorate(TextDecoration.State state, Collection<TextDecoration> decorations) {
+	@NotNull
+	public JsonBuilder decorate(@NotNull TextDecoration.State state, @NotNull Collection<TextDecoration> decorations) {
 		decorations.forEach(decoration -> builder.decoration(decoration, state));
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder decorate(@NotNull Map<TextDecoration, TextDecoration.State> decorations) {
+		decorations.forEach((decoration, state) -> builder.decoration(decoration, state));
 		return this;
 	}
 
 	/**
 	 * Enables bold
 	 */
+	@NotNull
 	public JsonBuilder bold() {
 		return bold(true);
 	}
 
+	@NotNull
 	public JsonBuilder bold(boolean state) {
 		return bold(stateOf(state));
 	}
 
-	public JsonBuilder bold(TextDecoration.State state) {
+	@NotNull
+	public JsonBuilder bold(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.BOLD);
 	}
 
 	/**
 	 * Enables italicization
 	 */
+	@NotNull
 	public JsonBuilder italic() {
 		return italic(true);
 	}
 
+	@NotNull
 	public JsonBuilder italic(boolean state) {
 		return italic(stateOf(state));
 	}
 
-	public JsonBuilder italic(TextDecoration.State state) {
+	@NotNull
+	public JsonBuilder italic(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.ITALIC);
 	}
 
@@ -190,59 +241,71 @@ public class JsonBuilder {
 	/**
 	 * Enables strikethrough
 	 */
+	@NotNull
 	public JsonBuilder strikethrough() {
 		return strikethrough(true);
 	}
 
+	@NotNull
 	public JsonBuilder strikethrough(boolean state) {
 		return strikethrough(stateOf(state));
 	}
 
-	public JsonBuilder strikethrough(TextDecoration.State state) {
+	@NotNull
+	public JsonBuilder strikethrough(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.STRIKETHROUGH);
 	}
 
 	/**
 	 * Enables underlines
 	 */
+	@NotNull
 	public JsonBuilder underline() {
 		return underline(true);
 	}
 
+	@NotNull
 	public JsonBuilder underline(boolean state) {
 		return underline(stateOf(state));
 	}
 
-	public JsonBuilder underline(TextDecoration.State state) {
+	@NotNull
+	public JsonBuilder underline(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.UNDERLINED);
 	}
 
 	/**
 	 * Enables obfuscation (the random gibberish text)
 	 */
+	@NotNull
 	public JsonBuilder obfuscate() {
 		return obfuscate(true);
 	}
 
+	@NotNull
 	public JsonBuilder obfuscate(boolean state) {
 		return obfuscate(stateOf(state));
 	}
 
-	public JsonBuilder obfuscate(TextDecoration.State state) {
+	@NotNull
+	public JsonBuilder obfuscate(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.OBFUSCATED);
 	}
 
-	public JsonBuilder style(Style style) {
+	@NotNull
+	public JsonBuilder style(@NotNull Style style) {
 		builder.style(style);
 		return this;
 	}
 
-	public JsonBuilder style(Consumer<Style.Builder> style) {
+	@NotNull
+	public JsonBuilder style(@NotNull Consumer<Style.Builder> style) {
 		builder.style(style);
 		return this;
 	}
 
-	public JsonBuilder clickEvent(ClickEvent clickEvent) {
+	@NotNull
+	public JsonBuilder clickEvent(@Nullable ClickEvent clickEvent) {
 		builder.clickEvent(clickEvent);
 		return this;
 	}
@@ -250,14 +313,16 @@ public class JsonBuilder {
 	/**
 	 * Prompts the player to open a URL when clicked
 	 */
-	public JsonBuilder url(String url) {
+	@NotNull
+	public JsonBuilder url(@NotNull String url) {
 		return clickEvent(ClickEvent.openUrl(url));
 	}
 
 	/**
 	 * Prompts the player to open a URL when clicked
 	 */
-	public JsonBuilder url(URL url) {
+	@NotNull
+	public JsonBuilder url(@NotNull URL url) {
 		return clickEvent(ClickEvent.openUrl(url));
 	}
 
@@ -265,7 +330,8 @@ public class JsonBuilder {
 	 * Makes the player run a command when clicked
 	 * @param command a command, forward slash not required
 	 */
-	public JsonBuilder command(String command) {
+	@NotNull
+	public JsonBuilder command(@NotNull String command) {
 		if (!command.startsWith("/"))
 			command = "/" + command;
 		return clickEvent(ClickEvent.runCommand(command));
@@ -275,11 +341,13 @@ public class JsonBuilder {
 	 * Suggests a command to a player on click by typing it into their chat window
 	 * @param text some text, usually a command
 	 */
-	public JsonBuilder suggest(String text) {
+	@NotNull
+	public JsonBuilder suggest(@NotNull String text) {
 		return clickEvent(ClickEvent.suggestCommand(text));
 	}
 
-	public JsonBuilder copy(String text) {
+	@NotNull
+	public JsonBuilder copy(@NotNull String text) {
 		return clickEvent(ClickEvent.copyToClipboard(text));
 	}
 
@@ -287,6 +355,7 @@ public class JsonBuilder {
 	 * Sets the page of a book when clicked
 	 * @param page page number
 	 */
+	@NotNull
 	public JsonBuilder bookPage(int page) {
 		return bookPage(String.valueOf(page));
 	}
@@ -295,10 +364,12 @@ public class JsonBuilder {
 	 * Sets the page of a book when clicked
 	 * @param page page number
 	 */
-	public JsonBuilder bookPage(String page) {
+	@NotNull
+	public JsonBuilder bookPage(@NotNull String page) {
 		return clickEvent(ClickEvent.changePage(page));
 	}
 
+	@NotNull
 	public JsonBuilder loreize(boolean loreize) {
 		this.loreize = loreize;
 		return this;
@@ -307,59 +378,73 @@ public class JsonBuilder {
 	/**
 	 * Clears this builder's hover text
 	 */
+	@NotNull
 	public JsonBuilder hover() {
-		lore.removeAll(new ArrayList<>(lore));
+		lore.clear();
+		builder.hoverEvent(null);
 		return this;
 	}
 
+	@NotNull
 	public JsonBuilder hover(@NonNull String... lines) {
 		return hover(Arrays.asList(lines));
 	}
 
+	@NotNull
 	public JsonBuilder hover(@NonNull List<String> lines) {
 		lore.addAll(lines);
 		return this;
 	}
 
+	@NotNull
 	public JsonBuilder hover(@NonNull ItemStack itemStack) {
 		builder.hoverEvent(itemStack.asHoverEvent());
 		return this;
 	}
 
+	@NotNull
 	public JsonBuilder hover(@NonNull Entity entity) {
 		builder.hoverEvent(entity.asHoverEvent());
 		return this;
 	}
 
+	@NotNull
 	public <V> JsonBuilder hover(@Nullable HoverEventSource<V> hoverEvent) {
 		builder.hoverEvent(hoverEvent);
 		return this;
 	}
 
+	@NotNull
+	public JsonBuilder hover(@Nullable Component component) {
+		if (component != null)
+			builder.hoverEvent(component.asHoverEvent());
+		return this;
+	}
+
+	@NotNull
 	public JsonBuilder insert(@Nullable String insertion) {
 		builder.insertion(insertion);
 		return this;
 	}
 
-	public boolean isInitialized() {
-		return initialized;
-	}
-
+	@NotNull
 	public JsonBuilder initialize() {
 		this.initialized = true;
 		return this;
 	}
 
-	public void send(Object recipient) {
+	public void send(@Nullable Object recipient) {
 		PlayerUtils.send(recipient, build());
 	}
 
+	@NotNull
 	public Component build() {
 		group();
 		return result.asComponent();
 	}
 
-	private String getColoredWords(String text) {
+	@Contract("null -> null; !null -> !null")
+	private String getColoredWords(@Nullable String text) {
 		if (text == null) return null;
 		StringBuilder builder = new StringBuilder();
 		for (String word : text.split(" "))
@@ -371,10 +456,12 @@ public class JsonBuilder {
 		return result;
 	}
 
+	@NotNull
 	public String toString() {
 		return AdventureUtils.asPlainText(build());
 	}
 
+	@NotNull
 	public String serialize() {
 		return GsonComponentSerializer.gson().serialize(build());
 	}

@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -246,7 +247,9 @@ public class PlayerUtils {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
-	public static void send(Object recipient, Object message) {
+	public static void send(@Nullable Object recipient, Object message) {
+		if (recipient == null)
+			return;
 		if (recipient instanceof CommandSender) {
 			if (message instanceof String)
 				((CommandSender) recipient).sendMessage(colorize((String) message));
