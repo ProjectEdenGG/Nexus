@@ -12,7 +12,7 @@ public interface Named {
 	@NotNull String getName();
 
 	/**
-	 * Returns a text component that represents this object. May be colored.
+	 * Returns a text component that represents this object using {@link #getName()}.
 	 * @return an adventure text component
 	 */
 	default @NotNull TextComponent getComponent() {

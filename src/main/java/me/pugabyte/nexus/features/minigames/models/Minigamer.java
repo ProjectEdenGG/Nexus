@@ -25,7 +25,6 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -93,12 +92,7 @@ public class Minigamer implements ColoredAndNicknamed {
 	public @NotNull Color getColor() {
 		if (team == null)
 			return Color.WHITE;
-		return team.getChatColor().getColor();
-	}
-
-	@Override
-	public @NotNull ChatColor getChatColor() {
-		return team == null ? ChatColor.WHITE : team.getChatColor();
+		return team.getColor();
 	}
 
 	public void join(String name) {

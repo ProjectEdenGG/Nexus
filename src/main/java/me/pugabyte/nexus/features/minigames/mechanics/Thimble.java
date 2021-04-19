@@ -160,7 +160,7 @@ public final class Thimble extends TeamlessMechanic {
 			lines.put("&1", 0);
 			lines.put("&2Jumping:", 0);
 			if (matchData.getTurnMinigamer() != null) {
-				lines.put("&a" + matchData.getTurnMinigamer().getColoredName(), 0);
+				lines.put("&a" + matchData.getTurnMinigamer().getVanillaColoredName(), 0);
 			} else {
 				lines.put("&f", 0);
 			}
@@ -169,7 +169,7 @@ public final class Thimble extends TeamlessMechanic {
 		if (!match.isStarted()) {
 			// Shows players in lobby
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), 0);
 		} else {
 			// Shows players scores
 			for (Minigamer minigamer : match.getMinigamers())

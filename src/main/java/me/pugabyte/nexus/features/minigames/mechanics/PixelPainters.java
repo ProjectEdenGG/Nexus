@@ -207,7 +207,7 @@ public class PixelPainters extends TeamlessMechanic {
 			// In Lobby
 		} else {
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), 0);
 		}
 
 		return lines;

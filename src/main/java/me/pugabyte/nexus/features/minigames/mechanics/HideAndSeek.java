@@ -248,8 +248,8 @@ public class HideAndSeek extends Infection {
 		List<Minigamer> humans = getHumans(match);
 		lines.put("", 0);
 		lines.put("&3&lPlayer Count", 0);
-		lines.put("- " + getZombieTeam(match).getColoredName(), -1 * getZombies(match).size());
-		lines.put("- " + getHumanTeam(match).getColoredName(), -1 * humans.size());
+		lines.put("- " + getZombieTeam(match).getVanillaColoredName(), -1 * getZombies(match).size());
+		lines.put("- " + getHumanTeam(match).getVanillaColoredName(), -1 * humans.size());
 
 		lines.put("&3&lSurviving Blocks", 99);
 		Map<Material, Integer> blockCounts = new HashMap<>();

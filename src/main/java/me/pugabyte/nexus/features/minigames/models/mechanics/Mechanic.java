@@ -270,7 +270,7 @@ public abstract class Mechanic implements Listener, Named {
 
 		if (renderTeamNames() && match.getMechanic() instanceof TeamMechanic) {
 			for (Team team : match.getAliveTeams()) {
-				lines.put("- " + team.getColoredName(), team.getScore(match));
+				lines.put("- " + team.getVanillaColoredName(), team.getScore(match));
 
 				lineCount++;
 				if (lineCount == 15) return lines;
@@ -287,8 +287,8 @@ public abstract class Mechanic implements Listener, Named {
 				int minScore = getMin(lines.values(), Integer::intValue).getObject();
 				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), minScore-1);
 				break;
-			 } else if (minigamer.isAlive())
-				lines.put("&f" + minigamer.getColoredName(), minigamer.getScore());
+			} else if (minigamer.isAlive())
+				lines.put("&f" + minigamer.getVanillaColoredName(), minigamer.getScore());
 			else
 				// &r to force last
 				lines.put("&r&c&m" + minigamer.getNickname(), minigamer.getScore());

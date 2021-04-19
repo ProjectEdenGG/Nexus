@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public interface MinigameScoreboard {
 
@@ -84,7 +85,7 @@ public interface MinigameScoreboard {
 		public ScoreboardTeam getScoreboardTeam(Team team) {
 			scoreboardTeams.computeIfAbsent(team, $ -> {
 				ScoreboardTeam scoreboardTeam = Minigames.getScoreboard().createTeam(match.getArena().getName() + "-" + team.getColoredName(), false);
-				scoreboardTeam.setColor(ColorType.toBukkit(team.getChatColor()));
+				scoreboardTeam.setColor(Objects.requireNonNull(ColorType.toBukkit(team.getVanillaChatColor())));
 				scoreboardTeam.setPrefix(team.getChatColor().toString());
 				scoreboardTeam.setNameTagVisibility(team.getNameTagVisibility());
 				return scoreboardTeam;

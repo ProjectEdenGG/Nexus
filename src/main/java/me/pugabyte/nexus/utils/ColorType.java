@@ -26,12 +26,14 @@ public enum ColorType implements Colored {
 			"white",
 			Color.WHITE,
 			ChatColor.WHITE,
+			ChatColor.WHITE,
 			DyeColor.WHITE,
 			GlowAPI.Color.WHITE
 	),
 	LIGHT_GRAY(
 			"light gray",
 			Color.SILVER,
+			ChatColor.GRAY,
 			ChatColor.GRAY,
 			DyeColor.LIGHT_GRAY,
 			GlowAPI.Color.GRAY
@@ -40,12 +42,14 @@ public enum ColorType implements Colored {
 			"gray",
 			Color.GRAY,
 			ChatColor.DARK_GRAY,
+			ChatColor.DARK_GRAY,
 			DyeColor.GRAY,
 			GlowAPI.Color.DARK_GRAY
 	),
 	BLACK(
 			"black",
 			Color.BLACK,
+			ChatColor.BLACK,
 			ChatColor.BLACK,
 			DyeColor.BLACK,
 			GlowAPI.Color.BLACK
@@ -54,6 +58,7 @@ public enum ColorType implements Colored {
 			"brown",
 			Color.fromRGB(139, 69, 42),
 			ChatColor.of(new java.awt.Color(139, 69, 42)),
+			ChatColor.GOLD,
 			DyeColor.BROWN,
 			null
 	),
@@ -61,12 +66,14 @@ public enum ColorType implements Colored {
 			"red",
 			Color.RED,
 			ChatColor.DARK_RED,
+			ChatColor.DARK_RED,
 			DyeColor.RED,
 			GlowAPI.Color.DARK_RED
 	),
 	LIGHT_RED(
 			"light red",
 			Color.fromRGB(255, 85, 85),
+			ChatColor.RED,
 			ChatColor.RED,
 			null,
 			DyeColor.RED,
@@ -76,12 +83,14 @@ public enum ColorType implements Colored {
 			"orange",
 			Color.ORANGE,
 			ChatColor.GOLD,
+			ChatColor.GOLD,
 			DyeColor.ORANGE,
 			GlowAPI.Color.GOLD
 	),
 	YELLOW(
 			"yellow",
 			Color.YELLOW,
+			ChatColor.YELLOW,
 			ChatColor.YELLOW,
 			DyeColor.YELLOW,
 			GlowAPI.Color.YELLOW
@@ -90,12 +99,14 @@ public enum ColorType implements Colored {
 			"lime",
 			Color.LIME,
 			ChatColor.GREEN,
+			ChatColor.GREEN,
 			DyeColor.LIME,
 			GlowAPI.Color.GREEN
 	),
 	GREEN(
 			"green",
 			Color.GREEN,
+			ChatColor.DARK_GREEN,
 			ChatColor.DARK_GREEN,
 			DyeColor.GREEN,
 			GlowAPI.Color.DARK_GREEN
@@ -104,12 +115,14 @@ public enum ColorType implements Colored {
 			"cyan",
 			Color.TEAL,
 			ChatColor.DARK_AQUA,
+			ChatColor.DARK_AQUA,
 			DyeColor.CYAN,
 			GlowAPI.Color.DARK_AQUA
 	),
 	LIGHT_BLUE(
 			"light blue",
 			Color.AQUA,
+			ChatColor.AQUA,
 			ChatColor.AQUA,
 			DyeColor.LIGHT_BLUE,
 			GlowAPI.Color.AQUA
@@ -118,12 +131,14 @@ public enum ColorType implements Colored {
 			"blue",
 			Color.BLUE,
 			ChatColor.BLUE,
+			ChatColor.BLUE,
 			DyeColor.BLUE,
 			GlowAPI.Color.BLUE
 	),
 	PURPLE(
 			"purple",
 			Color.PURPLE,
+			ChatColor.DARK_PURPLE,
 			ChatColor.DARK_PURPLE,
 			DyeColor.PURPLE,
 			GlowAPI.Color.DARK_PURPLE
@@ -132,12 +147,14 @@ public enum ColorType implements Colored {
 			"magenta",
 			Color.FUCHSIA,
 			ChatColor.of(new java.awt.Color(0xFF, 0, 0xFF)),
+			ChatColor.LIGHT_PURPLE,
 			DyeColor.MAGENTA,
 			GlowAPI.Color.PURPLE
 	),
 	PINK(
 			"pink",
 			Color.fromRGB(255, 105, 180),
+			ChatColor.LIGHT_PURPLE,
 			ChatColor.LIGHT_PURPLE,
 			DyeColor.PINK,
 			GlowAPI.Color.PURPLE
@@ -146,12 +163,16 @@ public enum ColorType implements Colored {
 	private final @NotNull String name;
 	private final @NotNull Color bukkitColor;
 	private final @NotNull ChatColor chatColor;
+	/**
+	 * A similar official vanilla chat color
+	 */
+	private final @NotNull ChatColor vanillaChatColor;
 	private final @Nullable DyeColor dyeColor;
 	private final @NotNull DyeColor similarDyeColor;
 	private final @Nullable GlowAPI.Color glowColor;
 
-	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
-		this(name, bukkitColor, chatColor, dyeColor, dyeColor, glowColor);
+	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
+		this(name, bukkitColor, chatColor, bukkitChatColor, dyeColor, dyeColor, glowColor);
 	}
 
 	@Override
@@ -354,14 +375,18 @@ public enum ColorType implements Colored {
 		return chatColor + StringUtils.camelCase(name);
 	}
 
-	@NotNull
+	@Nullable
 	public org.bukkit.ChatColor toBukkit() {
-		return toBukkit(getChatColor());
+		return toBukkit(getVanillaChatColor());
 	}
 
-	@NotNull
+	@Nullable
 	public static org.bukkit.ChatColor toBukkit(@NotNull ChatColor color) {
-		return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
+		try {
+			return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 
 	@Getter
