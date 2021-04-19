@@ -24,7 +24,7 @@ public enum MiniGolfHole {
 	TWELVE(12, 2),
 	THIRTEEN(13, 3),
 	FOURTEEN(14, 3),
-	FIFTEEN(15, 9),
+	FIFTEEN(15, 5),
 	SIXTEEN(16, 9),
 	SEVENTEEN(17, 9),
 	EIGHTEEN(18, 9);
