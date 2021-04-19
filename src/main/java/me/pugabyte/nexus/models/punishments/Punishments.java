@@ -28,8 +28,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -48,7 +50,7 @@ public class Punishments extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Punishment> punishments = new ArrayList<>();
-	private List<String> ipHistory = new ArrayList<>();
+	private Set<String> ipHistory = new HashSet<>();
 
 	public static transient final String PREFIX = StringUtils.getPrefix("Justice");
 	public static transient final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Justice");

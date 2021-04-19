@@ -44,11 +44,12 @@ public class Justice extends Feature implements Listener {
 	public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getUniqueId());
+		punishments.getIpHistory().add(event.getAddress().getHostAddress());
+
 		Optional<Punishment> banMaybe = punishments.getAnyActiveBan();
 		banMaybe.ifPresent(ban -> {
 			event.disallow(Result.KICK_BANNED, ban.getDisconnectMessage());
 			ban.received();
-			service.save(punishments);
 
 			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(" + ban.getTimeLeft() + ")";
 
@@ -59,6 +60,8 @@ public class Justice extends Feature implements Listener {
 			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
 			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
 		});
+
+		service.save(punishments);
 	}
 
 	// Mute
