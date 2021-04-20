@@ -23,10 +23,14 @@ public class AltsCommand extends _JusticeCommand {
 		super(event);
 	}
 
+	@Async
 	@Path("<player>")
 	void alts(@Arg("self") Punishments player) {
 		player.sendAltsMessage(this::send, () -> error("No alts found for &e" + player.getNickname()));
 	}
+
+	// SELECT uuid, date, ip FROM `history` INTO OUTFILE '/var/lib/mysql-files/alts.csv' FIELDS TERMINATED BY ',';
+	// nexus ;; sudo mv /var/lib/mysql-files/alts.csv .
 
 	@Async
 	@Path("import")

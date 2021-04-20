@@ -253,13 +253,17 @@ public class Punishments extends PlayerOwnedObject {
 			ipHistory.add(new IPHistoryEntry(ip, LocalDateTime.now()));
 	}
 
+	public List<String> getIps() {
+		return ipHistory.stream().map(IPHistoryEntry::getIp).collect(toList());
+	}
+
 	@NotNull
 	public Set<UUID> getAlts() {
 		final PunishmentsService service = new PunishmentsService();
 		Set<UUID> alts = new HashSet<UUID>() {{ add(uuid); }};
 		Set<UUID> newMatches = new HashSet<>(alts);
 
-		int size = 0;
+		int size = 1;
 		while (true) {
 			Set<UUID> toSearch = new HashSet<>(newMatches);
 			newMatches.clear();
@@ -269,6 +273,7 @@ public class Punishments extends PlayerOwnedObject {
 						.map(Punishments::getUuid)
 						.collect(toList()));
 
+			newMatches.removeAll(alts);
 			alts.addAll(newMatches);
 
 			if (alts.size() == size)
