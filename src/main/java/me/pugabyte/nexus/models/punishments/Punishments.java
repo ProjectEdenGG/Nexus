@@ -240,7 +240,7 @@ public class Punishments extends PlayerOwnedObject {
 
 		int size = 0;
 		while (true) {
-			HashSet<UUID> toSearch = new HashSet<>(newMatches);
+			Set<UUID> toSearch = new HashSet<>(newMatches);
 			newMatches.clear();
 
 			for (UUID alt : toSearch)

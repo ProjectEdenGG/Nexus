@@ -3,16 +3,22 @@ package me.pugabyte.nexus.features.commands.staff.moderator.justice.add;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.commands.ChannelCommand;
+import me.pugabyte.nexus.features.chat.commands.MessageCommand;
+import me.pugabyte.nexus.features.chat.commands.ReplyCommand;
+import me.pugabyte.nexus.features.commands.info.RulesCommand;
 import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
+import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -24,7 +30,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -34,6 +39,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import java.util.Arrays;
 import java.util.List;
 
 @NoArgsConstructor
@@ -188,26 +194,30 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 		event.setCancelled(true);
 	}
 
+	private static final List<Class<? extends CustomCommand>> commandWhitelist = Arrays.asList(
+			ChannelCommand.class,
+			MessageCommand.class,
+			ReplyCommand.class,
+			RulesCommand.class
+	);
+
 	@EventHandler
-	public void onCommand(PlayerCommandPreprocessEvent event) {
-		if (!isFrozen(event.getPlayer())) return;
-		if (PlayerUtils.isStaffGroup(event.getPlayer())) return;
-		switch (event.getMessage().split(" ")[0]) {
-			case "/rules":
-			case "/ch":
-			case "/chat":
-			case "/channel":
-			case "/r":
-			case "/reply":
-			case "/msg":
-			case "/pm":
-			case "/tell":
-			case "/freeze":
-			case "/unfreeze":
-				return;
-			default:
+	public void onCommand(CommandRunEvent event) {
+		if (!(event.getSender() instanceof Player))
+			return;
+
+		Player player = event.getPlayer();
+
+		if (!isFrozen(player))
+			return;
+
+		if (Rank.of(player).isStaff())
+			return;
+
+		Punishments.of(player).getActiveMute().ifPresent(mute -> {
+			if (!commandWhitelist.contains(event.getCommand().getClass()))
 				event.setCancelled(true);
-		}
+		});
 	}
 
 }
