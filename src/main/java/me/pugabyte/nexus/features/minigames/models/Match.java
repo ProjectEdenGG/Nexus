@@ -46,12 +46,13 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -323,11 +324,12 @@ public class Match {
 	}
 
 	private void teleportIn() {
-		arena.getTeams().forEach(team -> team.spawn(this));
+		Set<Location> usedSpawnpoints = new HashSet<>();
+		arena.getTeams().forEach(team -> team.spawn(this, usedSpawnpoints));
 	}
 
 	public void teleportIn(Minigamer minigamer) {
-		minigamer.getTeam().spawn(Collections.singletonList(minigamer));
+		minigamer.getTeam().spawn(minigamer);
 	}
 
 	private void clearStates() {
