@@ -48,6 +48,7 @@ public class Frogger implements Listener {
 	private static final Location checkpointLoc = new Location(BearFair21.getWorld(), 133.5, 138.0, -67.5, -180, 0);
 	private static final Set<Player> checkpointList = new HashSet<>();
 	private static boolean enabled = false;
+	private static int animationTaskId;
 	private final BF21PointSource SOURCE = BF21PointSource.FROGGER;
 	//
 	private static final Map<Location, Material> logSpawnMap = new HashMap<>();
@@ -66,60 +67,69 @@ public class Frogger implements Listener {
 	}
 
 	private void loadLogSpawns() {
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
-		for (Block block : blocks) {
-			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
-				logSpawnMap.put(block.getLocation(), block.getType());
-			}
-		}
+		loadSpawns(logsRg, logSpawnMap);
 	}
 
 	private void loadCarSpawns() {
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(carsRg));
-		for (Block block : blocks) {
-			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
-				carSpawnMap.put(block.getLocation(), block.getType());
-			}
-		}
+		loadSpawns(carsRg, carSpawnMap);
+	}
+
+	private void loadSpawns(String logsRg, Map<Location, Material> logSpawnMap) {
+		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
+		for (Block block : blocks)
+			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK))
+				logSpawnMap.put(block.getLocation(), block.getType());
 	}
 
 	public void startAnimations() {
 		// Log Animations
-		clearLogs();
-		int lastLogLen = 3;
-		for (Location spawnLoc : logSpawnMap.keySet()) {
-			BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
-			for (int i = 0; i < 4; i++) {
+		AtomicInteger taskId = new AtomicInteger();
+		taskId.set(Tasks.wait(0, () -> {
+			clearLogs();
+			int lastLogLen = 3;
+			for (Location spawnLoc : logSpawnMap.keySet()) {
+				BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
+				for (int i = 0; i < 4; i++) {
 
-				int ran = RandomUtils.randomInt(2, 3);
-				// 10 = task update interval
-				int wait = ((lastLogLen * 10) + 30) + (((RandomUtils.randomInt(1, 3)) * 10) * i);
-//				int wait = (((20 * lastLogLen) + (Utils.randomInt(2, 4) * 10) + 10) * i);
-				lastLogLen = ran;
+					int ran = RandomUtils.randomInt(2, 3);
+					int wait = ((lastLogLen * 10) + 30) + (((RandomUtils.randomInt(1, 3)) * 10) * i);
+					lastLogLen = ran;
 
-				Tasks.wait((long) wait * i, () -> logTask(ran, spawnLoc, blockFace));
+					Tasks.wait((long) wait * i, () -> {
+						if (animationTaskId == taskId.get())
+							logTask(ran, spawnLoc, blockFace);
+					});
+				}
 			}
-		}
 
-		// Car Animations
-		clearCars();
-		for (Location spawnLoc : carSpawnMap.keySet()) {
-			Location loc = spawnLoc.getBlock().getRelative(0, 2, 0).getLocation();
-			BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
+			// Car Animations
+			clearCars();
+			for (Location spawnLoc : carSpawnMap.keySet()) {
+				Location loc = spawnLoc.getBlock().getRelative(0, 2, 0).getLocation();
+				BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
 
-			Tasks.wait(0, () -> carTask(loc, blockFace));
-			Tasks.wait(28, () -> carTask(loc, blockFace));
-		}
+				Tasks.wait(0, () -> {
+					if (animationTaskId == taskId.get())
+						carTask(loc, blockFace);
+				});
+				Tasks.wait(28, () -> {
+					if (animationTaskId == taskId.get())
+						carTask(loc, blockFace);
+				});
+			}
+		}));
+
+		animationTaskId = taskId.get();
 	}
 
 	public void stopAnimations() {
-		for (Integer logTask : logTasks) {
+		for (Integer logTask : logTasks)
 			Tasks.cancel(logTask);
-		}
+		logTasks.clear();
 
-		for (Integer carTask : carTasks) {
+		for (Integer carTask : carTasks)
 			Tasks.cancel(carTask);
-		}
+		carTasks.clear();
 	}
 
 	private void logTask(int maxLength, Location location, BlockFace blockFace) {
