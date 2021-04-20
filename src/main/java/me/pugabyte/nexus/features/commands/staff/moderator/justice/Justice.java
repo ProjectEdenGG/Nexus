@@ -64,7 +64,8 @@ public class Justice extends Feature implements Listener {
 	public void ban_onPlayerLogin(AsyncPlayerPreLoginEvent event) {
 		final PunishmentsService service = new PunishmentsService();
 		final Punishments punishments = service.get(event.getUniqueId());
-		punishments.getIpHistory().add(event.getAddress().getHostAddress());
+
+		punishments.logIp(event.getAddress().getHostAddress());
 
 		Optional<Punishment> banMaybe = punishments.getAnyActiveBan();
 		banMaybe.ifPresent(ban -> {

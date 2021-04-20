@@ -64,16 +64,16 @@ public class Nickname extends PlayerOwnedObject {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static String of(UUID uuid) {
-		return of(PlayerUtils.getPlayer(uuid));
-	}
-
 	public static String of(PlayerOwnedObject player) {
 		return of(player.getUuid());
 	}
 
 	public static String of(OfflinePlayer player) {
-		return new NicknameService().get(player).getNickname();
+		return of(player.getUniqueId());
+	}
+
+	public static String of(UUID uuid) {
+		return new NicknameService().get(uuid).getNickname();
 	}
 
 	public @NotNull String getNickname() {

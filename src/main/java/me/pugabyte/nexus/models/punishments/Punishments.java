@@ -54,7 +54,7 @@ public class Punishments extends PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Punishment> punishments = new ArrayList<>();
-	private Set<String> ipHistory = new HashSet<>();
+	private List<IPHistoryEntry> ipHistory = new ArrayList<>();
 
 	public static transient final String PREFIX = StringUtils.getPrefix("Justice");
 	public static transient final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Justice");
@@ -63,16 +63,16 @@ public class Punishments extends PlayerOwnedObject {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static Punishments of(UUID uuid) {
-		return of(PlayerUtils.getPlayer(uuid));
-	}
-
 	public static Punishments of(PlayerOwnedObject player) {
 		return of(player.getUuid());
 	}
 
 	public static Punishments of(OfflinePlayer player) {
-		return new PunishmentsService().get(player);
+		return of(player.getUniqueId());
+	}
+
+	public static Punishments of(UUID uuid) {
+		return new PunishmentsService().get(uuid);
 	}
 
 	public Punishment getById(UUID id) {
@@ -230,6 +230,27 @@ public class Punishments extends PlayerOwnedObject {
 
 			save();
 		});
+	}
+
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class IPHistoryEntry {
+		private String ip;
+		private LocalDateTime timestamp;
+	}
+
+	public Optional<IPHistoryEntry> getIpHistoryEntry(String ip) {
+		return ipHistory.stream().filter(entry -> entry.getIp().equals(ip)).findFirst();
+	}
+
+	public boolean hasIp(String ip) {
+		return getIpHistoryEntry(ip).isPresent();
+	}
+
+	public void logIp(String ip) {
+		if (!hasIp(ip))
+			ipHistory.add(new IPHistoryEntry(ip, LocalDateTime.now()));
 	}
 
 	@NotNull

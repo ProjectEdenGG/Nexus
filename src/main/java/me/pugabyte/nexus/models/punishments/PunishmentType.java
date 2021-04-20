@@ -32,7 +32,6 @@ public enum PunishmentType implements ColoredAndNamed {
 		}
 	},
 	IP_BAN("ip-banned", ChatColor.DARK_RED, true, true, false, true) { // TODO onlyOneActive ?
-
 		@Override
 		public void action(Punishment punishment) {
 			kick(punishment);
