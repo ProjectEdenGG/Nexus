@@ -1,9 +1,12 @@
 package me.pugabyte.nexus.models.punishments;
 
+import dev.morphia.query.Query;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,6 +16,17 @@ public class PunishmentsService extends MongoService<Punishments> {
 
 	public Map<UUID, Punishments> getCache() {
 		return cache;
+	}
+
+	public List<Punishments> getAlts(Punishments player) {
+		if (player.getIpHistory().isEmpty())
+			return new ArrayList<>();
+
+		Query<Punishments> query = database.createQuery(Punishments.class);
+		for (String ipHistory : player.getIpHistory())
+			query.or(query.criteria("ipHistory").containsIgnoreCase(ipHistory));
+
+		return query.find().toList();
 	}
 
 }

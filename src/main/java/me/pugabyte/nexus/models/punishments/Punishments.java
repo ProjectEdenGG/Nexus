@@ -22,7 +22,9 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,9 +35,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
+import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
@@ -226,6 +230,68 @@ public class Punishments extends PlayerOwnedObject {
 
 			save();
 		});
+	}
+
+	@NotNull
+	public Set<UUID> getAlts() {
+		Set<UUID> alts = new HashSet<UUID>() {{ add(uuid); }};
+		Set<UUID> newMatches = new HashSet<>(alts);
+
+		int size = 0;
+		while (true) {
+			HashSet<UUID> toSearch = new HashSet<>(newMatches);
+			newMatches.clear();
+
+			for (UUID alt : toSearch)
+				newMatches.addAll(new PunishmentsService().getAlts(Punishments.of(alt)).stream().map(Punishments::getUuid).collect(toList()));
+
+			alts.addAll(newMatches);
+
+			if (alts.size() == size)
+				break;
+			size = alts.size();
+		}
+
+		return alts;
+	}
+
+	public void sendAltsMessage(Consumer<JsonBuilder> sender) {
+		JsonBuilder altsMessage = getAltsMessage();
+		if (altsMessage != null)
+			sender.accept(altsMessage);
+	}
+
+	public JsonBuilder getAltsMessage() {
+		Set<UUID> alts = getAlts();
+		if (alts.size() == 1)
+			return null;
+
+		JsonBuilder json = new JsonBuilder(PREFIX + "Alts of &e" + getNickname()).newline();
+
+		alts.stream().map(Punishments::of).forEach(alt -> {
+			ChatColor color = ChatColor.GRAY;
+			String description = "Offline";
+
+			if (alt.isOnline()) {
+				color = ChatColor.GREEN;
+				description = "Online";
+			}
+
+			for (PunishmentType type : Arrays.asList(PunishmentType.WATCHLIST, PunishmentType.FREEZE, PunishmentType.MUTE, PunishmentType.BAN))
+				if (alt.getMostRecentActive(type).isPresent()) {
+					color = type.getChatColor();
+					description = type.getPastTense();
+				}
+
+			if (json.isInitialized())
+				json.next("&f, ");
+			else
+				json.initialize();
+
+			json.group().next(color + alt.getNickname()).hover(color + camelCase(description)).group();
+		});
+
+		return json;
 	}
 
 	void save() {

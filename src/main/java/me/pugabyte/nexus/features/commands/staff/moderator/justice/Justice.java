@@ -182,4 +182,16 @@ public class Justice extends Feature implements Listener {
 		});
 	}
 
+	// Alts
+	@EventHandler
+	public void alts_onJoin(PlayerJoinEvent event) {
+		final Player player = event.getPlayer();
+		Tasks.waitAsync(Time.SECOND, () -> {
+			if (!player.isOnline())
+				return;
+
+			Punishments.of(player).sendAltsMessage(json -> Chat.broadcastIngame(json, StaticChannel.STAFF));
+		});
+	}
+
 }

@@ -83,7 +83,7 @@ public enum PunishmentType implements ColoredAndNamed {
 			punishment.send("&cYou have been unfrozen");
 		}
 	},
-	WATCHLIST("watchlisted", ChatColor.GREEN, false, true, true, true) {
+	WATCHLIST("watchlisted", ChatColor.LIGHT_PURPLE, false, true, true, true) {
 		@Override
 		public void action(Punishment punishment) {}
 	};
