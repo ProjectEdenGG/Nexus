@@ -9,7 +9,6 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21User.BF21PointSource;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -109,8 +108,7 @@ public class Frogger implements Listener {
 			BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
 
 			Tasks.wait(0, () -> carTask(loc, blockFace));
-			// delay = 28 ticks
-			Tasks.wait(Time.SECOND.x(16), () -> carTask(loc, blockFace));
+			Tasks.wait(28, () -> carTask(loc, blockFace));
 		}
 	}
 
@@ -177,8 +175,7 @@ public class Frogger implements Listener {
 		AtomicInteger distance = new AtomicInteger(0);
 		AtomicInteger currentLen = new AtomicInteger(0);
 
-		// interval = 2
-		int taskId = Tasks.repeat(0, Time.SECOND, () -> {
+		int taskId = Tasks.repeat(0, 2, () -> {
 			if (!enabled) {
 				stopAnimations();
 				return;

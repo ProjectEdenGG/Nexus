@@ -138,22 +138,22 @@ public class WorldGuardUtils {
 		return null;
 	}
 
-	public Set<ProtectedRegion> getRegionsLike(String name) {
+	public Set<ProtectedRegion> getRegionsLike(String regex) {
 		Map<String, ProtectedRegion> regions = manager.getRegions();
-		return regions.keySet().stream().filter(id -> id.matches(name.toLowerCase())).map(regions::get).collect(Collectors.toSet());
+		return regions.keySet().stream().filter(id -> id.matches(regex.toLowerCase())).map(regions::get).collect(Collectors.toSet());
 	}
 
-	public Set<ProtectedRegion> getRegionsLikeAt(String name, Location location) {
+	public Set<ProtectedRegion> getRegionsLikeAt(String regex, Location location) {
 		if (!isSameWorld(location)) return new HashSet<>();
-		return getRegionsAt(location).stream().filter(region -> region.getId().matches(name.toLowerCase())).collect(Collectors.toSet());
+		return getRegionsAt(location).stream().filter(region -> region.getId().matches(regex.toLowerCase())).collect(Collectors.toSet());
 	}
 
 	public boolean isSameWorld(Location location) {
 		return location.getWorld().equals(world);
 	}
 
-	public ProtectedRegion getRegionLike(String name) {
-		Set<ProtectedRegion> matches = getRegionsLike(name);
+	public ProtectedRegion getRegionLike(String regex) {
+		Set<ProtectedRegion> matches = getRegionsLike(regex);
 		if (matches.size() == 0)
 			throw new InvalidInputException("No regions found");
 		return matches.iterator().next();

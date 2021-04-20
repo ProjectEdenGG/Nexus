@@ -25,11 +25,11 @@ import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.Sound;
@@ -71,7 +71,8 @@ public class MiniGolf {
 			Material.PETRIFIED_OAK_SLAB, Material.SAND, Material.RED_SAND, Material.SOUL_SOIL, Material.BLUE_ICE,
 			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
 			Material.REDSTONE_BLOCK);
-	@Getter private static final String regionHole = "bearfair21_minigolf_hole_";
+	@Getter private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
+	@Getter private static final String regionHole = gameRegion + "_hole_";
 	//
 	private BF21PointSource SOURCE = BF21PointSource.MINIGOLF;
 	// @formatter:on
@@ -84,7 +85,7 @@ public class MiniGolf {
 		new RegionListener();
 
 		ballTask();
-		powerTask();
+		playerTasks();
 		redstoneTask();
 	}
 
@@ -127,17 +128,37 @@ public class MiniGolf {
 		});
 	}
 
-	private void powerTask() {
+	private void playerTasks() {
+		// Kit
+		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				if (!BearFair21.isAtBearFair(player))
+					continue;
+
+				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
+
+				MiniGolf21User user = service.get(player);
+				if (user.isPlaying() && regions == 0) {
+					user.setPlaying(false);
+					takeKit(user);
+				} else if (!user.isPlaying() && regions > 0) {
+					user.setPlaying(true);
+					giveKit(user);
+				}
+
+			}
+		});
+
+		// Power
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
-				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
-				if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
+				if (!user.isOnline())
 					continue;
 
 				if (user.getSnowball() == null)
 					continue;
 
-				Player player = offlinePlayer.getPlayer();
+				Player player = user.getPlayer();
 				ItemStack tool = ItemUtils.getTool(player);
 				if (ItemUtils.isNullOrAir(tool))
 					continue;

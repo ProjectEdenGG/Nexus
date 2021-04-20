@@ -20,6 +20,8 @@ import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
 public class BearFair21 {
 	@Getter
+	private static final boolean allowWarp = false;
+	@Getter
 	private static final String region = "bearfair21";
 	@Getter
 	private static final String PREFIX = "&8&l[&eBearFair&8&l] &3";

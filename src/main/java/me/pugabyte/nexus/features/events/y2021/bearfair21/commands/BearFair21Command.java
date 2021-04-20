@@ -15,6 +15,11 @@ public class BearFair21Command extends CustomCommand {
 		super(event);
 	}
 
+	@Path
+	void warp() {
+		runCommand("bearfair21warp");
+	}
+
 	@Path("strengthTest")
 	@Permission("group.admin")
 	void strengthTest() {
