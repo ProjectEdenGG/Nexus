@@ -56,7 +56,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -319,7 +318,7 @@ public class Murder extends TeamMechanic {
 
 	private void useTeleporter(Minigamer minigamer) {
 		Team innocentTeam = getInnocentTeam(minigamer.getMatch());
-		innocentTeam.toSpawnpoints(minigamer.getMatch(), new HashSet<>());
+		innocentTeam.toSpawnpoints(minigamer.getMatch());
 
 		minigamer.tell("You used the teleporter!");
 		minigamer.getMatch().broadcast("The murderer used the teleporter!");

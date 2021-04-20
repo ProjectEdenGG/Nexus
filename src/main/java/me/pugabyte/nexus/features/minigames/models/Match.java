@@ -77,6 +77,7 @@ public class Match {
 	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
+	private Set<Location> usedSpawnpoints = new HashSet<>();
 
 	public Minigamer getMinigamer(Player player) {
 		for (Minigamer minigamer : minigamers)
@@ -325,7 +326,7 @@ public class Match {
 
 	private void teleportIn() {
 		Set<Location> usedSpawnpoints = new HashSet<>();
-		arena.getTeams().forEach(team -> team.spawn(this, usedSpawnpoints));
+		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 
 	public void teleportIn(Minigamer minigamer) {

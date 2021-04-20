@@ -11,10 +11,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.LocationUtils;
-import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
@@ -26,7 +24,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,23 +97,15 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 		return chatColor.getColor();
 	}
 
-	public @NotNull String getColoredName() {
-		return chatColor + name;
-	}
-
-	public @NotNull TextComponent getComponent() {
-		return AdventureUtils.colorText(chatColor, name);
-	}
-
-	public void spawn(Match match, Set<Location> usedSpawnpoints) {
-		spawn(getMinigamers(match), usedSpawnpoints);
+	public void spawn(Match match) {
+		spawn(getMinigamers(match));
 	}
 
 	public void spawn(Minigamer minigamer) {
-		spawn(Collections.singletonList(minigamer), new HashSet<>());
+		spawn(Collections.singletonList(minigamer));
 	}
 
-	public void spawn(List<Minigamer> minigamers, Set<Location> usedSpawnpoints) {
+	public void spawn(List<Minigamer> minigamers) {
 		List<Minigamer> members = getAliveMinigamers(minigamers);
 		if (members.isEmpty()) return;
 
@@ -128,14 +117,14 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 		if (loadout != null)
 			members.forEach(minigamer -> loadout.apply(minigamer));
 
-		toSpawnpoints(members, usedSpawnpoints);
+		toSpawnpoints(members);
 	}
 
-	public void toSpawnpoints(Match match, Set<Location> usedSpawnpoints) {
-		toSpawnpoints(getAliveMinigamers(match), usedSpawnpoints);
+	public void toSpawnpoints(Match match) {
+		toSpawnpoints(getAliveMinigamers(match));
 	}
 
-	public void toSpawnpoints(List<Minigamer> members, Set<Location> usedSpawnpoints) {
+	public void toSpawnpoints(List<Minigamer> members) {
 		Validate.notEmpty(members, "Members argument should not be empty");
 		members = new ArrayList<>(members);
 		Match match = members.get(0).getMatch();
@@ -155,6 +144,7 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 			return;
 		}
 
+		Set<Location> usedSpawnpoints = match.getUsedSpawnpoints();
 		List<Location> locations = null;
 		boolean shuffle = match.getMechanic().shuffleSpawnpoints();
 
@@ -162,7 +152,7 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 			if (locations == null || locations.isEmpty()) {
 				locations = new ArrayList<>(spawnpoints);
 				if (!usedSpawnpoints.isEmpty()) {
-					// remove spawnpoints from the same block
+					// remove spawnpoints from the same block/location
 					locations.removeIf(location1 -> usedSpawnpoints.stream().anyMatch(location2 -> LocationUtils.blockLocationsEqual(location1, location2)));
 
 					if (locations.isEmpty()) {
