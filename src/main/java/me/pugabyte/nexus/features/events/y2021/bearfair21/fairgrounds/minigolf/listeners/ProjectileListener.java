@@ -36,6 +36,9 @@ public class ProjectileListener implements Listener {
 		if (!BearFair21.isAtBearFair(entity))
 			return;
 
+		if (!MiniGolfUtils.isInMiniGolf(entity.getLocation()))
+			return;
+
 		// Check if golf ball
 		if (entity instanceof Snowball) {
 			// Get info

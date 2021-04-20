@@ -22,6 +22,10 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MiniGolfUtils {
+	public static boolean isInMiniGolf(Location location) {
+		return BearFair21.getWGUtils().getRegionsLikeAt(MiniGolf.getGameRegion() + ".*", location).size() > 0;
+	}
+
 	public static String getStrokeString(MiniGolf21User user) {
 		String strokes = "Stroke " + user.getCurrentStrokes();
 		if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
