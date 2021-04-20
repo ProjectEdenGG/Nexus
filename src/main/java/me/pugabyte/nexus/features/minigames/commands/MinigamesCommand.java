@@ -102,14 +102,15 @@ public class MinigamesCommand extends CustomCommand {
 		minigamer.quit();
 	}
 
-	@Path("warn <player>")
+	@Path("warn <player> [reason]")
 	@Permission(value = "group.moderator", absolute = true)
-	void warn(Player player) {
+	void warn(Player player, String reason) {
 		if (!Minigames.isMinigameWorld(player.getWorld()))
 			error("Target player is not in minigames");
 
 		player.getWorld().strikeLightningEffect(player.getLocation());
-		Punishments.of(player).add(Punishment.ofType(PunishmentType.WARN).punisher(uuid()).input("Please obey the rules of our minigames"));
+		Punishments.of(player).add(Punishment.ofType(PunishmentType.WARN).punisher(uuid())
+				.input("Please obey the rules of our minigames" + (isNullOrEmpty(reason) ? "" : ": " + reason)));
 	}
 
 	@Path("testMode [boolean]")
