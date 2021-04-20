@@ -103,7 +103,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("warn <player>")
-	@Permission("group.moderator")
+	@Permission(value = "group.moderator", absolute = true)
 	void warn(Player player) {
 		if (!Minigames.isMinigameWorld(player.getWorld()))
 			error("Target player is not in minigames");

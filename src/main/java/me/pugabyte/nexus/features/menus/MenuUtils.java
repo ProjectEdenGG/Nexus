@@ -279,6 +279,7 @@ public abstract class MenuUtils {
 		private Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@NonNull
 		private Consumer<ItemClickData> onConfirm;
+		private Consumer<ItemClickData> onFinally;
 
 		public static class ConfirmationMenuBuilder {
 
@@ -312,6 +313,9 @@ public abstract class MenuUtils {
 
 				if (title.equals(e.getPlayer().getOpenInventory().getTitle()))
 					e.getPlayer().closeInventory();
+
+				if (onFinally != null)
+					onFinally.accept(e);
 			}));
 
 			contents.set(1, 6, ClickableItem.from(confirmItem, e -> {
@@ -319,6 +323,9 @@ public abstract class MenuUtils {
 
 				if (colorize(title).equals(e.getPlayer().getOpenInventory().getTitle()))
 					e.getPlayer().closeInventory();
+
+				if (onFinally != null)
+					onFinally.accept(e);
 			}));
 		}
 	}

@@ -77,31 +77,31 @@ public class Punishments extends PlayerOwnedObject {
 
 	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getAnyActiveBan() {
-		return getLastActive(PunishmentType.BAN, PunishmentType.IP_BAN);
+		return getMostRecentActive(PunishmentType.BAN, PunishmentType.IP_BAN);
 	}
 
 	public Optional<Punishment> getActiveBan() {
-		return getLastActive(PunishmentType.BAN);
+		return getMostRecentActive(PunishmentType.BAN);
 	}
 
 	public Optional<Punishment> getActiveIPBan() {
-		return getLastActive(PunishmentType.IP_BAN);
+		return getMostRecentActive(PunishmentType.IP_BAN);
 	}
 
 	public Optional<Punishment> getActiveMute() {
-		return getLastActive(PunishmentType.MUTE);
+		return getMostRecentActive(PunishmentType.MUTE);
 	}
 
 	public Optional<Punishment> getActiveFreeze() {
-		return getLastActive(PunishmentType.FREEZE);
+		return getMostRecentActive(PunishmentType.FREEZE);
 	}
 
 	public Optional<Punishment> getActiveWatchlist() {
-		return getLastActive(PunishmentType.WATCHLIST);
+		return getMostRecentActive(PunishmentType.WATCHLIST);
 	}
 
 	public Optional<Punishment> getLastWarn() {
-		return getLastActive(PunishmentType.WARN);
+		return getMostRecentActive(PunishmentType.WARN);
 	}
 
 	public List<Punishment> getActive(PunishmentType... types) {
@@ -110,8 +110,30 @@ public class Punishments extends PlayerOwnedObject {
 				.collect(toList());
 	}
 
-	public Optional<Punishment> getLastActive(PunishmentType... types) {
-		return getActive(types).stream().max(Comparator.comparing(Punishment::getTimestamp));
+	public Optional<Punishment> getMostRecentActive(PunishmentType... types) {
+		return getMostRecent(getActive(types));
+	}
+
+	public Optional<Punishment> getMostRecent() {
+		return getMostRecent(punishments);
+	}
+
+	public Optional<Punishment> getCooldown(UUID punisher) {
+		Optional<Punishment> mostRecent = getMostRecent();
+		if (!mostRecent.isPresent())
+			return Optional.empty();
+
+		boolean recent = mostRecent.get().getTimestamp().isAfter(LocalDateTime.now().minusSeconds(30));
+		boolean samePunisher = mostRecent.get().getPunisher().equals(punisher);
+
+		if (!(recent && !samePunisher))
+			return Optional.empty();
+
+		return mostRecent;
+	}
+
+	public Optional<Punishment> getMostRecent(List<Punishment> punishments) {
+		return punishments.stream().max(Comparator.comparing(Punishment::getTimestamp));
 	}
 
 	public List<Punishment> getNewWarnings() {

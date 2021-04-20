@@ -46,6 +46,19 @@ import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 @NoArgsConstructor
 public class Justice extends Feature implements Listener {
 
+	private void broadcast(Punishment punishment, String message) {
+		broadcast(historyClick(punishment, new JsonBuilder(PREFIX + message)));
+	}
+
+	private void broadcast(JsonBuilder json) {
+		Chat.broadcastIngame(json, StaticChannel.STAFF);
+		Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(json.toString()), StaticChannel.STAFF);
+	}
+
+	private JsonBuilder historyClick(Punishment punishment, JsonBuilder ingame) {
+		return ingame.hover("&eClick for more information").command("/history " + punishment.getName());
+	}
+
 	// Ban
 	@EventHandler
 	public void ban_onPlayerLogin(AsyncPlayerPreLoginEvent event) {
@@ -60,18 +73,32 @@ public class Justice extends Feature implements Listener {
 
 			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(" + ban.getTimeLeft() + ")";
 
-			JsonBuilder ingame = new JsonBuilder(PREFIX + message)
-					.hover("&eClick for more information")
-					.command("/history " + punishments.getName());
-
-			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
-			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+			broadcast(ban, message);
 		});
 
 		service.save(punishments);
 	}
 
 	// Mute
+	private void broadcastMute(Punishment mute, String message) {
+		JsonBuilder json = new JsonBuilder(PREFIX + message);
+
+		if (!isNullOrEmpty(mute.getReason()))
+			json.hover("&eReason: &7" + mute.getReason()).hover("");
+
+		historyClick(mute, json);
+		broadcast(json);
+	}
+
+	private static final List<Class<? extends CustomCommand>> muteCommandBlacklist = Arrays.asList(
+			PoofCommand.class,
+			PoofHereCommand.class,
+			BoopCommand.class,
+			PayCommand.class,
+			TicketCommand.class,
+			ReportCommand.class
+	);
+
 	@EventHandler
 	public void mute_onChat(ChatEvent event) {
 		Chatter chatter = event.getChatter();
@@ -93,25 +120,11 @@ public class Justice extends Feature implements Listener {
 
 			String message = "&e" + punishments.getName() + " &cspoke while muted: &7" + originalMessage + " &c(" + mute.getTimeLeft() + ")";
 
-			JsonBuilder ingame = new JsonBuilder(PREFIX + message)
-					.hover("&eClick for more information")
-					.command("/history " + punishments.getName());
-
-			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
-			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+			broadcastMute(mute, message);
 
 			punishments.send("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " (" + mute.getTimeLeft() + ")");
 		});
 	}
-
-	private static final List<Class<? extends CustomCommand>> muteCommandBlacklist = Arrays.asList(
-			PoofCommand.class,
-			PoofHereCommand.class,
-			BoopCommand.class,
-			PayCommand.class,
-			TicketCommand.class,
-			ReportCommand.class
-	);
 
 	@EventHandler
 	public void mute_onCommand(CommandRunEvent event) {
@@ -127,12 +140,7 @@ public class Justice extends Feature implements Listener {
 			event.setCancelled(true);
 			String message = "&e" + punishments.getName() + " &cused a blacklisted command while muted: &7" + event.getOriginalMessage() + " &c(" + mute.getTimeLeft() + ")";
 
-			JsonBuilder ingame = new JsonBuilder(PREFIX + message)
-					.hover("&eClick for more information")
-					.command("/history " + punishments.getName());
-
-			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
-			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+			broadcastMute(mute, message);
 
 			punishments.send("&cYou cannot use this command while muted (" + mute.getTimeLeft() + ")");
 		});
@@ -157,11 +165,12 @@ public class Justice extends Feature implements Listener {
 			if (!player.isOnline())
 				return;
 
-			Function<Punishment, JsonBuilder> notification = watchlist ->
-					new JsonBuilder("&e" + getName() + " &cwas watchlisted for &e" + watchlist.getReason() + " &cby &e"
-							+ Nickname.of(watchlist.getPunisher()) + " &con &e" + shortDateFormat(watchlist.getTimestamp().toLocalDate()))
-							.hover("&eClick for more information")
-							.command("/history " + watchlist.getName());
+			Function<Punishment, JsonBuilder> notification = watchlist -> {
+				String punisher = Nickname.of(watchlist.getPunisher());
+				String timestamp = shortDateFormat(watchlist.getTimestamp().toLocalDate());
+				return historyClick(watchlist, new JsonBuilder("&e" + getName() + " &cwas watchlisted for &e"
+						+ watchlist.getReason() + " &cby &e" + punisher + " &con &e" + timestamp));
+			};
 
 			if (Nerd.of(player).getRank().isMod())
 				for (Player onlinePlayer : Bukkit.getOnlinePlayers())
