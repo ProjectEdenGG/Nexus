@@ -62,6 +62,14 @@ public class JsonBuilder {
 		initialized = json.initialized;
 	}
 
+	public JsonBuilder(@Nullable Component component) {
+		next(component);
+	}
+
+	public JsonBuilder(@Nullable Builder component) {
+		next(component);
+	}
+
 	private void debug(@NotNull String message) {
 		Nexus.debug(message);
 	}
@@ -76,6 +84,20 @@ public class JsonBuilder {
 	@NotNull
 	public JsonBuilder next(@NotNull JsonBuilder json) {
 		builder.append(json.build());
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable Component component) {
+		if (component != null)
+			builder.append(component);
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable Builder component) {
+		if (component != null)
+			builder.append(component);
 		return this;
 	}
 

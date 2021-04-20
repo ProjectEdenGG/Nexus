@@ -74,7 +74,7 @@ public class Minigamer implements ColoredAndNicknamed {
 
 	/**
 	 * Returns the Minigamer's Minecraft username.
-	 * You should consider using {@link #getNickname()} instead.
+	 * @deprecated You should probably be using {@link #getNickname()} instead.
 	 */
 	@Deprecated
 	@NotNull

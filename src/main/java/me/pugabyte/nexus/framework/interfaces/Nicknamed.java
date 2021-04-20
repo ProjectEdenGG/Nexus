@@ -4,7 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Nicknamed extends Named {
 	/**
-	 * Returns a name that represents this object. For display purposes, use {@link #getNickname()} instead.
+	 * Returns a name that represents this object.
+	 * @deprecated For display purposes, use {@link #getNickname()} instead.
 	 */
 	@Override
 	@Deprecated
