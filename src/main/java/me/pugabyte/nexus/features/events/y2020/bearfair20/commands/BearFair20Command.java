@@ -26,7 +26,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 
 	@Override
 	public WarpType getWarpType() {
-		return WarpType.BEAR_FAIR;
+		return WarpType.BEAR_FAIR20;
 	}
 
 	@Path
@@ -38,17 +38,17 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //		if (user.isFirstVisit())
 //			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 
-		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR));
+		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR20));
 	}
 
 	@Path("gallery")
 	void warpToGallery() {
-		teleport(new WarpService().get("gallery", WarpType.BEAR_FAIR));
+		teleport(new WarpService().get("gallery", WarpType.BEAR_FAIR20));
 	}
 
 	@Path("store")
 	void warpToStore() {
-		teleport(new WarpService().get("store", WarpType.BEAR_FAIR));
+		teleport(new WarpService().get("store", WarpType.BEAR_FAIR20));
 	}
 
 //	@Path("quests giveAllQuestItem")

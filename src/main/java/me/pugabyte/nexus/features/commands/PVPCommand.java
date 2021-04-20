@@ -115,7 +115,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
 		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
