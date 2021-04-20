@@ -219,7 +219,7 @@ public abstract class IMastermindMatchData extends MatchData {
 
 				int delay = RandomUtils.randomInt(Time.SECOND.get() / 2, Time.SECOND.get());
 				Tasks.wait(delay * i, () -> {
-					Type type = (Type) RandomUtils.randomElement(EnumUtils.valuesExcept(Type.class, Type.CREEPER, Type.BALL));
+					Type type = RandomUtils.randomElement(EnumUtils.valuesExcept(Type.class, Type.CREEPER, Type.BALL));
 					FireworkLauncher.random(location)
 							.type(type)
 							.power(RandomUtils.randomElement(1, 1, 1, 2))

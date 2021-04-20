@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.particle.ParticleOwner;
 import me.pugabyte.nexus.models.particle.ParticleService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
@@ -91,7 +90,7 @@ public class LineEffect {
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				((ParticleOwner) new ParticleService().get(player)).cancelTasks(taskId);
+				new ParticleService().get(player).cancelTasks(taskId);
 				return;
 			}
 

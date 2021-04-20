@@ -76,7 +76,7 @@ public class PublicChannel implements Channel {
 			recipients.addAll(chatter.getPlayer().getWorld().getPlayers());
 
 		return recipients.stream()
-				.map(player -> (Chatter) new ChatService().get(player))
+				.map(player -> new ChatService().get(player))
 				.filter(_chatter -> _chatter.canJoin(this))
 				.filter(_chatter -> _chatter.hasJoined(this))
 				.collect(Collectors.toSet());

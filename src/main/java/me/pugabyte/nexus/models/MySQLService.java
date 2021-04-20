@@ -31,7 +31,7 @@ public abstract class MySQLService extends DatabaseService {
 
 	@Override
 	public <T> T get(UUID uuid) {
-		return (T) get(uuid.toString());
+		return get(uuid.toString());
 	}
 
 	@Override

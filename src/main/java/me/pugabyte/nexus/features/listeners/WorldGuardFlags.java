@@ -108,7 +108,7 @@ public class WorldGuardFlags implements Listener {
 	public void onEntityTame(EntityTameEvent event) {
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), TAMING) == State.DENY) {
 			event.setCancelled(true);
-			PlayerUtils.send((Player) event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
+			PlayerUtils.send(event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
 		}
 	}
 

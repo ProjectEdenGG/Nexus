@@ -4,7 +4,6 @@ import com.griefcraft.model.Permission;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.TrustService;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class LWCTrustModule extends JavaModule {
 		}
 
 		UUID requester = event.getPlayer().getUniqueId();
-		List<UUID> trusted = ((Trust) new TrustService().get(owner)).getLocks();
+		List<UUID> trusted = new TrustService().get(owner).getLocks();
 
 		if (trusted.contains(requester))
 			event.setAccess(Permission.Access.PLAYER);

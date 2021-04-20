@@ -564,7 +564,7 @@ public final class Thimble extends TeamlessMechanic {
 		void editPool(Match match) {
 			ThimbleArena arena = match.getArena();
 			ThimbleMatchData matchData = match.getMatchData();
-			Thimble mechanic = (Thimble) arena.getMechanic();
+			Thimble mechanic = arena.getMechanic();
 
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();

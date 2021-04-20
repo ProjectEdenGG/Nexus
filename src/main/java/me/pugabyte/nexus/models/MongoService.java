@@ -111,7 +111,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> {
 	@NotNull
 	public T get(UUID uuid) {
 //		if (isEnableCache())
-		return (T) getCache(uuid);
+		return getCache(uuid);
 //		else
 //			return getNoCache(uuid);
 	}
@@ -158,7 +158,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> {
 		if (getCache().containsKey(uuid) && getCache().get(uuid) == null)
 			getCache().remove(uuid);
 		getCache().computeIfAbsent(uuid, $ -> getNoCache(uuid));
-		return (T) getCache().get(uuid);
+		return getCache().get(uuid);
 	}
 
 	protected T getNoCache(UUID uuid) {
@@ -182,17 +182,17 @@ public abstract class MongoService<T extends PlayerOwnedObject> {
 	}
 
 	public List<T> getAll() {
-		return (List<T>) database.createQuery(getPlayerClass()).find().toList();
+		return database.createQuery(getPlayerClass()).find().toList();
 	}
 
 	public List<T> getAllSortedBy(Sort... sorts) {
-		return (List<T>) database.createQuery(getPlayerClass())
+		return database.createQuery(getPlayerClass())
 				.order(sorts)
 				.find().toList();
 	}
 
 	public List<T> getAllSortedByLimit(int limit, Sort... sorts) {
-		return (List<T>) database.createQuery(getPlayerClass())
+		return database.createQuery(getPlayerClass())
 				.order(sorts)
 				.limit(limit)
 				.find().toList();

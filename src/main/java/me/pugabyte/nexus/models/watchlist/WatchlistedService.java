@@ -18,7 +18,7 @@ public class WatchlistedService extends MongoService<Watchlisted> {
 	}
 
 	public List<Watchlisted> getAllActive() {
-		return (List<Watchlisted>) database.createQuery(getPlayerClass())
+		return database.createQuery(getPlayerClass())
 				.filter("active", true)
 				.order(Sort.descending("watchlistedOn"))
 				.find().toList();

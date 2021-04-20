@@ -92,7 +92,7 @@ public class BankerService extends MongoService<Banker> {
 	}
 
 	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
-		transfer((Banker) get(from), get(to), money, shopGroup, cause);
+		transfer(get(from), get(to), money, shopGroup, cause);
 	}
 
 	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
