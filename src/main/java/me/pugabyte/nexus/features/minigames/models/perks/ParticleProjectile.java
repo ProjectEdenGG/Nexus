@@ -9,22 +9,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 @Data
 public class ParticleProjectile {
-    private final ParticleProjectilePerk perk;
-    private final Projectile projectile;
-    private final Match match;
-    public ParticleProjectile(ParticleProjectilePerk perk, Projectile projectile, Match match) {
-        this.perk = perk;
-        this.projectile = projectile;
-        this.match = match;
-        Tasks.repeat(1, 1, new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!projectile.isValid() || projectile.isDead() || projectile.isOnGround()) {
-                    cancel();
-                    return;
-                }
-                perk.tick(projectile, match);
-            }
-        });
-    }
+	private final ParticleProjectilePerk perk;
+	private final Projectile projectile;
+	private final Match match;
+
+	public ParticleProjectile(ParticleProjectilePerk perk, Projectile projectile, Match match) {
+		this.perk = perk;
+		this.projectile = projectile;
+		this.match = match;
+		Tasks.repeat(1, 1, new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (!projectile.isValid() || projectile.isDead() || projectile.isOnGround()) {
+					cancel();
+					return;
+				}
+				perk.tick(projectile, match);
+			}
+		});
+	}
+
 }
