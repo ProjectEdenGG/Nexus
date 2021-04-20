@@ -259,9 +259,15 @@ public class Punishments extends PlayerOwnedObject {
 	}
 
 	public void sendAltsMessage(Consumer<JsonBuilder> sender) {
+		sendAltsMessage(sender, null);
+	}
+
+	public void sendAltsMessage(Consumer<JsonBuilder> sender, Runnable ifNull) {
 		JsonBuilder altsMessage = getAltsMessage();
 		if (altsMessage != null)
 			sender.accept(altsMessage);
+		else if (ifNull != null)
+			ifNull.run();
 	}
 
 	public JsonBuilder getAltsMessage() {

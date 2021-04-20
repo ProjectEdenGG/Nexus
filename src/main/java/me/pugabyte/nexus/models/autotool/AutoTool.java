@@ -13,8 +13,9 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.GameMode;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ public class AutoTool extends PlayerOwnedObject {
 	private boolean enabled = true;
 
 	@Getter
-	private static final List<String> disabledWorlds = Arrays.asList("gameworld", "deathswap");
+	private static final List<String> disabledWorlds = WorldGroup.MINIGAMES.getWorlds();
 
 	public boolean isEnabled() {
 		if (!isOnline())
@@ -40,6 +41,8 @@ public class AutoTool extends PlayerOwnedObject {
 		if (!enabled)
 			return false;
 		if (disabledWorlds.contains(getPlayer().getWorld().getName()))
+			return false;
+		if (getPlayer().getGameMode() != GameMode.SURVIVAL)
 			return false;
 		if (!getPlayer().hasPermission("autotool.use"))
 			return false;
