@@ -69,6 +69,11 @@ public interface MinigameScoreboard {
 			}
 		}
 
+		/**
+		 * Get the scoreboard team corresponding to a team
+		 * @param team a minigame team
+		 * @return a scoreboard team
+		 */
 		ScoreboardTeam getScoreboardTeam(Team team);
 	}
 
@@ -96,10 +101,13 @@ public interface MinigameScoreboard {
 		@Override
 		public void update() {
 			match.getMinigamers().forEach(minigamer -> {
-				if (!minigamer.isAlive() || minigamer.getTeam() == null) {
-					scoreboardTeams.values().forEach(scoreboardTeam -> scoreboardTeam.removePlayer(minigamer.getPlayer()));
-					return;
-				}
+				boolean removePlayer = !minigamer.isAlive() || minigamer.getTeam() == null;
+				scoreboardTeams.forEach((team, scoreboardTeam) -> {
+					if (removePlayer || !minigamer.getTeam().equals(team))
+						scoreboardTeam.removePlayer(minigamer.getPlayer());
+				});
+				if (removePlayer) return;
+
 				getScoreboardTeam(minigamer.getTeam()).addPlayer(minigamer.getPlayer());
 			});
 
@@ -117,18 +125,16 @@ public interface MinigameScoreboard {
 		@Override
 		public void handleQuit(Minigamer minigamer) {
 			if (minigamer.getTeam() == null) return;
-			scoreboardTeams.forEach((team, scoreboardTeam) ->
-					scoreboardTeam.removePlayer(minigamer.getPlayer()));
+			ScoreboardTeam scoreboardTeam = getScoreboardTeam(minigamer.getTeam());
+			scoreboardTeam.removePlayer(minigamer.getPlayer());
+			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleEnd() {
 			scoreboardTeams.forEach((team, scoreboardTeam) -> {
-				Bukkit.getOnlinePlayers().forEach(player -> {
-					scoreboardTeam.removePlayer(player);
-					scoreboardTeam.unsubscribe(player);
-				});
-
+				scoreboardTeam.getPlayers().forEach(scoreboardTeam::removePlayer);
+				Bukkit.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
 				Minigames.getScoreboard().removeTeam(scoreboardTeam.getId());
 			});
 		}
