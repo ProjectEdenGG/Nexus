@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.punishments;
 
+import dev.morphia.query.Criteria;
 import dev.morphia.query.Query;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
@@ -29,10 +30,12 @@ public class PunishmentsService extends MongoService<Punishments> {
 			return new ArrayList<>();
 
 		Query<Punishments> query = database.createQuery(Punishments.class);
+		List<Criteria> criteriaList = new ArrayList<>();
 		for (String ip : player.getIpHistory().stream().map(IPHistoryEntry::getIp).collect(toList())) {
 			Nexus.log("  Adding criteria: " + ip);
-			query.or(query.criteria("ipHistory.ip").equal(ip));
+			criteriaList.add(query.criteria("ipHistory.ip").equal(ip));
 		}
+		query.or(criteriaList.toArray(new Criteria[0]));
 		query.and(query.criteria("_id").notEqual(player.getUuid()));
 		Nexus.log("=======================================");
 
