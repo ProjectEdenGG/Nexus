@@ -81,7 +81,7 @@ public class Punishments extends PlayerOwnedObject {
 
 	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getAnyActiveBan() {
-		return getMostRecentActive(PunishmentType.BAN, PunishmentType.IP_BAN);
+		return getMostRecentActive(PunishmentType.BAN, PunishmentType.ALT_BAN);
 	}
 
 	public Optional<Punishment> getActiveBan() {
@@ -89,7 +89,7 @@ public class Punishments extends PlayerOwnedObject {
 	}
 
 	public Optional<Punishment> getActiveIPBan() {
-		return getMostRecentActive(PunishmentType.IP_BAN);
+		return getMostRecentActive(PunishmentType.ALT_BAN);
 	}
 
 	public Optional<Punishment> getActiveMute() {
@@ -312,7 +312,7 @@ public class Punishments extends PlayerOwnedObject {
 				description = "Online";
 			}
 
-			for (PunishmentType type : Arrays.asList(PunishmentType.WATCHLIST, PunishmentType.FREEZE, PunishmentType.MUTE, PunishmentType.BAN))
+			for (PunishmentType type : Arrays.asList(PunishmentType.WATCHLIST, PunishmentType.FREEZE, PunishmentType.MUTE, PunishmentType.ALT_BAN, PunishmentType.BAN))
 				if (alt.getMostRecentActive(type).isPresent()) {
 					color = type.getChatColor();
 					description = type.getPastTense();

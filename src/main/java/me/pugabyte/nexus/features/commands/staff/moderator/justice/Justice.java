@@ -37,6 +37,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -67,15 +69,22 @@ public class Justice extends Feature implements Listener {
 
 		punishments.logIp(event.getAddress().getHostAddress());
 
-		Optional<Punishment> banMaybe = punishments.getAnyActiveBan();
-		banMaybe.ifPresent(ban -> {
+		Consumer<Punishment> kick = ban -> {
 			event.disallow(Result.KICK_BANNED, ban.getDisconnectMessage());
 			ban.received();
 
 			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(" + ban.getTimeLeft() + ")";
 
 			broadcast(ban, message);
-		});
+		};
+
+		Optional<Punishment> banMaybe = punishments.getAnyActiveBan();
+		banMaybe.ifPresent(kick);
+
+		for (UUID altUuid : punishments.getAlts()) {
+			Optional<Punishment> ipBanMaybe = Punishments.of(altUuid).getActiveIPBan();
+			ipBanMaybe.ifPresent(kick);
+		}
 
 		service.save(punishments);
 	}

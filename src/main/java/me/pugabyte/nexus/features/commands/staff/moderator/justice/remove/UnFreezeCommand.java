@@ -10,9 +10,9 @@ import me.pugabyte.nexus.models.freeze.Freeze;
 import java.util.List;
 
 @Permission("group.moderator")
-public class UnfreezeCommand extends _JusticeCommand {
+public class UnFreezeCommand extends _JusticeCommand {
 
-	public UnfreezeCommand(CommandEvent event) {
+	public UnFreezeCommand(CommandEvent event) {
 		super(event);
 	}
 
