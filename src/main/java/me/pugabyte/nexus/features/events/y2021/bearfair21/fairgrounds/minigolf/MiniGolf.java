@@ -115,6 +115,7 @@ public class MiniGolf {
 		inventory.remove(getScoreBook());
 	}
 
+	// TODO: randomize how long the bridge stays for
 	private void redstoneTask() {
 		if (!Nexus.getEnv().equals(Env.PROD))
 			return;
@@ -139,6 +140,7 @@ public class MiniGolf {
 
 				MiniGolf21User user = service.get(player);
 				if (user.isPlaying() && regions == 0) {
+					PlayerUtils.runCommand(player, "");
 					user.setPlaying(false);
 					takeKit(user);
 				} else if (!user.isPlaying() && regions > 0) {

@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
+
 public class BearFair21 {
 	@Getter
 	private static final boolean allowWarp = false;

@@ -323,11 +323,7 @@ public class Match {
 	}
 
 	private void teleportIn() {
-		arena.getTeams().forEach(team -> {
-			if (team.getSpawnpoints().isEmpty())
-				Mechanic.error("Team "+team.getName()+" has no spawnpoints!", this);
-			team.spawn(this);
-		});
+		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 
 	public void teleportIn(Minigamer minigamer) {
