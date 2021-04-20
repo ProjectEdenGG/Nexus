@@ -234,6 +234,7 @@ public class Punishments extends PlayerOwnedObject {
 
 	@NotNull
 	public Set<UUID> getAlts() {
+		final PunishmentsService service = new PunishmentsService();
 		Set<UUID> alts = new HashSet<UUID>() {{ add(uuid); }};
 		Set<UUID> newMatches = new HashSet<>(alts);
 
@@ -243,7 +244,9 @@ public class Punishments extends PlayerOwnedObject {
 			newMatches.clear();
 
 			for (UUID alt : toSearch)
-				newMatches.addAll(new PunishmentsService().getAlts(Punishments.of(alt)).stream().map(Punishments::getUuid).collect(toList()));
+				newMatches.addAll(service.getAlts(Punishments.of(alt)).stream()
+						.map(Punishments::getUuid)
+						.collect(toList()));
 
 			alts.addAll(newMatches);
 
