@@ -36,7 +36,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -78,13 +77,10 @@ public class Justice extends Feature implements Listener {
 			broadcast(ban, message);
 		};
 
-		Optional<Punishment> banMaybe = punishments.getAnyActiveBan();
-		banMaybe.ifPresent(kick);
+		punishments.getAnyActiveBan().ifPresent(kick);
 
-		for (UUID altUuid : punishments.getAlts()) {
-			Optional<Punishment> ipBanMaybe = Punishments.of(altUuid).getActiveIPBan();
-			ipBanMaybe.ifPresent(kick);
-		}
+		for (UUID altUuid : punishments.getAlts())
+			Punishments.of(altUuid).getActiveIPBan().ifPresent(kick);
 
 		service.save(punishments);
 	}
