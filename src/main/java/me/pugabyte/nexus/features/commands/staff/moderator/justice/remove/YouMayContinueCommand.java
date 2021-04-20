@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.commands.staff.moderator.justice.remove;
 import de.myzelyam.api.vanish.VanishAPI;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._JusticeCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Aliases("ymc")
 @Permission("group.moderator")
-public class YouMayContinueCommand extends CustomCommand {
+public class YouMayContinueCommand extends _JusticeCommand {
 
 	public YouMayContinueCommand(CommandEvent event) {
 		super(event);

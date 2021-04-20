@@ -2,14 +2,12 @@ package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.punishments.NameBanConfig;
 import me.pugabyte.nexus.models.punishments.NameBanConfigService;
-import me.pugabyte.nexus.models.punishments.Punishments;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -23,14 +21,12 @@ import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 
 @NoArgsConstructor
 @Permission("group.moderator")
-public class NameBanCommand extends CustomCommand implements Listener {
+public class NameBanCommand extends _JusticeCommand implements Listener {
 	private final NameBanConfigService service = new NameBanConfigService();
 	private final NameBanConfig config = service.get();
 
 	public NameBanCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = Punishments.PREFIX;
-		DISCORD_PREFIX = Punishments.DISCORD_PREFIX;
 	}
 
 	@Path("<player>")

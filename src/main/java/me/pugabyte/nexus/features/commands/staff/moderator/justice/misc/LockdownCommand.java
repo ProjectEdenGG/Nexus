@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -44,6 +45,8 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 	public LockdownCommand(@NonNull CommandEvent event) {
 		super(event);
+		PREFIX = Punishments.PREFIX;
+		DISCORD_PREFIX = Punishments.DISCORD_PREFIX;
 	}
 
 	static {

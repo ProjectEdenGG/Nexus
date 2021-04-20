@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishment;
@@ -15,7 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @NoArgsConstructor
-public abstract class _PunishmentCommand extends CustomCommand {
+public abstract class _PunishmentCommand extends _JusticeCommand {
 
 	public _PunishmentCommand(@NonNull CommandEvent event) {
 		super(event);

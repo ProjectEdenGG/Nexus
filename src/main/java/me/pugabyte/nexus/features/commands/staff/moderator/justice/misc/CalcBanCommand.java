@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
 
-import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -8,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import java.text.DecimalFormat;
 
 @Permission("group.moderator")
-public class CalcBanCommand extends CustomCommand {
+public class CalcBanCommand extends _JusticeCommand {
 
 	public CalcBanCommand(CommandEvent event) {
 		super(event);

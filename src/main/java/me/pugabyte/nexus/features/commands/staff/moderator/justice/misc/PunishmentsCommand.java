@@ -1,13 +1,12 @@
 package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 
 @Permission("group.moderator")
-public class PunishmentsCommand extends CustomCommand {
+public class PunishmentsCommand extends _JusticeCommand {
 
 	public PunishmentsCommand(@NonNull CommandEvent event) {
 		super(event);

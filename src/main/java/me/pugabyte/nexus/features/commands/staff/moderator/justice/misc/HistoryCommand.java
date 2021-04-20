@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -15,12 +14,10 @@ import java.util.function.BiFunction;
 
 import static java.util.stream.Collectors.toList;
 
-public class HistoryCommand extends CustomCommand {
+public class HistoryCommand extends _JusticeCommand {
 
 	public HistoryCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = Punishments.PREFIX;
-		DISCORD_PREFIX = Punishments.DISCORD_PREFIX;
 	}
 
 	@Path("<player> [page]")
