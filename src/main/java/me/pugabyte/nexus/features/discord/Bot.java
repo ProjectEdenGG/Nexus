@@ -109,15 +109,15 @@ public enum Bot {
 				.setActivity(Activity.playing("Minecraft"));
 
 		Reflections reflections = new Reflections(getClass().getPackage().getName());
-		for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class)) {
-			for (Class<? extends Command> superclass : Utils.getSuperclasses(command)) {
-				HandledBy handledBy = superclass.getAnnotation(HandledBy.class);
-				if (handledBy != null && handledBy.value() == this) {
-					commands.addCommand(command.newInstance());
-					break;
+		for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class))
+			if (Utils.canEnable(command))
+				for (Class<? extends Command> superclass : Utils.getSuperclasses(command)) {
+					HandledBy handledBy = superclass.getAnnotation(HandledBy.class);
+					if (handledBy != null && handledBy.value() == this) {
+						commands.addCommand(command.newInstance());
+						break;
+					}
 				}
-			}
-		}
 		return commands;
 	}
 
