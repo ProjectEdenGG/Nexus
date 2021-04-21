@@ -3,10 +3,18 @@ package me.pugabyte.nexus.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import joptsimple.internal.Strings;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import net.md_5.bungee.api.ChatColor;
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -19,8 +27,11 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.*;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -269,7 +280,7 @@ public class StringUtils {
 	public static final String UUID_REGEX = "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
 
 	public static boolean isUuid(String uuid) {
-		return uuid.matches(UUID_REGEX);
+		return uuid != null && uuid.matches(UUID_REGEX);
 	}
 
 	public static boolean isV4Uuid(UUID uuid) {
@@ -294,6 +305,7 @@ public class StringUtils {
 	}
 
 	public static String toPrettyString(Object object) {
+		if (object == null) return null;
 		try {
 			return getPrettyPrinter().toJson(object);
 		} catch (Exception | StackOverflowError ignored) {

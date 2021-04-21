@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.Punishments;
@@ -14,6 +15,7 @@ import java.util.function.BiFunction;
 
 import static java.util.stream.Collectors.toList;
 
+@Permission("group.moderator")
 public class HistoryCommand extends _JusticeCommand {
 
 	public HistoryCommand(@NonNull CommandEvent event) {

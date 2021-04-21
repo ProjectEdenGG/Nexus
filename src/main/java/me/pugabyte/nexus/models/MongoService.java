@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import static me.pugabyte.nexus.utils.StringUtils.isV4Uuid;
@@ -85,6 +87,25 @@ public abstract class MongoService<T extends PlayerOwnedObject> {
 	public void cache(T object) {
 		if (object != null)
 			getCache().put(object.getUuid(), object);
+	}
+
+	public void saveCache() {
+		saveCache(100);
+	}
+
+	public void saveCache(int threadCount) {
+		Tasks.async(() -> saveCacheSync(threadCount));
+	}
+
+	public void saveCacheSync() {
+		saveCacheSync(100);
+	}
+
+	public void saveCacheSync(int threadCount) {
+		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
+		for (T player : getCache().values())
+			executor.submit(() -> saveSync(player));
 	}
 
 	public Class<T> getPlayerClass() {

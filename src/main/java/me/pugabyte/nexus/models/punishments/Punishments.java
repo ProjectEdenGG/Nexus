@@ -79,6 +79,10 @@ public class Punishments extends PlayerOwnedObject {
 		return punishments.stream().filter(punishment -> punishment.getId().equals(id)).findFirst().orElse(null);
 	}
 
+	public boolean hasHistory() {
+		return !punishments.isEmpty();
+	}
+
 	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getAnyActiveBan() {
 		return getMostRecentActive(PunishmentType.BAN, PunishmentType.ALT_BAN);
@@ -155,6 +159,17 @@ public class Punishments extends PlayerOwnedObject {
 		punishments.add(punishment);
 		punishment.getType().action(punishment);
 		punishment.announceStart();
+
+		save();
+	}
+
+	public void addImport(PunishmentBuilder builder) {
+		Punishment punishment = builder.uuid(uuid).build();
+
+		if (punishment.getType().isOnlyOneActive())
+			deactivatePrevious(punishment);
+
+		punishments.add(punishment);
 
 		save();
 	}
@@ -249,8 +264,12 @@ public class Punishments extends PlayerOwnedObject {
 	}
 
 	public void logIp(String ip) {
+		logIp(ip, LocalDateTime.now());
+	}
+
+	public void logIp(String ip, LocalDateTime timestamp) {
 		if (!hasIp(ip))
-			ipHistory.add(new IPHistoryEntry(ip, LocalDateTime.now()));
+			ipHistory.add(new IPHistoryEntry(ip, timestamp));
 	}
 
 	public List<String> getIps() {
@@ -268,10 +287,10 @@ public class Punishments extends PlayerOwnedObject {
 			Set<UUID> toSearch = new HashSet<>(newMatches);
 			newMatches.clear();
 
-			for (UUID alt : toSearch)
-				newMatches.addAll(service.getAlts(Punishments.of(alt)).stream()
-						.map(Punishments::getUuid)
-						.collect(toList()));
+			List<Punishments> players = toSearch.stream().map(Punishments::of).collect(toList());
+			newMatches.addAll(service.getAlts(players).stream()
+					.map(Punishments::getUuid)
+					.collect(toList()));
 
 			newMatches.removeAll(alts);
 			alts.addAll(newMatches);
@@ -291,7 +310,7 @@ public class Punishments extends PlayerOwnedObject {
 	public void sendAltsMessage(Consumer<JsonBuilder> sender, Runnable ifNull) {
 		JsonBuilder altsMessage = getAltsMessage();
 		if (altsMessage != null)
-			sender.accept(altsMessage);
+			sender.accept(new JsonBuilder(PREFIX + "Alts of &e" + getNickname()).newline().next(altsMessage));
 		else if (ifNull != null)
 			ifNull.run();
 	}
@@ -301,7 +320,7 @@ public class Punishments extends PlayerOwnedObject {
 		if (alts.size() == 1)
 			return null;
 
-		JsonBuilder json = new JsonBuilder(PREFIX + "Alts of &e" + getNickname()).newline();
+		JsonBuilder json = new JsonBuilder();
 
 		alts.stream().map(Punishments::of).forEach(alt -> {
 			ChatColor color = ChatColor.GRAY;

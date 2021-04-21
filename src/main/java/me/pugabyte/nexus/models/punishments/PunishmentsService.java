@@ -5,6 +5,7 @@ import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +18,24 @@ public class PunishmentsService extends MongoService<Punishments> {
 	public Map<UUID, Punishments> getCache() {
 		return cache;
 	}
-
 	public List<Punishments> getAlts(Punishments player) {
-		if (player.getIpHistory().isEmpty())
+		return getAlts(Collections.singletonList(player));
+	}
+
+	public List<Punishments> getAlts(List<Punishments> players) {
+		Query<Punishments> query = database.createQuery(Punishments.class);
+
+		List<String> ips = new ArrayList<String>() {{
+			for (Punishments player : players) {
+				query.criteria("_id").notEqual(player.getUuid());
+				addAll(player.getIps());
+			}
+		}};
+
+		if (ips.isEmpty())
 			return new ArrayList<>();
 
-		Query<Punishments> query = database.createQuery(Punishments.class);
-		query.and(
-				query.criteria("_id").notEqual(player.getUuid()),
-				query.criteria("ipHistory.ip").hasAnyOf(player.getIps())
-		);
+		query.and(query.criteria("ipHistory.ip").hasAnyOf(ips));
 
 		return query.find().toList();
 	}

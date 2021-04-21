@@ -8,10 +8,8 @@ import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.litebans.LiteBansService;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.OfflinePlayer;
 
 import java.util.stream.Collectors;
 
@@ -36,12 +34,12 @@ public class AltsDiscordCommand extends Command {
 				if (args.length == 0)
 					throw new InvalidInputException("Correct usage: `/alts <player>`");
 
-				LiteBansService service = new LiteBansService();
-				OfflinePlayer player = PlayerUtils.getPlayer(args[0]);
+				Punishments player = Punishments.of(args[0]);
 
-				String alts = service.getAlts(player.getUniqueId().toString()).stream()
-						.map(PlayerUtils::getPlayer).map(_player -> {
-							if (service.isBanned(_player.getUniqueId().toString()))
+				// TODO Categorize by active type? See ingame /alts
+				String alts = player.getAlts().stream()
+						.map(Punishments::of).map(_player -> {
+							if (player.getAnyActiveBan().isPresent())
 								return "**" + _player.getName() + "**";
 							else if (_player.isOnline())
 								return "_" + _player.getName() + "_";

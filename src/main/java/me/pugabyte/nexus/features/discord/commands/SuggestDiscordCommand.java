@@ -10,10 +10,10 @@ import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -67,8 +67,8 @@ public class SuggestDiscordCommand extends Command {
 				String hoursTotal = TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format();
 				String hoursMonthly = TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format();
 				String history = "None";
-				if (new LiteBansService().getHistory(nerd.getUuid().toString()) > 0)
-					 history = "[View](https://bans.bnn.gg/history.php?uuid=" + nerd.getUuid() + ")";
+				if (!Punishments.of(nerd).hasHistory())
+					 history = String.valueOf(Punishments.of(nerd).getPunishments().size()); // TODO + " [View](https://justice.bnn.gg/history/" + nerd.getUuid() + ")";
 
 				EmbedBuilder embed = new EmbedBuilder()
 						.appendDescription("\n:information_source: **Rank**: " + nerd.getRank().getName())
