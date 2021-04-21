@@ -7,11 +7,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.commands.PushCommand;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.banker.BankerService;
-import me.pugabyte.nexus.models.chat.Channel;
-import me.pugabyte.nexus.models.chat.ChatService;
-import me.pugabyte.nexus.models.chat.Chatter;
-import me.pugabyte.nexus.models.chat.PrivateChannel;
-import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.models.chat.*;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
@@ -26,11 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -135,14 +127,7 @@ public enum ScoreboardLine {
 	WORLD {
 		@Override
 		public String render(Player player) {
-			String world = player.getWorld().getName();
-			if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
-				world = world.replace("world", "legacy");
-			if (world.contains("oneblock"))
-				world = world.replace("oneblock_world", "one_block");
-			if (world.contains("bskyblock"))
-				world = world.replace("bskyblock_world", "skyblock");
-			return "&3World: &e" + camelCase(world);
+			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getWorld());
 		}
 	},
 
