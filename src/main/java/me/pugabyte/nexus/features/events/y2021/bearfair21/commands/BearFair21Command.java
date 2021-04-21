@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -25,5 +26,11 @@ public class BearFair21Command extends CustomCommand {
 	void strengthTest() {
 		commandBlock();
 		Interactables.strengthTest();
+	}
+
+	@Path("seeker")
+	void seeker() {
+		send("Find the crimson button");
+		Seeker.addPlayer(player());
 	}
 }

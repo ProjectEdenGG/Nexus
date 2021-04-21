@@ -500,11 +500,18 @@
             <version>6.2.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- LibsDisguises -->
         <dependency>
             <groupId>LibsDisguises</groupId>
             <artifactId>LibsDisguises</artifactId>
             <version>10.0.24</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Checker, used by Adventure, and is included here because it wasn't resolving -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>2.5.4</version>
         </dependency>
     </dependencies>
 </project>

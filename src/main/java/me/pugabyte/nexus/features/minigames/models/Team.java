@@ -11,9 +11,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ColorType;
-import net.kyori.adventure.text.TextComponent;
+import me.pugabyte.nexus.utils.LocationUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
@@ -28,6 +27,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -97,14 +97,6 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 		return chatColor.getColor();
 	}
 
-	public @NotNull String getColoredName() {
-		return chatColor + name;
-	}
-
-	public @NotNull TextComponent getComponent() {
-		return AdventureUtils.colorText(chatColor, name);
-	}
-
 	public void spawn(Match match) {
 		spawn(getMinigamers(match));
 	}
@@ -152,16 +144,29 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 			return;
 		}
 
+		Set<Location> usedSpawnpoints = match.getUsedSpawnpoints();
 		List<Location> locations = null;
 		boolean shuffle = match.getMechanic().shuffleSpawnpoints();
 
 		while (!members.isEmpty()) {
 			if (locations == null || locations.isEmpty()) {
 				locations = new ArrayList<>(spawnpoints);
+				if (!usedSpawnpoints.isEmpty()) {
+					// remove spawnpoints from the same block/location
+					locations.removeIf(location1 -> usedSpawnpoints.stream().anyMatch(location2 -> LocationUtils.blockLocationsEqual(location1, location2)));
+
+					if (locations.isEmpty()) {
+						// we have run out of spawns, time to clear the used spawnpoints
+						usedSpawnpoints.clear();
+						locations = new ArrayList<>(spawnpoints);
+					}
+				}
 				if (shuffle)
 					Collections.shuffle(locations);
 			}
-			members.remove(0).teleport(locations.remove(0));
+			Location spawnpoint = locations.remove(0);
+			members.remove(0).teleport(spawnpoint);
+			usedSpawnpoints.add(spawnpoint);
 		}
 	}
 

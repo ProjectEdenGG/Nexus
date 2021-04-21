@@ -3,19 +3,12 @@ package me.pugabyte.nexus.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import joptsimple.internal.Strings;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import net.md_5.bungee.api.ChatColor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.json.JSONArray;
@@ -26,11 +19,8 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -503,6 +493,20 @@ public class StringUtils {
 		if (Byte.class == type || Byte.TYPE == type) return nf;
 		if (BigDecimal.class == type) return df;
 		throw new InvalidInputException("No formatter found for class " + type.getSimpleName());
+	}
+
+	public static String getWorldDisplayName(String world) {
+		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
+			world = world.replace("world", "legacy");
+		else if (world.contains("oneblock"))
+			world = world.replace("oneblock_world", "one_block");
+		else if (world.contains("bskyblock"))
+			world = world.replace("bskyblock_world", "skyblock");
+		return camelCase(world);
+	}
+
+	public static String getWorldDisplayName(World world) {
+		return getWorldDisplayName(world.getName());
 	}
 
 	public static String getLocationString(Location loc) {

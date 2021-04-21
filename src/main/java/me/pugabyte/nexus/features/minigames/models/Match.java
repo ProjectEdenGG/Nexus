@@ -46,12 +46,13 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -76,6 +77,7 @@ public class Match {
 	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
+	private Set<Location> usedSpawnpoints = new HashSet<>();
 
 	public Minigamer getMinigamer(Player player) {
 		for (Minigamer minigamer : minigamers)
@@ -323,11 +325,12 @@ public class Match {
 	}
 
 	private void teleportIn() {
+		Set<Location> usedSpawnpoints = new HashSet<>();
 		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 
 	public void teleportIn(Minigamer minigamer) {
-		minigamer.getTeam().spawn(Collections.singletonList(minigamer));
+		minigamer.getTeam().spawn(minigamer);
 	}
 
 	private void clearStates() {

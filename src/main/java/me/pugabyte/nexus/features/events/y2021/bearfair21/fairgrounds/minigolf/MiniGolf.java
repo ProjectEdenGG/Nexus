@@ -28,6 +28,7 @@ import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -56,23 +57,35 @@ public class MiniGolf {
 	// @formatter:off
 	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+	@Getter
+	private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	//
-	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
-	@Getter private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
+	@Getter
+	private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
+	@Getter
+	private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
 	//
-	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
-	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
-	@Getter private static final double floorOffset = 0.05;
-	@Getter private static final double maxVelLen = 2;
-	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
+	@Getter
+	private static final MiniGolf21UserService service = new MiniGolf21UserService();
+	@Getter
+	private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
+	@Getter
+	private static final double floorOffset = 0.05;
+	@Getter
+	private static final double maxVelLen = 2;
+	@Getter
+	private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
 			Material.PETRIFIED_OAK_SLAB, Material.SAND, Material.RED_SAND, Material.SOUL_SOIL, Material.BLUE_ICE,
 			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
-			Material.REDSTONE_BLOCK);
-	@Getter private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
-	@Getter private static final String regionHole = gameRegion + "_hole_";
+			Material.REDSTONE_BLOCK, Material.SPRUCE_FENCE);
+	@Getter
+	private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
+	@Getter
+	private static final String regionHole = gameRegion + "_hole_";
 	//
 	private BF21PointSource SOURCE = BF21PointSource.MINIGOLF;
 	// @formatter:on
@@ -115,17 +128,23 @@ public class MiniGolf {
 		inventory.remove(getScoreBook());
 	}
 
-	// TODO: randomize how long the bridge stays for
 	private void redstoneTask() {
 		if (!Nexus.getEnv().equals(Env.PROD))
 			return;
 
-		String hole13 = regionHole + "13_activate";
+		// Hole 13
+		String hole13 = MiniGolfHole.THIRTEEN.getRegionId() + "_activate";
 		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
-
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
 			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
 				hole13Loc.getBlock().setType(Material.REDSTONE_BLOCK);
+		});
+
+		// Hole 17
+		Location hole17Loc = new Location(BearFair21.getWorld(), 107, 117, -9);
+		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(38), () -> {
+			if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
+				hole17Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 	}
 
@@ -139,13 +158,10 @@ public class MiniGolf {
 				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
 
 				MiniGolf21User user = service.get(player);
-				if (user.isPlaying() && regions == 0) {
-					PlayerUtils.runCommand(player, "");
-					user.setPlaying(false);
-					takeKit(user);
-				} else if (!user.isPlaying() && regions > 0) {
-					user.setPlaying(true);
-					giveKit(user);
+				if (user.isPlaying() && regions == 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+					PlayerUtils.runCommand(player, "minigolf quit");
+				} else if (!user.isPlaying() && regions > 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+					PlayerUtils.runCommand(player, "minigolf play");
 				}
 
 			}
