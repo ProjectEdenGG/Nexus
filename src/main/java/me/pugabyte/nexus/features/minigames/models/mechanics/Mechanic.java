@@ -21,6 +21,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -331,15 +332,7 @@ public abstract class Mechanic implements Listener, Named {
 	// Reflection utils
 
 	public List<Class<? extends Mechanic>> getSuperclasses() {
-		List<Class<? extends Mechanic>> superclasses = new ArrayList<>();
-		Class<? extends Mechanic> clazz = this.getClass();
-		while (clazz.getSuperclass() != Object.class) {
-			superclasses.add(clazz);
-
-			clazz = (Class<? extends Mechanic>) clazz.getSuperclass();
-		}
-
-		return superclasses;
+		return Utils.getSuperclasses(this.getClass());
 	}
 
 	public <T> T getAnnotation(Class<? extends Annotation> annotation) {

@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.commands.NicknameCommand.NicknameApprovalListe
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.features.discord.commands.TwitterDiscordCommand.TweetApprovalListener;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -109,9 +110,13 @@ public enum Bot {
 
 		Reflections reflections = new Reflections(getClass().getPackage().getName());
 		for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class)) {
-			HandledBy handledBy = command.getAnnotation(HandledBy.class);
-			if (handledBy != null && handledBy.value() == this)
-				commands.addCommand(command.newInstance());
+			for (Class<? extends Command> superclass : Utils.getSuperclasses(command)) {
+				HandledBy handledBy = superclass.getAnnotation(HandledBy.class);
+				if (handledBy != null && handledBy.value() == this) {
+					commands.addCommand(command.newInstance());
+					break;
+				}
+			}
 		}
 		return commands;
 	}

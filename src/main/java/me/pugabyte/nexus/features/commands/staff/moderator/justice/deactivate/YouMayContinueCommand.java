@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.remove;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.deactivate;
 
 import de.myzelyam.api.vanish.VanishAPI;
 import me.pugabyte.nexus.features.chat.Chat;

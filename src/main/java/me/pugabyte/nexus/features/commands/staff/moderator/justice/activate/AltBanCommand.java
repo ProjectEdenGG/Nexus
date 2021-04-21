@@ -1,8 +1,7 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.add;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.activate;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -14,7 +13,6 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import java.util.List;
 
 @Permission("group.moderator")
-@Aliases({"altsban", "banalt", "banalts", "banip", "ipban"})
 public class AltBanCommand extends _PunishmentCommand {
 
 	public AltBanCommand(@NonNull CommandEvent event) {

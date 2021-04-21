@@ -418,4 +418,15 @@ public class Utils {
 		return parameter.getType() == Boolean.class || parameter.getType() == Boolean.TYPE;
 	}
 
+	public static <T> List<Class<? extends T>> getSuperclasses(Class<? extends T> clazz) {
+		List<Class<? extends T>> superclasses = new ArrayList<>();
+		while (clazz.getSuperclass() != Object.class) {
+			superclasses.add(clazz);
+
+			clazz = (Class<? extends T>) clazz.getSuperclass();
+		}
+
+		return superclasses;
+	}
+
 }

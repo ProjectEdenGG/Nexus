@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.remove;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.deactivate;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
@@ -12,9 +12,9 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import java.util.List;
 
 @Permission("group.moderator")
-public class UnBanCommand extends _PunishmentCommand {
+public class UnMuteCommand extends _PunishmentCommand {
 
-	public UnBanCommand(@NonNull CommandEvent event) {
+	public UnMuteCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -25,7 +25,7 @@ public class UnBanCommand extends _PunishmentCommand {
 
 	@Override
 	protected PunishmentType getType() {
-		return PunishmentType.BAN;
+		return PunishmentType.MUTE;
 	}
 
 }

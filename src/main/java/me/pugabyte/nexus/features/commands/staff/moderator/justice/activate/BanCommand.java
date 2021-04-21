@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.add;
+package me.pugabyte.nexus.features.commands.staff.moderator.justice.activate;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;

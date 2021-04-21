@@ -69,18 +69,22 @@ public class Justice extends Feature implements Listener {
 		punishments.logIp(event.getAddress().getHostAddress());
 
 		Consumer<Punishment> kick = ban -> {
+			if (event.getLoginResult() == Result.KICK_BANNED)
+				return;
+
 			event.disallow(Result.KICK_BANNED, ban.getDisconnectMessage());
 			ban.received();
 
-			String message = "&e" + punishments.getName() + " &ctried to join, but is banned for &7" + ban.getReason() + " &c(" + ban.getTimeLeft() + ")";
+			String message = "&e" + punishments.getName() + " &ctried to join, but is " + ban.getType().getPastTense()
+					+ " for &7" + ban.getReason() + " &c(" + ban.getTimeLeft() + ")";
 
 			broadcast(ban, message);
 		};
 
 		punishments.getAnyActiveBan().ifPresent(kick);
 
-		for (UUID altUuid : punishments.getAlts())
-			Punishments.of(altUuid).getActiveIPBan().ifPresent(kick);
+		for (UUID alt : punishments.getAlts())
+			Punishments.of(alt).getActiveAltBan().ifPresent(kick);
 
 		service.save(punishments);
 	}

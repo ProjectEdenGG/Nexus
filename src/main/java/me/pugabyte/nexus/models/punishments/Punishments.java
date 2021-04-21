@@ -88,7 +88,7 @@ public class Punishments extends PlayerOwnedObject {
 		return getMostRecentActive(PunishmentType.BAN);
 	}
 
-	public Optional<Punishment> getActiveIPBan() {
+	public Optional<Punishment> getActiveAltBan() {
 		return getMostRecentActive(PunishmentType.ALT_BAN);
 	}
 
