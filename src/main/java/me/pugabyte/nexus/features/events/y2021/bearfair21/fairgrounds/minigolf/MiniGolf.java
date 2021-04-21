@@ -28,6 +28,7 @@ import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -139,13 +140,10 @@ public class MiniGolf {
 				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
 
 				MiniGolf21User user = service.get(player);
-				if (user.isPlaying() && regions == 0) {
-					PlayerUtils.runCommand(player, "");
-					user.setPlaying(false);
-					takeKit(user);
-				} else if (!user.isPlaying() && regions > 0) {
-					user.setPlaying(true);
-					giveKit(user);
+				if (user.isPlaying() && regions == 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+					PlayerUtils.runCommand(player, "minigolf quit");
+				} else if (!user.isPlaying() && regions > 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+					PlayerUtils.runCommand(player, "minigolf play");
 				}
 
 			}
