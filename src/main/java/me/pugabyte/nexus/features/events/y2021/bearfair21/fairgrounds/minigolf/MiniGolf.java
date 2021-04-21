@@ -67,12 +67,15 @@ public class MiniGolf {
 	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
 	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
 	@Getter private static final double floorOffset = 0.05;
-	@Getter private static final double maxVelLen = 2;
-	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
+	@Getter
+	private static final double maxVelLen = 2;
+	@Getter
+	private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
 			Material.PETRIFIED_OAK_SLAB, Material.SAND, Material.RED_SAND, Material.SOUL_SOIL, Material.BLUE_ICE,
 			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
-			Material.REDSTONE_BLOCK);
-	@Getter private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
+			Material.REDSTONE_BLOCK, Material.SPRUCE_FENCE);
+	@Getter
+	private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
 	@Getter private static final String regionHole = gameRegion + "_hole_";
 	//
 	private BF21PointSource SOURCE = BF21PointSource.MINIGOLF;
@@ -116,17 +119,24 @@ public class MiniGolf {
 		inventory.remove(getScoreBook());
 	}
 
-	// TODO: randomize how long the bridge stays for
 	private void redstoneTask() {
 		if (!Nexus.getEnv().equals(Env.PROD))
 			return;
 
-		String hole13 = regionHole + "13_activate";
+		// Hole 13
+		String hole13 = MiniGolfHole.THIRTEEN.getRegionId() + "_activate";
 		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
-
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
 			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
 				hole13Loc.getBlock().setType(Material.REDSTONE_BLOCK);
+		});
+
+		// Hole 17
+		String hole17 = MiniGolfHole.SEVENTEEN.getRegionId();
+		Location hole17Loc = new Location(BearFair21.getWorld(), 107, 117, -9);
+		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(38), () -> {
+			if (BearFair21.getWGUtils().getPlayersInRegion(hole17).size() > 0)
+				hole17Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 	}
 
