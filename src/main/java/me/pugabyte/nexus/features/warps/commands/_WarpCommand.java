@@ -97,6 +97,8 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Path("(teleport|tp|warp) <name>")
 	public void teleport(Warp warp) {
 		checkPermission();
+		if (warp == null)
+			error("That warp is not set");
 		warp.teleport(player());
 		send(PREFIX + "&3Warping to &e" + warp.getName());
 	}
