@@ -57,16 +57,24 @@ public class MiniGolf {
 	// @formatter:off
 	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+	@Getter
+	private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	//
-	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
-	@Getter private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
+	@Getter
+	private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
+	@Getter
+	private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
 	//
-	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
-	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
-	@Getter private static final double floorOffset = 0.05;
+	@Getter
+	private static final MiniGolf21UserService service = new MiniGolf21UserService();
+	@Getter
+	private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
+	@Getter
+	private static final double floorOffset = 0.05;
 	@Getter
 	private static final double maxVelLen = 2;
 	@Getter
@@ -76,7 +84,8 @@ public class MiniGolf {
 			Material.REDSTONE_BLOCK, Material.SPRUCE_FENCE);
 	@Getter
 	private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
-	@Getter private static final String regionHole = gameRegion + "_hole_";
+	@Getter
+	private static final String regionHole = gameRegion + "_hole_";
 	//
 	private BF21PointSource SOURCE = BF21PointSource.MINIGOLF;
 	// @formatter:on
@@ -132,10 +141,9 @@ public class MiniGolf {
 		});
 
 		// Hole 17
-		String hole17 = MiniGolfHole.SEVENTEEN.getRegionId();
 		Location hole17Loc = new Location(BearFair21.getWorld(), 107, 117, -9);
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(38), () -> {
-			if (BearFair21.getWGUtils().getPlayersInRegion(hole17).size() > 0)
+			if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
 				hole17Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 	}
