@@ -5,7 +5,7 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.Punishments;
 
-public abstract class _PunishmentAddDiscordCommand extends _PunishmentDiscordCommand {
+public abstract class _PunishmentActivateDiscordCommand extends _PunishmentDiscordCommand {
 
 	protected void execute(DiscordUser author, String name, String reason, boolean now) {
 		Punishments.of(name).add(Punishment.ofType(getType())
