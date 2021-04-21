@@ -55,8 +55,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MiniGolf {
 	// @formatter:off
-	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	@Getter
 	private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	@Getter
@@ -238,7 +240,7 @@ public class MiniGolf {
 
 				// Check block underneath
 				Location loc = ball.getLocation();
-				Block block = loc.subtract(0, 0.1, 0).getBlock();
+				Block below = loc.subtract(0, 0.1, 0).getBlock();
 
 				Vector vel = ball.getVelocity();
 
@@ -271,8 +273,14 @@ public class MiniGolf {
 						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getPlayer());
 				}
 
+				Material _type = loc.getBlock().getType();
+				if (_type.equals(Material.LAVA) || _type.equals(Material.WATER)) {
+					MiniGolfUtils.respawnBall(ball);
+					continue;
+				}
+
 				// Act upon block type
-				Material type = block.getType();
+				Material type = below.getType();
 				MiniGolfHole ballHole = MiniGolfUtils.getHole(ball.getLocation());
 				switch (type) {
 					case CAULDRON:
@@ -360,7 +368,7 @@ public class MiniGolf {
 						break;
 					case MAGENTA_GLAZED_TERRACOTTA:
 						// Get Direction
-						Directional directional = (Directional) block.getBlockData();
+						Directional directional = (Directional) below.getBlockData();
 
 						Vector dir = getDirection(directional.getFacing(), 0.1);
 						if (dir == null)
@@ -372,7 +380,7 @@ public class MiniGolf {
 						break;
 					case OBSERVER:
 						// Get Direction
-						directional = (Directional) block.getBlockData();
+						directional = (Directional) below.getBlockData();
 						dir = getDirection(directional.getFacing(), 0.5);
 						if (dir == null)
 							continue;
@@ -384,9 +392,9 @@ public class MiniGolf {
 
 						break;
 					case DISPENSER:
-						Block below = block.getRelative(BlockFace.DOWN);
-						if (MaterialTag.SIGNS.isTagged(below.getType())) {
-							Sign sign = (Sign) below.getState();
+						Block under = below.getRelative(BlockFace.DOWN);
+						if (MaterialTag.SIGNS.isTagged(under.getType())) {
+							Sign sign = (Sign) under.getState();
 							String line4 = sign.getLine(3);
 							String[] split = line4.split(",");
 							if (split.length == 3) {
@@ -406,15 +414,16 @@ public class MiniGolf {
 						break;
 					case SMOKER:
 						// Get Direction
-						directional = (Directional) block.getBlockData();
+						under = below.getRelative(BlockFace.DOWN);
+						directional = (Directional) under.getBlockData();
 						BlockFace facing = directional.getFacing();
-						below = block.getRelative(facing.getOppositeFace());
-						if (MaterialTag.SIGNS.isTagged(below.getType())) {
-							Sign sign = (Sign) below.getState();
+						under = under.getRelative(facing.getOppositeFace());
+						if (MaterialTag.SIGNS.isTagged(under.getType())) {
+							Sign sign = (Sign) under.getState();
 							String heightStr = sign.getLine(2).replaceAll("height", "");
 							String powerStr = sign.getLine(3).replaceAll("power", "");
 							try {
-								Location newLoc = LocationUtils.getCenteredLocation(block.getRelative(facing).getLocation());
+								Location newLoc = LocationUtils.getCenteredLocation(under.getRelative(facing).getLocation());
 								ball.setVelocity(new Vector(0, 0, 0));
 								ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 								ball.setGravity(true);
@@ -433,7 +442,7 @@ public class MiniGolf {
 						break;
 					default:
 						// Check if floating above slabs
-						if (MiniGolfUtils.isBottomSlab(block) && loc.getY() > block.getY() + 0.5)
+						if (MiniGolfUtils.isBottomSlab(below) && loc.getY() > below.getY() + 0.5)
 							ball.setGravity(true);
 
 						if (ball.getLocation().getY() < 0) {
