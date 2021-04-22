@@ -104,6 +104,7 @@ public class JusticeImportCommand extends CustomCommand {
 
 		for (Watchlisted watchlisted : watched) {
 			Punishment punishment = new Punishment();
+			punishment.setType(PunishmentType.WATCHLIST);
 			punishment.setId(UUID.randomUUID());
 			punishment.setUuid(watchlisted.getUuid());
 			punishment.setPunisher(watchlisted.getWatchlister());
@@ -111,7 +112,7 @@ public class JusticeImportCommand extends CustomCommand {
 			punishment.setReason(watchlisted.getReason());
 			punishment.setActive(true);
 
-			Punishments.of(watchlisted.getUuid());
+			Punishments.of(watchlisted.getUuid()).getPunishments().add(punishment);
 			++count;
 		}
 
