@@ -193,10 +193,10 @@
         <dependency>
 <!--            <groupId>com.dieselpoint</groupId>-->
 <!--            <artifactId>norm</artifactId>-->
-<!--            <version>0.9.6</version>-->
-            <groupId>com.github.pugabyte</groupId>
+<!--            <version>0.9.7</version>-->
+            <groupId>com.github.Pugabyte</groupId>
             <artifactId>norm</artifactId>
-            <version>e04065acd8</version>
+            <version>0843afb4e5</version>
         </dependency>
         <!-- MySQL -->
         <dependency>

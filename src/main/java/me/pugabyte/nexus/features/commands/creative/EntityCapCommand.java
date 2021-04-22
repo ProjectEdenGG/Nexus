@@ -15,7 +15,7 @@ public class EntityCapCommand extends CustomCommand {
 
 	@Path("<amount>")
 	void run(@Arg("50") int amount) {
-		runCommand("plot set entity-cap " + amount);
+		runCommand("plot flag set entity-cap " + amount);
 		send("&3Set the entity cap to " + amount);
 	}
 

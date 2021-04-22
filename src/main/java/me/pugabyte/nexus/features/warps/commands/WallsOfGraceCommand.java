@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
 @Aliases("wog")
 @NoArgsConstructor
@@ -97,6 +98,18 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		}
 
 		service.save(wallsOfGrace);
+	}
+
+	@EventHandler
+	public void onBucketEmpty(PlayerBucketEmptyEvent event) {
+		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
+		if (WGUtils.getRegionsLikeAt("wallsofgrace", event.getBlock().getLocation()).size() == 0)
+			return;
+
+		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler

@@ -14,7 +14,7 @@ public class RedstoneOffCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommand("plot set redstone false");
+		runCommand("plots flag set redstone false");
 	}
 
 }
