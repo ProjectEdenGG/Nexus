@@ -21,6 +21,7 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +105,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> {
 	public void saveCacheSync(int threadCount) {
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
-		for (T player : getCache().values())
+		for (T player : new ArrayList<>(getCache().values()))
 			executor.submit(() -> saveSync(player));
 	}
 

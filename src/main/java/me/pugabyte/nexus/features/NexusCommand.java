@@ -702,6 +702,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Hello!");
 	}
 
+	@Async
+	@Path("cooldown janitor")
+	void cooldownJanitor() {
+		send(PREFIX + "Janitored " + new CooldownService().janitor() + " records");
+	}
+
 	@Path("argPermTest [one] [two] [three] [four] [five]")
 	void argPermTest(
 			@Arg(tabCompleter = Player.class) String one,

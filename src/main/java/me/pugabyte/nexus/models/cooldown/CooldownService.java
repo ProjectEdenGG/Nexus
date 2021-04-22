@@ -4,11 +4,13 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -70,6 +72,33 @@ public class CooldownService extends MongoService<Cooldown> {
 			return Timespan.of(cooldown.get(type)).format();
 
 		return ".0s";
+	}
+
+	static {
+		Tasks.repeatAsync(Time.MINUTE, Time.HOUR, () -> new CooldownService().janitor());
+	}
+
+	public int janitor() {
+		int count = 0;
+		for (Object object : getAll()) {
+			Cooldown cooldown = get((Cooldown) object);
+			for (String key : new HashSet<>(cooldown.getCooldowns().keySet()))
+				if (cooldown.check(key)) {
+					cooldown.getCooldowns().remove(key);
+					++count;
+				}
+		}
+
+		saveCacheSync();
+		return count;
+	}
+
+	@Override
+	public void saveSync(Cooldown object) {
+		if (object.getCooldowns().isEmpty())
+			super.deleteSync(object);
+		else
+			super.saveSync(object);
 	}
 
 }
