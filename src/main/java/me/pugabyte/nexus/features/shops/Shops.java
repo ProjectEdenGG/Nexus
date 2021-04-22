@@ -219,18 +219,13 @@ public class Shops extends Feature {
 			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
 		}
 
-
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
-			// march vote reward boost
-			if (isResourceWorld)
-				price = price * 2;
 			addBuyItem(shopGroup, isResourceWorld, new ItemStack(material, quantity), price);
 		}
 
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
 			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price));
 		}
-
 
 		private void add(Product product) {
 			new ShopService().getMarket().getProducts().add(product);
