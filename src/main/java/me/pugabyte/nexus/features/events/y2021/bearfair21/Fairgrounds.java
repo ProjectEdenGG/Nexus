@@ -3,9 +3,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Archery;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Frogger;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Reflection;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflection.ReflectionGame;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 
 public class Fairgrounds {
@@ -15,6 +15,6 @@ public class Fairgrounds {
 		new Timer("      Archery", Archery::new);
 		new Timer("      Frogger", Frogger::new);
 		new Timer("      Seeker", Seeker::new);
-		new Timer("      Reflection", Reflection::new);
+		new Timer("      Reflection", ReflectionGame::new);
 	}
 }
