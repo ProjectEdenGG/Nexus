@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -7,11 +8,13 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -320,5 +323,11 @@ public class Restrictions implements Listener {
 			Material.YELLOW_CONCRETE_POWDER,
 			Material.YELLOW_WALL_BANNER
 	);
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onVanillaAchievement(PlayerAdvancementCriterionGrantEvent event) {
+		if (!WorldGroup.SURVIVAL.contains(event.getPlayer().getWorld()) || event.getPlayer().getGameMode() != GameMode.SURVIVAL)
+			event.setCancelled(true);
+	}
 
 }
