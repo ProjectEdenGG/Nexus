@@ -115,6 +115,9 @@ public class TimeUtils {
 
 	public static class Timespan {
 		private final int original;
+		/**
+		 * Displays "None" if the input value is 0.
+		 */
 		private final boolean noneDisplay;
 		private final FormatType formatType;
 		@Getter
