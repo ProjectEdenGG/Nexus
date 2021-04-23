@@ -16,6 +16,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -77,8 +78,10 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		if (!cooldownService.check(player, "throwDyeBomb", 2 * 20))
 			return;
 
-		int amount = event.getItem().getAmount();
-		event.getItem().setAmount(amount - 1);
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			int amount = event.getItem().getAmount();
+			event.getItem().setAmount(amount - 1);
+		}
 
 		Location location = player.getLocation().add(0, 1.5, 0);
 		location.add(player.getLocation().getDirection());
