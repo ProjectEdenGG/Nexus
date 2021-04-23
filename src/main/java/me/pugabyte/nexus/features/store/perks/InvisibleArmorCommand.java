@@ -52,7 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @NoArgsConstructor
 @Permission("invis.armour")
 @Aliases({"ia", "invisarmor", "invisarmour", "invisiblearmor"})
-@Environments(Env.DEV)
+@Environments({Env.DEV, Env.TEST})
 public class InvisibleArmorCommand extends CustomCommand {
 	private static final List<ItemSlot> armourSlots = Arrays.asList(ItemSlot.HEAD, ItemSlot.CHEST, ItemSlot.LEGS, ItemSlot.FEET);
 	private final InvisibleArmorService service = new InvisibleArmorService();

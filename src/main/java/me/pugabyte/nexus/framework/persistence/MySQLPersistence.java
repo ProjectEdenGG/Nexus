@@ -12,20 +12,12 @@ import java.util.Map;
 public class MySQLPersistence {
 	private static Map<MySQLDatabase, Database> databases = new HashMap<>();
 
-	static {
-		Nexus.getInstance().addConfigDefault("databases.mysql.host", "localhost");
-		Nexus.getInstance().addConfigDefault("databases.mysql.port", 3306);
-		Nexus.getInstance().addConfigDefault("databases.mysql.username", "root");
-		Nexus.getInstance().addConfigDefault("databases.mysql.password", "password");
-		Nexus.getInstance().addConfigDefault("databases.mysql.prefix", "");
-	}
-
 	@SneakyThrows
 	private static void openConnection(MySQLDatabase db) {
 		Class.forName("com.mysql.jdbc.Driver");
 
 		DatabaseConfig config = DatabaseConfig.builder()
-				.password(Nexus.getInstance().getConfig().getString("database.mysql.password"))
+				.password(Nexus.getInstance().getConfig().getString("databases.mysql.password"))
 				.port(3306)
 				.env(Nexus.getEnv())
 				.build();

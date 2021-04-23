@@ -43,7 +43,7 @@ import static me.pugabyte.nexus.utils.StringUtils.CHECK;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
-@Entity("nerd")
+@Entity(value = "nerd", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
