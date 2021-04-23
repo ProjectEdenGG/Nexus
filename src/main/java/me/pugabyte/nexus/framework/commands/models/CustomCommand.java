@@ -682,6 +682,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(OfflinePlayer.class)
 	public OfflinePlayer convertToOfflinePlayer(String value) {
+		if (value == null) return null;
 		if ("self".equalsIgnoreCase(value)) value = uuid().toString();
 		return PlayerUtils.getPlayer(value.replaceFirst("[pP]:", ""));
 	}

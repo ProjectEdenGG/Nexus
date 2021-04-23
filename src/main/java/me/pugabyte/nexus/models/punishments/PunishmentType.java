@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +121,13 @@ public enum PunishmentType implements ColoredAndNamed {
 				.next("&f" + punishment.getTimeSince())
 				.hover("&e" + shortDateTimeFormat(punishment.getTimestamp()))
 				.group()
-				.next(hasTimespan && punishment.isActive() ? " &c[Active]" : "");
+				.next(hasTimespan && punishment.isActive() ? " &c[Active]" : "")
+				.group()
+				.next(" &e| &c")
+				.group()
+				.next(StringUtils.getX())
+				.command("/history delete " + punishment.getName() + " " + punishment.getId())
+				.hover("&cClick to delete");
 
 		if (punishment.hasReason())
 			json.newline().next("&7   Reason &f" + punishment.getReason());

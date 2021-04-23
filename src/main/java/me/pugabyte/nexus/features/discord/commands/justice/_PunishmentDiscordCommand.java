@@ -2,11 +2,11 @@ package me.pugabyte.nexus.features.discord.commands.justice;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
@@ -57,14 +57,14 @@ public abstract class _PunishmentDiscordCommand extends Command {
 							execute(author, name, reason, now);
 						} catch (Exception ex) {
 							event.reply(stripColor(ex.getMessage()));
-							if (!(ex instanceof NexusException))
+							if (!(ex instanceof EdenException))
 								ex.printStackTrace();
 						}
 					}
 				}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}
 		});

@@ -10,6 +10,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 	}
 
 	public T get(OfflinePlayer player) {
+		if (player == null) return null;
 		return get(player.getUniqueId());
 	}
 

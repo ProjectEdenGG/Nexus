@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.features.discord;
 
 import com.google.gson.Gson;
+import eden.exceptions.EdenException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -110,7 +110,7 @@ public class DiscordListener extends ListenerAdapter {
 						}
 					} catch (Exception ex) {
 						event.getChannel().sendMessage(stripColor(ex.getMessage())).queue();
-						if (!(ex instanceof NexusException))
+						if (!(ex instanceof EdenException))
 							ex.printStackTrace();
 					}
 				}

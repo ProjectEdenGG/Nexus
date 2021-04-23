@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
@@ -80,11 +81,10 @@ public class TicketsDiscordCommand extends Command {
 						break;
 					}
 				}
-			} catch (InvalidInputException ex) {
-				event.reply(stripColor(PREFIX + ex.getMessage()));
 			} catch (Exception ex) {
-				event.reply(PREFIX + "An internal error occurred while attempting to execute this command");
-				ex.printStackTrace();
+				event.reply(stripColor(ex.getMessage()));
+				if (!(ex instanceof EdenException))
+					ex.printStackTrace();
 			}
 		});
 	}

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import eden.exceptions.EdenException;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -62,6 +63,11 @@ public class ErrorCommand extends CustomCommand {
 	@Path("framework json withColor")
 	void framework_json_withColor() {
 		error(json("Test &eexception"));
+	}
+
+	@Path("api")
+	void api_text() {
+		throw new EdenException("Test exception");
 	}
 
 }

@@ -253,7 +253,10 @@ public abstract class ICustomCommand {
 
 			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !isNullOrEmpty(value)));
 			try {
-				objects[i++] = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
+				Object converted = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
+				if (required && converted == null)
+					throw new MissingArgumentException();
+				objects[i++] = converted;
 			} catch (MissingArgumentException ex) {
 				event.getCommand().showUsage();
 			}

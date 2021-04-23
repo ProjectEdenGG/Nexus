@@ -3,13 +3,13 @@ package me.pugabyte.nexus.features.discord.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.vdurmont.emoji.EmojiManager;
+import eden.exceptions.EdenException;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId.Guild;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.socialmedia.TwitterData;
 import me.pugabyte.nexus.models.socialmedia.TwitterData.PendingTweet;
@@ -86,7 +86,7 @@ public class TwitterDiscordCommand extends Command {
 					}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			} finally {
 				service.save(data);

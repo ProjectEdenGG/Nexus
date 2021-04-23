@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -245,6 +246,13 @@ public class Punishments implements PlayerOwnedObject {
 
 			save();
 		});
+	}
+
+	public Punishment getPunishment(UUID id) {
+		return punishments.stream()
+				.filter(punishment -> punishment.getId().equals(id))
+				.findFirst()
+				.orElseThrow(() -> new InvalidInputException("Punishment not found"));
 	}
 
 	@Data
