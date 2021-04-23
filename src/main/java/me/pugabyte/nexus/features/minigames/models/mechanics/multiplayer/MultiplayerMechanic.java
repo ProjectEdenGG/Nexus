@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer;
 
+import eden.interfaces.Named;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
-import me.pugabyte.nexus.framework.interfaces.Named;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.AdventureUtils;
@@ -183,7 +183,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	protected TextComponent getWinnersComponent(List<? extends Named> winners) {
-		TextComponent component = AdventureUtils.commaJoinText(winners.stream().map(Named::getComponent).collect(Collectors.toList()));
+		TextComponent component = AdventureUtils.commaJoinText(winners.stream().map(named -> Component.text(named.getName())).collect(Collectors.toList()));
 		if (winners.size() == 1)
 			return component.append(Component.text(" has won "));
 		else

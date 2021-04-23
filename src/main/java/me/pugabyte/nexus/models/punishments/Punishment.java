@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.models.punishments;
 
 import dev.morphia.annotations.Converters;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
@@ -24,7 +24,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class Punishment extends PlayerOwnedObject {
+public class Punishment implements PlayerOwnedObject {
 	private UUID id;
 	private UUID uuid;
 	private UUID punisher;

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.bearfair21;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,6 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.m
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
@@ -37,7 +37,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class MiniGolf21User extends PlayerOwnedObject {
+public class MiniGolf21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	@EqualsAndHashCode.Include

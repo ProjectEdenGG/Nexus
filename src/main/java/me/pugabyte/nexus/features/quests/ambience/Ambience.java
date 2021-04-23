@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.quests.ambience;
 
+import eden.annotations.Disabled;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.features.Feature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;

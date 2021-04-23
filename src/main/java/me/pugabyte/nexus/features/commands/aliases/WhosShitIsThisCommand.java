@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.commands.aliases;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;

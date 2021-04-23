@@ -76,7 +76,7 @@ public class HoursService extends MongoService<Hours> {
 
 	@Data
 	@AllArgsConstructor
-	public static class PageResult extends PlayerOwnedObject {
+	public static class PageResult implements PlayerOwnedObject {
 		@Id
 		@NonNull
 		private UUID uuid;

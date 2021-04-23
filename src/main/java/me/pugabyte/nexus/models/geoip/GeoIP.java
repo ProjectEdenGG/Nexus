@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Entity("geoip")
 @NoArgsConstructor
 @Converters(UUIDConverter.class)
-public class GeoIP extends PlayerOwnedObject {
+public class GeoIP implements PlayerOwnedObject {
 	@Id
 	private UUID uuid;
 	private String ip;

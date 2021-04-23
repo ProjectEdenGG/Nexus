@@ -26,13 +26,13 @@ public class AgeCommand extends CustomCommand {
 			bn();
 			return;
 		}
+
 		try {
 			int year = nerd.getBirthday().until(LocalDate.now()).getYears();
 			send(PREFIX + Nickname.of(nerd) + " is &e" + year + "&3 years old.");
 		} catch (Exception ex) {
 			send(PREFIX + "That player does not have a set birthday");
 		}
-
 	}
 
 	@Data

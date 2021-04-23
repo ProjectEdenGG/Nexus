@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics;
 
+import eden.interfaces.Named;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
-import me.pugabyte.nexus.framework.interfaces.Named;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
@@ -55,7 +55,6 @@ public abstract class Mechanic implements Listener, Named {
 
 	public abstract @NotNull String getName();
 
-	@Override
 	public @NotNull TextComponent getComponent() {
 		return Component.text(getName(), NamedTextColor.YELLOW);
 	}

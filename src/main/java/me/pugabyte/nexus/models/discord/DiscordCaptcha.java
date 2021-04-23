@@ -4,6 +4,8 @@ import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +15,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
@@ -34,7 +34,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Entity("discord_captcha")
 @Converters({UUIDConverter.class, LocalDateTimeConverter.class})
-public class DiscordCaptcha extends PlayerOwnedObject {
+public class DiscordCaptcha implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

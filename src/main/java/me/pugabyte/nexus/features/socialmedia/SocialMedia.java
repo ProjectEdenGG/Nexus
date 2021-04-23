@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.features.socialmedia;
 
+import eden.annotations.Environments;
+import eden.utils.Env;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;

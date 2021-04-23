@@ -3,6 +3,8 @@ package me.pugabyte.nexus.models.socialmedia;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +17,6 @@ import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.ReactionVoter;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -46,7 +46,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateTimeConverter.class})
-public class TwitterData extends PlayerOwnedObject {
+public class TwitterData implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

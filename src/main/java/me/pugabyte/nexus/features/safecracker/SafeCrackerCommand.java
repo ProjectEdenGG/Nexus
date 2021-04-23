@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.safecracker;
 
+import eden.annotations.Disabled;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.safecracker.menus.SafeCrackerInventories;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;

@@ -3,23 +3,18 @@ package me.pugabyte.nexus.models.nickname;
 import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,18 +37,12 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
 
 @Data
-@Builder
-@Entity("nickname")
+@Entity(value = "nickname", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class Nickname extends PlayerOwnedObject {
-	@Id
-	@NonNull
-	private UUID uuid;
+public class Nickname extends eden.models.nickname.Nickname implements PlayerOwnedObject {
 
-	private String nickname;
 	private List<NicknameHistoryEntry> nicknameHistory = new ArrayList<>();
 
 	@Getter
@@ -61,20 +50,8 @@ public class Nickname extends PlayerOwnedObject {
 		put(Role.ADMINS, 3);
 	}};
 
-	public static String of(String name) {
-		return of(PlayerUtils.getPlayer(name));
-	}
-
-	public static String of(PlayerOwnedObject player) {
-		return of(player.getUuid());
-	}
-
 	public static String of(OfflinePlayer player) {
 		return of(player.getUniqueId());
-	}
-
-	public static String of(UUID uuid) {
-		return new NicknameService().get(uuid).getNickname();
 	}
 
 	public @NotNull String getNickname() {
@@ -110,16 +87,6 @@ public class Nickname extends PlayerOwnedObject {
 		return !isNullOrEmpty(nickname);
 	}
 
-	public void fixPastNicknames() {
-		if (hasNickname())
-			if (nicknameHistory.isEmpty()) {
-				nicknameHistory.add(new NicknameHistoryEntry(this, nickname));
-				for (NicknameHistoryEntry pastNickname : new ArrayList<>(nicknameHistory))
-					if (pastNickname.getRequestedTimestamp() == null)
-						pastNickname.setRequestedTimestamp(LocalDateTime.now());
-			}
-	}
-
 	public Optional<NicknameHistoryEntry> getPending() {
 		return nicknameHistory.stream().filter(NicknameHistoryEntry::isPending).findAny();
 	}
@@ -127,7 +94,7 @@ public class Nickname extends PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class NicknameHistoryEntry extends PlayerOwnedObject{
+	public static class NicknameHistoryEntry implements PlayerOwnedObject {
 		private UUID uuid;
 		private String nickname;
 		private LocalDateTime requestedTimestamp;

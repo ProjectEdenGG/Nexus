@@ -46,8 +46,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.economy.commands.TransactionsCommand.getFormatter;
-import static me.pugabyte.nexus.utils.ItemUtils.isSimilar;
 import static me.pugabyte.nexus.models.banker.Transaction.combine;
+import static me.pugabyte.nexus.utils.ItemUtils.isSimilar;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 

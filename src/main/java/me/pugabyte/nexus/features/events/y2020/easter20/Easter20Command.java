@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.easter20;
 
+import eden.annotations.Disabled;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;

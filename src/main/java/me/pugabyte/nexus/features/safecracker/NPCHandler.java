@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.safecracker;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerPlayer;

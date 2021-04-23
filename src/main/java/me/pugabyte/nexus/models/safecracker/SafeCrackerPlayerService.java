@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.safecracker;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import org.bukkit.OfflinePlayer;

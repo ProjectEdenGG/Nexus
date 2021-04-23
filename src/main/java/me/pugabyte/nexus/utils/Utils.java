@@ -1,12 +1,13 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
+import eden.annotations.Disabled;
+import eden.annotations.Environments;
+import eden.utils.Env;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.annotations.Disabled;
-import me.pugabyte.nexus.framework.annotations.Environments;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

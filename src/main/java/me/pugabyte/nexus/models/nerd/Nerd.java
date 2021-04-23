@@ -4,12 +4,13 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.LocalDateConverter;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
@@ -18,9 +19,6 @@ import me.pugabyte.nexus.features.commands.PronounsCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
@@ -37,10 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -51,41 +46,21 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @Entity("nerd")
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
-	@Id
-	@NonNull
-	private UUID uuid;
-	private String name;
-	private String preferredName;
-	private String prefix;
-	private boolean checkmark;
-	private LocalDate birthday;
-	private LocalDateTime firstJoin;
-	private LocalDateTime lastJoin;
-	private LocalDateTime lastQuit;
-	private LocalDate promotionDate;
-	private String about;
-	private boolean meetMeVideo;
-	private Set<String> pronouns = new HashSet<>();
-	private static final LocalDateTime EARLIEST_JOIN = LocalDateTime.of(2015, 1, 1, 0, 0);
+public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, ColoredAndNicknamed {
 
 	private Location teleportOnLogin;
-
-	private Set<String> aliases = new HashSet<>();
-	private Set<String> pastNames = new HashSet<>();
 
 	public static Nerd of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static Nerd of(UUID uuid) {
-		return of(PlayerUtils.getPlayer(uuid));
-	}
-
 	public static Nerd of(PlayerOwnedObject player) {
 		return of(player.getUuid());
+	}
+
+	public static Nerd of(UUID uuid) {
+		return of(PlayerUtils.getPlayer(uuid));
 	}
 
 	public static Nerd of(OfflinePlayer player) {
@@ -102,7 +77,6 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 			if (firstJoin == null || firstJoin.isBefore(EARLIEST_JOIN) || newFirstJoin.isBefore(firstJoin))
 				firstJoin = newFirstJoin;
 		}
-		getNicknameData().fixPastNicknames();
 	}
 
 	@ToString.Include
@@ -236,7 +210,7 @@ public class Nerd extends PlayerOwnedObject implements ColoredAndNicknamed {
 	}
 
 	@Data
-	public static class StaffMember extends PlayerOwnedObject {
+	public static class StaffMember implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
 	}

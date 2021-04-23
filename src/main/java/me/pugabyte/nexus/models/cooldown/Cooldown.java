@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.models.cooldown;
 
+import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +21,8 @@ import java.util.UUID;
 @Entity("cooldown")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cooldown extends PlayerOwnedObject {
+@Converters(UUIDConverter.class)
+public class Cooldown implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

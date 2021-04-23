@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models.safecracker;
 
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent.SafeCrackerGame;

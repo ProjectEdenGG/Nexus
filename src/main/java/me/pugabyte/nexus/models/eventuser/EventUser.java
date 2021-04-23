@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.eventuser;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.events.Events;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.time.LocalDate;
@@ -36,7 +36,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 		Add a way to differentiate between event-world only items and survival items
 		Add a way to send survival items back to survival (delivery service)
  */
-public class EventUser extends PlayerOwnedObject {
+public class EventUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

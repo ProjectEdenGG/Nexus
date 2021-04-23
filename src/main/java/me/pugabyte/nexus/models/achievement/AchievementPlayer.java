@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Data
 @Entity("achievement_player")
-public class AchievementPlayer extends PlayerOwnedObject {
+public class AchievementPlayer implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

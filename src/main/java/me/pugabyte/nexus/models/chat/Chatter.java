@@ -25,7 +25,7 @@ import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Chatter extends PlayerOwnedObject {
+public class Chatter implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Channel activeChannel;

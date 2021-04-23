@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.mobheads;
 
+import eden.annotations.Environments;
+import eden.utils.Env;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
