@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.models.nerd;
 
 import dev.morphia.query.Query;
+import eden.models.hours.HoursService;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.Utils;
 
 import java.util.ArrayList;

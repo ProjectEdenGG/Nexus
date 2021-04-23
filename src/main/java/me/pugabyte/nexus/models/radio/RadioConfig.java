@@ -120,6 +120,9 @@ public class RadioConfig implements PlayerOwnedObject {
 				songList.add(song);
 			}
 
+			if (songList.isEmpty())
+				return null;
+
 			return new Playlist(songList.toArray(new Song[0]));
 		}
 

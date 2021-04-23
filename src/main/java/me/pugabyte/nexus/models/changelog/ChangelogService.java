@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.changelog;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.changelog.Changelog.ChangelogEntry;
 

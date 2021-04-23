@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.commands;
 
-import lombok.Data;
-import lombok.ToString;
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
+import eden.models.hours.HoursService.HoursTopArguments;
+import eden.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Koda;
@@ -15,10 +17,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -28,13 +26,11 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
-import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,19 +51,18 @@ public class HoursCommand extends CustomCommand {
 	@Async
 	@Path("[player]")
 	void player(@Arg("self") Hours hours) {
-		OfflinePlayer player = hours.getOfflinePlayer();
-		boolean isSelf = isSelf(player);
+		boolean isSelf = isSelf(hours);
 
 		send("");
-		send(PREFIX + (isSelf ? "Your" : "&e" + player.getName() + "&3's") + " playtime");
+		send(PREFIX + (isSelf ? "Your" : "&e" + hours.getName() + "&3's") + " playtime");
 		send("&3Total: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
 		send("&7- &3Today: &e" + TimespanBuilder.of(hours.getDaily()).noneDisplay(true).format());
 		send("&7- &3This month: &e" + TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format());
 		send("&7- &3This year: &e" + TimespanBuilder.of(hours.getYearly()).noneDisplay(true).format());
 
-		if (Rank.of(player) == Rank.GUEST) {
+		if (Rank.of(hours) == Rank.GUEST) {
 
-			String who = (isSelf ? "You need" : player.getName() + " needs") + " ";
+			String who = (isSelf ? "You need" : hours.getName() + " needs") + " ";
 			String left = Timespan.of(DAY - hours.getTotal()).format();
 
 			line();
@@ -78,7 +73,7 @@ public class HoursCommand extends CustomCommand {
 	@Permission("group.seniorstaff")
 	@Path("debug [player]")
 	void debug(@Arg("self") OfflinePlayer player) {
-		send(service.get(player).toString());
+		send(service.get(player.getUniqueId()).toString());
 	}
 
 	// TODO Update paginate to support database-level pagination
@@ -99,128 +94,11 @@ public class HoursCommand extends CustomCommand {
 		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
-				json("&3" + index + " &e" + result.getOfflinePlayer().getName() + " &7- " + Timespan.of(result.getTotal()).format());
+				json("&3" + index + " &e" + PlayerUtils.getPlayer(result.getUuid()).getName() + " &7- " + Timespan.of(result.getTotal()).format());
 
 		paginate(results, formatter, "/hours top " + args.getInput(), page);
 	}
 
-	@Data
-	public static class HoursTopArguments {
-		private int year = -1;
-		private int month = -1;
-		private int day = -1;
-		private int page = 1;
-		private String input;
-
-		public HoursTopArguments() {
-			this("");
-		}
-
-		public HoursTopArguments(String input) {
-			LocalDate now = LocalDate.now();
-
-			String[] args = input.split(" ");
-			String[] split = args[0].split("-");
-			this.input = args[0];
-			if (Utils.isInt(this.input) && Integer.parseInt(this.input) < 2015) // its page number
-				this.input = "";
-
-			switch (args[0]) {
-				case "day":
-				case "daily":
-					day = now.getDayOfMonth();
-					month = now.getMonthValue();
-					year = now.getYear();
-					break;
-				case "month":
-				case "monthly":
-					month = now.getMonthValue();
-					year = now.getYear();
-					break;
-				case "year":
-				case "yearly":
-					year = now.getYear();
-					break;
-				default:
-					if (split[0].length() > 0) {
-						if (Utils.isInt(split[0])) {
-							int yearInput = Integer.parseInt(split[0]);
-							if (yearInput >= 2015)
-								if (yearInput <= 2019)
-									throw new InvalidInputException("Years 2015-2019 are not supported");
-								else if (yearInput > now.getYear())
-									throw new InvalidInputException("Year &e" + yearInput + " &cis in the future");
-								else
-									year = yearInput;
-							else {
-								page = yearInput;
-								break;
-							}
-
-							if (split.length >= 2) {
-								if (split[1].length() > 0 && Utils.isInt(split[1])) {
-									int monthInput = Integer.parseInt(split[1]);
-									if (monthInput >= 1 && monthInput <= 12)
-										if (YearMonth.of(year, monthInput).isAfter(YearMonth.now()))
-											throw new InvalidInputException("Month &e" + yearInput + "-" + monthInput + " &cis in the future");
-										else
-											month = monthInput;
-									else
-										throw new InvalidInputException("Invalid month &e" + monthInput);
-								} else
-									throw new InvalidInputException("Invalid month &e" + split[1]);
-
-								if (split.length >= 3) {
-									if (split[2].length() > 0 && Utils.isInt(split[2])) {
-										int dayInput = Integer.parseInt(split[2]);
-										if (YearMonth.of(year, month).isValidDay(dayInput))
-											if (LocalDate.of(year, month, dayInput).isAfter(now))
-												throw new InvalidInputException("Day &e" + year + "-" + month + "-" + dayInput + " &cis in the future");
-											else
-												day = dayInput;
-										else
-											throw new InvalidInputException("Invalid day of month &e" + dayInput);
-									} else
-										throw new InvalidInputException("Invalid day &e" + split[2]);
-								}
-							}
-						} else
-							throw new InvalidInputException("Invalid year &e" + split[0]);
-					}
-			}
-
-			if (args.length >= 2 && Utils.isInt(args[1]))
-				page = Integer.parseInt(args[1]);
-
-			if (year == 2020) {
-				if (month == -1)
-					throw new InvalidInputException("Year 2020 is not supported");
-				else if (month <= 5)
-					throw new InvalidInputException("Months Jan-May of 2020 are not supported");
-			}
-
-			if (page < 1)
-				throw new InvalidInputException("Page cannot be less than 1");
-		}
-
-		@ToString.Include
-		public String getRegex() {
-			if (year <= 0)
-				return ".*";
-
-			String regex = year + "-";
-			if (month > 0) {
-				regex += String.format("%02d", month) + "-";
-				if (day > 0)
-					regex += String.format("%02d", day);
-				else
-					regex += ".*";
-			} else
-				regex += ".*";
-
-			return regex;
-		}
-	}
 
 	@ConverterFor(HoursTopArguments.class)
 	HoursTopArguments convertToHoursTopArgument(String value) {
@@ -259,7 +137,7 @@ public class HoursCommand extends CustomCommand {
 					if (AFK.get(player).isAfk()) continue;
 
 					HoursService service = new HoursService();
-					Hours hours = service.get(player);
+					Hours hours = service.get(player.getUniqueId());
 					hours.increment(INTERVAL);
 					service.update(hours);
 

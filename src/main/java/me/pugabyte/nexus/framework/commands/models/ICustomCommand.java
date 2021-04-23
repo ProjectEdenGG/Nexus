@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.framework.commands.models;
 
+import eden.interfaces.PlayerOwnedObject;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -24,7 +25,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundExcep
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;

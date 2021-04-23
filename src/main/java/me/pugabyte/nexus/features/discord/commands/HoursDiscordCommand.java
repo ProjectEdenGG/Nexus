@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
 import joptsimple.internal.Strings;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
@@ -10,8 +12,6 @@ import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
@@ -45,7 +45,7 @@ public class HoursDiscordCommand extends Command {
 					}
 
 				HoursService service = new HoursService();
-				Hours hours = service.get(player);
+				Hours hours = service.get(player.getUniqueId());
 
 				String message = "**[Hours]** " + hours.getName() + "'s in-game playtime";
 				message += System.lineSeparator() + "Total: **" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format() + "**";

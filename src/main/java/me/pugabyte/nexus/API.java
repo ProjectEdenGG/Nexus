@@ -29,6 +29,7 @@ public class API extends EdenAPI {
 		return DatabaseConfig.builder()
 				.password(Nexus.getInstance().getConfig().getString("databases.mongodb.password"))
 				.modelPath("me.pugabyte.nexus.models")
+				.env(getEnv())
 				.build();
 	}
 

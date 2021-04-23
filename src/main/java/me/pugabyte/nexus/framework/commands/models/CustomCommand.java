@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.framework.commands.models;
 
 import com.google.common.base.Strings;
+import eden.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,6 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeConsoleExcepti
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -419,7 +419,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSelf(PlayerOwnedObject object) {
-		return isPlayer() && isSelf(object.getOfflinePlayer());
+		return isPlayer() && isSelf(PlayerUtils.getPlayer(object.getUuid()));
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {
@@ -674,6 +674,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@SneakyThrows
 	protected PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
 		Class<? extends MongoService> service = (Class<? extends MongoService>) MongoService.ofObject(type);
+		System.out.println("Value: " + value + " / Type: " + type + " / Service: " + service);
 		if (service != null)
 			return service.newInstance().get(convertToOfflinePlayer(value));
 		return null;
@@ -961,7 +962,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	public String formatWho(Player self, PlayerOwnedObject target, WhoType whoType) {
-		return formatWho(target.getOfflinePlayer(), whoType);
+		return formatWho(PlayerUtils.getPlayer(target.getUuid()), whoType);
 	}
 
 	public String formatWho(Player self, OfflinePlayer target, WhoType whoType) {

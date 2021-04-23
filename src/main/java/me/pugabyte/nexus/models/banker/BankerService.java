@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.banker;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;

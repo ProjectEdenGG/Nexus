@@ -5,6 +5,8 @@ import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.model.Protection;
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -23,8 +25,6 @@ import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.lwc.LWCProtection;
 import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -138,8 +138,8 @@ public class AccountTransferCommand extends CustomCommand {
 			@Override
 			public void transfer(OfflinePlayer old, OfflinePlayer target) {
 				HoursService service = new HoursService();
-				Hours previous = service.get(old);
-				Hours current = service.get(target);
+				Hours previous = service.get(old.getUniqueId());
+				Hours current = service.get(target.getUniqueId());
 
 				previous.getTimes().forEach((date, seconds) -> current.getTimes().put(date, seconds));
 				previous.getTimes().clear();

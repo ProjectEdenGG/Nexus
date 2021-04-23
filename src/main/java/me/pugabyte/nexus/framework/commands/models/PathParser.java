@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.framework.commands.models;
 
+import eden.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +16,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Method;

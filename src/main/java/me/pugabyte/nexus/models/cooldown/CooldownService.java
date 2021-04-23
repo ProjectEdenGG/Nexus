@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models.cooldown;
 
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;

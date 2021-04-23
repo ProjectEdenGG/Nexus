@@ -1,13 +1,14 @@
 package me.pugabyte.nexus.models.nerd;
 
+import eden.interfaces.PlayerOwnedObject;
+import eden.models.hours.HoursService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -24,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -98,8 +100,8 @@ public enum Rank implements ColoredAndNamed {
 
 	public List<Nerd> getNerds() {
 		// Temporary? fix to get players in this group. Using Hours Top limit 100 because this method is only used for staff
-		List<OfflinePlayer> inGroup = new HoursService().getActivePlayers().stream()
-				.filter(player -> Nexus.getPerms().playerHas(null, player, "rank." + name().toLowerCase()))
+		List<UUID> inGroup = new HoursService().getActivePlayers().stream()
+				.filter(player -> Nexus.getPerms().playerHas(null, PlayerUtils.getPlayer(player), "rank." + name().toLowerCase()))
 				.collect(Collectors.toList());
 		Set<Nerd> nerds = new HashSet<>();
 		inGroup.forEach(player -> nerds.add(Nerd.of(player)));

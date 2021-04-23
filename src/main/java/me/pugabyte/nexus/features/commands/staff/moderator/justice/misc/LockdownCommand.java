@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
 
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -11,8 +13,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;

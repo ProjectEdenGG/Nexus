@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
+import eden.models.hours.HoursService;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +39,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;
@@ -1000,6 +1000,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	List<String> tabCompleteStaffMember(String filter) {
 		return new HoursService().getActivePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff())
+				.map(PlayerUtils::getPlayer)
 				.map(OfflinePlayer::getName)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());

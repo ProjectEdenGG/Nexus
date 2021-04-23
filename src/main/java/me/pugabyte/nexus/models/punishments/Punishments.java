@@ -44,7 +44,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Builder
-@Entity("punishments")
+@Entity(value = "punishments", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor

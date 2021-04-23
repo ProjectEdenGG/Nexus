@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.models.discord;
 
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.HashMap;

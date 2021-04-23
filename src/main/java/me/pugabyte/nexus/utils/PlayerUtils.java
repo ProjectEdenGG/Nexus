@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.interfaces.PlayerOwnedObject;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -266,7 +266,7 @@ public class PlayerUtils {
 		} else if (recipient instanceof UUID) {
 			send(getPlayer((UUID) recipient), message);
 		} else if (recipient instanceof PlayerOwnedObject)
-			send(((PlayerOwnedObject) recipient).getOfflinePlayer(), message);
+			send(getPlayer(((PlayerOwnedObject) recipient).getUuid()), message);
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

@@ -1,8 +1,12 @@
 package me.pugabyte.nexus.features.commands.staff.moderator;
 
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
+import eden.utils.Env;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -10,8 +14,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.event.EventHandler;
@@ -38,7 +40,8 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.MINUTE, Time.HOUR, GeoIPCommand::writeFiles);
+		if (Nexus.getEnv() == Env.PROD)
+			Tasks.repeatAsync(Time.MINUTE, Time.HOUR, GeoIPCommand::writeFiles);
 	}
 
 	@Async
@@ -78,7 +81,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 			if (!countriesMap.containsKey(key))
 				countriesMap.put(key, geoIp.getCountryName());
 
-			Hours hours = hoursService.get(geoIp.getOfflinePlayer());
+			Hours hours = hoursService.get(geoIp);
 			int hoursPlayed = hours.getTotal() / 3600;
 			if (hoursPlayed < 1) return;
 

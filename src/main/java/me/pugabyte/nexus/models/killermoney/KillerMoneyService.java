@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models.killermoney;
 
+import eden.mongodb.annotations.PlayerClass;
 import lombok.Getter;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.HashMap;

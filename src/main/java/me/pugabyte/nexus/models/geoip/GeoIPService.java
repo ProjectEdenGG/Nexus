@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.models.geoip;
 
 import com.google.gson.Gson;
+import eden.mongodb.annotations.PlayerClass;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

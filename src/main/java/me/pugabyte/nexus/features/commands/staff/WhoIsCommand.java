@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -13,8 +15,6 @@ import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
 import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishments;

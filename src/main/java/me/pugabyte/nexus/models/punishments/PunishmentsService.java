@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models.punishments;
 
 import dev.morphia.query.Query;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ public class PunishmentsService extends MongoService<Punishments> {
 	public Map<UUID, Punishments> getCache() {
 		return cache;
 	}
+
 	public List<Punishments> getAlts(Punishments player) {
 		return getAlts(Collections.singletonList(player));
 	}
