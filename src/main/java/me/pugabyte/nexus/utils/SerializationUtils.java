@@ -125,6 +125,8 @@ public class SerializationUtils {
 				return deserializeRecursive(metaMap);
 			});
 
+			value.putIfAbsent("v", 2586);
+
 			ItemStack deserialize = ItemStack.deserialize(value);
 			if (deserialize.getAmount() == 0)
 				deserialize.setAmount(1);
