@@ -62,7 +62,7 @@ public class SignListener implements Listener {
 
 						String descriptionText = arena.getMechanic().getDescription();
 						TextComponent description = descriptionText != null && !descriptionText.isEmpty() && !descriptionText.equalsIgnoreCase("todo")
-								? Component.text("Description: ").append(Component.text("\n" + descriptionText, NamedTextColor.YELLOW))
+								? Component.text("\nDescription: ").append(Component.text(descriptionText, NamedTextColor.YELLOW))
 								: Component.text("");
 
 						TextComponent component = Component.text("\n" + arena.getDisplayName(), NamedTextColor.DARK_AQUA, TextDecoration.BOLD)
