@@ -6,6 +6,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -446,6 +447,7 @@ public enum Achievement {
 		AchievementPlayer achievementPlayer = new AchievementService().get(player);
 		if (achievementPlayer == null) return false;
 		if (achievementPlayer.hasAchievement(this)) return false;
+		if (!WorldGroup.SURVIVAL.contains(player.getWorld())) return false;
 
 		ProgressType progressType = this.getProgressType();
 

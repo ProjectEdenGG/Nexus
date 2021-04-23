@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.achievements.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.achievements.events.AchievementCompletedEvent;
 import me.pugabyte.nexus.models.achievement.Achievement;
@@ -8,8 +9,10 @@ import me.pugabyte.nexus.models.achievement.AchievementPlayer;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class AchievementListener implements Listener {
@@ -33,6 +36,11 @@ public class AchievementListener implements Listener {
 			PlayerUtils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()));
 		}
 
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onVanillaAchievement(PlayerAdvancementCriterionGrantEvent event) {
+		if (!WorldGroup.SURVIVAL.contains(event.getPlayer().getWorld())) event.setCancelled(true);
 	}
 
 }
