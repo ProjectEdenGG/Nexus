@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import eden.annotations.Disabled;
 import joptsimple.internal.Strings;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.HandledBy;
@@ -15,7 +14,6 @@ import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-@Disabled // TODO New punishments website
 @HandledBy(Bot.KODA)
 public class HistoryDiscordCommand extends Command {
 
@@ -34,8 +32,8 @@ public class HistoryDiscordCommand extends Command {
 
 				OfflinePlayer player = PlayerUtils.getPlayer(args[0]);
 
-				if (!Punishments.of(player).hasHistory())
-					event.reply("<https://justice.bnn.gg/history/" + player.getUniqueId().toString() + ">");
+				if (Punishments.of(player).hasHistory())
+					event.reply("<https://justice.bnn.gg/history/" + player.getName() + ">");
 				else
 					event.reply("No history found");
 			} catch (Exception ex) {
