@@ -120,6 +120,9 @@ public class TimeUtils {
 	public static class Timespan {
 		@Getter
 		private final int original;
+		/**
+		 * Displays "None" if the input value is 0.
+		 */
 		private final boolean noneDisplay;
 		private final FormatType formatType;
 		private int years, days, hours, minutes, seconds;

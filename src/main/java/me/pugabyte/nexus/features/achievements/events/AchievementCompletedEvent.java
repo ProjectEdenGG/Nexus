@@ -5,6 +5,7 @@ import me.pugabyte.nexus.models.achievement.Achievement;
 import me.pugabyte.nexus.models.achievement.AchievementPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 public class AchievementCompletedEvent extends Event {
@@ -22,7 +23,7 @@ public class AchievementCompletedEvent extends Event {
 	}
 
 	@Override
-	public HandlerList getHandlers() {
+	public @NotNull HandlerList getHandlers() {
 		return handlers;
 	}
 
