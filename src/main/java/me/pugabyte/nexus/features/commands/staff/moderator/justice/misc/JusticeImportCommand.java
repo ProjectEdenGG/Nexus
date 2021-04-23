@@ -146,6 +146,9 @@ public class JusticeImportCommand extends CustomCommand {
 			punishment.setRemoved(entry.getRemoved());
 			punishment.setReceived(entry.getReceived());
 
+			if (entry.isIpban())
+				punishment.setType(PunishmentType.ALT_BAN);
+
 			Punishments.of(punishment.getUuid()).getPunishments().add(punishment);
 			++count;
 		}
