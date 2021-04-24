@@ -10,6 +10,8 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -55,23 +57,26 @@ public class SignListener implements Listener {
 						int players = match == null ? 0 : match.getMinigamers().size();
 						boolean canJoin = match == null || !match.isStarted() || arena.canJoinLate();
 
-						TextComponent availability = canJoin ? Component.text("available", NamedTextColor.GREEN) : Component.text("unavailable", NamedTextColor.RED);
-						TextComponent fullAvailability = Component.text("\nThis game is ").append(availability).append(Component.text(" to join"));
-						if (canJoin)
-							fullAvailability = fullAvailability.clickEvent(ClickEvent.runCommand("/mgm join " + arena.getName()));
+						TextComponent.Builder builder = Component.text().color(NamedTextColor.GOLD);
+						builder.append(Component.text("\n" + arena.getDisplayName(), NamedTextColor.DARK_AQUA, TextDecoration.BOLD));
+						builder.append(Component.text("\nGamemode: " ).append(Component.text(arena.getMechanic().getName(), NamedTextColor.YELLOW)));
 
 						String descriptionText = arena.getMechanic().getDescription();
-						TextComponent description = descriptionText != null && !descriptionText.isEmpty() && !descriptionText.equalsIgnoreCase("todo")
-								? Component.text("\nDescription: ").append(Component.text(descriptionText, NamedTextColor.YELLOW))
-								: Component.text("");
+						if (descriptionText != null && !descriptionText.isEmpty() && !descriptionText.equalsIgnoreCase("todo"))
+							builder.append(Component.text("\nDescription: ").append(Component.text(descriptionText, NamedTextColor.YELLOW)));
 
-						TextComponent component = Component.text("\n" + arena.getDisplayName(), NamedTextColor.DARK_AQUA, TextDecoration.BOLD)
-								.append(Component.text("\nGamemode: ", NamedTextColor.GOLD).decoration(TextDecoration.BOLD, false).append(Component.text(arena.getMechanic().getName(), NamedTextColor.YELLOW))
-									.append(description)
-									.append(Component.text("\n"+players, NamedTextColor.YELLOW)).append(Component.text('/').append(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
-										.append(Component.text(" players")))
-									.append(fullAvailability));
-						event.getPlayer().sendMessage(component);
+						builder.append(Component.text("\n"+players, NamedTextColor.YELLOW)).append(Component.text('/').append(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
+								.append(Component.text(" players")));
+
+						TextComponent.Builder availability = Component.text().content("\nThis game is ");
+						availability.append(canJoin ? Component.text("available", NamedTextColor.GREEN) : Component.text("unavailable", NamedTextColor.RED));
+						availability.append(Component.text(" to join"));
+						if (canJoin)
+							availability.clickEvent(ClickEvent.runCommand("/mgm join " + arena.getName())).hoverEvent(Component.text("Click to join the game!", NamedTextColor.DARK_AQUA));
+
+						builder.append(availability);
+
+						event.getPlayer().sendMessage(Identity.nil(), builder, MessageType.SYSTEM);
 					} else
 						PlayerManager.get(event.getPlayer()).join(arena);
 					break;
