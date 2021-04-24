@@ -83,8 +83,9 @@ public class Justice extends Feature implements Listener {
 
 		punishments.getAnyActiveBan().ifPresent(kick);
 
-		for (UUID alt : punishments.getAlts())
-			Punishments.of(alt).getActiveAltBan().ifPresent(kick);
+		if (!punishments.getNerd().getRank().isStaff())
+			for (UUID alt : punishments.getAlts())
+				Punishments.of(alt).getActiveAltBan().ifPresent(kick);
 
 		service.save(punishments);
 	}
@@ -198,6 +199,9 @@ public class Justice extends Feature implements Listener {
 		final Player player = event.getPlayer();
 		Tasks.waitAsync(Time.SECOND, () -> {
 			if (!player.isOnline())
+				return;
+
+			if (player.hasPermission("justice.alts.hide"))
 				return;
 
 			Punishments.of(player).sendAltsMessage(json -> Chat.broadcastIngame(json, StaticChannel.STAFF));
