@@ -30,7 +30,7 @@ public class EntityUtils {
 	}
 
 	public static List<EntityType> getExtraHostileMobs() {
-		return Arrays.asList(EntityType.PHANTOM, EntityType.GHAST, EntityType.MAGMA_CUBE, EntityType.SLIME, EntityType.SHULKER);
+		return Arrays.asList(EntityType.PHANTOM, EntityType.GHAST, EntityType.MAGMA_CUBE, EntityType.SLIME, EntityType.SHULKER, EntityType.ENDER_DRAGON);
 	}
 
 	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
