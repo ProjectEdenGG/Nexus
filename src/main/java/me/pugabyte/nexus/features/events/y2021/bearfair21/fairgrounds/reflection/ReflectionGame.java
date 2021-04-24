@@ -117,6 +117,12 @@ public class ReflectionGame {
 							Lightable lightable = (Lightable) blockData;
 							lightable.setLit(true);
 							block.setBlockData(lightable);
+
+							Block block1 = block.getRelative(0, -6, 0);
+							BlockData blockData1 = block1.getBlockData();
+							Lightable lightable1 = (Lightable) blockData1;
+							lightable1.setLit(true);
+							block1.setBlockData(lightable1);
 							ReflectionGameUtils.win(reflections.get());
 							broadcast = false;
 						}

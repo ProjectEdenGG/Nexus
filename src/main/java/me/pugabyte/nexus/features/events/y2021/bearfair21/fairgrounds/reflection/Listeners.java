@@ -47,9 +47,9 @@ public class Listeners implements Listener {
 		Block block = button.getRelative(0, -1, 0).getRelative(directional.getFacing().getOppositeFace());
 		Material type = block.getType();
 
-		if (type.equals(Material.CYAN_CONCRETE_POWDER))
+		if (type.equals(Material.IRON_BLOCK))
 			ReflectionGameUtils.rotateBanner(block.getRelative(0, 2, 0));
-		else if (type.equals(Material.WHITE_CONCRETE_POWDER) && !ReflectionGame.isActive()) {
+		else if (type.equals(Material.NETHERITE_BLOCK) && !ReflectionGame.isActive()) {
 			Location skullLoc = LocationUtils.getCenteredLocation(block.getRelative(0, 3, 0).getLocation());
 			skullLoc.setY(skullLoc.getY() + 0.25);
 			ReflectionGame.setLaserStart(skullLoc);

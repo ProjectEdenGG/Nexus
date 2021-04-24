@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflectio
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
-import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -104,32 +103,44 @@ public class ReflectionGameUtils {
 		ProtectedRegion region = getWGUtils().getProtectedRegion(ReflectionGame.getPowderRg());
 		List<Block> blocks = getWEUtils().getBlocks(region);
 		for (Block block : blocks) {
-			if (!MaterialTag.CONCRETE_POWDERS.isTagged(block.getType()))
+			if (!block.getType().equals(Material.IRON_BLOCK))
 				continue;
 
 			Block banner = block.getRelative(0, 2, 0);
+			Block banner1 = banner.getRelative(0, -5, 0);
+
 			BlockData blockData = banner.getBlockData();
-			if (!(blockData instanceof Rotatable))
-				continue;
+			BlockData blockData1 = banner1.getBlockData();
 
 			Rotatable rotatable = (Rotatable) blockData;
+			Rotatable rotatable1 = (Rotatable) blockData1;
 
-			if (block.getType().equals(Material.CYAN_CONCRETE_POWDER)) {
-				BlockFace newFace = RandomUtils.randomElement(ReflectionGame.getAngles());
-				if (newFace == null)
-					continue;
+			BlockFace newFace = RandomUtils.randomElement(ReflectionGame.getAngles());
 
-				rotatable.setRotation(newFace);
-				banner.setBlockData(rotatable);
-			}
+			rotatable.setRotation(newFace);
+			rotatable1.setRotation(newFace);
+
+			banner.setBlockData(rotatable);
+			banner1.setBlockData(rotatable1);
 		}
 	}
 
 	static void rotateBanner(Block banner) {
+		Block banner1 = banner.getRelative(0, -5, 0);
+
 		BlockData blockData = banner.getBlockData();
+		BlockData blockData1 = banner1.getBlockData();
+
 		Rotatable rotatable = (Rotatable) blockData;
-		rotatable.setRotation(rotateBlockFace(rotatable.getRotation()));
+		Rotatable rotatable1 = (Rotatable) blockData1;
+
+		BlockFace newFace = rotateBlockFace(rotatable.getRotation());
+
+		rotatable.setRotation(newFace);
+		rotatable1.setRotation(newFace);
+
 		banner.setBlockData(rotatable);
+		banner1.setBlockData(rotatable1);
 	}
 
 	private static BlockFace rotateBlockFace(BlockFace blockFace) {
