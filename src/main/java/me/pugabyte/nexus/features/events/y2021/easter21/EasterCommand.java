@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import static java.util.stream.Collectors.toList;
-import static me.pugabyte.nexus.utils.StringUtils.getShorterLocationString;
+import static me.pugabyte.nexus.utils.StringUtils.getCoordinateString;
 import static me.pugabyte.nexus.utils.StringUtils.getTeleportCommand;
 
 @NoArgsConstructor
@@ -72,7 +72,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Most found eggs");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-				json("&3" + index + " &e" + getShorterLocationString(location) + " &7- " + counts.get(location))
+				json("&3" + index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
 						.command(getTeleportCommand(location))
 						.hover("&eClick to teleport");
 		paginate(new ArrayList<>(Utils.sortByValueReverse(counts).keySet()), formatter, "/easter topLocations", page);

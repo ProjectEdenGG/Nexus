@@ -530,7 +530,7 @@ public class StringUtils {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 
-	public static String getShorterLocationString(Location loc) {
+	public static String getCoordinateString(Location loc) {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ();
 	}
 
