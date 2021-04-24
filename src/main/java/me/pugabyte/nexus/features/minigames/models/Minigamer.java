@@ -23,6 +23,7 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Time;
+import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatColor;
@@ -252,13 +253,19 @@ public class Minigamer implements ColoredAndNicknamed {
 
 	public void setTeam(Team team) {
 		this.team = team;
+		assert match != null;
 
 		// join new team channel
-		if (match.getMechanic() instanceof TeamMechanic && team != null)
-			((TeamMechanic)match.getMechanic()).joinTeamChannel(this);
+		if (match.getMechanic() instanceof TeamMechanic && team != null) {
+			((TeamMechanic) match.getMechanic()).joinTeamChannel(this);
+			if (team.getObjective() != null && !team.getObjective().isEmpty()) {
+				send("&6Team Objective: &e" + team.getObjective());
+				TitleUtils.sendTitle(player, "&6Team Objective", "&e" + team.getObjective(), 10, Time.SECOND.x(4), 20);
+			}
+		}
 
-		if (this.getMatch().getScoreboardTeams() != null)
-			this.match.getScoreboardTeams().update();
+		if (match.getScoreboardTeams() != null)
+			match.getScoreboardTeams().update();
 	}
 
 	public void scored() {
