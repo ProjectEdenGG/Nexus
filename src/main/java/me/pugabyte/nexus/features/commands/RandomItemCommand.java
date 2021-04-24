@@ -14,12 +14,12 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+@Permission("group.admin")
 public class RandomItemCommand extends CustomCommand {
 	public RandomItemCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Permission("group.admin")
 	@Path("[player]")
 	void give(@Arg("self") Player player) {
 		Material item = RandomUtils.randomElement(Arrays.stream(Material.values()).filter(Material::isItem).collect(Collectors.toList()));
