@@ -28,10 +28,19 @@ public class ReflectionGameUtils {
 	public static void clearLamps() {
 		for (ReflectionGameLamp lamp : ReflectionGameLamp.values()) {
 			Block block = lamp.getLocation().getBlock();
+			Block block1 = block.getRelative(0, -6, 0);
+
 			BlockData blockData = block.getBlockData();
+			BlockData blockData1 = block1.getBlockData();
+
 			Lightable lightable = (Lightable) blockData;
+			Lightable lightable1 = (Lightable) blockData1;
+
 			lightable.setLit(false);
+			lightable1.setLit(false);
+
 			block.setBlockData(lightable);
+			block1.setBlockData(lightable1);
 		}
 	}
 
