@@ -67,7 +67,7 @@ public class HideAndSeek extends Infection {
 
 	@Override
 	public String getDescription() {
-		return "Hide from the hunters!";
+		return "Blocks hide from the hunters";
 	}
 
 	@Override
