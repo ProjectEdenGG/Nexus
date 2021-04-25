@@ -114,7 +114,7 @@ public class DiscordCommand extends CustomCommand {
 		if (user.getUser() == null)
 			error("Could not find user from userId &e" + id);
 		service.save(user);
-		send("Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
+		send("&3Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
 		Discord.addRole(id, DiscordId.Role.VERIFIED);
 		Discord.staffLog("**" + user.getIngameName() + "** Discord account force linked to **" + user.getNameAndDiscrim() +  "** by " + name());
 	}
