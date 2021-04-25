@@ -17,7 +17,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Redirect(from = "/entityhealth", to = "/health target")
 public class HealthCommand extends CustomCommand {
-	private DecimalFormat nf = new DecimalFormat("#.00");
+	private static final DecimalFormat nf = new DecimalFormat("#.00");
 
 	public HealthCommand(CommandEvent event) {
 		super(event);

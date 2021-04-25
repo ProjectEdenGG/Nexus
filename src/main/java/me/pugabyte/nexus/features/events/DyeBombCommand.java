@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
+@Permission("group.moderator")
 public class DyeBombCommand extends CustomCommand implements Listener {
 	public static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
 
@@ -47,7 +48,6 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("give <amount> [player]")
-	@Permission("group.moderator")
 	public void give(@Arg int amount, @Arg("self") Player player) {
 		giveDyeBomb(player, amount);
 	}

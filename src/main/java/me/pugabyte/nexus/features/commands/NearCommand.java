@@ -23,7 +23,7 @@ public class NearCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	void run(@Arg("self") Player player) {
+	void run(@Arg(value = "self", permission = "group.staff") Player player) {
 		List<Player> nearby = Bukkit.getOnlinePlayers().stream()
 				.filter(_player -> player.getUniqueId() != _player.getUniqueId()
 						 && player.getWorld() == _player.getWorld()

@@ -48,7 +48,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 		sign.update();
 	}
 
-	@Path("check <player>")
+	@Path("check [player]")
 	void check(@Arg("self") OfflinePlayer player) {
 		send(PREFIX + "&e" + player.getName() + " &3has found &e" + service.get(player, "easter2020").getValue() + "&3 easter eggs");
 	}

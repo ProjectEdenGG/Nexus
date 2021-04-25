@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -91,6 +92,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("debug [player]")
+	@Permission("group.admin")
 	void debug(@Arg("self") Referral referral) {
 		send(toPrettyString(referral));
 	}

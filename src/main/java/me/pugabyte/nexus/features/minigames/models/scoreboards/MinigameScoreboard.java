@@ -46,7 +46,7 @@ public interface MinigameScoreboard {
 		MINIGAMER(MinigamerSidebar.class);
 
 		@Getter
-		private Class<? extends MinigameScoreboard> type;
+		private final Class<? extends MinigameScoreboard> type;
 
 		Type(Class<? extends MinigameScoreboard> clazz) {
 			this.type = clazz;
@@ -78,8 +78,8 @@ public interface MinigameScoreboard {
 	}
 
 	class Teams implements ITeams {
-		private Match match;
-		private Map<Team, ScoreboardTeam> scoreboardTeams = new HashMap<>();
+		private final Match match;
+		private final Map<Team, ScoreboardTeam> scoreboardTeams = new HashMap<>();
 
 		public Teams(Match match) {
 			this.match = match;

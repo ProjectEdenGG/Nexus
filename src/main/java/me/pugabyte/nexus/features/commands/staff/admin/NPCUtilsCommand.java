@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -14,6 +15,7 @@ import org.bukkit.World;
 
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 
+@Permission("group.staff")
 public class NPCUtilsCommand extends CustomCommand {
 
 	public NPCUtilsCommand(@NonNull CommandEvent event) {

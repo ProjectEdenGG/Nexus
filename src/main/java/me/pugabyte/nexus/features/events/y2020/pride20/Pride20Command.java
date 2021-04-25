@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -74,13 +75,12 @@ public class Pride20Command extends CustomCommand {
 	}
 
 	@Path("parade leave [player]")
-	void leaveParade(@Arg("self") OfflinePlayer player) {
-		if (!isStaff())
-			player = player();
-
+	void leaveParade(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+		boolean isSelf = isSelf(player);
+		String playerText = isSelf ? "You have" : Nickname.of(player) + " has";
 		Setting setting = service.get(player, "pride20Parade");
 		if (!setting.getBoolean())
-			error("You have not joined the parade");
+			error(playerText + " not joined the parade");
 
 		WorldGuardUtils wgUtils = new WorldGuardUtils(Bukkit.getWorld("safepvp"));
 		for (Entity entity : wgUtils.getEntitiesInRegion("pride20_parade")) {
@@ -91,7 +91,7 @@ public class Pride20Command extends CustomCommand {
 
 		setting.setBoolean(false);
 		service.save(setting);
-		send(PREFIX + "You have left the pride parade");
+		send(PREFIX + playerText + " left the pride parade");
 	}
 
 	public boolean isHighestBlock(Location loc) {
