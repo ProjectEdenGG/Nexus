@@ -52,7 +52,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("history [player] [page]")
-	void history(@Arg("self") Banker banker, @Arg("1") int page) {
+	void history(@Arg(value = "self", permission = "group.staff") Banker banker, @Arg("1") int page) {
 		List<Transaction> transactions = banker.getTransactions().stream()
 				.filter(transaction -> transaction.getShopGroup() == shopGroup)
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())

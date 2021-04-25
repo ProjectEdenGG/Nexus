@@ -57,7 +57,7 @@ public class PayCommand extends CustomCommand {
 
 	@Async
 	@Path("history [player] [shopGroup] [page]")
-	void history(@Arg("self") Banker banker, @Arg("current") ShopGroup shopGroup, @Arg("1") int page) {
+	void history(@Arg(value = "self", permission = "group.staff") Banker banker, @Arg("current") ShopGroup shopGroup, @Arg("1") int page) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions()).stream()
 				.filter(transaction -> transaction.getShopGroup() == shopGroup && transaction.getCause() == TransactionCause.PAY)
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
