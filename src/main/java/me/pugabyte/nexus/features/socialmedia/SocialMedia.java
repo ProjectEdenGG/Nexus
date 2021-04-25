@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.socialmedia;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -22,6 +23,7 @@ import org.bukkit.block.Skull;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -131,6 +133,7 @@ public class SocialMedia extends Feature implements Listener {
 		WEBSITE("https://bnn.gg"),
 		DISCORD(null) {
 			@Override
+			@NotNull
 			public String getUrl() {
 				String url = "https://discord.bnn.gg";
 				if (Discord.getGuild() != null && Discord.getGuild().getBoostTier().getKey() == 3)
@@ -157,6 +160,7 @@ public class SocialMedia extends Feature implements Listener {
 			this.url = url;
 		}
 
+		@NonNull
 		public String getUrl() {
 			return url;
 		}
