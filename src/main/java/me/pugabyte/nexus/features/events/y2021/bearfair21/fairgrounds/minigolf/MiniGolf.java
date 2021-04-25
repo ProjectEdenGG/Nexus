@@ -414,7 +414,7 @@ public class MiniGolf {
 						break;
 					case SMOKER:
 						// Get Direction
-						under = below.getRelative(BlockFace.DOWN);
+						under = below;
 						directional = (Directional) under.getBlockData();
 						BlockFace facing = directional.getFacing();
 						under = under.getRelative(facing.getOppositeFace());
@@ -423,7 +423,7 @@ public class MiniGolf {
 							String heightStr = sign.getLine(2).replaceAll("height", "");
 							String powerStr = sign.getLine(3).replaceAll("power", "");
 							try {
-								Location newLoc = LocationUtils.getCenteredLocation(under.getRelative(facing).getLocation());
+								Location newLoc = LocationUtils.getCenteredLocation(below.getRelative(facing).getLocation());
 								ball.setVelocity(new Vector(0, 0, 0));
 								ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 								ball.setGravity(true);
