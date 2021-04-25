@@ -29,8 +29,7 @@ public class Fairgrounds {
 
 	private void ridesTask() {
 		AtomicBoolean resetRides = new AtomicBoolean(false);
-		// droptower, swingship ferriswheel
-		List<String> rides = Arrays.asList("carousel", "chairswing", "enterprise", "jets", "pendulum", "swingtower", "teacups");
+		List<String> rides = Arrays.asList("carousel", "chairswing", "droptower", "enterprise", "ferriswheel", "jets", "pendulum", "swingship", "swingtower", "teacups");
 
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(15), () -> {
 			int count = BearFair21.getWGUtils().getPlayersInRegion(BearFair21.getRegion()).size();
