@@ -43,6 +43,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -180,6 +181,7 @@ public class HideAndSeek extends Infection {
 								fallingBlock.setGravity(false);
 								fallingBlock.setHurtEntities(false);
 								fallingBlock.setDropItem(false);
+								fallingBlock.setVelocity(new Vector());
 								matchData.getSolidBlocks().put(minigamer.getPlayer().getUniqueId(), fallingBlock);
 								// stop their disguise (as otherwise the hider sees 2 of their block)
 								matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).stopDisguise();

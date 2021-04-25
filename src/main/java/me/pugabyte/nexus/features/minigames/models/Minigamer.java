@@ -52,7 +52,6 @@ public class Minigamer implements ColoredAndNicknamed {
 	@NonNull
 	private Player player;
 	@ToString.Exclude
-	@Nullable
 	private Match match;
 	@Nullable
 	private Team team;
