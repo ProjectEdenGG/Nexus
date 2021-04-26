@@ -1,13 +1,21 @@
 package me.pugabyte.nexus.models.punishments;
 
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +36,29 @@ public enum PunishmentType implements ColoredAndNamed {
 		@Override
 		public void action(Punishment punishment) {
 			kick(punishment);
+
+			checkEstablishedPlayer(punishment);
+		}
+
+		private void checkEstablishedPlayer(Punishment punishment) {
+			Tasks.waitAsync(10, () -> {
+				Hours hours = new HoursService().get(punishment.getUuid());
+				if (hours.getTotal() >= Time.HOUR.get() / 20) {
+					Nerd punisher = Nerd.of(punishment.getPunisher());
+					DiscordUser discordUser = new DiscordUserService().get(punisher);
+					if (!isNullOrEmpty(discordUser.getUserId()))
+						Discord.staffLog("<@" + discordUser.getUserId() + "> Please include any additional information about the " +
+								"ban here, such as screenshots, chat logs, and any other information that will help us understand the ban.");
+
+					new JsonBuilder()
+							.line()
+							.next("&cYou have banned an established player")
+							.line()
+							.next("&3If applicable, please remember to add any additional information about this ban in #staff-log")
+							.line()
+							.send(punisher);
+				}
+			});
 		}
 
 		@Override
@@ -51,7 +82,7 @@ public enum PunishmentType implements ColoredAndNamed {
 	ALT_BAN("alt-banned", ChatColor.DARK_RED, true, true, false, true) {
 		@Override
 		public void action(Punishment punishment) {
-			kick(punishment);
+			BAN.action(punishment);
 			for (UUID alt : Punishments.of(punishment).getAlts())
 				kick(getPlayer(alt), punishment);
 		}
