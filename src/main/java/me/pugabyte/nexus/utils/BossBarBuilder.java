@@ -157,7 +157,7 @@ public class BossBarBuilder {
 	}
 
 	/**
-	 * Gets the flags that control environmental factors for this boss bar
+	 * Gets a copy of the flags that control environmental factors for this boss bar
 	 * @return this builder
 	 */
 	@NonNull
