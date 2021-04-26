@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.models;
 
+import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
@@ -50,11 +52,17 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 
 	@Override
 	default @NotNull String getName() {
-		// silly failsafe for deleted users ig
 		String name = getOfflinePlayer().getName();
-		if (name == null)
-			name = getUuid().toString();
+		if (name == null) {
+			if (Nexus.isDebug()) try { throw new InvalidInputException("Stacktrace"); } catch (InvalidInputException ex) { ex.printStackTrace(); }
+			name = "nexus-" + getUuid().toString();
+		}
 		return name;
+	}
+
+	@Override
+	default String getNickname() {
+		return Nickname.of(this);
 	}
 
 	default Nickname getNicknameData() {

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.framework.commands.models;
 
+import eden.exceptions.EdenException;
 import eden.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import org.bukkit.OfflinePlayer;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -93,7 +95,12 @@ class PathParser {
 						if (annotation.tabCompleter() != void.class)
 							arg.setTabCompleter(annotation.tabCompleter());
 						if (annotation.context() > 0)
-							arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.context() - 1]);
+							try {
+								arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.context() - 1]);
+							} catch (Exception ex) {
+								if (!(ex instanceof InvocationTargetException && ex.getCause() instanceof EdenException))
+									ex.printStackTrace();
+							}
 					}
 
 					if (PlayerOwnedObject.class.isAssignableFrom(arg.getType()) && arg.getTabCompleter() == null)

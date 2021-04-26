@@ -4,6 +4,7 @@ import eden.models.hours.Hours;
 import eden.models.hours.HoursService;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -71,8 +72,8 @@ public enum PunishmentType implements ColoredAndNamed {
 			if (!isNullOrEmpty(punishment.getReason()))
 					message += nl + "&3Reason: &c" + punishment.getReason();
 
-			if (punishment.getSeconds() > 0)
-				message += nl + "&3Expires in: &3" + punishment.getTimeLeft();
+			if (punishment.getExpiration() != null)
+				message += nl + "&3Expires in: &3" + Timespan.of(punishment.getExpiration()).format(FormatType.LONG);
 
 			message += nl + nl + "&3Appeal at &chttps://bnn.gg/appeal";
 

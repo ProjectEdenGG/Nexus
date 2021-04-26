@@ -51,6 +51,10 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 
 	private Location teleportOnLogin;
 
+	public Nerd(@NonNull UUID uuid) {
+		super(uuid);
+	}
+
 	public static Nerd of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}

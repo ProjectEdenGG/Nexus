@@ -22,6 +22,7 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.PunishmentsService;
 import me.pugabyte.nexus.models.watchlist.Watchlisted;
 import me.pugabyte.nexus.models.watchlist.WatchlistedService;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 
 import java.util.List;
@@ -148,6 +149,9 @@ public class JusticeImportCommand extends CustomCommand {
 
 			if (entry.isIpban())
 				punishment.setType(PunishmentType.ALT_BAN);
+
+			if (punishment.getRemoved() != null && punishment.getRemover() == null)
+				punishment.setRemover(StringUtils.getUUID0());
 
 			Punishments.of(punishment.getUuid()).getPunishments().add(punishment);
 			++count;

@@ -13,6 +13,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -193,8 +195,9 @@ public class Punishments implements PlayerOwnedObject {
 	}
 
 	static void broadcast(String message) {
-		Chat.broadcastIngame(PREFIX + message);
-		Chat.broadcastDiscord(DISCORD_PREFIX + message);
+		Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
+		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
+		Discord.send(DISCORD_PREFIX + message, TextChannel.STAFF_LOG);
 	}
 
 	public List<Punishment> showWarns() {
@@ -316,7 +319,7 @@ public class Punishments implements PlayerOwnedObject {
 	public void sendAltsMessage(Consumer<JsonBuilder> sender, Runnable ifNull) {
 		JsonBuilder altsMessage = getAltsMessage();
 		if (altsMessage != null)
-			sender.accept(new JsonBuilder(PREFIX + "Alts of &e" + getNickname()).newline().next(altsMessage));
+			sender.accept(new JsonBuilder(PREFIX + "Alts of &e" + getNickname() + " ").next(altsMessage));
 		else if (ifNull != null)
 			ifNull.run();
 	}
@@ -329,6 +332,9 @@ public class Punishments implements PlayerOwnedObject {
 		JsonBuilder json = new JsonBuilder();
 
 		alts.stream().map(Punishments::of).forEach(alt -> {
+			if (alt.getUuid().equals(this.getUuid()))
+				return;
+
 			ChatColor color = ChatColor.GRAY;
 			String description = "Offline";
 

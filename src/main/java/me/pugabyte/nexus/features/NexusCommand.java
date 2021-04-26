@@ -157,7 +157,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 			ReloadCondition.tryReload();
 		} catch (Exception ex) {
 			reloader = uuid();
-			error(json(ex.getMessage()).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
+			error(json("&c" + ex.getMessage()).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
 		for (Player player : Bukkit.getOnlinePlayers())

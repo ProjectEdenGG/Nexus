@@ -10,6 +10,8 @@ import me.pugabyte.nexus.features.chat.events.PrivateChatEvent;
 import me.pugabyte.nexus.features.commands.BoopCommand;
 import me.pugabyte.nexus.features.commands.poof.PoofCommand;
 import me.pugabyte.nexus.features.commands.poof.PoofHereCommand;
+import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.economy.commands.PayCommand;
 import me.pugabyte.nexus.features.tickets.ReportCommand;
 import me.pugabyte.nexus.features.tickets.TicketCommand;
@@ -48,12 +50,14 @@ import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 public class Justice extends Feature implements Listener {
 
 	private void broadcast(Punishment punishment, String message) {
-		broadcast(historyClick(punishment, new JsonBuilder(PREFIX + message)));
+		broadcast(historyClick(punishment, new JsonBuilder(message)));
 	}
 
 	private void broadcast(JsonBuilder json) {
-		Chat.broadcastIngame(json, StaticChannel.STAFF);
-		Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(json.toString()), StaticChannel.STAFF);
+		Chat.broadcastIngame(PREFIX + json, StaticChannel.STAFF);
+		String discord = stripColor(json.toString());
+		Chat.broadcastDiscord(DISCORD_PREFIX + discord, StaticChannel.STAFF);
+		Discord.send(DISCORD_PREFIX + discord, TextChannel.STAFF_LOG);
 	}
 
 	private JsonBuilder historyClick(Punishment punishment, JsonBuilder ingame) {
@@ -179,7 +183,7 @@ public class Justice extends Feature implements Listener {
 			Function<Punishment, JsonBuilder> notification = watchlist -> {
 				String punisher = Nickname.of(watchlist.getPunisher());
 				String timestamp = shortDateFormat(watchlist.getTimestamp().toLocalDate());
-				return historyClick(watchlist, new JsonBuilder("&e" + getName() + " &cwas watchlisted for &e"
+				return historyClick(watchlist, new JsonBuilder("&e" + watchlist.getName() + " &cwas watchlisted for &e"
 						+ watchlist.getReason() + " &cby &e" + punisher + " &con &e" + timestamp));
 			};
 

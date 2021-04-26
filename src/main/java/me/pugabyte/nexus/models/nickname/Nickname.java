@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId;
@@ -16,6 +17,7 @@ import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -45,6 +47,10 @@ public class Nickname extends eden.models.nickname.Nickname implements PlayerOwn
 
 	private List<NicknameHistoryEntry> nicknameHistory = new ArrayList<>();
 
+	public Nickname(@NonNull UUID uuid) {
+		super(uuid);
+	}
+
 	@Getter
 	private static final Map<Role, Integer> requiredVotes = new HashMap<Role, Integer>() {{
 		put(Role.ADMINS, 3);
@@ -52,6 +58,18 @@ public class Nickname extends eden.models.nickname.Nickname implements PlayerOwn
 
 	public static String of(OfflinePlayer player) {
 		return of(player.getUniqueId());
+	}
+
+	public static String of(String name) {
+		return of(PlayerUtils.getPlayer(name));
+	}
+
+	public static String of(PlayerOwnedObject player) {
+		return of(player.getUuid());
+	}
+
+	public static String of(UUID uuid) {
+		return new NicknameService().get(uuid).getNickname();
 	}
 
 	public @NotNull String getNickname() {

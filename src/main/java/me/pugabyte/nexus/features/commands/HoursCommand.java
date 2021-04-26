@@ -1,9 +1,5 @@
 package me.pugabyte.nexus.features.commands;
 
-import eden.models.hours.Hours;
-import eden.models.hours.HoursService;
-import eden.models.hours.HoursService.HoursTopArguments;
-import eden.models.hours.HoursService.PageResult;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
@@ -20,6 +16,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.hours.HoursService.HoursTopArguments;
+import me.pugabyte.nexus.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
