@@ -1,9 +1,12 @@
 package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
@@ -33,7 +36,8 @@ import java.util.function.Consumer;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getLastColor;
 
-public class JsonBuilder {
+@NoArgsConstructor
+public class JsonBuilder implements ComponentLike {
 	@NonNull private Builder builder = Component.text();
 	@NonNull private final Builder result = Component.text();
 
@@ -48,26 +52,136 @@ public class JsonBuilder {
 	@Getter
 	private boolean initialized = false;
 
-	public JsonBuilder() {
-		this("");
+	public JsonBuilder(@Nullable TextColor color) {
+		color(color);
 	}
 
+	public JsonBuilder(@Nullable Colored color) {
+		color(color);
+	}
+
+	public JsonBuilder(@Nullable ChatColor color) {
+		color(color);
+	}
+
+	public JsonBuilder(@Nullable Color color) {
+		color(color);
+	}
+
+	public JsonBuilder(@Nullable org.bukkit.Color color) {
+		color(color);
+	}
+
+	public JsonBuilder(@Nullable TextColor color, @NotNull TextDecoration... decorations) {
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@Nullable Colored color, @NotNull TextDecoration... decorations) {
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@Nullable ChatColor color, @NotNull TextDecoration... decorations) {
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@Nullable Color color, @NotNull TextDecoration... decorations) {
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@Nullable org.bukkit.Color color, @NotNull TextDecoration... decorations) {
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@NotNull TextDecoration... decorations) {
+		decorate(decorations);
+	}
+
+	/**
+	 * Creates a new builder with a component created from the input text appended
+	 */
 	public JsonBuilder(@Nullable String text) {
 		next(text);
 	}
 
-	public JsonBuilder(@NotNull JsonBuilder json) {
-		next(json);
-		loreize = json.loreize;
-		initialized = json.initialized;
+	public JsonBuilder(@Nullable JsonBuilder json) {
+		if (json != null) {
+			next(json);
+			loreize = json.loreize;
+			initialized = json.initialized;
+		}
 	}
 
-	public JsonBuilder(@Nullable Component component) {
+	public JsonBuilder(@Nullable ComponentLike component) {
 		next(component);
 	}
 
-	public JsonBuilder(@Nullable Builder component) {
-		next(component);
+	public JsonBuilder(@Nullable ColoredAndNamed coloredAndNamed) {
+		next(coloredAndNamed);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable TextColor color) {
+		content(rawText);
+		color(color);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable Colored color) {
+		content(rawText);
+		color(color);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable ChatColor color) {
+		content(rawText);
+		color(color);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable Color color) {
+		content(rawText);
+		color(color);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable org.bukkit.Color color) {
+		content(rawText);
+		color(color);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable TextColor color, @NotNull TextDecoration... decorations) {
+		content(rawText);
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable Colored color, @NotNull TextDecoration... decorations) {
+		content(rawText);
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable ChatColor color, @NotNull TextDecoration... decorations) {
+		content(rawText);
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable Color color, @NotNull TextDecoration... decorations) {
+		content(rawText);
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @Nullable org.bukkit.Color color, @NotNull TextDecoration... decorations) {
+		content(rawText);
+		color(color);
+		decorate(decorations);
+	}
+
+	public JsonBuilder(@NotNull String rawText, @NotNull Style style) {
+		content(rawText);
+		style(style);
 	}
 
 	private void debug(@NotNull String message) {
@@ -82,22 +196,80 @@ public class JsonBuilder {
 	}
 
 	@NotNull
-	public JsonBuilder next(@NotNull JsonBuilder json) {
-		builder.append(json.build());
+	public JsonBuilder next(@Nullable String rawText, @Nullable TextColor color) {
+		if (rawText != null)
+			builder.append(Component.text(rawText, color));
 		return this;
 	}
 
 	@NotNull
-	public JsonBuilder next(@Nullable Component component) {
+	public JsonBuilder next(@Nullable String rawText, @Nullable Colored color) {
+		return next(rawText, AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable ChatColor color) {
+		return next(rawText, AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable Color color) {
+		return next(rawText, AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable org.bukkit.Color color) {
+		return next(rawText, AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable TextColor color, TextDecoration... decorations) {
+		if (rawText != null)
+			builder.append(Component.text(rawText, color, decorations));
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable Colored color, TextDecoration... decorations) {
+		return next(rawText, AdventureUtils.textColorOf(color), decorations);
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable ChatColor color, TextDecoration... decorations) {
+		return next(rawText, AdventureUtils.textColorOf(color), decorations);
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable Color color, TextDecoration... decorations) {
+		return next(rawText, AdventureUtils.textColorOf(color), decorations);
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, @Nullable org.bukkit.Color color, TextDecoration... decorations) {
+		return next(rawText, AdventureUtils.textColorOf(color), decorations);
+	}
+
+	/**
+	 * Sets the raw text for the base text component. Does not handle any color codes.
+	 * @return this builder
+	 */
+	@NotNull
+	public JsonBuilder content(@NotNull String rawText) {
+		builder.content(rawText);
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable ComponentLike component) {
 		if (component != null)
 			builder.append(component);
 		return this;
 	}
 
 	@NotNull
-	public JsonBuilder next(@Nullable Builder component) {
-		if (component != null)
-			builder.append(component);
+	public JsonBuilder next(@Nullable ColoredAndNamed coloredAndNamed) {
+		if (coloredAndNamed != null)
+			builder.append(coloredAndNamed.getComponent());
 		return this;
 	}
 
@@ -462,7 +634,13 @@ public class JsonBuilder {
 	@NotNull
 	public Component build() {
 		group();
-		return result.asComponent();
+		return result.build();
+	}
+
+	@Override
+	@NonNull
+	public Component asComponent() {
+		return build();
 	}
 
 	@Contract("null -> null; !null -> !null")
