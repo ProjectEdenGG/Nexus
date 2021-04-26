@@ -174,8 +174,7 @@
         <dependency>
             <groupId>me.pugabyte</groupId>
             <artifactId>eden-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <systemPath>${project.basedir}/libs/eden-api-1.0.0-SNAPSHOT.jar</systemPath>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
