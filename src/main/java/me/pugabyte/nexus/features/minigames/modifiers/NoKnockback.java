@@ -11,8 +11,10 @@ public class NoKnockback implements MinigameModifier {
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
 		minigamer.getPlayer().getInventory().forEach(itemStack -> {
+			if (itemStack == null) return;
 			ItemMeta meta = itemStack.getItemMeta();
 			meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier("minigame_noknockback", 10, AttributeModifier.Operation.ADD_NUMBER));
+			itemStack.setItemMeta(meta);
 		});
 	}
 

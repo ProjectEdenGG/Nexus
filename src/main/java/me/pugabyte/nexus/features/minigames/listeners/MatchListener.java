@@ -18,6 +18,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -341,6 +342,7 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying())
 			return;
+		new MinigamesSettingService().get().getModifier().onProjectileSpawn(projectile);
 		PerkOwner owner = new PerkOwnerService().get(player);
 		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile, minigamer.getMatch()));
 	}

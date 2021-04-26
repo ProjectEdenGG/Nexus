@@ -14,8 +14,10 @@ public class HalfKnockback implements MinigameModifier {
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
 		minigamer.getPlayer().getInventory().forEach(itemStack -> {
+			if (itemStack == null) return;
 			ItemMeta meta = itemStack.getItemMeta();
 			meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(UUID.randomUUID(), "minigame_halfknockback", 0.5, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
+			itemStack.setItemMeta(meta);
 		});
 	}
 

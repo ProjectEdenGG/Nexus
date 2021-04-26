@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Data
 @Entity("minigames_setting")
 @NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class})
 public class MinigamesSetting extends PlayerOwnedObject {
