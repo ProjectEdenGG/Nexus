@@ -28,20 +28,26 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTick
 import me.pugabyte.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.BossBarBuilder;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -78,6 +84,8 @@ public class Match {
 	private MatchData matchData;
 	private MatchTasks tasks;
 	private Set<Location> usedSpawnpoints = new HashSet<>();
+	@Nullable
+	private BossBar modifierBar;
 
 	public Minigamer getMinigamer(Player player) {
 		for (Minigamer minigamer : minigamers)
@@ -182,6 +190,7 @@ public class Match {
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
 
+		if (modifierBar != null) minigamer.getPlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
 		if (scoreboardTeams != null) scoreboardTeams.handleQuit(minigamer);
 
@@ -203,6 +212,7 @@ public class Match {
 			balance();
 			initializeScores();
 			teleportIn();
+			startModifierBar();
 			startTimer(); // -> arena.getMechanic().startTimer();
 			arena.getMechanic().onStart(event);
 			if (scoreboard != null) scoreboard.update();
@@ -228,6 +238,7 @@ public class Match {
 		clearHolograms();
 		clearEntities();
 		clearStates();
+		stopModifierBar();
 		toGamelobby();
 		try {
 			arena.getMechanic().onEnd(event);
@@ -287,6 +298,18 @@ public class Match {
 			matchData = (MatchData) matchDataMap.get(arena.getMechanic()).newInstance(this);
 		else
 			matchData = new MatchData(this);
+	}
+
+	private void startModifierBar() {
+		MinigameModifier modifier = new MinigamesSettingService().get().getModifier();
+		if (modifier instanceof NoModifier) return;
+		modifierBar = new BossBarBuilder().title(modifier.getComponent()).color(BossBar.Color.BLUE).build();
+		getMinigamers().forEach(minigamer -> minigamer.getPlayer().showBossBar(modifierBar));
+	}
+
+	private void stopModifierBar() {
+		if (modifierBar == null) return;
+		getAllPlayers().forEach(player -> player.hideBossBar(modifierBar));
 	}
 
 	private void startTimer() {

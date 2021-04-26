@@ -14,6 +14,8 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -31,6 +33,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSetting;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
@@ -41,6 +45,7 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -560,6 +565,22 @@ public class MinigamesCommand extends CustomCommand {
 		send(Minigames.PREFIX + "Now hiding "+type.toString().toLowerCase()+" particles");
 	}
 
+	@Path("modifier <type>")
+	@Permission("group.staff")
+	void modifier(MinigameModifier type) {
+		MinigamesSettingService service = new MinigamesSettingService();
+		MinigamesSetting data = service.get();
+		data.setModifier(type);
+		service.save(data);
+		send(PREFIX + "Minigame modifier set to &e" + type.getName());
+	}
+
+	@Path("modifier random")
+	@Permission("group.staff")
+	void modifierRandom() {
+		modifier(RandomUtils.randomElement(Arrays.stream(MinigameModifiers.values()).map(MinigameModifiers::getModifier).collect(Collectors.toList())));
+	}
+
 	private Match getRunningMatch(Arena arena) {
 		Match match = MatchManager.find(arena);
 
@@ -628,6 +649,19 @@ public class MinigamesCommand extends CustomCommand {
 		return context.getTeams().stream()
 				.map(Team::getName)
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
+	}
+
+	@ConverterFor({MinigameModifier.class})
+	MinigameModifier convertToModifier(String value) {
+		return MinigameModifiers.valueOf(value.toUpperCase()).getModifier();
+	}
+
+	@TabCompleterFor({MinigameModifier.class})
+	List<String> tabCompleteModifier(String filter) {
+		return Arrays.stream(MinigameModifiers.values())
+				.map(modifier -> modifier.name().toLowerCase())
+				.filter(modifier -> modifier.startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 }
