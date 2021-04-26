@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.mobheads.MobHeadType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -171,20 +172,18 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 					case MUSHROOM_COW:
 						material = new ItemStack(Material.MOOSHROOM_SPAWN_EGG);
 						break;
-					case ENDER_DRAGON:
-						material = new ItemStack(Material.DRAGON_HEAD);
-						break;
-					case WITHER:
-						material = new ItemStack(Material.WITHER_SKELETON_SKULL);
-						break;
-					case IRON_GOLEM:
-						material = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Golem").build();
-						break;
 					case SNOWMAN:
 						material = new ItemStack(Material.PUMPKIN);
 						break;
+					case GIANT:
+						material = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
+						break;
 					default:
-						material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
+						try {
+							material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
+						} catch (IllegalArgumentException e) {
+							material = MobHeadType.of(entity).getGeneric();
+						}
 				}
 				ItemStack item = new ItemBuilder(material)
 						.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))

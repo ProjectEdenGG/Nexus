@@ -7,10 +7,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
-import org.bukkit.event.Listener;
 
 @Aliases({"bearfair21warp", "bf21warps", "bf21warp"})
-public class BearFair21WarpsCommand extends _WarpCommand implements Listener {
+public class BearFair21WarpsCommand extends _WarpCommand {
 
 	public BearFair21WarpsCommand(CommandEvent event) {
 		super(event);

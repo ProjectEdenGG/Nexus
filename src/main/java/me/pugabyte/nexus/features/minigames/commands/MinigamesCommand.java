@@ -495,7 +495,6 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens [user]")
-	@Permission("group.seniorstaff")
 	void getTokens(@Arg("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(nerd);

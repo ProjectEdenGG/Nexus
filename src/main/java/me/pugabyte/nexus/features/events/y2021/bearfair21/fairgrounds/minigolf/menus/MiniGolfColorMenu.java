@@ -82,7 +82,7 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 		if (user.getSnowball() == null)
 			MiniGolf.giveKit(user);
 
-		String message = MiniGolf.getPREFIX() + "Set color to: ";
+		String message = "Set color to: ";
 		String colorName = StringUtils.camelCase(color);
 
 		if (color.equals(MiniGolfColor.RAINBOW))

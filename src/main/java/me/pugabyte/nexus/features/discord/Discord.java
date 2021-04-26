@@ -27,6 +27,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -112,6 +113,7 @@ public class Discord extends Feature {
 		return discordize(PlainComponentSerializer.plain().serialize(message));
 	}
 
+	@Nullable
 	public static Guild getGuild() {
 		if (Bot.KODA.jda() == null) return null;
 		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());

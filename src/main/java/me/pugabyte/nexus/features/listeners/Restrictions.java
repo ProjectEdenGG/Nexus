@@ -45,6 +45,12 @@ public class Restrictions implements Listener {
 	}
 
 	@EventHandler
+	public void onPortalCreateEvent(PortalCreateEvent event) {
+		if (WorldGroup.CREATIVE.contains(event.getWorld()))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onWitherRoseEffect(EntityPotionEffectEvent event) {
 		if (event.getCause() == Cause.WITHER_ROSE)
 			if (event.getEntity() instanceof Player)

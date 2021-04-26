@@ -21,7 +21,7 @@ public class WeeeCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player>")
+	@Path("[player]")
 	void weee(@Arg("self") Player player) {
 		List<Vector> vectors = Arrays.asList(new Vector(3, 0, 1), new Vector(-3, 0, 1), new Vector(1, 0, 3), new Vector(1, 0, -3), new Vector(0, 2.5, 0));
 
