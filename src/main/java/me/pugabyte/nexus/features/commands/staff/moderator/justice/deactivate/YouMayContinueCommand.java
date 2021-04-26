@@ -36,7 +36,7 @@ public class YouMayContinueCommand extends _JusticeCommand {
 		}
 
 		line(2);
-		VanishAPI.showPlayer(player());
+		VanishAPI.hidePlayer(player());
 		Chat.setActiveChannel(player(), StaticChannel.STAFF);
 	}
 

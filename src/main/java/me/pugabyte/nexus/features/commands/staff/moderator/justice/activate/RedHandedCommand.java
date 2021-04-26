@@ -40,7 +40,7 @@ public class RedHandedCommand extends _PunishmentCommand {
 			else
 				player().setGameMode(GameMode.SURVIVAL);
 
-		VanishAPI.hidePlayer(player());
+		VanishAPI.showPlayer(player());
 		player().setFallDistance(0);
 		player().setAllowFlight(true);
 		player().setFlying(true);
