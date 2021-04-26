@@ -1,14 +1,16 @@
 package me.pugabyte.nexus.models.cooldown;
 
+import eden.mongodb.annotations.PlayerClass;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,7 +19,7 @@ import java.util.UUID;
 	Returns false, if cooldown is still in effect
  */
 @PlayerClass(Cooldown.class)
-public class CooldownService extends MongoService {
+public class CooldownService extends MongoService<Cooldown> {
 
 	private final static Map<UUID, Cooldown> cache = new HashMap<>();
 
@@ -70,6 +72,33 @@ public class CooldownService extends MongoService {
 			return Timespan.of(cooldown.get(type)).format();
 
 		return ".0s";
+	}
+
+	static {
+		Tasks.repeatAsync(Time.MINUTE, Time.HOUR, () -> new CooldownService().janitor());
+	}
+
+	public int janitor() {
+		int count = 0;
+		for (Object object : getAll()) {
+			Cooldown cooldown = get((Cooldown) object);
+			for (String key : new HashSet<>(cooldown.getCooldowns().keySet()))
+				if (cooldown.check(key)) {
+					cooldown.getCooldowns().remove(key);
+					++count;
+				}
+		}
+
+		saveCacheSync();
+		return count;
+	}
+
+	@Override
+	public void saveSync(Cooldown object) {
+		if (object.getCooldowns().isEmpty())
+			super.deleteSync(object);
+		else
+			super.saveSync(object);
 	}
 
 }

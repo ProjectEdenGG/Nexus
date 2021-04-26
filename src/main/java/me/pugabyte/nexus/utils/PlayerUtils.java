@@ -3,22 +3,23 @@ package me.pugabyte.nexus.utils;
 import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.interfaces.PlayerOwnedObject;
+import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -29,17 +30,20 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,6 +51,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
+@UtilityClass
 public class PlayerUtils {
 
 	public enum Dev {
@@ -244,22 +249,24 @@ public class PlayerUtils {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
-	public static void send(Object sender, Object message) {
-		if (sender instanceof CommandSender) {
+	public static void send(@Nullable Object recipient, Object message) {
+		if (recipient == null)
+			return;
+		if (recipient instanceof CommandSender) {
 			if (message instanceof String)
-				((CommandSender) sender).sendMessage(colorize((String) message));
+				((CommandSender) recipient).sendMessage(colorize((String) message));
 			else if (message instanceof JsonBuilder)
-				((CommandSender) sender).sendMessage(((JsonBuilder) message).build());
+				((CommandSender) recipient).sendMessage(((JsonBuilder) message).build());
 			else if (message instanceof Component)
-				((CommandSender) sender).sendMessage(((Component) message));
-		} else if (sender instanceof OfflinePlayer) {
-			OfflinePlayer player = (OfflinePlayer) sender;
+				((CommandSender) recipient).sendMessage(((Component) message));
+		} else if (recipient instanceof OfflinePlayer) {
+			OfflinePlayer player = (OfflinePlayer) recipient;
 			if (player.getPlayer() != null)
 				send(player.getPlayer(), message);
-		} else if (sender instanceof UUID) {
-			send(getPlayer((UUID) sender), message);
-		} else if (sender instanceof PlayerOwnedObject)
-			send(((PlayerOwnedObject) sender).getOfflinePlayer(), message);
+		} else if (recipient instanceof UUID) {
+			send(getPlayer((UUID) recipient), message);
+		} else if (recipient instanceof PlayerOwnedObject)
+			send(getPlayer(((PlayerOwnedObject) recipient).getUuid()), message);
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
@@ -291,14 +298,17 @@ public class PlayerUtils {
 	}
 
 	public static boolean playerHas(Player player, ItemStack itemStack) {
-		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(itemStack))
-			return true;
-		if (Arrays.asList(inventory.getStorageContents()).contains(itemStack))
-			return true;
-		if (Arrays.asList(inventory.getArmorContents()).contains(itemStack))
-			return true;
-		return Arrays.asList(inventory.getExtraContents()).contains(itemStack);
+		return getAllInventoryContents(player).contains(itemStack);
+	}
+
+	@NotNull
+	public static Set<ItemStack> getAllInventoryContents(Player player) {
+		Set<ItemStack> items = new HashSet<>();
+		items.addAll(Arrays.asList(player.getInventory().getContents()));
+		items.addAll(Arrays.asList(player.getInventory().getArmorContents()));
+		items.addAll(Arrays.asList(player.getInventory().getExtraContents()));
+		items.addAll(Arrays.asList(player.getInventory().getItemInOffHand()));
+		return items;
 	}
 
 	@Deprecated

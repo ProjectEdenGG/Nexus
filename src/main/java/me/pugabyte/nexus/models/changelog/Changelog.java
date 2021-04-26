@@ -3,6 +3,8 @@ package me.pugabyte.nexus.models.changelog;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -32,7 +32,7 @@ import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class Changelog extends PlayerOwnedObject {
+public class Changelog implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

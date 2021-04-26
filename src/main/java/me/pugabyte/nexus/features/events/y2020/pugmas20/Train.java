@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
@@ -8,7 +9,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

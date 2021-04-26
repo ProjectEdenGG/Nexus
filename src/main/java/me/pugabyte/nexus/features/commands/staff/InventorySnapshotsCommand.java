@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Timespan;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -25,7 +26,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -72,8 +72,8 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String worldName = snapshot.getLocation().getWorld().getName();
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
 			return json("&3" + index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
-					.addHover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
-					.addHover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
+					.hover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
+					.hover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
 		};
 		paginate(history.getSnapshots(), formatter, "/inventorysnapshots " + history.getName(), page);
@@ -102,7 +102,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	@Path("nearbyDeaths [page]")
 	void nearbyDeaths(@Arg("1") int page) {
 		Map<InventorySnapshot, Double> nearbyDeaths = new HashMap<>();
-		for (InventoryHistory history : service.<InventoryHistory>getAll()) {
+		for (InventoryHistory history : service.getAll()) {
 			history.janitor();
 			for (InventorySnapshot snapshot : history.getSnapshots()) {
 				if (snapshot.getReason() != SnapshotReason.DEATH)

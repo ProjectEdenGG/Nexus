@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands;
 
 import com.google.common.base.Strings;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -20,7 +21,6 @@ import me.pugabyte.nexus.models.referral.Referral.Origin;
 import me.pugabyte.nexus.models.referral.ReferralService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -100,7 +100,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("extraInputs")
 	void others() {
-		List<Referral> referrals = service.<Referral>getAll().stream()
+		List<Referral> referrals = service.getAll().stream()
 				.filter(_referral -> !isNullOrEmpty(_referral.getExtra()))
 				.collect(Collectors.toList());
 

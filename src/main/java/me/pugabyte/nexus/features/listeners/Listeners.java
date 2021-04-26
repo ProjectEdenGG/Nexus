@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.listeners;
 
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.features.Feature;
 import org.bukkit.event.Listener;
 import org.objenesis.ObjenesisStd;

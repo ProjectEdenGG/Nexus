@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.scoreboard;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,6 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.BNScoreboard;
 import me.pugabyte.nexus.utils.Tasks;
@@ -32,7 +32,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters(UUIDConverter.class)
-public class ScoreboardUser extends PlayerOwnedObject {
+public class ScoreboardUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

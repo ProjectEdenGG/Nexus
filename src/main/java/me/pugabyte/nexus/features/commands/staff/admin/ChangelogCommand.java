@@ -77,9 +77,9 @@ public class ChangelogCommand extends CustomCommand {
 			String timestamp = shortDateTimeFormat(entry.getTimestamp());
 			String timestampIso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(entry.getTimestamp());
 			return json("&3" + index + " &e" + timestamp + " &7- &3" + entry.getMinecraftVersion() + " #" + entry.getPaperVersion())
-					.addHover("&3Plugins: &e" + entry.getPluginVersions().size())
-					.addHover("&3Plugin Notes: &e" + entry.getPluginNotes().size())
-					.addHover("&3Commits: &e" + entry.getCommits().size())
+					.hover("&3Plugins: &e" + entry.getPluginVersions().size())
+					.hover("&3Plugin Notes: &e" + entry.getPluginNotes().size())
+					.hover("&3Commits: &e" + entry.getCommits().size())
 					.command("/changelog database debug " + timestampIso);
 		};
 		paginate(changelog.getEntries(), formatter, "/changelog list ", page);

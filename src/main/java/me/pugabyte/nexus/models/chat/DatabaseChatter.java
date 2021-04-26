@@ -3,11 +3,11 @@ package me.pugabyte.nexus.models.chat;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.ChatManager;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 
 import java.util.HashSet;
 import java.util.List;

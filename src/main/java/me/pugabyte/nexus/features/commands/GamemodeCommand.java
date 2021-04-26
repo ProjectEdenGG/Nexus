@@ -31,15 +31,15 @@ public class GamemodeCommand extends CustomCommand {
 	}
 
 	@Path("<gamemode> [player]")
-	void run(GameMode gameMode, @Arg("self") Player player) {
+	void run(GameMode gamemode, @Arg("self") Player player) {
 		if (!isSelf(player))
 			checkPermission("essentials.gamemode.others");
 
-		checkPermission("essentials.gamemode." + gameMode.name().toLowerCase());
-		player.setGameMode(gameMode);
-		send(player, PREFIX + "Switched to &e" + camelCase(gameMode));
+		checkPermission("essentials.gamemode." + gamemode.name().toLowerCase());
+		player.setGameMode(gamemode);
+		send(player, PREFIX + "Switched to &e" + camelCase(gamemode));
 		if (!isSelf(player))
-			send(PREFIX + "Switched to &e" + camelCase(gameMode) + " &3for &e" + player.getName());
+			send(PREFIX + "Switched to &e" + camelCase(gamemode) + " &3for &e" + player.getName());
 	}
 
 	@ConverterFor(GameMode.class)

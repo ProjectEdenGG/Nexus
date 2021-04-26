@@ -1,215 +1,472 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.interfaces.Colored;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent.Builder;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Content;
-import net.md_5.bungee.api.chat.hover.content.Text;
-import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getLastColor;
 
 public class JsonBuilder {
-	private final ComponentBuilder result = new ComponentBuilder("");
-	private ComponentBuilder builder = new ComponentBuilder("");
+	@NonNull private Builder builder = Component.text();
+	@NonNull private final Builder result = Component.text();
 
-	private List<String> lore = new ArrayList<>();
+	private final List<String> lore = new ArrayList<>();
 	private boolean loreize = true;
 
-	// Helper boolean for loops and stuff
-	private boolean initialized;
+	/**
+	 * Helper boolean that does not affect anything within the builder itself.
+	 * Can be used by external methods to determine if the builder has been setup.
+	 * To set this boolean to true, use {@link #initialize()}
+	 */
+	@Getter
+	private boolean initialized = false;
 
 	public JsonBuilder() {
 		this("");
 	}
 
-	public JsonBuilder(String text) {
+	public JsonBuilder(@Nullable String text) {
 		next(text);
 	}
 
-	public JsonBuilder(ComponentBuilder builder) {
-		this.builder = builder;
+	public JsonBuilder(@NotNull JsonBuilder json) {
+		next(json);
+		loreize = json.loreize;
+		initialized = json.initialized;
 	}
 
-	public JsonBuilder(BaseComponent[] builder) {
-		this.builder = new ComponentBuilder().append(builder);
+	public JsonBuilder(@Nullable Component component) {
+		next(component);
 	}
 
-	private void debug(String message) {
-		if (false)
-			Nexus.log(message);
+	public JsonBuilder(@Nullable Builder component) {
+		next(component);
 	}
 
-	public JsonBuilder next(String text) {
-		builder.append(TextComponent.fromLegacyText(getColoredWords(colorize(text))), FormatRetention.NONE);
+	private void debug(@NotNull String message) {
+		Nexus.debug(message);
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable String text) {
+		if (text != null)
+			builder.append(AdventureUtils.fromLegacyText(getColoredWords(colorize(text))));
 		return this;
 	}
 
-	public JsonBuilder next(JsonBuilder json) {
-		builder.append(json.build(), FormatRetention.FORMATTING);
+	@NotNull
+	public JsonBuilder next(@NotNull JsonBuilder json) {
+		builder.append(json.build());
 		return this;
 	}
 
+	@NotNull
+	public JsonBuilder next(@Nullable Component component) {
+		if (component != null)
+			builder.append(component);
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder next(@Nullable Builder component) {
+		if (component != null)
+			builder.append(component);
+		return this;
+	}
+
+	/**
+	 * Applies saved hover text, appends the current working Component to the output Component, and resets the working
+	 * component to default.
+	 */
+	@NotNull
 	public JsonBuilder group() {
-		if (!this.lore.isEmpty()) {
-			String lore = this.lore.stream()
-					.map(line -> colorize(loreize ? StringUtils.loreize(line) : line).replaceAll("\\|\\|", "\n"))
-					.collect(Collectors.joining("\n"));
+		if (!lore.isEmpty()) {
+			List<String> lines = new ArrayList<>();
+			lore.forEach(line -> {
+				if (loreize) line = StringUtils.loreize(line);
+				line = line.replaceAll("\\|\\|", System.lineSeparator()); // TODO remove...
+				lines.addAll(Arrays.asList(colorize(line).split(System.lineSeparator())));
+			});
 
-			addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new ComponentBuilder(lore).create())));
+			Builder hover = Component.text();
+
+			Iterator<String> iterator = lines.iterator();
+			while (iterator.hasNext()) {
+				hover.append(Component.text(iterator.next()));
+				if (iterator.hasNext())
+					hover.append(Component.newline());
+			}
+
+			builder.hoverEvent(hover.build().asHoverEvent());
+			lore.clear();
 		}
 
-		result.append(builder.create(), FormatRetention.NONE);
-		builder = new ComponentBuilder("");
+		result.append(builder);
+		builder = Component.text();
 		return this;
 	}
 
+	@NotNull
 	public JsonBuilder newline() {
-		builder.append("\n");
+		builder.append(Component.text(System.lineSeparator()));
 		group();
 		return this;
 	}
 
+	/**
+	 * Creates an empty line (two newlines)
+	 */
+	@NotNull
 	public JsonBuilder line() {
 		newline();
 		newline();
 		return this;
 	}
 
-	public JsonBuilder color(ChatColor color) {
+	@NotNull
+	public JsonBuilder color(@Nullable TextColor color) {
 		builder.color(color);
 		return this;
 	}
 
-	public JsonBuilder url(String url) {
-		addClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
+	@NotNull
+	public JsonBuilder color(@Nullable Colored color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	public JsonBuilder color(@Nullable ChatColor color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	public JsonBuilder color(@Nullable Color color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	public JsonBuilder color(@Nullable org.bukkit.Color color) {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	/**
+	 * Parses a hexadecimal number
+	 * @param color number in the format "#FFFFFF" (# optional)
+	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 */
+	@NotNull
+	public JsonBuilder color(@Nullable String color) throws IllegalArgumentException {
+		return color(AdventureUtils.textColorOf(color));
+	}
+
+	@NotNull
+	private static TextDecoration.State stateOf(boolean bool) {
+		return bool ? TextDecoration.State.TRUE : TextDecoration.State.FALSE;
+	}
+
+	@NotNull
+	public JsonBuilder decorate(@NotNull TextDecoration... decorations) {
+		return decorate(true, decorations);
+	}
+
+	@NotNull
+	public JsonBuilder decorate(boolean state, @NotNull TextDecoration... decorations) {
+		return decorate(state, Arrays.asList(decorations));
+	}
+
+	@NotNull
+	public JsonBuilder decorate(@NotNull TextDecoration.State state, @NotNull TextDecoration... decorations) {
+		return decorate(state, Arrays.asList(decorations));
+	}
+
+	@NotNull
+	public JsonBuilder decorate(boolean state, @NotNull Collection<TextDecoration> decorations) {
+		return decorate(stateOf(state), new HashSet<>(decorations));
+	}
+
+	@NotNull
+	public JsonBuilder decorate(@NotNull TextDecoration.State state, @NotNull Collection<TextDecoration> decorations) {
+		decorations.forEach(decoration -> builder.decoration(decoration, state));
 		return this;
 	}
 
-	public JsonBuilder command(String command) {
+	@NotNull
+	public JsonBuilder decorate(@NotNull Map<TextDecoration, TextDecoration.State> decorations) {
+		decorations.forEach((decoration, state) -> builder.decoration(decoration, state));
+		return this;
+	}
+
+	/**
+	 * Enables bold
+	 */
+	@NotNull
+	public JsonBuilder bold() {
+		return bold(true);
+	}
+
+	@NotNull
+	public JsonBuilder bold(boolean state) {
+		return bold(stateOf(state));
+	}
+
+	@NotNull
+	public JsonBuilder bold(@NotNull TextDecoration.State state) {
+		return decorate(state, TextDecoration.BOLD);
+	}
+
+	/**
+	 * Enables italicization
+	 */
+	@NotNull
+	public JsonBuilder italic() {
+		return italic(true);
+	}
+
+	@NotNull
+	public JsonBuilder italic(boolean state) {
+		return italic(stateOf(state));
+	}
+
+	@NotNull
+	public JsonBuilder italic(@NotNull TextDecoration.State state) {
+		return decorate(state, TextDecoration.ITALIC);
+	}
+
+
+	/**
+	 * Enables strikethrough
+	 */
+	@NotNull
+	public JsonBuilder strikethrough() {
+		return strikethrough(true);
+	}
+
+	@NotNull
+	public JsonBuilder strikethrough(boolean state) {
+		return strikethrough(stateOf(state));
+	}
+
+	@NotNull
+	public JsonBuilder strikethrough(@NotNull TextDecoration.State state) {
+		return decorate(state, TextDecoration.STRIKETHROUGH);
+	}
+
+	/**
+	 * Enables underlines
+	 */
+	@NotNull
+	public JsonBuilder underline() {
+		return underline(true);
+	}
+
+	@NotNull
+	public JsonBuilder underline(boolean state) {
+		return underline(stateOf(state));
+	}
+
+	@NotNull
+	public JsonBuilder underline(@NotNull TextDecoration.State state) {
+		return decorate(state, TextDecoration.UNDERLINED);
+	}
+
+	/**
+	 * Enables obfuscation (the random gibberish text)
+	 */
+	@NotNull
+	public JsonBuilder obfuscate() {
+		return obfuscate(true);
+	}
+
+	@NotNull
+	public JsonBuilder obfuscate(boolean state) {
+		return obfuscate(stateOf(state));
+	}
+
+	@NotNull
+	public JsonBuilder obfuscate(@NotNull TextDecoration.State state) {
+		return decorate(state, TextDecoration.OBFUSCATED);
+	}
+
+	@NotNull
+	public JsonBuilder style(@NotNull Style style) {
+		builder.style(style);
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder style(@NotNull Consumer<Style.Builder> style) {
+		builder.style(style);
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder clickEvent(@Nullable ClickEvent clickEvent) {
+		builder.clickEvent(clickEvent);
+		return this;
+	}
+
+	/**
+	 * Prompts the player to open a URL when clicked
+	 */
+	@NotNull
+	public JsonBuilder url(@NotNull String url) {
+		return clickEvent(ClickEvent.openUrl(url));
+	}
+
+	/**
+	 * Prompts the player to open a URL when clicked
+	 */
+	@NotNull
+	public JsonBuilder url(@NotNull URL url) {
+		return clickEvent(ClickEvent.openUrl(url));
+	}
+
+	/**
+	 * Makes the player run a command when clicked
+	 * @param command a command, forward slash not required
+	 */
+	@NotNull
+	public JsonBuilder command(@NotNull String command) {
 		if (!command.startsWith("/"))
 			command = "/" + command;
-		addClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-		return this;
+		return clickEvent(ClickEvent.runCommand(command));
 	}
 
-	public JsonBuilder suggest(String command) {
-		addClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
-		return this;
+	/**
+	 * Suggests a command to a player on click by typing it into their chat window
+	 * @param text some text, usually a command
+	 */
+	@NotNull
+	public JsonBuilder suggest(@NotNull String text) {
+		return clickEvent(ClickEvent.suggestCommand(text));
 	}
 
-	public JsonBuilder copy(String command) {
-		addClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, command));
-		return this;
+	@NotNull
+	public JsonBuilder copy(@NotNull String text) {
+		return clickEvent(ClickEvent.copyToClipboard(text));
 	}
 
+	/**
+	 * Sets the page of a book when clicked
+	 * @param page page number
+	 */
+	@NotNull
+	public JsonBuilder bookPage(int page) {
+		return bookPage(String.valueOf(page));
+	}
+
+	/**
+	 * Sets the page of a book when clicked
+	 * @param page page number
+	 */
+	@NotNull
+	public JsonBuilder bookPage(@NotNull String page) {
+		return clickEvent(ClickEvent.changePage(page));
+	}
+
+	@NotNull
 	public JsonBuilder loreize(boolean loreize) {
 		this.loreize = loreize;
 		return this;
 	}
 
-	public JsonBuilder hover(String text) {
-		lore = new ArrayList<String>() {{ add(text); }};
+	/**
+	 * Clears this builder's hover text
+	 */
+	@NotNull
+	public JsonBuilder hover() {
+		lore.clear();
+		builder.hoverEvent(null);
 		return this;
 	}
 
-	public JsonBuilder addHover(String text) {
-		lore.add(text);
-		return this;
+	@NotNull
+	public JsonBuilder hover(@NonNull String... lines) {
+		return hover(Arrays.asList(lines));
 	}
 
-	public JsonBuilder hover(List<String> lines) {
-		lore = lines;
-		return this;
-	}
-
-	public JsonBuilder addHover(List<String> lines) {
+	@NotNull
+	public JsonBuilder hover(@NonNull List<String> lines) {
 		lore.addAll(lines);
 		return this;
 	}
 
-	public JsonBuilder hover(ItemStack itemStack) {
-		Content item = Bukkit.getServer().getItemFactory().hoverContentOf(itemStack);
-		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, item));
+	@NotNull
+	public JsonBuilder hover(@NonNull ItemStack itemStack) {
+		builder.hoverEvent(itemStack.asHoverEvent());
 		return this;
 	}
 
-	public JsonBuilder hover(Entity entity) {
-		Content item = Bukkit.getServer().getItemFactory().hoverContentOf(entity);
-		addHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ENTITY, item));
+	@NotNull
+	public JsonBuilder hover(@NonNull Entity entity) {
+		builder.hoverEvent(entity.asHoverEvent());
 		return this;
 	}
 
-	public JsonBuilder insert(String insertion) {
+	@NotNull
+	public <V> JsonBuilder hover(@Nullable HoverEventSource<V> hoverEvent) {
+		builder.hoverEvent(hoverEvent);
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder hover(@Nullable Component component) {
+		if (component != null)
+			builder.hoverEvent(component.asHoverEvent());
+		return this;
+	}
+
+	@NotNull
+	public JsonBuilder insert(@Nullable String insertion) {
 		builder.insertion(insertion);
-		ComponentBuilder newBuilder = new ComponentBuilder();
-		for (BaseComponent baseComponent : builder.getParts()) {
-			baseComponent.setInsertion(insertion);
-			newBuilder.append(baseComponent, FormatRetention.NONE);
-		}
-		builder = newBuilder;
 		return this;
 	}
 
-	private void addClickEvent(ClickEvent event) {
-		ComponentBuilder newBuilder = new ComponentBuilder();
-		for (BaseComponent baseComponent : builder.getParts()) {
-			baseComponent.setClickEvent(event);
-			newBuilder.append(baseComponent, FormatRetention.NONE);
-		}
-		builder = newBuilder;
-	}
-
-	private void addHoverEvent(HoverEvent event) {
-		ComponentBuilder newBuilder = new ComponentBuilder();
-		for (BaseComponent baseComponent : builder.getParts()) {
-			baseComponent.setHoverEvent(event);
-			newBuilder.append(baseComponent, FormatRetention.NONE);
-		}
-		builder = newBuilder;
-	}
-
-	public boolean isInitialized() {
-		return initialized;
-	}
-
-	public void initialize() {
+	@NotNull
+	public JsonBuilder initialize() {
 		this.initialized = true;
+		return this;
 	}
 
-	public void send(CommandSender sender) {
-		if (sender instanceof Player)
-			sender.spigot().sendMessage(build());
-		else if (sender instanceof OfflinePlayer) {
-			OfflinePlayer player = (OfflinePlayer) sender;
-			if (player.isOnline() && player.getPlayer() != null)
-				player.getPlayer().spigot().sendMessage(build());
-		} else
-			sender.sendMessage(toString());
+	public void send(@Nullable Object recipient) {
+		PlayerUtils.send(recipient, build());
 	}
 
-	public BaseComponent[] build() {
+	@NotNull
+	public Component build() {
 		group();
-		return new ComponentBuilder(result).create();
+		return result.asComponent();
 	}
 
-	private String getColoredWords(String text) {
+	@Contract("null -> null; !null -> !null")
+	private String getColoredWords(@Nullable String text) {
 		if (text == null) return null;
 		StringBuilder builder = new StringBuilder();
 		for (String word : text.split(" "))
@@ -221,12 +478,14 @@ public class JsonBuilder {
 		return result;
 	}
 
+	@NotNull
 	public String toString() {
-		return BaseComponent.toPlainText(new ComponentBuilder(new ComponentBuilder(result).append(builder.create(), FormatRetention.NONE)).create());
+		return AdventureUtils.asPlainText(build());
 	}
 
+	@NotNull
 	public String serialize() {
-		return ComponentSerializer.toString(build());
+		return GsonComponentSerializer.gson().serialize(build());
 	}
 
 

@@ -50,7 +50,7 @@ public class ShipColorMenu extends MenuUtils implements InventoryProvider {
 			if (concrete != null) {
 				ItemStack color = new ItemBuilder(concrete).name(StringUtils.camelCase(colorType.name())).build();
 				contents.set(new SlotPos(row, col), ClickableItem.from(color, e -> {
-					user.setShipColor(colorType.getColor());
+					user.setShipColor(colorType.getBukkitColor());
 					service.save(user);
 					e.getPlayer().closeInventory();
 					ClientsideBlocks.update(player);

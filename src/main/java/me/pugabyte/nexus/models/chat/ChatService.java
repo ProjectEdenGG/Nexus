@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ChatService extends MongoService {
+public class ChatService extends MongoService<Chatter> {
 	private final static Map<UUID, Chatter> cache = new HashMap<>();
 
 	public Map<UUID, Chatter> getCache() {

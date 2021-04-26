@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.regions.Region;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import lombok.Data;
 import me.pugabyte.nexus.features.minigames.mechanics.Mastermind;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -8,8 +10,6 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 
 @Data
 @MatchDataFor(Mastermind.class)

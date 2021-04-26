@@ -55,7 +55,7 @@ public class KangarooJumpingMenu extends MenuUtils implements InventoryProvider 
 		KangarooJumpingArena arena;
 
 		public KangarooJumpingSubMenu(@NonNull Arena arena) {
-			this.arena = (KangarooJumpingArena) ArenaManager.convert(arena, KangarooJumpingArena.class);
+			this.arena = ArenaManager.convert(arena, KangarooJumpingArena.class);
 		}
 
 		@Override

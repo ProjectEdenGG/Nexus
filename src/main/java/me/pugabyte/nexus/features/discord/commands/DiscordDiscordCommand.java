@@ -3,13 +3,14 @@ package me.pugabyte.nexus.features.discord.commands;
 import com.google.common.base.Strings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.features.discord.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
@@ -18,7 +19,6 @@ import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.Permission;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.OfflinePlayer;
@@ -110,7 +110,7 @@ public class DiscordDiscordCommand extends Command {
 				}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}
 		});

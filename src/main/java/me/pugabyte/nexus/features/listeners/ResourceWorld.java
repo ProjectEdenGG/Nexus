@@ -39,13 +39,12 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
+import static me.pugabyte.nexus.utils.PlayerUtils.getAllInventoryContents;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -98,13 +97,7 @@ public class ResourceWorld implements Listener {
 
 			rejectedMaterials.clear();
 
-			Set<ItemStack> items = new HashSet<>();
-			items.addAll(Arrays.asList(player.getInventory().getContents()));
-			items.addAll(Arrays.asList(player.getInventory().getArmorContents()));
-			items.addAll(Arrays.asList(player.getInventory().getExtraContents()));
-			items.addAll(Arrays.asList(player.getInventory().getItemInOffHand()));
-
-			for (ItemStack item : items)
+			for (ItemStack item : getAllInventoryContents(player))
 				for (ItemStack content : getShulkerContents(item))
 					if (materials.contains(content.getType())) {
 						rejectedMaterials.add(content.getType());

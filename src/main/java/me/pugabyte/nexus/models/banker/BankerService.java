@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.banker;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Banker.class)
-public class BankerService extends MongoService {
+public class BankerService extends MongoService<Banker> {
 	private final static Map<UUID, Banker> cache = new HashMap<>();
 
 	public Map<UUID, Banker> getCache() {
@@ -25,22 +25,22 @@ public class BankerService extends MongoService {
 
 	public double getBalance(OfflinePlayer player, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
-		return this.<Banker>get(player).getBalance(shopGroup).doubleValue();
+		return this.get(player).getBalance(shopGroup).doubleValue();
 	}
 
 	public String getBalanceFormatted(OfflinePlayer player, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
-		return this.<Banker>get(player).getBalanceFormatted(shopGroup);
+		return this.get(player).getBalanceFormatted(shopGroup);
 	}
 
 	public boolean has(OfflinePlayer player, double money, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
-		return this.<Banker>get(player).has(money, shopGroup);
+		return this.get(player).has(money, shopGroup);
 	}
 
 	public boolean has(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
-		return this.<Banker>get(player).has(money, shopGroup);
+		return this.get(player).has(money, shopGroup);
 	}
 
 	public void deposit(OfflinePlayer player, double amount, ShopGroup shopGroup, TransactionCause cause) {
@@ -92,7 +92,7 @@ public class BankerService extends MongoService {
 	}
 
 	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
-		transfer((Banker) get(from), get(to), money, shopGroup, cause);
+		transfer(get(from), get(to), money, shopGroup, cause);
 	}
 
 	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
@@ -103,7 +103,7 @@ public class BankerService extends MongoService {
 	}
 
 	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
-		transfer(get(from), this.<Banker>get(to), money, shopGroup, transaction);
+		transfer(get(from), this.get(to), money, shopGroup, transaction);
 	}
 
 	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {

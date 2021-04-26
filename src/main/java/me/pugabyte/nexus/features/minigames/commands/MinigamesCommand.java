@@ -34,6 +34,9 @@ import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
+import me.pugabyte.nexus.models.punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.PunishmentType;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
@@ -97,6 +100,17 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("use")
 	void quit() {
 		minigamer.quit();
+	}
+
+	@Path("warn <player> [reason]")
+	@Permission(value = "group.moderator", absolute = true)
+	void warn(Player player, String reason) {
+		if (!Minigames.isMinigameWorld(player.getWorld()))
+			error("Target player is not in minigames");
+
+		player.getWorld().strikeLightningEffect(player.getLocation());
+		Punishments.of(player).add(Punishment.ofType(PunishmentType.WARN).punisher(uuid())
+				.input("Please obey the rules of our minigames" + (isNullOrEmpty(reason) ? "" : ": " + reason)));
 	}
 
 	@Path("testMode [boolean]")

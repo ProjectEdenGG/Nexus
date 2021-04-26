@@ -76,7 +76,7 @@ public class PublicChannel implements Channel {
 			recipients.addAll(chatter.getPlayer().getWorld().getPlayers());
 
 		return recipients.stream()
-				.map(player -> (Chatter) new ChatService().get(player))
+				.map(player -> new ChatService().get(player))
 				.filter(_chatter -> _chatter.canJoin(this))
 				.filter(_chatter -> _chatter.hasJoined(this))
 				.collect(Collectors.toSet());
@@ -257,7 +257,7 @@ public class PublicChannel implements Channel {
 	}
 
 	public void broadcastIngame(Chatter chatter, JsonBuilder builder) {
-		Bukkit.getConsoleSender().spigot().sendMessage(builder.build());
+		Bukkit.getConsoleSender().sendMessage(builder.build());
 		getRecipients(chatter).forEach(_chatter -> _chatter.send(builder));
 	}
 

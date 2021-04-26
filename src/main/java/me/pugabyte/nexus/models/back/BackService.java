@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.back;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import org.bukkit.Location;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @PlayerClass(Back.class)
-public class BackService extends MongoService {
+public class BackService extends MongoService<Back> {
 	private final static Map<UUID, Back> cache = new HashMap<>();
 
 	public Map<UUID, Back> getCache() {

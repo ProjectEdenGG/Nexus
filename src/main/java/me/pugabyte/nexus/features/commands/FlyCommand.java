@@ -20,7 +20,7 @@ public class FlyCommand extends CustomCommand {
 		if (enable == null)
 			enable = !player.getAllowFlight();
 
-		player.setFallDistance(0f);
+		player.setFallDistance(0);
 		player.setAllowFlight(enable);
 
 		if (!player.getAllowFlight())

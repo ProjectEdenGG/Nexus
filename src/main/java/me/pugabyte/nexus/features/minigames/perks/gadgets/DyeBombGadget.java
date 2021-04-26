@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.minigames.perks.gadgets;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.features.minigames.models.perks.common.GadgetPerk;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 

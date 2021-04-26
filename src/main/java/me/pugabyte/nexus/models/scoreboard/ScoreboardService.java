@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.scoreboard;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(ScoreboardUser.class)
-public class ScoreboardService extends MongoService {
+public class ScoreboardService extends MongoService<ScoreboardUser> {
 	private final static Map<UUID, ScoreboardUser> cache = new HashMap<>();
 
 	public Map<UUID, ScoreboardUser> getCache() {

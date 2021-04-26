@@ -160,7 +160,7 @@ public final class Thimble extends TeamlessMechanic {
 			lines.put("&1", 0);
 			lines.put("&2Jumping:", 0);
 			if (matchData.getTurnMinigamer() != null) {
-				lines.put("&a" + matchData.getTurnMinigamer().getColoredName(), 0);
+				lines.put("&a" + matchData.getTurnMinigamer().getVanillaColoredName(), 0);
 			} else {
 				lines.put("&f", 0);
 			}
@@ -169,7 +169,7 @@ public final class Thimble extends TeamlessMechanic {
 		if (!match.isStarted()) {
 			// Shows players in lobby
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), 0);
 		} else {
 			// Shows players scores
 			for (Minigamer minigamer : match.getMinigamers())
@@ -387,7 +387,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			blockLocation.getBlock().setType(concreteType);
 
-			Color color = ColorType.of(concreteType).getColor();
+			Color color = ColorType.of(concreteType).getBukkitColor();
 			Location fireworkLocation = blockLocation.clone().add(0.0, 2.0, 0.0);
 
 			new FireworkLauncher(fireworkLocation)
@@ -564,7 +564,7 @@ public final class Thimble extends TeamlessMechanic {
 		void editPool(Match match) {
 			ThimbleArena arena = match.getArena();
 			ThimbleMatchData matchData = match.getMatchData();
-			Thimble mechanic = (Thimble) arena.getMechanic();
+			Thimble mechanic = arena.getMechanic();
 
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();

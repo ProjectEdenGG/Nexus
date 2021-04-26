@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.home;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(HomeOwner.class)
-public class HomeService extends MongoService {
+public class HomeService extends MongoService<HomeOwner> {
 	private final static Map<UUID, HomeOwner> cache = new HashMap<>();
 
 	public Map<UUID, HomeOwner> getCache() {
@@ -26,9 +26,9 @@ public class HomeService extends MongoService {
 	}
 
 	@Override
-	public <T> void save(T object) {
-		((HomeOwner) object).getHomes().sort(Comparator.comparing(home -> home.getName().toLowerCase()));
-		super.save(object);
+	public void save(HomeOwner homeOwner) {
+		homeOwner.getHomes().sort(Comparator.comparing(home -> home.getName().toLowerCase()));
+		super.save(homeOwner);
 	}
 
 }

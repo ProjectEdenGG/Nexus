@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models.afk;
 
 import com.dieselpoint.norm.serialize.DbSerializer;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -11,7 +12,6 @@ import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

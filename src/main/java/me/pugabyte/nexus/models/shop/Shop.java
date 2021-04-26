@@ -6,6 +6,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.ShopUtils;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
@@ -67,7 +67,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, ItemStackConverter.class})
-public class Shop extends PlayerOwnedObject {
+public class Shop implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

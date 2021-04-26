@@ -2,27 +2,35 @@ package me.pugabyte.nexus.features.scoreboard;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.commands.PushCommand;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.banker.BankerService;
-import me.pugabyte.nexus.models.chat.*;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.chat.Channel;
+import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.PrivateChannel;
+import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -196,9 +204,8 @@ public enum ScoreboardLine {
 	HOURS {
 		@Override
 		public String render(Player player) {
-			Hours hours = new HoursService().get(player);
-			int seconds = hours == null ? 0 : hours.getTotal();
-			return "&3Hours: &e" + TimespanBuilder.of(seconds).noneDisplay(true).format();
+			Hours hours = new HoursService().get(player.getUniqueId());
+			return "&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format();
 		}
 	},
 

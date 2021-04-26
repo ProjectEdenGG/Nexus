@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.coupon;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.coupon.Coupons.Coupon;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Coupons.class)
-public class CouponService extends MongoService {
+public class CouponService extends MongoService<Coupons> {
 	private final static Map<UUID, Coupons> cache = new HashMap<>();
 
 	public Map<UUID, Coupons> getCache() {
@@ -18,13 +18,12 @@ public class CouponService extends MongoService {
 	}
 
 	@Override
-	public <T> void save(T object) {
-		Coupons coupons = (Coupons) object;
+	public void save(Coupons coupons) {
 		if (coupons.getCoupons().isEmpty())
 			super.delete(coupons);
 		else {
 			coupons.getCoupons().sort(Comparator.comparing(Coupon::getId));
-			super.save(object);
+			super.save(coupons);
 		}
 	}
 

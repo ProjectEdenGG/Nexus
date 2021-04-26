@@ -8,6 +8,9 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import eden.annotations.Environments;
+import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -17,7 +20,6 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.Minigames;
-import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -25,12 +27,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.invisiblearmour.InvisibleArmor;
 import me.pugabyte.nexus.models.invisiblearmour.InvisibleArmorService;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Bukkit;
@@ -52,7 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @NoArgsConstructor
 @Permission("invis.armour")
 @Aliases({"ia", "invisarmor", "invisarmour", "invisiblearmor"})
-@Environments(Env.DEV)
+@Environments({Env.DEV, Env.TEST})
 public class InvisibleArmorCommand extends CustomCommand {
 	private static final List<ItemSlot> armourSlots = Arrays.asList(ItemSlot.HEAD, ItemSlot.CHEST, ItemSlot.LEGS, ItemSlot.FEET);
 	private final InvisibleArmorService service = new InvisibleArmorService();

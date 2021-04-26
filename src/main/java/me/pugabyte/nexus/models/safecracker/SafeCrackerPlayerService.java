@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models.safecracker;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.annotations.Disabled;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import org.bukkit.OfflinePlayer;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @PlayerClass(SafeCrackerPlayer.class)
 @Disabled
-public class SafeCrackerPlayerService extends MongoService {
+public class SafeCrackerPlayerService extends MongoService<SafeCrackerPlayer> {
 	private final static Map<UUID, SafeCrackerPlayer> cache = new HashMap<>();
 
 	public Map<UUID, SafeCrackerPlayer> getCache() {

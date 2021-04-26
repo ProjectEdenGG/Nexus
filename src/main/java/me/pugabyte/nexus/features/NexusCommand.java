@@ -2,6 +2,11 @@ package me.pugabyte.nexus.features;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
+import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.FormatType;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +43,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;
@@ -59,10 +63,6 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
@@ -702,6 +702,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Hello!");
 	}
 
+	@Async
+	@Path("cooldown janitor")
+	void cooldownJanitor() {
+		send(PREFIX + "Janitored " + new CooldownService().janitor() + " records");
+	}
+
 	@Path("argPermTest [one] [two] [three] [four] [five]")
 	void argPermTest(
 			@Arg(tabCompleter = Player.class) String one,
@@ -874,19 +880,19 @@ public class NexusCommand extends CustomCommand implements Listener {
 			AdvancementProgress progress = player.getAdvancementProgress(advancement);
 			json.next((progress.isDone() ? "&e" : "&c") + advancement.getKey().getKey());
 
-			json.addHover("&eAwarded Criteria:");
+			json.hover("&eAwarded Criteria:");
 			for (String criteria : progress.getAwardedCriteria()) {
 				String text = "&7- &e" + criteria;
 				Date dateAwarded = progress.getDateAwarded(criteria);
 				if (dateAwarded != null)
 					text += " &7- " + shortDateFormat(dateAwarded.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-				json.addHover(text);
+				json.hover(text);
 			}
 
-			json.addHover(" ");
-			json.addHover("&cRemaining Criteria:");
+			json.hover(" ");
+			json.hover("&cRemaining Criteria:");
 			for (String criteria : progress.getRemainingCriteria())
-				json.addHover("&7- &c" + criteria);
+				json.hover("&7- &c" + criteria);
 
 			return json;
 		};
@@ -994,6 +1000,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	List<String> tabCompleteStaffMember(String filter) {
 		return new HoursService().getActivePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff())
+				.map(PlayerUtils::getPlayer)
 				.map(OfflinePlayer::getName)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());

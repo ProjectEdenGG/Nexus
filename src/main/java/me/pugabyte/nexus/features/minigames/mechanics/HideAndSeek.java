@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
+import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -24,7 +25,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -250,8 +250,8 @@ public class HideAndSeek extends Infection {
 		List<Minigamer> humans = getHumans(match);
 		lines.put("", 0);
 		lines.put("&3&lPlayer Count", 0);
-		lines.put("- " + getZombieTeam(match).getColoredName(), -1 * getZombies(match).size());
-		lines.put("- " + getHumanTeam(match).getColoredName(), -1 * humans.size());
+		lines.put("- " + getZombieTeam(match).getVanillaColoredName(), -1 * getZombies(match).size());
+		lines.put("- " + getHumanTeam(match).getVanillaColoredName(), -1 * humans.size());
 
 		lines.put("&3&lSurviving Blocks", 99);
 		Map<Material, Integer> blockCounts = new HashMap<>();

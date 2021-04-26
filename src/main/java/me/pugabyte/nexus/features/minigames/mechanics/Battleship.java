@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.commands.BattleshipCommand;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
@@ -31,8 +33,6 @@ import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
@@ -154,7 +154,7 @@ public class Battleship extends TeamMechanic {
 			lines.add("&cTime: &e" + Timespan.of(matchData.getStart(), to).format());
 
 			if (matchData.isEnding()) {
-				lines.add("&cWinner: " + matchData.getWinnerTeam().getColoredName());
+				lines.add("&cWinner: " + matchData.getWinnerTeam().getVanillaColoredName());
 			} else {
 				long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
 				String timeLeft = Timespan.of(arena.getTurnTime() - turnDuration).format();

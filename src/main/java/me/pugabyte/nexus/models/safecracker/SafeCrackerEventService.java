@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.models.safecracker;
 
+import eden.annotations.Disabled;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.annotations.Disabled;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent.SafeCrackerGame;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @PlayerClass(SafeCrackerEvent.class)
 @Disabled
-public class SafeCrackerEventService extends MongoService {
+public class SafeCrackerEventService extends MongoService<SafeCrackerEvent> {
 
 	private final static Map<UUID, SafeCrackerEvent> cache = new HashMap<>();
 

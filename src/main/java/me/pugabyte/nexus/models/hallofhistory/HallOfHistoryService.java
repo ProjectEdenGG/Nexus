@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.hallofhistory;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(HallOfHistory.class)
-public class HallOfHistoryService extends MongoService {
+public class HallOfHistoryService extends MongoService<HallOfHistory> {
 	public static Map<UUID, HallOfHistory> cache = new HashMap<>();
 
 	public Map<UUID, HallOfHistory> getCache() {

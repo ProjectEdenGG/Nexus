@@ -6,6 +6,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import dev.morphia.annotations.PreLoad;
+import eden.mongodb.serializers.BigDecimalConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +20,6 @@ import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.BigDecimalConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
@@ -41,7 +41,7 @@ import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, BigDecimalConverter.class})
-public class Banker extends PlayerOwnedObject {
+public class Banker implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

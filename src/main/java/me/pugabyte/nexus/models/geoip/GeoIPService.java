@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.models.geoip;
 
 import com.google.gson.Gson;
+import eden.mongodb.annotations.PlayerClass;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(GeoIP.class)
-public class GeoIPService extends MongoService {
+public class GeoIPService extends MongoService<GeoIP> {
 	private final static Map<UUID, GeoIP> cache = new HashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {

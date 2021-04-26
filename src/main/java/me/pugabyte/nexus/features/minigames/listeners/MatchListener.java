@@ -49,6 +49,7 @@ import java.text.DecimalFormat;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsOp;
+import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 public class MatchListener implements Listener {
 
@@ -91,7 +92,7 @@ public class MatchListener implements Listener {
 				return;
 
 		event.setCancelled(true);
-		Nexus.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + event.getFrom() + " to " + event.getTo());
+		Nexus.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
 		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 

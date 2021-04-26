@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.models.changelog;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.changelog.Changelog.ChangelogEntry;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @PlayerClass(Changelog.class)
-public class ChangelogService extends MongoService {
+public class ChangelogService extends MongoService<Changelog> {
 	private final static Map<UUID, Changelog> cache = new HashMap<>();
 
 	public Map<UUID, Changelog> getCache() {
@@ -18,10 +18,9 @@ public class ChangelogService extends MongoService {
 	}
 
 	@Override
-	public <T> void saveSync(T object) {
-		Changelog changelog = (Changelog) object;
+	public void saveSync(Changelog changelog) {
 		changelog.getEntries().sort(Comparator.comparing(ChangelogEntry::getTimestamp).reversed());
-		super.saveSync(object);
+		super.saveSync(changelog);
 	}
 
 }

@@ -87,7 +87,7 @@ public class BridgeCommand extends CustomCommand {
 	@Path("updateRoleColors <rank>")
 	void updateRoleColors(Rank rank) {
 		int updated = 0;
-		for (DiscordUser user : service.<DiscordUser>getAll()) {
+		for (DiscordUser user : service.getAll()) {
 			if (user.getRoleId() == null || user.getUuid() == null)
 				continue;
 

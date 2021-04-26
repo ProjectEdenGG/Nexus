@@ -3,9 +3,9 @@ package me.pugabyte.nexus.framework.interfaces;
 import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.Arrays;
 
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
 
@@ -39,10 +39,11 @@ public interface Colored {
 	}
 
 	/**
-	 * Returns the Bukkit ChatColor corresponding to this object, which is one of the vanilla chat colors.
+	 * Returns one of the official vanilla colors. Overriding methods may choose to return a similar chat color.
+	 * If none are found, White is returned.
 	 */
-	default @Nullable org.bukkit.ChatColor getBukkitChatColor() {
-		return null;
+	default @NotNull ChatColor getVanillaChatColor() {
+		return Arrays.stream(ChatColor.values()).filter(chatColor -> chatColor.getColor() != null && chatColor.getColor().equals(getColor())).findAny().orElse(ChatColor.WHITE);
 	}
 
 	/**

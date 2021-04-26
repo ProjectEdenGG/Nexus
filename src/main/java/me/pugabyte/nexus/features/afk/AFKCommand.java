@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.afk;
 
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -42,7 +42,7 @@ public class BalanceTopCommand extends CustomCommand {
 		else
 			processing.add(uuid());
 
-		List<Banker> bankers = service.<Banker>getAll().stream()
+		List<Banker> bankers = service.getAll().stream()
 				.filter(banker -> !banker.isMarket() && banker.getBalance(shopGroup).compareTo(BigDecimal.valueOf(500)) != 0)
 				.sorted(Comparator.comparing(banker -> banker.getBalance(shopGroup), Comparator.reverseOrder()))
 				.collect(Collectors.toList());

@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.safecracker.menus;
 
+import eden.annotations.Disabled;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.safecracker.SafeCracker;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.nexus.utils.ItemBuilder;

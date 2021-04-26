@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands.poof;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.models.lwc.LWCProtection;
 import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;

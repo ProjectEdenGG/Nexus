@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;

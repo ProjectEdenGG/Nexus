@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.chat;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.Setter;
 import me.pugabyte.nexus.features.chat.events.PrivateChatEvent;
@@ -18,7 +19,6 @@ import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -132,8 +132,8 @@ public class ChatManager {
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")
-					.addHover("&cChat message was filtered")
-					.addHover("&cClick to see original message")
+					.hover("&cChat message was filtered")
+					.hover("&cClick to see original message")
 					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
 
 		Component aPlayer = AdventureUtils.fromJson(json);
@@ -150,9 +150,7 @@ public class ChatManager {
 	}
 
 	public static void process(PrivateChatEvent event) {
-		Set<String> othersNames = event.getChannel().getOthersNames(event.getChatter());
-
-		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> ")
+		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + event.getRecipientNames() + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nickname.of(event.getChatter()) + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
@@ -180,7 +178,7 @@ public class ChatManager {
 		if (seen > 0)
 			event.getChatter().send(to);
 
-		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
+		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + event.getRecipientNames() + ": " + event.getMessage());
 	}
 
 }

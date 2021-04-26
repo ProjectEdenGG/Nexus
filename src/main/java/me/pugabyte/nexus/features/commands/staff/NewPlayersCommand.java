@@ -1,16 +1,16 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class NewPlayersCommand extends CustomCommand {
 	void run(@Arg("1") int page) {
 		HashMap<Player, Integer> players = new HashMap<>();
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			Hours hours = new HoursService().get(player);
+			Hours hours = new HoursService().get(player.getUniqueId());
 			if (hours.getTotal() < (Time.HOUR.get() / 20))
 				players.put(player, hours.getTotal());
 		}

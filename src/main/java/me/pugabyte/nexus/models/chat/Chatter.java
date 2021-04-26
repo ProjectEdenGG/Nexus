@@ -6,12 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.ChatManager;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 
@@ -21,14 +19,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.features.chat.Chat.PREFIX;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Chatter extends PlayerOwnedObject {
+public class Chatter implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Channel activeChannel;
@@ -118,16 +115,6 @@ public class Chatter extends PlayerOwnedObject {
 				setActiveChannel(joinedChannels.iterator().next());
 			else
 				setActiveChannel(null);
-	}
-
-	public void send(String message) {
-		if (isOnline())
-			getOfflinePlayer().getPlayer().sendMessage(colorize(message));
-	}
-
-	public void send(JsonBuilder message) {
-		if (isOnline())
-			getOfflinePlayer().getPlayer().spigot().sendMessage(message.build());
 	}
 
 	public void updateChannels() {

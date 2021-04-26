@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.models.achievement;
 
+import eden.models.hours.Hours;
+import eden.models.hours.HoursService;
 import me.pugabyte.nexus.features.achievements.events.AchievementCompletedEvent;
 import me.pugabyte.nexus.models.banker.BankerService;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.EnumUtils;
 import org.bukkit.Bukkit;
@@ -480,7 +480,7 @@ public enum Achievement {
 			case NUMBER:
 				return (int) progress;
 			case HOURS:
-				Hours hours = new HoursService().get(achievementPlayer.getPlayer());
+				Hours hours = new HoursService().get(achievementPlayer);
 				return hours.getTotal() / 60 / 60;
 			case BALANCE:
 				return (int) new BankerService().getBalance(achievementPlayer.getPlayer(), ShopGroup.get(achievementPlayer.getPlayer()));

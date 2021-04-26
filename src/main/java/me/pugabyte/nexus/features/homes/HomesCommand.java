@@ -1,12 +1,16 @@
 package me.pugabyte.nexus.features.homes;
 
+import eden.utils.Utils.MinMaxResult;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.*;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
@@ -72,7 +76,7 @@ public class HomesCommand extends CustomCommand {
 
 	@Path("nearest [player]")
 	void nearest(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
-		MinMaxResult<Home> result = getMin(service.<HomeOwner>get(player).getHomes(), home -> {
+		MinMaxResult<Home> result = getMin(service.get(player).getHomes(), home -> {
 			if (!world().equals(home.getLocation().getWorld())) return null;
 			return location().distance(home.getLocation());
 		});

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.framework.commands.models;
 
+import eden.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -10,11 +11,11 @@ import lombok.experimental.Accessors;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Method;
@@ -27,17 +28,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.toList;
+import static me.pugabyte.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
 import static me.pugabyte.nexus.utils.StringUtils.left;
 
 @Data
 class PathParser {
 	@NonNull
-	CommandEvent event;
-	CustomCommand command;
-	List<Method> methods;
+	private final CommandEvent event;
+	private final CustomCommand command;
+	private final List<Method> methods;
 
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
@@ -68,9 +70,10 @@ class PathParser {
 			int index = 0;
 			int paramIndex = 0;
 			for (String realArg : realArgs) {
-				TabCompleteArg arg = new TabCompleteArg(index, realArg);
+				TabCompleteArg arg = new TabCompleteArg(method, realArg);
 				if (pathArgs.size() > index)
-					arg.setPathArg(pathArgs.get(index));
+					if (!pathArgs.get(index).startsWith("[-"))
+						arg.setPathArg(pathArgs.get(index));
 				if (realArgs.size() == index + 1)
 					arg.isCompletionIndex(true);
 
@@ -128,12 +131,69 @@ class PathParser {
 
 		@ToString.Include
 		List<String> tabComplete() {
+			ArrayList<String> completions = new ArrayList<>();
 			for (TabCompleteArg arg : args)
 				if (arg.isCompletionIndex())
-					return arg.tabComplete();
+					completions.addAll(arg.tabComplete());
 
-			return new ArrayList<>();
+			completions.addAll(getSwitches());
+
+			return completions;
 		}
+
+		private List<String> getSwitches() {
+			List<String> switches = new ArrayList<>();
+			String lastArg = realArgs.get(realArgs.size() - 1);
+
+			if (!lastArg.startsWith("-"))
+				return switches;
+
+			for (Parameter parameter : method.getParameters()) {
+				Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
+				if (annotation == null)
+					continue;
+
+				Pattern pattern = getSwitchPattern(parameter);
+				boolean found = false;
+				for (String arg : event.getArgs()) {
+					Matcher matcher = pattern.matcher(arg);
+
+					if (matcher.find())
+						found = true;
+				}
+
+				if (!found) {
+					switches.add("--" + parameter.getName());
+					if (annotation.shorthand() != '-')
+						switches.add("-" + annotation.shorthand());
+				}
+
+				if (lastArg.contains("=")) {
+					TabCompleteArg arg = new TabCompleteArg(method, lastArg.split("=", 2)[1]);
+					arg.setPathArg("[switch]");
+					arg.isCompletionIndex(true);
+
+					if (!isNullOrEmpty(annotation.permission()))
+						if (!event.getSender().hasPermission(annotation.permission()))
+							break;
+
+					arg.setTabCompleter(parameter.getType());
+					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
+					if (annotation.type() != void.class)
+						arg.setTabCompleter(annotation.type());
+					if (annotation.tabCompleter() != void.class)
+						arg.setTabCompleter(annotation.tabCompleter());
+
+					if (PlayerOwnedObject.class.isAssignableFrom(arg.getType()) && arg.getTabCompleter() == null)
+						arg.setTabCompleter(OfflinePlayer.class);
+
+					switches.addAll(arg.tabComplete().stream().map(completion -> lastArg.split("=")[0] + "=" + completion).collect(toList()));
+				}
+			}
+
+			return switches.stream().filter(completion -> completion.toLowerCase().startsWith(lastArg.toLowerCase())).collect(toList());
+		}
+
 	}
 
 	@Data
@@ -141,7 +201,7 @@ class PathParser {
 	@RequiredArgsConstructor
 	class TabCompleteArg {
 		@NonNull
-		private int index;
+		private Method method;
 		@NonNull
 		private String realArg;
 		private String pathArg;
@@ -188,7 +248,7 @@ class PathParser {
 		private List<String> getSplitPathArg(String filter) {
 			List<String> options = Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
 			if (filter != null)
-				options = options.stream().filter(option -> option.toLowerCase().startsWith(filter.toLowerCase())).collect(Collectors.toList());
+				options = options.stream().filter(option -> option.toLowerCase().startsWith(filter.toLowerCase())).collect(toList());
 			return options;
 		}
 
@@ -255,7 +315,7 @@ class PathParser {
 
 	}
 
-	List<String> tabComplete(TabEvent event) {
+	List<String> tabComplete(CommandTabEvent event) {
 		List<String> completions = new ArrayList<>();
 
 		for (Method method : methods) {
@@ -274,7 +334,7 @@ class PathParser {
 			completions.addAll(helper.tabComplete());
 		}
 
-		return completions.stream().distinct().collect(Collectors.toList());
+		return completions.stream().distinct().collect(toList());
 	}
 
 	Method match(List<String> args) {

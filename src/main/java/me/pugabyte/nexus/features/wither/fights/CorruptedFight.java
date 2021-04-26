@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.wither.fights;
 
 import com.destroystokyo.paper.Title;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
@@ -8,7 +9,6 @@ import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;

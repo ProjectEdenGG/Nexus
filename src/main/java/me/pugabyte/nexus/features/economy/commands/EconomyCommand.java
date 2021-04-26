@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.economy.commands;
 
+import eden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -101,7 +101,7 @@ public class EconomyCommand extends CustomCommand {
 
 		BigDecimal total = BigDecimal.valueOf(0);
 
-		for (Banker banker : service.<Banker>getAll())
+		for (Banker banker : service.getAll())
 			for (Transaction transaction : banker.getTransactions()) {
 				if (startTime != null && !transaction.getTimestamp().isAfter(startTime))
 					continue;

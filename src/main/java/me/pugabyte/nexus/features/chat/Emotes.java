@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.models.emote.EmoteService;
-import me.pugabyte.nexus.models.emote.EmoteUser;
 import me.pugabyte.nexus.utils.RandomUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -87,7 +86,7 @@ public enum Emotes {
 		OfflinePlayer player = event.getChatter().getOfflinePlayer();
 		if (!Nexus.getPerms().playerHas(null, player, "emoticons.use"))
 			return;
-		if (!((EmoteUser) new EmoteService().get(player)).isEnabled())
+		if (!new EmoteService().get(player).isEnabled())
 			return;
 
 		event.setMessage(process(event.getMessage(), event.getChannel().getMessageColor()));

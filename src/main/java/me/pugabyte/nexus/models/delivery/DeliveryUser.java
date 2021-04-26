@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.delivery.DeliveryWorldMenu;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -39,7 +39,7 @@ import static me.pugabyte.nexus.utils.StringUtils.asOxfordList;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, ItemStackConverter.class})
-public class DeliveryUser extends PlayerOwnedObject {
+public class DeliveryUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.particles;
 
 import com.mewin.worldguardregionapi.events.RegionLeftEvent;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.particles.effects.WingsEffect;
 import me.pugabyte.nexus.features.particles.menu.ParticleMenu;
@@ -14,7 +15,6 @@ import me.pugabyte.nexus.models.particle.ParticleSetting;
 import me.pugabyte.nexus.models.particle.ParticleType;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -63,7 +63,7 @@ public class WingsCommand extends CustomCommand implements Listener {
 		wingSettings.put(ParticleSetting.WINGS_STYLE, wingStyle);
 		wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, Color.YELLOW);
 		wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, Color.BLACK);
-		wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, ColorType.CYAN.getColor());
+		wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, ColorType.CYAN.getBukkitColor());
 		wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, false);
 		wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, false);
 		wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, false);

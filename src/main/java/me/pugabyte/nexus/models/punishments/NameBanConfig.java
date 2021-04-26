@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.punishments;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment;
-import me.pugabyte.nexus.models.punishments.Punishments.Punishment.PunishmentType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -34,7 +32,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class NameBanConfig extends PlayerOwnedObject {
+public class NameBanConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -69,12 +67,12 @@ public class NameBanConfig extends PlayerOwnedObject {
 			throw new InvalidInputException(name + " is already name banned");
 
 		addToBanList(uuid, name);
-		warn(executor, uuid);
+		warn(executor, uuid, name);
 
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 		if (player.isOnline() && player.getPlayer() != null)
-			// TODO Improve
-			player.getPlayer().kick(Component.text("Your name is not allowed on this server, please change it in order to join"));
+			player.getPlayer().kick(Component.text("Your username '" + player.getName() + "' has been banned from this server, " +
+					"please change it in order to join"));
 	}
 
 	private void addToBanList(UUID uuid, String name) {
@@ -83,13 +81,10 @@ public class NameBanConfig extends PlayerOwnedObject {
 		bannedNames.put(uuid, names);
 	}
 
-	private void warn(UUID executor, UUID uuid) {
-		Punishments player = new PunishmentsService().get(uuid);
-		player.add(Punishment.ofType(PunishmentType.WARN)
-				.uuid(uuid)
+	private void warn(UUID executor, UUID uuid, String name) {
+		Punishments.of(uuid).add(Punishment.ofType(PunishmentType.WARN)
 				.punisher(executor)
-				// TODO improve
-				.input("The name " + player.getName() + " is not allowed on this server"));
+				.input("The username '" + name + "' is not allowed on this server"));
 	}
 
 	public void unban(String name) {

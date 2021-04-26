@@ -45,7 +45,7 @@ public class AlertsListener implements Listener {
 
 	public void tryAlerts(Set<Chatter> recipients, String message) {
 		AlertsService service = new AlertsService();
-		recipients.forEach(chatter -> service.<Alerts>get(chatter.getUuid()).tryAlerts(message));
+		recipients.forEach(chatter -> service.get(chatter.getUuid()).tryAlerts(message));
 	}
 
 	@EventHandler

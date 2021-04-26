@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.experimental.UtilityClass;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import net.kyori.adventure.identity.Identified;
@@ -16,6 +17,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class AdventureUtils {
 	public static Component stripColor(Component component) {
 		component = component.style(Style.empty());
@@ -79,36 +82,86 @@ public class AdventureUtils {
 				.append(Component.text(" ", NamedTextColor.DARK_AQUA));
 	}
 
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable Color color) {
+		if (color == null)
+			return null;
+		return TextColor.color(color.getRGB());
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable org.bukkit.Color color) {
+		if (color == null)
+			return null;
+		return TextColor.color(color.asRGB());
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable ChatColor color) {
+		if (color == null)
+			return null;
+		return textColorOf(color.getColor());
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable Colored color) {
+		if (color == null)
+			return null;
+		return color.getTextColor();
+	}
+
+	/**
+	 * Parses a hexadecimal number
+	 * @param string number in the format "#FFFFFF" (# optional)
+	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 * @return corresponding text color
+	 */
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable String string) throws IllegalArgumentException {
+		if (string == null)
+			return null;
+		if (string.startsWith("#"))
+			string = string.substring(1);
+		try {
+			return TextColor.color(Integer.parseInt(string, 16));
+		} catch ( NumberFormatException ex ) {
+			throw new IllegalArgumentException("Illegal hex string " + string);
+		}
+	}
+
+	@NotNull
 	public static TextComponent colorText(@Nullable ChatColor color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getColor().getRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
-	public static TextComponent colorText(@Nullable ColorType color, @NotNull String text) {
-		if (color == null || color.getColor() == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getColor().asRGB()));
-	}
-
+	@NotNull
 	public static TextComponent colorText(@Nullable Color color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
+	@NotNull
 	public static TextComponent colorText(@Nullable org.bukkit.Color color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.asRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
+	@NotNull
 	public static TextComponent colorText(@Nullable Colored color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, color.getTextColor());
+		return Component.text(text, textColorOf(color));
 	}
 
+	/**
+	 * Parses a hexadecimal number
+	 * @param color number in the format "#FFFFFF" (# optional)
+	 * @param text text to color
+	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 * @return corresponding text color
+	 */
+	@NotNull
+	public static TextComponent colorText(@Nullable String color, @NotNull String text) throws IllegalArgumentException {
+		return Component.text(text, textColorOf(color));
+	}
+
+	@NotNull
 	public static TextComponent colorText(@NotNull ColoredAndNamed coloredAndNamed) {
 		return Component.text(coloredAndNamed.getName(), coloredAndNamed.getTextColor());
 	}

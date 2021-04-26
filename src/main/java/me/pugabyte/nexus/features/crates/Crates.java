@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.crates;
 
+import eden.annotations.Environments;
+import eden.utils.Env;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
@@ -8,9 +10,12 @@ import me.pugabyte.nexus.features.crates.menus.CrateEditMenu;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
-import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;

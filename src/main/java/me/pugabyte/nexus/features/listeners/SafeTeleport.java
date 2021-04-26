@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.listeners;
 
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.LocationUtils;

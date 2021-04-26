@@ -5,6 +5,7 @@ import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.Title;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -27,7 +28,6 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -311,7 +311,7 @@ public class Misc implements Listener {
 		if (WorldGroup.get(event.getFrom()) == WorldGroup.CREATIVE) {
 			if (Nerd.of(player).isVanished())
 				if (player.hasPermission("essentials.fly")) {
-					player.setFallDistance(0f);
+					player.setFallDistance(0);
 					player.setAllowFlight(true);
 					player.setFlying(true);
 				}

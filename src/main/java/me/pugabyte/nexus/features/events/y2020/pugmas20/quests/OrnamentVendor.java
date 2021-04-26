@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
+import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
@@ -19,9 +21,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Location;
 import org.bukkit.Material;

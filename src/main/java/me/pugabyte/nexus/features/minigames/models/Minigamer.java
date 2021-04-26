@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models;
 
 import com.google.common.base.Strings;
 import de.myzelyam.api.vanish.VanishAPI;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -22,11 +23,9 @@ import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -75,7 +74,7 @@ public class Minigamer implements ColoredAndNicknamed {
 
 	/**
 	 * Returns the Minigamer's Minecraft username.
-	 * You should consider using {@link #getNickname()} instead.
+	 * @deprecated You should probably be using {@link #getNickname()} instead.
 	 */
 	@Deprecated
 	@NotNull
@@ -83,9 +82,6 @@ public class Minigamer implements ColoredAndNicknamed {
 		return player.getName();
 	}
 
-	/**
-	 * Returns this minigamer's nickname, or player name if absent
-	 */
 	public @NotNull String getNickname() {
 		return Nickname.of(player);
 	}
@@ -93,12 +89,7 @@ public class Minigamer implements ColoredAndNicknamed {
 	public @NotNull Color getColor() {
 		if (team == null)
 			return Color.WHITE;
-		return team.getChatColor().getColor();
-	}
-
-	@Override
-	public @NotNull ChatColor getChatColor() {
-		return team == null ? ChatColor.WHITE : team.getChatColor();
+		return team.getColor();
 	}
 
 	public void join(String name) {
@@ -211,7 +202,7 @@ public class Minigamer implements ColoredAndNicknamed {
 		boolean staff = PlayerUtils.isStaffGroup(player);
 
 		player.setGameMode(GameMode.SURVIVAL);
-		player.setFallDistance(0f);
+		player.setFallDistance(0);
 		player.setAllowFlight(staff);
 		player.setFlying(staff);
 
@@ -434,7 +425,7 @@ public class Minigamer implements ColoredAndNicknamed {
 		player.setLevel(0);
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
-		player.setFallDistance(0f);
+		player.setFallDistance(0);
 		player.setAllowFlight(mechanic.allowFly());
 		player.setFlying(mechanic.allowFly());
 		if (VanishAPI.isInvisible(player))

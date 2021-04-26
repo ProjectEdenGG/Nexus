@@ -2,10 +2,10 @@ package me.pugabyte.nexus.features.mcmmo;
 
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.MaterialMapStore;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;

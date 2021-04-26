@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.economy.commands;
 
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -20,8 +22,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -124,12 +124,12 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			JsonBuilder jsonBuilder = new JsonBuilder("&3" + index + " &7" + timestamp + "  " + newBalance + "  &7|  " +
 					fromPlayer + " &3→ " + toPlayer + "  " + amount + "  " + description)
-					.addHover("&3Time since: &e" + Timespan.of(transaction.getTimestamp()).format());
+					.hover("&3Time since: &e" + Timespan.of(transaction.getTimestamp()).format());
 
 			if (PlayerUtils.isAdminGroup(player) && Nexus.isDebug())
 				jsonBuilder
-					.addHover("")
-					.addHover(transaction.toString());
+					.hover("")
+					.hover(transaction.toString());
 
 			return jsonBuilder;
 		};

@@ -1,16 +1,15 @@
 package me.pugabyte.nexus.features.dailyrewards;
 
+import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.dailyreward.Reward;
-import me.pugabyte.nexus.models.hours.Hours;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
@@ -49,7 +48,7 @@ public class DailyRewardsFeature extends Feature {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(5), () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
-					if (((Hours) new HoursService().get(player)).getDaily() < Time.MINUTE.x(15) / 20) continue;
+					if (new HoursService().get(player.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20) continue;
 
 					DailyRewardService service = new DailyRewardService();
 					DailyReward dailyReward = service.get(player);
