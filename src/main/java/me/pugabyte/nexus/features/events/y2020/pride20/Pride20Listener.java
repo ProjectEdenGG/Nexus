@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.features.events.y2020.pride20;
 
 import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

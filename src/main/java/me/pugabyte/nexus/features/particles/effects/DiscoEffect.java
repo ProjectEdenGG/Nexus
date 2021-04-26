@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.particles.effects;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
@@ -8,7 +9,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.particle.ParticleService;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;

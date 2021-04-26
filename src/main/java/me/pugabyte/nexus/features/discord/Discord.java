@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.discord;
 
 import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
 import joptsimple.internal.Strings;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
@@ -15,7 +16,6 @@ import me.pugabyte.nexus.models.queup.QueUp;
 import me.pugabyte.nexus.models.queup.QueUpService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;

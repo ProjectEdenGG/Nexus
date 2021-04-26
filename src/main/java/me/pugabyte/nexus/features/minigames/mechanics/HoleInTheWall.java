@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -17,7 +18,6 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamles
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

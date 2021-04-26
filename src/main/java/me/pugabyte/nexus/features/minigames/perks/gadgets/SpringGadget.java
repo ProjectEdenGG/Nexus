@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.minigames.perks.gadgets;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.models.perks.common.GadgetPerk;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;

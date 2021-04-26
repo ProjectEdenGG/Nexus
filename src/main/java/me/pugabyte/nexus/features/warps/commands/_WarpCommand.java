@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.warps.commands;
 
+import eden.utils.Utils.MinMaxResult;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -13,7 +14,6 @@ import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.Location;
 
 import java.util.List;

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.punishments;
 
+import eden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -7,14 +8,15 @@ import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
@@ -36,7 +38,8 @@ public enum PunishmentType implements ColoredAndNamed {
 		@Override
 		public void action(Punishment punishment) {
 			kick(punishment);
-			// TODO look for alts, kick
+			for (UUID alt : Punishments.of(punishment).getAlts())
+				kick(getPlayer(alt), punishment);
 		}
 
 		@Override
@@ -63,7 +66,7 @@ public enum PunishmentType implements ColoredAndNamed {
 
 		@Override
 		public void onExpire(Punishment punishment) {
-			punishment.send("Your mute has expired");
+			punishment.send("Your mute has expired"); // TODO
 		}
 	},
 	WARN("warned", ChatColor.RED, false, false, false, false) {
@@ -110,6 +113,11 @@ public enum PunishmentType implements ColoredAndNamed {
 			punishment.getPlayer().kick(punishment.getDisconnectMessage());
 			punishment.received();
 		}
+	}
+
+	void kick(OfflinePlayer player, Punishment punishment) {
+		if (player.isOnline() && player.getPlayer() != null)
+			player.getPlayer().kick(punishment.getDisconnectMessage());
 	}
 
 	public JsonBuilder getHistoryDisplay(Punishment punishment) {

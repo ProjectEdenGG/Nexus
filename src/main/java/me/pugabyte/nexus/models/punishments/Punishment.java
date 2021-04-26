@@ -2,6 +2,8 @@ package me.pugabyte.nexus.models.punishments;
 
 import dev.morphia.annotations.Converters;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +12,6 @@ import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +42,6 @@ public class Punishment implements PlayerOwnedObject {
 	private LocalDateTime removed;
 
 	private UUID replacedBy;
-	// TODO: For ip bans? for multi-punishments too?
-	//  private Set<UUID> related = new HashSet<>();
 
 	@Builder
 	public Punishment(@NotNull UUID uuid, @NotNull UUID punisher, @NotNull PunishmentType type, String input, boolean now) {

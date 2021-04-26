@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.chat;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -19,7 +20,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

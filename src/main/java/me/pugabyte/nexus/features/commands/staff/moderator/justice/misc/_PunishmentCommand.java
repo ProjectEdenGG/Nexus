@@ -18,8 +18,6 @@ public abstract class _PunishmentCommand extends _JusticeCommand {
 
 	public _PunishmentCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = Punishments.PREFIX;
-		DISCORD_PREFIX = Punishments.DISCORD_PREFIX;
 	}
 
 	protected void punish(List<Punishments> players) {

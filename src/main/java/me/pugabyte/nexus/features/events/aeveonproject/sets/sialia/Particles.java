@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.events.aeveonproject.sets.sialia;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.features.particles.effects.LineEffect;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;

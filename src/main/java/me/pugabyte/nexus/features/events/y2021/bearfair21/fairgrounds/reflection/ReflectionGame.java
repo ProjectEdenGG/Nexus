@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflection;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.Setter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;

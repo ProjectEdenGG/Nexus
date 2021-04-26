@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams;
 
 import com.google.common.collect.ImmutableSet;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.pugabyte.nexus.Nexus;
@@ -22,7 +23,6 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.Component;

@@ -33,7 +33,7 @@ public class HistoryDiscordCommand extends Command {
 				OfflinePlayer player = PlayerUtils.getPlayer(args[0]);
 
 				if (Punishments.of(player).hasHistory())
-					event.reply("<https://justice.bnn.gg/history/" + player.getName() + ">");
+					event.reply("<https://justice.projecteden.gg/history/" + player.getName() + ">");
 				else
 					event.reply("No history found");
 			} catch (Exception ex) {

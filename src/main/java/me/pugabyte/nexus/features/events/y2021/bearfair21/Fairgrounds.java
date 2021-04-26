@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Archery;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Frogger;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
@@ -8,7 +9,6 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.M
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflection.ReflectionGame;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 
 import java.util.Arrays;

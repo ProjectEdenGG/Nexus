@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import eden.exceptions.EdenException;
 import eden.models.hours.Hours;
 import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
@@ -17,7 +18,6 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 
@@ -68,7 +68,7 @@ public class SuggestDiscordCommand extends Command {
 				String hoursMonthly = TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format();
 				String history = "None";
 				if (!Punishments.of(nerd).hasHistory())
-					 history = Punishments.of(nerd).getPunishments().size() + " [View](https://justice.bnn.gg/history/" + nerd.getUuid() + ")";
+					 history = Punishments.of(nerd).getPunishments().size() + " [View](https://justice.projecteden.gg/history/" + nerd.getUuid() + ")";
 
 				EmbedBuilder embed = new EmbedBuilder()
 						.appendDescription("\n:information_source: **Rank**: " + nerd.getRank().getName())

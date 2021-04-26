@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import eden.models.hours.Hours;
 import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -14,7 +15,6 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

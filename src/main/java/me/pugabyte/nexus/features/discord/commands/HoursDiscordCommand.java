@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import eden.exceptions.EdenException;
 import eden.models.hours.Hours;
 import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import joptsimple.internal.Strings;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
@@ -14,7 +15,6 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.OfflinePlayer;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;

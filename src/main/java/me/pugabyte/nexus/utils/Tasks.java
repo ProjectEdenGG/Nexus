@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.utils;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;

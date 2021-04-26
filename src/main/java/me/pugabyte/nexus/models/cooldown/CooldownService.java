@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.models.cooldown;
 
 import eden.mongodb.annotations.PlayerClass;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
 import java.util.HashMap;

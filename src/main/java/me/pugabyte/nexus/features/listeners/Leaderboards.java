@@ -8,6 +8,8 @@ import eden.models.hours.HoursService;
 import eden.models.hours.HoursService.HoursTopArguments;
 import eden.models.hours.HoursService.PageResult;
 import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.store.Package;
@@ -21,8 +23,6 @@ import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

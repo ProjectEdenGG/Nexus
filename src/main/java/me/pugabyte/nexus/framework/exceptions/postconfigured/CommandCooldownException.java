@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.framework.exceptions.postconfigured;
 
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;

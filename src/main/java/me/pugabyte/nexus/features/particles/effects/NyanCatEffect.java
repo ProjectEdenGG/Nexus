@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.features.particles.effects;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.particle.ParticleService;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;

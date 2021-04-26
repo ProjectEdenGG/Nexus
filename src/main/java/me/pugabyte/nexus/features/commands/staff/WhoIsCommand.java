@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.commands.staff;
 
 import eden.models.hours.Hours;
 import eden.models.hours.HoursService;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -20,8 +22,6 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

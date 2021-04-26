@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.store.perks;
 
+import eden.utils.Utils.MinMaxResult;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.autotool.AutoTool;
 import me.pugabyte.nexus.models.autotool.AutoToolService;
 import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

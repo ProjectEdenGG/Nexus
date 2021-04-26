@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +84,6 @@ public class Punishments implements PlayerOwnedObject {
 		return !punishments.isEmpty();
 	}
 
-	// TODO Other player IP Ban check - service query IP history
 	public Optional<Punishment> getAnyActiveBan() {
 		return getMostRecentActive(PunishmentType.BAN, PunishmentType.ALT_BAN);
 	}
@@ -203,7 +202,6 @@ public class Punishments implements PlayerOwnedObject {
 		if (warnings.isEmpty())
 			return warnings;
 
-		// TODO Not sure I like this formatting
 		send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
 		for (Punishment warning : warnings) {
 			boolean recent = warning.getTimestamp().isAfter(LocalDateTime.now().minusMinutes(1));
