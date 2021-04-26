@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.utils.SerializationUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -66,6 +67,8 @@ public class Loadout implements ConfigurationSerializable {
 
 		if (effects != null && effects.size() > 0)
 			player.addPotionEffects(effects);
+
+		new MinigamesSettingService().get().getModifier().afterLoadout(minigamer);
 	}
 
 
