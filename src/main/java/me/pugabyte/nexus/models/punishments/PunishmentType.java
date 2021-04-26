@@ -113,7 +113,7 @@ public enum PunishmentType implements ColoredAndNamed {
 	MUTE("muted", ChatColor.GOLD, true, true, false, false) {
 		@Override
 		public void action(Punishment punishment) {
-			punishment.send("&cYou have been muted by &e" + Nickname.of(punishment.getPunisher() + punishment.getTimeAndReason()));
+			punishment.send("&cYou have been muted by &e" + Nickname.of(punishment.getPunisher()) + punishment.getTimeAndReason());
 		}
 
 		@Override
