@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @NoArgsConstructor
@@ -126,14 +127,17 @@ public class Punishment implements PlayerOwnedObject {
 	}
 
 	void announceStart() {
-		String message = "&e" + Nickname.of(punisher) + " &c" + type.getPastTense() + " &e" + getNickname();
+		Punishments.broadcast(("&e" + Nickname.of(punisher) + " &c" + type.getPastTense() + " &e" + getNickname()) + getTimeAndReason());
+	}
+
+	String getTimeAndReason() {
+		String message = "";
 		if (seconds > 0)
 			message += " &cfor &e" + Timespan.of(seconds).format(FormatType.LONG);
 
 		if (!isNullOrEmpty(reason))
 			message += " &cfor &7" + reason;
-
-		Punishments.broadcast(message);
+		return message;
 	}
 
 	void announceEnd() {
@@ -145,7 +149,7 @@ public class Punishment implements PlayerOwnedObject {
 		String message = getType().getDisconnectMessage(this);
 		if (isNullOrEmpty(message))
 			return null;
-		return Component.text(message);
+		return Component.text(colorize(message));
 	}
 
 	public String getTimeLeft() {

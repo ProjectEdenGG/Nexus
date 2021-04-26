@@ -71,8 +71,8 @@ public class NameBanConfig implements PlayerOwnedObject {
 
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 		if (player.isOnline() && player.getPlayer() != null)
-			// TODO Improve
-			player.getPlayer().kick(Component.text("Your name is not allowed on this server, please change it in order to join"));
+			player.getPlayer().kick(Component.text("Your username '" + player.getName() + "' has been banned from this server, " +
+					"please change it in order to join"));
 	}
 
 	private void addToBanList(UUID uuid, String name) {
@@ -84,8 +84,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 	private void warn(UUID executor, UUID uuid, String name) {
 		Punishments.of(uuid).add(Punishment.ofType(PunishmentType.WARN)
 				.punisher(executor)
-				// TODO improve
-				.input("The name " + name + " is not allowed on this server"));
+				.input("The username '" + name + "' is not allowed on this server"));
 	}
 
 	public void unban(String name) {

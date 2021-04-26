@@ -16,6 +16,7 @@ import java.awt.*;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static eden.utils.StringUtils.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
@@ -31,7 +32,20 @@ public enum PunishmentType implements ColoredAndNamed {
 
 		@Override
 		public String getDisconnectMessage(Punishment punishment) {
-			return punishment.getReason();
+			String nl = System.lineSeparator();
+			String message = "&4You are " + (punishment.getSeconds() == 0 ? "permanently " : "") + "banned from this server"
+					+ nl + nl
+					+ "&3Banned on &e" + shortDateTimeFormat(punishment.getTimestamp()) + " &3by &e" + Nickname.of(punishment.getPunisher());
+
+			if (!isNullOrEmpty(punishment.getReason()))
+					message += nl + "&3Reason: &c" + punishment.getReason();
+
+			if (punishment.getSeconds() > 0)
+				message += nl + "&3Expires in: &3" + punishment.getTimeLeft();
+
+			message += nl + nl + "&3Appeal at &chttps://bnn.gg/appeal";
+
+			return message;
 		}
 	},
 	ALT_BAN("alt-banned", ChatColor.DARK_RED, true, true, false, true) {
@@ -44,7 +58,7 @@ public enum PunishmentType implements ColoredAndNamed {
 
 		@Override
 		public String getDisconnectMessage(Punishment punishment) {
-			return punishment.getReason();
+			return BAN.getDisconnectMessage(punishment);
 		}
 	},
 	KICK("kicked", ChatColor.YELLOW, false, false, true, true) {
@@ -55,18 +69,24 @@ public enum PunishmentType implements ColoredAndNamed {
 
 		@Override
 		public String getDisconnectMessage(Punishment punishment) {
-			return punishment.getReason();
+			String nl = System.lineSeparator();
+			String message = "&3Kicked by &e" + Nickname.of(punishment.getPunisher());
+			if (!isNullOrEmpty(punishment.getReason()))
+				message += nl + "&3Reason: &c" + punishment.getReason();
+
+			message += nl + nl + "&3You may connect to the server again";
+			return message;
 		}
 	},
 	MUTE("muted", ChatColor.GOLD, true, true, false, false) {
 		@Override
 		public void action(Punishment punishment) {
-			punishment.send("You have been muted"); // TODO
+			punishment.send("&cYou have been muted by &e" + Nickname.of(punishment.getPunisher() + punishment.getTimeAndReason()));
 		}
 
 		@Override
 		public void onExpire(Punishment punishment) {
-			punishment.send("Your mute has expired"); // TODO
+			punishment.send("&cYour mute has &eexpired");
 		}
 	},
 	WARN("warned", ChatColor.RED, false, false, false, false) {
