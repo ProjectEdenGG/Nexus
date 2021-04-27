@@ -136,9 +136,9 @@ public class ChatManager {
 
 		event.getRecipients().forEach(recipient -> {
 			if (Rank.of(recipient.getPlayer()).isStaff())
-				recipient.send(event, json, MessageType.CHAT);
-			else
 				recipient.send(event, staff, MessageType.CHAT);
+			else
+				recipient.send(event, json, MessageType.CHAT);
 		});
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
