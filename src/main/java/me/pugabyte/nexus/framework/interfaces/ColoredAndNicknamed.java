@@ -25,7 +25,7 @@ public interface ColoredAndNicknamed extends ColoredAndNamed, Nicknamed {
 	 * @return an adventure text component
 	 */
 	@Override
-	default @NotNull TextComponent getComponent() {
+	default @NotNull TextComponent asComponent() {
 		return Component.text(getNickname(), getTextColor());
 	}
 }

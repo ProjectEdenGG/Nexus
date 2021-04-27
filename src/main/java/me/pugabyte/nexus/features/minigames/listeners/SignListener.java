@@ -7,14 +7,13 @@ import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
@@ -57,24 +56,25 @@ public class SignListener implements Listener {
 						int players = match == null ? 0 : match.getMinigamers().size();
 						boolean canJoin = match == null || !match.isStarted() || arena.canJoinLate();
 
-						TextComponent.Builder builder = Component.text().color(NamedTextColor.GOLD);
-						builder.append(Component.text("\n" + arena.getDisplayName(), NamedTextColor.DARK_AQUA, TextDecoration.BOLD));
-						builder.append(Component.text("\nGamemode: " ).append(Component.text(arena.getMechanic().getName(), NamedTextColor.YELLOW)));
+						JsonBuilder builder = new JsonBuilder(NamedTextColor.GOLD);
+						builder.newline(false).next(arena.getDisplayName(), NamedTextColor.DARK_AQUA, TextDecoration.BOLD);
+						builder.newline(false).next("Gamemode: " ).next(arena.getMechanic().getName(), NamedTextColor.YELLOW);
 
 						String descriptionText = arena.getMechanic().getDescription();
 						if (descriptionText != null && !descriptionText.isEmpty() && !descriptionText.equalsIgnoreCase("todo"))
-							builder.append(Component.text("\nDescription: ").append(Component.text(descriptionText, NamedTextColor.YELLOW)));
+							builder.newline(false).next("Description: ").next(descriptionText, NamedTextColor.YELLOW);
 
-						builder.append(Component.text("\n"+players, NamedTextColor.YELLOW)).append(Component.text('/').append(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
-								.append(Component.text(" players")));
+						builder.newline(false).next(String.valueOf(players), NamedTextColor.YELLOW).next("/").next(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
+								.next(Component.text(" players"));
 
-						TextComponent.Builder availability = Component.text().content("\nThis game is ");
-						availability.append(canJoin ? Component.text("available", NamedTextColor.GREEN) : Component.text("unavailable", NamedTextColor.RED));
-						availability.append(Component.text(" to join"));
+						builder.newline().color(NamedTextColor.GOLD).content("This game is ");
 						if (canJoin)
-							availability.clickEvent(ClickEvent.runCommand("/mgm join " + arena.getName())).hoverEvent(Component.text("Click to join the game!", NamedTextColor.DARK_AQUA));
-
-						builder.append(availability);
+							builder.next("available", NamedTextColor.GREEN);
+						else
+							builder.next("unavailable", NamedTextColor.RED);
+						builder.next(" to join");
+						if (canJoin)
+							builder.command("/mgm join " + arena.getName()).hover(new JsonBuilder("Click to join the game!", NamedTextColor.DARK_AQUA));
 
 						event.getPlayer().sendMessage(Identity.nil(), builder, MessageType.SYSTEM);
 					} else

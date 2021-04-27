@@ -28,7 +28,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
@@ -50,7 +54,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
@@ -162,12 +171,12 @@ public class Murder extends TeamMechanic {
 
 		TextComponent.Builder builder = Component.text();
 		if (!murderer.isAlive())
-			builder.append(murderer.getComponent())
+			builder.append(murderer.asComponent())
 					.append(Component.text(" has been stopped by "))
-					.append(hero.getComponent())
+					.append(hero.asComponent())
 					.append(Component.text(" on "));
 		else if (match.getTimer().getTime() != 0)
-			builder.append(murderer.getComponent()).append(Component.text(" has won on "));
+			builder.append(murderer.asComponent()).append(Component.text(" has won on "));
 		else
 			builder.content("The ")
 					.append(Component.text("innocents", NamedTextColor.BLUE))

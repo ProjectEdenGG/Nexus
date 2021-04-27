@@ -21,7 +21,9 @@ import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
 import net.dv8tion.jda.annotations.ReplaceWith;
+import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,17 +36,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -249,24 +241,30 @@ public class PlayerUtils {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
+	/**
+	 * Sends a message to a player
+	 * @param recipient a {@link CommandSender}, {@link OfflinePlayer}, {@link PlayerOwnedObject}, {@link Identified}, or {@link UUID}
+	 * @param message a {@link String} or {@link ComponentLike}
+	 */
 	public static void send(@Nullable Object recipient, Object message) {
 		if (recipient == null)
 			return;
 		if (recipient instanceof CommandSender) {
 			if (message instanceof String)
 				((CommandSender) recipient).sendMessage(colorize((String) message));
-			else if (message instanceof JsonBuilder)
-				((CommandSender) recipient).sendMessage(((JsonBuilder) message).build());
-			else if (message instanceof Component)
-				((CommandSender) recipient).sendMessage(((Component) message));
+			else if (message instanceof ComponentLike)
+				((CommandSender) recipient).sendMessage(((ComponentLike) message));
 		} else if (recipient instanceof OfflinePlayer) {
 			OfflinePlayer player = (OfflinePlayer) recipient;
 			if (player.getPlayer() != null)
 				send(player.getPlayer(), message);
 		} else if (recipient instanceof UUID) {
 			send(getPlayer((UUID) recipient), message);
-		} else if (recipient instanceof PlayerOwnedObject)
+		} else if (recipient instanceof PlayerOwnedObject) {
 			send(getPlayer(((PlayerOwnedObject) recipient).getUuid()), message);
+		} else if (recipient instanceof Identified) {
+			send(getPlayer(((Identified) recipient).identity().uuid()), message);
+		}
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

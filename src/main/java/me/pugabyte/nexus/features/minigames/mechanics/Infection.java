@@ -91,7 +91,7 @@ public class Infection extends TeamMechanic {
 		boolean humansAlive = getHumans(match).size() > 0;
 
 		Team winningTeam = !humansAlive || match.getTimer().getTime() != 0 ? getZombieTeam(match) : getHumanTeam(match);
-		Component broadcast = Component.text("The ").append(winningTeam.getComponent())
+		Component broadcast = Component.text("The ").append(winningTeam.asComponent())
 				.append(Component.text(" have won "));
 
 		Minigames.broadcast(broadcast.append(match.getArena().getComponent()));

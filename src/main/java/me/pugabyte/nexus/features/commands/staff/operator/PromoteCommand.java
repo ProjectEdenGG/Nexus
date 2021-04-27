@@ -33,7 +33,7 @@ public class PromoteCommand extends CustomCommand {
 		if (nerd.getOfflinePlayer().isOnline()) {
 			nerd.getPlayer().sendMessage(Component.text("\n", NamedTextColor.DARK_AQUA)
 				.append(Component.text("Congratulations!", NamedTextColor.YELLOW, TextDecoration.BOLD))
-				.append(Component.text("You've been promoted to ")).append(next.getComponent())
+				.append(Component.text("You've been promoted to ")).append(next.asComponent())
 				.append(Component.text("!")));
 
 			Jingle.RANKUP.play(nerd.getPlayer());

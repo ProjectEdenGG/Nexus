@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import io.papermc.paper.text.PaperComponents;
 import lombok.experimental.UtilityClass;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
@@ -12,9 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Contract;
@@ -43,7 +42,7 @@ public class AdventureUtils {
 	}
 
 	public static String asPlainText(Component component) {
-		return PlainComponentSerializer.plain().serialize(component);
+		return PaperComponents.plainSerializer().serialize(component);
 	}
 
 	public static String asLegacyText(Component component) {
@@ -58,8 +57,9 @@ public class AdventureUtils {
 		return LegacyComponentSerializer.legacyAmpersand().deserialize(string);
 	}
 
+	@Deprecated // TODO: remove method
 	public static Component fromJson(JsonBuilder json) {
-		return GsonComponentSerializer.gson().deserialize(json.serialize());
+		return PaperComponents.gsonSerializer().deserialize(json.serialize());
 	}
 
 	public static Identity identityOf(Identified object) {

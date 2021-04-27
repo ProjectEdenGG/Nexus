@@ -64,11 +64,11 @@ public final class Siege extends OneFlagCaptureTheFlag {
 		TextComponent.Builder builder = Component.text();
 		if (winningScore == 0) {
 			winningTeam = getDefendingTeam(match);
-			builder.append(winningTeam == null ? Component.text("Defenders", NamedTextColor.BLUE) : winningTeam.getComponent());
+			builder.append(winningTeam == null ? Component.text("Defenders", NamedTextColor.BLUE) : winningTeam.asComponent());
 			builder.append(Component.text(" protected the flag on "));
 		} else {
 			winningTeam = getMax(match.getAliveTeams(), team -> team.getScore(match)).getObject();
-			builder.append(winningTeam.getComponent().append(Component.text(" captured the flag on ")));
+			builder.append(winningTeam.asComponent().append(Component.text(" captured the flag on ")));
 		}
 		builder.append(match.getArena().getComponent());
 		Minigames.broadcast(builder.build());

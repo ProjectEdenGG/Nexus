@@ -2,10 +2,11 @@ package me.pugabyte.nexus.framework.interfaces;
 
 import eden.interfaces.Named;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
-public interface ColoredAndNamed extends Named, Colored {
+public interface ColoredAndNamed extends Named, Colored, ComponentLike {
 	/**
 	 * Returns this object's name with a chat color prefixed.
 	 */
@@ -24,7 +25,7 @@ public interface ColoredAndNamed extends Named, Colored {
 	 * Returns a component corresponding with this object. Uses the object's name and {@link #getTextColor()}.
 	 * @return an adventure text component
 	 */
-	default @NotNull TextComponent getComponent() {
+	default @NotNull TextComponent asComponent() {
 		return Component.text(getName(), getTextColor());
 	}
 }

@@ -2,11 +2,10 @@ package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.Colored;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
@@ -18,7 +17,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +32,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.getLastColor;
 
 @NoArgsConstructor
 public class JsonBuilder implements ComponentLike {
@@ -52,62 +49,100 @@ public class JsonBuilder implements ComponentLike {
 	@Getter
 	private boolean initialized = false;
 
+	/**
+	 * Creates a new builder with its color set
+	 */
 	public JsonBuilder(@Nullable TextColor color) {
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its color set
+	 */
 	public JsonBuilder(@Nullable Colored color) {
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its color set
+	 */
 	public JsonBuilder(@Nullable ChatColor color) {
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its color set
+	 */
 	public JsonBuilder(@Nullable Color color) {
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its color set
+	 */
 	public JsonBuilder(@Nullable org.bukkit.Color color) {
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its color and text decorations set
+	 */
 	public JsonBuilder(@Nullable TextColor color, @NotNull TextDecoration... decorations) {
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its color and text decorations set
+	 */
 	public JsonBuilder(@Nullable Colored color, @NotNull TextDecoration... decorations) {
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its color and text decorations set
+	 */
 	public JsonBuilder(@Nullable ChatColor color, @NotNull TextDecoration... decorations) {
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its color and text decorations set
+	 */
 	public JsonBuilder(@Nullable Color color, @NotNull TextDecoration... decorations) {
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its color and text decorations set
+	 */
 	public JsonBuilder(@Nullable org.bukkit.Color color, @NotNull TextDecoration... decorations) {
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its text decorations set
+	 */
 	public JsonBuilder(@NotNull TextDecoration... decorations) {
 		decorate(decorations);
 	}
 
 	/**
-	 * Creates a new builder with a component created from the input text appended
+	 * Converts the input text to a component and appends it to the internal builder
+	 * <br>Note: this does not apply any text, color, or formatting changes to the builder itself
 	 */
-	public JsonBuilder(@Nullable String text) {
-		next(text);
+	public JsonBuilder(@Nullable String formattedText) {
+		next(formattedText);
 	}
 
+	/**
+	 * Converts the input to a component and appends it to the internal builder. Also copies {@link #loreize} and {@link #initialized}.
+	 * <br>Note: this does not apply any text, color, or formatting changes to the builder itself
+	 */
 	public JsonBuilder(@Nullable JsonBuilder json) {
 		if (json != null) {
 			next(json);
@@ -116,85 +151,145 @@ public class JsonBuilder implements ComponentLike {
 		}
 	}
 
+	/**
+	 * Converts the input to a component and appends it to the internal builder
+	 * <br>Note: this does not apply any text, color, or formatting changes to the builder itself
+	 */
 	public JsonBuilder(@Nullable ComponentLike component) {
 		next(component);
 	}
 
-	public JsonBuilder(@Nullable ColoredAndNamed coloredAndNamed) {
-		next(coloredAndNamed);
+	/**
+	 * Creates a new builder with its raw text set and the provided color applied
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
+	public JsonBuilder(@NotNull String rawText, @NotNull TextDecoration... decorations) {
+		content(rawText);
+		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set and the provided color applied
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable TextColor color) {
 		content(rawText);
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set and the provided color applied
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable Colored color) {
 		content(rawText);
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set and the provided color applied
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable ChatColor color) {
 		content(rawText);
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set and the provided color applied
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable Color color) {
 		content(rawText);
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set and the provided color applied
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable org.bukkit.Color color) {
 		content(rawText);
 		color(color);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set, provided color applied, and text decorations set
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable TextColor color, @NotNull TextDecoration... decorations) {
 		content(rawText);
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set, provided color applied, and text decorations set
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable Colored color, @NotNull TextDecoration... decorations) {
 		content(rawText);
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set, provided color applied, and text decorations set
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable ChatColor color, @NotNull TextDecoration... decorations) {
 		content(rawText);
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set, provided color applied, and text decorations set
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable Color color, @NotNull TextDecoration... decorations) {
 		content(rawText);
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set, provided color applied, and text decorations set
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable org.bukkit.Color color, @NotNull TextDecoration... decorations) {
 		content(rawText);
 		color(color);
 		decorate(decorations);
 	}
 
+	/**
+	 * Creates a new builder with its raw text set and provided style applied
+	 * @param rawText raw text, meaning formatting codes are ignored
+	 * @param style style that overwrites saved colors and text decorations
+	 */
 	public JsonBuilder(@NotNull String rawText, @NotNull Style style) {
 		content(rawText);
 		style(style);
 	}
 
-	private void debug(@NotNull String message) {
-		Nexus.debug(message);
-	}
-
+	/**
+	 * Converts the input text to a colored and formatted component and appends it to the internal builder
+	 * @param formattedText text formatted with ampersands or section symbols
+	 * @return this builder
+	 */
 	@NotNull
-	public JsonBuilder next(@Nullable String text) {
-		if (text != null)
-			builder.append(AdventureUtils.fromLegacyText(getColoredWords(colorize(text))));
+	public JsonBuilder next(@Nullable String formattedText) {
+		if (formattedText != null)
+			builder.append(AdventureUtils.fromLegacyText(colorize(formattedText)));
 		return this;
 	}
 
+	/**
+	 * Creates a component with its text and color set and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable TextColor color) {
 		if (rawText != null)
@@ -202,26 +297,51 @@ public class JsonBuilder implements ComponentLike {
 		return this;
 	}
 
+	/**
+	 * Creates a component with its text and color set and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable Colored color) {
 		return next(rawText, AdventureUtils.textColorOf(color));
 	}
 
+	/**
+	 * Creates a component with its text and color set and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable ChatColor color) {
 		return next(rawText, AdventureUtils.textColorOf(color));
 	}
 
+	/**
+	 * Creates a component with its text and color set and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable Color color) {
 		return next(rawText, AdventureUtils.textColorOf(color));
 	}
 
+	/**
+	 * Creates a component with its text and color set and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable org.bukkit.Color color) {
 		return next(rawText, AdventureUtils.textColorOf(color));
 	}
 
+	/**
+	 * Creates a component with its text, color, and decorations set, and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable TextColor color, TextDecoration... decorations) {
 		if (rawText != null)
@@ -229,28 +349,61 @@ public class JsonBuilder implements ComponentLike {
 		return this;
 	}
 
+	/**
+	 * Creates a component with its text, color, and decorations set, and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable Colored color, TextDecoration... decorations) {
 		return next(rawText, AdventureUtils.textColorOf(color), decorations);
 	}
 
+	/**
+	 * Creates a component with its text, color, and decorations set, and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable ChatColor color, TextDecoration... decorations) {
 		return next(rawText, AdventureUtils.textColorOf(color), decorations);
 	}
 
+	/**
+	 * Creates a component with its text, color, and decorations set, and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable Color color, TextDecoration... decorations) {
 		return next(rawText, AdventureUtils.textColorOf(color), decorations);
 	}
 
+	/**
+	 * Creates a component with its text, color, and decorations set, and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable String rawText, @Nullable org.bukkit.Color color, TextDecoration... decorations) {
 		return next(rawText, AdventureUtils.textColorOf(color), decorations);
 	}
 
 	/**
-	 * Sets the raw text for the base text component. Does not handle any color codes.
+	 * Creates a component with its text, color, and decorations set, and appends it to the internal builder
+	 * @param rawText raw text, color codes are ignored
+	 * @return this builder
+	 */
+	@NotNull
+	public JsonBuilder next(@Nullable String rawText, TextDecoration... decorations) {
+		if (rawText != null)
+			builder.append(new JsonBuilder(rawText, decorations));
+		return this;
+	}
+
+	/**
+	 * Sets the raw text for the base text component
+	 * @param rawText raw text, color codes are ignored
 	 * @return this builder
 	 */
 	@NotNull
@@ -259,6 +412,10 @@ public class JsonBuilder implements ComponentLike {
 		return this;
 	}
 
+	/**
+	 * Appends a component to the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder next(@Nullable ComponentLike component) {
 		if (component != null)
@@ -266,16 +423,10 @@ public class JsonBuilder implements ComponentLike {
 		return this;
 	}
 
-	@NotNull
-	public JsonBuilder next(@Nullable ColoredAndNamed coloredAndNamed) {
-		if (coloredAndNamed != null)
-			builder.append(coloredAndNamed.getComponent());
-		return this;
-	}
-
 	/**
 	 * Applies saved hover text, appends the current working Component to the output Component, and resets the working
 	 * component to default.
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder group() {
@@ -305,15 +456,29 @@ public class JsonBuilder implements ComponentLike {
 		return this;
 	}
 
+	/**
+	 * Adds a new line and creates a new {@link #group()}
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder newline() {
+		return newline(true);
+	}
+
+	/**
+	 * Adds a new line and optionally creates a new {@link #group()}
+	 * @return this builder
+	 */
+	@NotNull
+	public JsonBuilder newline(boolean newGroup) {
 		builder.append(Component.text(System.lineSeparator()));
-		group();
+		if (newGroup)
+			group();
 		return this;
 	}
 
 	/**
-	 * Creates an empty line (two newlines)
+	 * Creates an empty line (2x {@link #newline()})
 	 */
 	@NotNull
 	public JsonBuilder line() {
@@ -322,27 +487,47 @@ public class JsonBuilder implements ComponentLike {
 		return this;
 	}
 
+	/**
+	 * Sets the color for the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder color(@Nullable TextColor color) {
 		builder.color(color);
 		return this;
 	}
 
+	/**
+	 * Sets the color for the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder color(@Nullable Colored color) {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
+	/**
+	 * Sets the color for the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder color(@Nullable ChatColor color) {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
+	/**
+	 * Sets the color for the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder color(@Nullable Color color) {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
+	/**
+	 * Sets the color for the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder color(@Nullable org.bukkit.Color color) {
 		return color(AdventureUtils.textColorOf(color));
@@ -352,43 +537,73 @@ public class JsonBuilder implements ComponentLike {
 	 * Parses a hexadecimal number
 	 * @param color number in the format "#FFFFFF" (# optional)
 	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder color(@Nullable String color) throws IllegalArgumentException {
 		return color(AdventureUtils.textColorOf(color));
 	}
 
-	@NotNull
-	private static TextDecoration.State stateOf(boolean bool) {
-		return bool ? TextDecoration.State.TRUE : TextDecoration.State.FALSE;
-	}
-
+	/**
+	 * Enables the provided text decorations
+	 * @param decorations varargs list of decorations
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder decorate(@NotNull TextDecoration... decorations) {
 		return decorate(true, decorations);
 	}
 
+	/**
+	 * Sets the state of text decorations
+	 * @param state whether to enable or disable the decorations
+	 * @param decorations varargs list of decorations
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder decorate(boolean state, @NotNull TextDecoration... decorations) {
 		return decorate(state, Arrays.asList(decorations));
 	}
 
+	/**
+	 * Sets the state of text decorations
+	 * @param state state to set the decorations to
+	 * @param decorations varargs list of decorations
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder decorate(@NotNull TextDecoration.State state, @NotNull TextDecoration... decorations) {
 		return decorate(state, Arrays.asList(decorations));
 	}
 
+	/**
+	 * Sets the state of text decorations
+	 * @param state whether to enable or disable the decorations
+	 * @param decorations collection of decorations
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder decorate(boolean state, @NotNull Collection<TextDecoration> decorations) {
-		return decorate(stateOf(state), new HashSet<>(decorations));
+		return decorate(TextDecoration.State.byBoolean(state), new HashSet<>(decorations));
 	}
 
+	/**
+	 * Sets the state of text decorations
+	 * @param state state to set the decorations to
+	 * @param decorations collection of decorations
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder decorate(@NotNull TextDecoration.State state, @NotNull Collection<TextDecoration> decorations) {
 		decorations.forEach(decoration -> builder.decoration(decoration, state));
 		return this;
 	}
 
+	/**
+	 * Sets the state of text decorations
+	 * @param decorations map of decorations to states
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder decorate(@NotNull Map<TextDecoration, TextDecoration.State> decorations) {
 		decorations.forEach((decoration, state) -> builder.decoration(decoration, state));
@@ -396,36 +611,54 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
-	 * Enables bold
+	 * Enables bold on the internal builder
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder bold() {
 		return bold(true);
 	}
 
+	/**
+	 * Sets the state of bold on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder bold(boolean state) {
-		return bold(stateOf(state));
+		return bold(TextDecoration.State.byBoolean(state));
 	}
 
+	/**
+	 * Sets the state of bold on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder bold(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.BOLD);
 	}
 
 	/**
-	 * Enables italicization
+	 * Enables italicization on the internal builder
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder italic() {
 		return italic(true);
 	}
 
+	/**
+	 * Sets the state of italicization on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder italic(boolean state) {
-		return italic(stateOf(state));
+		return italic(TextDecoration.State.byBoolean(state));
 	}
 
+	/**
+	 * Sets the state of italicization on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder italic(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.ITALIC);
@@ -433,71 +666,110 @@ public class JsonBuilder implements ComponentLike {
 
 
 	/**
-	 * Enables strikethrough
+	 * Enables strikethrough on the internal builder
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder strikethrough() {
 		return strikethrough(true);
 	}
 
+	/**
+	 * Sets the state of strikethrough on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder strikethrough(boolean state) {
-		return strikethrough(stateOf(state));
+		return strikethrough(TextDecoration.State.byBoolean(state));
 	}
 
+	/**
+	 * Sets the state of strikethrough on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder strikethrough(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.STRIKETHROUGH);
 	}
 
 	/**
-	 * Enables underlines
+	 * Enables underlines on the internal builder
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder underline() {
 		return underline(true);
 	}
 
+	/**
+	 * Sets the state of underlines on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder underline(boolean state) {
-		return underline(stateOf(state));
+		return underline(TextDecoration.State.byBoolean(state));
 	}
 
+	/**
+	 * Sets the state of underlines on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder underline(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.UNDERLINED);
 	}
 
 	/**
-	 * Enables obfuscation (the random gibberish text)
+	 * Enables obfuscation (random gibberish text) on the internal builder
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder obfuscate() {
 		return obfuscate(true);
 	}
 
+	/**
+	 * Sets the state of obfuscation (random gibberish text) on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder obfuscate(boolean state) {
-		return obfuscate(stateOf(state));
+		return obfuscate(TextDecoration.State.byBoolean(state));
 	}
 
+	/**
+	 * Sets the state of obfuscation (random gibberish text) on the internal builder
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder obfuscate(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.OBFUSCATED);
 	}
 
+	/**
+	 * Sets the style of the internal builder, replacing existing colors and decorations
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder style(@NotNull Style style) {
 		builder.style(style);
 		return this;
 	}
 
+	/**
+	 * Sets the style of the internal builder, replacing existing colors and decorations
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder style(@NotNull Consumer<Style.Builder> style) {
 		builder.style(style);
 		return this;
 	}
 
+	/**
+	 * Adds an action to run on click
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder clickEvent(@Nullable ClickEvent clickEvent) {
 		builder.clickEvent(clickEvent);
@@ -506,6 +778,7 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Prompts the player to open a URL when clicked
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder url(@NotNull String url) {
@@ -514,6 +787,7 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Prompts the player to open a URL when clicked
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder url(@NotNull URL url) {
@@ -523,6 +797,7 @@ public class JsonBuilder implements ComponentLike {
 	/**
 	 * Makes the player run a command when clicked
 	 * @param command a command, forward slash not required
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder command(@NotNull String command) {
@@ -534,12 +809,18 @@ public class JsonBuilder implements ComponentLike {
 	/**
 	 * Suggests a command to a player on click by typing it into their chat window
 	 * @param text some text, usually a command
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder suggest(@NotNull String text) {
 		return clickEvent(ClickEvent.suggestCommand(text));
 	}
 
+	/**
+	 * Copies text to the user's clipboard on click
+	 * @param text text to copy
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder copy(@NotNull String text) {
 		return clickEvent(ClickEvent.copyToClipboard(text));
@@ -548,6 +829,7 @@ public class JsonBuilder implements ComponentLike {
 	/**
 	 * Sets the page of a book when clicked
 	 * @param page page number
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder bookPage(int page) {
@@ -557,12 +839,17 @@ public class JsonBuilder implements ComponentLike {
 	/**
 	 * Sets the page of a book when clicked
 	 * @param page page number
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder bookPage(@NotNull String page) {
 		return clickEvent(ClickEvent.changePage(page));
 	}
 
+	/**
+	 * Toggles loreize, which automatically splits text and replaces || with newlines using {@link StringUtils#loreize(String)}
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder loreize(boolean loreize) {
 		this.loreize = loreize;
@@ -571,6 +858,7 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Clears this builder's hover text
+	 * @return this builder
 	 */
 	@NotNull
 	public JsonBuilder hover() {
@@ -579,92 +867,136 @@ public class JsonBuilder implements ComponentLike {
 		return this;
 	}
 
+	/**
+	 * Adds lines of text to this builder's hover text
+	 * <br>Note: this is not computed until {@link #build()} which will override any other hover set
+	 * @param lines lines of text
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder hover(@NonNull String... lines) {
 		return hover(Arrays.asList(lines));
 	}
 
+	/**
+	 * Adds lines of text to this builder's hover text
+	 * <br>Note: this is not computed until {@link #build()} which will override any other hover set
+	 * @param lines lines of text
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder hover(@NonNull List<String> lines) {
 		lore.addAll(lines);
 		return this;
 	}
 
+	/**
+	 * Sets hover text to render the metadata of the provided item stack, like when hovering over one in your inventory
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder hover(@NonNull ItemStack itemStack) {
 		builder.hoverEvent(itemStack.asHoverEvent());
 		return this;
 	}
 
+	/**
+	 * Sets hover text to render the name, type, and UUID of an entity
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder hover(@NonNull Entity entity) {
 		builder.hoverEvent(entity.asHoverEvent());
 		return this;
 	}
 
+	/**
+	 * Sets the text shown on hover
+	 * @return this builder
+	 */
 	@NotNull
 	public <V> JsonBuilder hover(@Nullable HoverEventSource<V> hoverEvent) {
 		builder.hoverEvent(hoverEvent);
 		return this;
 	}
 
+	/**
+	 * Sets a component to display on hover
+	 * @return this builder
+	 */
 	@NotNull
-	public JsonBuilder hover(@Nullable Component component) {
+	public JsonBuilder hover(@Nullable ComponentLike component) {
 		if (component != null)
-			builder.hoverEvent(component.asHoverEvent());
+			builder.hoverEvent(component.asComponent().asHoverEvent());
 		return this;
 	}
 
+	/**
+	 * Sets a string that will be inserted in chat when this component is shift-clicked
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder insert(@Nullable String insertion) {
 		builder.insertion(insertion);
 		return this;
 	}
 
+	/**
+	 * "Initializes" the builder. This does nothing on its own. See {@link #isInitialized()} for more information.
+	 * @return this builder
+	 */
 	@NotNull
 	public JsonBuilder initialize() {
 		this.initialized = true;
 		return this;
 	}
 
+	/**
+	 * Runs {@link #build()} and sends the resulting component to a recipient.
+	 * @param recipient a player object (see {@link PlayerUtils#send(Object, Object)} for valid objects)
+	 */
 	public void send(@Nullable Object recipient) {
-		PlayerUtils.send(recipient, build());
+		PlayerUtils.send(recipient, this);
 	}
 
+	/**
+	 * Executes {@link #group()} and returns the final result
+	 * @return resultant component
+	 */
 	@NotNull
-	public Component build() {
+	public TextComponent build() {
 		group();
 		return result.build();
 	}
 
+	/**
+	 * Alias of {@link #build()}. Executes {@link #group()} and returns the final result
+	 * @return resultant component
+	 */
 	@Override
 	@NonNull
 	public Component asComponent() {
 		return build();
 	}
 
-	@Contract("null -> null; !null -> !null")
-	private String getColoredWords(@Nullable String text) {
-		if (text == null) return null;
-		StringBuilder builder = new StringBuilder();
-		for (String word : text.split(" "))
-			builder.append(getLastColor(builder.toString())).append(word).append(" ");
-
-		// Trim trailing whitespace
-		String result = builder.toString().replaceFirst("\\s++$", "");
-		if (text.endsWith(" ")) result += " ";
-		return result;
-	}
-
+	/**
+	 * Builds this component ({@link #build()}) and formats it as plain text using Paper's serializer
+	 * @return plain human text (no color codes)
+	 */
 	@NotNull
 	public String toString() {
 		return AdventureUtils.asPlainText(build());
 	}
 
+	/**
+	 * Builds this component ({@link #build()}) and converts it to json format using Paper's serializer
+	 * @deprecated should not generally be working with json anymore
+	 * @return Minecraft json string
+	 */
 	@NotNull
+	@Deprecated
 	public String serialize() {
 		return GsonComponentSerializer.gson().serialize(build());
 	}
-
 
 }
