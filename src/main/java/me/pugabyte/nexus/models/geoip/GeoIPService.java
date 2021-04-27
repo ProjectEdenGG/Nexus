@@ -90,6 +90,7 @@ public class GeoIPService extends MongoService<GeoIP> {
 		return database.createQuery(GeoIP.class).find().toList();
 	}
 
+	@Override
 	public void save(GeoIP geoIp) {
 		if (geoIp != null && geoIp.getIp() != null)
 			super.save(geoIp);

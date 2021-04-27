@@ -33,9 +33,12 @@ public class Back implements PlayerOwnedObject {
 	@Embedded
 	private List<Location> locations = new ArrayList<>();
 
+	private final static int MAX_LOCATIONS = 10;
+
 	public void add(Location from) {
 		locations.removeIf(location -> location.getWorld() == null || !location.isWorldLoaded());
 		locations.add(0, from);
+		locations = new ArrayList<>(locations.subList(0, Math.min(locations.size(), MAX_LOCATIONS)));
 	}
 
 }

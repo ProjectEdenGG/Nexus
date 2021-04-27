@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static eden.utils.Utils.isNullOrEmpty;
+
 @PlayerClass(PowertoolUser.class)
 public class PowertoolService extends MongoService<PowertoolUser> {
 	private final static Map<UUID, PowertoolUser> cache = new HashMap<>();
@@ -16,11 +18,8 @@ public class PowertoolService extends MongoService<PowertoolUser> {
 	}
 
 	@Override
-	public void save(PowertoolUser user) {
-		if (user.getPowertools().isEmpty())
-			super.delete(user);
-		else
-			super.save(user);
+	protected boolean deleteIf(PowertoolUser user) {
+		return isNullOrEmpty(user.getPowertools());
 	}
 
 }

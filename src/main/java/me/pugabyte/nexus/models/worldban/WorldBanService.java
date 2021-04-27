@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static eden.utils.Utils.isNullOrEmpty;
+
 @PlayerClass(WorldBan.class)
 public class WorldBanService extends MongoService<WorldBan> {
 	private final static Map<UUID, WorldBan> cache = new HashMap<>();
@@ -15,11 +17,9 @@ public class WorldBanService extends MongoService<WorldBan> {
 		return cache;
 	}
 
-	public void save(WorldBan worldBan) {
-		if (worldBan.getBans() == null || worldBan.getBans().size() == 0)
-			super.delete(worldBan);
-		else
-			super.save(worldBan);
+	@Override
+	protected boolean deleteIf(WorldBan worldBan) {
+		return isNullOrEmpty(worldBan.getBans());
 	}
 
 }

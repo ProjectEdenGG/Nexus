@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static eden.utils.Utils.isNullOrEmpty;
+
 @PlayerClass(HallOfHistory.class)
 public class HallOfHistoryService extends MongoService<HallOfHistory> {
 	public static Map<UUID, HallOfHistory> cache = new HashMap<>();
@@ -15,11 +17,9 @@ public class HallOfHistoryService extends MongoService<HallOfHistory> {
 		return cache;
 	}
 
-	public void save(HallOfHistory hallOfHistory) {
-		if (hallOfHistory.getRankHistory() == null || hallOfHistory.getRankHistory().size() == 0)
-			super.delete(hallOfHistory);
-		else
-			super.save(hallOfHistory);
+	@Override
+	protected boolean deleteIf(HallOfHistory hallOfHistory) {
+		return isNullOrEmpty(hallOfHistory.getRankHistory());
 	}
 
 }

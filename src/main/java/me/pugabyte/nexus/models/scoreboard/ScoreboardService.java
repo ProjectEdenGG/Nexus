@@ -15,10 +15,10 @@ public class ScoreboardService extends MongoService<ScoreboardUser> {
 		return cache;
 	}
 
-	public void delete(ScoreboardUser user) {
+	@Override
+	protected void beforeDelete(ScoreboardUser user) {
 		if (user.getScoreboard() != null)
 			user.getScoreboard().delete();
-		super.delete(user);
 	}
 
 }

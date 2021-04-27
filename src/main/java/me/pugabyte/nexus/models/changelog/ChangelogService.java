@@ -18,9 +18,8 @@ public class ChangelogService extends MongoService<Changelog> {
 	}
 
 	@Override
-	public void saveSync(Changelog changelog) {
+	public void beforeSave(Changelog changelog) {
 		changelog.getEntries().sort(Comparator.comparing(ChangelogEntry::getTimestamp).reversed());
-		super.saveSync(changelog);
 	}
 
 }

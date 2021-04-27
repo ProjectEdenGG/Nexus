@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+import static eden.utils.Utils.isNullOrEmpty;
+
 /*
 	Returns true, if cooldown has expired/is bypassed
 	Returns false, if cooldown is still in effect
@@ -94,11 +96,15 @@ public class CooldownService extends MongoService<Cooldown> {
 	}
 
 	@Override
-	public void saveSync(Cooldown object) {
-		if (object.getCooldowns().isEmpty())
-			super.deleteSync(object);
-		else
-			super.saveSync(object);
+	protected boolean deleteIf(Cooldown cooldown) {
+		return isNullOrEmpty(cooldown.getCooldowns());
+	}
+
+	@Override
+	protected void beforeSave(Cooldown cooldown) {
+		for (String key : new HashSet<>(cooldown.getCooldowns().keySet()))
+			if (cooldown.check(key))
+				cooldown.getCooldowns().remove(key);
 	}
 
 }

@@ -16,11 +16,8 @@ public class DurabilityWarningService extends MongoService<DurabilityWarning> {
 	}
 
 	@Override
-	public void saveSync(DurabilityWarning durabilityWarning) {
-		if (durabilityWarning.isEnabled())
-			super.delete(durabilityWarning);
-		else
-			super.saveSync(durabilityWarning);
+	protected boolean deleteIf(DurabilityWarning durabilityWarning) {
+		return durabilityWarning.isEnabled();
 	}
 
 }

@@ -26,9 +26,8 @@ public class HomeService extends MongoService<HomeOwner> {
 	}
 
 	@Override
-	public void save(HomeOwner homeOwner) {
+	public void beforeSave(HomeOwner homeOwner) {
 		homeOwner.getHomes().sort(Comparator.comparing(home -> home.getName().toLowerCase()));
-		super.save(homeOwner);
 	}
 
 }

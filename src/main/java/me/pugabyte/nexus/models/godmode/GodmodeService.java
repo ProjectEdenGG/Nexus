@@ -16,11 +16,8 @@ public class GodmodeService extends MongoService<Godmode> {
 	}
 
 	@Override
-	public void saveSync(Godmode godmode) {
-		if (godmode.isEnabledRaw())
-			super.saveSync(godmode);
-		else
-			super.deleteSync(godmode);
+	protected boolean deleteIf(Godmode godmode) {
+		return !godmode.isEnabledRaw();
 	}
 
 }
