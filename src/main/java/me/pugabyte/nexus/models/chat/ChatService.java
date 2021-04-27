@@ -28,10 +28,12 @@ public class ChatService extends MongoService<Chatter> {
 		return cache.get(uuid);
 	}
 
+	@Override
 	public void save(Chatter chatter) {
 		Tasks.async(() -> saveSync(chatter));
 	}
 
+	@Override
 	public void saveSync(Chatter chatter) {
 		database.save(new DatabaseChatter(chatter));
 	}
