@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -130,11 +131,13 @@ public enum PunishmentType implements ColoredAndNamed {
 	FREEZE("froze", ChatColor.AQUA, false, true, true, true) {
 		@Override
 		public void action(Punishment punishment) {
+			new FreezeService().get(punishment).freeze();
 			punishment.send("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 		}
 
 		@Override
 		public void onExpire(Punishment punishment) {
+			new FreezeService().get(punishment).unfreeze();
 			punishment.send("&cYou have been unfrozen");
 		}
 	},

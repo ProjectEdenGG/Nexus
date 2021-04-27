@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,13 +30,14 @@ public abstract class _PunishmentCommand extends _JusticeCommand {
 	}
 
 	protected void punish(List<Punishments> players, String input, boolean now) {
+		List<Punishments> toPunish = new ArrayList<>(players);
 		AtomicReference<Runnable> loop = new AtomicReference<>();
 		loop.set(() -> {
-			if (players.isEmpty())
+			if (toPunish.isEmpty())
 				return;
 
 			try {
-				Punishments player = players.remove(0);
+				Punishments player = toPunish.remove(0);
 
 				Runnable punish = () -> player.add(Punishment.ofType(getType())
 						.punisher(uuid())
