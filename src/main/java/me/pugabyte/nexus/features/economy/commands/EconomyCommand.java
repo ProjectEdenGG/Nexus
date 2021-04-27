@@ -1,25 +1,21 @@
 package me.pugabyte.nexus.features.economy.commands;
 
-import eden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
-import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
-import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 
@@ -92,48 +88,6 @@ public class EconomyCommand extends CustomCommand {
 		service.withdraw(cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
-
-	@Async
-	@Path("volume [startTime] [endTime]")
-	void volume(LocalDateTime startTime, LocalDateTime endTime) {
-		if (endTime == null)
-			endTime = LocalDateTime.now();
-
-		BigDecimal total = BigDecimal.valueOf(0);
-
-		for (Banker banker : service.getAll())
-			for (Transaction transaction : banker.getTransactions()) {
-				if (startTime != null && !transaction.getTimestamp().isAfter(startTime))
-					continue;
-				if (!transaction.getTimestamp().isBefore(endTime))
-					continue;
-
-				total = total.add(transaction.getAmount());
-			}
-
-		send(PREFIX + "Total volume" + (startTime != null ? " for " + Timespan.of(startTime, endTime).format() : "") + ": &e" + prettyMoney(total));
-	}
-
-//	@Async
-//	@Path("convertBalances")
-//	void convertBalance() {
-//		int wait = 0;
-//		Essentials essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-//		for (UUID uuid : essentials.getUserMap().getAllUniqueUsers()) {
-//			int count = 0;
-//			User user = essentials.getUser(uuid);
-//			Banker banker = service.get(uuid);
-//			if (user.getMoney().doubleValue() > 550 || user.getMoney().doubleValue() < 450) {
-//				++count;
-//				Tasks.wait(wait, () -> {
-//					banker.setBalance(user.getMoney());
-//					service.save(banker);
-//				});
-//				if (count > 200)
-//					wait += 3;
-//			}
-//		}
-//	}
 
 	@ConverterFor(ShopGroup.class)
 	ShopGroup convertToShopGroup(String value) {

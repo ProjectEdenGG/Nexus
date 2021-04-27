@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.banker.Transactions;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -57,7 +58,7 @@ public class PayCommand extends CustomCommand {
 
 	@Async
 	@Path("history [player] [shopGroup] [page]")
-	void history(@Arg("self") Banker banker, @Arg("current") ShopGroup shopGroup, @Arg("1") int page) {
+	void history(@Arg("self") Transactions banker, @Arg("current") ShopGroup shopGroup, @Arg("1") int page) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions()).stream()
 				.filter(transaction -> transaction.getShopGroup() == shopGroup && transaction.getCause() == TransactionCause.PAY)
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())

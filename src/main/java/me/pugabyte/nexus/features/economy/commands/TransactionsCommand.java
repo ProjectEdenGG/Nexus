@@ -11,10 +11,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.banker.Banker;
-import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.banker.Transactions;
+import me.pugabyte.nexus.models.banker.TransactionsService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
@@ -28,6 +28,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +42,7 @@ import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
 
 @NoArgsConstructor
-@Aliases({"transaction", "txn"})
+@Aliases({"transaction", "txn", "txns"})
 public class TransactionsCommand extends CustomCommand implements Listener {
 	private ShopGroup shopGroup;
 
@@ -51,8 +53,29 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
+	@Path("volume [startTime] [endTime]")
+	void volume(LocalDateTime startTime, LocalDateTime endTime) {
+		if (endTime == null)
+			endTime = LocalDateTime.now();
+
+		BigDecimal total = BigDecimal.valueOf(0);
+
+		for (Transactions banker : new TransactionsService().getAll())
+			for (Transaction transaction : banker.getTransactions()) {
+				if (startTime != null && !transaction.getTimestamp().isAfter(startTime))
+					continue;
+				if (!transaction.getTimestamp().isBefore(endTime))
+					continue;
+
+				total = total.add(transaction.getAmount());
+			}
+
+		send(PREFIX + "Total volume" + (startTime != null ? " for " + Timespan.of(startTime, endTime).format() : "") + ": &e" + prettyMoney(total));
+	}
+
+	@Async
 	@Path("history [player] [page]")
-	void history(@Arg("self") Banker banker, @Arg("1") int page) {
+	void history(@Arg("self") Transactions banker, @Arg("1") int page) {
 		List<Transaction> transactions = banker.getTransactions().stream()
 				.filter(transaction -> transaction.getShopGroup() == shopGroup)
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
@@ -70,7 +93,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	}
 
 	@NotNull
-	public static BiFunction<Transaction, String, JsonBuilder> getFormatter(Player player, Banker banker) {
+	public static BiFunction<Transaction, String, JsonBuilder> getFormatter(Player player, Transactions banker) {
 		return (transaction, index) -> {
 			String timestamp = shortishDateTimeFormat(transaction.getTimestamp());
 
@@ -165,7 +188,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 				return;
 
 			Nerd nerd = Nerd.of(event.getPlayer());
-			Banker banker = new BankerService().get(event.getPlayer());
+			Transactions banker = new TransactionsService().get(event.getPlayer());
 
 			if (banker.getTransactions().isEmpty())
 				return;

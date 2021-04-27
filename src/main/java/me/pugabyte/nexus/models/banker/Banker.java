@@ -129,7 +129,7 @@ public class Banker implements PlayerOwnedObject {
 		BigDecimal newBalance = rounded(balance);
 
 		if (new BalanceChangeEvent(getOfflinePlayer(), getBalance(shopGroup), newBalance, shopGroup).callEvent()) {
-			transactions.add(transaction);
+			new TransactionsService().get(this).getTransactions().add(transaction);
 			balances.put(shopGroup, newBalance);
 		}
 	}

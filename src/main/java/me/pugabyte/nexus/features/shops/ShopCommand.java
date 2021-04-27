@@ -17,9 +17,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.banker.Transactions;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
@@ -103,7 +103,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("history [player] [page]")
-	void history(@Arg("self") Banker banker, @Arg("1") int page) {
+	void history(@Arg("self") Transactions banker, @Arg("1") int page) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
 				.stream().filter(transaction ->
 						transaction.getShopGroup() == shopGroup &&
