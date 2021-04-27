@@ -52,6 +52,7 @@ public class MuteMenuCommand extends CustomCommand {
 			REMINDERS("Reminders", Material.REPEATER),
 			AFK("AFK Broadcasts", Material.REDSTONE_LAMP),
 			JOIN_QUIT("Join/Quit Messages", Material.OAK_FENCE_GATE),
+			DEATH_MESSAGES("Death Messages", Material.PLAYER_HEAD),
 			EVENTS("Event Broadcasts", Material.BEACON),
 			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD),
 			QUEUP("QueUp Song Updates", Material.JUKEBOX),

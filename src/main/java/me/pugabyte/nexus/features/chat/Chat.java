@@ -563,6 +563,10 @@ public class Chat extends Feature {
 		broadcastIngame(sender, message, ChatManager.getMainChannel(), type);
 	}
 
+	public static void broadcastIngame(Identified sender, Component message, MessageType type, MuteMenuItem muteMenuItem) {
+		broadcastIngame(sender, message, ChatManager.getMainChannel(), type, muteMenuItem);
+	}
+
 	public static void broadcastIngame(UUID sender, Component message, MessageType type) {
 		broadcastIngame(sender, message, ChatManager.getMainChannel(), type);
 	}

@@ -6,6 +6,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -17,6 +18,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
+import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -165,14 +167,15 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
-			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT);
+			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
 
 			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
 				Chat.broadcastDiscord("☠ " + deathString); // dumb fix :(
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			Chatter chatter = new ChatService().get(event.getEntity());
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
-				recipient.send(event.getEntity(), output, MessageType.CHAT);
+				if (!MuteMenuUser.hasMuted(recipient.getPlayer(), MuteMenuItem.DEATH_MESSAGES))
+					recipient.send(event.getEntity(), output, MessageType.CHAT);
 		}
 	}
 
