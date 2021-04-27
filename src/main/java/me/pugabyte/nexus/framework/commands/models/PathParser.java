@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
+import static me.pugabyte.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static me.pugabyte.nexus.utils.StringUtils.left;
 
 @Data
@@ -275,7 +276,7 @@ class PathParser {
 				if (realArg.lastIndexOf(",") == realArg.length() - 1)
 					realArg = "";
 				else {
-					String[] split = realArg.split(",");
+					String[] split = realArg.split(COMMA_SPLIT_REGEX);
 					realArg = split[split.length - 1];
 				}
 			}
@@ -295,7 +296,7 @@ class PathParser {
 				results.addAll(command.tabCompleteEnum(realArg.toLowerCase(), (Class<? extends Enum<?>>) type));
 
 			if (isList) {
-				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(",")));
+				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(COMMA_SPLIT_REGEX)));
 				if (!this.realArg.endsWith(","))
 					realArgs.remove(realArgs.size() - 1);
 				String realArgBeginning = String.join(",", realArgs);

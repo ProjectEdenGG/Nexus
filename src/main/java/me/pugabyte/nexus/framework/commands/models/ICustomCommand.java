@@ -59,6 +59,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
+import static me.pugabyte.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static me.pugabyte.nexus.utils.StringUtils.asParsableDecimal;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.Utils.getDefaultPrimitiveValue;
@@ -306,7 +307,7 @@ public abstract class ICustomCommand {
 				throw new InvalidInputException("Collection parameter must define concrete type with @Arg");
 
 			List<Object> values = new ArrayList<>();
-			for (String index : value.split(",(?=[^}]*(?:\\{|$))"))
+			for (String index : value.split(COMMA_SPLIT_REGEX))
 				values.add(convert(index, context, annotation.type(), parameter, name, event, required));
 			values.removeIf(Objects::isNull);
 			return values;

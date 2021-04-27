@@ -38,6 +38,8 @@ public class StringUtils extends eden.utils.StringUtils {
 	public static final String CHECK = "&a✔";
 	@Getter
 	public static final String X = "&c✗";
+	@Getter
+	public static final String COMMA_SPLIT_REGEX = ",(?=[^}]*(?:\\{|$))";
 
 	public static String getPrefix(Class<?> clazz) {
 		return getPrefix(clazz.getSimpleName());
