@@ -43,7 +43,9 @@ public class NerdService extends MongoService<Nerd> {
 	}
 
 	public Nerd getFromAlias(String alias) {
-		return database.createQuery(Nerd.class).filter("aliases", sanitize(alias)).find().tryNext();
+		Query<Nerd> query = database.createQuery(Nerd.class);
+		query.and(query.criteria("aliases").hasThisOne(alias));
+		return query.find().tryNext();
 	}
 
 }

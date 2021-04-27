@@ -195,14 +195,15 @@ public class PlayerUtils {
 				return player;
 
 		NerdService nerdService = new NerdService();
+		NicknameService nicknameService = new NicknameService();
+
+		Nickname fromNickname = nicknameService.getFromNickname(partialName);
+		if (fromNickname != null)
+			return fromNickname.getOfflinePlayer();
 
 		Nerd fromAlias = nerdService.getFromAlias(partialName);
 		if (fromAlias != null)
 			return fromAlias.getOfflinePlayer();
-
-		Nickname fromNickname = new NicknameService().getFromNickname(partialName);
-		if (fromNickname != null)
-			return fromNickname.getOfflinePlayer();
 
 		List<Nerd> matches = nerdService.find(partialName);
 		if (matches.size() > 0) {

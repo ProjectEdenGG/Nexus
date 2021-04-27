@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.discord;
 
+import dev.morphia.query.Query;
 import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -27,13 +28,17 @@ public class DiscordUserService extends MongoService<DiscordUser> {
 	}
 
 	public DiscordUser getFromUserId(String userId) {
-		DiscordUser user = database.createQuery(DiscordUser.class).filter("userId", userId).find().tryNext();
+		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
+		query.and(query.criteria("userId").equalIgnoreCase(userId));
+		DiscordUser user = query.find().tryNext();
 		cache(user);
 		return user;
 	}
 
 	public DiscordUser getFromRoleId(String roleId) {
-		DiscordUser user = database.createQuery(DiscordUser.class).filter("roleId", roleId).find().tryNext();
+		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
+		query.and(query.criteria("roleId").equalIgnoreCase(roleId));
+		DiscordUser user = query.find().tryNext();
 		cache(user);
 		return user;
 	}

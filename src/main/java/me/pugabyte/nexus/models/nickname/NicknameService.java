@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.nickname;
 
+import dev.morphia.query.Query;
 import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
@@ -16,13 +17,17 @@ public class NicknameService extends MongoService<Nickname> {
 	}
 
 	public Nickname getFromNickname(String nickname) {
-		Nickname data = database.createQuery(Nickname.class).filter("nickname", sanitize(nickname)).find().tryNext();
+		Query<Nickname> query = database.createQuery(Nickname.class);
+		query.and(query.criteria("nickname").equalIgnoreCase(nickname));
+		Nickname data = query.find().tryNext();
 		cache(data);
 		return data;
 	}
 
 	public Nickname getFromQueueId(String queueId) {
-		Nickname data = database.createQuery(Nickname.class).filter("nicknameHistory.nicknameQueueId", sanitize(queueId)).find().tryNext();
+		Query<Nickname> query = database.createQuery(Nickname.class);
+		query.and(query.criteria("nicknameHistory.nicknameQueueId").equalIgnoreCase(queueId));
+		Nickname data = query.find().tryNext();
 		cache(data);
 		return data;
 	}
