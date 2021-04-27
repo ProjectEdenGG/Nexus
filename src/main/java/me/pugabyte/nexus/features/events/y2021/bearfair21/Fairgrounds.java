@@ -16,6 +16,5 @@ public class Fairgrounds {
 		new Timer("      Frogger", Frogger::new);
 		new Timer("      Seeker", Seeker::new);
 		new Timer("      Reflection", ReflectionGame::new);
-
 	}
 }
