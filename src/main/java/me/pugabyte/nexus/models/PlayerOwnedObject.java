@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
@@ -44,6 +45,14 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 
 	default boolean isOnline() {
 		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
+	}
+
+	default boolean isAfk() {
+		return AFK.get(getPlayer()).isAfk();
+	}
+
+	default boolean isTimeAfk() {
+		return AFK.get(getPlayer()).isTimeAfk();
 	}
 
 	default Nerd getNerd() {

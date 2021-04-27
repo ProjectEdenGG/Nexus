@@ -54,10 +54,10 @@ public class Justice extends Feature implements Listener {
 	}
 
 	private void broadcast(JsonBuilder json) {
-		Chat.broadcastIngame(PREFIX + json, StaticChannel.STAFF);
-		String discord = stripColor(json.toString());
-		Chat.broadcastDiscord(DISCORD_PREFIX + discord, StaticChannel.STAFF);
-		Discord.send(DISCORD_PREFIX + discord, TextChannel.STAFF_LOG);
+		Chat.broadcastIngame(new JsonBuilder(PREFIX).next(json), StaticChannel.STAFF);
+		String discord = DISCORD_PREFIX + stripColor(json.toString());
+		Chat.broadcastDiscord(discord, StaticChannel.STAFF);
+		Discord.send(discord, TextChannel.STAFF_LOG);
 	}
 
 	private JsonBuilder historyClick(Punishment punishment, JsonBuilder ingame) {
@@ -96,7 +96,7 @@ public class Justice extends Feature implements Listener {
 
 	// Mute
 	private void broadcastMute(Punishment mute, String message) {
-		JsonBuilder json = new JsonBuilder(PREFIX + message);
+		JsonBuilder json = new JsonBuilder(message);
 
 		if (!isNullOrEmpty(mute.getReason()))
 			json.hover("&eReason: &7" + mute.getReason()).hover("");

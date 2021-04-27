@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.punishments;
 import dev.morphia.query.Query;
 import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,7 @@ public class PunishmentsService extends MongoService<Punishments> {
 
 		List<String> ips = new ArrayList<String>() {{
 			for (Punishments player : players) {
-				query.criteria("_id").notEqual(player.getUuid());
+				query.and(query.criteria("_id").notEqual(player.getUuid()));
 				addAll(player.getIps());
 			}
 		}};
@@ -36,7 +37,11 @@ public class PunishmentsService extends MongoService<Punishments> {
 		if (ips.isEmpty())
 			return new ArrayList<>();
 
-		query.and(query.criteria("ipHistory.ip").hasAnyOf(ips));
+		query.and(
+			query.criteria("_id").notEqual(Dev.KODA.getUuid()),
+			query.criteria("_id").notEqual(Dev.SPIKE.getUuid()),
+			query.criteria("ipHistory.ip").hasAnyOf(ips)
+		);
 
 		return query.find().toList();
 	}

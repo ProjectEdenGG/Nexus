@@ -61,9 +61,11 @@ public class Punishment implements PlayerOwnedObject {
 			if (this.reason.matches("^[rR]:.*"))
 				this.reason = reason.replaceFirst("[rR]:", "");
 
-			if (type.isAutomaticallyReceived())
-				received();
 			if (now)
+				received();
+			else if (type.isAutomaticallyReceived())
+				received();
+			else if (isOnline() && !isAfk())
 				received();
 		} else
 			this.reason = input;

@@ -36,7 +36,17 @@ import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -52,7 +62,8 @@ public class PlayerUtils {
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
-		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94");
+		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
+		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd");
 
 		@Getter
 		private final UUID uuid;
