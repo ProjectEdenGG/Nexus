@@ -1,24 +1,30 @@
 package me.pugabyte.nexus.features.warps.commands;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.wallsofgrace.WallsOfGrace;
 import me.pugabyte.nexus.models.wallsofgrace.WallsOfGraceService;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 
 @Aliases("wog")
 @NoArgsConstructor
@@ -35,48 +41,67 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		runCommand("warp wallsofgrace");
 	}
 
-	@Path("removesigns")
-	void removeSigns() {
-		WallsOfGrace wallsOfGrace = service.get(event.getPlayer());
+	@Path("set <player>")
+	@Permission("group.admin")
+	void set(WallsOfGrace player) {
+		if (player.get(1) == null)
+			player.set(1, getTargetSignRequired().getLocation());
+		else if (player.get(2) == null)
+			player.set(2, getTargetSignRequired().getLocation());
+		else
+			error(player.getName() + " already has both signs set");
+
+		new WallsOfGraceService().save(player);
+		send(PREFIX + "Saved");
+	}
+
+	@Path("removeSigns [player]")
+	void removeSigns(@Arg(value = "self", permission = "group.staff") WallsOfGrace wallsOfGrace) {
 		if (wallsOfGrace.get(1) == null && wallsOfGrace.get(2) == null)
-			error("You have not created any signs");
+			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created any signs");
 
 		ConfirmationMenu.builder()
 				.onConfirm(e -> {
-					wallsOfGrace.get(1).getBlock().setType(Material.AIR);
-					wallsOfGrace.get(2).getBlock().setType(Material.AIR);
-					wallsOfGrace.set(1, null);
-					wallsOfGrace.set(2, null);
+					removeSign(wallsOfGrace, 1);
+					removeSign(wallsOfGrace, 2);
 					service.save(wallsOfGrace);
 					send(PREFIX + "Removed signs");
 				})
 				.open(player());
 	}
 
-	@Path("removesign <id>")
-	void removeSign(int id) {
-		WallsOfGrace wallsOfGrace = service.get(event.getPlayer());
-		Location location = wallsOfGrace.get(id);
-		if (location == null)
-			error("You have not created that sign");
+	@Path("removeSign <id> [player]")
+	void removeSign(int id, @Arg(value = "self", permission = "group.staff") WallsOfGrace wallsOfGrace) {
+		if (wallsOfGrace.get(id) == null)
+			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created that sign");
 
 		ConfirmationMenu.builder()
 				.onConfirm(e -> {
-					location.getBlock().setType(Material.AIR);
-					wallsOfGrace.set(id, null);
+					removeSign(wallsOfGrace, id);
 					service.save(wallsOfGrace);
 					send(PREFIX + "Removed sign #" + id);
 				})
 				.open(player());
 	}
 
+	private void removeSign(WallsOfGrace wallsOfGrace, int i) {
+		// Give the executor the sign, instead of the owner
+		PlayerUtils.giveItem(player(), wallsOfGrace.get(i).getBlock().getType());
+		wallsOfGrace.get(i).getBlock().setType(Material.AIR);
+		wallsOfGrace.set(i, null);
+	}
+
+	private boolean isInRegion(Block block) {
+		return !new WorldGuardUtils(block).getRegionsLikeAt("wallsofgrace", block.getLocation()).isEmpty();
+	}
+
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
-		if (WGUtils.getRegionsLikeAt("wallsofgrace", event.getBlock().getLocation()).size() == 0) return;
+		if (!isInRegion(event.getBlock()))
+			return;
 
 		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
-			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+			if (!canWorldGuardEdit(event.getPlayer()))
 				event.setCancelled(true);
 			return;
 		}
@@ -102,11 +127,10 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onBucketEmpty(PlayerBucketEmptyEvent event) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
-		if (WGUtils.getRegionsLikeAt("wallsofgrace", event.getBlock().getLocation()).size() == 0)
+		if (!isInRegion(event.getBlock()))
 			return;
 
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+		if (canWorldGuardEdit(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);
@@ -114,19 +138,24 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(event.getBlock());
-		if (WGUtils.getRegionsLikeAt("wallsofgrace", event.getBlock().getLocation()).size() == 0) return;
+		if (!isInRegion(event.getBlock()))
+			return;
 
-		if (MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
-			// Sign must be placed on concrete
-			if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
+		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
+			if (!canWorldGuardEdit(event.getPlayer()))
 				event.setCancelled(true);
-				send(event.getPlayer(), "&cYou must place your sign on concrete");
-				return;
-			}
-		} else {
-			if (!event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
-				event.setCancelled(true);
+			return;
+		}
+
+		if (!MaterialTag.CONCRETES.isTagged(event.getBlockAgainst().getType())) {
+			event.setCancelled(true);
+			send(event.getPlayer(), "&cYou must place your sign on concrete");
+			return;
+		}
+
+		if (Rank.of(event.getPlayer()).lt(Rank.TRUSTED)) {
+			event.setCancelled(true);
+			send(event.getPlayer(), "&cYou must be Trusted rank or higher to place signs");
 			return;
 		}
 

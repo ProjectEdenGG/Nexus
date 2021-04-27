@@ -56,6 +56,10 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 		PermissionChange.unset().player(player).permission(permission).run();
 	}
 
+	public static boolean canWorldGuardEdit(Player player) {
+		return player.hasPermission(permission);
+	}
+
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (event.getPlayer().hasPermission(permission))

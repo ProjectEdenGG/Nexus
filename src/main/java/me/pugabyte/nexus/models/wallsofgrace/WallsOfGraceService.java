@@ -15,4 +15,9 @@ public class WallsOfGraceService extends MongoService<WallsOfGrace> {
 		return cache;
 	}
 
+	@Override
+	protected boolean deleteIf(WallsOfGrace wallsOfGrace) {
+		return wallsOfGrace.get(1) == null && wallsOfGrace.get(2) == null;
+	}
+
 }
