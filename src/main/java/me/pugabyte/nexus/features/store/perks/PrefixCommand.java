@@ -5,6 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.emote.EmoteService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -57,7 +58,7 @@ public class PrefixCommand extends CustomCommand {
 	@Permission("set.my.prefix")
 	void prefix(String input) {
 		if (player().hasPermission("emoticons.use"))
-			input = Emotes.process(input);
+			input = Emotes.process(new EmoteService().get(player()), input);
 
 		if (stripColor(input).length() > 10)
 			error("Your prefix cannot be more than 10 characters");

@@ -15,4 +15,9 @@ public class EmoteService extends MongoService<EmoteUser> {
 		return cache;
 	}
 
+	@Override
+	protected boolean deleteIf(EmoteUser user) {
+		return user.getDisabled().isEmpty();
+	}
+
 }

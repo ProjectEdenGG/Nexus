@@ -38,6 +38,10 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 			String content = event.getMessage().getContentDisplay().trim();
 
+			try {
+				content = EmojiParser.parseToAliases(content);
+			} catch (Throwable ignore) {}
+
 			DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, content, channel.get().getPermission());
 			if (!discordChatEvent.callEvent()) {
 				Tasks.async(() -> event.getMessage().delete().queue());
@@ -56,21 +60,16 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 
-			try {
-				content = EmojiParser.parseToAliases(content);
-			} catch (Throwable ignore) {
-			} finally {
-				if (content.length() > 0)
-					builder.next(" " + colorize(content.replaceAll("&", "&&f")));
+			if (content.length() > 0)
+				builder.next(" " + colorize(content.replaceAll("&", "&&f")));
 
-				for (Message.Attachment attachment : event.getMessage().getAttachments())
-					builder.group()
-							.next(" &f&l[View Attachment]")
-							.url(attachment.getUrl());
+			for (Message.Attachment attachment : event.getMessage().getAttachments())
+				builder.group()
+						.next(" &f&l[View Attachment]")
+						.url(attachment.getUrl());
 
-				Identity identity = user == null ? Identity.nil() : user.identity();
-				channel.get().broadcastIngame(identity, builder, MessageType.CHAT);
-			}
+			Identity identity = user == null ? Identity.nil() : user.identity();
+			channel.get().broadcastIngame(identity, builder, MessageType.CHAT);
 		});
 	}
 
