@@ -61,6 +61,8 @@ public class AutoToolCommand extends CustomCommand implements Listener {
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
+		if (!new AutoToolService().get(player).isEnabled())
+			return;
 
 		MinMaxResult<ItemStack> result = Utils.getMax(getAllInventoryContents(player), item -> {
 			if (isNullOrAir(item))
