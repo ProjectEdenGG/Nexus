@@ -10,8 +10,11 @@ import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.afk.events.NowAFKEvent;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -110,7 +113,7 @@ public class AFKPlayer {
 	}
 
 	private void broadcast() {
-		String broadcast = "&7* &e" + Nickname.of(getPlayer()) + " &7is " + (isAfk ? "now" : "no longer") + " AFK";
+		TextComponent broadcast = new JsonBuilder("&7* &e" + Nickname.of(getPlayer()) + " &7is " + (isAfk ? "now" : "no longer") + " AFK").build();
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!PlayerUtils.canSee(_player, getPlayer()))
 				return;
@@ -119,7 +122,7 @@ public class AFKPlayer {
 			if (MuteMenuUser.hasMuted(_player, MuteMenuItem.AFK))
 				return;
 
-			PlayerUtils.send(_player, broadcast);
+			_player.sendMessage(getPlayer(), broadcast, MessageType.CHAT);
 		});
 	}
 

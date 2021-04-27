@@ -151,7 +151,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		event.setQuitMessage(null);
+		event.quitMessage(null);
 		Player player = event.getPlayer();
 		if (!vanished.contains(player))
 			quit(player, event.getReason());

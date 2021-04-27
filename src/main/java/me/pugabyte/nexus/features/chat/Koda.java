@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -54,7 +55,9 @@ public class Koda {
 	@Getter
 	private static final String discordFormat = "<@&&f" + Role.KODA.getId() + "> **>** ";
 	@Getter
-	private static final OfflinePlayer player = Bukkit.getOfflinePlayer("KodaBear");
+	private static final UUID uuid = UUID.fromString("56cb00fd-4738-47bc-be08-cb7c4f9a5a94");
+	@Getter
+	private static final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 	@Getter
 	private static final Chatter chatter = new ChatService().get(player);
 
@@ -76,7 +79,7 @@ public class Koda {
 	}
 
 	public static void sayIngame(String message) {
-		Chat.broadcastIngame(AdventureUtils.fromLegacyAmpersandText(globalFormat + message));
+		Chat.broadcastIngame(chatter, AdventureUtils.fromLegacyText(colorize(globalFormat + message)));
 	}
 
 	public static void sayDiscord(String message) {
