@@ -32,6 +32,7 @@ public class BearFair21 {
 
 
 	public BearFair21() {
+		new Timer("    Restrictions", Restrictions::new);
 		new Timer("    Fairgrounds", Fairgrounds::new);
 		if (enableQuests)
 			new Timer("    Quests", Quests::new);
