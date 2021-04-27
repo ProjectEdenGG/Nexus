@@ -36,17 +36,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -258,8 +248,8 @@ public class PlayerUtils {
 	 * @param recipient a {@link CommandSender}, {@link OfflinePlayer}, {@link PlayerOwnedObject}, {@link Identified}, or {@link UUID}
 	 * @param message a {@link String} or {@link ComponentLike}
 	 */
-	public static void send(@Nullable Object recipient, Object message) {
-		if (recipient == null)
+	public static void send(@Nullable Object recipient, @Nullable Object message) {
+		if (recipient == null || message == null)
 			return;
 		if (recipient instanceof CommandSender) {
 			if (message instanceof String)

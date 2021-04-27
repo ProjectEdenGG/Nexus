@@ -25,6 +25,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,65 +38,65 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class Koda {
-	@Getter
+	@Getter @NotNull
 	private static final String PREFIX = StringUtils.getPrefix("KodaBear");
-	@Getter
+	@Getter @NotNull
 	private static final String name = "KodaBear";
-	@Getter
+	@Getter @NotNull
 	private static final ChatColor chatColor = ChatColor.DARK_PURPLE;
-	@Getter
+	@Getter @NotNull
 	private static final Color color = chatColor.getColor();
-	@Getter
+	@Getter @NotNull
 	private static final String coloredName = chatColor + name;
-	@Getter
+	@Getter @NotNull
 	private static final String globalFormat = "&2[G] " + coloredName + " &2&l> &f";
-	@Getter
+	@Getter @NotNull
 	private static final String localFormat = "&e[L] " + coloredName + " &e&l> &f";
-	@Getter
+	@Getter @NotNull
 	private static final String dmFormat = colorize("&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e");
-	@Getter
+	@Getter @NotNull
 	private static final String discordFormat = "<@&&f" + Role.KODA.getId() + "> **>** ";
-	@Getter
-	private static final UUID uuid = UUID.fromString("56cb00fd-4738-47bc-be08-cb7c4f9a5a94");
-	@Getter
-	private static final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-	@Getter
+	@Getter @NotNull
+	private static final OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+	@Getter @NotNull
+	private static final UUID uuid = player.getUniqueId();
+	@Getter @NotNull
 	private static final Chatter chatter = new ChatService().get(player);
 
-	public static void reply(String message) {
+	public static void reply(@NotNull String message) {
 		Tasks.wait(10, () -> say(message));
 	}
 
-	public static void replyIngame(String message) {
+	public static void replyIngame(@NotNull String message) {
 		Tasks.wait(10, () -> sayIngame(message));
 	}
 
-	public static void replyDiscord(String message) {
+	public static void replyDiscord(@NotNull String message) {
 		Tasks.wait(10, () -> sayDiscord(message));
 	}
 
-	public static void say(String message) {
+	public static void say(@NotNull String message) {
 		sayIngame(message);
 		sayDiscord(message);
 	}
 
-	public static void sayIngame(String message) {
+	public static void sayIngame(@NotNull String message) {
 		Chat.broadcastIngame(chatter, AdventureUtils.fromLegacyText(colorize(globalFormat + message)));
 	}
 
-	public static void sayDiscord(String message) {
+	public static void sayDiscord(@NotNull String message) {
 		Chat.broadcastDiscord(discordFormat + message);
 	}
 
-	public static void announce(String message) {
+	public static void announce(@NotNull String message) {
 		Discord.koda(message, TextChannel.ANNOUNCEMENTS);
 	}
 
-	public static void console(String message) {
+	public static void console(@NotNull String message) {
 		Bukkit.getConsoleSender().sendMessage("[KodaBear] " + stripColor(message));
 	}
 
-	public static void dm(Player player, String message) {
+	public static void dm(@Nullable Player player, @NotNull String message) {
 		PlayerUtils.send(player, dmFormat + message);
 	}
 
