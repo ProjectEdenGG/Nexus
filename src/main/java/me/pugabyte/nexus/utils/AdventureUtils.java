@@ -29,6 +29,9 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class AdventureUtils {
+	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().build();
+	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').build();
+
 	public static Component stripColor(ComponentLike componentLike) {
 		Component component = componentLike.asComponent();
 		component = component.style(Style.empty());
@@ -52,11 +55,11 @@ public class AdventureUtils {
 	}
 
 	public static Component fromLegacyText(String string) {
-		return PaperComponents.legacySectionSerializer().deserialize(string);
+		return LEGACY_SERIALIZER.deserialize(string);
 	}
 
 	public static Component fromLegacyAmpersandText(String string) {
-		return LegacyComponentSerializer.legacyAmpersand().deserialize(string);
+		return LEGACY_AMPERSAND_SERIALIZER.deserialize(string);
 	}
 
 	public static Identity identityOf(Identified object) {

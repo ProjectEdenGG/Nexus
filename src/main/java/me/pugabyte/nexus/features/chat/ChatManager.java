@@ -125,8 +125,8 @@ public class ChatManager {
 			staff.hover(hover).group();
 		}
 
-		json.hover().next(event.getMessage());
-		staff.hover().next(event.getMessage());
+		json.next(event.getMessage());
+		staff.next(event.getMessage());
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")
