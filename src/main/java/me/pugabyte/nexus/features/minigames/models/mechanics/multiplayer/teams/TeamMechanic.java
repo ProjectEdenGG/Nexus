@@ -26,7 +26,6 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -198,13 +197,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		else if (arena.getTeams().size() == winners.size())
 			announcement = "All teams tied in ";
 
-		TextComponent.Builder builder = Component.text();
-		builder.append(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
-		builder.append(arena.getComponent());
+		JsonBuilder builder = new JsonBuilder();
+		builder.next(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
+		builder.next(arena);
 		if (winningScore != 0)
-			builder.append(Component.text(" (" + winningScore + ")"));
+			builder.next(" (" + winningScore + ")");
 
-		Minigames.broadcast(builder.build());
+		Minigames.broadcast(builder);
 	}
 
 	protected List<Team> getWinningTeams(int winningScore, Map<Team, Integer> scores) {

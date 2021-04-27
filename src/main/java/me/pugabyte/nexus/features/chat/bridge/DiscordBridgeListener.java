@@ -10,7 +10,6 @@ import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
@@ -70,7 +69,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 							.url(attachment.getUrl());
 
 				Identity identity = user == null ? Identity.nil() : user.identity();
-				channel.get().broadcastIngame(identity, AdventureUtils.fromJson(builder), MessageType.CHAT);
+				channel.get().broadcastIngame(identity, builder, MessageType.CHAT);
 			}
 		});
 	}

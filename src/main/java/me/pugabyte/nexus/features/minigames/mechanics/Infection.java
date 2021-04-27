@@ -94,7 +94,7 @@ public class Infection extends TeamMechanic {
 		Component broadcast = Component.text("The ").append(winningTeam.asComponent())
 				.append(Component.text(" have won "));
 
-		Minigames.broadcast(broadcast.append(match.getArena().getComponent()));
+		Minigames.broadcast(broadcast.append(match.getArena().asComponent()));
 	}
 
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)

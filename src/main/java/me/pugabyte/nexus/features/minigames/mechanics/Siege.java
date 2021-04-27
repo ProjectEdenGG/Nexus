@@ -7,8 +7,8 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.Flag;
 import me.pugabyte.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -61,17 +61,17 @@ public final class Siege extends OneFlagCaptureTheFlag {
 		int winningScore = getWinningScore(scores.values());
 
 		Team winningTeam;
-		TextComponent.Builder builder = Component.text();
+		JsonBuilder builder = new JsonBuilder();
 		if (winningScore == 0) {
 			winningTeam = getDefendingTeam(match);
-			builder.append(winningTeam == null ? Component.text("Defenders", NamedTextColor.BLUE) : winningTeam.asComponent());
-			builder.append(Component.text(" protected the flag on "));
+			builder.next(winningTeam == null ? Component.text("Defenders", NamedTextColor.BLUE) : winningTeam);
+			builder.next(" protected the flag on ");
 		} else {
 			winningTeam = getMax(match.getAliveTeams(), team -> team.getScore(match)).getObject();
-			builder.append(winningTeam.asComponent().append(Component.text(" captured the flag on ")));
+			builder.next(winningTeam).next(" captured the flag on ");
 		}
-		builder.append(match.getArena().getComponent());
-		Minigames.broadcast(builder.build());
+		builder.next(match.getArena());
+		Minigames.broadcast(builder);
 	}
 
 	@Override

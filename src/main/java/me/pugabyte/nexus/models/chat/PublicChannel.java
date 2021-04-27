@@ -10,11 +10,10 @@ import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.AdventureUtils;
-import me.pugabyte.nexus.utils.JsonBuilder;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -92,67 +91,67 @@ public class PublicChannel implements Channel {
 		broadcastDiscord(message);
 	}
 
-	public void broadcast(Component component) {
+	public void broadcast(ComponentLike component) {
 		broadcastIngame(component);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Component component, MuteMenuItem muteMenuItem) {
+	public void broadcast(ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(component, muteMenuItem);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(UUID sender, Component component, MuteMenuItem muteMenuItem) {
+	public void broadcast(UUID sender, ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(sender, component, muteMenuItem);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Identified sender, Component component, MuteMenuItem muteMenuItem) {
+	public void broadcast(Identified sender, ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(sender, component, muteMenuItem);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Identity sender, Component component, MuteMenuItem muteMenuItem) {
+	public void broadcast(Identity sender, ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(sender, component, muteMenuItem);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(UUID sender, Component component, MessageType type) {
+	public void broadcast(UUID sender, ComponentLike component, MessageType type) {
 		broadcastIngame(sender, component, type);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Identified sender, Component component, MessageType type) {
+	public void broadcast(Identified sender, ComponentLike component, MessageType type) {
 		broadcastIngame(sender, component, type);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Identity sender, Component component, MessageType type) {
+	public void broadcast(Identity sender, ComponentLike component, MessageType type) {
 		broadcastIngame(sender, component, type);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(UUID sender, Component component) {
+	public void broadcast(UUID sender, ComponentLike component) {
 		broadcastIngame(sender, component);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Identified sender, Component component) {
+	public void broadcast(Identified sender, ComponentLike component) {
 		broadcastIngame(sender, component);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Identity sender, Component component) {
+	public void broadcast(Identity sender, ComponentLike component) {
 		broadcastIngame(sender, component);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Component component, MessageType type) {
+	public void broadcast(ComponentLike component, MessageType type) {
 		broadcastIngame(component, type);
 		broadcastDiscord(component);
 	}
 
-	public void broadcast(Identity sender, Component component, MessageType type, MuteMenuItem muteMenuItem) {
+	public void broadcast(Identity sender, ComponentLike component, MessageType type, MuteMenuItem muteMenuItem) {
 		broadcastIngame(sender, component, type, muteMenuItem);
 		broadcastDiscord(component);
 	}
@@ -165,27 +164,27 @@ public class PublicChannel implements Channel {
 		broadcastIngame(AdventureUtils.fromLegacyText(colorize(message)), muteMenuItem);
 	}
 
-	public void broadcastIngame(Component component) {
+	public void broadcastIngame(ComponentLike component) {
 		broadcastIngame(component, (MuteMenuItem) null);
 	}
 
-	public void broadcastIngame(Component component, MuteMenuItem muteMenuItem) {
+	public void broadcastIngame(ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(Identity.nil(), component, MessageType.SYSTEM, muteMenuItem);
 	}
 
-	public void broadcastIngame(Component component, MessageType type) {
+	public void broadcastIngame(ComponentLike component, MessageType type) {
 		broadcastIngame(Identity.nil(), component, type, null);
 	}
 
-	public void broadcastIngame(UUID sender, Component component, MessageType type, MuteMenuItem muteMenuItem) {
+	public void broadcastIngame(UUID sender, ComponentLike component, MessageType type, MuteMenuItem muteMenuItem) {
 		broadcastIngame(AdventureUtils.identityOf(sender), component, type, muteMenuItem);
 	}
 
-	public void broadcastIngame(Identified sender, Component component, MessageType type, MuteMenuItem muteMenuItem) {
+	public void broadcastIngame(Identified sender, ComponentLike component, MessageType type, MuteMenuItem muteMenuItem) {
 		broadcastIngame(sender.identity(), component, type, muteMenuItem);
 	}
 
-	public void broadcastIngame(Identity sender, Component component, MessageType type, MuteMenuItem muteMenuItem) {
+	public void broadcastIngame(Identity sender, ComponentLike component, MessageType type, MuteMenuItem muteMenuItem) {
 		Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> (Chatter) new ChatService().get(player))
@@ -193,39 +192,39 @@ public class PublicChannel implements Channel {
 				.forEach(chatter -> chatter.send(sender, component, type));
 	}
 
-	public void broadcastIngame(UUID sender, Component component, MessageType type) {
+	public void broadcastIngame(UUID sender, ComponentLike component, MessageType type) {
 		broadcastIngame(AdventureUtils.identityOf(sender), component, type, null);
 	}
 
-	public void broadcastIngame(Identified sender, Component component, MessageType type) {
+	public void broadcastIngame(Identified sender, ComponentLike component, MessageType type) {
 		broadcastIngame(sender.identity(), component, type, null);
 	}
 
-	public void broadcastIngame(Identity sender, Component component, MessageType type) {
+	public void broadcastIngame(Identity sender, ComponentLike component, MessageType type) {
 		broadcastIngame(sender, component, type, null);
 	}
 
-	public void broadcastIngame(UUID sender, Component component) {
+	public void broadcastIngame(UUID sender, ComponentLike component) {
 		broadcastIngame(AdventureUtils.identityOf(sender), component, MessageType.SYSTEM, null);
 	}
 
-	public void broadcastIngame(Identified sender, Component component) {
+	public void broadcastIngame(Identified sender, ComponentLike component) {
 		broadcastIngame(sender.identity(), component, MessageType.SYSTEM, null);
 	}
 
-	public void broadcastIngame(Identity sender, Component component) {
+	public void broadcastIngame(Identity sender, ComponentLike component) {
 		broadcastIngame(sender, component, MessageType.SYSTEM, null);
 	}
 
-	public void broadcastIngame(UUID sender, Component component, MuteMenuItem muteMenuItem) {
+	public void broadcastIngame(UUID sender, ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(AdventureUtils.identityOf(sender), component, MessageType.SYSTEM, muteMenuItem);
 	}
 
-	public void broadcastIngame(Identified sender, Component component, MuteMenuItem muteMenuItem) {
+	public void broadcastIngame(Identified sender, ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(sender.identity(), component, MessageType.SYSTEM, muteMenuItem);
 	}
 
-	public void broadcastIngame(Identity sender, Component component, MuteMenuItem muteMenuItem) {
+	public void broadcastIngame(Identity sender, ComponentLike component, MuteMenuItem muteMenuItem) {
 		broadcastIngame(sender, component, MessageType.SYSTEM, muteMenuItem);
 	}
 
@@ -234,36 +233,13 @@ public class PublicChannel implements Channel {
 			Discord.send(message, discordTextChannel);
 	}
 
-	public void broadcastDiscord(Component component) {
+	public void broadcastDiscord(ComponentLike component) {
 		broadcastDiscord(AdventureUtils.asPlainText(component));
 	}
 
-	public void broadcast(JsonBuilder builder) {
-		broadcastIngame(builder, null);
-		broadcastDiscord(builder);
-	}
-
-	public void broadcast(JsonBuilder message, MuteMenuItem muteMenuItem) {
-		broadcastIngame(message, muteMenuItem);
-		broadcastDiscord(message);
-	}
-
-	public void broadcastIngame(JsonBuilder builder) {
-		broadcastIngame(builder, null);
-	}
-
-	public void broadcastIngame(JsonBuilder builder, MuteMenuItem muteMenuItem) {
-		broadcastIngame(AdventureUtils.fromJson(builder), muteMenuItem);
-	}
-
-	public void broadcastIngame(Chatter chatter, JsonBuilder builder) {
-		Bukkit.getConsoleSender().sendMessage(builder.build());
-		getRecipients(chatter).forEach(_chatter -> _chatter.send(builder));
-	}
-
-	public void broadcastDiscord(JsonBuilder builder) {
-		if (discordTextChannel != null)
-			Discord.send(builder.toString(), discordTextChannel);
+	public void broadcastIngame(Chatter chatter, ComponentLike builder) {
+		Bukkit.getConsoleSender().sendMessage(builder);
+		getRecipients(chatter).forEach(_chatter -> _chatter.send(chatter, builder, MessageType.CHAT));
 	}
 
 	public String getPermission() {

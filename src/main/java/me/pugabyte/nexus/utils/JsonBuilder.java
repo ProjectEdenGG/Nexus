@@ -133,7 +133,7 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Converts the input text to a component and appends it to the internal builder
-	 * <br>Note: this does not apply any text, color, or formatting changes to the builder itself
+	 * <p>Note: this does not apply any text, color, or formatting changes to the builder itself
 	 */
 	public JsonBuilder(@Nullable String formattedText) {
 		next(formattedText);
@@ -141,7 +141,7 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Converts the input to a component and appends it to the internal builder. Also copies {@link #loreize} and {@link #initialized}.
-	 * <br>Note: this does not apply any text, color, or formatting changes to the builder itself
+	 * <p>Note: this does not apply any text, color, or formatting changes to the builder itself
 	 */
 	public JsonBuilder(@Nullable JsonBuilder json) {
 		if (json != null) {
@@ -153,7 +153,7 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Converts the input to a component and appends it to the internal builder
-	 * <br>Note: this does not apply any text, color, or formatting changes to the builder itself
+	 * <p>Note: this does not apply any text, color, or formatting changes to the builder itself
 	 */
 	public JsonBuilder(@Nullable ComponentLike component) {
 		next(component);
@@ -888,6 +888,15 @@ public class JsonBuilder implements ComponentLike {
 	public JsonBuilder hover(@NonNull List<String> lines) {
 		lore.addAll(lines);
 		return this;
+	}
+
+	/**
+	 * Gets a copy of the current pending lines of hover text
+	 * @return list of not-yet-formatted strings
+	 */
+	@NotNull
+	public List<String> getHoverLines() {
+		return new ArrayList<>(lore);
 	}
 
 	/**

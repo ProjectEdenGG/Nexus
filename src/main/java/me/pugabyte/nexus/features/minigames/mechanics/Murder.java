@@ -19,13 +19,12 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.MurderMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -169,20 +168,20 @@ public class Murder extends TeamMechanic {
 		Minigamer murderer = getMurderer(match);
 		Minigamer hero = matchData.getHero();
 
-		TextComponent.Builder builder = Component.text();
+		JsonBuilder builder = new JsonBuilder();
 		if (!murderer.isAlive())
-			builder.append(murderer.asComponent())
-					.append(Component.text(" has been stopped by "))
-					.append(hero.asComponent())
-					.append(Component.text(" on "));
+			builder.next(murderer)
+					.next(" has been stopped by ")
+					.next(hero)
+					.next(" on ");
 		else if (match.getTimer().getTime() != 0)
-			builder.append(murderer.asComponent()).append(Component.text(" has won on "));
+			builder.next(murderer).next(" has won on ");
 		else
 			builder.content("The ")
-					.append(Component.text("innocents", NamedTextColor.BLUE))
-					.append(Component.text(" have won"));
+					.next("innocents", NamedTextColor.BLUE)
+					.next(" have won");
 
-		Minigames.broadcast(builder.append(match.getArena().getComponent()).build());
+		Minigames.broadcast(builder.next(match.getArena()).build());
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -48,7 +49,7 @@ import static me.pugabyte.nexus.utils.SerializationUtils.YML.serializeMaterialSe
 @AllArgsConstructor
 @SerializableAs("Arena")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Arena implements ConfigurationSerializable, Named {
+public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private int id = ArenaManager.getNextId();
@@ -145,7 +146,7 @@ public class Arena implements ConfigurationSerializable, Named {
 		}};
 	}
 
-	public @NotNull TextComponent getComponent() {
+	public @NotNull TextComponent asComponent() {
 		return Component.text(getDisplayName(), NamedTextColor.YELLOW)
 				.hoverEvent(HoverEvent.showText(Component.text(getMechanic().getName(), NamedTextColor.DARK_AQUA)));
 	}

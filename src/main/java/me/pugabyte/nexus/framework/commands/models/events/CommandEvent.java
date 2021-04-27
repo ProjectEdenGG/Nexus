@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -40,8 +41,8 @@ public abstract class CommandEvent extends Event implements Cancellable {
 		reply(new JsonBuilder(message));
 	}
 
-	public void reply(JsonBuilder json) {
-		PlayerUtils.send(sender, json);
+	public void reply(ComponentLike component) {
+		PlayerUtils.send(sender, component);
 	}
 
 	public Player getPlayer() throws NexusException {

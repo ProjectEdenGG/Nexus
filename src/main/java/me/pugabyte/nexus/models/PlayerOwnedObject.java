@@ -15,7 +15,7 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -74,12 +74,12 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 	}
 
 	default void send(String message) {
-		send(new JsonBuilder(message));
+		send(json(message));
 	}
 
 	default void sendOrMail(String message) {
 		if (isOnline())
-			send(new JsonBuilder(message));
+			send(json(message));
 		else {
 			DeliveryService service = new DeliveryService();
 			DeliveryUser deliveryUser = service.get(getUuid());
@@ -88,17 +88,12 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 		}
 	}
 
-	default void send(JsonBuilder message) {
-		if (isOnline())
-			getPlayer().sendMessage(message.build());
-	}
-
-	default void send(Component component) {
+	default void send(ComponentLike component) {
 		if (isOnline())
 			getPlayer().sendMessage(component);
 	}
 
-	default void send(Component component, MessageType type) {
+	default void send(ComponentLike component, MessageType type) {
 		if (type == null) {
 			send(component);
 			return;
@@ -107,7 +102,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 			getPlayer().sendMessage(component, type);
 	}
 
-	default void send(Identity identity, Component component, MessageType type) {
+	default void send(Identity identity, ComponentLike component, MessageType type) {
 		// fail safes, as sendMessage requires NonNull args
 		if (component == null)
 			return;
@@ -129,15 +124,15 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 			getPlayer().sendMessage(identity, component, type);
 	}
 
-	default void send(Identified sender, Component component, MessageType type) {
+	default void send(Identified sender, ComponentLike component, MessageType type) {
 		send(sender.identity(), component, type);
 	}
 
-	default void send(UUID sender, Component component, MessageType type) {
+	default void send(UUID sender, ComponentLike component, MessageType type) {
 		send(identityOf(sender), component, type);
 	}
 
-	default void send(Identity identity, Component component) {
+	default void send(Identity identity, ComponentLike component) {
 		if (identity == null) {
 			send(component);
 			return;
@@ -146,11 +141,11 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 			getPlayer().sendMessage(identity, component);
 	}
 
-	default void send(Identified sender, Component component) {
+	default void send(Identified sender, ComponentLike component) {
 		send(sender.identity(), component);
 	}
 
-	default void send(UUID sender, Component component) {
+	default void send(UUID sender, ComponentLike component) {
 		send(identityOf(sender), component);
 	}
 
@@ -158,7 +153,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 		Tasks.wait(delay, () -> send(message));
 	}
 
-	default void send(int delay, JsonBuilder message) {
+	default void send(int delay, ComponentLike message) {
 		Tasks.wait(delay, () -> send(message));
 	}
 

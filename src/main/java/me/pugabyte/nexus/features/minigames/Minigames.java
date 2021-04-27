@@ -31,6 +31,7 @@ import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -126,7 +127,7 @@ public class Minigames extends Feature {
 		// TODO: If arena is public, announce to discord and whole server
 	}
 
-	public static void broadcast(Component component) {
+	public static void broadcast(ComponentLike component) {
 		getPlayers().forEach(player -> player.sendMessage(Minigames.COMPONENT_PREFIX.append(component)));
 	}
 

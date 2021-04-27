@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
@@ -164,13 +165,13 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		else if (match.getAliveMinigamers().size() == winners.size() && match.getAliveMinigamers().size() > 1)
 			announcement = "All players tied in ";
 
-		TextComponent.Builder builder = Component.text();
-		builder.append(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
-		builder.append(arena.getComponent());
+		JsonBuilder builder = new JsonBuilder();
+		builder.next(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
+		builder.next(arena);
 		if (winningScore != 0)
-			builder.append(Component.text(" (" + winningScore + ")"));
+			builder.next(" (" + winningScore + ")");
 
-		Minigames.broadcast(builder.build());
+		Minigames.broadcast(builder);
 	}
 
 	protected List<Minigamer> getWinners(int winningScore, Map<Minigamer, Integer> scores) {

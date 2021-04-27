@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -52,8 +53,8 @@ public class BossBarBuilder {
 	 * @return this builder
 	 */
 	@NonNull
-	public BossBarBuilder title(@NonNull Component component) {
-		this.title = component;
+	public BossBarBuilder title(@NonNull ComponentLike component) {
+		this.title = component.asComponent();
 		return this;
 	}
 
@@ -64,16 +65,6 @@ public class BossBarBuilder {
 	@NonNull
 	public BossBarBuilder title(@NonNull String title) {
 		this.title = AdventureUtils.fromLegacyText(colorize(title));
-		return this;
-	}
-
-	/**
-	 * Sets the title of the boss bar using a JsonBuilder.
-	 * @return this builder
-	 */
-	@NonNull
-	public BossBarBuilder title(@NonNull JsonBuilder title) {
-		this.title = AdventureUtils.fromJson(title);
 		return this;
 	}
 

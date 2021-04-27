@@ -39,6 +39,7 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -247,11 +248,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		send(sender(), json(message));
 	}
 
-	protected void send(JsonBuilder builder) {
-		send(sender(), builder);
-	}
-
-	protected void send(Component component) {
+	protected void send(ComponentLike component) {
 		send(sender(), component);
 	}
 
@@ -295,6 +292,11 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@Contract("_ -> fail")
 	public void error(JsonBuilder error) {
+		throw new InvalidInputException(error);
+	}
+
+	@Contract("_ -> fail")
+	public void error(ComponentLike error) {
 		throw new InvalidInputException(error);
 	}
 

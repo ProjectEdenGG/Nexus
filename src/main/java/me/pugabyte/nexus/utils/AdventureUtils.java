@@ -4,9 +4,11 @@ import io.papermc.paper.text.PaperComponents;
 import lombok.experimental.UtilityClass;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,14 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @UtilityClass
 public class AdventureUtils {
-	public static Component stripColor(Component component) {
+	public static Component stripColor(ComponentLike componentLike) {
+		Component component = componentLike.asComponent();
 		component = component.style(Style.empty());
 		if (component instanceof TranslatableComponent) {
 			TranslatableComponent tComponent = (TranslatableComponent) component;
@@ -37,29 +39,24 @@ public class AdventureUtils {
 		return component.children(stripColor(component.children()));
 	}
 
-	public static List<Component> stripColor(Collection<Component> components) {
+	public static List<Component> stripColor(List<Component> components) {
 		return components.stream().map(AdventureUtils::stripColor).collect(Collectors.toList());
 	}
 
-	public static String asPlainText(Component component) {
-		return PaperComponents.plainSerializer().serialize(component);
+	public static String asPlainText(ComponentLike component) {
+		return PaperComponents.plainSerializer().serialize(component.asComponent());
 	}
 
-	public static String asLegacyText(Component component) {
-		return LegacyComponentSerializer.legacySection().serialize(component);
+	public static String asLegacyText(ComponentLike component) {
+		return PaperComponents.legacySectionSerializer().serialize(component.asComponent());
 	}
 
 	public static Component fromLegacyText(String string) {
-		return LegacyComponentSerializer.legacySection().deserialize(string);
+		return PaperComponents.legacySectionSerializer().deserialize(string);
 	}
 
 	public static Component fromLegacyAmpersandText(String string) {
 		return LegacyComponentSerializer.legacyAmpersand().deserialize(string);
-	}
-
-	@Deprecated // TODO: remove method
-	public static Component fromJson(JsonBuilder json) {
-		return PaperComponents.gsonSerializer().deserialize(json.serialize());
 	}
 
 	public static Identity identityOf(Identified object) {
@@ -166,6 +163,11 @@ public class AdventureUtils {
 		return Component.text(coloredAndNamed.getName(), coloredAndNamed.getTextColor());
 	}
 
+	@NotNull
+	public static TextComponent colorText(@NotNull ColoredAndNicknamed coloredAndNicknamed) {
+		return Component.text(coloredAndNicknamed.getNickname(), coloredAndNicknamed.getTextColor());
+	}
+
 	/**
 	 * Returns a component that has separated the input list of components with commas.
 	 * <p>
@@ -180,7 +182,7 @@ public class AdventureUtils {
 	 * @param color optional color to use for the commas
 	 * @return a formatted TextComponent
 	 */
-	public static TextComponent commaJoinText(List<Component> components, @Nullable TextColor color) {
+	public static TextComponent commaJoinText(List<ComponentLike> components, @Nullable TextColor color) {
 		TextComponent component = Component.text("", color);
 
 		if (components.isEmpty())
@@ -216,7 +218,7 @@ public class AdventureUtils {
 	 * @param components components to separate by commas.
 	 * @return a formatted TextComponent
 	 */
-	public static TextComponent commaJoinText(List<Component> components) {
+	public static TextComponent commaJoinText(List<ComponentLike> components) {
 		return commaJoinText(components, null);
 	}
 }
