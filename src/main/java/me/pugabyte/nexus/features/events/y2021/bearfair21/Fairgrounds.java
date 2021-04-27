@@ -25,7 +25,7 @@ public class Fairgrounds {
 		new Timer("      Seeker", Seeker::new);
 		new Timer("      Reflection", ReflectionGame::new);
 
-		ridesTask();
+		// ridesTask();
 	}
 
 	private void ridesTask() {
