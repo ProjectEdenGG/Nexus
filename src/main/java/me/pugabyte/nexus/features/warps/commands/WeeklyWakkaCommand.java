@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +29,10 @@ import java.util.List;
 @NoArgsConstructor
 public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 
-	public WeeklyWakkaCommand(CommandEvent event) {
-		super(event);
-	}
+	private static final int npcId = 3362;
+	private static final int stationaryNPCId = 3361;
 
-	public int npcId = 3362;
-	public int stationaryNPCId = 3361;
-	List<JsonBuilder> tips = new ArrayList<JsonBuilder>() {{
+	private static final List<JsonBuilder> tips = new ArrayList<JsonBuilder>() {{
 		add(new JsonBuilder("&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money.").command("/mcmmo reset").hover("&eClick to run the command!"));
 		add(new JsonBuilder("&3Considering a donor perk, but not sure? You can test many of the commands in the donor test world- find it in the &c/warps &3menu!").command("/warps"));
 		add(new JsonBuilder("&3Each month the community has a group goal for voting." +
@@ -65,6 +63,10 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		add(new JsonBuilder("&3The walls of grace (&c/wog&3) are a great way to share your love for the server. Leave a sign for others to read").command("/wog").hover("&eClick to run the command!"));
 	}};
 
+	public WeeklyWakkaCommand(CommandEvent event) {
+		super(event);
+	}
+
 	@Override
 	public WarpType getWarpType() {
 		return WarpType.WEEKLY_WAKKA;
@@ -76,6 +78,13 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 				"&3for you to find. If you find it, you can get a key to open up one of my crates here. My cow clone will move location " +
 				"once a week, so you can get a new reward each week! If you find it, &eI'll tell you a tip about the server and give " +
 				"you a key to this crate.");
+	}
+
+	@Path("tp")
+	@Permission("group.admin")
+	void tp() {
+		send(PREFIX + "Teleporting to location #" + new WeeklyWakkaService().get().getCurrentLocation());
+		player().teleportAsync(getNPC().getStoredLocation(), TeleportCause.COMMAND);
 	}
 
 	@EventHandler
@@ -122,13 +131,17 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		JsonBuilder newTip = RandomUtils.randomElement(newTips);
 		Warp newWarp = RandomUtils.randomElement(warps);
 		weeklyWakka.setCurrentLocation(newWarp.getName());
-		weeklyWakka.setCurrentTip(tips.indexOf(newTip) + "");
+		weeklyWakka.setCurrentTip(String.valueOf(tips.indexOf(newTip)));
 		weeklyWakka.getFoundPlayers().clear();
 		service.save(weeklyWakka);
-		NPC npc = CitizensUtils.getNPC(npcId);
+		NPC npc = getNPC();
 		npc.teleport(newWarp.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
 		if (sender() != null)
 			send(json("The Weekly Wakka NPC has moved to location #" + newWarp.getName()).command("/weeklywakka " + newWarp.getName()));
+	}
+
+	private NPC getNPC() {
+		return CitizensUtils.getNPC(npcId);
 	}
 
 }
