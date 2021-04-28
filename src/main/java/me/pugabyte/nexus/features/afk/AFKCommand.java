@@ -51,7 +51,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 			player.forceAfk(player::afk);
 	}
 
-	@Path("mobTargeting [enable]")
+	@Path("settings mobTargeting [enable]")
 	void mobTargeting(Boolean enable) {
 		AFKSettingsService service = new AFKSettingsService();
 		AFKSettings afkSettings = service.get(player());
@@ -61,6 +61,18 @@ public class AFKCommand extends CustomCommand implements Listener {
 		afkSettings.setMobTargeting(enable);
 		service.save(afkSettings);
 		send(PREFIX + "Mobs " + (enable ? "&awill" : "&cwill not") + " &3target you while you are AFK");
+	}
+
+	@Path("settings broadcasts [enable]")
+	void hideBroadcasts(Boolean enable) {
+		AFKSettingsService service = new AFKSettingsService();
+		AFKSettings afkSettings = service.get(player());
+		if (enable == null)
+			enable = !afkSettings.isBroadcasts();
+
+		afkSettings.setBroadcasts(enable);
+		service.save(afkSettings);
+		send(PREFIX + "Your own AFK broadcasts are now " + (enable ? "&ashown" : "&chidden") + " &3from other players");
 	}
 
 	@EventHandler(ignoreCancelled = true)

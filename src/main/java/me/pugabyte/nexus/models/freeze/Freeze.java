@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -44,7 +45,11 @@ public class Freeze implements PlayerOwnedObject {
 	}
 
 	public void deactivate(UUID remover) {
-		Punishments.of(uuid).getActiveFreeze().ifPresent(freeze -> freeze.deactivate(remover));
+		Optional<Punishment> activeFreeze = Punishments.of(uuid).getActiveFreeze();
+		if (activeFreeze.isPresent())
+			activeFreeze.get().deactivate(remover);
+		else
+			throw new InvalidInputException(getNickname() + " is not frozen");
 	}
 
 	public void freeze() {

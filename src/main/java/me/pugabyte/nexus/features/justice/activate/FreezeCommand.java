@@ -37,6 +37,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.Arrays;
@@ -101,10 +102,15 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (!isFrozen(event.getPlayer())) return;
 		Tasks.wait(5, () -> {
 			if (!event.getPlayer().isOnline())
 				return;
+
+			if (!isFrozen(event.getPlayer())) {
+				if (event.getPlayer().getPotionEffect(PotionEffectType.JUMP) != null)
+					new FreezeService().get(event.getPlayer()).unfreeze();
+				return;
+			}
 
 			get(event.getPlayer()).mount();
 
