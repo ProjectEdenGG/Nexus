@@ -30,13 +30,24 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -95,8 +106,8 @@ public class PlayerUtils {
 				PlayerUtils.send(player.getPlayer(), component);
 		}
 
-		public boolean is(OfflinePlayer player) {
-			return uuid.equals(player.getUniqueId());
+		public boolean is(Entity entity) {
+			return uuid.equals(entity.getUniqueId());
 		}
 
 		public boolean is(Nerd nerd) {

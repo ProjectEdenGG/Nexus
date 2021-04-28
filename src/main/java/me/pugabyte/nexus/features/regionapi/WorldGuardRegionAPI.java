@@ -38,7 +38,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 public class WorldGuardRegionAPI extends Feature implements Listener {
-	private static final Map<Entity, Set<ProtectedRegion>> entities = new HashMap<>();
+	private static final Map<Entity, Set<ProtectedRegion>> entityRegions = new HashMap<>();
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
@@ -71,12 +71,12 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onVehicleEnter(VehicleEnterEvent event) {
-		updateRegions(event.getEntered(), MovementType.VEHICLE_ENTER, event.getVehicle().getLocation(), event);
+		updateRegions(event.getEntered(), MovementType.ENTER_VEHICLE, event.getVehicle().getLocation(), event);
 	}
 
 	@EventHandler
 	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
-		updateRegions(event.getPlayer(), MovementType.BED_ENTER, event.getBed().getLocation(), event);
+		updateRegions(event.getPlayer(), MovementType.ENTER_BED, event.getBed().getLocation(), event);
 	}
 
 	@EventHandler
@@ -116,13 +116,13 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 
-	public static Set<ProtectedRegion> getRegions(Entity entity) {
-		return entities.getOrDefault(entity, new HashSet<>());
+	public static Set<ProtectedRegion> getStoredRegions(Entity entity) {
+		return entityRegions.getOrDefault(entity, new HashSet<>());
 	}
 
 	private void clearRegions(Entity entity, MovementType movementType, PlayerEvent event) {
-		Set<ProtectedRegion> regions = getRegions(entity);
-		entities.remove(entity);
+		Set<ProtectedRegion> regions = getStoredRegions(entity);
+		entityRegions.remove(entity);
 		if (regions == null)
 			return;
 
@@ -135,8 +135,8 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	private synchronized boolean updateRegions(final Entity entity, MovementType movementType, Location newLocation, final Event parentEvent) {
 		final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(newLocation);
 
-		Set<ProtectedRegion> regions = getRegions(entity);
-		Set<ProtectedRegion> oldRegions = new HashSet<>(regions);
+		Set<ProtectedRegion> regions = getStoredRegions(entity);
+		Set<ProtectedRegion> originalRegions = new HashSet<>(regions);
 
 		Set<ProtectedRegion> applicableRegions = worldGuardUtils.getRegionsAt(newLocation);
 
@@ -144,7 +144,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 			if (!regions.contains(region)) {
 				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
-					regions.addAll(oldRegions);
+					regions.addAll(originalRegions);
 					return true;
 				} else {
 					Tasks.wait(1, () -> RegionEventFactory.of(EnteredRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
@@ -157,14 +157,9 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		while (iterator.hasNext()) {
 			final ProtectedRegion region = iterator.next();
 			if (!applicableRegions.contains(region)) {
-				if (worldGuardUtils.getManager().getRegion(region.getId()) != region) {
-					iterator.remove();
-					continue;
-				}
-
 				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
-					regions.addAll(oldRegions);
+					regions.addAll(originalRegions);
 					return true;
 				} else {
 					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
@@ -173,7 +168,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 			}
 		}
 
-		entities.put(entity, regions);
+		entityRegions.put(entity, regions);
 		return false;
 	}
 }
