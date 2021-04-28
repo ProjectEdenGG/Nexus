@@ -23,7 +23,6 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishment.PunishmentBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -42,6 +41,8 @@ import java.util.function.Consumer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
+import static me.pugabyte.nexus.features.justice.Justice.DISCORD_PREFIX;
+import static me.pugabyte.nexus.features.justice.Justice.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -58,9 +59,6 @@ public class Punishments implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<Punishment> punishments = new ArrayList<>();
 	private List<IPHistoryEntry> ipHistory = new ArrayList<>();
-
-	public static transient final String PREFIX = StringUtils.getPrefix("Justice");
-	public static transient final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Justice");
 
 	public static Punishments of(String name) {
 		return of(PlayerUtils.getPlayer(name));

@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.activate;
+package me.pugabyte.nexus.features.justice.activate;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -7,7 +7,7 @@ import me.pugabyte.nexus.features.chat.commands.ChannelCommand;
 import me.pugabyte.nexus.features.chat.commands.MessageCommand;
 import me.pugabyte.nexus.features.chat.commands.ReplyCommand;
 import me.pugabyte.nexus.features.commands.info.RulesCommand;
-import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
+import me.pugabyte.nexus.features.justice.misc._PunishmentCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;

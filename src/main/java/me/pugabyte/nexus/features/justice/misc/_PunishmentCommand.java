@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
+package me.pugabyte.nexus.features.justice.misc;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

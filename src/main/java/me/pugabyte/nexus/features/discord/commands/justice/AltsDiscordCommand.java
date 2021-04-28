@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.discord.commands;
+package me.pugabyte.nexus.features.discord.commands.justice;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;

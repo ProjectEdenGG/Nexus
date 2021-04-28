@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.misc;
+package me.pugabyte.nexus.features.justice.misc;
 
 import eden.models.hours.Hours;
 import eden.models.hours.HoursService;
@@ -11,12 +11,12 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
+import me.pugabyte.nexus.features.justice.Justice;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -45,8 +45,8 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 	public LockdownCommand(@NonNull CommandEvent event) {
 		super(event);
-		PREFIX = Punishments.PREFIX;
-		DISCORD_PREFIX = Punishments.DISCORD_PREFIX;
+		PREFIX = Justice.PREFIX;
+		DISCORD_PREFIX = Justice.DISCORD_PREFIX;
 	}
 
 	static {

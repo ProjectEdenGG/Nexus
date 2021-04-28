@@ -1,6 +1,6 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.deactivate;
+package me.pugabyte.nexus.features.justice.deactivate;
 
-import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._JusticeCommand;
+import me.pugabyte.nexus.features.justice.misc._JusticeCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;

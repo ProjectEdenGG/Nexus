@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.chat.commands;
+package me.pugabyte.nexus.features.justice.misc;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Koda;

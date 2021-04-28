@@ -15,6 +15,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import java.util.Arrays;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.features.justice.Justice.DISCORD_PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
@@ -56,14 +57,14 @@ public abstract class _PunishmentDiscordCommand extends Command {
 						try {
 							execute(author, name, reason, now);
 						} catch (Exception ex) {
-							event.reply(stripColor(ex.getMessage()));
+							event.reply(DISCORD_PREFIX + stripColor(ex.getMessage()));
 							if (!(ex instanceof EdenException))
 								ex.printStackTrace();
 						}
 					}
 				}
 			} catch (Exception ex) {
-				event.reply(stripColor(ex.getMessage()));
+				event.reply(DISCORD_PREFIX + stripColor(ex.getMessage()));
 				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}

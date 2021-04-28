@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.chat.commands;
+package me.pugabyte.nexus.features.justice.misc;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -9,8 +9,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 
-@Permission("group.staff")
 @Aliases("fc")
+@Permission("group.staff")
 public class ForceChannelCommand extends CustomCommand {
 
 	public ForceChannelCommand(@NonNull CommandEvent event) {

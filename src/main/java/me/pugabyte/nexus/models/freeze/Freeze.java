@@ -37,8 +37,6 @@ public class Freeze implements PlayerOwnedObject {
 	private UUID uuid;
 	private boolean frozen;
 
-	private static final String PREFIX = Punishments.PREFIX;
-	private static final String DISCORD_PREFIX = Punishments.DISCORD_PREFIX;
 	private static final boolean armorStandsDisabled = true;
 
 	public void punish(UUID punisher) {

@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice;
+package me.pugabyte.nexus.features.justice;
 
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
@@ -27,6 +27,7 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.PunishmentsService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -48,6 +49,8 @@ import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
 public class Justice extends Feature implements Listener {
+	public static final String PREFIX = StringUtils.getPrefix("Justice");
+	public static final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Justice");
 
 	private void broadcast(Punishment punishment, String message) {
 		broadcast(historyClick(punishment, new JsonBuilder(message)));

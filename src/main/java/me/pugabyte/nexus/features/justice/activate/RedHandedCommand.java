@@ -1,9 +1,9 @@
-package me.pugabyte.nexus.features.commands.staff.moderator.justice.activate;
+package me.pugabyte.nexus.features.justice.activate;
 
 import de.myzelyam.api.vanish.VanishAPI;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.features.commands.staff.moderator.justice.misc._PunishmentCommand;
+import me.pugabyte.nexus.features.justice.misc._PunishmentCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
