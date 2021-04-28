@@ -57,7 +57,7 @@ public class Changelog implements PlayerOwnedObject {
 		if (!from.getMinecraftVersion().equals(to.getMinecraftVersion()))
 			message += "**Minecraft version updated:** " + to.getMinecraftVersion() + nl;
 		if (!from.getPaperVersion().equals(to.getPaperVersion()))
-			message += "**Paper version updated:** #" + to.getPaperVersion() + nl;
+			message += "**Paper version updated:** #" + to.getPaperVersion() + nl + nl;
 
 		List<String> pluginsAdded = new ArrayList<>();
 		List<String> pluginsRemoved = new ArrayList<>();

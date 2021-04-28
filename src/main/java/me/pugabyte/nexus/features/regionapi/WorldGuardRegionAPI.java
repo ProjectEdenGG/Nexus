@@ -32,7 +32,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -141,7 +140,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		Set<ProtectedRegion> applicableRegions = worldGuardUtils.getRegionsAt(newLocation);
 
 		for (final ProtectedRegion region : applicableRegions) {
-			if (!regions.contains(region)) {
+			if (!originalRegions.contains(region)) {
 				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(originalRegions);
@@ -153,9 +152,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 			}
 		}
 
-		Iterator<ProtectedRegion> iterator = regions.iterator();
-		while (iterator.hasNext()) {
-			final ProtectedRegion region = iterator.next();
+		for (final ProtectedRegion region : originalRegions) {
 			if (!applicableRegions.contains(region)) {
 				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
@@ -163,7 +160,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 					return true;
 				} else {
 					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
-					iterator.remove();
+					regions.remove(region);
 				}
 			}
 		}
