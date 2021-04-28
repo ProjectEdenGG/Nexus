@@ -318,8 +318,13 @@ public class Punishments implements PlayerOwnedObject {
 
 	public void sendAltsMessage(Consumer<JsonBuilder> sender, Runnable ifNull) {
 		JsonBuilder altsMessage = getAltsMessage();
+
+		JsonBuilder message = new JsonBuilder(PREFIX + "Alts of &e" + getNickname() + " ");
+		if (!getName().equals(getNickname()))
+			message.hover("&3Real Name: &e" + getName()).group();
+
 		if (altsMessage != null)
-			sender.accept(new JsonBuilder(PREFIX + "Alts of &e" + getNickname() + " ").next(altsMessage));
+			sender.accept(message.next(altsMessage));
 		else if (ifNull != null)
 			ifNull.run();
 	}
@@ -354,7 +359,12 @@ public class Punishments implements PlayerOwnedObject {
 			else
 				json.initialize();
 
-			json.group().next(color + alt.getNickname()).hover(color + camelCase(description)).group();
+			List<String> hover = new ArrayList<>();
+			hover.add(color + camelCase(description));
+			if (!alt.getName().equals(alt.getNickname()))
+				hover.add("&3Real Name: &e" + alt.getName());
+
+			json.group().content(alt.getNickname()).color(color).hover(hover).group();
 		});
 
 		return json;
