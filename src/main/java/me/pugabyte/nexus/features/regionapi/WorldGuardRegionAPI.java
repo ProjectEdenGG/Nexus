@@ -33,11 +33,15 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
+
+import static eden.utils.Utils.isNullOrEmpty;
 
 @NoArgsConstructor
 public class WorldGuardRegionAPI extends Feature implements Listener {
-	private static final Map<Entity, Set<ProtectedRegion>> entityRegions = new HashMap<>();
+	private static final Map<UUID, Set<ProtectedRegion>> entityRegions = new HashMap<>();
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
@@ -115,14 +119,9 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 
-	public static Set<ProtectedRegion> getStoredRegions(Entity entity) {
-		return entityRegions.getOrDefault(entity, new HashSet<>());
-	}
-
 	private void clearRegions(Entity entity, MovementType movementType, PlayerEvent event) {
-		Set<ProtectedRegion> regions = getStoredRegions(entity);
-		entityRegions.remove(entity);
-		if (regions == null)
+		Set<ProtectedRegion> regions = entityRegions.remove(entity.getUniqueId());
+		if (isNullOrEmpty(regions))
 			return;
 
 		for (ProtectedRegion region : regions) {
@@ -134,13 +133,14 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	private synchronized boolean updateRegions(final Entity entity, MovementType movementType, Location newLocation, final Event parentEvent) {
 		final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(newLocation);
 
-		Set<ProtectedRegion> regions = getStoredRegions(entity);
-		Set<ProtectedRegion> originalRegions = new HashSet<>(regions);
+		Set<ProtectedRegion> regions = entityRegions.getOrDefault(entity.getUniqueId(), new HashSet<>());
+		regions.removeIf(Objects::isNull);
 
+		Set<ProtectedRegion> originalRegions = new HashSet<>(regions);
 		Set<ProtectedRegion> applicableRegions = worldGuardUtils.getRegionsAt(newLocation);
 
-		for (final ProtectedRegion region : applicableRegions) {
-			if (!originalRegions.contains(region)) {
+		for (final ProtectedRegion region : applicableRegions)
+			if (!originalRegions.contains(region))
 				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(originalRegions);
@@ -149,11 +149,9 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 					Tasks.wait(1, () -> RegionEventFactory.of(EnteredRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
 					regions.add(region);
 				}
-			}
-		}
 
-		for (final ProtectedRegion region : originalRegions) {
-			if (!applicableRegions.contains(region)) {
+		for (final ProtectedRegion region : originalRegions)
+			if (!applicableRegions.contains(region))
 				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(originalRegions);
@@ -162,10 +160,8 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
 					regions.remove(region);
 				}
-			}
-		}
 
-		entityRegions.put(entity, regions);
+		entityRegions.put(entity.getUniqueId(), regions);
 		return false;
 	}
 }
