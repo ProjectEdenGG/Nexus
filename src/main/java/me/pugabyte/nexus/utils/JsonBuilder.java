@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 @NoArgsConstructor
 public class JsonBuilder implements ComponentLike {
 	@NonNull private Builder builder = Component.text();

@@ -53,9 +53,9 @@ public class MysteryCrate extends Crate {
 	public void onSpawnItem(CrateSpawnItemEvent event) {
 		if (event.getCrateType() != getCrateType()) return;
 		if (!event.getCrateLoot().getItems().contains(new ItemStack(Material.BEACON))) return;
-		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() +
-				" &3has gotten a &eBeacon &3from the &eMystery Crate", MuteMenuItem.EVENTS);
-		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten a Beacon from the Mystery Crate");
+		String message = "&e" + event.getPlayer().getName() + " &3has received a &eBeacon &3from the &eMystery Crate";
+		Chat.broadcastIngame(Crates.PREFIX + message, MuteMenuItem.CRATES);
+		Chat.broadcastDiscord("**[Crates]** " + message);
 	}
 
 	@Override

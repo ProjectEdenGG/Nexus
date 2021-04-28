@@ -40,9 +40,9 @@ public class VoteCrate extends Crate {
 	public void onItemSpawn(CrateSpawnItemEvent event) {
 		CrateLoot loot = event.getCrateLoot();
 		if (loot.getItems().contains(CrateType.MYSTERY.getKey())) {
-			Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() +
-					                     " &3has gotten a &eMystery Crate Key &3from the &eVote Crate", MuteMenuItem.EVENTS);
-			Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten a Mystery Crate Key from the Vote Crate");
+			String message = "&e" + event.getPlayer().getName() + " &3has received a &eMystery Crate Key &3from the &eVote Crate";
+			Chat.broadcastIngame(Crates.PREFIX + message, MuteMenuItem.CRATES);
+			Chat.broadcastDiscord("**[Crates]** " + message);
 		}
 	}
 }

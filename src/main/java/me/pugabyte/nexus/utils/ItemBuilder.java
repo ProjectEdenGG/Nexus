@@ -129,6 +129,10 @@ public class ItemBuilder implements Cloneable {
 		return this;
 	}
 
+	public ItemBuilder glow(boolean glow) {
+		return glow ? glow() : this;
+	}
+
 	public ItemBuilder unbreakable() {
 		itemMeta.setUnbreakable(true);
 		return this;

@@ -104,7 +104,7 @@ public abstract class WitherFight implements Listener {
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(location -> {
 			Chat.broadcastIngame(new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
-					.command("/wither spectate").hover("&eYou will be teleported to the wither arena"), MuteMenuItem.EVENTS);
+					.command("/wither spectate").hover("&eYou will be teleported to the wither arena"), MuteMenuItem.BOSS_FIGHT);
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
 			new WorldEditUtils("events").set("witherarena-lobby", BlockTypes.NETHERRACK);
@@ -324,7 +324,7 @@ public abstract class WitherFight implements Listener {
 			int partySize = party.size();
 			Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode", MuteMenuItem.EVENTS);
+					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode", MuteMenuItem.BOSS_FIGHT);
 			Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 					" lost to the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode");
@@ -362,7 +362,7 @@ public abstract class WitherFight implements Listener {
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" successfully beaten the Wither in " +
-				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star"), MuteMenuItem.EVENTS);
+				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star"), MuteMenuItem.BOSS_FIGHT);
 		Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "and got the star" : "but did not get the star"));

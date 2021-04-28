@@ -26,5 +26,6 @@ public class AFKSettings implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean mobTargeting = false;
+	private boolean broadcasts = true;
 
 }

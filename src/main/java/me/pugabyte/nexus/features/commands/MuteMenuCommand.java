@@ -21,8 +21,14 @@ import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class MuteMenuCommand extends CustomCommand {
@@ -49,13 +55,15 @@ public class MuteMenuCommand extends CustomCommand {
 			CHANNEL_MINIGAMES("Minigames Chat", Material.CYAN_WOOL, "chat.use.minigames"),
 			CHANNEL_CREATIVE("Creative Chat", Material.LIGHT_BLUE_WOOL, "chat.use.creative"),
 			CHANNEL_SKYBLOCK("Skyblock Chat", Material.ORANGE_WOOL, "chat.use.skyblock"),
-			REMINDERS("Reminders", Material.REPEATER),
+			REMINDERS("Reminders", Material.REPEATER, Arrays.asList("Periodic reminders about", "features and events")),
 			AFK("AFK Broadcasts", Material.REDSTONE_LAMP),
 			JOIN_QUIT("Join/Quit Messages", Material.OAK_FENCE_GATE),
 			DEATH_MESSAGES("Death Messages", Material.PLAYER_HEAD),
+			BOSS_FIGHT("Boss Fight Broadcasts", Material.NETHER_STAR),
+			CRATES("Crate Broadcasts", Material.CHEST, Arrays.asList("Broadcasts when players win", "rare items from crates")),
 			EVENTS("Event Broadcasts", Material.BEACON),
 			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD),
-			QUEUP("QueUp Song Updates", Material.JUKEBOX),
+			QUEUP("QueUp Song Updates", Material.MUSIC_DISC_MALL),
 			// Sounds
 			FIRST_JOIN_SOUND("First Join", Material.GOLD_BLOCK, 50),
 			JOIN_QUIT_SOUNDS("Join/Quit", Material.NOTE_BLOCK, 50),
@@ -63,11 +71,12 @@ public class MuteMenuCommand extends CustomCommand {
 			RANK_UP("Rank Up", Material.EMERALD, 50);
 
 			@NonNull
-			public String title;
+			private final String title;
 			@NonNull
-			public Material material;
-			public String permission = null;
-			public Integer defaultVolume = null;
+			private final Material material;
+			private List<String> lore = new ArrayList<>();
+			private String permission = null;
+			private Integer defaultVolume = null;
 
 			MuteMenuItem(String title, Material material, int defaultVolume) {
 				this.title = title;
@@ -79,6 +88,14 @@ public class MuteMenuCommand extends CustomCommand {
 				this.title = title;
 				this.material = material;
 				this.permission = permission;
+			}
+
+			MuteMenuItem(String title, Material material, List<String> lore) {
+				this.title = title;
+				this.material = material;
+				this.lore = lore.stream().map(line -> "&f" + line).collect(toList());
+				if (!this.lore.isEmpty())
+					this.lore.add(0, "");
 			}
 		}
 
@@ -115,9 +132,12 @@ public class MuteMenuCommand extends CustomCommand {
 						continue;
 
 					boolean muted = user.hasMuted(item);
-					ItemStack stack = nameItem(item.getMaterial(), "&e" + item.getTitle(), muted ? "&cMuted" : "&aUnmuted");
-					if (muted)
-						addGlowing(stack);
+					ItemStack stack = new ItemBuilder(item.getMaterial()).name("&e" + item.getTitle())
+							.lore(muted ? "&cMuted" : "&aUnmuted")
+							.lore(item.getLore())
+							.glow(muted)
+							.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+							.build();
 
 					contents.set(row, column, ClickableItem.from(stack, e -> {
 						toggleMute(user, item);

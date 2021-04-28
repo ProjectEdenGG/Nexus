@@ -113,6 +113,9 @@ public class AFKPlayer {
 	}
 
 	private void broadcast() {
+		if (!new AFKSettingsService().get(UUID.fromString(uuid)).isBroadcasts())
+			return;
+
 		TextComponent broadcast = new JsonBuilder("&7* &e" + Nickname.of(getPlayer()) + " &7is " + (isAfk ? "now" : "no longer") + " AFK").build();
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!PlayerUtils.canSee(_player, getPlayer()))
