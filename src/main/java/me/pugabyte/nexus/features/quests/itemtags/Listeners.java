@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.quests.itemtags;
 
-import com.destroystokyo.paper.event.inventory.PrepareGrindstoneEvent;
+import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
@@ -11,9 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +26,7 @@ public class Listeners implements Listener {
 	}
 
 	public static boolean isNotTesting(Player player) {
-		return !Dev.WAKKA.is(player);
+		return !Dev.GRIFFIN.is(player);
 	}
 
 	@EventHandler
@@ -61,20 +59,6 @@ public class Listeners implements Listener {
 	}
 
 	@EventHandler
-	public void onAnvilCraftItem(PrepareAnvilEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		if (isNotTesting((Player) event.getView().getPlayer())) return;
-
-		ItemStack result = event.getInventory().getResult();
-		if (isNullOrAir(result)) return;
-
-		ItemStack updated = updateItem(result);
-
-		event.getInventory().setResult(updated);
-		Tasks.sync(() -> event.getInventory().setResult(updated));
-	}
-
-	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent event) {
 		if (isNotTesting(event.getPlayer())) return;
 		ItemStack result = event.getItem();
@@ -86,21 +70,7 @@ public class Listeners implements Listener {
 	}
 
 	@EventHandler
-	public void onGrindstoneCraftItem(PrepareGrindstoneEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		if (isNotTesting((Player) event.getView().getPlayer())) return;
-
-		ItemStack result = event.getInventory().getResult();
-		if (isNullOrAir(result)) return;
-
-		ItemStack updated = updateItem(result);
-
-		event.getInventory().setResult(updated);
-		Tasks.sync(() -> event.getInventory().setResult(updated));
-	}
-
-	@EventHandler
-	public void onSmithingTableCraftItem(PrepareSmithingEvent event) {
+	public void onGrindstoneCraftItem(PrepareResultEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player)) return;
 		if (isNotTesting((Player) event.getView().getPlayer())) return;
 

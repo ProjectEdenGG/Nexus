@@ -108,7 +108,6 @@ public class RadioConfig implements PlayerOwnedObject {
 
 			if (!unloadedSongs.isEmpty())
 				Nexus.log("[Radio] [" + id + "] " + loadedSongs.size() + " unloaded songs: " + String.join(", ", unloadedSongs));
-			Nexus.log("[Radio] " + id + " loaded");
 
 			ArrayList<File> list = new ArrayList<>(loadedSongs);
 			Collections.shuffle(list);
