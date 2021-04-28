@@ -18,6 +18,7 @@ public enum MovementType {
 	SPAWN,
 	RESPAWN,
 	DESPAWN,
+	CONNECT,
 	DISCONNECT,
 	;
 

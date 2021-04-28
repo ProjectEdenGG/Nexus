@@ -45,7 +45,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		updateRegions(event.getPlayer(), MovementType.RESPAWN, event.getPlayer().getLocation(), event);
+		updateRegions(event.getPlayer(), MovementType.CONNECT, event.getPlayer().getLocation(), event);
 	}
 
 	@EventHandler
