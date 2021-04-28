@@ -6,13 +6,14 @@ load: POSTWORLD
 depend:
   - Multiverse-Core
 softdepend:
+  - BentoBox
   - BlueMap
   - BuycraftX
   - Citizens
-  - Essentials
+  - GlowAPI
   - helper
   - HolographicDisplays
-  - LiteBans
+  - LibsDisguises
   - LWC
   - mcMMO
   - Multiverse-Inventories
@@ -24,7 +25,3 @@ softdepend:
   - Vault
   - Votifier
   - WorldGuard
-  - WorldGuardRegionAPI
-  - GlowAPI
-  - LibsDisguises
-  - BentoBox
