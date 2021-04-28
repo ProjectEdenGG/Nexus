@@ -105,7 +105,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
 	}
 
-	@Path("find [entityType]")
+	@Path("find <entityType>")
 	@Description("Make your nearby animals glow so you can find them")
 	void find(TameableEntity entityType) {
 		List<Entity> entities = list(entityType);

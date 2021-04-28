@@ -85,7 +85,9 @@ public class ModReviewCommand extends CustomCommand {
 		modReview.request(request);
 		save();
 		send(PREFIX + "Requested mod &e" + name + " &3to be reviewed");
-		Chat.broadcast(json(PREFIX + "&e" + name() + " &3has requested mod &e" + name + " &3to be reviewed").command("/modreview requests"), StaticChannel.STAFF);
+		String message = "&e" + name() + " &3has requested mod &e" + name + " &3to be reviewed";
+		Chat.broadcastIngame(json(PREFIX + message).command("/modreview requests"), StaticChannel.STAFF);
+		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
 	}
 
 	@Permission("group.staff")
@@ -111,7 +113,7 @@ public class ModReviewCommand extends CustomCommand {
 	void removeRequest(ModReviewRequest request) {
 		requests.remove(request);
 		save();
-		send(PREFIX + "Removed aliases to mod &e" + request.getName());
+		send(PREFIX + "Removed request for mod &e" + request.getName());
 	}
 
 	@Permission("group.admin")

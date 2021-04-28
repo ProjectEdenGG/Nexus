@@ -233,7 +233,8 @@ public class Nexus extends JavaPlugin {
 		Locale.setDefault(Locale.US);
 
 		new Timer("Enable", () -> {
-			Nexus.log("Loaded worlds: " + Bukkit.getWorlds().stream().map(World::getName).collect(joining(", ")));
+			String loadedWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(joining(", "));
+//			Nexus.log("Loaded worlds: " + loadedWorlds);
 
 			new Timer(" Config", this::setupConfig);
 			new Timer(" Databases", this::databases);
@@ -260,7 +261,7 @@ public class Nexus extends JavaPlugin {
 		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
-		try { features.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
 		try { API.shutdown();											} catch (Throwable ex) { ex.printStackTrace(); }
