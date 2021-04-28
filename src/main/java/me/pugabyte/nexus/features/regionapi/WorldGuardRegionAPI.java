@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -26,6 +27,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 import java.util.HashMap;
@@ -68,9 +70,18 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	}
 
 	@EventHandler
+	public void onVehicleEnter(VehicleEnterEvent event) {
+		updateRegions(event.getEntered(), MovementType.VEHICLE_ENTER, event.getVehicle().getLocation(), event);
+	}
+
+	@EventHandler
+	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
+		updateRegions(event.getPlayer(), MovementType.BED_ENTER, event.getBed().getLocation(), event);
+	}
+
+	@EventHandler
 	public void onEntityTeleport(EntityTeleportEvent event) {
-		MovementType movementType = MovementType.TELEPORT;
-		updateRegions(event.getEntity(), movementType, event.getTo(), event);
+		updateRegions(event.getEntity(), MovementType.TELEPORT, event.getTo(), event);
 	}
 
 	@EventHandler
@@ -89,7 +100,10 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 			return;
 
 		for (Entity entity : event.getVehicle().getPassengers())
-			updateRegions(entity, MovementType.RIDE, entity.getLocation(), event);
+			if (updateRegions(entity, MovementType.RIDE, event.getTo(), event)) {
+				event.getVehicle().removePassenger(entity);
+				entity.teleportAsync(event.getFrom());
+			}
 	}
 
 	@EventHandler
@@ -118,7 +132,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		}
 	}
 
-	private synchronized void updateRegions(final Entity entity, MovementType movementType, Location newLocation, final Event parentEvent) {
+	private synchronized boolean updateRegions(final Entity entity, MovementType movementType, Location newLocation, final Event parentEvent) {
 		final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(newLocation);
 
 		Set<ProtectedRegion> regions = getRegions(entity);
@@ -131,6 +145,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(oldRegions);
+					return true;
 				} else {
 					Tasks.wait(1, () -> RegionEventFactory.of(EnteredRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
 					regions.add(region);
@@ -150,6 +165,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(oldRegions);
+					return true;
 				} else {
 					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
 					iterator.remove();
@@ -158,5 +174,6 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		}
 
 		entities.put(entity, regions);
+		return false;
 	}
 }

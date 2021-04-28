@@ -43,10 +43,9 @@ public abstract class CancellableRegionEvent extends RegionEvent implements Canc
 	 */
 	@Override
 	public void setCancelled(boolean cancelled) {
-		if (isCancellable()) {
-			this.cancelled = cancelled;
+		this.cancelled = cancelled;
+		if (isCancellable())
 			((Cancellable) parentEvent).setCancelled(cancelled);
-		}
 	}
 
 	/**

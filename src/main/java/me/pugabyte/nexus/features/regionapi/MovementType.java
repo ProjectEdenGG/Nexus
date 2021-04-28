@@ -9,14 +9,15 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MovementType {
-	MOVE(true),
-	RIDE(false),
-	TELEPORT(true),
-	WORLD_CHANGE(false),
-	SPAWN(true),
-	RESPAWN(false),
-	DISCONNECT(false);
-
-	private final boolean cancellable;
+	MOVE,
+	RIDE,
+	TELEPORT,
+	WORLD_CHANGE,
+	BED_ENTER,
+	VEHICLE_ENTER,
+	SPAWN,
+	RESPAWN,
+	DISCONNECT,
+	;
 
 }
