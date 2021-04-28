@@ -58,7 +58,7 @@ public class Punishment implements PlayerOwnedObject {
 			this.reason = timespan.getRest();
 			this.seconds = timespan.getOriginal();
 
-			if (this.reason.matches("^[rR]:.*"))
+			if (this.reason != null && this.reason.matches("^[rR]:.*"))
 				this.reason = reason.replaceFirst("[rR]:", "");
 
 			if (now)

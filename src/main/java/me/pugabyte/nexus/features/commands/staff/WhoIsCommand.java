@@ -91,7 +91,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
 
 		if (history)
-			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("&eClick to view history");
+			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history");
 
 		if (alts != null)
 			json.newline().next("&3Alts: &e").next(alts);
