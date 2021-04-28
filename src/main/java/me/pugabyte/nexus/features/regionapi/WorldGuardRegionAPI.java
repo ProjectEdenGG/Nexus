@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -48,7 +49,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerChangeWorlds(PlayerChangedWorldEvent event) {
+	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
 		clearRegions(event.getPlayer(), MovementType.WORLD_CHANGE, event);
 		updateRegions(event.getPlayer(), MovementType.WORLD_CHANGE, event.getPlayer().getLocation(), event);
 	}
@@ -70,6 +71,11 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	public void onEntityTeleport(EntityTeleportEvent event) {
 		MovementType movementType = MovementType.TELEPORT;
 		updateRegions(event.getEntity(), movementType, event.getTo(), event);
+	}
+
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event) {
+		event.setCancelled(updateRegions(event.getPlayer(), MovementType.MOVE, event.getTo(), event));
 	}
 
 	@EventHandler
