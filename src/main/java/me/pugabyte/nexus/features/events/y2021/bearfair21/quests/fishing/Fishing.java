@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -29,14 +28,7 @@ public class Fishing implements Listener {
 		if (fishingLoot == null)
 			return null;
 
-		ItemBuilder result = new ItemBuilder(fishingLoot.getMaterial(player));
-
-		if (fishingLoot.getCustomName() != null)
-			result.name(fishingLoot.getCustomName());
-		if (fishingLoot.getCustomModelData() != 0)
-			result.customModelData(fishingLoot.getCustomModelData());
-
-		return result.build();
+		return fishingLoot.getItem(player);
 	}
 
 	private static FishingLoot getFishingLoot(Player player) {
@@ -78,7 +70,8 @@ public class Fishing implements Listener {
 		if (!(caught instanceof Item)) return;
 
 		ItemStack loot = getLoot(player);
-		if (loot == null) return;
+		if (loot == null)
+			loot = FishingLoot.CARP.getItem(player);
 
 		Item item = (Item) caught;
 		ItemStack itemStack = item.getItemStack();

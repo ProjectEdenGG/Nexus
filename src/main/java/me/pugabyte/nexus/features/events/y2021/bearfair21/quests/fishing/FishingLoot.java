@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.resourcepack.ResourcePack;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,8 +139,10 @@ public enum FishingLoot {
 
 	public double getChance() {
 		double sum = 0.0;
+		FishingLootCategory category = this.getCategory();
 		for (FishingLoot loot : values())
-			sum += loot.getWeight();
+			if (category.equals(loot.getCategory()))
+				sum += loot.getWeight();
 
 		return (weight / sum) * 100;
 	}
@@ -167,6 +171,17 @@ public enum FishingLoot {
 			return backup;
 
 		return resourcepack;
+	}
+
+	public ItemStack getItem(Player player) {
+		ItemBuilder result = new ItemBuilder(this.getMaterial(player));
+
+		if (this.getCustomName() != null)
+			result.name(this.getCustomName());
+		if (this.getCustomModelData() != 0)
+			result.customModelData(this.getCustomModelData());
+
+		return result.build();
 	}
 
 	@Getter
