@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.minigames.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
@@ -18,6 +17,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
@@ -295,7 +295,7 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterKillRegion(RegionEnteredEvent event) {
+	public void onEnterKillRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying()) return;
 		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;

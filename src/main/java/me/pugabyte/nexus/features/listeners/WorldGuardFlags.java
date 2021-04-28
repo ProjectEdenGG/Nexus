@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.features.listeners;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import eden.utils.TimeUtils.Time;
 import joptsimple.internal.Strings;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.EntityUtils;
@@ -150,7 +150,7 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onEnterRegion(RegionEnteredEvent event) {
+	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 
 		// Action Bar
@@ -191,7 +191,7 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onExitRegion(RegionLeftEvent event) {
+	public void onExitRegion(PlayerLeftRegionEvent event) {
 		Player player = event.getPlayer();
 
 		World world = WorldGuardUtils.getWorld(event.getRegion());

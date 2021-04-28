@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import eden.utils.TimeUtils.Time;
@@ -9,6 +7,8 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.Fairgrounds;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
@@ -274,7 +274,7 @@ public class Basketball implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		Player player = event.getPlayer();
 		if (new CooldownService().check(player, "basketball-doublejump-tip", Time.SECOND.x(30)))
@@ -284,7 +284,7 @@ public class Basketball implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionLeave(RegionLeftEvent event) {
+	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		removeBasketball(event.getPlayer());
 		removeBasketballEntity(event.getPlayer());

@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.events.aeveonproject.effects;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,7 +53,7 @@ public class GravLift implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterRegion_GravLift(RegionEnteredEvent event) {
+	public void onEnterRegion_GravLift(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 
@@ -65,7 +65,7 @@ public class GravLift implements Listener {
 	}
 
 	@EventHandler
-	public void onExitRegion_GravLift(RegionLeftEvent event) {
+	public void onExitRegion_GravLift(PlayerLeftRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 

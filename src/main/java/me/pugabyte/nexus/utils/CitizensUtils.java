@@ -18,6 +18,14 @@ public class CitizensUtils {
 		return CitizensAPI.getNPCRegistry().getById(id);
 	}
 
+	public static NPC getNPC(Entity entity) {
+		return CitizensAPI.getNPCRegistry().getNPC(entity);
+	}
+
+	public static boolean isNPC(Entity entity) {
+		return CitizensAPI.getNPCRegistry().isNPC(entity);
+	}
+
 	public static void updateNameAndSkin(int id, String name) {
 		updateNameAndSkin(getNPC(id), name);
 	}
@@ -73,10 +81,6 @@ public class CitizensUtils {
 				((SkinnableEntity) npcEntity).getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
 			}
 		});
-	}
-
-	public static boolean isNPC(Entity entity) {
-		return entity.hasMetadata("NPC");
 	}
 
 	public static NPC getSelectedNPC(Player player) {

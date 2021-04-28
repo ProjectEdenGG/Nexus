@@ -120,7 +120,7 @@ public class BearFair20 implements Listener {
 	}
 
 //	@EventHandler
-//	public void onRegionEnter(RegionEnteredEvent event) {
+//	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 //		Player player = event.getPlayer();
 //		if(!isAtBearFair(player)) return;
 //		if (player.hasPermission("worldguard.region.bypass.*")) {
@@ -167,7 +167,7 @@ public class BearFair20 implements Listener {
 	}
 
 //	@EventHandler
-//	public void onRegionEnterYacht(RegionEnteredEvent event) {
+//	public void onRegionEnterYacht(PlayerEnteredRegionEvent event) {
 //		if (!allowWarp) return;
 //		if (!event.getRegion().getId().equalsIgnoreCase("spawn_spaceyacht")) return;
 //		Player player = event.getPlayer();
@@ -177,7 +177,7 @@ public class BearFair20 implements Listener {
 //	}
 
 //	@EventHandler
-//	public void onRegionEnterQuarters(RegionEnteredEvent event) {
+//	public void onRegionEnterQuarters(PlayerEnteredRegionEvent event) {
 //		if (!allowWarp) return;
 //		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
 //

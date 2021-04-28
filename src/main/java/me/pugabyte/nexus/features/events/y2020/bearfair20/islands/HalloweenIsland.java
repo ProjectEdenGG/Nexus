@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
@@ -11,6 +9,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.HalloweenIsland.HalloweenNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -205,13 +205,13 @@ public class HalloweenIsland implements Listener, Island {
 	}
 
 	@EventHandler
-	public void onHalloweenRegionEnter(RegionEnteredEvent event) {
+	public void onHalloweenRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(getRegion())) return;
 		startSoundsTask(event.getPlayer());
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(getRegion())) return;
 		stopSoundsTask(event.getPlayer());
 	}
@@ -262,7 +262,7 @@ public class HalloweenIsland implements Listener, Island {
 	}
 
 	@EventHandler
-	public void onAtticRegionEnter(RegionEnteredEvent event) {
+	public void onAtticRegionEnter(PlayerEnteredRegionEvent event) {
 		if (event.getRegion().getId().equalsIgnoreCase(atticRg)) {
 			if (!BearFair20.enableQuests) return;
 			Player player = event.getPlayer();

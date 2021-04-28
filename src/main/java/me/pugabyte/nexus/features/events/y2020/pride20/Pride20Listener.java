@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.events.y2020.pride20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.DyeBombCommand;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
@@ -65,7 +65,7 @@ public class Pride20Listener implements Listener {
 
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase("pride20")) return;
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(event.getPlayer(), "pride20enter", Time.MINUTE.x(5)))

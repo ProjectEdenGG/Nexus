@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
@@ -10,6 +9,7 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.SoundButton;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.Gate;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
@@ -104,7 +104,7 @@ public class Halloween20 implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterGateRegion(RegionEnteredEvent event) {
+	public void onEnterGateRegion(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(region + "_gate_open")) return;
 		Halloween20User user = new Halloween20Service().get(event.getPlayer());
 		if (user.getCombinationStage() != QuestStage.Combination.NOT_STARTED) return;

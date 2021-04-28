@@ -11,6 +11,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -61,6 +62,10 @@ public class WorldGuardUtils {
 		this.manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld);
 	}
 
+	public RegionContainer getContainer() {
+		return WorldGuard.getInstance().getPlatform().getRegionContainer();
+	}
+
 	public ProtectedRegion getProtectedRegion(String name) {
 		ProtectedRegion region = manager.getRegion(name.toLowerCase());
 		if (region == null)
@@ -103,13 +108,21 @@ public class WorldGuardUtils {
 	}
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {
-		if (!isSameWorld(location)) return new HashSet<>();
-		return manager.getApplicableRegions(toBlockVector3(location)).getRegions();
+		if (!isSameWorld(location))
+			return new HashSet<>();
+
+		Set<ProtectedRegion> regions = manager.getApplicableRegions(toBlockVector3(location)).getRegions();
+		ProtectedRegion globalRegion = manager.getRegion("__global__");
+		if (globalRegion != null)
+			regions.add(globalRegion); // just to be sure
+		return regions;
 	}
 
 	public Set<String> getRegionNamesAt(Location location) {
-		if (!isSameWorld(location)) return new HashSet<>();
-		return manager.getApplicableRegions(toBlockVector3(location)).getRegions().stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
+		if (!isSameWorld(location))
+			return new HashSet<>();
+
+		return getRegionsAt(location).stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}
 
 	public boolean isInRegion(Player player, String region) {
@@ -212,6 +225,5 @@ public class WorldGuardUtils {
 		}
 		return blocks;
 	}
-
 
 }

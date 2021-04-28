@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflection;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Location;
@@ -26,7 +26,7 @@ public class Listeners implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(ReflectionGame.getGameRg()))
 			send(ReflectionGame.getPrefix() + ReflectionGame.getMessage(), event.getPlayer());

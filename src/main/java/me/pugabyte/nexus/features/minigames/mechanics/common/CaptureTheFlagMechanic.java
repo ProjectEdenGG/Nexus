@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics.common;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -11,6 +10,7 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.CaptureTheFlagMatch
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.TitleUtils;
@@ -78,7 +78,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 	}
 
 	@EventHandler
-	public void onRegionEvent(RegionEnteredEvent event) {
+	public void onRegionEvent(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion(), "kill")) return;

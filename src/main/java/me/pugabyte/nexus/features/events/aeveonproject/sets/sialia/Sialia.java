@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.events.aeveonproject.sets.sialia;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
@@ -12,6 +10,8 @@ import me.pugabyte.nexus.features.events.aeveonproject.sets.APRegions;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSet;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -52,7 +52,7 @@ public class Sialia implements Listener, APSet {
 
 
 	@EventHandler
-	public void onEnterRegion_Bulkhead(RegionEnteredEvent event) {
+	public void onEnterRegion_Bulkhead(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!APUtils.isInWorld(player)) return;
 
@@ -80,7 +80,7 @@ public class Sialia implements Listener, APSet {
 	}
 
 	@EventHandler
-	public void onExitRegion_Bulkhead(RegionLeftEvent event) {
+	public void onExitRegion_Bulkhead(PlayerLeftRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!APUtils.isInWorld(player)) return;
 

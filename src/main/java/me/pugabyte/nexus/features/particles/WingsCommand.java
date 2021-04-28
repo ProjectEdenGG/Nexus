@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.particles;
 
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.particles.effects.WingsEffect;
 import me.pugabyte.nexus.features.particles.menu.ParticleMenu;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -82,7 +82,7 @@ public class WingsCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onLeave(RegionLeftEvent event) {
+	public void onLeave(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase("exchange")) return;
 		ParticleOwner owner = new ParticleService().get(event.getPlayer());
 		owner.cancelTasks();

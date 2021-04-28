@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events.aeveonproject.effects;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
@@ -8,6 +7,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.aeveonproject.APUtils;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSet;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.aeveonproject.AeveonProjectService;
 import me.pugabyte.nexus.models.aeveonproject.AeveonProjectUser;
 import me.pugabyte.nexus.utils.ColorType;
@@ -80,7 +80,7 @@ public class ClientsideBlocks implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterRegion(RegionEnteredEvent event) {
+	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 

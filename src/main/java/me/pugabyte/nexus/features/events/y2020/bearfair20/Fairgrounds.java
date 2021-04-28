@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.Archery;
@@ -10,6 +8,8 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.Frogger;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.PugDunk;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds.Reflection;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -138,7 +138,7 @@ public class Fairgrounds implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String id = event.getRegion().getId();
 		if (id.contains(BearFair20.getRegion() + "_bow_"))
 			giveKit(BearFairKit.BOW_AND_ARROW, event.getPlayer());
@@ -147,7 +147,7 @@ public class Fairgrounds implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String id = event.getRegion().getId();
 		String bowRg = BearFair20.getRegion() + "_bow_";
 		String minecartRg = BearFair20.getRegion() + "_minecart_";
