@@ -17,6 +17,7 @@ public enum MovementType {
 	ENTER_VEHICLE,
 	SPAWN,
 	RESPAWN,
+	DESPAWN,
 	DISCONNECT,
 	;
 

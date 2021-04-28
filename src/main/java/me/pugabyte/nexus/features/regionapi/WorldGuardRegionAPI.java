@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.regionapi;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.paper.event.entity.EntityMoveEvent;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,6 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -51,6 +51,11 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		clearRegions(event.getPlayer(), MovementType.DISCONNECT, event);
+	}
+
+	@EventHandler
+	public void onEntityRemoveFromWorld(EntityRemoveFromWorldEvent event) {
+		clearRegions(event.getEntity(), MovementType.DESPAWN, event);
 	}
 
 	@EventHandler
@@ -119,7 +124,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 
-	private void clearRegions(Entity entity, MovementType movementType, PlayerEvent event) {
+	private void clearRegions(Entity entity, MovementType movementType, Event event) {
 		Set<ProtectedRegion> regions = entityRegions.remove(entity.getUniqueId());
 		if (isNullOrEmpty(regions))
 			return;
