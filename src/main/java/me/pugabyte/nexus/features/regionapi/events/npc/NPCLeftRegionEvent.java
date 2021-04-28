@@ -19,11 +19,12 @@ public class NPCLeftRegionEvent extends LeftRegionEvent {
 	 * Creates a new NPCLeftRegionEvent
 	 *
 	 * @param region       the region the npc has left
-	 * @param npc          the npc who triggered the event
+	 * @param npc          the npc who triggered this event
 	 * @param movementType the type of movement how the npc left the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public NPCLeftRegionEvent(ProtectedRegion region, NPC npc, MovementType movementType, Event parent) {
-		super(region, npc.getEntity(), movementType, parent);
+	public NPCLeftRegionEvent(ProtectedRegion region, NPC npc, MovementType movementType, Event parentEvent) {
+		super(region, npc.getEntity(), movementType, parentEvent);
 		this.npc = npc;
 	}
 

@@ -19,11 +19,12 @@ public class NPCEnteringRegionEvent extends EnteringRegionEvent {
 	 * Creates a new NPCEnteringRegionEvent
 	 *
 	 * @param region       the region the npc is entering
-	 * @param npc          the npc who triggered the event
+	 * @param npc          the npc who triggered this event
 	 * @param movementType the type of movement how the npc enters the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public NPCEnteringRegionEvent(ProtectedRegion region, NPC npc, MovementType movementType, Event parent) {
-		super(region, npc.getEntity(), movementType, parent);
+	public NPCEnteringRegionEvent(ProtectedRegion region, NPC npc, MovementType movementType, Event parentEvent) {
+		super(region, npc.getEntity(), movementType, parentEvent);
 		this.npc = npc;
 	}
 

@@ -15,11 +15,12 @@ public class EntityEnteredRegionEvent extends EnteredRegionEvent {
 	 * creates a new EntityEnteredRegionEvent
 	 *
 	 * @param region       the region the entity entered
-	 * @param entity       the entity who triggered the event
+	 * @param entity       the entity who triggered this event
 	 * @param movementType the type of movement how the entity entered the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public EntityEnteredRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parent) {
-		super(region, entity, movementType, parent);
+	public EntityEnteredRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
+		super(region, entity, movementType, parentEvent);
 	}
 
 }

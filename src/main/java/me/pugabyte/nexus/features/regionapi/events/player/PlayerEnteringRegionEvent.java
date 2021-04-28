@@ -19,11 +19,12 @@ public class PlayerEnteringRegionEvent extends EnteringRegionEvent {
 	 * Creates a new PlayerEnteringRegionEvent
 	 *
 	 * @param region       the region the player is entering
-	 * @param player       the player who triggered the event
+	 * @param player       the player who triggered this event
 	 * @param movementType the type of movement how the player enters the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public PlayerEnteringRegionEvent(ProtectedRegion region, Player player, MovementType movementType, Event parent) {
-		super(region, player, movementType, parent);
+	public PlayerEnteringRegionEvent(ProtectedRegion region, Player player, MovementType movementType, Event parentEvent) {
+		super(region, player, movementType, parentEvent);
 		this.player = player;
 	}
 

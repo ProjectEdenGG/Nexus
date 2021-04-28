@@ -30,36 +30,36 @@ public class RegionEventFactory {
 	/**
 	 * Returns the correct event based on the entity provided
 	 */
-	public static RegionEvent of(Class<? extends RegionEvent> eventClass, ProtectedRegion region, Entity entity, MovementType movementType, Event event) {
+	public static RegionEvent of(Class<? extends RegionEvent> eventClass, ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
 		if (CitizensUtils.isNPC(entity)) {
 			NPC npc = CitizensUtils.getNPC(entity);
 			if (eventClass == EnteredRegionEvent.class)
-				return new NPCEnteredRegionEvent(region, npc, movementType, event);
+				return new NPCEnteredRegionEvent(region, npc, movementType, parentEvent);
 			else if (eventClass == EnteringRegionEvent.class)
-				return new NPCEnteringRegionEvent(region, npc, movementType, event);
+				return new NPCEnteringRegionEvent(region, npc, movementType, parentEvent);
 			else if (eventClass == LeavingRegionEvent.class)
-				return new NPCLeavingRegionEvent(region, npc, movementType, event);
+				return new NPCLeavingRegionEvent(region, npc, movementType, parentEvent);
 			else if (eventClass == LeftRegionEvent.class)
-				return new NPCLeftRegionEvent(region, npc, movementType, event);
+				return new NPCLeftRegionEvent(region, npc, movementType, parentEvent);
 		} else if (entity instanceof Player) {
 			Player player = (Player) entity;
 			if (eventClass == EnteredRegionEvent.class)
-				return new PlayerEnteredRegionEvent(region, player, movementType, event);
+				return new PlayerEnteredRegionEvent(region, player, movementType, parentEvent);
 			else if (eventClass == EnteringRegionEvent.class)
-				return new PlayerEnteringRegionEvent(region, player, movementType, event);
+				return new PlayerEnteringRegionEvent(region, player, movementType, parentEvent);
 			else if (eventClass == LeavingRegionEvent.class)
-				return new PlayerLeavingRegionEvent(region, player, movementType, event);
+				return new PlayerLeavingRegionEvent(region, player, movementType, parentEvent);
 			else if (eventClass == LeftRegionEvent.class)
-				return new PlayerLeftRegionEvent(region, player, movementType, event);
+				return new PlayerLeftRegionEvent(region, player, movementType, parentEvent);
 		} else {
 			if (eventClass == EnteredRegionEvent.class)
-				return new EntityEnteredRegionEvent(region, entity, movementType, event);
+				return new EntityEnteredRegionEvent(region, entity, movementType, parentEvent);
 			else if (eventClass == EnteringRegionEvent.class)
-				return new EntityEnteringRegionEvent(region, entity, movementType, event);
+				return new EntityEnteringRegionEvent(region, entity, movementType, parentEvent);
 			else if (eventClass == LeavingRegionEvent.class)
-				return new EntityLeavingRegionEvent(region, entity, movementType, event);
+				return new EntityLeavingRegionEvent(region, entity, movementType, parentEvent);
 			else if (eventClass == LeftRegionEvent.class)
-				return new EntityLeftRegionEvent(region, entity, movementType, event);
+				return new EntityLeftRegionEvent(region, entity, movementType, parentEvent);
 		}
 
 		throw new IllegalArgumentException("No region event found for class " + eventClass.getSimpleName() + " and entity " + entity.getClass().getSimpleName());

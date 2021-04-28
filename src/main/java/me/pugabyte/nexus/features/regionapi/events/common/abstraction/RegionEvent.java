@@ -16,11 +16,19 @@ public abstract class RegionEvent extends EntityEvent {
 	protected final MovementType movementType;
 	protected final Event parentEvent;
 
-	public RegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parent) {
+	/**
+	 * Creates a new RegionEvent
+	 *
+	 * @param region       the region the entity has left
+	 * @param entity       the entity who triggered this event
+	 * @param movementType the type of movement how the entity left the region
+	 * @param parentEvent  the event that triggered this event
+	 */
+	public RegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
 		super(entity);
 		this.region = region;
 		this.movementType = movementType;
-		this.parentEvent = parent;
+		this.parentEvent = parentEvent;
 	}
 
 	private static final HandlerList handlerList = new HandlerList();

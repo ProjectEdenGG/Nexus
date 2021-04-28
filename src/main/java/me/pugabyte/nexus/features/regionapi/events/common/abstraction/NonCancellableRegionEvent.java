@@ -11,14 +11,15 @@ import org.bukkit.event.Event;
 public abstract class NonCancellableRegionEvent extends RegionEvent {
 
 	/**
-	 * Creates a new RegionLeftEvent
+	 * Creates a new NonCancellableRegionEvent
 	 *
 	 * @param region       the region the entity has left
-	 * @param entity       the entity who triggered the event
+	 * @param entity       the entity who triggered this event
 	 * @param movementType the type of movement how the entity left the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public NonCancellableRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parent) {
-		super(region, entity, movementType, parent);
+	public NonCancellableRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
+		super(region, entity, movementType, parentEvent);
 	}
 
 }

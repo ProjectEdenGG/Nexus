@@ -19,11 +19,12 @@ public class PlayerLeavingRegionEvent extends LeavingRegionEvent {
 	 * creates a new PlayerLeavingRegionEvent
 	 *
 	 * @param region       the region the player is leaving
-	 * @param player       the player who triggered the event
+	 * @param player       the player who triggered this event
 	 * @param movementType the type of movement how the player leaves the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public PlayerLeavingRegionEvent(ProtectedRegion region, Player player, MovementType movementType, Event parent) {
-		super(region, player, movementType, parent);
+	public PlayerLeavingRegionEvent(ProtectedRegion region, Player player, MovementType movementType, Event parentEvent) {
+		super(region, player, movementType, parentEvent);
 		this.player = player;
 	}
 

@@ -15,11 +15,12 @@ public class EntityLeavingRegionEvent extends LeavingRegionEvent {
 	 * creates a new EntityLeavingRegionEvent
 	 *
 	 * @param region       the region the entity is leaving
-	 * @param entity       the entity who triggered the event
+	 * @param entity       the entity who triggered this event
 	 * @param movementType the type of movement how the entity leaves the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public EntityLeavingRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parent) {
-		super(region, entity, movementType, parent);
+	public EntityLeavingRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
+		super(region, entity, movementType, parentEvent);
 	}
 
 }

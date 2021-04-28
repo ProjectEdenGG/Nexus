@@ -15,11 +15,12 @@ public class LeavingRegionEvent extends CancellableRegionEvent {
 	 * creates a new EntityLeavingRegionEvent
 	 *
 	 * @param region       the region the entity is leaving
-	 * @param entity       the entity who triggered the event
+	 * @param entity       the entity who triggered this event
 	 * @param movementType the type of movement how the entity leaves the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public LeavingRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parent) {
-		super(region, entity, movementType, parent);
+	public LeavingRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
+		super(region, entity, movementType, parentEvent);
 	}
 
 }

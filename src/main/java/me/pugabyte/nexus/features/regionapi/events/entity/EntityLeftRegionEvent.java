@@ -15,11 +15,12 @@ public class EntityLeftRegionEvent extends LeftRegionEvent {
 	 * Creates a new EntityLeftRegionEvent
 	 *
 	 * @param region       the region the entity has left
-	 * @param entity       the entity who triggered the event
+	 * @param entity       the entity who triggered this event
 	 * @param movementType the type of movement how the entity left the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public EntityLeftRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parent) {
-		super(region, entity, movementType, parent);
+	public EntityLeftRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
+		super(region, entity, movementType, parentEvent);
 	}
 
 }

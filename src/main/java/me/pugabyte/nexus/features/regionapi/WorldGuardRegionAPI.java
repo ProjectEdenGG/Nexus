@@ -118,7 +118,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		}
 	}
 
-	private synchronized boolean updateRegions(final Entity entity, MovementType movementType, Location newLocation, final Event event) {
+	private synchronized boolean updateRegions(final Entity entity, MovementType movementType, Location newLocation, final Event parentEvent) {
 		final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(newLocation);
 
 		Set<ProtectedRegion> regions = getRegions(entity);
@@ -128,12 +128,12 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 		for (final ProtectedRegion region : applicableRegions) {
 			if (!regions.contains(region)) {
-				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, event).callEvent()) {
+				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(oldRegions);
 					return true;
 				} else {
-					Tasks.wait(1, () -> RegionEventFactory.of(EnteredRegionEvent.class, region, entity, movementType, event).callEvent());
+					Tasks.wait(1, () -> RegionEventFactory.of(EnteredRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
 					regions.add(region);
 				}
 			}
@@ -148,12 +148,12 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 					continue;
 				}
 
-				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, event).callEvent()) {
+				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(oldRegions);
 					return true;
 				} else {
-					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, event).callEvent());
+					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
 					iterator.remove();
 				}
 			}

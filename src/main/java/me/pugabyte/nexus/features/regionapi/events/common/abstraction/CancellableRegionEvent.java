@@ -11,19 +11,18 @@ import org.bukkit.event.Event;
  */
 public abstract class CancellableRegionEvent extends RegionEvent implements Cancellable {
 	protected boolean cancelled;
-	protected final boolean cancellable;
 
 	/**
-	 * Creates a new RegionEnterEvent
+	 * Creates a new CancellableRegionEvent
 	 *
 	 * @param region       the region the entity is entering
-	 * @param entity       the entity who triggered the event
+	 * @param entity       the entity who triggered this event
 	 * @param movementType the type of movement how the entity enters the region
+	 * @param parentEvent  the event that triggered this event
 	 */
-	public CancellableRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parent) {
-		super(region, entity, movementType, parent);
+	public CancellableRegionEvent(ProtectedRegion region, Entity entity, MovementType movementType, Event parentEvent) {
+		super(region, entity, movementType, parentEvent);
 		cancelled = false;
-		cancellable = movementType.isCancellable();
 	}
 
 	/**
@@ -44,8 +43,10 @@ public abstract class CancellableRegionEvent extends RegionEvent implements Canc
 	 */
 	@Override
 	public void setCancelled(boolean cancelled) {
-		if (this.cancellable)
+		if (isCancellable()) {
 			this.cancelled = cancelled;
+			((Cancellable) parentEvent).setCancelled(cancelled);
+		}
 	}
 
 	/**
@@ -54,7 +55,7 @@ public abstract class CancellableRegionEvent extends RegionEvent implements Canc
 	 * @return whether you can cancel this event
 	 */
 	public boolean isCancellable() {
-		return this.cancellable;
+		return parentEvent instanceof Cancellable;
 	}
 
 }
