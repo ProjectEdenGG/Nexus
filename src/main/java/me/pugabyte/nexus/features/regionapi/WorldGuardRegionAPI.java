@@ -75,12 +75,12 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		event.setCancelled(updateRegions(event.getPlayer(), MovementType.MOVE, event.getTo(), event));
+		updateRegions(event.getPlayer(), MovementType.MOVE, event.getTo(), event);
 	}
 
 	@EventHandler
 	public void onEntityMove(EntityMoveEvent event) {
-		event.setCancelled(updateRegions(event.getEntity(), MovementType.MOVE, event.getTo(), event));
+		updateRegions(event.getEntity(), MovementType.MOVE, event.getTo(), event);
 	}
 
 	@EventHandler
@@ -99,7 +99,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onEntitySpawn(EntitySpawnEvent event) {
-		event.setCancelled(updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event));
+		updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 
 	public static Set<ProtectedRegion> getRegions(Entity entity) {
