@@ -140,7 +140,7 @@ public class Justice extends Feature implements Listener {
 
 			broadcastMute(mute, message);
 
-			punishments.send("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " (" + mute.getTimeLeft() + ")");
+			punishments.send("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " &c(" + mute.getTimeLeft() + ")");
 		});
 	}
 
