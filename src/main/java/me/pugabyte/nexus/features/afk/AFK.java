@@ -61,7 +61,7 @@ public class AFK extends Feature {
 	}
 
 	public static AFKPlayer get(UUID uuid) {
-		return players.computeIfAbsent(uuid, $ -> players.put(uuid, new AFKPlayer(uuid)));
+		return players.computeIfAbsent(uuid, $ -> new AFKPlayer(uuid));
 	}
 
 	public static void remove(Player player) {
