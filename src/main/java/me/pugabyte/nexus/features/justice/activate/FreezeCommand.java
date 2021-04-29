@@ -35,6 +35,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.potion.PotionEffectType;
@@ -118,6 +119,12 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 			Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
 			Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
 		});
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (!isFrozen(event.getPlayer())) return;
+		event.setCancelled(true);
 	}
 
 	@EventHandler
