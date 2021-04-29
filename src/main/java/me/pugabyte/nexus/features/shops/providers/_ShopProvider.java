@@ -5,6 +5,7 @@ import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
 import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.shops.Shops;
@@ -40,6 +41,10 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 		} catch (Exception ex) {
 			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
 		}
+	}
+
+	public void open(Player viewer, Pagination pagination) {
+		open(viewer, pagination.getPage());
 	}
 
 	abstract public void open(Player viewer, int page);

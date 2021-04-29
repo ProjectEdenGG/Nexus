@@ -167,7 +167,11 @@ public class StringUtils extends eden.utils.StringUtils {
 	}
 
 	public static String pretty(ItemStack item) {
-		return item.getAmount() + " " + camelCase(item.getType().name());
+		return pretty(item, 1);
+	}
+
+	public static String pretty(ItemStack item, int amount) {
+		return item.getAmount() * amount + " " + camelCase(item.getType().name());
 	}
 
 	public static String bool(boolean b) {

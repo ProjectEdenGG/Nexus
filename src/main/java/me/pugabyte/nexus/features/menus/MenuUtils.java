@@ -71,8 +71,20 @@ public abstract class MenuUtils {
 		return isClickType(e, ClickType.LEFT);
 	}
 
-	protected boolean isClickType(ItemClickData e, ClickType clickType) {
-		return e.getEvent() instanceof InventoryClickEvent && ((InventoryClickEvent) e.getEvent()).getClick() == clickType;
+	protected boolean isShiftClick(ItemClickData e) {
+		return isClickType(e, ClickType.SHIFT_LEFT, ClickType.SHIFT_RIGHT);
+	}
+
+	protected boolean isShiftLeftClick(ItemClickData e) {
+		return isClickType(e, ClickType.SHIFT_LEFT);
+	}
+
+	protected boolean isShiftRightClick(ItemClickData e) {
+		return isClickType(e, ClickType.SHIFT_RIGHT);
+	}
+
+	protected boolean isClickType(ItemClickData e, ClickType... clickTypes) {
+		return e.getEvent() instanceof InventoryClickEvent && Arrays.asList(clickTypes).contains(((InventoryClickEvent) e.getEvent()).getClick());
 	}
 
 	protected ItemStack addGlowing(ItemStack itemStack) {

@@ -179,8 +179,12 @@ public class BrowseProductsProvider extends _ShopProvider {
 							try {
 								if (handleRightClick(product, e))
 									return;
-								product.process(player);
-								open(player, page.getPage());
+
+								if (isLeftClick(e))
+									product.process(player);
+								else if (isShiftLeftClick(e))
+									processAll(player, page, product);
+								open(player, page);
 							} catch (Exception ex) {
 								PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
 							}
@@ -195,6 +199,20 @@ public class BrowseProductsProvider extends _ShopProvider {
 			items.add(empty);
 
 		addPagination(player, contents, items);
+	}
+
+	private void processAll(Player player, Pagination page, Product product) {
+		ConfirmationMenu.builder()
+				.title("&4" + product.getExchange().getCustomerAction() + " all?")
+				.onConfirm(e2 -> {
+					try {
+						product.processAll(player);
+					} catch (Exception ex) {
+						PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+					}
+				})
+				.onFinally(e2 -> open(player, page))
+				.open(player);
 	}
 
 	public boolean isFiltered(Product product) {
