@@ -50,7 +50,7 @@ public class DailyRewardsFeature extends Feature {
 	private static LocalDateTime lastTaskTime;
 
 	private void scheduler() {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(5), () -> {
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(6), () -> {
 			lastTaskTime = LocalDateTime.now();
 
 			DailyRewardService service = new DailyRewardService();
@@ -72,19 +72,21 @@ public class DailyRewardsFeature extends Feature {
 				}
 			}
 
-			for (DailyReward dailyReward : service.getAllNotEarnedToday()) {
-				try {
-					if (new HoursService().get(dailyReward.getOfflinePlayer().getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
-						continue;
+			Tasks.waitAsync(Time.SECOND.x(3), () -> {
+				for (DailyReward dailyReward : service.getAllNotEarnedToday()) {
+					try {
+						if (new HoursService().get(dailyReward.getOfflinePlayer().getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+							continue;
 
-					Tasks.sync(() -> {
-						dailyReward.increaseStreak();
-						service.save(dailyReward);
-					});
-				} catch (Exception ex) {
-					ex.printStackTrace();
+						Tasks.sync(() -> {
+							dailyReward.increaseStreak();
+							service.save(dailyReward);
+						});
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 				}
-			}
+			});
 		});
 	}
 

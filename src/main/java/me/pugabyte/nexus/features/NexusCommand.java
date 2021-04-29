@@ -145,7 +145,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("cancelReload")
-	@Cooldown(@Part(value = Time.SECOND, x = 15))
 	void cancelReload() {
 		reloader = null;
 		send(PREFIX + "Reload unqueued");
@@ -706,6 +705,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("cooldown janitor")
 	void cooldownJanitor() {
 		send(PREFIX + "Janitored " + new CooldownService().janitor() + " records");
+	}
+
+	@Path("cooldown forceCME <iterations>")
+	void cooldownForceCME(int iterations) {
+		CooldownService service = new CooldownService();
+		for (int i = 0; i < iterations; i++)
+			service.check(uuid(), UUID.randomUUID().toString(), Time.SECOND);
 	}
 
 	@Path("argPermTest [one] [two] [three] [four] [five]")

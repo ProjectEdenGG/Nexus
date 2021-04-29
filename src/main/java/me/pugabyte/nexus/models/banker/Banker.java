@@ -25,9 +25,7 @@ import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,7 +44,6 @@ public class Banker implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<ShopGroup, BigDecimal> balances = new HashMap<>();
-	private List<Transaction> transactions = new ArrayList<>();
 
 	@Deprecated
 	@Getter(AccessLevel.PRIVATE)

@@ -1,8 +1,17 @@
 package me.pugabyte.nexus.models;
 
+import dev.morphia.mapping.MappingException;
+import eden.utils.TimeUtils.Time;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mongodb.MongoService<T> {
 
@@ -15,6 +24,46 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 			Tasks.async(() -> super.save(object));
 		else
 			super.save(object);
+	}
+
+	private final Map<UUID, Integer> resaveQueue = new HashMap<>();
+
+	@Override
+	@SneakyThrows
+	protected void handleSaveException(T object, Exception ex, String type) {
+		if (isCME(ex))
+			throw ex;
+
+		super.handleSaveException(object, ex, type);
+	}
+
+	private boolean isCME(Exception ex) {
+		return ex instanceof ConcurrentModificationException ||
+				(ex instanceof MappingException && ex.getCause() instanceof ConcurrentModificationException);
+	}
+
+	@Override
+	public void saveSync(T object) {
+		try {
+			super.saveSync(object);
+		} catch (Exception ex) {
+			if (!isCME(ex))
+				throw ex;
+
+			AtomicInteger taskId = new AtomicInteger(0);
+
+			Runnable resave = () -> {
+				if (resaveQueue.get(object.getUuid()) == taskId.get())
+					saveSync(object);
+			};
+
+			if (Bukkit.isPrimaryThread())
+				taskId.set(Tasks.wait(Time.SECOND.x(3), resave));
+			else
+				taskId.set(Tasks.waitAsync(Time.SECOND.x(3), resave));
+
+			resaveQueue.put(object.getUuid(), taskId.get());
+		}
 	}
 
 	public void delete(T object) {
