@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.dailyrewards;
 
 import eden.models.hours.HoursService;
 import eden.utils.TimeUtils.Time;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
@@ -14,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,22 +46,43 @@ public class DailyRewardsFeature extends Feature {
 		Nexus.getCron().schedule("00 00 * * *", DailyRewardsFeature::dailyReset);
 	}
 
+	@Getter
+	private static LocalDateTime lastTaskTime;
+
 	private void scheduler() {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(5), () -> {
+			lastTaskTime = LocalDateTime.now();
+
+			DailyRewardService service = new DailyRewardService();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
-					if (new HoursService().get(player.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20) continue;
+					if (new HoursService().get(player.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+						continue;
 
-					DailyRewardService service = new DailyRewardService();
 					DailyReward dailyReward = service.get(player);
-					if (dailyReward.isEarnedToday()) continue;
+					if (dailyReward.isEarnedToday())
+						continue;
 
 					Tasks.sync(() -> {
 						dailyReward.increaseStreak();
 						service.save(dailyReward);
 					});
 				} catch (Exception ex) {
-					Nexus.warn("Error in DailyRewards scheduler: " + ex.getMessage());
+					ex.printStackTrace();
+				}
+			}
+
+			for (DailyReward dailyReward : service.getAllNotEarnedToday()) {
+				try {
+					if (new HoursService().get(dailyReward.getOfflinePlayer().getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+						continue;
+
+					Tasks.sync(() -> {
+						dailyReward.increaseStreak();
+						service.save(dailyReward);
+					});
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		});
@@ -76,7 +99,7 @@ public class DailyRewardsFeature extends Feature {
 			}
 
 			dailyReward.setEarnedToday(false);
-			if (dailyReward.getPlayer().isOnline())
+			if (dailyReward.getOfflinePlayer().isOnline())
 				dailyReward.increaseStreak();
 
 			service.save(dailyReward);

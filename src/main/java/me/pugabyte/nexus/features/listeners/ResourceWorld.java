@@ -177,7 +177,6 @@ public class ResourceWorld implements Listener {
 	where world in ('resource', 'resource_nether', 'resource_the_end')
 		and lwc_blocks.name not like "%DOOR%"
 		and lwc_blocks.name not like "%GATE%"
-
 	 */
 
 	// TODO Automation

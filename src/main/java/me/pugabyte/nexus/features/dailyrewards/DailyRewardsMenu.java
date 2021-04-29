@@ -131,7 +131,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			addBackItem(contents, e -> new DailyRewardsMenu(dailyReward).open(dailyReward.getPlayer().getPlayer(), page));
+			addBackItem(contents, e -> new DailyRewardsMenu(dailyReward).open(dailyReward.getOfflinePlayer().getPlayer(), page));
 
 			List<Reward> rewards = DailyRewardsFeature.getRewards(day);
 
@@ -151,7 +151,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		private void applyReward(int day, int option) {
-			Player player = (Player) dailyReward.getPlayer();
+			Player player = (Player) dailyReward.getOfflinePlayer();
 
 			Reward reward = DailyRewardsFeature.getReward(day, option);
 			List<ItemStack> items = reward.getItems();
@@ -208,7 +208,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		public void saveAndReturn(int day) {
 			dailyReward.claim(day);
 			new DailyRewardService().save(dailyReward);
-			new DailyRewardsMenu(dailyReward).open(dailyReward.getPlayer().getPlayer(), page);
+			new DailyRewardsMenu(dailyReward).open(dailyReward.getOfflinePlayer().getPlayer(), page);
 		}
 	}
 

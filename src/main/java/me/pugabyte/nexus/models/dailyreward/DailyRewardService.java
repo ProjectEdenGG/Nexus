@@ -22,6 +22,10 @@ public class DailyRewardService extends MySQLService {
 		return database.where("active = 1").results(DailyReward.class);
 	}
 
+	public List<DailyReward> getAllNotEarnedToday() {
+		return database.where("active = 1 and earnedToday = 0").results(DailyReward.class);
+	}
+
 	public void save(DailyReward dailyReward) {
 		if (dailyReward.getStreak() > 0)
 			super.save(dailyReward);

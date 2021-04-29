@@ -269,7 +269,7 @@ public class PlayerUtils {
 				((CommandSender) recipient).sendMessage(((ComponentLike) message));
 		} else if (recipient instanceof OfflinePlayer) {
 			OfflinePlayer player = (OfflinePlayer) recipient;
-			if (player.getPlayer() != null)
+			if (player.isOnline() && player.getPlayer() != null)
 				send(player.getPlayer(), message);
 		} else if (recipient instanceof UUID) {
 			send(getPlayer((UUID) recipient), message);

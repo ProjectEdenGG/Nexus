@@ -5,10 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.IntegerListSerializer;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 import javax.persistence.GeneratedValue;
@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+
+import static me.pugabyte.nexus.utils.StringUtils.getPrefix;
 
 @Data
 @NoArgsConstructor
@@ -33,18 +35,17 @@ public class DailyReward {
 	@DbSerializer(IntegerListSerializer.class)
 	private List<Integer> claimed;
 
-	public OfflinePlayer getPlayer() {
+	public OfflinePlayer getOfflinePlayer() {
 		return PlayerUtils.getPlayer(uuid);
 	}
 
 	public void increaseStreak() {
+		Nexus.log("[DailyRewards] Increasing streak for " + getOfflinePlayer().getName());
 		earnedToday = true;
 		++streak;
-		if (!getPlayer().isOnline()) return;
-		new JsonBuilder()
-				.next(StringUtils.getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
-				.command("/dr")
-				.send(getPlayer().getPlayer());
+		PlayerUtils.send(getOfflinePlayer(), new JsonBuilder()
+				.next(getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
+				.command("/dr"));
 	}
 
 	public boolean hasClaimed(int day) {

@@ -39,7 +39,7 @@ public class MobHeads extends Feature implements Listener {
 	private static final List<UUID> handledEntities = new ArrayList<>();
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public static void onKillEntity(EntityDeathEvent event) {
+	public void onKillEntity(EntityDeathEvent event) {
 		if (event.isCancelled())
 			return;
 
