@@ -167,7 +167,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			playerBoost = km.getBoost();
 
 		double money = mob.getRandomValue() * BOOST * playerBoost;
-		new BankerService().deposit(player, money, ShopGroup.get(player), TransactionCause.KILLER_MONEY);
+		new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.KILLER_MONEY);
 		if (!km.isMuted())
 			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
 					"&3 and received &e" + formatter.format(money));

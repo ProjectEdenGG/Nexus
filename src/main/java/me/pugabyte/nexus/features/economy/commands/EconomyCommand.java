@@ -94,7 +94,7 @@ public class EconomyCommand extends CustomCommand {
 		if ("current".equalsIgnoreCase(value)) {
 			if (isConsole())
 				error("You must specify a shop group");
-			ShopGroup shopGroup = ShopGroup.get(world());
+			ShopGroup shopGroup = ShopGroup.of(world());
 			if (shopGroup == null)
 				return ShopGroup.SURVIVAL;
 			return shopGroup;

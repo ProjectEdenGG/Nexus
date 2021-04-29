@@ -158,7 +158,7 @@ public enum ScoreboardLine {
 	BALANCE {
 		@Override
 		public String render(Player player) {
-			ShopGroup shopGroup = ShopGroup.get(player);
+			ShopGroup shopGroup = ShopGroup.of(player);
 			if (shopGroup == null) shopGroup = ShopGroup.SURVIVAL;
 			double balance = new BankerService().getBalance(player, shopGroup);
 

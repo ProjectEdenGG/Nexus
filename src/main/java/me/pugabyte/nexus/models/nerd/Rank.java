@@ -111,8 +111,8 @@ public enum Rank implements ColoredAndNamed {
 	public List<Nerd> getOnlineNerds() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank() == this)
-				.sorted(Comparator.comparing(Player::getName))
 				.map(Nerd::of)
+				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
 	}
 
@@ -123,16 +123,16 @@ public enum Rank implements ColoredAndNamed {
 	public static List<Nerd> getOnlineStaff() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff() && Nerd.of(player).getRank().isActive())
-				.sorted(Comparator.comparing(Player::getName))
 				.map(Nerd::of)
+				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
 	}
 
 	public static List<Nerd> getOnlineMods() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
-				.sorted(Comparator.comparing(Player::getName))
 				.map(Nerd::of)
+				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
 	}
 

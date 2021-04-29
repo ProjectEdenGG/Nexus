@@ -48,7 +48,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	public TransactionsCommand(@NonNull CommandEvent event) {
 		super(event);
-		shopGroup = ShopGroup.get(player());
+		shopGroup = ShopGroup.of(player());
 		PREFIX = StringUtils.getPrefix("Economy");
 	}
 

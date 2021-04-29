@@ -18,7 +18,7 @@ public class AFKTimeCommand extends CustomCommand {
 	@Path("[player]")
 	void timeAfk(@Arg("self") Player player) {
 		String timespan = Timespan.of(AFK.get(player).getTime()).format();
-		send("&3" + nickname(player) + " has been AFK for &e" + timespan);
+		send(PREFIX + "&3" + nickname(player) + " has been AFK for &e" + timespan);
 	}
 
 }

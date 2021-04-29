@@ -23,6 +23,8 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceExcep
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -49,6 +51,22 @@ public class Banker implements PlayerOwnedObject {
 	@Getter(AccessLevel.PRIVATE)
 	@Setter(AccessLevel.PRIVATE)
 	private BigDecimal balance = BigDecimal.ZERO;
+
+	public static Banker of(String name) {
+		return of(PlayerUtils.getPlayer(name));
+	}
+
+	public static Banker of(OfflinePlayer player) {
+		return of(player.getUniqueId());
+	}
+
+	public static Banker of(PlayerOwnedObject player) {
+		return of(player.getUuid());
+	}
+
+	public static Banker of(UUID uuid) {
+		return new BankerService().get(uuid);
+	}
 
 	@PreLoad
 	void fixPreLoad(DBObject dbObject) {

@@ -60,7 +60,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	public ShopCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isCommandEvent()) {
-			shopGroup = ShopGroup.get(world());
+			shopGroup = ShopGroup.of(world());
 			if (shopGroup == null)
 				error("Shops are not enabled in this world");
 		}

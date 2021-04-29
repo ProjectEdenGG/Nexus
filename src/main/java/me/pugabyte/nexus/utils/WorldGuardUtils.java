@@ -142,9 +142,11 @@ public class WorldGuardUtils {
 	}
 
 	public Collection<Entity> getEntitiesInRegion(String region) {
-		if (world != null)
-			return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
-		return null;
+		return getEntitiesInRegion(getProtectedRegion(region));
+	}
+
+	public Collection<Entity> getEntitiesInRegion(ProtectedRegion region) {
+		return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
 	}
 
 	public Set<ProtectedRegion> getRegionsLike(String regex) {

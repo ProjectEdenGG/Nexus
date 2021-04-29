@@ -136,15 +136,15 @@ public class Shop implements PlayerOwnedObject {
 		SKYBLOCK,
 		ONEBLOCK;
 
-		public static ShopGroup get(org.bukkit.entity.Entity entity) {
-			return get(entity.getWorld());
+		public static ShopGroup of(org.bukkit.entity.Entity entity) {
+			return of(entity.getWorld());
 		}
 
-		public static ShopGroup get(World world) {
-			return get(world.getName());
+		public static ShopGroup of(World world) {
+			return of(world.getName());
 		}
 
-		public static ShopGroup get(String world) {
+		public static ShopGroup of(String world) {
 			if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
 				return SURVIVAL;
 			if (WorldGroup.get(world) == WorldGroup.SKYBLOCK)

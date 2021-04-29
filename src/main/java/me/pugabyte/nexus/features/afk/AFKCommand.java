@@ -127,10 +127,8 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 		if (event.getTarget() instanceof Player) {
 			Player player = (Player) event.getTarget();
-			AFKPlayer afkPlayer = AFK.get(player);
-			if (afkPlayer.isTimeAfk()) {
-				AFKSettingsService service = new AFKSettingsService();
-				AFKSettings afkSettings = service.get(player);
+			if (AFK.get(player).isTimeAfk()) {
+				AFKSettings afkSettings = new AFKSettingsService().get(player);
 				if (!afkSettings.isMobTargeting())
 					event.setCancelled(true);
 			}

@@ -483,7 +483,7 @@ public enum Achievement {
 				Hours hours = new HoursService().get(achievementPlayer);
 				return hours.getTotal() / 60 / 60;
 			case BALANCE:
-				return (int) new BankerService().getBalance(achievementPlayer.getPlayer(), ShopGroup.get(achievementPlayer.getPlayer()));
+				return (int) new BankerService().getBalance(achievementPlayer.getPlayer(), ShopGroup.of(achievementPlayer.getPlayer()));
 		}
 		return 0;
 	}

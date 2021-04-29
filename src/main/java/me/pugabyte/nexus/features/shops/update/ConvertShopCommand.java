@@ -118,7 +118,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 	private void convert(Sign sign) {
 		ShopService service = new ShopService();
-		ShopGroup shopGroup = ShopGroup.get(player());
+		ShopGroup shopGroup = ShopGroup.of(player());
 
 		if (!isValidShopSign(sign))
 			error("Not a valid shop sign");

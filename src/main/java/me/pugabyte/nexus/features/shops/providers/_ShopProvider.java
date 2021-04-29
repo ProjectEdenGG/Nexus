@@ -46,7 +46,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 
 	public void open(Player viewer, int page, _ShopProvider provider, String title) {
 		this.page = page;
-		this.shopGroup = ShopGroup.get(viewer);
+		this.shopGroup = ShopGroup.of(viewer);
 		try {
 			if (!(this instanceof BrowseMarketProvider || this instanceof SearchProductsProvider) && viewer.getWorld().getName().startsWith("resource"))
 				throw new InvalidInputException("You cannot use player shops while in the resource world");

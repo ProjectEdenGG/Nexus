@@ -184,7 +184,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			} else {
 
 				if (money != null) {
-					new BankerService().deposit(player, money, ShopGroup.get(player), TransactionCause.DAILY_REWARD);
+					new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.DAILY_REWARD);
 					PlayerUtils.send(player, PREFIX + "&e" + money + " &3has been added to your balance");
 				}
 
