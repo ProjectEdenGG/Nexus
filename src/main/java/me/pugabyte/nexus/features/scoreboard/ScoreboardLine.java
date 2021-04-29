@@ -2,8 +2,6 @@ package me.pugabyte.nexus.features.scoreboard;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
-import eden.models.hours.Hours;
-import eden.models.hours.HoursService;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.Getter;
@@ -16,6 +14,8 @@ import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.ticket.TicketService;

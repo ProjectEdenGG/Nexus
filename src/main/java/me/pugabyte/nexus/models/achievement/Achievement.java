@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.models.achievement;
 
-import eden.models.hours.Hours;
-import eden.models.hours.HoursService;
 import me.pugabyte.nexus.features.achievements.events.AchievementCompletedEvent;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.EnumUtils;
 import org.bukkit.Bukkit;

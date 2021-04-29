@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.commands;
 
-import eden.models.hours.Hours;
-import eden.models.hours.HoursService;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
@@ -9,6 +7,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.inviterewards.InviteRewards;
 import me.pugabyte.nexus.models.inviterewards.InviteRewardsService;
 import me.pugabyte.nexus.models.nerd.Nerd;

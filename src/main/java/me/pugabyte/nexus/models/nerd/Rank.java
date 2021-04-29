@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.models.nerd;
 
 import eden.interfaces.PlayerOwnedObject;
-import eden.models.hours.HoursService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;

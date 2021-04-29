@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.models.punishments;
 
-import eden.models.hours.Hours;
-import eden.models.hours.HoursService;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.FormatType;
@@ -13,6 +11,8 @@ import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.freeze.FreezeService;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;

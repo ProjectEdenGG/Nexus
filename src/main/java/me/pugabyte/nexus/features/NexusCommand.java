@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
-import eden.models.hours.HoursService;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.FormatType;
@@ -43,6 +42,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;

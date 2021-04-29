@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.commands;
 
-import eden.models.hours.Hours;
-import eden.models.hours.HoursService;
 import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -10,6 +8,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;

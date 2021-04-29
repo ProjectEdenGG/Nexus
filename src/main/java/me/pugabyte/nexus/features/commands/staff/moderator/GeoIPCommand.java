@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.commands.staff.moderator;
 
-import eden.models.hours.Hours;
-import eden.models.hours.HoursService;
 import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
@@ -15,6 +13,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

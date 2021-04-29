@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.dailyrewards;
 
-import eden.models.hours.HoursService;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
@@ -8,6 +7,7 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.dailyreward.Reward;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;

@@ -6,13 +6,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.BsonField;
 import com.mongodb.client.model.Sorts;
 import dev.morphia.annotations.Id;
-import eden.exceptions.EdenException;
 import eden.mongodb.annotations.PlayerClass;
 import eden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.ToString;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bson.Document;
@@ -161,7 +161,7 @@ public class HoursService extends MongoService<Hours> {
 			else
 				return HoursType.DAILY;
 
-		throw new EdenException("Invalid leaderboard type. Options are: " + HoursType.valuesString());
+		throw new InvalidInputException("Invalid leaderboard type. Options are: " + HoursType.valuesString());
 	}
 
 	public enum HoursType {
@@ -228,9 +228,9 @@ public class HoursService extends MongoService<Hours> {
 							int yearInput = Integer.parseInt(split[0]);
 							if (yearInput >= 2015)
 								if (yearInput <= 2019)
-									throw new EdenException("Years 2015-2019 are not supported");
+									throw new InvalidInputException("Years 2015-2019 are not supported");
 								else if (yearInput > now.getYear())
-									throw new EdenException("Year &e" + yearInput + " &cis in the future");
+									throw new InvalidInputException("Year &e" + yearInput + " &cis in the future");
 								else
 									year = yearInput;
 							else {
@@ -243,30 +243,30 @@ public class HoursService extends MongoService<Hours> {
 									int monthInput = Integer.parseInt(split[1]);
 									if (monthInput >= 1 && monthInput <= 12)
 										if (YearMonth.of(year, monthInput).isAfter(YearMonth.now()))
-											throw new EdenException("Month &e" + yearInput + "-" + monthInput + " &cis in the future");
+											throw new InvalidInputException("Month &e" + yearInput + "-" + monthInput + " &cis in the future");
 										else
 											month = monthInput;
 									else
-										throw new EdenException("Invalid month &e" + monthInput);
+										throw new InvalidInputException("Invalid month &e" + monthInput);
 								} else
-									throw new EdenException("Invalid month &e" + split[1]);
+									throw new InvalidInputException("Invalid month &e" + split[1]);
 
 								if (split.length >= 3) {
 									if (split[2].length() > 0 && Utils.isInt(split[2])) {
 										int dayInput = Integer.parseInt(split[2]);
 										if (YearMonth.of(year, month).isValidDay(dayInput))
 											if (LocalDate.of(year, month, dayInput).isAfter(now))
-												throw new EdenException("Day &e" + year + "-" + month + "-" + dayInput + " &cis in the future");
+												throw new InvalidInputException("Day &e" + year + "-" + month + "-" + dayInput + " &cis in the future");
 											else
 												day = dayInput;
 										else
-											throw new EdenException("Invalid day of month &e" + dayInput);
+											throw new InvalidInputException("Invalid day of month &e" + dayInput);
 									} else
-										throw new EdenException("Invalid day &e" + split[2]);
+										throw new InvalidInputException("Invalid day &e" + split[2]);
 								}
 							}
 						} else
-							throw new EdenException("Invalid year &e" + split[0]);
+							throw new InvalidInputException("Invalid year &e" + split[0]);
 					}
 			}
 
@@ -275,13 +275,13 @@ public class HoursService extends MongoService<Hours> {
 
 			if (year == 2020) {
 				if (month == -1)
-					throw new EdenException("Year 2020 is not supported");
+					throw new InvalidInputException("Year 2020 is not supported");
 				else if (month <= 5)
-					throw new EdenException("Months Jan-May of 2020 are not supported");
+					throw new InvalidInputException("Months Jan-May of 2020 are not supported");
 			}
 
 			if (page < 1)
-				throw new EdenException("Page cannot be less than 1");
+				throw new InvalidInputException("Page cannot be less than 1");
 		}
 
 		@ToString.Include
