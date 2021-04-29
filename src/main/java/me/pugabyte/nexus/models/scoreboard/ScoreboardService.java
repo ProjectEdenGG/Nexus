@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(ScoreboardUser.class)
 public class ScoreboardService extends MongoService<ScoreboardUser> {
 	private final static Map<UUID, ScoreboardUser> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, ScoreboardUser> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

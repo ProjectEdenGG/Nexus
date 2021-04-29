@@ -11,9 +11,14 @@ import java.util.UUID;
 @PlayerClass(Nickname.class)
 public class NicknameService extends MongoService<Nickname> {
 	private final static Map<UUID, Nickname> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Nickname> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public Nickname getFromNickname(String nickname) {

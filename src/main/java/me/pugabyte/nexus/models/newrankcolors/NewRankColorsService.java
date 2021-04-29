@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(NewRankColors.class)
 public class NewRankColorsService extends MongoService<NewRankColors> {
 	private final static Map<UUID, NewRankColors> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, NewRankColors> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

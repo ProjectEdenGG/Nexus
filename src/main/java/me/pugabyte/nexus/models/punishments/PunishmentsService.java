@@ -15,9 +15,14 @@ import java.util.UUID;
 @PlayerClass(Punishments.class)
 public class PunishmentsService extends MongoService<Punishments> {
 	private final static Map<UUID, Punishments> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Punishments> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public List<Punishments> getAlts(Punishments player) {

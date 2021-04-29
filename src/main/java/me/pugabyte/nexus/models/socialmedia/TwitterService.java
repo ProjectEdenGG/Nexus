@@ -11,9 +11,14 @@ import java.util.UUID;
 @PlayerClass(TwitterData.class)
 public class TwitterService extends MongoService<TwitterData> {
 	private final static Map<UUID, TwitterData> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, TwitterData> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public TwitterData get() {

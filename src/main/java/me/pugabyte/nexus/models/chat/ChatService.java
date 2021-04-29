@@ -10,9 +10,14 @@ import java.util.UUID;
 
 public class ChatService extends MongoService<Chatter> {
 	private final static Map<UUID, Chatter> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Chatter> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

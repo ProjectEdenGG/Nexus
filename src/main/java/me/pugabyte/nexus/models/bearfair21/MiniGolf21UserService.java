@@ -12,9 +12,14 @@ import java.util.UUID;
 @PlayerClass(MiniGolf21User.class)
 public class MiniGolf21UserService extends MongoService<MiniGolf21User> {
 	private final static Map<UUID, MiniGolf21User> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, MiniGolf21User> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public Collection<MiniGolf21User> getUsers() {

@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(ModReview.class)
 public class ModReviewService extends MongoService<ModReview> {
 	private final static Map<UUID, ModReview> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, ModReview> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

@@ -17,10 +17,15 @@ import java.util.UUID;
 
 @PlayerClass(Banker.class)
 public class BankerService extends MongoService<Banker> {
-	private final static Map<UUID, Banker> cache = new HashMap<>();
+	private static final Map<UUID, Banker> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Banker> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public double getBalance(OfflinePlayer player, ShopGroup shopGroup) {
@@ -51,7 +56,7 @@ public class BankerService extends MongoService<Banker> {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.deposit(money, shopGroup, cause);
-		save(banker);
+		queueSave(5, banker);
 	}
 
 	public void deposit(Transaction transaction) {
@@ -62,7 +67,7 @@ public class BankerService extends MongoService<Banker> {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.deposit(money, shopGroup, transaction);
-		save(banker);
+		queueSave(5, banker);
 	}
 
 	public void withdraw(OfflinePlayer player, double amount, ShopGroup shopGroup, TransactionCause cause) {
@@ -73,7 +78,7 @@ public class BankerService extends MongoService<Banker> {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.withdraw(money, shopGroup, cause);
-		save(banker);
+		queueSave(5, banker);
 	}
 
 	public void withdraw(Transaction transaction) {
@@ -84,7 +89,7 @@ public class BankerService extends MongoService<Banker> {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.withdraw(money, shopGroup, transaction);
-		save(banker);
+		queueSave(5, banker);
 	}
 
 	public void transfer(OfflinePlayer from, OfflinePlayer to, double amount, ShopGroup shopGroup, TransactionCause cause) {
@@ -98,8 +103,8 @@ public class BankerService extends MongoService<Banker> {
 	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		from.transfer(to, money, shopGroup, cause);
-		save(from);
-		save(to);
+		queueSave(5, from);
+		queueSave(5, to);
 	}
 
 	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
@@ -109,8 +114,8 @@ public class BankerService extends MongoService<Banker> {
 	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		from.transfer(to, money, shopGroup, transaction);
-		save(from);
-		save(to);
+		queueSave(5, from);
+		queueSave(5, to);
 	}
 
 	public void setBalance(OfflinePlayer player, double balance, ShopGroup shopGroup, TransactionCause cause) {
@@ -121,7 +126,7 @@ public class BankerService extends MongoService<Banker> {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.setBalance(balance, shopGroup, cause);
-		save(banker);
+		queueSave(5, banker);
 	}
 
 	public void setBalance(Transaction transaction) {
@@ -132,7 +137,7 @@ public class BankerService extends MongoService<Banker> {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.setBalance(balance, shopGroup, transaction);
-		save(banker);
+		queueSave(5, banker);
 	}
 
 	@NotNull

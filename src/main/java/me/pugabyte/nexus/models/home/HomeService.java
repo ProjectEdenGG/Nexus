@@ -12,9 +12,14 @@ import java.util.UUID;
 @PlayerClass(HomeOwner.class)
 public class HomeService extends MongoService<HomeOwner> {
 	private final static Map<UUID, HomeOwner> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, HomeOwner> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

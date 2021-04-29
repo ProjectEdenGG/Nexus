@@ -11,9 +11,14 @@ import java.util.UUID;
 @PlayerClass(InviteRewards.class)
 public class InviteRewardsService extends MongoService<InviteRewards> {
 	private final static Map<UUID, InviteRewards> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, InviteRewards> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public boolean hasBeenInvited(UUID uuid) {

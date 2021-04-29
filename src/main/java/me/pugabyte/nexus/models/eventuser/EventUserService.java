@@ -12,9 +12,14 @@ import java.util.UUID;
 @PlayerClass(EventUser.class)
 public class EventUserService extends MongoService<EventUser> {
 	private final static Map<UUID, EventUser> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, EventUser> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public List<EventUser> getTopTokens() {

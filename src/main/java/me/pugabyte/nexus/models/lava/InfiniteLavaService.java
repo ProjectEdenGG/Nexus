@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(InfiniteLava.class)
 public class InfiniteLavaService extends MongoService<InfiniteLava> {
 	private final static Map<UUID, InfiniteLava> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, InfiniteLava> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

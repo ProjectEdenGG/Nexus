@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(EmoteUser.class)
 public class EmoteService extends MongoService<EmoteUser> {
 	private final static Map<UUID, EmoteUser> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, EmoteUser> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

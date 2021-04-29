@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(Curiosity.class)
 public class CuriosityService extends MongoService<Curiosity> {
 	private final static Map<UUID, Curiosity> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Curiosity> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

@@ -180,33 +180,37 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void fileLogActual(String file, String message) {
-		try {
-			Path path = Paths.get("plugins/Nexus/logs/" + file + ".log");
-			if (!path.toFile().exists())
-				path.toFile().createNewFile();
-			try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-				writer.append(System.lineSeparator()).append("[").append(shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	public static void csvLog(String file, String message) {
-		Tasks.async(() -> {
+		synchronized (Nexus.getInstance()) {
 			try {
-				Path path = Paths.get("plugins/Nexus/logs/" + file + ".csv");
+				Path path = Paths.get("plugins/Nexus/logs/" + file + ".log");
 				if (!path.toFile().exists())
 					path.toFile().createNewFile();
 				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-					writer.append(System.lineSeparator()).append(message);
+					writer.append(System.lineSeparator()).append("[").append(shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
+			}
+		}
+	}
+
+	public static void csvLog(String file, String message) {
+		Tasks.async(() -> {
+			synchronized (Nexus.getInstance()) {
+				try {
+					Path path = Paths.get("plugins/Nexus/logs/" + file + ".csv");
+					if (!path.toFile().exists())
+						path.toFile().createNewFile();
+					try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+						writer.append(System.lineSeparator()).append(message);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 	}

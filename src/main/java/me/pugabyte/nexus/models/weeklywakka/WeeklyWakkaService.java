@@ -10,11 +10,15 @@ import java.util.UUID;
 
 @PlayerClass(WeeklyWakka.class)
 public class WeeklyWakkaService extends MongoService<WeeklyWakka> {
-
-	public static Map<UUID, WeeklyWakka> cache = new HashMap<>();
+	private static final Map<UUID, WeeklyWakka> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, WeeklyWakka> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public WeeklyWakka get() {

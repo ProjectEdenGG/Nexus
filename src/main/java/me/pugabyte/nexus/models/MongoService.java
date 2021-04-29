@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +24,6 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 		else
 			super.save(object);
 	}
-
-	private final Map<UUID, Integer> resaveQueue = new HashMap<>();
 
 	@Override
 	@SneakyThrows
@@ -50,20 +47,34 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 			if (!isCME(ex))
 				throw ex;
 
-			AtomicInteger taskId = new AtomicInteger(0);
-
-			Runnable resave = () -> {
-				if (resaveQueue.get(object.getUuid()) == taskId.get())
-					saveSync(object);
-			};
-
-			if (Bukkit.isPrimaryThread())
-				taskId.set(Tasks.wait(Time.SECOND.x(3), resave));
-			else
-				taskId.set(Tasks.waitAsync(Time.SECOND.x(3), resave));
-
-			resaveQueue.put(object.getUuid(), taskId.get());
+			queueSaveSync(Time.SECOND.x(3), object);
 		}
+	}
+
+	protected abstract Map<UUID, Integer> getSaveQueue();
+
+	public void queueSave(int delayTicks, T object) {
+		Tasks.async(() -> queueSaveSync(delayTicks, object));
+	}
+
+	public void queueSaveSync(int delayTicks, T object) {
+		UUID uuid = object.getUuid();
+		AtomicInteger taskId = new AtomicInteger(0);
+
+		Runnable resave = () -> {
+			synchronized (object) {
+				if (getSaveQueue().containsKey(uuid))
+					if (getSaveQueue().get(uuid).equals(taskId.get()))
+						saveSync(object);
+			}
+		};
+
+		if (Bukkit.isPrimaryThread())
+			taskId.set(Tasks.wait(delayTicks, resave));
+		else
+			taskId.set(Tasks.waitAsync(delayTicks, resave));
+
+		getSaveQueue().put(uuid, taskId.get());
 	}
 
 	public void delete(T object) {

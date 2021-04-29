@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(Freeze.class)
 public class FreezeService extends MongoService<Freeze> {
 	private final static Map<UUID, Freeze> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Freeze> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

@@ -13,11 +13,15 @@ import java.util.UUID;
 @PlayerClass(SafeCrackerEvent.class)
 @Disabled
 public class SafeCrackerEventService extends MongoService<SafeCrackerEvent> {
-
 	private final static Map<UUID, SafeCrackerEvent> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, SafeCrackerEvent> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public SafeCrackerEvent get() {

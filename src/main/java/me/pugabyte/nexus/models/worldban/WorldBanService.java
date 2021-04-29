@@ -12,9 +12,14 @@ import static eden.utils.Utils.isNullOrEmpty;
 @PlayerClass(WorldBan.class)
 public class WorldBanService extends MongoService<WorldBan> {
 	private final static Map<UUID, WorldBan> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, WorldBan> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

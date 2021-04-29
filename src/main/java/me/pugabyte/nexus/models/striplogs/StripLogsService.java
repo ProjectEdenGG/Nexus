@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(StripLogs.class)
 public class StripLogsService extends MongoService<StripLogs> {
 	private final static Map<UUID, StripLogs> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, StripLogs> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

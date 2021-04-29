@@ -17,9 +17,14 @@ import java.util.stream.Collectors;
 @PlayerClass(Shop.class)
 public class ShopService extends MongoService<Shop> {
 	private final static Map<UUID, Shop> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Shop> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	static {

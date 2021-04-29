@@ -12,9 +12,14 @@ import java.util.UUID;
 @PlayerClass(BearFair20User.class)
 public class BearFair20UserService extends MongoService<BearFair20User> {
 	private final static Map<UUID, BearFair20User> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, BearFair20User> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public List<BearFair20User> getTopPoints(int page) {

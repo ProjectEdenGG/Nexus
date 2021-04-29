@@ -12,9 +12,14 @@ import java.util.UUID;
 @PlayerClass(Changelog.class)
 public class ChangelogService extends MongoService<Changelog> {
 	private final static Map<UUID, Changelog> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Changelog> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

@@ -23,9 +23,14 @@ import java.util.UUID;
 @PlayerClass(GeoIP.class)
 public class GeoIPService extends MongoService<GeoIP> {
 	private final static Map<UUID, GeoIP> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	private final String KEY = Nexus.getInstance().getConfig().getString("tokens.ipstack");

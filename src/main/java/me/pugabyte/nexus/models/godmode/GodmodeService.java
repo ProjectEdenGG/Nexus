@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(Godmode.class)
 public class GodmodeService extends MongoService<Godmode> {
 	private final static Map<UUID, Godmode> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Godmode> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

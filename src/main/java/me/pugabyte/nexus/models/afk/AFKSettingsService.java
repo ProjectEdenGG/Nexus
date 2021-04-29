@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(AFKSettings.class)
 public class AFKSettingsService extends MongoService<AFKSettings> {
 	private final static Map<UUID, AFKSettings> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, AFKSettings> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

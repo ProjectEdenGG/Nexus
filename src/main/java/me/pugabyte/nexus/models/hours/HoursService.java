@@ -44,9 +44,14 @@ import static eden.utils.StringUtils.camelCase;
 @PlayerClass(Hours.class)
 public class HoursService extends MongoService<Hours> {
 	private final static Map<UUID, Hours> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, Hours> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	protected Hours getNoCache(UUID uuid) {

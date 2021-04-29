@@ -12,9 +12,14 @@ import java.util.UUID;
 @PlayerClass(InventoryHistory.class)
 public class InventoryHistoryService extends MongoService<InventoryHistory> {
 	private final static Map<UUID, InventoryHistory> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, InventoryHistory> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

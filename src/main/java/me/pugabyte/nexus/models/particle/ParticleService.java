@@ -9,10 +9,15 @@ import java.util.UUID;
 
 @PlayerClass(ParticleOwner.class)
 public class ParticleService extends MongoService<ParticleOwner> {
-	public static final Map<UUID, ParticleOwner> cache = new HashMap<>();
+	private final static Map<UUID, ParticleOwner> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, ParticleOwner> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override

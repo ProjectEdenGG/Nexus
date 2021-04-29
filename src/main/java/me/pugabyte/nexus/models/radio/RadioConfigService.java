@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(RadioConfig.class)
 public class RadioConfigService extends MongoService<RadioConfig> {
 	private final static Map<UUID, RadioConfig> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, RadioConfig> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

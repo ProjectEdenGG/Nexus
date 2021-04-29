@@ -11,9 +11,14 @@ import java.util.UUID;
 @PlayerClass(MinigamesSetting.class)
 public class MinigamesSettingService extends MongoService<MinigamesSetting> {
 	private final static Map<UUID, MinigamesSetting> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, MinigamesSetting> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public MinigamesSetting get() {

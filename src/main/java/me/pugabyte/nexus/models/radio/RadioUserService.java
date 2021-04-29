@@ -9,13 +9,16 @@ import java.util.UUID;
 
 @PlayerClass(RadioUser.class)
 public class RadioUserService extends MongoService<RadioUser> {
-
-	public static Map<UUID, RadioUser> cache = new HashMap<>();
+	private final static Map<UUID, RadioUser> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	@Override
 	public Map<UUID, RadioUser> getCache() {
 		return cache;
 	}
 
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
+	}
 
 }

@@ -10,9 +10,14 @@ import java.util.UUID;
 @PlayerClass(AutoTool.class)
 public class AutoToolService extends MongoService<AutoTool> {
 	private final static Map<UUID, AutoTool> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, AutoTool> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

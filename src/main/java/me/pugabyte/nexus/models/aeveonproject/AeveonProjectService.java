@@ -12,9 +12,14 @@ import java.util.UUID;
 @PlayerClass(AeveonProjectUser.class)
 public class AeveonProjectService extends MongoService<AeveonProjectUser> {
 	private final static Map<UUID, AeveonProjectUser> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, AeveonProjectUser> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public boolean hasStarted(OfflinePlayer player) {

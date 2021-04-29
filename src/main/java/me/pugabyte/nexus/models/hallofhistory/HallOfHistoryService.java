@@ -11,10 +11,15 @@ import static eden.utils.Utils.isNullOrEmpty;
 
 @PlayerClass(HallOfHistory.class)
 public class HallOfHistoryService extends MongoService<HallOfHistory> {
-	public static Map<UUID, HallOfHistory> cache = new HashMap<>();
+	private final static Map<UUID, HallOfHistory> cache = new HashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
 
 	public Map<UUID, HallOfHistory> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	@Override
