@@ -45,15 +45,21 @@ public class NPCListener implements Listener {
 
 	private boolean isNpcAllowedAt(Location location) {
 		WorldGroup worldGroup = WorldGroup.get(location);
-		if (!allowedWorldGroups.contains(worldGroup))
+		if (!allowedWorldGroups.contains(worldGroup)) {
+			Nexus.warn("NPC not allowed here (allowedWorldGroups)");
 			return false;
+		}
 
-		if (blockedWorlds.contains(location.getWorld().getName()))
+		if (blockedWorlds.contains(location.getWorld().getName())) {
+			Nexus.warn("NPC not allowed here (blockedWorlds)");
 			return false;
+		}
 
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(location);
-		if (!worldGuardUtils.getRegionsAt(location).isEmpty())
+		if (!worldGuardUtils.getRegionsAt(location).isEmpty()) {
+			Nexus.warn("NPC not allowed here (regions)");
 			return false;
+		}
 
 		return true;
 	}
@@ -80,7 +86,7 @@ public class NPCListener implements Listener {
 		} else {
 			event.setCancelled(true);
 			PlayerUtils.send(owner, "&cNPCs cannot be teleported across worlds");
-			Nexus.warn("Preventing NPC teleport: " + event.getNPC().getId() + " from "
+			Nexus.warn("Preventing NPC cross-world teleport: " + event.getNPC().getId() + " from "
 					+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
 		}
 	}

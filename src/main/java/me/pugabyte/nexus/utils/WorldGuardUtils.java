@@ -111,11 +111,7 @@ public class WorldGuardUtils {
 		if (!isSameWorld(location))
 			return new HashSet<>();
 
-		Set<ProtectedRegion> regions = manager.getApplicableRegions(toBlockVector3(location)).getRegions();
-		ProtectedRegion globalRegion = manager.getRegion("__global__");
-		if (globalRegion != null)
-			regions.add(globalRegion); // just to be sure
-		return regions;
+		return manager.getApplicableRegions(toBlockVector3(location)).getRegions();
 	}
 
 	public Set<String> getRegionNamesAt(Location location) {
