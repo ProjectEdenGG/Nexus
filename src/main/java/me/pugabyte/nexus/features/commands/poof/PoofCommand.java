@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands.poof;
 
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -20,6 +21,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -55,13 +57,17 @@ public class PoofCommand extends CustomCommand {
 			error("You cannot poof to yourself");
 
 		Location targetLocation = Nerd.of(target).getLocation();
-		WorldGroup targetWorldGroup = WorldGroup.get(targetLocation);
+		World targetWorld = targetLocation.getWorld();
+		WorldGroup targetWorldGroup = WorldGroup.get(targetWorld);
 
-		if (!isStaff() && targetWorldGroup.equals(WorldGroup.MINIGAMES))
-			error("Cannot teleport to " + nickname(target) + ", they are playing minigames");
+		if (!isStaff()) {
+			String cannotTeleport = "Cannot teleport to " + nickname(target);
+			if (targetWorldGroup.equals(WorldGroup.MINIGAMES))
+				error(cannotTeleport + ", they are playing minigames");
 
-		if (!isStaff() && targetWorldGroup.equals(WorldGroup.STAFF))
-			error("Cannot teleport to " + nickname(target) + ", they are in a staff world");
+			if (targetWorldGroup.equals(WorldGroup.STAFF) || (targetWorld.equals(BearFair21.getWorld()) && !BearFair21.isAllowWarp()))
+				error(cannotTeleport + ", they are in a staff world");
+		}
 
 		Trust trust = new TrustService().get(target);
 		if (trust.trusts(Type.TELEPORTS, player())) {
