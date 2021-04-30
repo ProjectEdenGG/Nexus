@@ -83,11 +83,11 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		send(BashCommand.tryExecute("sudo /home/minecraft/git/Saturn/deploy.sh"));
 
 		String newHash = Utils.createSha1(URL);
-		file = Utils.saveFile(URL, fileName);
 
 		if (hash != null && hash.equals(newHash))
 			error("No resource pack update found");
 
+		menuReload();
 		hash = newHash;
 
 		if (hash == null)
@@ -99,9 +99,18 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 //				send(player, json(PREFIX + "There's an update to the resource pack available, click to update.").command("/rp"));
 	}
 
+	@Async
+	@Path("menu reload")
+	@Permission("group.admin")
+	void menuReload() {
+		file = Utils.saveFile(URL, fileName);
+		CustomModelMenu.load();
+		send(PREFIX + "Menu updated");
+	}
+
 	@Path("menu [folder]")
 	@Permission("group.staff")
-	void customModels(CustomModelFolder folder) {
+	void menu(CustomModelFolder folder) {
 		new CustomModelMenu(folder).open(player());
 	}
 

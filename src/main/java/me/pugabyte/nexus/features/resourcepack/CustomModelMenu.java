@@ -92,6 +92,11 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	static void load() {
+		ResourcePack.setModelGroups(new ArrayList<>());
+		ResourcePack.setFolders(new ArrayList<>());
+		ResourcePack.setModels(new ArrayList<>());
+		ResourcePack.setRootFolder(new CustomModelFolder("/"));
+
 		CustomModelGroup.load();
 
 		for (String path : getFolderPaths())

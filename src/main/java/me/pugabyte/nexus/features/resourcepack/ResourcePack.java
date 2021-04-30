@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.resourcepack;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
@@ -20,7 +21,6 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,13 +36,17 @@ public class ResourcePack extends Feature implements Listener {
 	static File file = Nexus.getFile(fileName);
 
 	@Getter
-	private static final List<CustomModelGroup> modelGroups = new ArrayList<>();
+	@Setter
+	private static List<CustomModelGroup> modelGroups;
 	@Getter
-	private static final List<CustomModelFolder> folders = new ArrayList<>();
+	@Setter
+	private static List<CustomModelFolder> folders;
 	@Getter
-	private static final List<CustomModel> models = new ArrayList<>();
+	@Setter
+	private static List<CustomModel> models;
 	@Getter
-	private static final CustomModelFolder rootFolder = new CustomModelFolder("/");
+	@Setter
+	private static CustomModelFolder rootFolder;
 
 	@Getter
 	static final URI fileUri = URI.create("jar:" + ResourcePack.getFile().toURI());
