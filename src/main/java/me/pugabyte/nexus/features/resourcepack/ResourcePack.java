@@ -51,6 +51,6 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isEnabledFor(Player player) {
-		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || Dev.WAKKA.is(player);
+		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player);
 	}
 }
