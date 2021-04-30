@@ -30,9 +30,11 @@ public class ResourcePack extends Feature implements Listener {
 	static File file = Nexus.getFile(fileName);
 
 	@Getter
-	private static final List<CustomModelGroup> customModelGroups = new ArrayList<>();
+	private static final List<CustomModelGroup> modelGroups = new ArrayList<>();
 	@Getter
-	private static final List<CustomModel> customModels = new ArrayList<>();
+	private static final List<CustomModel> models = new ArrayList<>();
+	@Getter
+	private static final List<CustomModelFolder> folders = new ArrayList<>();
 	@Getter
 	private static final CustomModelFolder rootFolder = new CustomModelFolder("/");
 

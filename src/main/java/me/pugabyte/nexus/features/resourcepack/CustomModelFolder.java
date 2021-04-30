@@ -25,10 +25,14 @@ public class CustomModelFolder {
 	public CustomModelFolder(@NonNull String path) {
 		this.path = path;
 		this.path = this.path.replaceFirst("//", "/");
+		ResourcePack.getFolders().add(this);
 		findModels();
 	}
 
 	public CustomModelFolder getFolder(String path) {
+		if (this.path.equals(path))
+			return this;
+
 		for (CustomModelFolder folder : folders) {
 			if (path.equals(folder.getPath()))
 				return folder;
@@ -37,6 +41,13 @@ public class CustomModelFolder {
 		}
 
 		return null;
+	}
+
+	public String getDisplayPath() {
+		String path = this.path;
+		if (path.startsWith("/"))
+			path = path.replaceFirst("/", "");
+		return path;
 	}
 
 	public void addFolder(String name) {
@@ -57,7 +68,7 @@ public class CustomModelFolder {
 	}
 
 	private void findModels() {
-		for (CustomModelGroup group : ResourcePack.getCustomModelGroups())
+		for (CustomModelGroup group : ResourcePack.getModelGroups())
 			for (Override override : group.getOverrides())
 				if (override.getModel().matches("item" + path + "/" + fileRegex))
 					models.add(CustomModel.builder()
@@ -74,7 +85,7 @@ public class CustomModelFolder {
 
 		Set<String> paths = new HashSet<>();
 
-		for (CustomModelGroup group : ResourcePack.getCustomModelGroups()) {
+		for (CustomModelGroup group : ResourcePack.getModelGroups()) {
 			for (Override override : group.getOverrides()) {
 				String path = override.getModel().replaceFirst("item", "");
 				List<String> folders = new ArrayList<>(Arrays.asList(path.split("/")));

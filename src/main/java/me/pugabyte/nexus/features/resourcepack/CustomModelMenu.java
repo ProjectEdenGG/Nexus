@@ -19,7 +19,6 @@ import java.util.List;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 // TODO Meta file
-// TODO Folder separator
 
 @RequiredArgsConstructor
 public class CustomModelMenu extends MenuUtils implements InventoryProvider {
@@ -31,11 +30,15 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		this(ResourcePack.getRootFolder(), null);
 	}
 
+	public CustomModelMenu(@NonNull CustomModelFolder folder) {
+		this(folder, null);
+	}
+
 	@Override
 	public void open(Player viewer, int page) {
 		String title = "Custom Models";
 		if (!folder.getPath().equals("/"))
-			title = folder.getPath().replaceFirst("/", "");
+			title = folder.getDisplayPath();
 
 		SmartInventory.builder()
 				.provider(this)
@@ -60,8 +63,16 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 			if (firstModel != null)
 				item = firstModel.getDisplayItem();
 
-			ItemBuilder builder = new ItemBuilder(item).name(folder.getPath().replaceFirst("/", "")).glow();
+			ItemBuilder builder = new ItemBuilder(item).name(folder.getDisplayPath()).glow();
 			items.add(ClickableItem.from(builder.build(), e -> new CustomModelMenu(folder, this).open(player)));
+		}
+
+		if (!items.isEmpty()) {
+			while (items.size() % 9 != 0)
+				items.add(ClickableItem.empty(new ItemStack(Material.AIR)));
+
+			for (int i = 0; i < 9; i++)
+				items.add(ClickableItem.empty(new ItemStack(Material.AIR)));
 		}
 
 		for (CustomModel model : folder.getModels()) {

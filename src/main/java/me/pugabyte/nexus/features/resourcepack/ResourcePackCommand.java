@@ -9,10 +9,11 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.resourcepack.ResourcePack.URL;
 import static me.pugabyte.nexus.features.resourcepack.ResourcePack.file;
@@ -97,17 +99,23 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 //				send(player, json(PREFIX + "There's an update to the resource pack available, click to update.").command("/rp"));
 	}
 
-	@Path("customModels")
+	@Path("menu [folder]")
 	@Permission("group.staff")
-	void customModels() {
-		new CustomModelMenu().open(player());
+	void customModels(CustomModelFolder folder) {
+		new CustomModelMenu(folder).open(player());
 	}
 
-	@Path("customModels [item]")
-	@Permission("group.staff")
-	void customModels(CustomModel customModel) {
-		PlayerUtils.giveItem(player(), customModel.getDisplayItem());
-		send(PREFIX + "Gave custom model &e" + customModel.getName());
+	@ConverterFor(CustomModelFolder.class)
+	CustomModelFolder convertToCustomModelFolder(String value) {
+		return ResourcePack.getRootFolder().getFolder("/" + (value == null ? "" : value));
+	}
+
+	@TabCompleterFor(CustomModelFolder.class)
+	List<String> tabCompleteCustomModelFolder(String filter) {
+		return ResourcePack.getFolders().stream()
+				.map(CustomModelFolder::getDisplayPath)
+				.filter(path -> path.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
 	}
 
 	@EventHandler

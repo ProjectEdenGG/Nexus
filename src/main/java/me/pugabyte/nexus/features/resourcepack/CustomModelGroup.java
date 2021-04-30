@@ -41,7 +41,7 @@ class CustomModelGroup {
 
 		CustomModelGroup group = read(path);
 		if (group.getMaterial() != null && !group.getOverrides().isEmpty())
-			ResourcePack.getCustomModelGroups().add(group);
+			ResourcePack.getModelGroups().add(group);
 	}
 
 	private static CustomModelGroup read(Path path) {
