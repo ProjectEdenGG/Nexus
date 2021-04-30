@@ -1,7 +1,15 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.BufferedSink;
+import okio.Okio;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.entity.EntityType;
@@ -12,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.objenesis.ObjenesisStd;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,6 +129,38 @@ public class Utils extends eden.utils.Utils {
 		} catch (Exception ignored) {}
 
 		return viewTitle;
+	}
+
+	@SneakyThrows
+	public static File downloadFile(String url, String destination) {
+		Response response = callUrl(url);
+		if (response.body() == null)
+			throw new NexusException("Response body is null");
+
+		return saveFile(response.body(), destination);
+	}
+
+	public static File saveFile(String url, String destination) {
+		return saveFile(callUrl(url).body(), Nexus.getFile(destination));
+	}
+
+	public static File saveFile(ResponseBody body, String destination) {
+		return saveFile(body, Nexus.getFile(destination));
+	}
+
+	@SneakyThrows
+	public static File saveFile(ResponseBody body, File destination) {
+		try (BufferedSink sink = Okio.buffer(Okio.sink(destination))) {
+			sink.writeAll(body.source());
+		}
+		return destination;
+	}
+
+	private static final OkHttpClient okHttpClient = new OkHttpClient();
+
+	@SneakyThrows
+	public static Response callUrl(String url) {
+		return okHttpClient.newCall(new Request.Builder().url(url).build()).execute();
 	}
 
 }

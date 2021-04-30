@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.recipes.functionals;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
-import me.pugabyte.nexus.features.resourcepack.CustomModel;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -28,7 +28,11 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack item = CustomModel.DIAMOND_TOTEM.getItem();
+	private static final ItemStack item = new ItemBuilder(Material.TOTEM_OF_UNDYING)
+			.customModelData(1)
+			.name("&bDiamond Totem Of Undying")
+			.lore("&7Activates from anywhere", "&7in your inventory")
+			.build();
 
 	@Override
 	public ItemStack getResult() {

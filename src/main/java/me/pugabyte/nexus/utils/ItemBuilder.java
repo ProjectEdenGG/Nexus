@@ -84,7 +84,8 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	public ItemBuilder name(String displayName) {
-		itemMeta.setDisplayName(colorize("&f" + displayName));
+		if (displayName != null)
+			itemMeta.setDisplayName(colorize("&f" + displayName));
 		return this;
 	}
 
@@ -93,7 +94,8 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	public ItemBuilder lore(List<String> lore) {
-		this.lore.addAll(lore);
+		if (lore != null)
+			this.lore.addAll(lore);
 		return this;
 	}
 

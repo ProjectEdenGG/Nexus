@@ -1,15 +1,10 @@
 package me.pugabyte.nexus.features.resourcepack;
 
 import eden.utils.TimeUtils.Time;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.admin.BashCommand;
-import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -27,19 +22,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.URL;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.file;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.fileName;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.hash;
 
 @Aliases("rp")
 @NoArgsConstructor
 public class ResourcePackCommand extends CustomCommand implements Listener {
-	private static final String URL = "http://cdn.bnn.gg/BearNationResourcePack.zip";
-	private static String hash = Utils.createSha1(URL);
 
 	public ResourcePackCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -86,6 +81,8 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		send(BashCommand.tryExecute("sudo /home/minecraft/git/Saturn/deploy.sh"));
 
 		String newHash = Utils.createSha1(URL);
+		file = Utils.saveFile(URL, fileName);
+
 		if (hash != null && hash.equals(newHash))
 			error("No resource pack update found");
 
@@ -103,43 +100,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("customModels")
 	@Permission("group.staff")
 	void customModels() {
-		new CustomModelsMenu().open(player());
+		new CustomModelMenu().open(player());
 	}
 
 	@Path("customModels [item]")
 	@Permission("group.staff")
 	void customModels(CustomModel customModel) {
-		PlayerUtils.giveItem(player(), customModel.getItem());
-		send(PREFIX + "Gave custom model &e" + camelCase(customModel));
-	}
-
-	@NoArgsConstructor
-	public static class CustomModelsMenu extends MenuUtils implements InventoryProvider {
-
-		@Override
-		public void open(Player viewer, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title(colorize("&0Custom Models"))
-					.size(6, 9)
-					.build()
-					.open(viewer, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
-
-			List<ClickableItem> items = new ArrayList<>();
-
-			for (CustomModel customModel : CustomModel.values()) {
-				ItemStack item = customModel.getItem();
-				items.add(ClickableItem.from(item, e -> PlayerUtils.giveItem(player, item)));
-			}
-
-			addPagination(player, contents, items);
-		}
-
+		PlayerUtils.giveItem(player(), customModel.getDisplayItem());
+		send(PREFIX + "Gave custom model &e" + customModel.getName());
 	}
 
 	@EventHandler
