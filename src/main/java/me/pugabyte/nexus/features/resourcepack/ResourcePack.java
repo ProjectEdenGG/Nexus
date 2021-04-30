@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.resourcepack;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
@@ -15,7 +16,12 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -32,14 +38,37 @@ public class ResourcePack extends Feature implements Listener {
 	@Getter
 	private static final List<CustomModelGroup> modelGroups = new ArrayList<>();
 	@Getter
-	private static final List<CustomModel> models = new ArrayList<>();
-	@Getter
 	private static final List<CustomModelFolder> folders = new ArrayList<>();
+	@Getter
+	private static final List<CustomModel> models = new ArrayList<>();
 	@Getter
 	private static final CustomModelFolder rootFolder = new CustomModelFolder("/");
 
-	static {
-		CustomModelFolder.load();
+	@Getter
+	static final URI fileUri = URI.create("jar:" + ResourcePack.getFile().toURI());
+	@Getter
+	static final String subdirectory = "/assets/minecraft/models/item";
+	@Getter
+	private static FileSystem zipFile;
+
+	@Override
+	@SneakyThrows
+	public void onStart() {
+		try {
+			FileSystem existing = FileSystems.getFileSystem(fileUri);
+			if (existing != null && existing.isOpen())
+				existing.close();
+		} catch (FileSystemNotFoundException ignore) {}
+
+		zipFile = FileSystems.newFileSystem(fileUri, Collections.emptyMap());
+		CustomModelMenu.load();
+	}
+
+	@Override
+	@SneakyThrows
+	public void onStop() {
+		if (zipFile != null && zipFile.isOpen())
+			zipFile.close();
 	}
 
 	public static boolean isCustomItem(ItemStack item) {

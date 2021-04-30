@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.recipes.functionals;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
-import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -23,16 +23,10 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-
 public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack item = new ItemBuilder(Material.TOTEM_OF_UNDYING)
-			.customModelData(1)
-			.name("&bDiamond Totem Of Undying")
-			.lore("&7Activates from anywhere", "&7in your inventory")
-			.build();
+	private static final ItemStack item = CustomModel.itemOf(Material.TOTEM_OF_UNDYING, 1);
 
 	@Override
 	public ItemStack getResult() {
@@ -41,7 +35,7 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Override
 	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_diamond_totem_of_undying"));
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_diamond_totem_of_undying");
 		return surroundRecipe(key, getResult(), Material.TOTEM_OF_UNDYING, Material.DIAMOND);
 	}
 

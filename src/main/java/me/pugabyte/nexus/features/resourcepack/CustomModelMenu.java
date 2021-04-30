@@ -14,7 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -86,6 +89,46 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		addPagination(player, contents, items);
+	}
+
+	static void load() {
+		CustomModelGroup.load();
+
+		for (String path : getFolderPaths())
+			addFoldersRecursively(path);
+	}
+
+	private static Set<String> getFolderPaths() {
+		Set<String> paths = new HashSet<>();
+
+		for (CustomModelGroup group : ResourcePack.getModelGroups())
+			for (CustomModelGroup.Override override : group.getOverrides())
+				paths.add(override.getFolderPath());
+
+		return new TreeSet<>(paths);
+	}
+
+	private static void addFoldersRecursively(String path) {
+		String[] folders = path.split("/");
+
+		String walk = "";
+		for (String folder : folders) {
+			if (folder.isEmpty() || folder.equals("/"))
+				continue;
+
+			String parent = walk;
+			walk += "/" + folder;
+			addFolder(walk, folder, parent);
+		}
+	}
+
+	private static void addFolder(String walk, String folder, String parent) {
+		CustomModelFolder existing = ResourcePack.getRootFolder().getFolder(walk);
+		if (existing == null)
+			if (parent.isEmpty())
+				ResourcePack.getRootFolder().addFolder(folder);
+			else
+				ResourcePack.getRootFolder().getFolder(parent).addFolder(folder);
 	}
 
 

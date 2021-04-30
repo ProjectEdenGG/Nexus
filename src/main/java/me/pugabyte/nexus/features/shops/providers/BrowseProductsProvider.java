@@ -14,6 +14,7 @@ import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterType;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
+import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -143,9 +144,11 @@ public class BrowseProductsProvider extends _ShopProvider {
 			open(player, contents.pagination().getPage());
 		}));
 
-		boolean isResourceWorld = player.getWorld().getName().startsWith("resource");
-		Filter world = FilterRequiredType.REQUIRED.of("This worlds items", product -> isResourceWorld == product.isResourceWorld());
-		filters.add(world);
+		if (shopGroup == ShopGroup.SURVIVAL) {
+			boolean isResourceWorld = player.getWorld().getName().startsWith("resource");
+			Filter world = FilterRequiredType.REQUIRED.of("This worlds items", product -> isResourceWorld == product.isResourceWorld());
+			filters.add(world);
+		}
 	}
 
 	public void addItems(Player player, InventoryContents contents) {

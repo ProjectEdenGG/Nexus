@@ -4,19 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.fileRegex;
 
 @Data
 class CustomModelGroup {
@@ -33,10 +29,36 @@ class CustomModelGroup {
 			@SerializedName("custom_model_data")
 			private int customModelData;
 		}
+
+		public String getFolderPath() {
+			String path = model.replaceFirst("item", "");
+			List<String> folders = new ArrayList<>(Arrays.asList(path.split("/")));
+			folders.remove(folders.size() - 1); // remove file name
+			return String.join("/", folders);
+		}
+
+		public String getFileName() {
+			return StringUtils.listLast(model, "/");
+		}
+
+		@Data
+		public static class CustomModelMeta {
+			private String name;
+			private List<String> lore;
+		}
+
+		@SneakyThrows
+		public CustomModelMeta getMeta() {
+			String metaUri = ResourcePack.getSubdirectory() + model.replaceFirst("item", "") + ".meta";
+			Path metaPath = ResourcePack.getZipFile().getPath(metaUri);
+			if (Files.exists(metaPath))
+				return new Gson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModelMeta.class);
+			return new CustomModelMeta();
+		}
 	}
 
 	private static void addCustomModel(Path path) {
-		if (!path.toUri().toString().matches(".*" + subdirectory + "/" + fileRegex + "\\.json"))
+		if (!path.toUri().toString().matches(".*" + ResourcePack.getSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json"))
 			return;
 
 		CustomModelGroup group = read(path);
@@ -62,14 +84,11 @@ class CustomModelGroup {
 		return Material.getMaterial(materialName.toUpperCase());
 	}
 
-	static final String subdirectory = "assets/minecraft/models/item";
-	static final URI fileUri = URI.create("jar:" + ResourcePack.getFile().toURI());
-
 	static void load() {
-		try (FileSystem fileSystem = FileSystems.newFileSystem(fileUri, Collections.emptyMap())) {
-			for (Path root : fileSystem.getRootDirectories()) {
+		try {
+			for (Path root : ResourcePack.getZipFile().getRootDirectories()) {
 				Files.walk(root).forEach(path -> {
-					if (path.toUri().toString().contains(subdirectory))
+					if (path.toUri().toString().contains(ResourcePack.getSubdirectory()))
 						addCustomModel(path);
 				});
 			}
