@@ -21,8 +21,6 @@ import java.util.TreeSet;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-// TODO Meta file
-
 @RequiredArgsConstructor
 public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 	@NonNull

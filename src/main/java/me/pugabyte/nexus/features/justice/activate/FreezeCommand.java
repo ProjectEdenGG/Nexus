@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -38,6 +39,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
@@ -108,8 +110,11 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 				return;
 
 			if (!isFrozen(event.getPlayer())) {
-				if (event.getPlayer().getPotionEffect(PotionEffectType.JUMP) != null)
-					new FreezeService().get(event.getPlayer()).unfreeze();
+				PotionEffect jumpEffect = event.getPlayer().getPotionEffect(PotionEffectType.JUMP);
+				if (jumpEffect != null && jumpEffect.getAmplifier() >= 127)
+					try {
+						new FreezeService().get(event.getPlayer()).unfreeze();
+					} catch (InvalidInputException ignore) {}
 				return;
 			}
 
