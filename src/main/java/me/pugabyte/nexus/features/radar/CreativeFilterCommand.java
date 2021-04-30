@@ -1,15 +1,19 @@
 package me.pugabyte.nexus.features.radar;
 
+import eden.utils.StringUtils;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -22,9 +26,11 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -108,5 +114,36 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 			entities.remove(oldest);
 		}
 	}
+
+	@EventHandler
+	public void onPlaceBlock(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		if (WorldGroup.get(player.getWorld()) != WorldGroup.CREATIVE)
+			return;
+
+		if (Rank.of(player) != Rank.GUEST)
+			return;
+
+		Material type = event.getBlock().getType();
+		if (disallowedPlacement.contains(type)) {
+			if (!new CooldownService().check(player, player.getUniqueId() + "-" + type.name(), Time.MINUTE))
+				return;
+
+			player.sendMessage("You must be Member rank to place " + StringUtils.camelCase(type));
+			event.setCancelled(true);
+		}
+	}
+
+	private static final List<Material> disallowedPlacement = Arrays.asList(
+			Material.DISPENSER,
+			Material.STICKY_PISTON,
+			Material.PISTON,
+			Material.REDSTONE_TORCH,
+			Material.DROPPER,
+			Material.OBSERVER,
+			Material.REPEATER,
+			Material.COMPARATOR,
+			Material.REDSTONE_WIRE
+	);
 
 }

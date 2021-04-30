@@ -25,7 +25,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
-import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,8 +44,8 @@ public class Restrictions implements Listener {
 	}
 
 	@EventHandler
-	public void onPortalCreateEvent(PortalCreateEvent event) {
-		if (WorldGroup.CREATIVE.contains(event.getWorld()))
+	public void onEndPortalCreate(PortalCreateEvent event) {
+		if (WorldGroup.get(event.getWorld()) != WorldGroup.SURVIVAL)
 			event.setCancelled(true);
 	}
 
@@ -75,15 +74,6 @@ public class Restrictions implements Listener {
 
 		event.setCancelled(true);
 		Koda.dm(player, PREFIX + "Sorry, but you can't place beds above y=20");
-	}
-
-	@EventHandler
-	public void onEndPortalCreate(PortalCreateEvent event) {
-		if (event.getReason() != CreateReason.END_PLATFORM)
-			return;
-
-		if (WorldGroup.get(event.getWorld()) != WorldGroup.SURVIVAL)
-			event.setCancelled(true);
 	}
 
 	@EventHandler
@@ -163,6 +153,7 @@ public class Restrictions implements Listener {
 			Material.ALLIUM,
 			Material.ANVIL,
 			Material.AZURE_BLUET,
+			Material.BAMBOO,
 			Material.BEETROOTS,
 			Material.BIRCH_BUTTON,
 			Material.BIRCH_DOOR,
@@ -194,6 +185,7 @@ public class Restrictions implements Listener {
 			Material.COCOA,
 			Material.COMPARATOR,
 			Material.CORNFLOWER,
+			Material.CRIMSON_FUNGUS,
 			Material.CYAN_BANNER,
 			Material.CYAN_CARPET,
 			Material.CYAN_CONCRETE_POWDER,
@@ -207,10 +199,8 @@ public class Restrictions implements Listener {
 			Material.DARK_OAK_SIGN,
 			Material.DARK_OAK_WALL_SIGN,
 			Material.DEAD_BUSH,
-			Material.DEAD_BUSH,
 			Material.DETECTOR_RAIL,
 			Material.DRAGON_EGG,
-			Material.END_PORTAL,
 			Material.END_PORTAL,
 			Material.FERN,
 			Material.FLOWER_POT,
@@ -257,7 +247,6 @@ public class Restrictions implements Listener {
 			Material.MAGENTA_CONCRETE_POWDER,
 			Material.MAGENTA_WALL_BANNER,
 			Material.MELON_STEM,
-			Material.NETHER_PORTAL,
 			Material.NETHER_PORTAL,
 			Material.NETHER_WART,
 			Material.OAK_BUTTON,
@@ -317,6 +306,7 @@ public class Restrictions implements Listener {
 			Material.TORCH,
 			Material.TRAPPED_CHEST,
 			Material.VINE,
+			Material.WARPED_FUNGUS,
 			Material.WHEAT,
 			Material.WHITE_BANNER,
 			Material.WHITE_CARPET,
