@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.features.resourcepack.CustomModel.CustomModelMeta;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -39,12 +40,6 @@ class CustomModelGroup {
 
 		public String getFileName() {
 			return StringUtils.listLast(model, "/");
-		}
-
-		@Data
-		public static class CustomModelMeta {
-			private String name;
-			private List<String> lore;
 		}
 
 		@SneakyThrows

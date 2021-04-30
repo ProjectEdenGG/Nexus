@@ -4,11 +4,12 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.resourcepack.CustomModelGroup.Override.CustomModelMeta;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static eden.utils.StringUtils.camelCase;
 
@@ -65,6 +66,12 @@ public class CustomModel implements Comparable<CustomModel> {
 			return material.compareTo(other.getMaterial());
 
 		return Integer.compare(data, other.getData());
+	}
+
+	@Data
+	public static class CustomModelMeta {
+		private String name;
+		private List<String> lore;
 	}
 
 }
