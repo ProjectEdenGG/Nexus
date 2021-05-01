@@ -47,14 +47,18 @@ public class CustomModelFolder {
 		folders.add(new CustomModelFolder(path + "/" + name));
 	}
 
-	public CustomModel getFirstModel() {
-		if (!models.isEmpty())
-			return models.get(0);
+	public CustomModel getIcon() {
+		if (!models.isEmpty()) {
+			return models.stream()
+					.filter(model -> model.getFileName().equals("icon"))
+					.findFirst()
+					.orElse(models.get(0));
+		}
 
 		for (CustomModelFolder folder : folders) {
-			CustomModel firstModel = folder.getFirstModel();
-			if (firstModel != null)
-				return firstModel;
+			CustomModel icon = folder.getIcon();
+			if (icon != null)
+				return icon;
 		}
 
 		return null;

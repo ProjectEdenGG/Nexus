@@ -59,7 +59,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (CustomModelFolder folder : folder.getFolders()) {
-			CustomModel firstModel = folder.getFirstModel();
+			CustomModel firstModel = folder.getIcon();
 			ItemStack item = new ItemStack(Material.BARRIER);
 			if (firstModel != null)
 				item = firstModel.getDisplayItem();
@@ -77,6 +77,9 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		for (CustomModel model : folder.getModels()) {
+			if (model.getFileName().equals("icon"))
+				continue;
+
 			ItemBuilder item = new ItemBuilder(model.getDisplayItem())
 					.lore("")
 					.lore("&7Click to obtain item")
