@@ -147,7 +147,7 @@ public class Banker implements PlayerOwnedObject {
 			TransactionsService transactionsService = new TransactionsService();
 			Transactions transactions = transactionsService.get(this);
 			transactions.getTransactions().add(transaction);
-			transactionsService.save(transactions);
+			transactionsService.queueSave(5, transactions);
 			balances.put(shopGroup, newBalance);
 		}
 	}
