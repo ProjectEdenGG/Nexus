@@ -8,7 +8,9 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
@@ -36,6 +38,25 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class Restrictions implements Listener {
 	private static final String PREFIX = Koda.getLocalFormat();
+
+	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE,
+			WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
+	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
+
+	public static boolean isPerkAllowedAt(Location location) {
+		WorldGroup worldGroup = WorldGroup.get(location);
+		if (!allowedWorldGroups.contains(worldGroup))
+			return false;
+
+		if (blockedWorlds.contains(location.getWorld().getName()))
+			return false;
+
+		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(location);
+		if (!worldGuardUtils.getRegionsAt(location).isEmpty())
+			return false;
+
+		return true;
+	}
 
 	@EventHandler
 	public void onPortalEvent(PlayerPortalEvent event) {
