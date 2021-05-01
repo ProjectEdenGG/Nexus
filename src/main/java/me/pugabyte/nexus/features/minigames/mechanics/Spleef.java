@@ -18,7 +18,7 @@ public final class Spleef extends SpleefMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Spleef other players off the map to win!";
 	}
 

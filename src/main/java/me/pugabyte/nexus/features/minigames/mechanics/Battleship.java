@@ -107,7 +107,7 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return null;
 	}
 

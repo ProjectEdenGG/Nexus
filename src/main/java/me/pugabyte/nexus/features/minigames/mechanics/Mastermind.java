@@ -41,7 +41,7 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 

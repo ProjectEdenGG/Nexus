@@ -18,4 +18,9 @@ public class MoonGravity extends BulletArrows {
 	public @NotNull String getName() {
 		return "Moon Gravity";
 	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Players fall slower and projectiles never fall";
+	}
 }

@@ -32,7 +32,6 @@ import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BossBarBuilder;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
@@ -301,9 +300,9 @@ public class Match {
 	}
 
 	private void startModifierBar() {
-		MinigameModifier modifier = new MinigamesSettingService().get().getModifier();
+		MinigameModifier modifier = Minigames.getModifier();
 		if (modifier instanceof NoModifier) return;
-		modifierBar = new BossBarBuilder().title(modifier.getComponent()).color(BossBar.Color.BLUE).build();
+		modifierBar = new BossBarBuilder().title(modifier.asComponent()).color(BossBar.Color.BLUE).build();
 		getMinigamers().forEach(minigamer -> minigamer.getPlayer().showBossBar(modifierBar));
 	}
 

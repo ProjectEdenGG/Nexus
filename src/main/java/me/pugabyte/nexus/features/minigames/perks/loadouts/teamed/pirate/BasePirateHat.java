@@ -7,6 +7,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -76,7 +77,7 @@ public abstract class BasePirateHat extends TeamLoadoutPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Show off your love for the seven seas with this pirate hat";
 	}
 

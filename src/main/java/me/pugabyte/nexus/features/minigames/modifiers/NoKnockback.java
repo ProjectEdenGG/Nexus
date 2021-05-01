@@ -22,4 +22,9 @@ public class NoKnockback implements MinigameModifier {
 	public @NotNull String getName() {
 		return "No Knockback";
 	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Removes knockback";
+	}
 }

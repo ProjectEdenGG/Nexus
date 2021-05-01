@@ -29,7 +29,7 @@ public final class Siege extends OneFlagCaptureTheFlag {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "One team protects their flag while the other tries to capture it";
 	}
 

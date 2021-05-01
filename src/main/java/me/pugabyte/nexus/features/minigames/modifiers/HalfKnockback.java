@@ -25,4 +25,9 @@ public class HalfKnockback implements MinigameModifier {
 	public @NotNull String getName() {
 		return "Half Knockback";
 	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Reduces knockback by one half";
+	}
 }

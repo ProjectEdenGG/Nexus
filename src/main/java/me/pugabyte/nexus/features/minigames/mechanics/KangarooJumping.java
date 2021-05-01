@@ -33,7 +33,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Jump higher and higher and be the first to the finish!";
 	}
 

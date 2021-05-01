@@ -23,4 +23,9 @@ public class ModernCombat implements MinigameModifier {
 	public @NotNull String getName() {
 		return "Modern Combat";
 	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Disables spam-clicking weapons";
+	}
 }

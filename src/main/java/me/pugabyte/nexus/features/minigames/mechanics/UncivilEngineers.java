@@ -48,7 +48,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Race to the finish";
 	}
 

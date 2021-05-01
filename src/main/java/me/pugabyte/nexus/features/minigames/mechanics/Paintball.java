@@ -27,7 +27,7 @@ public final class Paintball extends TeamMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Shoot players";
 	}
 

@@ -20,7 +20,7 @@ public class RainbowTrail extends ParticleProjectilePerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Turn your arrows multi-colored with rainbow trails";
 	}
 

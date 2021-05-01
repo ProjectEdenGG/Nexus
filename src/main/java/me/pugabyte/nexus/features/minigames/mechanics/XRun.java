@@ -14,7 +14,7 @@ public class XRun extends CheckpointMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Race your way to the finish line";
 	}
 

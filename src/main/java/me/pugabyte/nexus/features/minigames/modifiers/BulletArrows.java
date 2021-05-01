@@ -14,4 +14,9 @@ public class BulletArrows implements MinigameModifier {
 	public @NotNull String getName() {
 		return "Bullet Arrows";
 	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Projectiles fire straight forwards like bullets";
+	}
 }

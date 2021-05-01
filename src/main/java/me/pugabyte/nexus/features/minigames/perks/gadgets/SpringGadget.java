@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class SpringGadget extends GadgetPerk {
 	@Override
@@ -15,7 +16,7 @@ public class SpringGadget extends GadgetPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Launch into the air with this portable spring";
 	}
 

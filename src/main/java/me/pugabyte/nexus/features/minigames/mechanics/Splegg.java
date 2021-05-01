@@ -30,7 +30,7 @@ public final class Splegg extends SpleefMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Shoot blocks with eggs to break them and spleef players off the map";
 	}
 

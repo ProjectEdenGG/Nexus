@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.features.minigames.models.perks.common.GadgetPerk;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public class DyeBombGadget extends GadgetPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Show your friends your love by throwing colorful bombs at them";
 	}
 

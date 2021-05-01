@@ -51,7 +51,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Put out the fire!";
 	}
 

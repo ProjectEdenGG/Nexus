@@ -16,4 +16,9 @@ public class SuperSpeed implements MinigameModifier {
 	public @NotNull String getName() {
 		return "Super Speed";
 	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Gives everyone super speed";
+	}
 }

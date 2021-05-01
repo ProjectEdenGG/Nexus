@@ -45,7 +45,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Shoot blocks with eggs to break them and extinguish the armor stand.";
 	}
 

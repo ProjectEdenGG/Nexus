@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePe
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class FlameParticle extends PlayerParticlePerk {
 	@Override
@@ -17,7 +18,7 @@ public class FlameParticle extends PlayerParticlePerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Burn like the fire that fuels your craving for blood!";
 	}
 

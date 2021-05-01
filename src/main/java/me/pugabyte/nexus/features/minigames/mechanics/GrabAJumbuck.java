@@ -47,7 +47,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Grab as many sheep as possible! Colored sheep are worth more points!";
 	}
 

@@ -13,7 +13,7 @@ public final class FourTeamDeathmatch extends DeathmatchMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Kill the other teams";
 	}
 

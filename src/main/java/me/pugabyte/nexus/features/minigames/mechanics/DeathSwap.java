@@ -47,7 +47,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Trap players by swapping with them!";
 	}
 

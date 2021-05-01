@@ -14,7 +14,7 @@ public final class FreeForAll extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Kill everyone!";
 	}
 

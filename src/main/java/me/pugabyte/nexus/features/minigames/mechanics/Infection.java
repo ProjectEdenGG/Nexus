@@ -27,7 +27,7 @@ public class Infection extends TeamMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Zombies kill humans";
 	}
 

@@ -33,8 +33,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineExce
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
-import me.pugabyte.nexus.models.minigamessetting.MinigamesSetting;
-import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
@@ -568,10 +566,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("modifier <type>")
 	@Permission("group.staff")
 	void modifier(MinigameModifier type) {
-		MinigamesSettingService service = new MinigamesSettingService();
-		MinigamesSetting data = service.get();
-		data.setModifier(type);
-		service.save(data);
+		Minigames.setModifier(type);
 		send(PREFIX + "Minigame modifier set to &e" + type.getName());
 	}
 

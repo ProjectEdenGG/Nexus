@@ -12,4 +12,9 @@ public class NoModifier implements MinigameModifier {
 	public @NotNull String getName() {
 		return "No Modifier";
 	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Does nothing";
+	}
 }

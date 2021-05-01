@@ -28,7 +28,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Capture the other team's flag to win the game";
 	}
 

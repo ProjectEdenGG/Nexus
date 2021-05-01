@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class MarksmansHat extends LoadoutPerk {
 	@Override
@@ -12,7 +13,7 @@ public class MarksmansHat extends LoadoutPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Shoot your targets with uncanny accuracy with this hat";
 	}
 

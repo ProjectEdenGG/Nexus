@@ -4,6 +4,7 @@ import eden.interfaces.Named;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
@@ -18,12 +19,17 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
+import me.pugabyte.nexus.framework.interfaces.HasDescription;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
+import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
@@ -47,7 +53,7 @@ import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
-public abstract class Mechanic implements Listener, Named {
+public abstract class Mechanic implements Listener, Named, HasDescription, ComponentLike {
 
 	public Mechanic() {
 		Nexus.registerListener(this);
@@ -55,15 +61,13 @@ public abstract class Mechanic implements Listener, Named {
 
 	public abstract @NotNull String getName();
 
-	public @NotNull TextComponent getComponent() {
+	public @NotNull TextComponent asComponent() {
 		return Component.text(getName(), NamedTextColor.YELLOW);
 	}
 
 	public String getPrefix() {
 		return StringUtils.getPrefix(this.getClass());
 	}
-
-	public abstract String getDescription();
 
 	public abstract ItemStack getMenuItem();
 
@@ -235,6 +239,10 @@ public abstract class Mechanic implements Listener, Named {
 		String mechanicName = arena.getMechanic().getName();
 		String arenaName = arena.getDisplayName();
 		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equals(arenaName) ? "" : " &3on &e" + arenaName));
+		MinigameModifier modifier = Minigames.getModifier();
+		if (modifier.getClass() != NoModifier.class) {
+			TitleUtils.sendTitle(minigamer.getPlayer(), "&3Modifier: &e" + modifier.getName(), "&6" + modifier.getDescription(), 5, Time.SECOND.x(5), 10);
+		}
 	}
 
 	public abstract void announceWinners(Match match);

@@ -28,7 +28,7 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Kill as many players as you can as the Juggernaut, or kill the Juggernaut to become it!";
 	}
 

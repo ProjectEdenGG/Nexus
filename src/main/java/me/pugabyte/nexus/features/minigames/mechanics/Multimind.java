@@ -37,7 +37,7 @@ public final class Multimind extends SingleplayerMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
