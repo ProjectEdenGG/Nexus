@@ -40,6 +40,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -302,7 +303,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@Deprecated
 	public void error(Player player, String error) {
-		player.sendMessage(StringUtils.colorize("&c" + error));
+		player.sendMessage(new JsonBuilder(NamedTextColor.RED).next(error));
 	}
 
 	public void rethrow(Throwable ex) {
