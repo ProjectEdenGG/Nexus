@@ -56,8 +56,19 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 
 	@Override
-	@SneakyThrows
 	public void onStart() {
+		openZip();
+		CustomModelMenu.load();
+	}
+
+	@Override
+	@SneakyThrows
+	public void onStop() {
+		closeZip();
+	}
+
+	@SneakyThrows
+	static void openZip() {
 		try {
 			FileSystem existing = FileSystems.getFileSystem(fileUri);
 			if (existing != null && existing.isOpen())
@@ -65,12 +76,10 @@ public class ResourcePack extends Feature implements Listener {
 		} catch (FileSystemNotFoundException ignore) {}
 
 		zipFile = FileSystems.newFileSystem(fileUri, Collections.emptyMap());
-		CustomModelMenu.load();
 	}
 
-	@Override
 	@SneakyThrows
-	public void onStop() {
+	static void closeZip() {
 		if (zipFile != null && zipFile.isOpen())
 			zipFile.close();
 	}

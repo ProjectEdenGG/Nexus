@@ -30,9 +30,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.resourcepack.ResourcePack.URL;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.closeZip;
 import static me.pugabyte.nexus.features.resourcepack.ResourcePack.file;
 import static me.pugabyte.nexus.features.resourcepack.ResourcePack.fileName;
 import static me.pugabyte.nexus.features.resourcepack.ResourcePack.hash;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.openZip;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -87,11 +89,12 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		if (hash != null && hash.equals(newHash))
 			error("No resource pack update found");
 
-		menuReload();
 		hash = newHash;
 
 		if (hash == null)
 			error("Resource pack hash is null");
+
+		menuReload();
 
 //		TODO: Figure out a solution that actually works, this just disables the active resource pack for all players who click it
 //		for (Player player : Bukkit.getOnlinePlayers())
@@ -103,7 +106,9 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("menu reload")
 	@Permission("group.admin")
 	void menuReload() {
+		closeZip();
 		file = Utils.saveFile(URL, fileName);
+		openZip();
 		CustomModelMenu.load();
 		send(PREFIX + "Menu updated");
 	}
