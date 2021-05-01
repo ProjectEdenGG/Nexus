@@ -159,6 +159,10 @@
             <id>md_5-repo</id>
             <url>https://repo.md-5.net/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>skullcreator-repo</id>
+            <url>https://dl.bintray.com/deanveloper/SkullCreator</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Paper API -->
@@ -518,11 +522,18 @@
             <version>10.0.24</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Checker, used by Adventure, and is included here because it wasn't resolving -->
+        <!-- Checker -->
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-qual</artifactId>
             <version>2.5.4</version>
+        </dependency>
+        <!-- SkullCreator -->
+        <dependency>
+            <groupId>dev.dbassett</groupId>
+            <artifactId>skullcreator</artifactId>
+            <version>3.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

@@ -6,8 +6,11 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -94,6 +97,13 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 	public T get(OfflinePlayer player) {
 		if (player == null) return null;
 		return get(player.getUniqueId());
+	}
+
+	public List<T> getOnline() {
+		List<T> online = new ArrayList<>();
+		for (Player player : Bukkit.getOnlinePlayers())
+			online.add(get(player));
+		return online;
 	}
 
 }

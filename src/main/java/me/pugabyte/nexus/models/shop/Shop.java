@@ -336,8 +336,8 @@ public class Shop implements PlayerOwnedObject {
 			ItemBuilder builder = getItemWithLore().lore(getExchange().getLore());
 
 			builder.lore("")
-					.lore("&7Left click to purchase")
-					.lore("&7Shift+Left click to purchase all");
+					.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
+					.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
 
 			return builder;
 		}

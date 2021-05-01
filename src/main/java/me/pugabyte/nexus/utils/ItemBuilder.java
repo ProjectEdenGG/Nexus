@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -200,13 +201,20 @@ public class ItemBuilder implements Cloneable {
 	// Skulls
 
 	public ItemBuilder skullOwner(OfflinePlayer offlinePlayer) {
-		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
+		SkullMeta skullMeta = SkinCache.of(offlinePlayer).getHeadMeta();
+		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());
 		return this;
 	}
 
 	@Deprecated
 	public ItemBuilder skullOwner(String name) {
 		((SkullMeta) itemMeta).setOwner(name);
+		return this;
+	}
+
+	@Deprecated
+	public ItemBuilder skullOwnerActual(OfflinePlayer offlinePlayer) {
+		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
 		return this;
 	}
 
