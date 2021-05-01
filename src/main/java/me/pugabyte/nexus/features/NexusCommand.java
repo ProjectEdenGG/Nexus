@@ -51,22 +51,14 @@ import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.ActionBarUtils;
-import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PacketUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.*;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
-import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
-import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -156,7 +148,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 			ReloadCondition.tryReload();
 		} catch (Exception ex) {
 			reloader = uuid();
-			error(json("&c" + ex.getMessage()).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
+			error(new JsonBuilder(ex.getMessage(), NamedTextColor.RED).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
 		for (Player player : Bukkit.getOnlinePlayers())
