@@ -1,13 +1,11 @@
-package me.pugabyte.nexus.features.events.y2020.bearfair20.commands;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -16,8 +14,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.bearfair20.BearFair20User;
-import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJamService;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJammer;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -33,7 +31,6 @@ import me.pugabyte.nexus.utils.Utils.MapRotation;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -60,17 +57,16 @@ import org.bukkit.inventory.meta.MapMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-
-// TODO Make logic common for minigames
 
 @Aliases("jj")
 @NoArgsConstructor
 public class JigsawJamCommand extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("JigsawJam");
 	private static final String WORLD = "gameworld";
-	private static final String SCHEMATIC = "jigsawjam3";
+	private static final String SCHEMATIC = "jigsawjam4";
 	private static final int LENGTH = 9, HEIGHT = 5;
 
 	private final JigsawJamService service = new JigsawJamService();
@@ -82,7 +78,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 	@Path("validate")
 	void validate() {
-		validate(service.get(player()), LENGTH, HEIGHT);
+		validate(service.get(player()));
 	}
 
 	@Path("paste")
@@ -99,7 +95,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 	@Path("reset")
 	@Permission("group.staff")
-	void reset(@Arg("self") OfflinePlayer player) {
+	void reset() {
 		paste(location());
 		clear(location());
 	}
@@ -141,14 +137,14 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		runCommand("mcmd warp minigames ;; wait 7 ;; back");
 	}
 
-	private static final int INTERVAL = 5;
+	private static final int INTERVAL = 10;
 
 	static {
 		Tasks.repeat(INTERVAL, INTERVAL, () -> Bukkit.getOnlinePlayers().stream()
 				.filter(player -> player.getWorld().getName().equals(WORLD))
 				.filter(player -> !AFK.get(player).isAfk())
 				.filter(player -> new WorldGuardUtils(player).getRegionNamesAt(player.getLocation()).contains("jigsawjam"))
-				.map(player -> (JigsawJammer) new JigsawJamService().get(player))
+				.map(player -> new JigsawJamService().get(player))
 				.filter(JigsawJammer::isPlaying)
 				.forEach(jammer -> {
 					jammer.incrementTime(INTERVAL);
@@ -156,12 +152,16 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 				}));
 	}
 
+	private boolean isInJigsawJam(Entity entity) {
+		return new WorldGuardUtils(entity).getRegionNamesAt(entity.getLocation()).contains("jigsawjam");
+	}
+
 	@EventHandler
-	public void onEntityDamage(HangingBreakByEntityEvent event) {
+	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
 		if (!(event.getRemover() instanceof Player)) return;
-		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
-		if (event.getRemover().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (!isInJigsawJam(event.getEntity())) return;
+		if (canWorldGuardEdit(event.getRemover())) return;
 
 		event.setCancelled(true);
 	}
@@ -169,17 +169,17 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
-		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (!isInJigsawJam(event.getPlayer())) return;
+		if (canWorldGuardEdit(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
 
 	@EventHandler
-	public void onBlockPlace(BlockPlaceEvent event) {
+	public void on(BlockPlaceEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
-		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (!isInJigsawJam(event.getPlayer())) return;
+		if (canWorldGuardEdit(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
@@ -187,9 +187,11 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
 		if (!event.getPlayer().getWorld().getName().equals(WORLD)) return;
+		if (!isInJigsawJam(event.getPlayer())) return;
 		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
-		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
+		if (event.getClickedBlock() == null) return;
+		if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		Sign sign = (Sign) event.getClickedBlock().getState();
 		if (!stripColor(sign.getLine(0)).equals(stripColor(PREFIX.trim()))) return;
 
@@ -205,7 +207,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 				jammer.send(PREFIX + "&cYou have already started a game");
 		} else if (sign.getLine(2).toLowerCase().contains("finish")) {
 			if (jammer.isPlaying()) {
-				if (validate(jammer, LENGTH, HEIGHT)) {
+				if (validate(jammer)) {
 					end(jammer);
 					clear(event.getClickedBlock().getLocation());
 				}
@@ -217,9 +219,9 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onMapPickup(EntityPickupItemEvent event) {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
+		if (!isInJigsawJam(event.getEntity())) return;
 		if (event.getItem().getItemStack().getType() != Material.FILLED_MAP) return;
 		if (!(event.getEntity() instanceof Player)) return;
-		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
 
 		ItemBuilder.setName(event.getItem().getItemStack(), null);
 	}
@@ -227,12 +229,12 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onChestOpen(InventoryOpenEvent event) {
 		if (!event.getPlayer().getWorld().getName().equals(WORLD)) return;
+		if (!isInJigsawJam(event.getPlayer())) return;
 		if (event.getInventory().getLocation() == null) return;
 		if (!(event.getInventory().getHolder() instanceof Chest)) return;
-		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getInventory().getLocation()).contains("jigsawjam")) return;
+		if (canWorldGuardEdit(event.getPlayer())) return;
 
-		JigsawJamService service = new JigsawJamService();
-		JigsawJammer jammer = service.get((Player) event.getPlayer());
+		JigsawJammer jammer = new JigsawJamService().get((Player) event.getPlayer());
 		if (!jammer.isPlaying()) {
 			event.setCancelled(true);
 			jammer.send(PREFIX + "You must start the timer by clicking on the sign before collecting the pieces");
@@ -246,7 +248,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private void end(JigsawJammer jammer) {
-		Discord.staffLog("**[JigsawJam]** " + jammer.getOfflinePlayer().getName() + " finished in " + Timespan.of(jammer.getTime() / 20).format());
+		Discord.staffLog(DISCORD_PREFIX + jammer.getOfflinePlayer().getName() + " finished in " + Timespan.of(jammer.getTime() / 20).format());
 		jammer.setPlaying(false);
 		jammer.setTime(0);
 		new JigsawJamService().save(jammer);
@@ -266,8 +268,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 			int random = RandomUtils.randomInt(0, maps.size() - 1);
 			ItemFrame map = maps.remove(random);
 
-			final ItemFrame finalMap = map;
-			Tasks.wait(++wait, () -> finalMap.setItem(null));
+			Tasks.wait(++wait, () -> map.setItem(null));
 			Tasks.wait(++wait, () -> map.setRotation(Rotation.NONE));
 		}
 
@@ -278,7 +279,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		new WorldEditUtils(location).paster().file(SCHEMATIC).at(location).paste();
 	}
 
-	private boolean validate(JigsawJammer jammer, int length, int height) {
+	private boolean validate(JigsawJammer jammer) {
 		Player player = jammer.getPlayer();
 		Block blue = null;
 		Block orange = null;
@@ -332,20 +333,20 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		double direction = diff / 2;
 
 		int correct = 0;
-		int totalMaps = length * height;
+		int totalMaps = LENGTH * HEIGHT;
 
 		Location validate = answer.clone();
 
 		List<Integer> order = new ArrayList<>();
 		List<MapRotation> rotation = new ArrayList<>();
 
-		for (int i = 0; i < height; i++) {
+		for (int i = 0; i < HEIGHT; i++) {
 			if (axis == Axis.X)
 				validate.setX(answer.getX());
 			else
 				validate.setZ(answer.getZ());
 
-			for (int j = 0; j < length; j++) {
+			for (int j = 0; j < LENGTH; j++) {
 				for (Entity entity : EntityUtils.getNearbyEntities(validate, 1).keySet())
 					if (entity.getType() == EntityType.ITEM_FRAME)
 						if (isEntityAtLocation(entity, validate)) {
@@ -373,13 +374,13 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 		int index = 0;
 		Location check = attempt.clone();
-		for (int i = 0; i < height; i++) {
+		for (int i = 0; i < HEIGHT; i++) {
 			if (axis == Axis.X)
 				check.setX(attempt.getX());
 			else
 				check.setZ(attempt.getZ());
 
-			for (int j = 0; j < length; j++) {
+			for (int j = 0; j < LENGTH; j++) {
 				for (Entity entity : EntityUtils.getNearbyEntities(check, 1).keySet())
 					if (entity.getType() == EntityType.ITEM_FRAME)
 						if (isEntityAtLocation(entity, check)) {
@@ -390,8 +391,6 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 								MapRotation mapRotation = MapRotation.getRotation(itemFrame.getRotation());
 								if (order.get(index) == mapId && rotation.get(index) == mapRotation)
 									++correct;
-								else
-									DotEffect.builder().player(player).location(entity.getLocation().getBlock().getLocation()).ticks(5 * 20).color(Color.RED).start();
 							}
 					}
 
@@ -409,8 +408,8 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (correct == totalMaps) {
 			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
 
-			BearFair20UserService bearFairService = new BearFair20UserService();
-			BearFair20User user = bearFairService.get(player);
+			BearFair21UserService bearFairService = new BearFair21UserService();
+			BearFair21User user = bearFairService.get(player);
 
 			if (!jammer.hasPlayed()) {
 				user.givePoints(50);
@@ -442,13 +441,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private Location floorLocation(Location location) {
-		Location floored = location.clone();
-		floored.setX(Math.floor(floored.getX()));
-		floored.setY(Math.floor(floored.getY()));
-		floored.setZ(Math.floor(floored.getZ()));
-		floored.setYaw(0);
-		floored.setPitch(0);
-		return floored;
+		return location.getBlock().getLocation();
 	}
 
 }

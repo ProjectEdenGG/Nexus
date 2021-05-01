@@ -8,6 +8,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -17,14 +18,15 @@ import java.util.stream.Collectors;
 
 public class EntityUtils {
 
+	@NotNull
 	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, double radius) {
-		if (location.getWorld() == null) return null;
+		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
 	}
 
 	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, double radius) {
-		if (location.getWorld() == null) return null;
+		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
