@@ -15,6 +15,8 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -68,6 +70,10 @@ public class SkinCacheCommand extends CustomCommand {
 		send(PREFIX + "Cleared database");
 	}
 
+	static {
+		Nexus.getCron().schedule("0 */6 * * *", () -> Tasks.async(() -> Nexus.log(updateOnline())));
+	}
+
 	private static String updateOnline() {
 		return updateAll(new SkinCacheService().getOnline());
 	}
@@ -85,8 +91,9 @@ public class SkinCacheCommand extends CustomCommand {
 		return StringUtils.getPrefix("SkinCache") + "Checked " + online.size() + " skins, found " + updated + " updates, took " + timer.getDuration() + "ms";
 	}
 
-	static {
-		Nexus.getCron().schedule("0 */6 * * *", () -> Tasks.async(() -> Nexus.log(updateOnline())));
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		SkinCache.of(event.getPlayer()).update();
 	}
 
 }
