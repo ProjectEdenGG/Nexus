@@ -8,7 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class PostConfiguredException extends NexusException {
 
 	public PostConfiguredException(JsonBuilder json) {
-		super(json.color(NamedTextColor.RED));
+		super(new JsonBuilder(NamedTextColor.RED).next(json));
 	}
 
 	public PostConfiguredException(ComponentLike component) {
