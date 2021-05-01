@@ -87,7 +87,7 @@ public class BearFair21 {
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";
-		if (new GodmodeService().get(player).isEnabled()) return "godemode";
+		if (new GodmodeService().get(player).isEnabled()) return "godmode";
 
 		return null;
 	}
