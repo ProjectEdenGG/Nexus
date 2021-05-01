@@ -11,12 +11,17 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.Utils.getMin;
@@ -74,6 +79,25 @@ public class HomesCommand extends CustomCommand {
 			send(PREFIX + "&cYou have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
 	}
 
+	@Async
+	@Path("near [page]")
+	@Permission("group.staff")
+	void nearest(@Arg("1") int page) {
+		Map<Home, Double> unsorted = service.getAll().stream()
+				.map(HomeOwner::getHomes)
+				.flatMap(Collection::stream)
+				.filter(home -> world().equals(home.getLocation().getWorld()))
+				.collect(Collectors.toMap(home -> home, home -> home.getLocation().distance(location())));
+		Map<Home, Double> homes = Utils.sortByValue(unsorted);
+
+		BiFunction<Home, String, JsonBuilder> formatter = (home, index) ->
+				json("&3" + index + " &e" + home.getOwner().getNickname() + " &7- " + home.getName() + " (" + homes.get(home).intValue() + "m)")
+						.command("/home " + home.getOwner().getNickname() + " " + home.getName())
+						.hover("&fClick to teleport");
+		paginate(new ArrayList<>(homes.keySet()), formatter, "/homes near", page);
+	}
+
+	@Async
 	@Path("nearest [player]")
 	void nearest(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		MinMaxResult<Home> result = getMin(service.get(player).getHomes(), home -> {
