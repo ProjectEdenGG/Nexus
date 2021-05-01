@@ -6,6 +6,8 @@ import lombok.Setter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User.BF21PointSource;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -89,6 +91,16 @@ public class ReflectionGame {
 		ReflectionGameUtils.newObjective();
 	}
 
+	private static Color getMinigolfUserColor(Player player) {
+		MiniGolf21UserService service = new MiniGolf21UserService();
+		MiniGolf21User user = service.get(player);
+		Color color = user.getColor();
+		if (color.equals(Color.WHITE))
+			return Color.RED;
+
+		return color;
+	}
+
 	static void startLaser(Player player, BlockFace startFace) {
 		active = true;
 		ReflectionGameUtils.clearLamps();
@@ -96,7 +108,8 @@ public class ReflectionGame {
 		AtomicInteger lifespan = new AtomicInteger(750);
 		final BlockFace[] blockFace = {startFace};
 		final Location[] loc = {laserStart.clone()};
-		AtomicReference<Color> laserColor = new AtomicReference<>(Color.RED);
+
+		AtomicReference<Color> laserColor = new AtomicReference<>(getMinigolfUserColor(player));
 		AtomicInteger reflections = new AtomicInteger(0);
 		BearFair21.getWorld().playSound(laserStart, Sound.BLOCK_BEACON_ACTIVATE, 2F, 1F);
 		laserSound();

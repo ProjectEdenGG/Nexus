@@ -19,6 +19,8 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,6 +112,15 @@ public class BearFair21WebConfig implements PlayerOwnedObject {
 		public Node getFurthestNode(Node origin) {
 			return Utils.getMax(getNodes(), node -> node.getLocation().distance(origin.getLocation())).getObject();
 		}
+
+		public Node getNodeById(UUID uuid) {
+			for (Node node : getNodes()) {
+				if (node.getUuid().equals(uuid))
+					return node;
+			}
+
+			return null;
+		}
 	}
 
 	/*
@@ -132,9 +143,13 @@ public class BearFair21WebConfig implements PlayerOwnedObject {
 		@ToString.Exclude
 		Map<UUID, Double> neighbors = new HashMap<>();
 
-		public Node(Location location) {
+		public Node(@NotNull Location location) {
 			this.uuid = UUID.randomUUID();
 			this.location = location;
+		}
+
+		public Location getPathLocation() {
+			return this.location.getBlock().getRelative(BlockFace.UP).getLocation();
 		}
 	}
 
@@ -151,8 +166,20 @@ public class BearFair21WebConfig implements PlayerOwnedObject {
 		LinkedList<UUID> nodeUuids = new LinkedList<>();
 		Double length = null;
 
+		public Route(Node startNode) {
+			this.nodeUuids.add(startNode.getUuid());
+		}
+
 		public void addNode(Node node) {
 			nodeUuids.add(node.getUuid());
+		}
+
+		public void removeNode(Node node) {
+			nodeUuids.remove(node.getUuid());
+		}
+
+		public UUID getLast() {
+			return nodeUuids.getLast();
 		}
 	}
 }

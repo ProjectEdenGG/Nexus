@@ -113,6 +113,8 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("kit")
 	void getKit() {
+		if (!user.isPlaying())
+			error("You must be playing to do this");
 		MiniGolf.takeKit(user);
 		MiniGolf.giveKit(user);
 	}

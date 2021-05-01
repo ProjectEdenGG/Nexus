@@ -1,9 +1,11 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
+import com.destroystokyo.paper.entity.Pathfinder;
 import com.sk89q.worldedit.regions.Region;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Pathfinder;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.PathfinderHelper;
 import me.pugabyte.nexus.features.particles.effects.LineEffect;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
@@ -15,7 +17,9 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21WebConfig.Node;
 import me.pugabyte.nexus.models.bearfair21.BearFair21WebConfig.Route;
 import me.pugabyte.nexus.models.bearfair21.BearFair21WebConfig.Web;
 import me.pugabyte.nexus.models.bearfair21.BearFair21WebConfigService;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -26,21 +30,27 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 @NoArgsConstructor
 @Permission("group.admin")
 public class BearFair21PathfinderCommand extends CustomCommand implements Listener {
+	private static int wait = 0;
 
 	public BearFair21PathfinderCommand(CommandEvent event) {
 		super(event);
@@ -94,6 +104,126 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		send("&aNew web created: \"" + web.getId() + "\"");
 	}
 
+	@Path("entity select")
+	public void entitySelect() {
+		PathfinderHelper.setSelectedEntity(player().getTargetEntity(10, true));
+		send("Selected entity: " + PathfinderHelper.getSelectedEntity().getType());
+	}
+
+	@Path("entity next")
+	public void entityNext() {
+		Node random = RandomUtils.randomElement(getWeb().getNodes());
+		Location location = random.getPathLocation();
+		Mob mob = (Mob) PathfinderHelper.getSelectedEntity();
+		Pathfinder pathfinder = mob.getPathfinder();
+		pathfinder.moveTo(random.getPathLocation());
+		send("pathfinding to: " + StringUtils.getShortLocationString(random.getPathLocation()));
+
+		BlockUtils.glow(location.getBlock(), Time.SECOND.x(10), player());
+	}
+
+	@Path("entity stop")
+	public void entityReset() {
+		Mob mob = (Mob) PathfinderHelper.getSelectedEntity();
+		Pathfinder pathfinder = mob.getPathfinder();
+		pathfinder.stopPathfinding();
+		send("stopped entity pathfinding");
+	}
+
+	@Path("random")
+	public void random() {
+		Web web = getWeb();
+		Node startNode = web.getNodeByLocation(PathfinderHelper.getSelectedLoc());
+		if (startNode == null)
+			error("selected node is null");
+
+		Set<Node> nodes = web.getNodes();
+		Node endNode = RandomUtils.randomElement(nodes);
+
+		int ticks = Time.SECOND.x(5);
+		wait = 0;
+
+		startNode.getPathLocation().getBlock().setType(Material.RED_CONCRETE);
+		Route route = findRoute(player(), web, startNode, endNode, null, startNode, new Route(startNode), new HashSet<>());
+
+		Tasks.wait(wait += 10, () -> {
+			BlockUtils.glow(endNode.getPathLocation().getBlock(), ticks, player(), Color.BLUE);
+			BlockUtils.glow(startNode.getPathLocation().getBlock(), ticks, player(), Color.RED);
+
+			for (UUID nodeUuid : route.getNodeUuids()) {
+				Node node = web.getNodeById(nodeUuid);
+				Block block = node.getPathLocation().getBlock();
+
+				if (!route.getNodeUuids().getFirst().equals(nodeUuid) && !route.getNodeUuids().getLast().equals(nodeUuid))
+					BlockUtils.glow(block, ticks, player(), Color.WHITE);
+			}
+		});
+	}
+
+	// prioritize neighbor nodes by their distance, depending on the distance from the currentnode to the end node
+	private Route findRoute(Player player, Web web, Node startNode, Node endNode, Node previousNode, Node currentNode, Route route, Set<Node> visited) {
+		Block block = currentNode.getPathLocation().getBlock();
+		Tasks.wait(wait += 10, () -> {
+			player.sendMessage("node visited");
+			if (block.getType().equals(Material.AIR))
+				block.setType(Material.YELLOW_CONCRETE);
+		});
+
+		visited.add(currentNode);
+		List<Node> neighbors = web.getNeighborNodes(currentNode);
+
+		if (neighbors.isEmpty()) {
+			Tasks.wait(wait += 10, () -> {
+				block.setType(Material.GRAY_CONCRETE);
+				player.sendMessage("dead end, going back a node");
+			});
+			route.removeNode(currentNode);
+			return findRoute(player, web, startNode, endNode, currentNode, previousNode, route, visited);
+
+		} else {
+			for (Node neighbor : neighbors) {
+				if (visited.contains(neighbor)) {
+					continue;
+				}
+
+				route.addNode(neighbor);
+				Block neighborBlock = neighbor.getPathLocation().getBlock();
+				if (neighbor.getUuid().equals(endNode.getUuid())) {
+					Tasks.wait(wait += 10, () -> {
+						neighborBlock.setType(Material.BLUE_CONCRETE);
+						player.sendMessage("found end node, returning");
+					});
+					return route;
+				} else {
+					Tasks.wait(wait += 10, () -> {
+						neighborBlock.setType(Material.WHITE_CONCRETE);
+						player.sendMessage("next node");
+					});
+					return findRoute(player, web, startNode, endNode, currentNode, neighbor, route, visited);
+				}
+			}
+
+
+			LinkedList<UUID> routeUuids = route.getNodeUuids();
+			if (routeUuids.isEmpty() || (routeUuids.size() == 1 && routeUuids.getLast().equals(startNode.getUuid()))) {
+				player.sendMessage("no nodes left in route, returning");
+				return route;
+			}
+
+			Node last = web.getNodeById(route.getLast());
+			Block lastBlock = last.getPathLocation().getBlock();
+			if (!last.getUuid().equals(startNode.getUuid()))
+				route.removeNode(last);
+
+			Tasks.wait(wait += 10, () -> {
+				player.sendMessage("previous node");
+				if (!lastBlock.getType().equals(Material.RED_CONCRETE) && !lastBlock.getType().equals(Material.BLUE_CONCRETE))
+					lastBlock.setType(Material.AIR);
+			});
+			return findRoute(player, web, startNode, endNode, currentNode, last, route, visited);
+		}
+	}
+
 	@EventHandler
 	public void onPlaceBlock(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
@@ -126,7 +256,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 			return;
 		}
 
-		Node selectedNode = web.getNodeByLocation(Pathfinder.getSelectedLoc());
+		Node selectedNode = web.getNodeByLocation(PathfinderHelper.getSelectedLoc());
 
 		Location currentLoc = event.getBlock().getRelative(BlockFace.DOWN).getLocation();
 		Node currentNode = web.getNodeByLocation(currentLoc);
@@ -136,7 +266,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		}
 
 		if (type.equals(Material.LIME_CONCRETE_POWDER) && selectedNode == null) {
-			Pathfinder.setSelectedLoc(currentNode.getLocation());
+			PathfinderHelper.setSelectedLoc(currentNode.getLocation());
 			send(player, "&aSelected node at " + getShortLocationString(currentLoc));
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
@@ -154,13 +284,12 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				Block block = neighbor.getLocation().getBlock().getRelative(BlockFace.UP);
 				block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
 
-				Pathfinder.getLineTasks().add(LineEffect.builder()
+				PathfinderHelper.getLineTasks().add(LineEffect.builder()
 						.player(player)
-						.startLoc(currentLoc.clone().add(0, 1, 0))
-						.endLoc(block.getLocation())
-						.density(0.1)
+						.startLoc(LocationUtils.getCenteredLocation(currentLoc.clone().add(0, 1, 0)))
+						.endLoc(LocationUtils.getCenteredLocation(block.getLocation()))
+						.density(0.5)
 						.count(15)
-						.maxLength(3.5)
 						.color(ColorType.RED.getBukkitColor())
 						.ticks(-1)
 						.start()
@@ -213,16 +342,16 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		}
 
 		if (Material.WHITE_CONCRETE_POWDER.equals(type)) {
-			for (Integer taskId : Pathfinder.getLineTasks())
-				Tasks.cancel(taskId);
-
 			for (Node neighbor : web.getNeighborNodes(currentNode))
 				neighbor.getLocation().getBlock().getRelative(BlockFace.UP).setType(Material.AIR);
+
+			for (Integer taskId : PathfinderHelper.getLineTasks())
+				Tasks.cancel(taskId);
 
 			return;
 		}
 
-		Node selectedNode = web.getNodeByLocation(Pathfinder.getSelectedLoc());
+		Node selectedNode = web.getNodeByLocation(PathfinderHelper.getSelectedLoc());
 		if (selectedNode == null) {
 			send(player, "&cYou don't have a node selected");
 			return;
@@ -230,7 +359,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 
 		if (Material.LIME_CONCRETE_POWDER.equals(type)) {
 			send(player, "&2Unselected node at " + getShortLocationString(selectedNode.getLocation()));
-			Pathfinder.setSelectedLoc(null);
+			PathfinderHelper.setSelectedLoc(null);
 
 		} else if (Material.PURPLE_CONCRETE_POWDER.equals(type)) {
 			send(player, "&5Removed nodes as neighbors");
@@ -327,6 +456,16 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 					block.setType(primary);
 			});
 		}
+	}
+
+	private Web getWeb() {
+		BearFair21WebConfigService service = new BearFair21WebConfigService();
+		BearFair21WebConfig config = service.get(Nexus.getUUID0());
+		Web web = config.getById("beehive");
+		if (web == null)
+			error("web is null");
+
+		return web;
 	}
 
 }

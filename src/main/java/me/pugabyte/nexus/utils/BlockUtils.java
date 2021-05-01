@@ -2,16 +2,22 @@ package me.pugabyte.nexus.utils;
 
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.LocationUtils.Axis;
+import me.pugabyte.nexus.utils.Tasks.GlowTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -222,4 +228,37 @@ public class BlockUtils {
 		return block == null || block.getType().equals(Material.AIR);
 	}
 
+	public static void glow(Block block, int ticks, Player viewer) {
+		glow(block, ticks, viewer, Color.RED);
+	}
+
+	public static void glow(Block block, int ticks, Player viewer, Color color) {
+		glow(block, ticks, Collections.singletonList(viewer), color);
+	}
+
+	public static void glow(Block block, int ticks, List<Player> viewers, Color color) {
+		Material material = block.getType();
+		if (ItemUtils.isNullOrAir(material))
+			material = Material.WHITE_CONCRETE;
+
+		Location location = block.getLocation();
+		World blockWorld = block.getWorld();
+		FallingBlock fallingBlock = blockWorld.spawnFallingBlock(LocationUtils.getCenteredLocation(location), material.createBlockData());
+		fallingBlock.setDropItem(false);
+		fallingBlock.setGravity(false);
+		fallingBlock.setInvulnerable(true);
+		fallingBlock.setVelocity(new Vector(0, 0, 0));
+
+		GlowTask.builder()
+				.duration(ticks)
+				.entity(fallingBlock)
+				.color(color)
+				.viewers(viewers)
+				.onComplete(() -> {
+					fallingBlock.remove();
+					for (Player viewer : viewers)
+						viewer.sendBlockChange(location, block.getType().createBlockData());
+				})
+				.start();
+	}
 }
