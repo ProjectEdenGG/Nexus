@@ -80,7 +80,7 @@ public class KitCommand extends CustomCommand implements Listener {
 		for (Kit kit : kits)
 			if (player().hasPermission("kit." + kit.getName().replace(" ", "_")))
 				list.add(kit.getName().replace(" ", "_"));
-		return list.stream().filter(name -> name.contains(filter)).collect(Collectors.toList());
+		return list.stream().filter(name -> name.toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toList());
 	}
 
 	@ConverterFor(Kit.class)
