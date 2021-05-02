@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.interfaces.HasUniqueId;
 import eden.interfaces.PlayerOwnedObject;
 import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
@@ -37,17 +38,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -164,7 +155,26 @@ public class PlayerUtils {
 		return Bukkit.getOfflinePlayer(uuid);
 	}
 
-	public static OfflinePlayer getPlayer(String partialName) {
+	public static OfflinePlayer getPlayer(HasUniqueId uuid) {
+		return getPlayer(uuid.getUniqueId());
+	}
+
+	/**
+	 * Searches for a player whose username or nickname fully or partially matches the given partial name.
+	 * <p>
+	 * Examples:
+	 * <ul>
+	 *     <li>"Griffin" -> Pugabyte</li>
+	 *     <li>"Puga" -> Pugabyte</li>
+	 *     <li>"86d7e0e2-c95e-4f22-8f99-a6e83b398307" -> Pugabyte</li>
+	 *     <li>"Pugabytteee" -> throws PlayerNotFoundException</li>
+	 * </ul>
+	 * @param partialName UUID or partial text of a username/nickname
+	 * @return an offline player
+	 * @throws InvalidInputException input was null or empty
+	 * @throws PlayerNotFoundException a player matching that (nick)name could not be found
+	 */
+	public static OfflinePlayer getPlayer(String partialName) throws InvalidInputException, PlayerNotFoundException {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 

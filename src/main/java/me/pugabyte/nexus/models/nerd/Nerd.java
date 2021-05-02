@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
+import eden.interfaces.HasUniqueId;
 import eden.mongodb.serializers.LocalDateConverter;
 import eden.mongodb.serializers.LocalDateTimeConverter;
 import eden.mongodb.serializers.UUIDConverter;
@@ -59,18 +60,15 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static Nerd of(PlayerOwnedObject player) {
-		return of(player.getUuid());
+	public static Nerd of(HasUniqueId uuid) {
+		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid.getUniqueId());
+		Nerd nerd = new NerdService().get(offlinePlayer);
+		nerd.fromPlayer(offlinePlayer);
+		return nerd;
 	}
 
 	public static Nerd of(UUID uuid) {
-		return of(PlayerUtils.getPlayer(uuid));
-	}
-
-	public static Nerd of(OfflinePlayer player) {
-		Nerd nerd = new NerdService().get(player);
-		nerd.fromPlayer(player);
-		return nerd;
+		return new NerdService().get(uuid);
 	}
 
 	public void fromPlayer(OfflinePlayer player) {

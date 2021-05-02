@@ -1,5 +1,8 @@
 package me.pugabyte.nexus.models;
 
+import eden.interfaces.HasUniqueId;
+import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -31,20 +34,28 @@ import static me.pugabyte.nexus.utils.AdventureUtils.identityOf;
 /**
  * A mongo database object owned by a player
  */
-public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Identified {
+public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Identified, HasPlayer, HasOfflinePlayer {
 
-	default OfflinePlayer getOfflinePlayer() {
+	/**
+	 * Gets the unique ID of this object. Alias for {@link #getUuid()}, for compatibility with {@link HasUniqueId}.
+	 * @return this object's unique ID
+	 */
+	@Override
+	default @NotNull UUID getUniqueId() {return getUuid();}
+
+	default @NotNull OfflinePlayer getOfflinePlayer() {
 		return Bukkit.getOfflinePlayer(getUuid());
 	}
 
-	default Player getPlayer() {
-		if (!getOfflinePlayer().isOnline())
+	default @NotNull Player getPlayer() throws PlayerNotOnlineException {
+		Player player = getOfflinePlayer().getPlayer();
+		if (player == null)
 			throw new PlayerNotOnlineException(getOfflinePlayer());
-		return getOfflinePlayer().getPlayer();
+		return player;
 	}
 
 	default boolean isOnline() {
-		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
+		return getOfflinePlayer().isOnline();
 	}
 
 	default boolean isAfk() {
@@ -55,8 +66,8 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 		return AFK.get(getPlayer()).isTimeAfk();
 	}
 
-	default Nerd getNerd() {
-		return Nerd.of(this.getUuid());
+	default @NotNull Nerd getNerd() {
+		return Nerd.of(this);
 	}
 
 	@Override
@@ -70,7 +81,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 	}
 
 	@Override
-	default String getNickname() {
+	default @NotNull String getNickname() {
 		return Nickname.of(this);
 	}
 

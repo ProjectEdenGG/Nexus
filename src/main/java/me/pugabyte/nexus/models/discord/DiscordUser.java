@@ -58,10 +58,6 @@ public class DiscordUser implements PlayerOwnedObject {
 		return name;
 	}
 
-	public OfflinePlayer getOfflinePlayer() {
-		return PlayerUtils.getPlayer(uuid);
-	}
-
 	public String getIngameName() {
 		return getName();
 	}

@@ -5,7 +5,6 @@ import eden.utils.TimeUtils.Time;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -92,11 +91,6 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 			Tasks.async(super::deleteAll);
 		else
 			super.deleteAll();
-	}
-
-	public T get(OfflinePlayer player) {
-		if (player == null) return null;
-		return get(player.getUniqueId());
 	}
 
 	public List<T> getOnline() {
