@@ -45,10 +45,12 @@ public class Cooldown implements PlayerOwnedObject {
 	 * Ensures the type does not use invalid characters
 	 * @param type an arbitrary string corresponding to the type of cooldown hopefully matching the regex ^[A-Za-z_-]+$
 	 * @throws IllegalArgumentException type uses invalid characters
+	 * @return the input with spaces replaced with underscores
 	 */
-	private void checkType(String type) throws IllegalArgumentException {
+	private String checkType(String type) throws IllegalArgumentException {
 		if (!VALID_TYPE.matcher(type).matches())
 			throw new InvalidInputException("type `" + type + "` must match regex [A-Za-z_-]");
+		return type.replace(' ', '_');
 	}
 
 	/**
@@ -60,7 +62,7 @@ public class Cooldown implements PlayerOwnedObject {
 	 * @return true if a cooldown time is present
 	 */
 	public boolean exists(String type) {
-		checkType(type);
+		type = checkType(type);
 		return cooldowns.containsKey(type);
 	}
 
@@ -71,6 +73,7 @@ public class Cooldown implements PlayerOwnedObject {
 	 * @return expiration time of a cooldown or null if none is set
 	 */
 	public @Nullable LocalDateTime get(String type) {
+		type = checkType(type);
 		return cooldowns.getOrDefault(type, null);
 	}
 
@@ -84,7 +87,7 @@ public class Cooldown implements PlayerOwnedObject {
 	 * @return true if player is not on cooldown
 	 */
 	public boolean check(String type) {
-		checkType(type);
+		type = checkType(type);
 		return !exists(type) || cooldowns.get(type).isBefore(LocalDateTime.now());
 	}
 
@@ -98,7 +101,7 @@ public class Cooldown implements PlayerOwnedObject {
 	 */
 	@NotNull @Contract("_, _ -> this")
 	public Cooldown create(String type, double ticks) {
-		checkType(type);
+		type = checkType(type);
 		cooldowns.put(type, LocalDateTime.now().plusSeconds((long) ticks / 20));
 		return this;
 	}
@@ -108,6 +111,7 @@ public class Cooldown implements PlayerOwnedObject {
 	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_-]+$
 	 */
 	public void clear(String type) {
+		type = checkType(type);
 		cooldowns.remove(type);
 	}
 
