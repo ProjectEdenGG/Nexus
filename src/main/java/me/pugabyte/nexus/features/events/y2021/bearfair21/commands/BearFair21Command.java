@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Fairgrounds;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -7,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 
 @Permission("group.staff")
 @Aliases("bf21")
@@ -32,5 +34,17 @@ public class BearFair21Command extends CustomCommand {
 	void seeker() {
 		send("Find the crimson button");
 		Seeker.addPlayer(player());
+	}
+
+	@Path("rides enable")
+	void ridesEnable() {
+		for (String ride : Fairgrounds.rides)
+			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " enable");
+	}
+
+	@Path("rides disable")
+	void ridesDisable() {
+		for (String ride : Fairgrounds.rides)
+			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " disable");
 	}
 }

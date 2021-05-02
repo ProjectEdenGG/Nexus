@@ -14,11 +14,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Fairgrounds {
+	public static List<String> rides = Arrays.asList("carousel", "chairswing", "droptower", "enterprise",
+			"ferriswheel", "jets", "pendulum", "swingship", "swingtower", "teacups");
+
 	public Fairgrounds() {
 		new Timer("      Interactables", Interactables::new);
 		new Timer("      Minigolf", MiniGolf::new);
