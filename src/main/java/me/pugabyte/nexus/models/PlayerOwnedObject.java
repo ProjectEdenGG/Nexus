@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.models;
 
-import eden.interfaces.HasUniqueId;
 import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasPlayer;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
