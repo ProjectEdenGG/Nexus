@@ -81,7 +81,7 @@ public class Freeze implements PlayerOwnedObject {
 		if (!isOnline())
 			unfreeze();
 		else
-			if (getPlayer().getVehicle() != null && getPlayer().getVehicle() instanceof ArmorStand)
+			if (getOnlinePlayer().getVehicle() != null && getOnlinePlayer().getVehicle() instanceof ArmorStand)
 				unfreeze();
 			else
 				mount();
@@ -90,7 +90,7 @@ public class Freeze implements PlayerOwnedObject {
 	public void mount() {
 		if (!isOnline()) return;
 
-		Player player = getPlayer();
+		Player player = getOnlinePlayer();
 
 		if (armorStandsDisabled) {
 			SpeedCommand.setSpeed(player, 0, false);
@@ -112,7 +112,7 @@ public class Freeze implements PlayerOwnedObject {
 	}
 
 	private void unmount() {
-		Player player = getPlayer();
+		Player player = getOnlinePlayer();
 
 		if (armorStandsDisabled) {
 			SpeedCommand.resetSpeed(player);

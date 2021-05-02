@@ -28,7 +28,7 @@ public class IngameBridgeListener implements Listener {
 		TextChannel discordTextChannel = event.getChannel().getDiscordTextChannel();
 		if (discordTextChannel == null) return;
 
-		Player player = event.getChatter().getPlayer();
+		Player player = event.getChatter().getOnlinePlayer();
 		DiscordUser user = new DiscordUserService().get(player);
 		RoleManager.update(user);
 

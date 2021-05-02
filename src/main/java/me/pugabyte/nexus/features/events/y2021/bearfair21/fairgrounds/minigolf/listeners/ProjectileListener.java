@@ -69,7 +69,7 @@ public class ProjectileListener implements Listener {
 
 			ball.setItem(MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
 			if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getPlayer());
+				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
 
 			// Stroke
 			ball.setCustomName(MiniGolfUtils.getStrokeString(user));

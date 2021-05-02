@@ -43,7 +43,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@Path("[enable] [player]")
 	void run(Boolean enable, @Arg("self") Godmode godmode) {
-		Player player = godmode.getPlayer();
+		Player player = godmode.getOnlinePlayer();
 		if (Godmode.getDisabledWorlds().contains(player.getWorld().getName()))
 			error("Godmode disabled here");
 

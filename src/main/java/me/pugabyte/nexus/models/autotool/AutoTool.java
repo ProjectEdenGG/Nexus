@@ -40,11 +40,11 @@ public class AutoTool implements PlayerOwnedObject {
 			return false;
 		if (!enabled)
 			return false;
-		if (disabledWorlds.contains(getPlayer().getWorld().getName()))
+		if (disabledWorlds.contains(getOnlinePlayer().getWorld().getName()))
 			return false;
-		if (getPlayer().getGameMode() != GameMode.SURVIVAL)
+		if (getOnlinePlayer().getGameMode() != GameMode.SURVIVAL)
 			return false;
-		if (!getPlayer().hasPermission("autotool.use"))
+		if (!getOnlinePlayer().hasPermission("autotool.use"))
 			return false;
 
 		return true;

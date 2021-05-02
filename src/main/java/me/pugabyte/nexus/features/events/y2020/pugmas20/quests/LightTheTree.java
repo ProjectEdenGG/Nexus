@@ -181,7 +181,7 @@ public class LightTheTree implements Listener {
 			user.resetLightTheTree();
 			service.save(user);
 
-			user.getPlayer().getInventory().removeItem(lighter);
+			user.getOnlinePlayer().getInventory().removeItem(lighter);
 
 			animateTreeLightBlocks(player);
 
@@ -261,9 +261,9 @@ public class LightTheTree implements Listener {
 
 	private static void updateFound(Pugmas20User user) {
 		for (int i = 1; i <= user.getTorchesLit(); i++)
-			fire(user.getPlayer(), getLocation("torch", i));
+			fire(user.getOnlinePlayer(), getLocation("torch", i));
 		for (int i = (user.getTorchesLit() + 1); i <= 9; i++)
-			air(user.getPlayer(), getLocation("torch", i));
+			air(user.getOnlinePlayer(), getLocation("torch", i));
 	}
 
 	private static void updateAll(Player player, BiConsumer<Player, Location> method) {

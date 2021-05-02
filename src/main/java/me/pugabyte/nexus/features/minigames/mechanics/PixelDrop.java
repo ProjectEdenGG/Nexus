@@ -248,7 +248,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
-		Player player = event.getChatter().getPlayer();
+		Player player = event.getChatter().getOnlinePlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 		event.setCancelled(true);

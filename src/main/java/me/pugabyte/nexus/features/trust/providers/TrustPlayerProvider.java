@@ -36,7 +36,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 	}
 
 	public void refresh() {
-		open(trust.getPlayer(), trusted);
+		open(trust.getOnlinePlayer(), trusted);
 	}
 
 	@Override

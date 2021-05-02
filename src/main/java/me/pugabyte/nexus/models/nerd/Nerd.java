@@ -137,7 +137,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 	public boolean isVanished() {
 		if (!isOnline())
 			return false;
-		return PlayerUtils.isVanished(getPlayer());
+		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
 	@SneakyThrows
@@ -172,7 +172,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 
 	public Location getLocation() {
 		if (getOfflinePlayer().isOnline())
-			return getPlayer().getPlayer().getLocation();
+			return getOnlinePlayer().getPlayer().getLocation();
 
 		try {
 			NBTFile file = getDataFile();

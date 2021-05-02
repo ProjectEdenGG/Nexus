@@ -108,7 +108,7 @@ public class Punishment implements PlayerOwnedObject {
 
 	public void received() {
 		if (!type.isReceivedIfAfk())
-			if (isOnline() && AFK.get(getPlayer()).isAfk())
+			if (isOnline() && AFK.get(getOnlinePlayer()).isAfk())
 				return;
 
 		actuallyReceived();

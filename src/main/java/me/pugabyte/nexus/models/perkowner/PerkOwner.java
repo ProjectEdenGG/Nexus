@@ -106,8 +106,8 @@ public class PerkOwner implements PlayerOwnedObject {
 			tokens += amount;
 			dailyTokens += amount;
 			try {
-				if (getPlayer() != null)
-					SoundUtils.Jingle.PING.play(getPlayer()); // TODO: unique jingle
+				if (getOnlinePlayer() != null)
+					SoundUtils.Jingle.PING.play(getOnlinePlayer()); // TODO: unique jingle
 				PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for scoring in &e" + arenaName);
 				if (dailyTokens == MAX_DAILY_TOKENS)
 					PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");

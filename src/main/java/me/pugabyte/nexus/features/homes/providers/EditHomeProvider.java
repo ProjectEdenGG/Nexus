@@ -37,7 +37,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 				.size(6, 9)
 				.title(StringUtils.colorize((home.isLocked() ? "&4" : "&a") + StringUtils.camelCase(home.getName())))
 				.build()
-				.open(home.getOwner().getPlayer(), page);
+				.open(home.getOwner().getOnlinePlayer(), page);
 	}
 
 	@Override

@@ -194,7 +194,7 @@ public class PuttListener implements Listener {
 
 				user.setSnowball(ball);
 				if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-					GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getPlayer());
+					GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
 
 				// Remove golf ball from inventory
 				ItemStack itemInHand = event.getItem();

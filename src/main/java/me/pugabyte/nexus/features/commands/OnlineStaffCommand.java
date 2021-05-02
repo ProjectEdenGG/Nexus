@@ -45,12 +45,12 @@ public class OnlineStaffCommand extends CustomCommand {
 	}
 
 	private boolean canSee(Nerd nerd) {
-		return PlayerUtils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
+		return PlayerUtils.canSee(player(), nerd.getOnlinePlayer()) && player().canSee(nerd.getOnlinePlayer());
 	}
 
 	String getNameWithModifiers(Nerd nerd) {
-		boolean vanished = PlayerUtils.isVanished(nerd.getPlayer());
-		boolean afk = AFK.get(nerd.getPlayer()).isAfk();
+		boolean vanished = PlayerUtils.isVanished(nerd.getOnlinePlayer());
+		boolean afk = AFK.get(nerd.getOnlinePlayer()).isAfk();
 
 		String modifiers = "";
 		if (vanished)

@@ -10,7 +10,6 @@ import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
@@ -280,7 +279,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	}
 
 	private boolean validate(JigsawJammer jammer, int length, int height) {
-		Player player = jammer.getPlayer();
+		Player player = jammer.getOnlinePlayer();
 		Block blue = null;
 		Block orange = null;
 		for (Block block : BlockUtils.getBlocksInRadius(player.getLocation(), 20)) {

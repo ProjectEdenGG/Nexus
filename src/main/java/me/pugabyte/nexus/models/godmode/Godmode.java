@@ -41,13 +41,13 @@ public class Godmode implements PlayerOwnedObject {
 
 	public boolean isEnabled() {
 		if (isOnline() && loginLocation != null)
-			if (AFK.isSameLocation(loginLocation, getPlayer().getLocation()))
+			if (AFK.isSameLocation(loginLocation, getOnlinePlayer().getLocation()))
 				return true;
 			else
 				loginLocation = null;
-		if (isOnline() && !PlayerUtils.isStaffGroup(getPlayer()))
+		if (isOnline() && !PlayerUtils.isStaffGroup(getOnlinePlayer()))
 			return false;
-		if (isOnline() && disabledWorlds.contains(getPlayer().getWorld().getName()))
+		if (isOnline() && disabledWorlds.contains(getOnlinePlayer().getWorld().getName()))
 			return false;
 		return enabled;
 	}

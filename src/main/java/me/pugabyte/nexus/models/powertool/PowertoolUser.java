@@ -35,10 +35,10 @@ public class PowertoolUser implements PlayerOwnedObject {
 	private Map<Material, String> powertools = new HashMap<>();
 
 	public void use(Material material) {
-		if (getOfflinePlayer().isOnline() && getPlayer() != null) {
+		if (getOfflinePlayer().isOnline() && getOnlinePlayer() != null) {
 			String command = powertools.get(material);
-			runCommand(getPlayer(), command);
-			Nexus.log("[PT] " + getPlayer().getName() + " issued server command: /" + command);
+			runCommand(getOnlinePlayer(), command);
+			Nexus.log("[PT] " + getOnlinePlayer().getName() + " issued server command: /" + command);
 		}
 	}
 

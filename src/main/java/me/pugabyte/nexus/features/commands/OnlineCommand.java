@@ -62,12 +62,12 @@ public class OnlineCommand extends CustomCommand {
 	}
 
 	private boolean canSee(Nerd nerd) {
-		return PlayerUtils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
+		return PlayerUtils.canSee(player(), nerd.getOnlinePlayer()) && player().canSee(nerd.getOnlinePlayer());
 	}
 
 	void getNameWithModifiers(Nerd nerd, JsonBuilder builder) {
-		boolean vanished = PlayerUtils.isVanished(nerd.getPlayer());
-		boolean afk = AFK.get(nerd.getPlayer()).isAfk();
+		boolean vanished = PlayerUtils.isVanished(nerd.getOnlinePlayer());
+		boolean afk = AFK.get(nerd.getOnlinePlayer()).isAfk();
 
 		String modifiers = "";
 		if (vanished)
@@ -90,7 +90,7 @@ public class OnlineCommand extends CustomCommand {
 	}
 
 	String getInfo(Nerd nerd, String modifiers) {
-		Player player = nerd.getPlayer();
+		Player player = nerd.getOnlinePlayer();
 		Hours hours = new HoursService().get(player.getUniqueId());
 
 		int ping = PlayerUtils.getPing(player);
