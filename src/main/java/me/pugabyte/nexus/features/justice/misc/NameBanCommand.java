@@ -61,6 +61,11 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 		send(PREFIX + "Removed name ban on the word &e" + word);
 	}
 
+	@Path("list")
+	void list() {
+		help();
+	}
+
 	@Path("list names [page]")
 	void listNames(@Arg("1") int page) {
 		config.getBannedNames().forEach((uuid, names) -> send(getPlayer(uuid).getName() + ": " + String.join(", ", names)));
