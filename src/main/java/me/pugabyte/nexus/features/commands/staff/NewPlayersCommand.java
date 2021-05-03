@@ -15,7 +15,6 @@ import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 
@@ -55,7 +54,7 @@ public class NewPlayersCommand extends CustomCommand {
 						.group()
 						.next(" &e" + player.getName() + " &7- " + Timespan.of(sorted.get(player)).format());
 
-		paginate(new ArrayList<>(sorted.keySet()), formatter, "/newplayers", page);
+		paginate(sorted.keySet(), formatter, "/newplayers", page);
 	}
 
 }

@@ -72,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -848,11 +849,11 @@ public abstract class CustomCommand extends ICustomCommand {
 		}};
 	}
 
-	protected <T> void paginate(List<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page) {
+	protected <T> void paginate(Collection<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page) {
 		paginate(values, formatter, command, page, 10);
 	}
 
-	protected <T> void paginate(List<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page, int amount) {
+	protected <T> void paginate(Collection<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page, int amount) {
 		if (page < 1)
 			error("Page number must be 1 or greater");
 
@@ -864,7 +865,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		line();
 		AtomicInteger index = new AtomicInteger(start);
-		values.subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index))));
+		new LinkedList<>(values).subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index))));
 		line();
 
 		boolean first = page == 1;

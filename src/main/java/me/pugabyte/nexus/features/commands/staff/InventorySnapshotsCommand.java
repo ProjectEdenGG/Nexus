@@ -39,7 +39,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -125,7 +124,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 					.command("/tppos " + getShortLocationString(snapshot.getLocation()));
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(nearbyDeaths).keySet()), function, "/inventorysnapshots nearbyDeaths", page);
+		paginate(Utils.sortByValue(nearbyDeaths).keySet(), function, "/inventorysnapshots nearbyDeaths", page);
 	}
 
 	@EventHandler

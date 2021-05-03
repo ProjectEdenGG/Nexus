@@ -16,7 +16,6 @@ import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +140,7 @@ public class TicketsCommand extends CustomCommand {
 
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
 				json("&3" + index + " &e" + Nerd.of(uuid).getNameFormat() + " &7- " + closers.get(uuid));
-		paginate(new ArrayList<>(Utils.sortByValueReverse(closers).keySet()), formatter, "/tickets stats closed", page);
+		paginate(Utils.sortByValueReverse(closers).keySet(), formatter, "/tickets stats closed", page);
 	}
 
 	@ConverterFor(Ticket.class)

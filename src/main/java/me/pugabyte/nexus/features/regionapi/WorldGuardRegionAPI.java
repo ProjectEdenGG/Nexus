@@ -99,7 +99,9 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onEntityMove(EntityMoveEvent event) {
-		updateRegions(event.getEntity(), MovementType.MOVE, event.getTo(), event);
+		// TODO Config option? Taking up quite a bit of tick runtime
+		if (event.getTo().getWorld().getName().equals("bearfair21"))
+			updateRegions(event.getEntity(), MovementType.MOVE, event.getTo(), event);
 	}
 
 	@EventHandler

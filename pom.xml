@@ -32,6 +32,7 @@
                     <compilerArgument>-parameters</compilerArgument>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                     <compilerArguments>
                         <Xmaxerrs>1000000</Xmaxerrs>
                     </compilerArguments>
@@ -100,6 +101,10 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
+            <id>projecteden-repo</id>
+            <url>https://sonatype.projecteden.gg/repository/maven-public/</url>
+        </repository>
+        <repository>
             <id>bn-repo</id>
             <url>http://maven.bnn.gg/repo/</url>
         </repository>
@@ -124,10 +129,6 @@
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
         <repository>
-            <id>nuvotifier-repo</id>
-            <url>https://dl.bintray.com/nuvotifier/maven/</url>
-        </repository>
-        <repository>
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
@@ -148,20 +149,12 @@
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
         <repository>
-            <id>jcenter-repo</id>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-        <repository>
             <id>jda-repo</id>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
         <repository>
             <id>md_5-repo</id>
             <url>https://repo.md-5.net/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>skullcreator-repo</id>
-            <url>https://dl.bintray.com/deanveloper/SkullCreator</url>
         </repository>
     </repositories>
     <dependencies>
@@ -259,9 +252,9 @@
         </dependency>
         <!-- JDA-Utilities -->
         <dependency>
-            <groupId>com.jagrosh</groupId>
+            <groupId>com.github.JDA-Applications.JDA-Utilities</groupId>
             <artifactId>jda-utilities-command</artifactId>
-            <version>3.0.2</version>
+            <version>804d58a5ed</version>
             <scope>compile</scope>
         </dependency>
         <!-- Emoji Parser -->
@@ -419,7 +412,12 @@
             <groupId>com.vexsoftware</groupId>
             <artifactId>nuvotifier-universal</artifactId>
             <version>2.3.4</version>
+            <!---->
+            <systemPath>${project.basedir}/libs/nuvotifier-universal-2.3.4.jar</systemPath>
+            <scope>system</scope>
+            <!-- TODO: Fix when https://github.com/NuVotifier/NuVotifier/issues/234 is resolved
             <scope>provided</scope>
+            -->
         </dependency>
         <!-- ProtocolLib -->
         <dependency>
@@ -536,4 +534,11 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>projecteden-repo</id>
+            <url>https://sonatype.projecteden.gg/repository/maven-releases</url>
+        </repository>
+    </distributionManagement>
 </project>
