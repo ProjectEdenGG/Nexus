@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.socialmedia.TwitterData;
@@ -31,6 +32,7 @@ public class TwitterCommand extends CustomCommand {
 		send(json().next("&e" + BNSocialMediaSite.TWITTER.getUrl()));
 	}
 
+	@Async
 	@Path("lookForNewTweets")
 	void lookForNewTweets() {
 		lookForNewTweets0();
@@ -38,7 +40,7 @@ public class TwitterCommand extends CustomCommand {
 
 	static {
 		if (Nexus.getEnv() == Env.PROD)
-			Tasks.repeat(Time.MINUTE, Time.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
+			Tasks.repeatAsync(Time.MINUTE, Time.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
 	}
 
 	private static void lookForNewTweets0() {
