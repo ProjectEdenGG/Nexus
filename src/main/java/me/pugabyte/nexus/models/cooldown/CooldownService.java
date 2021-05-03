@@ -34,7 +34,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	 * <p>
 	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
 	 * @param player player to check
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_:#-]+$
+	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param time how long the cooldown should last
 	 * @return true if player is not on cooldown
 	 */
@@ -47,7 +47,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	 * <p>
 	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
 	 * @param uuid player UUID to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_:#-]+$
+	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param time how long the cooldown should last
 	 * @return true if player is not on cooldown
 	 */
@@ -60,7 +60,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	 * <p>
 	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
 	 * @param player player to check
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_:#-]+$
+	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param ticks how long the cooldown should last in ticks
 	 * @return true if player is not on cooldown
 	 */
@@ -73,7 +73,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	 * <p>
 	 * Returns true if the player is not on cooldown or if the player bypasses this cooldown. This will also create a new cooldown instance.
 	 * @param uuid player UUID to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_:#-]+$
+	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param ticks how long the cooldown should last in ticks
 	 * @param bypassPermission permission the player must have to bypass this cooldown
 	 * @return true if player is not on cooldown
@@ -91,7 +91,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	 * <p>
 	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
 	 * @param uuid player UUID to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_:#-]+$
+	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param ticks how long the cooldown should last in ticks
 	 * @return true if player is not on cooldown
 	 */
@@ -113,7 +113,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	/**
 	 * Gets a human-readable string for the time left on a player's cooldown.
 	 * @param player player to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_:#-]+$
+	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @return a human-readable string per {@link Timespan#format()}
 	 */
 	public String getDiff(OfflinePlayer player, String type) {
@@ -123,7 +123,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	/**
 	 * Gets a human-readable string for the time left on a player's cooldown.
 	 * @param uuid player UUID to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[A-Za-z_:#-]+$
+	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @return a human-readable string per {@link Timespan#format()}
 	 */
 	public String getDiff(UUID uuid, String type) {
