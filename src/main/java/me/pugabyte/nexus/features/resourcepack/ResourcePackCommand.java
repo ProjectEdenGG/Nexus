@@ -10,10 +10,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUser;
+import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -57,6 +60,30 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			error("You declined the original prompt for the resource pack. In order to use the resource pack, you must edit the server in your server list and change the \"Server Resource Packs\" option to either \"enabled\" or \"prompt\"");
 
 		resourcePack(player());
+	}
+
+	@Path("local [enabled]")
+	@Description("Tell the server you have the resource pack if you have installed it locally")
+	void local(Boolean enabled) {
+		if (enabled == null) {
+			send(PREFIX + "If you have the resource pack installed locally, use &c/rp local true");
+			return;
+		}
+
+		if (enabled && Status.DECLINED != player().getResourcePackStatus())
+			error("You must decline the resource pack in order to run this command");
+
+		LocalResourcePackUserService service = new LocalResourcePackUserService();
+		LocalResourcePackUser user = service.get(player());
+		user.setEnabled(enabled);
+		service.save(user);
+		if (enabled)
+			send(PREFIX + "The server will now trust that you have the resource pack installed");
+		else {
+			send(PREFIX + "The server will now automatically detect if you accept the resource pack download");
+			if (Status.DECLINED != player().getResourcePackStatus())
+				send(PREFIX + "Make sure to enable the resource pack in the server's settings in the multiplayer screen");
+		}
 	}
 
 	@Permission("group.staff")
