@@ -4,6 +4,7 @@ import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 
 import java.util.ArrayList;
@@ -44,6 +45,11 @@ public class ShopService extends MongoService<Shop> {
 
 	public Shop getMarket() {
 		return get(Nexus.getUUID0());
+	}
+
+	@Override
+	protected boolean deleteIf(Shop object) {
+		return StringUtils.isUUID0(object.getUuid());
 	}
 
 }
