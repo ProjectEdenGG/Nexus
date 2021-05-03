@@ -5,6 +5,8 @@ import com.comphenix.packetwrapper.WrapperPlayServerEntityHeadRotation;
 import com.comphenix.packetwrapper.WrapperPlayServerNamedEntitySpawn;
 import com.comphenix.packetwrapper.WrapperPlayServerPlayerInfo;
 import com.comphenix.packetwrapper.WrapperPlayServerTileEntityData;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
@@ -13,13 +15,39 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.mojang.datafixers.util.Pair;
+import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
+import net.minecraft.server.v1_16_R3.DataWatcher;
+import net.minecraft.server.v1_16_R3.DataWatcherRegistry;
+import net.minecraft.server.v1_16_R3.EntityArmorStand;
+import net.minecraft.server.v1_16_R3.EntityItemFrame;
+import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.EnumDirection;
+import net.minecraft.server.v1_16_R3.EnumItemSlot;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class PacketUtils {
 
@@ -83,6 +111,94 @@ public class PacketUtils {
 		headRotation.sendPacket(player);
 	}
 
+	public static void spawnItemFrame(@NonNull Player player, @NonNull Location location, BlockFace blockFace, ItemStack content, int rotation, boolean makeSound, boolean invisible) {
+		if (content == null) content = new ItemStack(Material.AIR);
+		if (blockFace == null) blockFace = BlockFace.NORTH;
+
+		EnumDirection direction = CraftBlock.blockFaceToNotch(blockFace);
+		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+		EntityItemFrame itemFrame = new EntityItemFrame(EntityTypes.ITEM_FRAME, nmsPlayer.world);
+		itemFrame.setLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
+		itemFrame.setItem(CraftItemStack.asNMSCopy(content), true, makeSound);
+		itemFrame.setDirection(direction);
+		itemFrame.setInvisible(invisible);
+		itemFrame.setRotation(rotation);
+
+		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(itemFrame, 71);
+
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(
+				itemFrame.getId(), itemFrame.getDataWatcher(), true);
+
+		sendPackets(player, rawSpawnPacket, rawMetadataPacket);
+	}
+
+	public static void updateItemFrame(@NonNull Player player, @NonNull ItemFrame entity, ItemStack content, int rotation) {
+		if (content == null) content = new ItemStack(Material.AIR);
+
+		EntityItemFrame itemFrame = ((CraftItemFrame) entity).getHandle();
+
+		DataWatcher dataWatcher = itemFrame.getDataWatcher();
+		dataWatcher.set(DataWatcherRegistry.g.a(7), CraftItemStack.asNMSCopy(content));
+		dataWatcher.set(DataWatcherRegistry.b.a(8), rotation);
+
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(
+				itemFrame.getId(), itemFrame.getDataWatcher(), true);
+
+		sendPacket(player, rawMetadataPacket);
+	}
+
+	public static void spawnArmorStand(Player player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible) {
+		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
+
+		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
+		armorStand.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		armorStand.setInvisible(invisible);
+
+		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(armorStand, 78);
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true);
+		PacketPlayOutEntityEquipment rawEquipmentPacket = new PacketPlayOutEntityEquipment(armorStand.getId(), equipment);
+
+		sendPackets(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
+	}
+
+	public static void updateArmorStandArmor(Player player, ArmorStand entity, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment) {
+		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
+		EntityArmorStand armorStand = ((CraftArmorStand) entity).getHandle();
+
+		PacketPlayOutEntityEquipment rawEquipmentPacket = new PacketPlayOutEntityEquipment(armorStand.getId(), equipment);
+
+		sendPacket(player, rawEquipmentPacket);
+	}
 
 
+	public static List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> getEquipmentList() {
+		return getEquipmentList(null, null, null, null);
+	}
+
+	public static List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> getEquipmentList(ItemStack head, ItemStack chest, ItemStack legs, ItemStack feet) {
+		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipmentList = new ArrayList<>();
+		equipmentList.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(head)));
+		equipmentList.add(new Pair<>(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(chest)));
+		equipmentList.add(new Pair<>(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(legs)));
+		equipmentList.add(new Pair<>(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(feet)));
+		return equipmentList;
+	}
+
+
+	private static void sendPackets(Player player, Object... packets) {
+		for (Object packet : packets) {
+			sendPacket(player, packet);
+		}
+	}
+
+	private static void sendPacket(Player player, Object packet) {
+		PacketContainer packetContainer = PacketContainer.fromPacket(packet);
+		try {
+			ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
+		} catch (InvocationTargetException e) {
+			Nexus.log("Error trying to send " + packetContainer + " packet to " + player.getName());
+			e.printStackTrace();
+		}
+	}
 }

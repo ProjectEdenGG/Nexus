@@ -54,7 +54,7 @@ public class ItemBuilder implements Cloneable {
 	public ItemBuilder(ItemStack itemStack) {
 		this.itemStack = itemStack.clone();
 		this.itemMeta = itemStack.getItemMeta();
-		if (itemMeta.getLore() != null)
+		if (itemMeta != null && itemMeta.getLore() != null)
 			this.lore.addAll(itemMeta.getLore());
 	}
 
