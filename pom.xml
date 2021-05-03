@@ -32,6 +32,7 @@
                     <compilerArgument>-parameters</compilerArgument>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                     <compilerArguments>
                         <Xmaxerrs>1000000</Xmaxerrs>
                     </compilerArguments>
@@ -100,6 +101,10 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
+            <id>projecteden-repo</id>
+            <url>https://sonatype.projecteden.gg/repository/maven-public/</url>
+        </repository>
+        <repository>
             <id>bn-repo</id>
             <url>http://maven.bnn.gg/repo/</url>
         </repository>
@@ -124,10 +129,6 @@
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
         <repository>
-            <id>nuvotifier-repo</id>
-            <url>https://dl.bintray.com/nuvotifier/maven/</url>
-        </repository>
-        <repository>
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
@@ -148,20 +149,12 @@
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
         <repository>
-            <id>jcenter-repo</id>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-        <repository>
             <id>jda-repo</id>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
         <repository>
             <id>md_5-repo</id>
             <url>https://repo.md-5.net/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>skullcreator-repo</id>
-            <url>https://dl.bintray.com/deanveloper/SkullCreator</url>
         </repository>
     </repositories>
     <dependencies>
