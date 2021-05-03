@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.menus.SignMenuFactory;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.features.Features;
@@ -60,7 +59,6 @@ import java.util.Locale;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.joining;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.TimeUtils.shortTimeFormat;
 import static org.reflections.ReflectionUtils.getMethods;
@@ -115,15 +113,15 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void log(String message) {
-		getInstance().getLogger().info(stripColor(message));
+		getInstance().getLogger().info(ChatColor.stripColor(message));
 	}
 
 	public static void warn(String message) {
-		getInstance().getLogger().warning(stripColor(message));
+		getInstance().getLogger().warning(ChatColor.stripColor(message));
 	}
 
 	public static void severe(String message) {
-		getInstance().getLogger().severe(stripColor(message));
+		getInstance().getLogger().severe(ChatColor.stripColor(message));
 	}
 
 	@Getter
@@ -261,7 +259,6 @@ public class Nexus extends JavaPlugin {
 		try { broadcastReload();										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { PlayerUtils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
-		try { BFQuests.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
