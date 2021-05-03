@@ -51,11 +51,20 @@ import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PacketUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
+import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -99,7 +108,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -333,7 +341,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		send(PREFIX + "Commands by plugin");
-		paginate(new ArrayList<>(Utils.sortByValueReverse(commands).keySet()), (plugin, index) ->
+		paginate(Utils.sortByValueReverse(commands).keySet(), (plugin, index) ->
 				json("&3" + index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)), "/nexus stats commands", page);
 	}
 
@@ -351,7 +359,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Event Handlers");
 		BiFunction<Class<? extends Event>, String, JsonBuilder> formatter = (clazz, index) ->
 				json("&3" + index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
-		paginate(new ArrayList<>(sorted.keySet()), formatter, "/nexus stats eventHandlers", page);
+		paginate(sorted.keySet(), formatter, "/nexus stats eventHandlers", page);
 	}
 
 	@Confirm
@@ -895,7 +903,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 			return json;
 		};
 
-		paginate(new ArrayList<>(PlayerUtils.getAdvancements().values()), formatter, "/nexus advancements " + player.getName(), page);
+		paginate(PlayerUtils.getAdvancements().values(), formatter, "/nexus advancements " + player.getName(), page);
 	}
 
 	@Path("updateWarpFlags")

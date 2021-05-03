@@ -94,7 +94,7 @@ public class HomesCommand extends CustomCommand {
 				json("&3" + index + " &e" + home.getOwner().getNickname() + " &7- " + home.getName() + " (" + homes.get(home).intValue() + "m)")
 						.command("/home " + home.getOwner().getNickname() + " " + home.getName())
 						.hover("&fClick to teleport");
-		paginate(new ArrayList<>(homes.keySet()), formatter, "/homes near", page);
+		paginate(homes.keySet(), formatter, "/homes near", page);
 	}
 
 	@Async

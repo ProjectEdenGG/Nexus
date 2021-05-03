@@ -184,9 +184,9 @@ public class BridgeCommand extends CustomCommand {
 					.hover("Shift+Click to insert");
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(new HashMap<String, Integer>() {{
+		paginate(Utils.sortByValue(new HashMap<String, Integer>() {{
 			archive.getRoleMap().forEach((k, v) -> put(k, v.size()));
-		}}).keySet()), formatter, "/bridge archive leastUsedRoles", page);
+		}}).keySet(), formatter, "/bridge archive leastUsedRoles", page);
 	}
 
 	@Async
@@ -271,9 +271,9 @@ public class BridgeCommand extends CustomCommand {
 			return json;
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(new HashMap<UUID, Integer>() {{
+		paginate(Utils.sortByValue(new HashMap<UUID, Integer>() {{
 			duplicates.forEach((k, v) -> put(k, v.size()));
-		}}).keySet()), formatter, "/bridge archive findDuplicateRoles", page);
+		}}).keySet(), formatter, "/bridge archive findDuplicateRoles", page);
 	}
 
 	private static final OffsetDateTime grandfather = TimeUtil.getTimeCreated(Long.parseLong("352232748955729930"));
