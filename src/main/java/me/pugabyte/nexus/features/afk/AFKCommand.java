@@ -77,7 +77,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onChat(MinecraftChatEvent event) {
-		AFKPlayer player = AFK.get(event.getChatter().getPlayer());
+		AFKPlayer player = AFK.get(event.getChatter().getOnlinePlayer());
 		if (player.isAfk())
 			player.notAfk();
 		else
@@ -86,11 +86,11 @@ public class AFKCommand extends CustomCommand implements Listener {
 		if (event.getChannel() instanceof PrivateChannel) {
 			for (Chatter recipient : event.getRecipients()) {
 				if (!recipient.getOfflinePlayer().isOnline()) continue;
-				if (!PlayerUtils.canSee(player.getPlayer(), recipient.getPlayer())) return;
-				AFKPlayer to = AFK.get(recipient.getPlayer());
+				if (!PlayerUtils.canSee(player.getPlayer(), recipient.getOnlinePlayer())) return;
+				AFKPlayer to = AFK.get(recipient.getOnlinePlayer());
 				if (AFK.get(to.getPlayer()).isAfk()) {
 					Tasks.wait(3, () -> {
-						if (!(event.getChatter().getPlayer().isOnline() && to.getPlayer().isOnline())) return;
+						if (!(event.getChatter().getOnlinePlayer().isOnline() && to.getPlayer().isOnline())) return;
 
 						String message = "&e* " + Nickname.of(to.getPlayer()) + " is AFK";
 						if (to.getMessage() != null)

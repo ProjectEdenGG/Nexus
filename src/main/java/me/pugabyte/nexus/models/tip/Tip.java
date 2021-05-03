@@ -52,7 +52,7 @@ public class Tip implements PlayerOwnedObject {
 			return false;
 
 		if (tipType.getPredicate() != null)
-			if (!tipType.getPredicate().test(getPlayer()))
+			if (!tipType.getPredicate().test(getOnlinePlayer()))
 				return false;
 
 		if (tipType.getRetryChance() > 0)

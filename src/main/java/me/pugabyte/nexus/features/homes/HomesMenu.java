@@ -35,15 +35,15 @@ public class HomesMenu {
 	}
 
 	public static void edit(HomeOwner homeOwner, int page) {
-		new EditHomesProvider(homeOwner).open(homeOwner.getPlayer(), page);
+		new EditHomesProvider(homeOwner).open(homeOwner.getOnlinePlayer(), page);
 	}
 
 	public static void edit(Home home) {
-		new EditHomeProvider(home).open(home.getOwner().getPlayer());
+		new EditHomeProvider(home).open(home.getOwner().getOnlinePlayer());
 	}
 
 	public static void setHome(HomeOwner homeOwner) {
-		new SetHomeProvider(homeOwner).open(homeOwner.getPlayer());
+		new SetHomeProvider(homeOwner).open(homeOwner.getOnlinePlayer());
 	}
 
 	private static final String[] playerNameLines = {"", ARROWS, "Enter a", "player's name"};
@@ -58,7 +58,7 @@ public class HomesMenu {
 					}
 					onResponse.accept(lines);
 				})
-				.open(home.getOwner().getPlayer());
+				.open(home.getOwner().getOnlinePlayer());
 	}
 
 	public static void remove(Home home, Consumer<String[]> onResponse) {
@@ -71,7 +71,7 @@ public class HomesMenu {
 					}
 					onResponse.accept(lines);
 				})
-				.open(home.getOwner().getPlayer());
+				.open(home.getOwner().getOnlinePlayer());
 	}
 
 	public static void displayItem(Home home, Consumer<String[]> onResponse) {
@@ -83,7 +83,7 @@ public class HomesMenu {
 						ItemStack itemStack = null;
 
 						if ("hand".equalsIgnoreCase(input)) {
-							itemStack = home.getPlayer().getInventory().getItemInMainHand();
+							itemStack = home.getOnlinePlayer().getInventory().getItemInMainHand();
 						} else {
 							Material material = Material.matchMaterial(input);
 							if (material != null) {
@@ -102,7 +102,7 @@ public class HomesMenu {
 						}
 
 						if (itemStack == null) {
-							PlayerUtils.send(home.getPlayer(), HomesFeature.PREFIX + "&cCould not parse item");
+							PlayerUtils.send(home.getOnlinePlayer(), HomesFeature.PREFIX + "&cCould not parse item");
 							displayItem(home, onResponse);
 						} else {
 							home.setItem(itemStack);
@@ -112,7 +112,7 @@ public class HomesMenu {
 
 					onResponse.accept(lines);
 				})
-				.open(home.getOwner().getPlayer());
+				.open(home.getOwner().getOnlinePlayer());
 	}
 
 	public static void rename(Home home, Consumer<String[]> onResponse) {
@@ -121,7 +121,7 @@ public class HomesMenu {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (home.getOwner().getHome(lines[0]).isPresent())
-							PlayerUtils.send(home.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
+							PlayerUtils.send(home.getOnlinePlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							home.setName(lines[0]);
 							new HomeService().save(home.getOwner());
@@ -129,7 +129,7 @@ public class HomesMenu {
 					}
 					onResponse.accept(lines);
 				})
-				.open(home.getOwner().getPlayer());
+				.open(home.getOwner().getOnlinePlayer());
 	}
 
 	public static void create(HomeOwner homeOwner, Consumer<String[]> onResponse) {
@@ -138,20 +138,20 @@ public class HomesMenu {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						if (homeOwner.getHome(lines[0]).isPresent())
-							PlayerUtils.send(homeOwner.getPlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
+							PlayerUtils.send(homeOwner.getOnlinePlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
 							homeOwner.checkHomesLimit();
 							homeOwner.add(Home.builder()
 									.uuid(homeOwner.getUuid())
 									.name(lines[0])
-									.location(homeOwner.getPlayer().getLocation())
+									.location(homeOwner.getOnlinePlayer().getLocation())
 									.build());
 							new HomeService().save(homeOwner);
 						}
 					}
 					onResponse.accept(lines);
 				})
-				.open(homeOwner.getPlayer());
+				.open(homeOwner.getOnlinePlayer());
 	}
 
 	public static String getAccessListNames(Set<UUID> accessList) {

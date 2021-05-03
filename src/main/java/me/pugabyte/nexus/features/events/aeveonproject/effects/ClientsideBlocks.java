@@ -164,7 +164,7 @@ public class ClientsideBlocks implements Listener {
 
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WHITE_CONCRETE))
-					user.getPlayer().sendBlockChange(block.getLocation(), concreteType.createBlockData());
+					user.getOnlinePlayer().sendBlockChange(block.getLocation(), concreteType.createBlockData());
 
 				else if (block.getType().equals(Material.WHITE_BED)) {
 					BlockData blockData = bedType.createBlockData();
@@ -180,7 +180,7 @@ public class ClientsideBlocks implements Listener {
 					newBed.setFacing(oldBed.getFacing());
 
 					blockData = newBed;
-					user.getPlayer().sendBlockChange(block.getLocation(), blockData);
+					user.getOnlinePlayer().sendBlockChange(block.getLocation(), blockData);
 				}
 			}
 		}

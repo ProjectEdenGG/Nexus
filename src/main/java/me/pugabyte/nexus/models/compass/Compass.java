@@ -47,7 +47,7 @@ public class Compass implements PlayerOwnedObject {
 		stop();
 
 		bossBar = Bukkit.createBossBar(getCompass(), BarColor.BLUE, BarStyle.SEGMENTED_6);
-		bossBar.addPlayer(getPlayer());
+		bossBar.addPlayer(getOnlinePlayer());
 		taskId = Tasks.repeatAsync(0, 2, () -> {
 			if (!isOnline())
 				stop();
@@ -68,6 +68,6 @@ public class Compass implements PlayerOwnedObject {
 	}
 
 	public String getCompass() {
-		return StringUtils.compass(getPlayer(), 14, 6);
+		return StringUtils.compass(getOnlinePlayer(), 14, 6);
 	}
 }

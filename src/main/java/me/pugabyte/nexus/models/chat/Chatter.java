@@ -40,7 +40,7 @@ public class Chatter implements PlayerOwnedObject {
 
 	public void say(String message) {
 		if (message.startsWith("/"))
-			PlayerUtils.runCommand(getPlayer(), trimFirst(message));
+			PlayerUtils.runCommand(getOnlinePlayer(), trimFirst(message));
 		else
 			say(getActiveChannel(), message);
 	}

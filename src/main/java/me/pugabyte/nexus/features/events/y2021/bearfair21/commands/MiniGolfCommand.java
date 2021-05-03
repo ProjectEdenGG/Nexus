@@ -140,7 +140,7 @@ public class MiniGolfCommand extends CustomCommand {
 	@Path("clearUser <user>")
 	@Confirm
 	void resetData(MiniGolf21User _user) {
-		if (!isSelf(_user.getPlayer()))
+		if (!isSelf(_user.getOnlinePlayer()))
 			user = _user;
 
 		service.delete(user);

@@ -97,12 +97,12 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (isVanished(victim.getPlayer()) || isVanished(attacker.getPlayer())) {
+		if (isVanished(victim.getOnlinePlayer()) || isVanished(attacker.getOnlinePlayer())) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (victim.getPlayer().getGameMode() != GameMode.SURVIVAL || attacker.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+		if (victim.getOnlinePlayer().getGameMode() != GameMode.SURVIVAL || attacker.getOnlinePlayer().getGameMode() != GameMode.SURVIVAL) {
 			event.setCancelled(true);
 			return;
 		}

@@ -280,7 +280,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean validate(JigsawJammer jammer) {
-		Player player = jammer.getPlayer();
+		Player player = jammer.getOnlinePlayer();
 		Block blue = null;
 		Block orange = null;
 		for (Block block : BlockUtils.getBlocksInRadius(player.getLocation(), 20)) {

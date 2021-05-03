@@ -63,7 +63,7 @@ public class TicketCommand extends CustomCommand {
 			Discord.staffLog(message);
 			Discord.staffBridge(message + (onlineMods.size() == 0 ? " [ @here ]" : ""));
 
-			onlineMods.forEach(mod -> Jingle.PING.play(mod.getPlayer()));
+			onlineMods.forEach(mod -> Jingle.PING.play(mod.getOnlinePlayer()));
 			Chat.broadcastIngame("", StaticChannel.STAFF);
 			Chat.broadcastIngame(PREFIX + "&e" + name() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), StaticChannel.STAFF);
 			Chat.broadcastIngame(Tickets.getTicketButtons(ticket), StaticChannel.STAFF);

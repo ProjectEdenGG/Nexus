@@ -50,7 +50,7 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 
 	@Override
 	public void open(Player viewer, int page) {
-		getMenu().open(user.getPlayer());
+		getMenu().open(user.getOnlinePlayer());
 	}
 
 	private SmartInventory getMenu() {

@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.models.nerd;
 
-import eden.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.models.hours.HoursService;
@@ -12,8 +12,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
@@ -136,20 +134,16 @@ public enum Rank implements ColoredAndNamed {
 				.collect(Collectors.toList());
 	}
 
-	public static Rank of(PlayerOwnedObject player) {
-		return of(Bukkit.getOfflinePlayer(player.getUuid()));
+	public static Rank of(UUID player) {
+		return of(Bukkit.getOfflinePlayer(player));
 	}
 
-	public static Rank of(Player player) {
-		return of(Bukkit.getOfflinePlayer(player.getUniqueId()));
-	}
-
-	public static Rank of(OfflinePlayer player) {
+	public static Rank of(HasOfflinePlayer player) {
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 
 		for (Rank rank : ranks)
-			if (Nexus.getPerms().playerInGroup(null, player, rank.name()))
+			if (Nexus.getPerms().playerInGroup(null, player.getOfflinePlayer(), rank.name()))
 				return rank;
 
 		return GUEST;

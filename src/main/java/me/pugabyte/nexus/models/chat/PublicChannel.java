@@ -66,13 +66,13 @@ public class PublicChannel implements Channel {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
 			recipients.addAll(Bukkit.getOnlinePlayers().stream()
-					.filter(player -> player.getWorld().equals(chatter.getPlayer().getWorld()))
-					.filter(player -> player.getLocation().distance(chatter.getPlayer().getLocation()) <= Chat.getLocalRadius())
+					.filter(player -> player.getWorld().equals(chatter.getOnlinePlayer().getWorld()))
+					.filter(player -> player.getLocation().distance(chatter.getOnlinePlayer().getLocation()) <= Chat.getLocalRadius())
 					.collect(Collectors.toList()));
 		else if (crossWorld)
 			recipients.addAll(Bukkit.getOnlinePlayers());
 		else
-			recipients.addAll(chatter.getPlayer().getWorld().getPlayers());
+			recipients.addAll(chatter.getOnlinePlayer().getWorld().getPlayers());
 
 		return recipients.stream()
 				.map(player -> new ChatService().get(player))
