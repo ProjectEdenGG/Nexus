@@ -102,10 +102,6 @@
             <url>https://sonatype.projecteden.gg/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>bn-repo</id>
-            <url>http://maven.bnn.gg/repo/</url>
-        </repository>
-        <repository>
             <id>multiverse-repo</id>
             <url>http://repo.onarandombox.com/content/groups/public/</url>
         </repository>
