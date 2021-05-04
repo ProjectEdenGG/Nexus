@@ -777,10 +777,10 @@ public abstract class CustomCommand extends ICustomCommand {
 			return ChatColor.of(value.replaceFirst("&", ""));
 
 		try {
-			return ChatColor.of(value.toUpperCase());
+			return ColorType.valueOf(value.toUpperCase()).getChatColor();
 		} catch (IllegalArgumentException ex) {
 			try {
-				return ColorType.valueOf(value.toUpperCase()).getChatColor();
+				return ChatColor.of(value.toUpperCase());
 			} catch (IllegalArgumentException ex2) {
 				throw new InvalidInputException("Color &e" + value + "&c not found");
 			}
@@ -789,9 +789,9 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor(ChatColor.class)
 	List<String> tabCompleteChatColor(String filter) {
-		return Arrays.stream(ChatColor.values())
-				.map(ChatColor::getName)
-				.filter(name -> name.startsWith(filter.toLowerCase()))
+		return Arrays.stream(ColorType.values())
+				.map(ColorType::getName)
+				.filter(name -> name.startsWith(filter.toUpperCase()))
 				.collect(toList());
 	}
 
