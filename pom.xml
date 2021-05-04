@@ -26,22 +26,19 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <compilerArgument>-parameters</compilerArgument>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <release>15</release>
                     <encoding>UTF-8</encoding>
-                    <compilerArguments>
-                        <Xmaxerrs>1000000</Xmaxerrs>
-                    </compilerArguments>
+                    <compilerArgument>-parameters</compilerArgument>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
