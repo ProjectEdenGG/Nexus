@@ -137,7 +137,7 @@ public class SocialMedia extends Feature implements Listener {
 			public String getUrl() {
 				String url = "https://discord.projecteden.gg";
 				if (Discord.getGuild() != null && Discord.getGuild().getBoostTier().getKey() == 3)
-					url = "https://discord.gg/bearnation";
+					url = "https://discord.gg/projecteden";
 				return url;
 			}
 		},
