@@ -55,7 +55,7 @@ public class DiscordCaptcha implements PlayerOwnedObject {
 					.addReaction(EmojiManager.getForAlias("thumbsup").getUnicode()).queue();
 		}
 
-		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
+		new TaskService().save(new Task(taskId, new HashMap<>() {{
 			put("id", id);
 		}}, LocalDateTime.now().plusMinutes(9)));
 	}

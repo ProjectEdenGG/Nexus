@@ -120,7 +120,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 				rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
 	}
 
-	private static final List<Material> colors = new ArrayList<Material>() {{
+	private static final List<Material> colors = new ArrayList<>() {{
 		add(Material.RED_STAINED_GLASS_PANE);
 		add(Material.ORANGE_STAINED_GLASS_PANE);
 		add(Material.YELLOW_STAINED_GLASS_PANE);

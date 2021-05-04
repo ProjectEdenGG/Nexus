@@ -96,7 +96,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		if (entities.size() <= MAX_DROPPED_ENTITIES)
 			return;
 
-		Map<Item, Integer> ticksLived = new HashMap<Item, Integer>() {{
+		Map<Item, Integer> ticksLived = new HashMap<>() {{
 			for (Item entity : entities)
 				put(entity, entity.getTicksLived());
 		}};

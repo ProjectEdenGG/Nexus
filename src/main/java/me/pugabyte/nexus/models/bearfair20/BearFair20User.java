@@ -103,7 +103,7 @@ public class BearFair20User implements PlayerOwnedObject {
 	}
 
 	public void giveDailyPoints(BF20PointSource source) {
-		pointsReceivedToday.putIfAbsent(source, new HashMap<LocalDate, Integer>() {{
+		pointsReceivedToday.putIfAbsent(source, new HashMap<>() {{
 			put(LocalDate.now(), 0);
 		}});
 

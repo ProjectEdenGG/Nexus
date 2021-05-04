@@ -174,7 +174,7 @@ public abstract class ICustomCommand {
 		Object[] convertedSwitches = convertSwitches(method, event, doValidation, switches);
 		Object[] convertedParameters = convertParameters(method, event, doValidation, parameters);
 
-		return new ArrayList<Object>() {{
+		return new ArrayList<>() {{
 			addAll(Arrays.asList(convertedParameters));
 			addAll(Arrays.asList(convertedSwitches));
 		}}.toArray(new Object[0]);

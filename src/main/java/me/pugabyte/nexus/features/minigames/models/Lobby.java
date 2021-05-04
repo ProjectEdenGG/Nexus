@@ -39,7 +39,7 @@ public class Lobby implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("waitTime", getWaitTime());
 			put("location", getLocation());
 		}};

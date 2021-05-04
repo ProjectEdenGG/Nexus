@@ -23,7 +23,7 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 public class ActionBar {
 	private static final int DELAY = Time.SECOND.x(5);
 
-	private List<String> messages = new ArrayList<String>() {{
+	private List<String> messages = new ArrayList<>() {{
 		add("&3You are currently in the &eMinigame Lobby&3!");
 		add("&3Right click a sign to join a game.");
 		add("&3Join us at &e{local_mgn_time} &3on &e{local_mgn_day} &3for &eMinigame Night!");

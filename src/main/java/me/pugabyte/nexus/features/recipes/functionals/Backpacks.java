@@ -70,7 +70,7 @@ public class Backpacks extends FunctionalRecipe {
 
 	@Override
 	public List<ItemStack> getIngredients() {
-		return new ArrayList<ItemStack>() {{
+		return new ArrayList<>() {{
 			add(new ItemStack(Material.LEATHER));
 			add(new ItemStack(Material.TRIPWIRE_HOOK));
 			add(new ItemStack(Material.SHULKER_SHELL));

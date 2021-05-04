@@ -31,7 +31,7 @@ public class Kit implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("name", name);
 			put("items", SerializationUtils.YML.serializeItems(items));
 			put("delay", delay);

@@ -286,7 +286,9 @@ public class Punishments implements PlayerOwnedObject {
 	@NotNull
 	public Set<UUID> getAlts() {
 		final PunishmentsService service = new PunishmentsService();
-		Set<UUID> alts = new HashSet<UUID>() {{ add(uuid); }};
+		Set<UUID> alts = new HashSet<>() {{
+			add(uuid);
+		}};
 		Set<UUID> newMatches = new HashSet<>(alts);
 
 		int size = 1;

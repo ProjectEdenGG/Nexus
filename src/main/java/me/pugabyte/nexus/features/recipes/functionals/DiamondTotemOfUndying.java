@@ -41,7 +41,7 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Override
 	public List<ItemStack> getIngredients() {
-		return new ArrayList<ItemStack>() {{
+		return new ArrayList<>() {{
 			add(new ItemStack(Material.DIAMOND));
 			add(new ItemStack(Material.TOTEM_OF_UNDYING));
 		}};

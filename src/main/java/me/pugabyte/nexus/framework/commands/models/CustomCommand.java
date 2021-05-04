@@ -839,7 +839,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor(LivingEntity.class)
 	protected List<String> tabCompleteLivingEntity(String value) {
-		return new ArrayList<String>() {{
+		return new ArrayList<>() {{
 			for (EntityType entityType : EntityType.values()) {
 				Class<? extends Entity> entityClass = entityType.getEntityClass();
 				if (entityClass != null && LivingEntity.class.isAssignableFrom(entityClass))

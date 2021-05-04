@@ -39,7 +39,7 @@ public class Merchants {
 		ORNAMENT_VENDOR(3083) {
 			@Override
 			public List<TradeBuilder> getTrades(Pugmas20User user) {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					for (Ornament ornament : Ornament.values()) {
 						if (!user.canTradeOrnament(ornament))
 							continue;
@@ -55,7 +55,7 @@ public class Merchants {
 		BLACKSMITH(3109) {
 			@Override
 			public List<TradeBuilder> getTrades(Pugmas20User user) {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(LightTheTree.steel_ingot)
 							.ingredient(OreType.COAL.getIngot(1))
@@ -67,7 +67,7 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(Pugmas20User user) {
 				Ornament.loadHeads();
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(Pugmas20.questItem(Material.GOLD_INGOT))
 							.ingredient(OreType.LIGHT_ANIMICA.getIngot(15)));

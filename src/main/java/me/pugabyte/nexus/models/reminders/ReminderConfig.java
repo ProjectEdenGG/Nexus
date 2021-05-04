@@ -54,7 +54,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("reminders", reminders);
 		}};
 	}
@@ -169,7 +169,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 
 		@Override
 		public Map<String, Object> serialize() {
-			return new LinkedHashMap<String, Object>() {{
+			return new LinkedHashMap<>() {{
 				put("id", id);
 				put("text", text);
 				put("command", command);

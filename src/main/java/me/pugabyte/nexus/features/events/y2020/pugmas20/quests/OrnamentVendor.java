@@ -364,7 +364,7 @@ public class OrnamentVendor implements Listener {
 		public static String taskId = "pugmas-tree-regen";
 
 		public void onBreak(int id) {
-			new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
+			new TaskService().save(new Task(taskId, new HashMap<>() {{
 				put("tree", name());
 				put("id", id);
 			}}, LocalDateTime.now().plusSeconds(randomInt(3 * 60, 5 * 60))));

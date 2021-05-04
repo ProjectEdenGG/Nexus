@@ -51,28 +51,28 @@ public class Quests {
 	@Getter
 	@AllArgsConstructor
 	public enum Pugmas20Quest implements Quest {
-		GIFT_GIVER(user -> new HashMap<QuestStage, String>() {{
+		GIFT_GIVER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.JADE.getName() + " in the Workshop");
 		}}),
 
-		TOY_TESTING(user -> new HashMap<QuestStage, String>() {{
+		TOY_TESTING(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.QA_ELF.getName() + " in the Workshop");
 			put(QuestStage.STARTED, "Test the remaining toys");
 			put(QuestStage.STEPS_DONE, "Talk to " + QuestNPC.QA_ELF.getName());
 		}}),
 
-		THE_MINES(user -> new HashMap<QuestStage, String>() {{
+		THE_MINES(user -> new HashMap<>() {{
 			put(QuestStage.INELIGIBLE, "Complete Light The Tree");
 			put(QuestStage.NOT_STARTED, "Talk to " + QuestNPC.FORELF.getName() + " in the coal mine");
 			put(QuestStage.STARTED, "Trade ingots in the crate next to " + QuestNPC.FORELF.getName());
 		}}),
 
-		ORNAMENT_VENDOR(user -> new HashMap<QuestStage, String>() {{
+		ORNAMENT_VENDOR(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.HAZELNUT.getName() + " near the Pugmas tree");
 			put(QuestStage.STARTED, "Trade logs with the Ornament Vendor and bring each of the 10 ornaments to " + QuestNPC.HAZELNUT.getName());
 		}}),
 
-		LIGHT_THE_TREE(user -> new HashMap<QuestStage, String>() {{
+		LIGHT_THE_TREE(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.NOUGAT.getName() + " near the Pugmas tree");
 			put(QuestStage.STARTED, "Find " + QuestNPC.CINNAMON.getName() + " in the workshop");
 			put(QuestStage.STEP_ONE, "Help " + QuestNPC.CINNAMON.getName() + " find the Ceremonial Lighter in the basement");

@@ -63,7 +63,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 	@Path("topLocations [page]")
 	@Permission("group.admin")
 	void topLocations(@Arg("1") int page) {
-		Map<Location, Integer> counts = new HashMap<Location, Integer>() {{
+		Map<Location, Integer> counts = new HashMap<>() {{
 			for (Easter21User user : new Easter21UserService().getAll())
 				for (Location location : user.getFound())
 					put(location, getOrDefault(location, 0) + 1);

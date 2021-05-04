@@ -52,7 +52,7 @@ public class Nickname extends eden.models.nickname.Nickname implements PlayerOwn
 	}
 
 	@Getter
-	private static final Map<Role, Integer> requiredVotes = new HashMap<Role, Integer>() {{
+	private static final Map<Role, Integer> requiredVotes = new HashMap<>() {{
 		put(Role.ADMINS, 3);
 	}};
 

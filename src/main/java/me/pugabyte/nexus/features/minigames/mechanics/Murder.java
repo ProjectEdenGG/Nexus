@@ -204,7 +204,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	public Map<String, Integer> getScoreboardLines(Match match) {
-		return new HashMap<String, Integer>() {{
+		return new HashMap<>() {{
 			match.getMinigamers().stream().filter(Minigamer::isAlive)
 					.forEach(minigamer -> put(minigamer.getNickname(), 0));
 		}};
@@ -252,7 +252,9 @@ public class Murder extends TeamMechanic {
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
-			List<Material> allowedRedstone = new ArrayList<Material>() {{ add(Material.LEVER); }};
+			List<Material> allowedRedstone = new ArrayList<>() {{
+				add(Material.LEVER);
+			}};
 			allowedRedstone.addAll(MaterialTag.BUTTONS.getValues());
 			if (allowedRedstone.contains(event.getClickedBlock().getType()))
 				return;

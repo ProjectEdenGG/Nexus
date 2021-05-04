@@ -39,7 +39,7 @@ public class Fairgrounds {
 		String rg = BearFair21.getRegion();
 
 		// Drop Tower
-		Map<String, Location> towerLights = new HashMap<String, Location>() {{
+		Map<String, Location> towerLights = new HashMap<>() {{
 			put(rg + "_droptower_light_1", new Location(BearFair21.getWorld(), 147, 145, -37));
 			put(rg + "_droptower_light_2", new Location(BearFair21.getWorld(), 147, 157, -37));
 			put(rg + "_droptower_light_3", new Location(BearFair21.getWorld(), 147, 169, -37));

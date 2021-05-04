@@ -88,7 +88,7 @@ public class EntitiesCommand extends CustomCommand {
 
 	@Path("villagers [world]")
 	void villagers(@Arg("current") World world) {
-		HashMap<Chunk, Villager> map = new HashMap<Chunk, Villager>() {{
+		HashMap<Chunk, Villager> map = new HashMap<>() {{
 			for (Entity entity : world.getEntities())
 				if (entity.getType() == EntityType.VILLAGER)
 					put(entity.getChunk(), (Villager) entity);

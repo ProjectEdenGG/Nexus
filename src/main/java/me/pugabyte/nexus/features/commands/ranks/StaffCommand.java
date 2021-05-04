@@ -30,7 +30,7 @@ public class StaffCommand extends CustomCommand {
 		Collections.reverse(ranks);
 
 		AtomicInteger total = new AtomicInteger();
-		Map<Rank, List<Nerd>> map = new LinkedHashMap<Rank, List<Nerd>>() {{
+		Map<Rank, List<Nerd>> map = new LinkedHashMap<>() {{
 			ranks.forEach(rank -> {
 				put(rank, rank.getNerds());
 				total.addAndGet(get(rank).size());

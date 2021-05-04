@@ -239,7 +239,7 @@ public class BridgeCommand extends CustomCommand {
 	@Async
 	@Path("archive findDuplicateRoles [page]")
 	void archive_findDuplicateRoles(@Arg("1") int page) {
-		Map<UUID, List<String>> duplicates = new HashMap<UUID, List<String>>() {{
+		Map<UUID, List<String>> duplicates = new HashMap<>() {{
 			for (String roleId : archive.getRoleMap().keySet()) {
 				Role role = Discord.getGuild().getRoleById(roleId);
 				DiscordUser user = new DiscordUserService().getFromRoleId(roleId);

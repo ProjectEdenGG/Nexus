@@ -32,7 +32,7 @@ public class PunishmentsService extends MongoService<Punishments> {
 	public List<Punishments> getAlts(List<Punishments> players) {
 		Query<Punishments> query = database.createQuery(Punishments.class);
 
-		List<String> ips = new ArrayList<String>() {{
+		List<String> ips = new ArrayList<>() {{
 			for (Punishments player : players) {
 				query.and(query.criteria("_id").notEqual(player.getUuid()));
 				addAll(player.getIps());

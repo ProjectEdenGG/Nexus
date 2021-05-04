@@ -53,7 +53,7 @@ public class Trust implements PlayerOwnedObject {
 	}
 
 	public Set<UUID> getAll() {
-		return new HashSet<UUID>() {{
+		return new HashSet<>() {{
 			for (Trust.Type type : Trust.Type.values())
 				addAll(get(type));
 		}};

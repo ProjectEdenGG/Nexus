@@ -90,7 +90,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public void setDescription(List<String> description) {
-		this.description = new ArrayList<String>() {{
+		this.description = new ArrayList<>() {{
 			for (String line : description)
 				if (!isNullOrEmpty(stripColor(line).replace(StringUtils.getColorChar(), "")))
 					add(line.startsWith("&") ? line : "&f" + line);

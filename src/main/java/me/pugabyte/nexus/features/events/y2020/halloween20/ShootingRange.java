@@ -156,7 +156,7 @@ public class ShootingRange implements Listener {
     }
 
     private Location getRandomTarget(){
-        ArrayList<Location> locations = new ArrayList<Location>(targets.keySet());
+        ArrayList<Location> locations = new ArrayList<>(targets.keySet());
         return RandomUtils.randomElement(locations);
     }
 

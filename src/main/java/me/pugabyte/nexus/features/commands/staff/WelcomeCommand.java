@@ -31,7 +31,7 @@ import java.util.List;
 public class WelcomeCommand extends CustomCommand {
 	private static String lastMessage = null;
 
-	List<String> messages = new ArrayList<String>() {{
+	List<String> messages = new ArrayList<>() {{
 		add("Welcome to the server [player]! Make sure to read the /rules and feel free to ask questions.");
 		add("Welcome to Project Eden [player]! Please take a moment to read the /rules and feel free to ask any questions you have.");
 		add("Hi [player], welcome to Project Eden :) Please read the /rules and ask if you have any questions.");

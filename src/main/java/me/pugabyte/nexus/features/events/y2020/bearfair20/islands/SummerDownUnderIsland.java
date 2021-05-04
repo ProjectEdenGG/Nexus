@@ -140,7 +140,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				return startQuest;
 			}
 		},
-		FARMER(2752, new ArrayList<String>() {{
+		FARMER(2752, new ArrayList<>() {{
 			add("G’day g’day, the crops are fresh and lookin’ real mean");
 			add("wait 80");
 			add("Oh you need it for the ANZAC Biscuit? Crikey, we haven’t had those around here for months! " +

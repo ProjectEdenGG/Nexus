@@ -100,7 +100,9 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 
 			if (relative.getState() instanceof CommandBlock) {
 				CommandBlock commandBlock = (CommandBlock) relative.getState();
-				sounds.put(wait, new ArrayList<String>(sounds.getOrDefault(wait, new ArrayList<>())) {{ add(commandBlock.getCommand()); }});
+				sounds.put(wait, new ArrayList<>(sounds.getOrDefault(wait, new ArrayList<>())) {{
+					add(commandBlock.getCommand());
+				}});
 				treeWait.put(relative.getLocation(), wait);
 				found(relative);
 				look(relative, direction.getOppositeFace());
