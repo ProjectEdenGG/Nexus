@@ -25,7 +25,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -55,12 +54,12 @@ public class MuteMenuCommand extends CustomCommand {
 			CHANNEL_MINIGAMES("Minigames Chat", Material.CYAN_WOOL, "chat.use.minigames"),
 			CHANNEL_CREATIVE("Creative Chat", Material.LIGHT_BLUE_WOOL, "chat.use.creative"),
 			CHANNEL_SKYBLOCK("Skyblock Chat", Material.ORANGE_WOOL, "chat.use.skyblock"),
-			REMINDERS("Reminders", Material.REPEATER, Arrays.asList("Periodic reminders about", "features and events")),
+			REMINDERS("Reminders", Material.REPEATER, List.of("Periodic reminders about", "features and events")),
 			AFK("AFK Broadcasts", Material.REDSTONE_LAMP),
 			JOIN_QUIT("Join/Quit Messages", Material.OAK_FENCE_GATE),
 			DEATH_MESSAGES("Death Messages", Material.PLAYER_HEAD),
 			BOSS_FIGHT("Boss Fight Broadcasts", Material.NETHER_STAR),
-			CRATES("Crate Broadcasts", Material.CHEST, Arrays.asList("Broadcasts when players win", "rare items from crates")),
+			CRATES("Crate Broadcasts", Material.CHEST, List.of("Broadcasts when players win", "rare items from crates")),
 			EVENTS("Event Broadcasts", Material.BEACON),
 			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD),
 			QUEUP("QueUp Song Updates", Material.MUSIC_DISC_MALL),
