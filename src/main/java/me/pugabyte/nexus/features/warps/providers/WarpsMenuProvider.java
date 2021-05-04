@@ -147,8 +147,8 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack wog = nameItem(Material.OAK_SIGN, "&3Walls of Grace");
 				ItemStack banners = nameItem(Material.CYAN_BANNER, "&3Banners");
 				ItemStack storetesting = nameItem(Material.GOLD_INGOT, "&3Store Perk Testing Area");
-				ItemStack walkthrough = nameItem(Material.NETHER_STAR, "&3Two Year Anniversary", "&e&lHistory Walkthrough||&eCelebrating 2 years||&eof Bear Nation");
-				ItemStack bearfair = nameItem(Material.FIREWORK_ROCKET, "&3Three Year Anniversary", "&e&lBear Fair||&eCelebrating 3 years||&eof Bear Nation");
+				ItemStack walkthrough = nameItem(Material.NETHER_STAR, "&3Two Year Anniversary", "&e&lHistory Walkthrough||&eCelebrating 2 years||&eof Project Eden");
+				ItemStack bearfair = nameItem(Material.FIREWORK_ROCKET, "&3Three Year Anniversary", "&e&lBear Fair||&eCelebrating 3 years||&eof Project Eden");
 				ItemStack buildcontests = nameItem(Material.CHEST, "&3Past Build Contests");
 
 				contents.set(1, 1, ClickableItem.from(leaderboards, e -> warp(player, "leaderboards")));

@@ -63,9 +63,9 @@ public class InviteRewardsCommand extends CustomCommand {
 			error("You have to play for an hour before you can do that.");
 
 		send(inviter, PREFIX + "&e" + invited.getName() + "&3 has confirmed your invite; thank you for " +
-				"helping Bear Nation grow! You earned &e15 vote points");
+				"helping Project Eden grow! You earned &e15 vote points");
 		send(invited, PREFIX + "You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you " +
-				"for flying Bear Nation!");
+				"for flying Project Eden!");
 		reward(inviter);
 		saveInvitation(inviter, invited);
 	}
@@ -86,7 +86,7 @@ public class InviteRewardsCommand extends CustomCommand {
 	private void sendInviteConfirmation(Player inviter, Player invited) {
 		// Invited player
 		send(invited, "");
-		send(invited, json("  &3Did &e" + Nickname.of(inviter) + " &3invite you to Bear Nation?"));
+		send(invited, json("  &3Did &e" + Nickname.of(inviter) + " &3invite you to Project Eden?"));
 
 		send(invited, json()
 				.next("  &3Click one  ||").color(NamedTextColor.DARK_AQUA)

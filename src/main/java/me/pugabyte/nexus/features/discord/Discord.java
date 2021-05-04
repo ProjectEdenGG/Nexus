@@ -7,7 +7,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -116,7 +116,7 @@ public class Discord extends Feature {
 	@Nullable
 	public static Guild getGuild() {
 		if (Bot.KODA.jda() == null) return null;
-		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
+		return Bot.KODA.jda().getGuildById(DiscordId.Guild.PROJECT_EDEN.getId());
 	}
 
 	@Deprecated
@@ -226,7 +226,7 @@ public class Discord extends Feature {
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get();
 		if (!Strings.isNullOrEmpty(queup.getLastSong()))
-			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + BNSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
 
 		return topic;
 	}

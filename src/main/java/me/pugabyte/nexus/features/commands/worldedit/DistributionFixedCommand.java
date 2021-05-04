@@ -41,7 +41,6 @@ public class DistributionFixedCommand extends CustomCommand {
 		if (region == null)
 			error("Make a selection first");
 
-
 		Map<Material, Integer> counts = new HashMap<>();
 		Map<Material, Double> percentages = new HashMap<>();
 

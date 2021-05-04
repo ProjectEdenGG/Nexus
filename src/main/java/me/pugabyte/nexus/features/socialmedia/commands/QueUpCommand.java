@@ -6,7 +6,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -20,7 +20,7 @@ import me.pugabyte.nexus.utils.Tasks;
 @Aliases("dubtrack")
 @SuppressWarnings("SameParameterValue")
 public class QueUpCommand extends CustomCommand {
-	private static final String URL = BNSocialMediaSite.QUEUP.getUrl();
+	private static final String URL = EdenSocialMediaSite.QUEUP.getUrl();
 
 	private static boolean enabled = true;
 	private static final QueUpService service = new QueUpService();

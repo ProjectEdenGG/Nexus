@@ -18,7 +18,7 @@ public class OperatorCommand extends CustomCommand {
 	void operator() {
 		line(5);
 		send(Rank.OPERATOR.getChatColor() + "Operators &3are the second level of staff. Along with all the duties of a mod, they participate in " +
-				"&eevent planning &3and take on &especial tasks &3to help improve Bear Nation.");
+				"&eevent planning &3and take on &especial tasks &3to help improve Project Eden.");
 		line();
 		send("&3[+] &eSenior Staff rank");
 		send("&3[+] &eHow to achieve&3: &3Promoted from " + Rank.MODERATOR.getColoredName() + " &3by Senior Staff");

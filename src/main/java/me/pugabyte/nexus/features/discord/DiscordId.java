@@ -39,7 +39,7 @@ public class DiscordId {
 		}
 
 		public net.dv8tion.jda.api.entities.TextChannel get(Bot bot) {
-			return bot.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId()).getTextChannelById(id);
+			return bot.jda().getGuildById(DiscordId.Guild.PROJECT_EDEN.getId()).getTextChannelById(id);
 		}
 
 		public static TextChannel of(net.dv8tion.jda.api.entities.TextChannel textChannel) {
@@ -92,7 +92,7 @@ public class DiscordId {
 	@Getter
 	@AllArgsConstructor
 	public enum Guild {
-		BEAR_NATION("132680070480396288");
+		PROJECT_EDEN("132680070480396288");
 
 		private final String id;
 	}

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -16,6 +17,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,9 +25,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 @Permission("group.admin")
-public class SkinCacheCommand extends CustomCommand {
-	private SkinCacheService service = new SkinCacheService();
+public class SkinCacheCommand extends CustomCommand implements Listener {
+	private final SkinCacheService service = new SkinCacheService();
 
 	public SkinCacheCommand(@NonNull CommandEvent event) {
 		super(event);

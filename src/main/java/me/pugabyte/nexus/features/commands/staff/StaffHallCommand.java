@@ -95,7 +95,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			line();
 		}
 		if (nerd.isMeetMeVideo()) {
-			send(json("&eMeet me! &chttps://bnn.gg/meet/" + nerd.getName().toLowerCase()).url("https://bnn.gg/meet/" + nerd.getName().toLowerCase()));
+			send(json("&eMeet me! &chttps://projecteden.gg/meet/" + nerd.getName().toLowerCase()).url("https://projecteden.gg/meet/" + nerd.getName().toLowerCase()));
 			line();
 		}
 	}

@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.discord;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -127,7 +127,7 @@ public class DiscordCommand extends CustomCommand {
 				User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
 				if (userById == null)
 					send(PREFIX + "Your minecraft account is linked to a Discord account, but I could not find that account. " +
-							"Are you in our Discord server? &e" + BNSocialMediaSite.DISCORD.getUrl());
+							"Are you in our Discord server? &e" + EdenSocialMediaSite.DISCORD.getUrl());
 				else
 					send(PREFIX + "Your minecraft account is linked to " + user.getName());
 				send(PREFIX + "You can unlink your account with &c/discord unlink");

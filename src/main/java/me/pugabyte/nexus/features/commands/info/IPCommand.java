@@ -12,6 +12,6 @@ public class IPCommand extends CustomCommand {
 
 	@Path
 	void ip() {
-		send(json("&ebnn.gg").hover("Click to copy").copy("bnn.gg"));
+		send(json("&eprojecteden.gg").hover("Click to copy").copy("projecteden.gg"));
 	}
 }

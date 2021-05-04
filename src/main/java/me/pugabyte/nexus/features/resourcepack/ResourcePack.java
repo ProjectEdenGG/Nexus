@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.utils.PlayerUtils.Dev;
+import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
-	static final String URL = "http://cdn.bnn.gg/BearNationResourcePack.zip";
+	static final String URL = "http://cdn.projecteden.gg/ResourcePack.zip";
 	static final String fileName = "ResourcePack.zip";
 	@Getter
 	static final String fileRegex = "[a-zA-Z0-9_]+";
@@ -95,6 +95,6 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isEnabledFor(Player player) {
-		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player);
+		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || new LocalResourcePackUserService().get(player).isEnabled();
 	}
 }

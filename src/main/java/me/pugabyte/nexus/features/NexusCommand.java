@@ -785,7 +785,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 		player().sendBlockChange(location().add(0, -1, 0), Bukkit.createBlockData(material));
 	}
 
-	private static String motd = null;
+	private static String motd = "&f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &a&l⚘ &f &#ffff44&lProject Eden &f &a&l⚘\n" +
+			"&f &f &3Survival &7| &3Creative &7| &3Minigames &7| &3Close Community";
 
 	@Path("motd <text...>")
 	void motd(String text) {
@@ -802,7 +803,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onServerListPing(ServerListPingEvent event) {
 		if (motd != null)
-			event.setMotd(motd);
+			event.setMotd(colorize(motd));
 	}
 
 	@Path("radiusTest")

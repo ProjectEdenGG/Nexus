@@ -31,13 +31,13 @@ public class MySQLPersistence {
 		databases.put(db, database);
 	}
 
-	public static Database getConnection(MySQLDatabase bndb) {
+	public static Database getConnection(MySQLDatabase db) {
 		try {
-			if (databases.get(bndb) == null)
-				openConnection(bndb);
-			return databases.get(bndb);
+			if (databases.get(db) == null)
+				openConnection(db);
+			return databases.get(db);
 		} catch (Exception ex) {
-			Nexus.severe("Could not establish connection to the MySQL database \"" + bndb.getDatabase() + "\": " + ex.getMessage());
+			Nexus.severe("Could not establish connection to the MySQL database \"" + db.getDatabase() + "\": " + ex.getMessage());
 			return null;
 		}
 	}

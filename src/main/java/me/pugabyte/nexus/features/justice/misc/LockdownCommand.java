@@ -136,7 +136,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 	private Component getLockdownReason() {
 		return new JsonBuilder()
-				.next("&e&lBear Nation &3&lis in &4&llockdown &3&lmode")
+				.next("&e&lProject Eden &3&lis in &4&llockdown &3&lmode")
 				.newline()
 				.newline()
 				.next("&eReason: &c" + reason)

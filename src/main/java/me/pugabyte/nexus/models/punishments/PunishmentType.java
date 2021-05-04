@@ -76,7 +76,7 @@ public enum PunishmentType implements ColoredAndNamed {
 			if (punishment.getExpiration() != null)
 				message += nl + "&3Expires in: &3" + Timespan.of(punishment.getExpiration()).format(FormatType.LONG);
 
-			message += nl + nl + "&3Appeal at &chttps://bnn.gg/appeal";
+			message += nl + nl + "&3Appeal at &chttps://projecteden.gg/appeal";
 
 			return message;
 		}

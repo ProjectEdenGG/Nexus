@@ -117,7 +117,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 		});
 
 		Discord.log(PREFIX + name() + " restored " + owner.getName() + "'s " + gameMode.name().toLowerCase()
-				+ " " + type + " from <https://paste.bnn.gg/" + code + ".json>");
+				+ " " + type + " from <https://paste.projecteden.gg/" + code + ".json>");
 	}
 
 	private void sendRestoreButtons(String gamemode) {

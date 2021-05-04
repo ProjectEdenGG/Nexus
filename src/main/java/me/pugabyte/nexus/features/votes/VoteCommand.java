@@ -62,7 +62,7 @@ public class VoteCommand extends CustomCommand {
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
 		send(json(PLUS + "Visit the &eVote Points Store").command("/vps"));
-		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://bnn.gg/vote"));
+		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://projecteden.gg/vote"));
 	}
 
 	@Path("time [player]")

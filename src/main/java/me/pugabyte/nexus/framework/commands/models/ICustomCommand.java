@@ -233,6 +233,10 @@ public abstract class ICustomCommand {
 		int i = 0;
 		int pathIndex = 0;
 		for (Parameter parameter : parameters) {
+			// TODO Delete - https://github.com/ProjectEdenGG/Issues/issues/641
+			Nexus.debug("Parameters for command event: " + event.getOriginalMessage());
+			Nexus.debug("  parameter.getName(): " + parameter.getName());
+			Nexus.debug("  parameter.getType(): " + parameter.getType());
 			String pathArg = "";
 			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<") && path.hasNext()) {
 				pathArg = path.next();

@@ -81,7 +81,7 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private static MessageEmbed createEmbed(String username) {
-		EmbedBuilder builder = new EmbedBuilder().setTitle("https://bnn.gg/vote").setDescription("");
+		EmbedBuilder builder = new EmbedBuilder().setTitle("https://projecteden.gg/vote").setDescription("");
 		for (VoteSite value : VoteSite.values())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();

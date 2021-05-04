@@ -33,10 +33,10 @@ public class WelcomeCommand extends CustomCommand {
 
 	List<String> messages = new ArrayList<String>() {{
 		add("Welcome to the server [player]! Make sure to read the /rules and feel free to ask questions.");
-		add("Welcome to Bear Nation [player]! Please take a moment to read the /rules and feel free to ask any questions you have.");
-		add("Hi [player], welcome to Bear Nation :) Please read the /rules and ask if you have any questions.");
-		add("Hey [player]! Welcome to Bear Nation. Be sure to read the /rules and don't be afraid to ask questions ^^");
-		add("Hi there [player] :D Welcome to Bear Nation. Make sure to read the /rules and feel free to ask questions.");
+		add("Welcome to Project Eden [player]! Please take a moment to read the /rules and feel free to ask any questions you have.");
+		add("Hi [player], welcome to Project Eden :) Please read the /rules and ask if you have any questions.");
+		add("Hey [player]! Welcome to Project Eden. Be sure to read the /rules and don't be afraid to ask questions ^^");
+		add("Hi there [player] :D Welcome to Project Eden. Make sure to read the /rules and feel free to ask questions.");
 	}};
 
 	public WelcomeCommand(@NonNull CommandEvent event) {

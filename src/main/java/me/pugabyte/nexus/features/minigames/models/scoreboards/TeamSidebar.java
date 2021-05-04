@@ -3,21 +3,21 @@ package me.pugabyte.nexus.features.minigames.models.scoreboards;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
-import me.pugabyte.nexus.utils.BNScoreboard;
+import me.pugabyte.nexus.utils.EdenScoreboard;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TeamSidebar implements MinigameScoreboard {
 	private Match match;
-	private Map<Team, BNScoreboard> scoreboards = new HashMap<>();
+	private Map<Team, EdenScoreboard> scoreboards = new HashMap<>();
 
 	public TeamSidebar(Match match) {
 		this.match = match;
 	}
 
-	private BNScoreboard createScoreboard(Team team) {
-		return new BNScoreboard(
+	private EdenScoreboard createScoreboard(Team team) {
+		return new EdenScoreboard(
 				team.getName() + "-" + match.getArena().getName(),
 				match.getMechanic().getScoreboardTitle(match)
 		);
