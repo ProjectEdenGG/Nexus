@@ -8,9 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasOfflinePlayer;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.HasUniqueId;
+import me.lexikiq.PlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -52,7 +50,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer implements ColoredAndNicknamed, HasPlayer, HasOfflinePlayer, HasUniqueId {
+public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 	@NonNull
 	private Player player;
 	@ToString.Exclude

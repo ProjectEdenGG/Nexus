@@ -2,9 +2,9 @@ package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
 import lombok.NonNull;
+import me.lexikiq.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
@@ -35,8 +35,8 @@ public class MerchantBuilder {
 		return merchant;
 	}
 
-	public void open(Player player) {
-		player.openMerchant(build(), true);
+	public void open(HasPlayer player) {
+		player.getPlayer().openMerchant(build(), true);
 	}
 
 	public static class TradeBuilder {

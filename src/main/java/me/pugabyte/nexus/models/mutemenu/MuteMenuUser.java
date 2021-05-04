@@ -10,11 +10,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.chat.ChatService;
-import org.bukkit.OfflinePlayer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,14 +61,14 @@ public class MuteMenuUser implements PlayerOwnedObject {
 		muted.add(item);
 	}
 
-	public static boolean hasMuted(OfflinePlayer player, MuteMenuItem item) {
+	public static boolean hasMuted(HasUniqueId player, MuteMenuItem item) {
 		if (item == null) return false;
 		MuteMenuService service = new MuteMenuService();
 		MuteMenuUser user = service.get(player);
 		return user.hasMuted(item);
 	}
 
-	public static Integer getVolume(OfflinePlayer player, MuteMenuItem item) {
+	public static Integer getVolume(HasUniqueId player, MuteMenuItem item) {
 		if (item == null) return null;
 		MuteMenuService service = new MuteMenuService();
 		MuteMenuUser user = service.get(player);

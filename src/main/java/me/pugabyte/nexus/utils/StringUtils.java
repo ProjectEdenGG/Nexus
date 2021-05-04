@@ -3,10 +3,10 @@ package me.pugabyte.nexus.utils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
@@ -223,20 +223,20 @@ public class StringUtils extends eden.utils.StringUtils {
 
 	private static final String[] compassParts = {"[S]","SW","[W]","NW","[N]","NE","[E]","SE"};
 
-	public static String compass(Player player) {
+	public static String compass(HasPlayer player) {
 		return compass(player, 8);
 	}
 
-	public static String compass(Player player, int extra) {
+	public static String compass(HasPlayer player, int extra) {
 		return compass(player, extra, 4);
 	}
 
-	public static String compass(Player player, int extra, int separators) {
+	public static String compass(HasPlayer player, int extra, int separators) {
 		String compass = "";
 		for (String compassPart : compassParts)
 			compass += compassPart + " " + String.join("", Collections.nCopies(separators, "-")) + " ";
 
-		float yaw = Location.normalizeYaw(player.getLocation().getYaw());
+		float yaw = Location.normalizeYaw(player.getPlayer().getLocation().getYaw());
 		if (yaw < 0) yaw = 360 + yaw;
 
 		int center = (int) Math.round(yaw / (360D / compass.length())) + 1;
@@ -282,7 +282,13 @@ public class StringUtils extends eden.utils.StringUtils {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ();
 	}
 
-	public static void sendJsonLocation(String message, Location location, Player player) {
+	/**
+	 * Sends a message to the player with the input message as a teleportation link.
+	 * @param message message to display
+	 * @param location location to set as a teleport destination on click
+	 * @param player any player handled by {@link PlayerUtils#send(Object, Object)}
+	 */
+	public static void sendJsonLocation(String message, Location location, Object player) {
 		new JsonBuilder().next(message).command(getTeleportCommand(location)).send(player);
 	}
 

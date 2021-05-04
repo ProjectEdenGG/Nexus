@@ -1,8 +1,7 @@
 package me.pugabyte.nexus.models;
 
-import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasUniqueId;
-import me.lexikiq.OptionalPlayer;
+import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -35,7 +34,7 @@ import static me.pugabyte.nexus.utils.AdventureUtils.identityOf;
 /**
  * A mongo database object owned by a player
  */
-public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Identified, HasOfflinePlayer, OptionalPlayer {
+public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, OptionalPlayerLike {
 
 	/**
 	 * Gets the unique ID of this object. Alias for {@link #getUuid()}, for compatibility with {@link HasUniqueId}.

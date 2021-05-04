@@ -5,6 +5,7 @@ import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import me.lexikiq.HasOfflinePlayer;
@@ -545,6 +546,24 @@ public class PlayerUtils {
 			for (ItemStack itemStack : excess)
 				if (!isNullOrAir(itemStack) && itemStack.getAmount() > 0)
 					_player.getWorld().dropItemNaturally(_player.getLocation(), itemStack);
+	}
+
+	/**
+	 * Gets {@link Player}s from a list of {@link HasPlayer}
+	 * @param hasPlayers list of player containers
+	 * @return list of players
+	 */
+	public static @NonNull List<Player> getPlayers(List<? extends @NonNull HasPlayer> hasPlayers) {
+		return hasPlayers.stream().map(HasPlayer::getPlayer).collect(Collectors.toList());
+	}
+
+	/**
+	 * Gets {@link Player}s from a list of {@link OptionalPlayer} if they are non null
+	 * @param hasPlayers list of optional players
+	 * @return list of non-null players
+	 */
+	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
+		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 }

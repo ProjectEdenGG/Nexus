@@ -13,6 +13,7 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import me.lexikiq.HasPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -23,7 +24,7 @@ import java.util.Collections;
 
 public class PacketUtils {
 
-	public static void copyTileEntityClient(Player player, Block origin, Location destination) {
+	public static void copyTileEntityClient(HasPlayer recipient, Block origin, Location destination) {
 		BlockPosition destinationPosition = toBlockPosition(destination);
 
 		WrapperPlayServerBlockChange blockChange = new WrapperPlayServerBlockChange();
@@ -35,6 +36,7 @@ public class PacketUtils {
 		tileEntityData.setLocation(destinationPosition);
 		tileEntityData.setNbtData(NbtFactory.readBlockState(origin));
 
+		Player player = recipient.getPlayer();
 		blockChange.sendPacket(player);
 		tileEntityData.sendPacket(player);
 	}
@@ -52,7 +54,7 @@ public class PacketUtils {
 	}
 	 */
 
-	public void npcPacket(Entity entity, Player player) {
+	public void npcPacket(Entity entity, HasPlayer recipient) {
 		WrapperPlayServerPlayerInfo playerInfo = new WrapperPlayServerPlayerInfo();
 
 		playerInfo.setAction(PlayerInfoAction.UPDATE_DISPLAY_NAME);
@@ -78,6 +80,7 @@ public class PacketUtils {
 		headRotation.setEntityID(entity.getEntityId());
 		headRotation.setHeadYaw((byte) (entity.getLocation().getYaw() * 256 / 360));
 
+		Player player = recipient.getPlayer();
 		playerInfo.sendPacket(player);
 		entitySpawn.sendPacket(player);
 		headRotation.sendPacket(player);

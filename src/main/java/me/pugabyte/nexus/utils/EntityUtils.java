@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import me.lexikiq.HasPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -57,10 +58,10 @@ public class EntityUtils {
 		return result;
 	}
 
-	public static void makeArmorStandLookAtPlayer(ArmorStand stand, Player player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
+	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
 		Location origin = stand.getEyeLocation(); //our original location (Point A)
 		double initYaw = origin.getYaw();
-		Vector tgt = player.getEyeLocation().toVector(); //our target location (Point B)
+		Vector tgt = player.getPlayer().getEyeLocation().toVector(); //our target location (Point B)
 		origin.setDirection(tgt.subtract(origin.toVector())); //set the origin's direction to be the direction vector between point A and B.
 		double yaw = origin.getYaw() - initYaw;
 		double pitch = origin.getPitch();

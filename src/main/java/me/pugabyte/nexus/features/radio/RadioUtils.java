@@ -9,6 +9,9 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.Fade;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.PlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
@@ -17,7 +20,6 @@ import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
-import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,35 +30,35 @@ import java.util.stream.Collectors;
 
 public class RadioUtils {
 
-	public static void actionBar(Player player, Song song) {
+	public static void actionBar(HasPlayer player, Song song) {
 		actionBar(player, song, false);
 	}
 
-	public static void actionBar(Player player, Song song, boolean nowPlaying) {
+	public static void actionBar(HasPlayer player, Song song, boolean nowPlaying) {
 		String message = "&2&lCurrently Playing: &a";
 		if (nowPlaying) message = "&2&lNow Playing: &a";
 		message += " " + song.getTitle();
 		ActionBarUtils.sendActionBar(player, message);
 	}
 
-	public static boolean isListening(Player player, Radio radio) {
+	public static boolean isListening(HasUniqueId player, Radio radio) {
 		return radio.getSongPlayer().getPlayerUUIDs().contains(player.getUniqueId());
 	}
 
-	public static Radio getListenedRadio(Player player) {
+	public static Radio getListenedRadio(HasPlayer player) {
 		return getListenedRadio(player, false);
 	}
 
-	public static Radio getListenedRadio(Player player, boolean includeRadius) {
+	public static Radio getListenedRadio(HasPlayer player, boolean includeRadius) {
 		for (Radio radio : getRadios()) {
 			SongPlayer songPlayer = radio.getSongPlayer();
 
 			if (songPlayer instanceof RadioSongPlayer) {
-				if (isListening(player, radio))
+				if (isListening(player.getPlayer(), radio))
 					return radio;
 
 			} else if (songPlayer instanceof PositionSongPlayer) {
-				if (isListening(player, radio)) {
+				if (isListening(player.getPlayer(), radio)) {
 					if (includeRadius)
 						if (isInRangeOfRadiusRadio(player, radio))
 							return radio;
@@ -109,7 +111,7 @@ public class RadioUtils {
 		radio.setPlaying(true);
 	}
 
-	public static void addPlayer(Player player, Radio radio) {
+	public static void addPlayer(PlayerLike player, Radio radio) {
 		if (!RadioUtils.isListening(player, radio)) {
 			RadioUserService userService = new RadioUserService();
 			RadioUser user = userService.get(player);
@@ -120,7 +122,7 @@ public class RadioUtils {
 			}
 
 			SongPlayer songPlayer = radio.getSongPlayer();
-			songPlayer.addPlayer(player);
+			songPlayer.addPlayer(player.getUniqueId());
 			if (songPlayer instanceof RadioSongPlayer)
 				actionBar(player, songPlayer.getSong());
 			else if (songPlayer instanceof PositionSongPlayer) {
@@ -130,7 +132,7 @@ public class RadioUtils {
 		}
 	}
 
-	public static void removePlayer(Player player, Radio radio) {
+	public static void removePlayer(PlayerLike player, Radio radio) {
 		if (radio == null)
 			return;
 
@@ -144,7 +146,7 @@ public class RadioUtils {
 			}
 
 			SongPlayer songPlayer = radio.getSongPlayer();
-			songPlayer.removePlayer(player);
+			songPlayer.removePlayer(player.getPlayer());
 			if (radio.getSongPlayer() instanceof RadioSongPlayer)
 				ActionBarUtils.sendActionBar(player, "&c&lYou have left the server radio");
 		}
@@ -162,11 +164,11 @@ public class RadioUtils {
 		configService.save(config);
 	}
 
-	public static boolean isInRangeOfRadiusRadio(Player player) {
+	public static boolean isInRangeOfRadiusRadio(HasPlayer player) {
 		return getRadiusRadio(player) != null;
 	}
 
-	public static Radio getRadiusRadio(Player player) {
+	public static Radio getRadiusRadio(HasPlayer player) {
 		for (Radio radio : getRadios()) {
 			if (isInRangeOfRadiusRadio(player, radio))
 				return radio;
@@ -174,7 +176,7 @@ public class RadioUtils {
 		return null;
 	}
 
-	public static boolean isInRangeOfRadiusRadio(Player player, Radio radio) {
+	public static boolean isInRangeOfRadiusRadio(HasPlayer player, Radio radio) {
 		SongPlayer songPlayer = radio.getSongPlayer();
 		if (songPlayer == null) return false;
 		if (!(songPlayer instanceof PositionSongPlayer)) return false;
@@ -182,7 +184,7 @@ public class RadioUtils {
 		PositionSongPlayer positionSongPlayer = (PositionSongPlayer) songPlayer;
 		if (positionSongPlayer.getTargetLocation() == null) return false;
 		if (positionSongPlayer.getTargetLocation().getWorld() == null) return false;
-		return positionSongPlayer.getTargetLocation().getWorld().equals(player.getWorld()) && positionSongPlayer.isInRange(player);
+		return positionSongPlayer.getTargetLocation().getWorld().equals(player.getPlayer().getWorld()) && positionSongPlayer.isInRange(player.getPlayer());
 	}
 
 	public static Playlist shufflePlaylist(Playlist playlist) {

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.lexikiq.OptionalPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
@@ -29,6 +30,7 @@ import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -69,7 +71,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return true;
 	}
 
-	public static Member getVoiceChannelMember(Player player) {
+	public static @Nullable Member getVoiceChannelMember(@NotNull OptionalPlayer hasPlayer) {
+		Player player = hasPlayer.getPlayer();
+		if (player == null) return null;
+
 		Guild guild = Discord.getGuild();
 		if (guild == null) return null;
 
@@ -131,7 +136,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		teamMembers.forEach(minigamer -> {
 			// add voice channel text if present and if user is in voice
-			Member member = getVoiceChannelMember(minigamer.getPlayer());
+			Member member = getVoiceChannelMember(minigamer);
 			if (member != null) {
 				// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
 				assert member.getVoiceState() != null;
@@ -154,7 +159,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	public void leaveTeamVoiceChannel(Minigamer minigamer) {
 		if (!usesTeamChannels()) return;
 
-		Member member = getVoiceChannelMember(minigamer.getPlayer());
+		Member member = getVoiceChannelMember(minigamer);
 		if (member == null) return;
 		// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
 		assert member.getVoiceState() != null;

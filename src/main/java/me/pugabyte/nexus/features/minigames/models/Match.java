@@ -46,6 +46,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -86,7 +87,7 @@ public class Match {
 	@Nullable
 	private BossBar modifierBar;
 
-	public Minigamer getMinigamer(Player player) {
+	public @Nullable Minigamer getMinigamer(@NotNull Player player) {
 		for (Minigamer minigamer : minigamers)
 			if (minigamer.getPlayer().equals(player))
 				return minigamer;

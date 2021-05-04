@@ -42,7 +42,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -58,12 +57,14 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.time.YearMonth;
@@ -155,7 +156,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlayerDamageByPlayer(PlayerDamageByPlayerEvent event) {
-		if (event.getVictim().getUniqueId().equals(event.getAttacker().getUniqueId()))
+		if (event.getPlayer().getUniqueId().equals(event.getAttacker().getUniqueId()))
 			event.getOriginalEvent().setCancelled(true);
 	}
 
@@ -341,10 +342,7 @@ public class Misc implements Listener {
 		PlayerUtils.runCommand(player, "ch join c");
 	}
 
-	public static class PlayerDamageByPlayerEvent extends Event {
-		@NonNull
-		@Getter
-		final Player victim;
+	public static class PlayerDamageByPlayerEvent extends PlayerEvent {
 		@NonNull
 		@Getter
 		final Player attacker;
@@ -353,8 +351,8 @@ public class Misc implements Listener {
 		final EntityDamageByEntityEvent originalEvent;
 
 		@SneakyThrows
-		public PlayerDamageByPlayerEvent(Player victim, Player attacker, EntityDamageByEntityEvent event) {
-			this.victim = victim;
+		public PlayerDamageByPlayerEvent(@NotNull Player victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
+			super(victim);
 			this.attacker = attacker;
 			this.originalEvent = event;
 		}
@@ -365,6 +363,7 @@ public class Misc implements Listener {
 			return handlers;
 		}
 
+		@NotNull
 		@Override
 		public HandlerList getHandlers() {
 			return handlers;
