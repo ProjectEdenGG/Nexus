@@ -66,7 +66,7 @@ public class WitherCommand extends CustomCommand {
 
 	public boolean checkHasItems() {
 		List<ItemStack> missingItems = new ArrayList<>();
-		List<ItemStack> neededItems = new ArrayList<ItemStack>() {{
+		List<ItemStack> neededItems = new ArrayList<>() {{
 			add(new ItemStack(Material.WITHER_SKELETON_SKULL, 3));
 			add(new ItemStack(Material.SOUL_SAND, 4));
 			add(new ItemStack(Material.BOW));

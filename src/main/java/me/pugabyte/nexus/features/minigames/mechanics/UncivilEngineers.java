@@ -283,7 +283,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 		@Override
 		public Map<String, Object> serialize() {
-			return new LinkedHashMap<String, Object>() {{
+			return new LinkedHashMap<>() {{
 				put("type", type.name());
 				put("location", location);
 			}};

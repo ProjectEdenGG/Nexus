@@ -100,7 +100,7 @@ public class HoursService extends MongoService<Hours> {
 
 	@NotNull
 	public List<PageResult> getPageResults(AggregateIterable<Document> aggregate) {
-		return new ArrayList<PageResult>() {{
+		return new ArrayList<>() {{
 			aggregate.forEach((Consumer<? super Document>) document ->
 					add(new PageResult(UUID.fromString((String) document.get("_id")), (int) document.get("total"))));
 		}};

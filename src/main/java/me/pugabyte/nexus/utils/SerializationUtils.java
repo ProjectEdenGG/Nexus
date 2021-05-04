@@ -48,7 +48,9 @@ public class SerializationUtils {
 
 		public static List<String> serializeMaterialSet(Set<Material> materials) {
 			if (materials == null) return null;
-			return new ArrayList<String>(){{ addAll(materials.stream().map(Material::name).collect(Collectors.toList())); }};
+			return new ArrayList<>() {{
+				addAll(materials.stream().map(Material::name).collect(Collectors.toList()));
+			}};
 		}
 
 		public static Set<Material> deserializeMaterialSet(List<String> materials) {
@@ -81,7 +83,7 @@ public class SerializationUtils {
 		/** Bukkit ConfigurationSerializable */
 
 		public static List<Map<String, Object>> serialize(List<ConfigurationSerializable> values) {
-			return new ArrayList<Map<String, Object>>() {{
+			return new ArrayList<>() {{
 				for (ConfigurationSerializable value : values)
 					add(serialize(value));
 			}};
@@ -96,7 +98,7 @@ public class SerializationUtils {
 		}
 
 		public static List<Object> deserialize(List<Map<String, Object>> values) {
-			return new ArrayList<Object>() {{
+			return new ArrayList<>() {{
 				for (Map<String, Object> value : values)
 					add(deserializeRecursive(value));
 			}};
@@ -107,7 +109,7 @@ public class SerializationUtils {
 		}
 
 		public static List<ItemStack> deserializeItemStacks(List<Map<String, Object>> values) {
-			return new ArrayList<ItemStack>() {{
+			return new ArrayList<>() {{
 				for (Map<String, Object> value : values)
 					add(deserializeItemStack(value));
 			}};
@@ -148,7 +150,7 @@ public class SerializationUtils {
 
 			if (Collection.class.isAssignableFrom(value.getClass()))
 				if (((Collection<?>) value).iterator().hasNext())
-					return ImmutableList.copyOf(new ArrayList<Object>() {{
+					return ImmutableList.copyOf(new ArrayList<>() {{
 						for (Object object : ((Collection<?>) value))
 							add(serializeRecursive(object));
 					}});
@@ -163,7 +165,7 @@ public class SerializationUtils {
 			Map<String, Object> fixed = new HashMap<>(values);
 			values.forEach(((key, value) -> {
 				if (Collection.class.isAssignableFrom(value.getClass())) {
-					fixed.put(key, new ArrayList<Object>() {{
+					fixed.put(key, new ArrayList<>() {{
 						for (Object next : (Collection<?>) value) {
 							if (next == null || !Map.class.isAssignableFrom(next.getClass())) {
 								add(next);
@@ -209,7 +211,7 @@ public class SerializationUtils {
 		}
 
 		private static Map<String, Object> toIntMap(Map<String, Object> map) {
-			return new HashMap<String, Object>() {{
+			return new HashMap<>() {{
 				map.forEach((key, value) -> {
 					put(key, value);
 					if (value instanceof Number)

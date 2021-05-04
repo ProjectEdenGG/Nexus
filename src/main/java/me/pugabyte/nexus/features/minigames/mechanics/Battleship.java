@@ -89,7 +89,7 @@ public class Battleship extends TeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
 	public static final String SCHEMATIC_FOLDER = "minigames/battleship";
-	public static final List<String> COORDINATES = new ArrayList<String>() {{
+	public static final List<String> COORDINATES = new ArrayList<>() {{
 		for (int number = 0; number < 10; number++)
 			for (String letter : LETTERS.split(""))
 				add(letter + number);
@@ -184,7 +184,7 @@ public class Battleship extends TeamMechanic {
 			lines.add(line);
 		}
 
-		return new HashMap<String, Integer>() {{
+		return new HashMap<>() {{
 			for (int i = lines.size(); i > 0; i--)
 				put(lines.get(lines.size() - i), i);
 		}};

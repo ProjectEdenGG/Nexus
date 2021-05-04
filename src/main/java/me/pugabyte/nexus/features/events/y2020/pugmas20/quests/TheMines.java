@@ -273,7 +273,7 @@ public class TheMines implements Listener {
 	}
 
 	public void scheduleRegen(Block block) {
-		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
+		new TaskService().save(new Task(taskId, new HashMap<>() {{
 			put("location", JSON.serializeLocation(block.getLocation()));
 			put("material", block.getType());
 		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));

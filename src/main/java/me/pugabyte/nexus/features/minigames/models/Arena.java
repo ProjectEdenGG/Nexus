@@ -63,7 +63,9 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	@NonNull
 	private MechanicType mechanicType = MechanicType.FREE_FOR_ALL;
 	@NonNull
-	private List<Team> teams = new ArrayList<Team>() {{ add(new Team()); }};
+	private List<Team> teams = new ArrayList<>() {{
+		add(new Team());
+	}};
 	@NonNull
 	private Lobby lobby = new Lobby();
 	private Location spectateLocation;
@@ -120,7 +122,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("id", getId());
 			put("name", getName());
 			put("displayName", getDisplayName());

@@ -32,7 +32,7 @@ public class NerdService extends MongoService<Nerd> {
 		if (query.count() > 50)
 			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + query.count() + ")");
 
-		Map<Nerd, Integer> hoursMap = new HashMap<Nerd, Integer>() {{
+		Map<Nerd, Integer> hoursMap = new HashMap<>() {{
 			HoursService service = new HoursService();
 			for (Nerd nerd : query.find().toList())
 				put(nerd, service.get(nerd.getUuid()).getTotal());

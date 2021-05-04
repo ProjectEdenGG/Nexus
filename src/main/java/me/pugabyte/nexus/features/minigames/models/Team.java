@@ -79,7 +79,7 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 	@Override
 	@NotNull
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("name", stripColor(getName()));
 			put("color", getChatColor().name());
 			put("objective", getObjective());

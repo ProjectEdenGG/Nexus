@@ -39,7 +39,7 @@ public class Merchants {
 		ARTIST(2657) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(MainIsland.relic_base)
 							.ingredient(goldIngot.clone().amount(2)));
@@ -49,7 +49,7 @@ public class Merchants {
 		BAKER(2659) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
 							.ingredient(new ItemBuilder(Material.BREAD).lore(itemLore).amount(64)));
@@ -59,7 +59,7 @@ public class Merchants {
 		BARTENDER(2655) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false).lore(itemLore))
 							.ingredient(goldNugget.clone().amount(3)));
@@ -75,7 +75,7 @@ public class Merchants {
 		BLACKSMITH(2656) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(16))
 							.ingredient(new ItemBuilder(Material.ANVIL).lore(itemLore)));
@@ -88,7 +88,7 @@ public class Merchants {
 		BOTANIST(2661) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.MELON).amount(8).lore(itemLore)));
@@ -116,7 +116,7 @@ public class Merchants {
 		BREWER(2662) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(MainIsland.relic_eyes)
 							.ingredient(new ItemBuilder(Material.HONEYCOMB).amount(9).lore(itemLore)));
@@ -129,7 +129,7 @@ public class Merchants {
 		COLLECTOR(2750) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(18))
 							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE).lore(itemLore))
@@ -159,7 +159,7 @@ public class Merchants {
 		FISHERMAN(2653) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(itemLore))
 							.ingredient(goldIngot.clone().amount(2)));
@@ -211,7 +211,7 @@ public class Merchants {
 		INVENTOR(2660) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(MainIsland.relic)
 							.ingredient(MainIsland.relic_body)
@@ -226,7 +226,7 @@ public class Merchants {
 		MINER(2743) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.IRON_PICKAXE).lore(itemLore).amount(1))
 							.ingredient(goldIngot.clone().amount(1)));
@@ -242,7 +242,7 @@ public class Merchants {
 		PASTRY_CHEF(2654) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(MainIsland.honeyStroopWafel)
 							.ingredient(MainIsland.stroofWafel)
@@ -263,7 +263,7 @@ public class Merchants {
 		SORCERER(2658) {
 			@Override
 			public List<TradeBuilder> getTrades() {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(3))
 							.ingredient(new ItemBuilder(Material.CAULDRON).lore(itemLore)));

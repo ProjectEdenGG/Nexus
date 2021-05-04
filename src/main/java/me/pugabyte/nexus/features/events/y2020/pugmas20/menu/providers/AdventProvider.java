@@ -132,7 +132,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	@NotNull
 	private List<String> showWaypoint(String... lines) {
-		return new ArrayList<String>(Arrays.asList(lines)) {{
+		return new ArrayList<>(Arrays.asList(lines)) {{
 			add("&f||&aClick to show waypoint");
 		}};
 	}

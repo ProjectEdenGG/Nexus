@@ -91,7 +91,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void createMineStacks(int mineStackHeight, List<Location> locations) {
-		Map<BlockType, Double> pattern = new HashMap<BlockType, Double>() {{
+		Map<BlockType, Double> pattern = new HashMap<>() {{
 			put(BlockTypes.COBBLESTONE, 10.0);
 			put(BlockTypes.GOLD_ORE, 40.0);
 			put(BlockTypes.DIRT, 20.0);

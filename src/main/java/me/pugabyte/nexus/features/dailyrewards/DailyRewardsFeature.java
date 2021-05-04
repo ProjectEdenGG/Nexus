@@ -139,7 +139,7 @@ public class DailyRewardsFeature extends Feature {
 	// @formatter:off
 	@SuppressWarnings("DuplicatedCode")
 	private void setupDailyRewards() {
-		rewards1 = new ArrayList<Reward>() {{
+		rewards1 = new ArrayList<>() {{
 			/*   1 */ add(new Reward("5 Cooked Chicken")						.item(COOKED_CHICKEN, 5));
 			/*   2 */ add(new Reward("5 Steak")									.item(COOKED_BEEF, 5));
 			/*   3 */ add(new Reward("10 Leather")								.item(LEATHER, 10));
@@ -242,7 +242,7 @@ public class DailyRewardsFeature extends Feature {
 			/* 100 */ add(new Reward("$20,000")									.money(20000));
 		}};
 
-		rewards2 = new ArrayList<Reward>() {{
+		rewards2 = new ArrayList<>() {{
 			/*   1 */ add(new Reward("1 Coal Block")							.item(COAL_BLOCK, 1));
 			/*   2 */ add(new Reward("1 Redstone Block")						.item(REDSTONE_BLOCK, 1));
 			/*   3 */ add(new Reward("1 Iron Block")							.item(IRON_BLOCK, 1));
@@ -345,7 +345,7 @@ public class DailyRewardsFeature extends Feature {
 			/* 100 */ add(new Reward("10 Diamond Blocks")						.item(DIAMOND_BLOCK, 10));
 		}};
 
-		rewards3 = new ArrayList<Reward>() {{
+		rewards3 = new ArrayList<>() {{
 			/*   1 */ add(new Reward("1 Workbench")								.item(CRAFTING_TABLE, 1));
 			/*   2 */ add(new Reward("1 Chest")									.item(CHEST, 1));
 			/*   3 */ add(new Reward("1 Furnace")								.item(FURNACE, 1));

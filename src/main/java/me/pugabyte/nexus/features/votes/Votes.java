@@ -150,7 +150,7 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private static final int basePoints = 1;
-	private static final Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
+	private static final Map<Integer, Integer> extras = new HashMap<>() {{
 		put(1500, 50);
 		put(500, 25);
 		put(200, 15);

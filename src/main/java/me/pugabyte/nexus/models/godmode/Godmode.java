@@ -34,7 +34,7 @@ public class Godmode implements PlayerOwnedObject {
 	private Location loginLocation;
 
 	@Getter
-	private static final List<String> disabledWorlds = new ArrayList<String>(Arrays.asList("gameworld", "deathswap")) {{
+	private static final List<String> disabledWorlds = new ArrayList<>(Arrays.asList("gameworld", "deathswap")) {{
 		addAll(WorldGroup.SKYBLOCK.getWorlds());
 		addAll(WorldGroup.ONEBLOCK.getWorlds());
 	}};

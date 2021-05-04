@@ -44,7 +44,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	@Override
 	public List<ItemStack> getIngredients() {
-		return new ArrayList<ItemStack>() {{
+		return new ArrayList<>() {{
 			add(new ItemStack(Material.WATER_BUCKET));
 			add(new ItemStack(Material.WATER_BUCKET));
 		}};

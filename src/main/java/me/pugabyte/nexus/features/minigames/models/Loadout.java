@@ -41,7 +41,7 @@ public class Loadout implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("inventory", SerializationUtils.YML.serializeItems(inventory));
 			put("effects", effects);
 		}};

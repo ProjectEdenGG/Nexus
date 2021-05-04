@@ -55,7 +55,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 			), e -> HomesMenu.create(homeOwner, response ->
 				homeOwner.getHome(response[0]).ifPresent(HomesMenu::edit))));
 
-		Map<String, ItemStack> options = new LinkedHashMap<String, ItemStack>() {{
+		Map<String, ItemStack> options = new LinkedHashMap<>() {{
 			put("home", new ItemBuilder(Material.CYAN_BED)
 					.loreize(false)
 					.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")

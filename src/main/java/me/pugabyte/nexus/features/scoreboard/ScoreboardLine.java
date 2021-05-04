@@ -254,7 +254,7 @@ public enum ScoreboardLine {
 	}
 
 	public static Map<ScoreboardLine, Boolean> getDefaultLines(Player player) {
-		return new HashMap<ScoreboardLine, Boolean>() {{
+		return new HashMap<>() {{
 			if (ScoreboardLine.ONLINE.hasPermission(player)) put(ScoreboardLine.ONLINE, true);
 			if (ScoreboardLine.TICKETS.hasPermission(player)) put(ScoreboardLine.TICKETS, true);
 			if (ScoreboardLine.TPS.hasPermission(player)) put(ScoreboardLine.TPS, true);
@@ -263,7 +263,8 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.VANISHED.hasPermission(player)) put(ScoreboardLine.VANISHED, true);
 			if (ScoreboardLine.MCMMO.hasPermission(player)) put(ScoreboardLine.MCMMO, !isStaffGroup(player));
 			if (ScoreboardLine.BALANCE.hasPermission(player)) put(ScoreboardLine.BALANCE, !isStaffGroup(player));
-			if (ScoreboardLine.VOTE_POINTS.hasPermission(player)) put(ScoreboardLine.VOTE_POINTS, !isStaffGroup(player));
+			if (ScoreboardLine.VOTE_POINTS.hasPermission(player))
+				put(ScoreboardLine.VOTE_POINTS, !isStaffGroup(player));
 			if (ScoreboardLine.GAMEMODE.hasPermission(player)) put(ScoreboardLine.GAMEMODE, true);
 			if (ScoreboardLine.WORLD.hasPermission(player)) put(ScoreboardLine.WORLD, true);
 			if (ScoreboardLine.BIOME.hasPermission(player)) put(ScoreboardLine.BIOME, false);

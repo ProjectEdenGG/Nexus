@@ -200,7 +200,7 @@ public final class Mastermind extends SingleplayerMechanic {
 		}
 
 		public static Set<Material> getMaterials(Function<MastermindColor, Material> function) {
-			return new LinkedHashSet<Material>() {{
+			return new LinkedHashSet<>() {{
 				for (MastermindColor color : values())
 					add(function.apply(color));
 			}};

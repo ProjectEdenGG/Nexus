@@ -96,7 +96,7 @@ public class RadioConfig implements PlayerOwnedObject {
 
 		public Playlist getPlaylist() {
 			Set<String> unloadedSongs = new HashSet<>(songs);
-			Set<File> loadedSongs = new HashSet<File>() {{
+			Set<File> loadedSongs = new HashSet<>() {{
 				for (String songName : songs)
 					for (RadioSong song : RadioFeature.getAllSongs())
 						if (song.getName().equals(songName)) {

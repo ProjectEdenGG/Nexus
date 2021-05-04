@@ -364,7 +364,7 @@ public enum Package {
 				.forEach(PlayerUtils::runCommandAsConsole);
 
 		if (getExpirationDays() > 0)
-			new TaskService().save(new Task("package-expire", new HashMap<String, Object>() {{
+			new TaskService().save(new Task("package-expire", new HashMap<>() {{
 				put("uuid", player.getUniqueId().toString());
 				put("packageId", String.valueOf(getId()));
 			}}, LocalDateTime.now().plusDays(getExpirationDays())));

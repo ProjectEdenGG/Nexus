@@ -26,7 +26,7 @@ import java.util.UUID;
 
 public class Seeker implements Listener {
 	private static final World world = BearFair21.getWorld();
-	private static final Map<Location, BlockFace> locationsMap = new HashMap<Location, BlockFace>() {{
+	private static final Map<Location, BlockFace> locationsMap = new HashMap<>() {{
 		put(new Location(world, 69, 138, -48), BlockFace.NORTH);
 		put(new Location(world, 56, 146, -48), BlockFace.WEST);
 		put(new Location(world, 35, 139, -48), BlockFace.EAST);

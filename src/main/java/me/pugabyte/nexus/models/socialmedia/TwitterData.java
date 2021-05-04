@@ -52,7 +52,7 @@ public class TwitterData implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<PendingTweet> pendingTweets = new ArrayList<>();
 	@Getter
-	private static final Map<Role, Integer> requiredVotes = new HashMap<Role, Integer>() {{
+	private static final Map<Role, Integer> requiredVotes = new HashMap<>() {{
 		put(Role.ADMINS, 3);
 		put(Role.MODERATORS, 3);
 	}};

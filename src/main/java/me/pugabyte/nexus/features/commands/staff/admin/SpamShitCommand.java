@@ -30,7 +30,7 @@ import java.util.Map;
 public class SpamShitCommand extends CustomCommand implements Listener {
 	private static boolean spamming = false;
 	private static Map<Material, Integer> taskIds = new HashMap<>();
-	private static Map<Material, Class<? extends Projectile>> projectiles = new HashMap<Material, Class<? extends Projectile>>() {{
+	private static Map<Material, Class<? extends Projectile>> projectiles = new HashMap<>() {{
 		put(Material.EGG, Egg.class);
 		put(Material.STICK, Arrow.class);
 		put(Material.SNOWBALL, Snowball.class);

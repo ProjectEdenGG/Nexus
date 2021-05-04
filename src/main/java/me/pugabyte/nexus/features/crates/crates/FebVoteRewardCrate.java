@@ -22,7 +22,7 @@ public class FebVoteRewardCrate extends Crate {
 
 	@Override
 	public List<String> getCrateHologramLines() {
-		return new ArrayList<String>() {{
+		return new ArrayList<>() {{
 			add("&c&l--=[+]=--");
 			add("&c[+] &6&lFeb. Vote Goal Crate &c[+]");
 			add("&c&l--=[+]=--");

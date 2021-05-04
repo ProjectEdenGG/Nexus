@@ -41,7 +41,7 @@ public class RulesCommand extends CustomCommand {
 		if (results.isEmpty())
 			return new ArrayList<>();
 
-		return new ArrayList<JsonBuilder>() {{
+		return new ArrayList<>() {{
 			add(json("&3[+] &e" + camelCase(rulesType) + " Rules").command("/rules " + rulesType.name().toLowerCase()));
 			add(json(" "));
 			addAll(results);

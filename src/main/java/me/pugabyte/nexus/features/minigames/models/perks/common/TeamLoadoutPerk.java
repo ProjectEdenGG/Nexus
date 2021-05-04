@@ -33,7 +33,7 @@ public abstract class TeamLoadoutPerk extends LoadoutPerk {
 		Arrays.stream(ColorType.values()).forEach(colorType -> {
 			try {
 				if (colorType.getChatColor() != null) {
-					loadout.put(colorType.getChatColor(), new HashMap<EnumItemSlot, ItemStack>() {{
+					loadout.put(colorType.getChatColor(), new HashMap<>() {{
 						put(EnumItemSlot.HEAD, getColorItem(colorType));
 					}});
 				}

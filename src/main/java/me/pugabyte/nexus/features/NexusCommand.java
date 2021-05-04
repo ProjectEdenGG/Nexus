@@ -388,7 +388,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("taskTest <message...>")
 	void taskTest(String message) {
-		new TaskService().save(new Task("command-test", new HashMap<String, Object>() {{
+		new TaskService().save(new Task("command-test", new HashMap<>() {{
 			put("uuid", uuid().toString());
 			put("message", message);
 		}}, LocalDateTime.now().plusMinutes(1)));

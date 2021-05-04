@@ -32,7 +32,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	private static final int npcId = 3362;
 	private static final int stationaryNPCId = 3361;
 
-	private static final List<JsonBuilder> tips = new ArrayList<JsonBuilder>() {{
+	private static final List<JsonBuilder> tips = new ArrayList<>() {{
 		add(new JsonBuilder("&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money.").command("/mcmmo reset").hover("&eClick to run the command!"));
 		add(new JsonBuilder("&3Considering a donor perk, but not sure? You can test many of the commands in the donor test world- find it in the &c/warps &3menu!").command("/warps"));
 		add(new JsonBuilder("&3Each month the community has a group goal for voting." +
