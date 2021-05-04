@@ -210,7 +210,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				startQuest.add("Hello mate. Golden Syrup hey? Hmm well. I think I should have some for you.");
 				startQuest.add("wait 80");
 				startQuest.add("Aha! Here it is. Have this mate. Fresh from a place called Landfall. Not really sure where that is on " +
-						"Bear Nation, but their syrup is to die for!");
+						"Project Eden, but their syrup is to die for!");
 
 				if (!user.isQuest_SDU_Start() || step < 4)
 					return Collections.singletonList(RandomUtils.randomElement(greetings));

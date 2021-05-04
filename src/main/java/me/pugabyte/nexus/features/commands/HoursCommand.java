@@ -156,7 +156,7 @@ public class HoursCommand extends CustomCommand {
 								PlayerUtils.send(player, "&e&lCongratulations! &3You have been promoted to &fMember&3 for " +
 										"playing for &e24 hours &3in-game. You are now eligible for &c/trusted&3.");
 								PlayerUtils.send(player, "");
-								PlayerUtils.send(player, "&6&lThank you for flying Bear Nation!");
+								PlayerUtils.send(player, "&6&lThank you for flying Project Eden!");
 							});
 						}
 					}

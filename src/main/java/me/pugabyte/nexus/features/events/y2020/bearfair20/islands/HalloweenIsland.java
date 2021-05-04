@@ -80,7 +80,7 @@ public class HalloweenIsland implements Listener, Island {
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hey there! Welcome to the historic Ravens' Nest Estate Museum!");
 				startQuest.add("wait 80");
-				startQuest.add("Here, we safely preserve the very location where the supernatural events that lead to the kidnap and resuce of the bear nation staff occured in 2018!");
+				startQuest.add("Here, we safely preserve the very location where the supernatural events that lead to the kidnap and resuce of the Project Eden staff occured in 2018!");
 				startQuest.add("wait 120");
 				startQuest.add("<self> Hey! I was wondering if you could tell me where I might find a halloween candy basket?");
 				startQuest.add("wait 80");

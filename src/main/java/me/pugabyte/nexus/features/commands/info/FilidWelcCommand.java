@@ -14,8 +14,8 @@ public class FilidWelcCommand extends CustomCommand {
 	void run() {
 		line(2);
 		send("&eGreetings &b" + name() + "&e!");
-		send("&3Welcome to Bear Nation. My name is Filid. Glad to meet you :)");
-		send("&3Here are some of the most important aspects of our &ecommunity &3and what makes Bear Nation unique.");
+		send("&3Welcome to Project Eden. My name is Filid. Glad to meet you :)");
+		send("&3Here are some of the most important aspects of our &ecommunity &3and what makes Project Eden unique.");
 		line();
 		send(json("&3[+] &eMinigames").command("/minigames").hover("&3Join us on &eSaturdays&3, &e4&3-&e6 &ePM &eEST " +
 				"\n&3for &eMinigame Night&3!\n" +
@@ -26,7 +26,7 @@ public class FilidWelcCommand extends CustomCommand {
 				"\n&eMake sure to join &c/discord &etoo!"));
 		send(json("&3[+] &eDiscord").command("/discord").hover("&eA community skype-like program including " +
 				"\n&etext chats and voice chats"));
-		send(json("&3[+] &eWebsite").url("https://bnn.gg/").hover("&eThe homepage for the server"));
+		send(json("&3[+] &eWebsite").url("https://projecteden.gg/").hover("&eThe homepage for the server"));
 		send(json("&3[+] &eVoting").command("/vote").hover("&eVote for our server to support us!"));
 		line();
 		runCommandAsConsole("curiosity cake " + name());

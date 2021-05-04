@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.discord;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.models.discord.DiscordCaptcha;
 import me.pugabyte.nexus.models.discord.DiscordCaptcha.CaptchaResult;
 import me.pugabyte.nexus.models.discord.DiscordCaptchaService;
@@ -72,7 +72,7 @@ public class DiscordCaptchaListener extends ListenerAdapter {
 					if (message == null)
 						Nexus.warn("[Captcha] Could not find original message");
 					else
-						message.editMessage("Account confirmed. You may now join the server again: " + BNSocialMediaSite.DISCORD.getUrl()).queue();
+						message.editMessage("Account confirmed. You may now join the server again: " + EdenSocialMediaSite.DISCORD.getUrl()).queue();
 				} else
 					complete.sendMessage("Account confirmed, thank you!").queue();
 

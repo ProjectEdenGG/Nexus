@@ -180,7 +180,7 @@ public class EndOfMonth {
 
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += "**<https://bnn.gg/vote>**";
+			msg += "**<https://projecteden.gg/vote>**";
 			return msg;
 		}
 	}

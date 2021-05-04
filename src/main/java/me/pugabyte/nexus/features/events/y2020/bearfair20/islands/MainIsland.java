@@ -213,7 +213,7 @@ public class MainIsland implements Listener, Island {
 			@Override
 			public List<String> getScript(Player player) {
 				List<String> script = new ArrayList<>();
-				script.add("Welcome to Bear Fair, Bear Nation's anniversary event!");
+				script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
 				script.add("wait 80");
 				script.add("This year features several islands to explore, find easter eggs, and do quests!");
 				script.add("wait 80");

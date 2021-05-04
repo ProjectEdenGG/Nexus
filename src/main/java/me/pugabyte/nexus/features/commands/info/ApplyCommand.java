@@ -18,7 +18,7 @@ public class ApplyCommand extends CustomCommand {
 		send("&3Ready to apply for " + Rank.MODERATOR.getPrefix());
 		send("&3How does your name look in blue, " + Rank.MODERATOR.getChatColor() + name() + "&3? :)");
 		send("&3If you think you are ready for this position, you can fill out an application here:");
-		send(json().next("&ehttps://bnn.gg/apply/mod"));
+		send(json().next("&ehttps://projecteden.gg/apply/mod"));
 	}
 
 }

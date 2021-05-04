@@ -129,30 +129,30 @@ public class SocialMedia extends Feature implements Listener {
 		}
 	}
 
-	public enum BNSocialMediaSite {
-		WEBSITE("https://bnn.gg"),
+	public enum EdenSocialMediaSite {
+		WEBSITE("https://projecteden.gg"),
 		DISCORD(null) {
 			@Override
 			@NotNull
 			public String getUrl() {
-				String url = "https://discord.bnn.gg";
+				String url = "https://discord.projecteden.gg";
 				if (Discord.getGuild() != null && Discord.getGuild().getBoostTier().getKey() == 3)
 					url = "https://discord.gg/bearnation";
 				return url;
 			}
 		},
-		YOUTUBE("https://youtube.bnn.gg"),
-		TWITTER("https://twitter.bnn.gg"),
-		INSTAGRAM("https://instagram.bnn.gg"),
-		REDDIT("https://reddit.bnn.gg"),
-		STEAM("https://steam.bnn.gg"),
-		QUEUP("https://queup.bnn.gg");
+		YOUTUBE("https://youtube.projecteden.gg"),
+		TWITTER("https://twitter.projecteden.gg"),
+		INSTAGRAM("https://instagram.projecteden.gg"),
+		REDDIT("https://reddit.projecteden.gg"),
+		STEAM("https://steam.projecteden.gg"),
+		QUEUP("https://queup.projecteden.gg");
 
 		@Getter
 		private String name = "&3" + camelCase(name());
 		private final String url;
 
-		BNSocialMediaSite(String url) {
+		EdenSocialMediaSite(String url) {
 			try {
 				this.name = SocialMediaSite.valueOf(name()).getLabel();
 			} catch (IllegalArgumentException ignore) {}

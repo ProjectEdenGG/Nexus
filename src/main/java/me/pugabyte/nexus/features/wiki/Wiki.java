@@ -65,7 +65,7 @@ public class Wiki {
 			wiki = "/";
 		} else {
 			prefix = StringUtils.getPrefix("Wiki");
-			url = "https://wiki.bnn.gg";
+			url = "https://wiki.projecteden.gg";
 			api = "/w/api.php";
 			wiki = "/wiki/";
 		}

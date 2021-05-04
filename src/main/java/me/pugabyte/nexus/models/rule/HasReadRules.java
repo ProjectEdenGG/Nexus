@@ -79,7 +79,7 @@ public class HasReadRules implements PlayerOwnedObject {
 				new ArrayList<JsonBuilder>() {{
 					add(new JsonBuilder("&e6. &3Do not do a staff member's job if they are available to do it themselves"));
 					add(new JsonBuilder("&e7. &3No inappropriate content"));
-					add(new JsonBuilder("&e8. &3No ban evading (that includes using Discord). Appeal at &chttps://bnn.gg/appeal"));
+					add(new JsonBuilder("&e8. &3No ban evading (that includes using Discord). Appeal at &chttps://projecteden.gg/appeal"));
 					add(new JsonBuilder("&e9. &3Keep heavily opinionated and political arguments out of public chats"));
 					add(new JsonBuilder("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)").command("/rules streaming"));
 				}},
@@ -120,7 +120,7 @@ public class HasReadRules implements PlayerOwnedObject {
 					add(new JsonBuilder("&e6. &3Give nearby players a reasonable amount of space. When in doubt, ask the build owner."));
 					add(new JsonBuilder("&e7. &3No mods/hacks, except OptiFine and Shaders. &eHover for more info").hover("&3Please ask about other mods\n&3you may wish to use."));
 					add(new JsonBuilder("&e8. &3No random 1x1 towers/holes, block spam or obscene structures/skins"));
-					add(new JsonBuilder("&e9. &3Bear Nation has the right to use & modify all builds produced on the server"));
+					add(new JsonBuilder("&e9. &3Project Eden has the right to use & modify all builds produced on the server"));
 				}}
 		),
 		MINIGAMES(

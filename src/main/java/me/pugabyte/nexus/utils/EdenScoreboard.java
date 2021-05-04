@@ -22,33 +22,33 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.left;
 
 @SuppressWarnings("unused")
-public class BNScoreboard {
+public class EdenScoreboard {
 	private static final ScoreboardManager manager = Nexus.getInstance().getServer().getScoreboardManager();
 	private static final Scoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 	private final ScoreboardObjective objective;
 	private final Map<String, Integer> lines = new HashMap<>();
 
-	public BNScoreboard(String title) {
+	public EdenScoreboard(String title) {
 		this(title, title, Collections.emptyList());
 	}
 
-	public BNScoreboard(String title, Player player) {
+	public EdenScoreboard(String title, Player player) {
 		this(title, title, Collections.singletonList(player));
 	}
 
-	public BNScoreboard(String title, Collection<? extends Player> players) {
+	public EdenScoreboard(String title, Collection<? extends Player> players) {
 		this(title, title, players);
 	}
 
-	public BNScoreboard(String id, String title) {
+	public EdenScoreboard(String id, String title) {
 		this(id, title, Collections.emptyList());
 	}
 
-	public BNScoreboard(String id, String title, Player player) {
+	public EdenScoreboard(String id, String title, Player player) {
 		this(id, title, Collections.singletonList(player));
 	}
 
-	public BNScoreboard(String id, String title, Collection<? extends Player> players) {
+	public EdenScoreboard(String id, String title, Collection<? extends Player> players) {
 		try { scoreboard.removeObjective(left(id, 16)); } catch (Exception ignore) {}
 		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
 		for (Player player : players)

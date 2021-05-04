@@ -85,7 +85,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			send("  &eAbout me: &3" + nerd.getAbout());
 		if (nerd.isMeetMeVideo()) {
 			line();
-			String url = "https://bnn.gg/meet/" + nerd.getName().toLowerCase();
+			String url = "https://projecteden.gg/meet/" + nerd.getName().toLowerCase();
 			send(json("  &eMeet Me!&c " + url).url(url));
 		}
 	}

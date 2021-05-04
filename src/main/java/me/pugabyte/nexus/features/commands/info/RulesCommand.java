@@ -51,14 +51,14 @@ public class RulesCommand extends CustomCommand {
 
 	@Path
 	void menu() {
-		send("&3Bear Nation's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
+		send("&3Project Eden's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
 		line();
 
 		for (RulesType rulesType : RulesType.values())
 			if (!rulesType.isHide())
 				send(json("&3[+] &e" + camelCase(rulesType) + " Rules").command("/rules " + rulesType.name().toLowerCase()));
 
-		send(json("&3[+] &eOther Rules").url("https://wiki.bnn.gg/wiki/Main_Page#Discord_rules"));
+		send(json("&3[+] &eOther Rules").url("https://wiki.projecteden.gg/wiki/Main_Page#Discord_rules"));
 		line();
 
 		RulesSection.MAIN.markRead(player());

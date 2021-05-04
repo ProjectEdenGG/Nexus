@@ -14,7 +14,7 @@ public class ModeratorCommand extends CustomCommand {
 		super(event);
 	}
 
-	String modApp = "https://bnn.gg/apply/mod";
+	String modApp = "https://projecteden.gg/apply/mod";
 
 	@Path
 	void moderator() {

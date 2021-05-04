@@ -99,7 +99,7 @@ public class BearFair20 implements Listener {
 				int id = event.getNPC().getId();
 				if (id == MainIsland.MainNPCs.WakkaFlocka.getNpcId()) {
 					List<String> script = new ArrayList<>();
-					script.add("Welcome to Bear Fair, Bear Nation's anniversary event!");
+					script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
 					script.add("wait 80");
 					script.add("This event starts every year on June 29th and lasts until the 5th!");
 					script.add("wait 80");

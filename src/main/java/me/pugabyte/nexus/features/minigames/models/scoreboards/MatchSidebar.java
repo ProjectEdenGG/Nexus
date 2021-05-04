@@ -2,17 +2,17 @@ package me.pugabyte.nexus.features.minigames.models.scoreboards;
 
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
-import me.pugabyte.nexus.utils.BNScoreboard;
+import me.pugabyte.nexus.utils.EdenScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class MatchSidebar implements MinigameScoreboard {
 	private Match match;
-	private BNScoreboard scoreboard;
+	private EdenScoreboard scoreboard;
 
 	public MatchSidebar(Match match) {
 		this.match = match;
-		this.scoreboard = new BNScoreboard(match.getMechanic().getScoreboardTitle(match));;
+		this.scoreboard = new EdenScoreboard(match.getMechanic().getScoreboardTitle(match));;
 	}
 
 	@Override

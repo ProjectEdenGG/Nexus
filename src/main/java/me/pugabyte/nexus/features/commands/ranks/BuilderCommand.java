@@ -14,7 +14,7 @@ public class BuilderCommand extends CustomCommand {
 		super(event);
 	}
 
-	String builderApp = "https://bnn.gg/apply/builder";
+	String builderApp = "https://projecteden.gg/apply/builder";
 
 	@Path
 	void builder() {

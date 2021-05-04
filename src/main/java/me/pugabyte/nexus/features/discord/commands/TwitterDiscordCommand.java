@@ -78,7 +78,7 @@ public class TwitterDiscordCommand extends Command {
 						case "pending":
 							StringBuilder message = new StringBuilder();
 							for (PendingTweet pendingTweet : data.getPendingTweets()) {
-								String link = "https://discord.com/channels/" + Guild.BEAR_NATION.getId() + "/" + TextChannel.STAFF_SOCIAL_MEDIA.getId() + "/" + pendingTweet.getMessageId();
+								String link = "https://discord.com/channels/" + Guild.PROJECT_EDEN.getId() + "/" + TextChannel.STAFF_SOCIAL_MEDIA.getId() + "/" + pendingTweet.getMessageId();
 								message.append(link).append(System.lineSeparator());
 							}
 							event.reply(message.toString());

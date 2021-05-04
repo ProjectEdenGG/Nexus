@@ -6,7 +6,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -29,7 +29,7 @@ public class TwitterCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().next("&e" + BNSocialMediaSite.TWITTER.getUrl()));
+		send(json().next("&e" + EdenSocialMediaSite.TWITTER.getUrl()));
 	}
 
 	@Async

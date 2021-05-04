@@ -170,8 +170,8 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			hostname = hostname.split(":")[0];
 		if (hostname.endsWith("."))
 			hostname = hostname.substring(0, hostname.length() - 1);
-		if (hostname.equalsIgnoreCase("server.bnn.gg"))
-			hostname = "bnn.gg";
+		if (hostname.equalsIgnoreCase("server.projecteden.gg"))
+			hostname = "projecteden.gg";
 
 		referral.setIp(hostname);
 		service.save(referral);

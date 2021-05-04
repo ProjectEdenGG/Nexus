@@ -12,7 +12,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.BNScoreboard;
+import me.pugabyte.nexus.utils.EdenScoreboard;
 import me.pugabyte.nexus.utils.Tasks;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	private Map<ScoreboardLine, Boolean> lines = new HashMap<>();
 	private boolean active = true;
 
-	private transient BNScoreboard scoreboard;
+	private transient EdenScoreboard scoreboard;
 	private transient ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
 	private transient int headerTaskId = -1;
 	private transient Map<ScoreboardLine, Integer> taskIds = new HashMap<>();
@@ -65,7 +65,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 		pause();
 		if (scoreboard == null)
-			scoreboard = new BNScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Bear Nation &e<", getPlayer());
+			scoreboard = new EdenScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Project Eden &e<", getPlayer());
 		else
 			scoreboard.subscribe(getPlayer());
 		active = true;
