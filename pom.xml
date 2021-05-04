@@ -162,18 +162,11 @@
         </repository>
     </repositories>
     <dependencies>
-        <!-- Paper API -->
+        <!-- Parchment API + server (NMS) -->
         <dependency>
             <groupId>me.lexikiq</groupId>
-            <artifactId>parchment-api</artifactId>
+            <artifactId>parchment</artifactId>
             <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- NMS -->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.16.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- PaperLib API wrapper -->
