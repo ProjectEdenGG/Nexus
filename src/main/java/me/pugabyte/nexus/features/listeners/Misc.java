@@ -188,7 +188,7 @@ public class Misc implements Listener {
 	}
 
 	private static final String CHAT_DISABLED_WARNING = "&4&lWARNING: &4You have chat disabled! If this is by mistake, please turn it on in your settings.";
-	private static final int WARNING_LENGTH_TICKS = Time.SECOND.x(10);
+	private static final int WARNING_LENGTH_TICKS = Time.MINUTE.x(1);
 
 	@EventHandler
 	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
