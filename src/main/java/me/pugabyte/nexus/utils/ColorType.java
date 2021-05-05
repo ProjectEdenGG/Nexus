@@ -196,7 +196,7 @@ public enum ColorType implements Colored {
 	@Nullable
 	public static ColorType of(@Nullable ChatColor chatColor) {
 		if (chatColor == null) return null;
-		return Arrays.stream(values()).filter(colorType -> colorType.getChatColor().equals(chatColor)).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(colorType -> colorType.getChatColor().getColor().equals(chatColor.getColor())).findFirst().orElse(null);
 	}
 
 	@Nullable
