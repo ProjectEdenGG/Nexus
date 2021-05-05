@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
-import com.destroystokyo.paper.Title;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import eden.utils.TimeUtils.Time;
@@ -188,19 +187,19 @@ public class Misc implements Listener {
 					"Use &c/trust lock <player> &eto allow someone else to use it.");
 	}
 
+	private static final String CHAT_DISABLED_WARNING = "&4&lWARNING: &4You have chat disabled! If this is by mistake, please turn it on in your settings.";
+	private static final int WARNING_LENGTH_TICKS = Time.SECOND.x(10);
+
 	@EventHandler
 	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			Player player = event.getPlayer();
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
-				int titleTime = Time.SECOND.x(10);
-				player.sendTitle(new Title("&4&lWARNING", "&4You have chat disabled!", 10, titleTime, 10));
-				ActionBarUtils.sendActionBar(player, "&4Turn it on in your settings", titleTime);
-				Tasks.wait(titleTime, () -> ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get()));
 				PlayerUtils.send(player, "");
-				PlayerUtils.send(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings");
+				PlayerUtils.send(player, CHAT_DISABLED_WARNING);
 				PlayerUtils.send(player, "");
+				ActionBarUtils.sendActionBar(player, CHAT_DISABLED_WARNING, WARNING_LENGTH_TICKS);
 			}
 		});
 	}
