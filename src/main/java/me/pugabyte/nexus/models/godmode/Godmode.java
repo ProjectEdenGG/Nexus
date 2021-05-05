@@ -35,8 +35,8 @@ public class Godmode implements PlayerOwnedObject {
 
 	@Getter
 	private static final List<String> disabledWorlds = new ArrayList<>(Arrays.asList("gameworld", "deathswap")) {{
-		addAll(WorldGroup.SKYBLOCK.getWorlds());
-		addAll(WorldGroup.ONEBLOCK.getWorlds());
+		addAll(WorldGroup.SKYBLOCK.getWorldNames());
+		addAll(WorldGroup.ONEBLOCK.getWorldNames());
 	}};
 
 	public boolean isEnabled() {

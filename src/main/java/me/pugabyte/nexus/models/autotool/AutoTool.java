@@ -33,7 +33,7 @@ public class AutoTool implements PlayerOwnedObject {
 	private boolean enabled = true;
 
 	@Getter
-	private static final List<String> disabledWorlds = WorldGroup.MINIGAMES.getWorlds();
+	private static final List<String> disabledWorlds = WorldGroup.MINIGAMES.getWorldNames();
 
 	public boolean isEnabled() {
 		if (!isOnline())
