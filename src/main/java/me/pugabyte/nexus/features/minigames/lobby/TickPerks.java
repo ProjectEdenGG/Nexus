@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.lobby;
 
 import eden.utils.TimeUtils.Time;
 import lombok.Data;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
@@ -223,7 +224,7 @@ public class TickPerks implements Listener {
 	private static class CooldownWrapper {
 		private final UUID uuid;
 		private final GadgetPerk perk;
-		public static CooldownWrapper of(OfflinePlayer player, GadgetPerk perk) {
+		public static CooldownWrapper of(HasUniqueId player, GadgetPerk perk) {
 			return new CooldownWrapper(player.getUniqueId(), perk);
 		}
 	}

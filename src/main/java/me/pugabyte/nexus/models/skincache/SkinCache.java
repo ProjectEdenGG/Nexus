@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -58,11 +59,7 @@ public class SkinCache implements PlayerOwnedObject {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static SkinCache of(PlayerOwnedObject player) {
-		return of(player.getUuid());
-	}
-
-	public static SkinCache of(OfflinePlayer player) {
+	public static SkinCache of(HasUniqueId player) {
 		return of(player.getUniqueId());
 	}
 

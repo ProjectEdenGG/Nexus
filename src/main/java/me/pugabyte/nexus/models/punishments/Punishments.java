@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -64,11 +65,7 @@ public class Punishments implements PlayerOwnedObject {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static Punishments of(PlayerOwnedObject player) {
-		return of(player.getUuid());
-	}
-
-	public static Punishments of(OfflinePlayer player) {
+	public static Punishments of(HasUniqueId player) {
 		return of(player.getUniqueId());
 	}
 

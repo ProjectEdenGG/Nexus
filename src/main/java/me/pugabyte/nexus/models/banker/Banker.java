@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
@@ -56,12 +57,8 @@ public class Banker implements PlayerOwnedObject {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static Banker of(OfflinePlayer player) {
+	public static Banker of(HasUniqueId player) {
 		return of(player.getUniqueId());
-	}
-
-	public static Banker of(PlayerOwnedObject player) {
-		return of(player.getUuid());
 	}
 
 	public static Banker of(UUID uuid) {
