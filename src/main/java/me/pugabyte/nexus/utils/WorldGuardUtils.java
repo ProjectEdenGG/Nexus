@@ -14,6 +14,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import lombok.Data;
 import lombok.NonNull;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -121,8 +122,8 @@ public class WorldGuardUtils {
 		return getRegionsAt(location).stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}
 
-	public boolean isInRegion(Player player, String region) {
-		return isInRegion(player.getLocation(), region);
+	public boolean isInRegion(HasPlayer player, String region) {
+		return isInRegion(player.getPlayer().getLocation(), region);
 	}
 
 	public boolean isInRegion(Location location, String region) {

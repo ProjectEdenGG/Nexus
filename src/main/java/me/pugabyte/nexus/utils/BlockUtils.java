@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.utils;
 
+import me.lexikiq.HasPlayer;
+import me.lexikiq.OptionalPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.LocationUtils.Axis;
 import me.pugabyte.nexus.utils.Tasks.GlowTask;
@@ -153,7 +155,8 @@ public class BlockUtils {
 	snow layers (all levels, layers=1 & 2, uses the block underneath)
 	 */
 
-	public static Block getBlockStandingOn(Player player) {
+	public static Block getBlockStandingOn(HasPlayer hasPlayer) {
+		Player player = hasPlayer.getPlayer();
 		Location below = player.getLocation().add(0, -.25, 0);
 		Block block = below.getBlock();
 		if (block.getType().isSolid())
@@ -228,15 +231,17 @@ public class BlockUtils {
 		return block == null || block.getType().equals(Material.AIR);
 	}
 
-	public static void glow(Block block, int ticks, Player viewer) {
+	public static void glow(Block block, int ticks, OptionalPlayer viewer) {
 		glow(block, ticks, viewer, Color.RED);
 	}
 
-	public static void glow(Block block, int ticks, Player viewer, Color color) {
+	public static void glow(Block block, int ticks, OptionalPlayer viewer, Color color) {
 		glow(block, ticks, Collections.singletonList(viewer), color);
 	}
 
-	public static void glow(Block block, int ticks, List<Player> viewers, Color color) {
+	public static void glow(Block block, int ticks, List<? extends OptionalPlayer> viewers, Color color) {
+		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
+
 		Material material = block.getType();
 		if (ItemUtils.isNullOrAir(material))
 			material = Material.WHITE_CONCRETE;
@@ -253,10 +258,10 @@ public class BlockUtils {
 				.duration(ticks)
 				.entity(fallingBlock)
 				.color(color)
-				.viewers(viewers)
+				.viewers(_viewers)
 				.onComplete(() -> {
 					fallingBlock.remove();
-					for (Player viewer : viewers)
+					for (Player viewer : _viewers)
 						viewer.sendBlockChange(location, block.getType().createBlockData());
 				})
 				.start();

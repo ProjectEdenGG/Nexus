@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import io.papermc.paper.text.PaperComponents;
 import lombok.experimental.UtilityClass;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
@@ -17,7 +18,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +70,7 @@ public class AdventureUtils {
 		return Identity.identity(uuid);
 	}
 
-	public static Identity identityOf(OfflinePlayer player) {
+	public static Identity identityOf(HasUniqueId player) {
 		return identityOf(player.getUniqueId());
 	}
 
@@ -185,7 +185,7 @@ public class AdventureUtils {
 	 * @param color optional color to use for the commas
 	 * @return a formatted TextComponent
 	 */
-	public static TextComponent commaJoinText(List<ComponentLike> components, @Nullable TextColor color) {
+	public static TextComponent commaJoinText(List<? extends ComponentLike> components, @Nullable TextColor color) {
 		TextComponent component = Component.text("", color);
 
 		if (components.isEmpty())
@@ -221,7 +221,14 @@ public class AdventureUtils {
 	 * @param components components to separate by commas.
 	 * @return a formatted TextComponent
 	 */
-	public static TextComponent commaJoinText(List<ComponentLike> components) {
+	public static TextComponent commaJoinText(List<? extends ComponentLike> components) {
 		return commaJoinText(components, null);
+	}
+
+	/**
+	 * Maps a list of {@link ComponentLike} to {@link Component}
+	 */
+	public static List<Component> asComponentList(List<? extends ComponentLike> components) {
+		return components.stream().map(ComponentLike::asComponent).collect(Collectors.toList());
 	}
 }

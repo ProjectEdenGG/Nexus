@@ -93,7 +93,7 @@ public class Pugmas20User implements PlayerOwnedObject {
 	public void storeInventory() {
 		if (!isOnline()) return;
 
-		PlayerInventory playerInventory = getPlayer().getInventory();
+		PlayerInventory playerInventory = getOnlinePlayer().getInventory();
 		for (ItemStack item : playerInventory.getContents()) {
 			if (isNullOrAir(item) || Utils.isNullOrEmpty(item.getLore()))
 				continue;
@@ -107,12 +107,12 @@ public class Pugmas20User implements PlayerOwnedObject {
 
 	public void applyInventory() {
 		if (!isOnline()) return;
-		if (!isAtPugmas(getPlayer())) return;
+		if (!isAtPugmas(getOnlinePlayer())) return;
 		if (this.inventory.isEmpty()) return;
 
 		ArrayList<ItemStack> inventory = new ArrayList<>(this.inventory);
 		this.inventory.clear();
-		this.inventory.addAll(PlayerUtils.giveItemsGetExcess(getPlayer(), inventory));
+		this.inventory.addAll(PlayerUtils.giveItemsGetExcess(getOnlinePlayer(), inventory));
 
 		if (this.inventory.isEmpty())
 			send(Pugmas20.PREFIX + "Inventory applied");

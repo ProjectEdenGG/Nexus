@@ -118,11 +118,11 @@ public class MiniGolf {
 		List<ItemStack> kit = Arrays.asList(getPutter(), getWedge(), getWhistle(),
 				getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build(), getScoreBook());
 
-		PlayerUtils.giveItems(user.getPlayer(), kit);
+		PlayerUtils.giveItems(user.getOnlinePlayer(), kit);
 	}
 
 	public static void takeKit(MiniGolf21User user) {
-		PlayerInventory inventory = user.getPlayer().getInventory();
+		PlayerInventory inventory = user.getOnlinePlayer().getInventory();
 		inventory.remove(getPutter());
 		inventory.remove(getWedge());
 		inventory.remove(getWhistle());
@@ -178,7 +178,7 @@ public class MiniGolf {
 				if (user.getSnowball() == null)
 					continue;
 
-				Player player = user.getPlayer();
+				Player player = user.getOnlinePlayer();
 				ItemStack tool = ItemUtils.getTool(player);
 				if (ItemUtils.isNullOrAir(tool))
 					continue;
@@ -270,7 +270,7 @@ public class MiniGolf {
 				// Rainbow Glow
 				if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
 					if (updateRainbow)
-						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getPlayer());
+						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getOnlinePlayer());
 				}
 
 				Material _type = loc.getBlock().getType();

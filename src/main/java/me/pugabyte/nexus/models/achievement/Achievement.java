@@ -485,7 +485,7 @@ public enum Achievement implements HasDescription {
 				Hours hours = new HoursService().get(achievementPlayer);
 				return hours.getTotal() / 60 / 60;
 			case BALANCE:
-				return (int) new BankerService().getBalance(achievementPlayer.getPlayer(), ShopGroup.of(achievementPlayer.getPlayer()));
+				return (int) new BankerService().getBalance(achievementPlayer.getOnlinePlayer(), ShopGroup.of(achievementPlayer.getOnlinePlayer()));
 		}
 		return 0;
 	}

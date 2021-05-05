@@ -43,9 +43,9 @@ public class Curiosity implements PlayerOwnedObject {
 	public void give(CuriosityReward reward) {
 		earned.add(reward);
 		if (isOnline()) {
-			PlayerUtils.giveItem(getPlayer(), reward.getItem());
-			PlayerUtils.send(getPlayer(), "");
-			PlayerUtils.send(getPlayer(), "&3You earned &e" + pretty(reward.getItem()) + " &3for learning!");
+			PlayerUtils.giveItem(getOnlinePlayer(), reward.getItem());
+			PlayerUtils.send(getOnlinePlayer(), "");
+			PlayerUtils.send(getOnlinePlayer(), "&3You earned &e" + pretty(reward.getItem()) + " &3for learning!");
 		}
 	}
 

@@ -41,7 +41,7 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 				.size(6, 9)
 				.title(colorize("&3Your Deliveries"))
 				.build()
-				.open(user.getPlayer(), page);
+				.open(user.getOnlinePlayer(), page);
 	}
 
 	@Override

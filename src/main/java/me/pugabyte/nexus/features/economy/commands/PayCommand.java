@@ -53,7 +53,7 @@ public class PayCommand extends CustomCommand {
 		String description = (reason == null ? "" : " &3for &e" + reason) + " &3in &e" + camelCase(shopGroup);
 		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName() + description);
 		if (banker.isOnline())
-			send(banker.getPlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + description);
+			send(banker.getOnlinePlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + description);
 	}
 
 	@Async

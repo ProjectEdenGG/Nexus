@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId;
@@ -23,7 +24,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -56,16 +56,12 @@ public class Nickname extends eden.models.nickname.Nickname implements PlayerOwn
 		put(Role.ADMINS, 3);
 	}};
 
-	public static String of(OfflinePlayer player) {
-		return of(player.getUniqueId());
-	}
-
 	public static String of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static String of(PlayerOwnedObject player) {
-		return of(player.getUuid());
+	public static String of(HasUniqueId player) {
+		return of(player.getUniqueId());
 	}
 
 	public static String of(UUID uuid) {

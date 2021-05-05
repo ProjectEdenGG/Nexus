@@ -39,7 +39,7 @@ public class AntiXray implements Listener {
 		put(Material.GILDED_BLACKSTONE, 20);	// generates in bastian remnants
 		// @formatter:on;
 	}};
-	private static Map<UUID, List<XRayLog>> XRayLogs = new HashMap<>();
+	private static final Map<UUID, List<XRayLog>> XRayLogs = new HashMap<>();
 	private final static int minuteThreshold = 5;
 
 	@EventHandler
@@ -95,7 +95,7 @@ public class AntiXray implements Listener {
 
 	@Getter
 	@AllArgsConstructor
-	class XRayLog {
+	static class XRayLog {
 		Material material;
 		LocalDateTime timestamp;
 		Location location;

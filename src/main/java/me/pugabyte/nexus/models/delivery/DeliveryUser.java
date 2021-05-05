@@ -60,7 +60,7 @@ public class DeliveryUser implements PlayerOwnedObject {
 	}
 
 	public void setupDelivery(ItemStack item) {
-		new DeliveryWorldMenu(item).open(getPlayer());
+		new DeliveryWorldMenu(item).open(getOnlinePlayer());
 	}
 
 	public void remove(WorldGroup worldGroup, Delivery delivery) {

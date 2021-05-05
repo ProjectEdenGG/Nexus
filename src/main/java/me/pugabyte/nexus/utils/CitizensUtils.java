@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.utils;
 
+import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -40,9 +40,9 @@ public class CitizensUtils {
 	 * @param npc NPC to update
 	 * @param player a server member
 	 */
-	public static void updateNameAndSkin(NPC npc, OfflinePlayer player) {
+	public static void updateNameAndSkin(NPC npc, OptionalPlayerLike player) {
 		updateName(npc, Nickname.of(player));
-		updateSkin(npc, player.getName());
+		updateSkin(npc, player.getOfflinePlayer().getName());
 	}
 
 	/**

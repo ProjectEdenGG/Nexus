@@ -38,7 +38,7 @@ public class OpenDeliveryMenuProvider extends MenuUtils implements InventoryProv
 				.size(4, 9)
 				.title(colorize("&3From: &e" + delivery.getFrom()))
 				.build()
-				.open(user.getPlayer());
+				.open(user.getOnlinePlayer());
 	}
 
 	@Override

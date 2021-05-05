@@ -54,7 +54,7 @@ public class StatusBar implements PlayerOwnedObject {
 		stop();
 
 		bossBar = Bukkit.createBossBar(getText(), BarColor.BLUE, BarStyle.SEGMENTED_6);
-		bossBar.addPlayer(getPlayer());
+		bossBar.addPlayer(getOnlinePlayer());
 		taskId = Tasks.repeat(0, Time.SECOND, () -> {
 			if (!isOnline())
 				stop();
@@ -76,9 +76,9 @@ public class StatusBar implements PlayerOwnedObject {
 
 	public String getText() {
 		return colorize(
-				ScoreboardLine.PING.render(getPlayer()) + "  &8&l|  " +
-				ScoreboardLine.TPS.render(getPlayer()) + "  &8&l|  " +
-				ScoreboardLine.CHANNEL.render(getPlayer())
+				ScoreboardLine.PING.render(getOnlinePlayer()) + "  &8&l|  " +
+				ScoreboardLine.TPS.render(getOnlinePlayer()) + "  &8&l|  " +
+				ScoreboardLine.CHANNEL.render(getOnlinePlayer())
 		);
 	}
 

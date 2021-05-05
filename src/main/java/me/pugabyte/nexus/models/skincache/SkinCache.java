@@ -135,7 +135,7 @@ public class SkinCache implements PlayerOwnedObject {
 	@SneakyThrows
 	private @NotNull ProfileProperty getCurrentProperty() {
 		if (isOnline())
-			return getTextureProperty(getPlayer().getPlayerProfile());
+			return getTextureProperty(getOnlinePlayer().getPlayerProfile());
 
 		Response response = FakePlayerProfile.call(uuid);
 

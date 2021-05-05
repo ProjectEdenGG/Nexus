@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.commands.PronounsCommand;
@@ -59,18 +60,15 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static Nerd of(PlayerOwnedObject player) {
-		return of(player.getUuid());
+	public static Nerd of(HasUniqueId uuid) {
+		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid.getUniqueId());
+		Nerd nerd = new NerdService().get(offlinePlayer);
+		nerd.fromPlayer(offlinePlayer);
+		return nerd;
 	}
 
 	public static Nerd of(UUID uuid) {
-		return of(PlayerUtils.getPlayer(uuid));
-	}
-
-	public static Nerd of(OfflinePlayer player) {
-		Nerd nerd = new NerdService().get(player);
-		nerd.fromPlayer(player);
-		return nerd;
+		return new NerdService().get(uuid);
 	}
 
 	public void fromPlayer(OfflinePlayer player) {
@@ -139,7 +137,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 	public boolean isVanished() {
 		if (!isOnline())
 			return false;
-		return PlayerUtils.isVanished(getPlayer());
+		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
 	@SneakyThrows
@@ -174,7 +172,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 
 	public Location getLocation() {
 		if (getOfflinePlayer().isOnline())
-			return getPlayer().getPlayer().getLocation();
+			return getOnlinePlayer().getPlayer().getLocation();
 
 		try {
 			NBTFile file = getDataFile();

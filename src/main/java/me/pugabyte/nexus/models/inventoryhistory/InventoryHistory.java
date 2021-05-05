@@ -59,7 +59,7 @@ public class InventoryHistory implements PlayerOwnedObject {
 	}
 
 	public InventorySnapshot takeSnapshot(SnapshotReason reason) {
-		return takeSnapshot(new InventorySnapshot(getPlayer(), reason));
+		return takeSnapshot(new InventorySnapshot(getOnlinePlayer(), reason));
 	}
 
 	public InventorySnapshot takeSnapshot(InventorySnapshot snapshot) {

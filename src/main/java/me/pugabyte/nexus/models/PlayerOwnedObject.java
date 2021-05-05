@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.models;
 
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -22,6 +24,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -31,32 +34,53 @@ import static me.pugabyte.nexus.utils.AdventureUtils.identityOf;
 /**
  * A mongo database object owned by a player
  */
-public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Identified {
+public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, OptionalPlayerLike {
 
-	default OfflinePlayer getOfflinePlayer() {
+	/**
+	 * Gets the unique ID of this object. Alias for {@link #getUuid()}, for compatibility with {@link HasUniqueId}.
+	 * @return this object's unique ID
+	 */
+	@Override
+	default @NotNull UUID getUniqueId() {return getUuid();}
+
+	default @NotNull OfflinePlayer getOfflinePlayer() {
 		return Bukkit.getOfflinePlayer(getUuid());
 	}
 
-	default Player getPlayer() {
-		if (!getOfflinePlayer().isOnline())
-			throw new PlayerNotOnlineException(getOfflinePlayer());
+	/**
+	 * Gets the online player for this object and returns null if they're not online
+	 * @return online player or null
+	 */
+	default @Nullable Player getPlayer() {
 		return getOfflinePlayer().getPlayer();
 	}
 
+	/**
+	 * Gets the online player for this object and throws if they're not online
+	 * @return online player
+	 * @throws PlayerNotOnlineException player is not online
+	 */
+	default @NotNull Player getOnlinePlayer() throws PlayerNotOnlineException {
+		Player player = getOfflinePlayer().getPlayer();
+		if (player == null)
+			throw new PlayerNotOnlineException(getOfflinePlayer());
+		return player;
+	}
+
 	default boolean isOnline() {
-		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
+		return getOfflinePlayer().isOnline();
 	}
 
 	default boolean isAfk() {
-		return AFK.get(getPlayer()).isAfk();
+		return AFK.get(getOnlinePlayer()).isAfk();
 	}
 
 	default boolean isTimeAfk() {
-		return AFK.get(getPlayer()).isTimeAfk();
+		return AFK.get(getOnlinePlayer()).isTimeAfk();
 	}
 
-	default Nerd getNerd() {
-		return Nerd.of(this.getUuid());
+	default @NotNull Nerd getNerd() {
+		return Nerd.of(this);
 	}
 
 	@Override
@@ -70,7 +94,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 	}
 
 	@Override
-	default String getNickname() {
+	default @NotNull String getNickname() {
 		return Nickname.of(this);
 	}
 
@@ -99,7 +123,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 
 	default void send(ComponentLike component) {
 		if (isOnline())
-			getPlayer().sendMessage(component);
+			getOnlinePlayer().sendMessage(component);
 	}
 
 	default void send(ComponentLike component, MessageType type) {
@@ -108,7 +132,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 			return;
 		}
 		if (isOnline())
-			getPlayer().sendMessage(component, type);
+			getOnlinePlayer().sendMessage(component, type);
 	}
 
 	default void send(Identity identity, ComponentLike component, MessageType type) {
@@ -130,7 +154,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 		}
 
 		if (isOnline())
-			getPlayer().sendMessage(identity, component, type);
+			getOnlinePlayer().sendMessage(identity, component, type);
 	}
 
 	default void send(Identified sender, ComponentLike component, MessageType type) {
@@ -147,7 +171,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Id
 			return;
 		}
 		if (isOnline())
-			getPlayer().sendMessage(identity, component);
+			getOnlinePlayer().sendMessage(identity, component);
 	}
 
 	default void send(Identified sender, ComponentLike component) {

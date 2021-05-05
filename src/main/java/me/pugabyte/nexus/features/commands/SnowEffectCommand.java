@@ -36,7 +36,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 				List<SnowEffect> all = new SnowEffectService().getAll();
 				all.stream()
 						.filter(snowEffect -> snowEffect.isOnline() && snowEffect.isEnabled())
-						.forEach(snowEffect -> playSnowEffect(snowEffect.getPlayer()));
+						.forEach(snowEffect -> playSnowEffect(snowEffect.getOnlinePlayer()));
 			});
 
 			Bukkit.getOnlinePlayers().stream()

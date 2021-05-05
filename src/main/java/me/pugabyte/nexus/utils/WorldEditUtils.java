@@ -36,6 +36,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -141,11 +142,11 @@ public class WorldEditUtils {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public BukkitPlayer getPlayer(Player player) {
-		return BukkitAdapter.adapt(player);
+	public BukkitPlayer getPlayer(HasPlayer player) {
+		return BukkitAdapter.adapt(player.getPlayer());
 	}
 
-	public Region getPlayerSelection(Player player) {
+	public Region getPlayerSelection(HasPlayer player) {
 		return getPlayer(player).getSelection();
 	}
 
@@ -190,9 +191,9 @@ public class WorldEditUtils {
 	}
 
 	@SneakyThrows
-	public void changeSelection(Player player, SelectionChangeType changeType, SelectionChangeDirectionType directionType, int amount) {
+	public void changeSelection(HasPlayer player, SelectionChangeType changeType, SelectionChangeDirectionType directionType, int amount) {
 		if (amount <= 0) return;
-		LocalSession session = plugin.getSession(player);
+		LocalSession session = plugin.getSession(player.getPlayer());
 		Region region = session.getSelection(worldEditWorld);
 		int oldSize = region.getArea();
 		BlockVector3[] directions = directionType.applyChanges(amount);
@@ -209,26 +210,54 @@ public class WorldEditUtils {
 //		actor.printInfo(TranslatableComponent.of("worldedit.expand.expanded.vert", new Component[]{TextComponent.of(changeSize)}));
 	}
 
-	public void setSelection(Player player, Location location) {
+	/**
+	 * Sets player's selection to one block
+	 * @param player player selection to modify
+	 * @param location location to set primary and secondary coordinates
+	 */
+	public void setSelection(HasPlayer player, Location location) {
 		setSelection(player, location, location);
 	}
 
-	public void setSelection(Player player, BlockVector3 vector) {
-		setSelection(player, vector);
+	/**
+	 * Sets player's selection to one block
+	 * @param player player selection to modify
+	 * @param vector location to set primary and secondary coordinates
+	 */
+	public void setSelection(HasPlayer player, BlockVector3 vector) {
+		setSelection(player, vector, vector);
 	}
 
-	public void setSelection(Player player, Location min, Location max) {
-		setSelection(player, toBlockVector3(min), toBlockVector3(min));
+	/**
+	 * Sets player's selection
+	 * @param player player selection to modify
+	 * @param min primary point
+	 * @param max secondary point
+	 */
+	public void setSelection(HasPlayer player, Location min, Location max) {
+		setSelection(player, toBlockVector3(min), toBlockVector3(max));
 	}
 
-	public void setSelection(Player player, BlockVector3 min, BlockVector3 max) {
+	/**
+	 * Sets player's selection
+	 * @param player player selection to modify
+	 * @param min primary point
+	 * @param max secondary point
+	 */
+	public void setSelection(HasPlayer player, BlockVector3 min, BlockVector3 max) {
 		setSelection(player, new CuboidRegion(min, max));
 	}
 
-	public void setSelection(Player player, Region region) {
-		LocalSession session = plugin.getSession(player);
+	/**
+	 * Sets player's selection
+	 * @param player player selection to modify
+	 * @param region region to set
+	 */
+	public void setSelection(HasPlayer player, Region region) {
+		Player _player = player.getPlayer();
+		LocalSession session = plugin.getSession(_player);
 		getPlayer(player).setSelection(region);
-		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(player);
+		com.sk89q.worldedit.entity.Player worldEditPlayer = plugin.wrapPlayer(_player);
 		session.getRegionSelector(worldEditWorld).explainPrimarySelection(worldEditPlayer, session, region.getMinimumPoint());
 		session.getRegionSelector(worldEditWorld).explainSecondarySelection(worldEditPlayer, session, region.getMaximumPoint());
 	}
@@ -408,11 +437,12 @@ public class WorldEditUtils {
 			blockDataMap.forEach((location, blockData) -> location.getBlock().setBlockData(blockData));
 		}
 
-		public void buildClientSide(Player player) {
+		public void buildClientSide(HasPlayer player) {
 			if (blockDataMap.isEmpty())
 				findBlocks();
 
-			blockDataMap.forEach(player::sendBlockChange);
+			Player _player = player.getPlayer();
+			blockDataMap.forEach(_player::sendBlockChange);
 		}
 
 		public void buildAsync() {
@@ -428,8 +458,8 @@ public class WorldEditUtils {
 			return buildQueue(location -> () -> location.getBlock().setBlockData(blockDataMap.get(location)));
 		}
 
-		public CompletableFuture<Boolean> buildQueueClientSide(Player player) {
-			return buildQueue(location -> () -> player.sendBlockChange(location.getBlock().getLocation(), blockDataMap.get(location)));
+		public CompletableFuture<Boolean> buildQueueClientSide(HasPlayer player) {
+			return buildQueue(location -> () -> player.getPlayer().sendBlockChange(location.getBlock().getLocation(), blockDataMap.get(location)));
 		}
 
 		public CompletableFuture<Boolean> buildQueue(Function<Location, Runnable> action) {

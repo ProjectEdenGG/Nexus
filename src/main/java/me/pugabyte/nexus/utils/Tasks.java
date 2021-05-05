@@ -3,6 +3,8 @@ package me.pugabyte.nexus.utils;
 import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Getter;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.OptionalPlayer;
 import me.pugabyte.nexus.Nexus;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -180,9 +182,10 @@ public class Tasks {
 	public static class GlowTask {
 
 		@Builder(buildMethodName = "start")
-		public GlowTask(int duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<Player> viewers) {
-			GlowAPI.setGlowing(entity, color, viewers);
-			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, viewers));
+		public GlowTask(int duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<? extends OptionalPlayer> viewers) {
+			List<Player> pViewers = PlayerUtils.getNonNullPlayers(viewers);
+			GlowAPI.setGlowing(entity, color, pViewers);
+			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, pViewers));
 			if (onComplete != null)
 				Tasks.wait(duration + 1, onComplete);
 		}
@@ -197,27 +200,28 @@ public class Tasks {
 		}
 
 		@Builder(buildMethodName = "start")
-		public ExpBarCountdown(Player player, int duration, boolean restoreExp) {
-			final int level = player.getLevel();
-			final float exp = player.getExp();
+		public ExpBarCountdown(HasPlayer player, int duration, boolean restoreExp) {
+			Player _player = player.getPlayer();
+			final int level = _player.getLevel();
+			final float exp = _player.getExp();
 
 			countdown.set(Tasks.Countdown.builder()
 					.duration(duration)
 					.onTick(ticks -> {
-						if (!player.isOnline())
+						if (!_player.isOnline())
 							countdown.get().stop();
 
 						int seconds = (ticks / 20) + 1;
-						player.setLevel(seconds > 59 ? seconds / 60 : seconds);
-						player.setExp((float) ticks / duration);
+						_player.setLevel(seconds > 59 ? seconds / 60 : seconds);
+						_player.setExp((float) ticks / duration);
 					})
 					.onComplete(() -> {
-						if (!player.isOnline())
+						if (!_player.isOnline())
 							countdown.get().stop();
 
 						if (restoreExp) {
-							player.setLevel(level);
-							player.setExp(exp);
+							_player.setLevel(level);
+							_player.setExp(exp);
 						}
 					})
 					.start());

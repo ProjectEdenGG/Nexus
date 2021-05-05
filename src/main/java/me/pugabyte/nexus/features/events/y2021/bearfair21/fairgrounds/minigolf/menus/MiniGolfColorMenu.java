@@ -90,6 +90,6 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 		else
 			MiniGolfUtils.send(user, message + color.getColorType().getChatColor() + colorName);
 
-		user.getPlayer().closeInventory();
+		user.getOnlinePlayer().closeInventory();
 	}
 }

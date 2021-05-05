@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import me.lexikiq.PlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -29,6 +30,7 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.potion.PotionEffect;
@@ -39,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Objects;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
 import static me.pugabyte.nexus.utils.PlayerUtils.hidePlayer;
@@ -47,7 +50,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer implements ColoredAndNicknamed {
+public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 	@NonNull
 	private Player player;
 	@ToString.Exclude
@@ -71,6 +74,16 @@ public class Minigamer implements ColoredAndNicknamed {
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
 	private static final double HEALTH_PER_TICK = (1d/2d)/ Time.SECOND.x(2);
 	private static final int IMMOBILE_SECONDS = Time.SECOND.x(3);
+
+	@Override
+	public @NotNull OfflinePlayer getOfflinePlayer() {
+		return player;
+	}
+
+	@Override
+	public @NotNull UUID getUniqueId() {
+		return player.getUniqueId();
+	}
 
 	/**
 	 * Returns the Minigamer's Minecraft username.

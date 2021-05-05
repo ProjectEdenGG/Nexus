@@ -204,7 +204,7 @@ public class MuteMenuCommand extends CustomCommand {
 		}
 
 		public void toggleMute(MuteMenuUser user, MuteMenuItem item) {
-			Player player = user.getPlayer();
+			Player player = user.getOnlinePlayer();
 			if (item.name().startsWith("CHANNEL_"))
 				if (user.hasMuted(item))
 					PlayerUtils.runCommand(player, "ch join " + item.name().replace("CHANNEL_", "").toLowerCase());

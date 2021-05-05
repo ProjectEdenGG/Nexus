@@ -56,7 +56,7 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			sendActionBar(getPlayer(), "&e+" + points + plural(" point", points));
+			sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
 		givePoints(points);
 	}
 

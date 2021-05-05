@@ -1,16 +1,7 @@
 package me.pugabyte.nexus.models.particle;
 
 import lombok.Getter;
-import me.pugabyte.nexus.features.particles.effects.BandsEffect;
-import me.pugabyte.nexus.features.particles.effects.CircleEffect;
-import me.pugabyte.nexus.features.particles.effects.DiscoEffect;
-import me.pugabyte.nexus.features.particles.effects.NyanCatEffect;
-import me.pugabyte.nexus.features.particles.effects.PolygonEffect;
-import me.pugabyte.nexus.features.particles.effects.SphereEffect;
-import me.pugabyte.nexus.features.particles.effects.SpiralEffect;
-import me.pugabyte.nexus.features.particles.effects.StarEffect;
-import me.pugabyte.nexus.features.particles.effects.StormEffect;
-import me.pugabyte.nexus.features.particles.effects.WingsEffect;
+import me.pugabyte.nexus.features.particles.effects.*;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -32,7 +23,7 @@ public enum ParticleType {
 			Boolean whole = ParticleSetting.WHOLE.get(particleOwner, this);
 
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.updateLoc(true)
 					.density(100)
 					.radius(radius)
@@ -54,7 +45,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = StarEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.radius(radius)
 					.ticks(-1)
 					.updateLoc(true)
@@ -76,7 +67,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.updateLoc(true)
 					.whole(whole)
 					.polygon(PolygonEffect.Polygon.TRIANGLE)
@@ -100,7 +91,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.updateLoc(true)
 					.whole(whole)
 					.polygon(PolygonEffect.Polygon.SQUARE)
@@ -124,7 +115,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.updateLoc(true)
 					.whole(whole)
 					.polygon(PolygonEffect.Polygon.PENTAGON)
@@ -148,7 +139,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.updateLoc(true)
 					.whole(whole)
 					.polygon(PolygonEffect.Polygon.HEXAGON)
@@ -166,7 +157,7 @@ public enum ParticleType {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			int taskId = NyanCatEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.ticks(-1)
 					.start()
 					.getTaskId();
@@ -177,7 +168,7 @@ public enum ParticleType {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			int taskId = BandsEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.ticks(-1)
 					.rainbow(true)
 					.start()
@@ -193,9 +184,9 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			Vector vector = new Vector(0, 2.1, 0);
-			Location loc = particleOwner.getPlayer().getLocation().add(vector);
+			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.location(loc)
 					.updateVector(vector)
 					.density(20)
@@ -215,7 +206,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId1 = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.density(10)
 					.radius(0.333)
 					.ticks(-1)
@@ -226,7 +217,7 @@ public enum ParticleType {
 					.start()
 					.getTaskId();
 			int taskId2 = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.density(20)
 					.radius(0.666)
 					.ticks(-1)
@@ -238,7 +229,7 @@ public enum ParticleType {
 					.start()
 					.getTaskId();
 			int taskId3 = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.density(40)
 					.radius(0.999)
 					.ticks(-1)
@@ -250,7 +241,7 @@ public enum ParticleType {
 					.start()
 					.getTaskId();
 			int taskId4 = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.density(60)
 					.radius(1.333)
 					.ticks(-1)
@@ -272,7 +263,7 @@ public enum ParticleType {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 
 			int taskId = SphereEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.radius(radius)
 					.ticks(-1)
 					.updateLoc(true)
@@ -293,7 +284,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = StarEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.radius(radius)
 					.ticks(-1)
 					.updateLoc(true)
@@ -314,7 +305,7 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = SpiralEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.radius(radius)
 					.ticks(-1)
 					.pulseDelay(2)
@@ -334,9 +325,9 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			Vector vector = new Vector(0, 1.5, 0);
-			Location loc = particleOwner.getPlayer().getLocation().add(vector);
+			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.location(loc)
 					.updateVector(vector)
 					.density(100)
@@ -358,9 +349,9 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			Vector vector = new Vector(0, 1.5, 0);
-			Location loc = particleOwner.getPlayer().getLocation().add(vector);
+			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.location(loc)
 					.updateVector(vector)
 					.density(100)
@@ -387,9 +378,9 @@ public enum ParticleType {
 			Color color2 = ParticleSetting.DOUBLE_CHAOS_COLOR_TWO.get(particleOwner, this);
 
 			Vector vector = new Vector(0, 1.5, 0);
-			Location loc = particleOwner.getPlayer().getLocation().add(vector);
+			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId1 = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.location(loc)
 					.updateVector(vector)
 					.density(100)
@@ -402,7 +393,7 @@ public enum ParticleType {
 					.start()
 					.getTaskId();
 			int taskId2 = CircleEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.location(loc)
 					.updateVector(vector)
 					.density(100)
@@ -425,7 +416,7 @@ public enum ParticleType {
 			StormEffect.RainPartile rainPartile = ParticleSetting.STORM_RAIN_PARTICLE.get(particleOwner, this);
 
 			int taskId = StormEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.ticks(-1)
 					.updateLoc(true)
 					.radius(radius)
@@ -450,10 +441,10 @@ public enum ParticleType {
 			Boolean lineRainbow = ParticleSetting.DISCO_LINE_RAINBOW.get(particleOwner, this);
 
 			Vector vector = new Vector(0, 4, 0);
-			Location loc = particleOwner.getPlayer().getLocation().add(vector);
+			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 
 			int taskId = DiscoEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.ticks(-1)
 					.lineLength(lineLength)
 					.maxLines(4)
@@ -484,7 +475,7 @@ public enum ParticleType {
 			Boolean rainbow3 = ParticleSetting.WINGS_RAINBOW_THREE.get(particleOwner, this);
 
 			int taskId = WingsEffect.builder()
-					.player(particleOwner.getPlayer())
+					.player(particleOwner.getOnlinePlayer())
 					.flapMode(flapMode)
 					.flapSpeed(flapSpeed)
 					.color1(color1)

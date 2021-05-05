@@ -73,8 +73,8 @@ public class MiniGolfUtils {
 	}
 
 	public static void giveBall(MiniGolf21User user) {
-		if (user.getPlayer().isOnline())
-			PlayerUtils.giveItem(user.getPlayer(), MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+		if (user.getOnlinePlayer().isOnline())
+			PlayerUtils.giveItem(user.getOnlinePlayer(), MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
 	}
 
 	public static void respawnBall(Snowball ball) {
@@ -115,7 +115,7 @@ public class MiniGolfUtils {
 		if (!user.isOnline())
 			return;
 
-		ActionBarUtils.sendActionBar(user.getPlayer(), message, Time.SECOND.x(3));
+		ActionBarUtils.sendActionBar(user.getOnlinePlayer(), message, Time.SECOND.x(3));
 	}
 
 	public static void error(MiniGolf21User user, String message) {
@@ -123,7 +123,7 @@ public class MiniGolfUtils {
 	}
 
 	public static void send(MiniGolf21User user, String message) {
-		user.getPlayer().sendMessage(MiniGolf.getPREFIX() + StringUtils.colorize(message));
+		user.getOnlinePlayer().sendMessage(MiniGolf.getPREFIX() + StringUtils.colorize(message));
 	}
 
 	static String getScore(MiniGolf21User user) {

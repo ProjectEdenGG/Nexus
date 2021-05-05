@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
-import com.destroystokyo.paper.Title;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import eden.utils.TimeUtils.Time;
@@ -42,7 +41,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -58,12 +56,14 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.time.YearMonth;
@@ -155,7 +155,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlayerDamageByPlayer(PlayerDamageByPlayerEvent event) {
-		if (event.getVictim().getUniqueId().equals(event.getAttacker().getUniqueId()))
+		if (event.getPlayer().getUniqueId().equals(event.getAttacker().getUniqueId()))
 			event.getOriginalEvent().setCancelled(true);
 	}
 
@@ -187,19 +187,19 @@ public class Misc implements Listener {
 					"Use &c/trust lock <player> &eto allow someone else to use it.");
 	}
 
+	private static final String CHAT_DISABLED_WARNING = "&4&lWARNING: &4You have chat disabled! If this is by mistake, please turn it on in your settings.";
+	private static final int WARNING_LENGTH_TICKS = Time.MINUTE.x(1);
+
 	@EventHandler
 	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			Player player = event.getPlayer();
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
-				int titleTime = Time.SECOND.x(10);
-				player.sendTitle(new Title("&4&lWARNING", "&4You have chat disabled!", 10, titleTime, 10));
-				ActionBarUtils.sendActionBar(player, "&4Turn it on in your settings", titleTime);
-				Tasks.wait(titleTime, () -> ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get()));
 				PlayerUtils.send(player, "");
-				PlayerUtils.send(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings");
+				PlayerUtils.send(player, CHAT_DISABLED_WARNING);
 				PlayerUtils.send(player, "");
+				ActionBarUtils.sendActionBar(player, CHAT_DISABLED_WARNING, WARNING_LENGTH_TICKS);
 			}
 		});
 	}
@@ -341,10 +341,7 @@ public class Misc implements Listener {
 		PlayerUtils.runCommand(player, "ch join c");
 	}
 
-	public static class PlayerDamageByPlayerEvent extends Event {
-		@NonNull
-		@Getter
-		final Player victim;
+	public static class PlayerDamageByPlayerEvent extends PlayerEvent {
 		@NonNull
 		@Getter
 		final Player attacker;
@@ -353,8 +350,8 @@ public class Misc implements Listener {
 		final EntityDamageByEntityEvent originalEvent;
 
 		@SneakyThrows
-		public PlayerDamageByPlayerEvent(Player victim, Player attacker, EntityDamageByEntityEvent event) {
-			this.victim = victim;
+		public PlayerDamageByPlayerEvent(@NotNull Player victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
+			super(victim);
 			this.attacker = attacker;
 			this.originalEvent = event;
 		}
@@ -365,6 +362,7 @@ public class Misc implements Listener {
 			return handlers;
 		}
 
+		@NotNull
 		@Override
 		public HandlerList getHandlers() {
 			return handlers;

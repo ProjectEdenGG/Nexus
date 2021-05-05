@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
+import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
@@ -9,7 +10,6 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -200,8 +200,8 @@ public class ItemBuilder implements Cloneable {
 
 	// Skulls
 
-	public ItemBuilder skullOwner(OfflinePlayer offlinePlayer) {
-		SkullMeta skullMeta = SkinCache.of(offlinePlayer).getHeadMeta();
+	public ItemBuilder skullOwner(HasOfflinePlayer offlinePlayer) {
+		SkullMeta skullMeta = SkinCache.of(offlinePlayer.getOfflinePlayer()).getHeadMeta();
 		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());
 		return this;
 	}
@@ -213,8 +213,8 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	@Deprecated
-	public ItemBuilder skullOwnerActual(OfflinePlayer offlinePlayer) {
-		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
+	public ItemBuilder skullOwnerActual(HasOfflinePlayer offlinePlayer) {
+		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer.getOfflinePlayer());
 		return this;
 	}
 

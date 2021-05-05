@@ -260,7 +260,7 @@ public enum ParticleSetting {
 		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			for (int i = 1; i <= 16; i++)
 				if (particleOwner.getOfflinePlayer().isOnline())
-					if (particleOwner.getPlayer().hasPermission("wings.style." + i))
+					if (particleOwner.getOnlinePlayer().hasPermission("wings.style." + i))
 						return WingsEffect.WingStyle.values()[i - 1];
 			return WingsEffect.WingStyle.ONE;
 		}

@@ -90,7 +90,7 @@ public class BearFair20User implements PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			sendActionBar(getPlayer(), "&e+" + points + plural(" point", points));
+			sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
 		givePoints(points);
 	}
 
@@ -118,7 +118,7 @@ public class BearFair20User implements PlayerOwnedObject {
 		getPointsReceivedToday().get(source).put(LocalDate.now(), timesCompleted + 1);
 
 		givePoints(DAILY_SOURCE_POINTS);
-		sendActionBar(getPlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
+		sendActionBar(getOnlinePlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
 	}
 
 	public enum BF20PointSource {

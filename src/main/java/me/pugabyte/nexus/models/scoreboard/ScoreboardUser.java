@@ -50,7 +50,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	public ScoreboardUser(UUID uuid) {
 		this.uuid = uuid;
 		if (lines.isEmpty())
-			lines = ScoreboardLine.getDefaultLines(getPlayer());
+			lines = ScoreboardLine.getDefaultLines(getOnlinePlayer());
 	}
 
 	public void on() {
@@ -65,12 +65,12 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 		pause();
 		if (scoreboard == null)
-			scoreboard = new EdenScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Project Eden &e<", getPlayer());
+			scoreboard = new EdenScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Project Eden &e<", getOnlinePlayer());
 		else
-			scoreboard.subscribe(getPlayer());
+			scoreboard.subscribe(getOnlinePlayer());
 		active = true;
 		Tasks.cancel(headerTaskId);
-		headerTaskId = Tasks.repeatAsync(0, (long) (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getPlayer()));
+		headerTaskId = Tasks.repeatAsync(0, (long) (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getOnlinePlayer()));
 		startTasks();
 	}
 
@@ -82,7 +82,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	public void pause() {
 		if (scoreboard != null) {
 			if (getOfflinePlayer().isOnline())
-				scoreboard.unsubscribe(getPlayer());
+				scoreboard.unsubscribe(getOnlinePlayer());
 			scoreboard.delete();
 			scoreboard = null;
 		}
@@ -135,7 +135,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 		String oldText = getRenderedText(line);
 		if (lines.containsKey(line) && lines.get(line)) {
-			String newText = line.render(getPlayer());
+			String newText = line.render(getOnlinePlayer());
 
 			if (!isNullOrEmpty(newText)) {
 				if (newText.equals(oldText))

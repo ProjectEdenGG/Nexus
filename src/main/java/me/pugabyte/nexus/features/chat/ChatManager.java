@@ -62,7 +62,7 @@ public class ChatManager {
 
 		message = message.trim();
 
-		if (!PlayerUtils.isAdminGroup(chatter.getPlayer()))
+		if (!PlayerUtils.isAdminGroup(chatter.getOnlinePlayer()))
 			message = stripColor(message);
 
 		if (message.length() == 0)
@@ -98,7 +98,7 @@ public class ChatManager {
 					process(event);
 			}
 		} catch (InvalidInputException ex) {
-			PlayerUtils.send(chatter.getPlayer(), Chat.PREFIX + "&c" + ex.getMessage());
+			PlayerUtils.send(chatter.getOnlinePlayer(), Chat.PREFIX + "&c" + ex.getMessage());
 		}
 	}
 
@@ -135,7 +135,7 @@ public class ChatManager {
 					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
 
 		event.getRecipients().forEach(recipient -> {
-			if (Rank.of(recipient.getPlayer()).isStaff())
+			if (Rank.of(recipient.getOnlinePlayer()).isStaff())
 				recipient.send(event, staff, MessageType.CHAT);
 			else
 				recipient.send(event, json, MessageType.CHAT);

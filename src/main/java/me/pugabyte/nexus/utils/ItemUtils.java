@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
@@ -86,9 +87,10 @@ public class ItemUtils {
 		return contents;
 	}
 
-	public static ItemStack getTool(Player player) {
-		ItemStack mainHand = player.getInventory().getItemInMainHand();
-		ItemStack offHand = player.getInventory().getItemInOffHand();
+	public static ItemStack getTool(HasPlayer player) {
+		Player _player = player.getPlayer();
+		ItemStack mainHand = _player.getInventory().getItemInMainHand();
+		ItemStack offHand = _player.getInventory().getItemInOffHand();
 		if (!isNullOrAir(mainHand))
 			return mainHand;
 		else if (!isNullOrAir(offHand))
@@ -96,16 +98,17 @@ public class ItemUtils {
 		return null;
 	}
 
-	public static ItemStack getToolRequired(Player player) {
+	public static ItemStack getToolRequired(HasPlayer player) {
 		ItemStack item = getTool(player);
 		if (isNullOrAir(item))
 			throw new InvalidInputException("You are not holding anything");
 		return item;
 	}
 
-	public static EquipmentSlot getHandWithTool(Player player) {
-		ItemStack mainHand = player.getInventory().getItemInMainHand();
-		ItemStack offHand = player.getInventory().getItemInOffHand();
+	public static EquipmentSlot getHandWithTool(HasPlayer player) {
+		Player _player = player.getPlayer();
+		ItemStack mainHand = _player.getInventory().getItemInMainHand();
+		ItemStack offHand = _player.getInventory().getItemInOffHand();
 		if (!isNullOrAir(mainHand))
 			return EquipmentSlot.HAND;
 		else if (!isNullOrAir(offHand))
@@ -113,7 +116,7 @@ public class ItemUtils {
 		return null;
 	}
 
-	public static EquipmentSlot getHandWithToolRequired(Player player) {
+	public static EquipmentSlot getHandWithToolRequired(HasPlayer player) {
 		EquipmentSlot hand = getHandWithTool(player);
 		if (hand == null)
 			throw new InvalidInputException("You are not holding anything");

@@ -177,7 +177,7 @@ public class Koda {
 				break;
 			case "canihaveop":
 				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
-					Player player = event.getChatter().getPlayer();
+					Player player = event.getChatter().getOnlinePlayer();
 					double health = player.getHealth();
 					player.setHealth(20);
 					player.getWorld().strikeLightning(player.getLocation());
@@ -193,7 +193,7 @@ public class Koda {
 				break;
 			case "canibestaff":
 				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
-					Player player = event.getChatter().getPlayer();
+					Player player = event.getChatter().getOnlinePlayer();
 					if (Rank.of(player) == Rank.GUEST) {
 						String command = "staff";
 						if (event.getMessage().contains("mod")) command = "moderator";
@@ -229,7 +229,7 @@ public class Koda {
 							respond(event, "[player], griefing is not allowed. Please take a look at the /rules for more information.");
 				break;
 			case "lag":
-				int ping = event.getChatter().getPlayer().spigot().getPing();
+				int ping = event.getChatter().getOnlinePlayer().spigot().getPing();
 				double tps = Bukkit.getTPS()[1];
 
 				if (ping > 200 && tps > 16)

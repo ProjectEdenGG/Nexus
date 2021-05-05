@@ -3,8 +3,8 @@ package me.pugabyte.nexus.utils;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import java.util.UUID;
@@ -38,7 +38,7 @@ public class LuckPermsUtils {
 			private boolean value = true;
 			private World world;
 
-			public PermissionChangeBuilder player(OfflinePlayer player) {
+			public PermissionChangeBuilder player(HasUniqueId player) {
 				this.uuid = player.getUniqueId();
 				return this;
 			}

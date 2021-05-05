@@ -165,7 +165,7 @@ public enum PunishmentType implements ColoredAndNamed {
 
 	void kick(Punishment punishment) {
 		if (punishment.isOnline()) {
-			punishment.getPlayer().kick(punishment.getDisconnectMessage());
+			punishment.getOnlinePlayer().kick(punishment.getDisconnectMessage());
 			punishment.received();
 		}
 	}
