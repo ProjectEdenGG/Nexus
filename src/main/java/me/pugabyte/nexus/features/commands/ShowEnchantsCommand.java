@@ -51,12 +51,12 @@ public class ShowEnchantsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("(hand|offhand|helmet|chestplate|leggings|boots) [message...]")
+	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
 	@Permission("showenchants.use")
 	@Cooldown(value = @Part(Time.MINUTE), bypass = "showenchants.bypasscooldown")
-	void run(String message) {
+	void run(String type, String message) {
 		Player player = player();
-		ItemStack item = getItem(player, arg(1));
+		ItemStack item = getItem(player, type);
 		if (ItemUtils.isNullOrAir(item))
 			error("You're not holding anything in that slot");
 
