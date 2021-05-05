@@ -7,15 +7,15 @@ import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(Punishments.class)
 public class PunishmentsService extends MongoService<Punishments> {
-	private final static Map<UUID, Punishments> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private final static Map<UUID, Punishments> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Punishments> getCache() {
 		return cache;

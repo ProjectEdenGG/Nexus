@@ -5,14 +5,14 @@ import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.utils.Tasks;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(MiniGolf21User.class)
 public class MiniGolf21UserService extends MongoService<MiniGolf21User> {
-	private final static Map<UUID, MiniGolf21User> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private final static Map<UUID, MiniGolf21User> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, MiniGolf21User> getCache() {
 		return cache;

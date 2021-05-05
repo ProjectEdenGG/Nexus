@@ -24,10 +24,10 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -43,8 +43,8 @@ import static eden.utils.StringUtils.camelCase;
 
 @PlayerClass(Hours.class)
 public class HoursService extends MongoService<Hours> {
-	private final static Map<UUID, Hours> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private final static Map<UUID, Hours> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Hours> getCache() {
 		return cache;

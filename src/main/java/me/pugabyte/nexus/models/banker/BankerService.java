@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(Banker.class)
 public class BankerService extends MongoService<Banker> {
-	private static final Map<UUID, Banker> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private static final Map<UUID, Banker> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Banker> getCache() {
 		return cache;

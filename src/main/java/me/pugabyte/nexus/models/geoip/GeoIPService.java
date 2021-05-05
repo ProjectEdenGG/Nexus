@@ -15,15 +15,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(GeoIP.class)
 public class GeoIPService extends MongoService<GeoIP> {
-	private final static Map<UUID, GeoIP> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private final static Map<UUID, GeoIP> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {
 		return cache;

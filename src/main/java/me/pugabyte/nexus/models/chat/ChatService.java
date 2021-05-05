@@ -4,13 +4,13 @@ import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.utils.Tasks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatService extends MongoService<Chatter> {
-	private final static Map<UUID, Chatter> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private final static Map<UUID, Chatter> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Chatter> getCache() {
 		return cache;

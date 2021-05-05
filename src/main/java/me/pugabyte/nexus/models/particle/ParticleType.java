@@ -1,7 +1,16 @@
 package me.pugabyte.nexus.models.particle;
 
 import lombok.Getter;
-import me.pugabyte.nexus.features.particles.effects.*;
+import me.pugabyte.nexus.features.particles.effects.BandsEffect;
+import me.pugabyte.nexus.features.particles.effects.CircleEffect;
+import me.pugabyte.nexus.features.particles.effects.DiscoEffect;
+import me.pugabyte.nexus.features.particles.effects.NyanCatEffect;
+import me.pugabyte.nexus.features.particles.effects.PolygonEffect;
+import me.pugabyte.nexus.features.particles.effects.SphereEffect;
+import me.pugabyte.nexus.features.particles.effects.SpiralEffect;
+import me.pugabyte.nexus.features.particles.effects.StarEffect;
+import me.pugabyte.nexus.features.particles.effects.StormEffect;
+import me.pugabyte.nexus.features.particles.effects.WingsEffect;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;

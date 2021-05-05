@@ -9,16 +9,16 @@ import me.pugabyte.nexus.utils.Tasks;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @PlayerClass(Shop.class)
 public class ShopService extends MongoService<Shop> {
-	private final static Map<UUID, Shop> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private final static Map<UUID, Shop> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Shop> getCache() {
 		return cache;

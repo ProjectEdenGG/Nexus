@@ -5,14 +5,14 @@ import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.changelog.Changelog.ChangelogEntry;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(Changelog.class)
 public class ChangelogService extends MongoService<Changelog> {
-	private final static Map<UUID, Changelog> cache = new HashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new HashMap<>();
+	private final static Map<UUID, Changelog> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Changelog> getCache() {
 		return cache;
