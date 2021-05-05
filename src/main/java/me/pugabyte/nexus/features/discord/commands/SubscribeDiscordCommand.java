@@ -44,20 +44,12 @@ public class SubscribeDiscordCommand extends Command {
 	}
 
 	static DiscordId.Role getRole(String input) {
-		switch (input) {
-			case "minigames":
-			case "minigame":
-			case "minigamesnews":
-			case "minigamenews":
-				return Role.MINIGAME_NEWS;
-			case "movienight":
-			case "theatre":
-			case "moviegoer":
-			case "moviegoers":
-				return Role.MOVIE_GOERS;
-		}
+		return switch (input) {
+			case "minigames", "minigame", "minigamesnews", "minigamenews" -> Role.MINIGAME_NEWS;
+			case "movienight", "theatre", "moviegoer", "moviegoers" -> Role.MOVIE_GOERS;
+			default -> null;
+		};
 
-		return null;
 	}
 
 }

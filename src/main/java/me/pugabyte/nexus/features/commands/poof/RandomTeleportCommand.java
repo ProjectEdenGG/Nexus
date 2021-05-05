@@ -47,10 +47,10 @@ public class RandomTeleportCommand extends CustomCommand {
 
 		int radius = 0;
 		switch (world().getName()) {
-			case "world": radius = 17500; break;
-			case "survival": radius = 7500; break;
-			case "resource": radius = 2500; break;
-			default: error("Could not find world border of current world");
+			case "world" -> radius = 17500;
+			case "survival" -> radius = 7500;
+			case "resource" -> radius = 2500;
+			default -> error("Could not find world border of current world");
 		}
 
 		int range = 250;

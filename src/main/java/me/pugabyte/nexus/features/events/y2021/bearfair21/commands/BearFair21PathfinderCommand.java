@@ -230,16 +230,11 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		if (!Dev.WAKKA.is(player)) return;
 
 		Material type = event.getBlock().getType();
-		boolean end = true;
-		switch (type) {
-			case LIME_CONCRETE_POWDER:
-			case PURPLE_CONCRETE_POWDER:
-			case WHITE_CONCRETE_POWDER:
-			case YELLOW_CONCRETE_POWDER:
-			case CYAN_CONCRETE_POWDER:
-			case PINK_CONCRETE_POWDER:
-				end = false;
-		}
+		boolean end = switch (type) {
+			case LIME_CONCRETE_POWDER, PURPLE_CONCRETE_POWDER, WHITE_CONCRETE_POWDER,
+					YELLOW_CONCRETE_POWDER, CYAN_CONCRETE_POWDER, PINK_CONCRETE_POWDER -> false;
+			default -> true;
+		};
 
 		if (end)
 			return;
@@ -312,13 +307,10 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		if (!Dev.WAKKA.is(player)) return;
 
 		Material type = event.getBlock().getType();
-		boolean end = true;
-		switch (type) {
-			case LIME_CONCRETE_POWDER:
-			case PURPLE_CONCRETE_POWDER:
-			case WHITE_CONCRETE_POWDER:
-				end = false;
-		}
+		boolean end = switch (type) {
+			case LIME_CONCRETE_POWDER, PURPLE_CONCRETE_POWDER, WHITE_CONCRETE_POWDER -> false;
+			default -> true;
+		};
 		if (end)
 			return;
 

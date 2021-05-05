@@ -14,43 +14,25 @@ import java.util.Map;
 public abstract class BasePirateHat extends TeamLoadoutPerk {
 	protected static int colorOffset(ColorType color) {
 		// unused: leather (5) and mint (11)
-		switch (color) {
-			case WHITE:
-				return 0;
-			case LIGHT_GRAY:
-				return 1;
-			case GRAY:
-				return 2;
-			case BLACK:
-				return 3;
-			case BROWN:
-				return 4;
-			case RED:
-			case LIGHT_RED:
-				return 6;
-			case ORANGE:
-				return 7;
-			case YELLOW:
-				return 8;
-			case GREEN:
-				return 9;
-			case LIGHT_GREEN:
-				return 10;
-			case CYAN:
-				return 12;
-			case LIGHT_BLUE:
-				return 13;
-			case BLUE:
-				return 14;
-			case PURPLE:
-				return 15;
-			case MAGENTA:
-				return 16;
-			case PINK:
-				return 17;
-			default:
-				throw new IllegalStateException("Unexpected value: " + color);
-		}
+		return switch (color) {
+			case WHITE -> 0;
+			case LIGHT_GRAY -> 1;
+			case GRAY -> 2;
+			case BLACK -> 3;
+			case BROWN -> 4;
+			case RED, LIGHT_RED -> 6;
+			case ORANGE -> 7;
+			case YELLOW -> 8;
+			case GREEN -> 9;
+			case LIGHT_GREEN -> 10;
+			case CYAN -> 12;
+			case LIGHT_BLUE -> 13;
+			case BLUE -> 14;
+			case PURPLE -> 15;
+			case MAGENTA -> 16;
+			case PINK -> 17;
+			default -> throw new IllegalStateException("Unexpected value: " + color);
+		};
 	}
 
 	/**

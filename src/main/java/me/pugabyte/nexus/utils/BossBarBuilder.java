@@ -88,29 +88,14 @@ public class BossBarBuilder {
 	@NonNull
 	public BossBarBuilder color(@NonNull ColorType colorType) throws IllegalArgumentException {
 		switch (colorType) {
-			case WHITE:
-				color = BossBar.Color.WHITE;
-				break;
-			case BLUE:
-				color = BossBar.Color.BLUE;
-				break;
-			case PURPLE:
-				color = BossBar.Color.PURPLE;
-				break;
-			case GREEN:
-				color = BossBar.Color.GREEN;
-				break;
-			case RED:
-				color = BossBar.Color.RED;
-				break;
-			case PINK:
-				color = BossBar.Color.PINK;
-				break;
-			case YELLOW:
-				color = BossBar.Color.YELLOW;
-				break;
-			default:
-				throw new IllegalArgumentException("Color not supported");
+			case WHITE -> color = BossBar.Color.WHITE;
+			case BLUE -> color = BossBar.Color.BLUE;
+			case PURPLE -> color = BossBar.Color.PURPLE;
+			case GREEN -> color = BossBar.Color.GREEN;
+			case RED -> color = BossBar.Color.RED;
+			case PINK -> color = BossBar.Color.PINK;
+			case YELLOW -> color = BossBar.Color.YELLOW;
+			default -> throw new IllegalArgumentException("Color not supported");
 		}
 		return this;
 	}

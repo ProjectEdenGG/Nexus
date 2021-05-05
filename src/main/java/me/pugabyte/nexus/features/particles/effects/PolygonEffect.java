@@ -128,23 +128,17 @@ public class PolygonEffect {
 					double change = .1;
 					double sub = -.1;
 					switch (points) {
-						case 3:
+						case 3 -> {
 							change = .05;
 							sub -= .65;
-							break;
-						case 4:
+						}
+						case 4 -> {
 							change = .05;
 							sub -= .35;
-							break;
-						case 6:
-							sub += .1;
-							break;
-						case 7:
-							sub += .2;
-							break;
-						case 8:
-							sub += .3;
-							break;
+						}
+						case 6 -> sub += .1;
+						case 7 -> sub += .2;
+						case 8 -> sub += .3;
 					}
 					for (double d = 0; d < distance + sub; d += change) {
 						double finalX = x - link.getX() * d;

@@ -36,18 +36,10 @@ public class PermHelperCommand extends CustomCommand {
 		String world = (which.equalsIgnoreCase("plots") ? "creative" : null);
 
 		switch (which) {
-			case "homes":
-				permission = "homes.limit.";
-				break;
-			case "npcs":
-				permission = "citizens.npc.limit.";
-				break;
-			case "plots":
-				permission = "plots.plot.";
-				break;
-			case "vaults":
-				permission = "playervaults.amount.";
-				break;
+			case "homes" -> permission = "homes.limit.";
+			case "npcs" -> permission = "citizens.npc.limit.";
+			case "plots" -> permission = "plots.plot.";
+			case "vaults" -> permission = "playervaults.amount.";
 		}
 
 		int oldLimit = getLimit(player, permission, world);

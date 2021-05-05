@@ -73,10 +73,8 @@ public enum ComboLockNumber {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		switch (user.getCombinationStage()) {
-			case NOT_STARTED:
-				PlayerUtils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
-				break;
-			case STARTED:
+			case NOT_STARTED -> PlayerUtils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
+			case STARTED -> {
 				if (user.getFoundComboLockNumbers().contains(this)) {
 					PlayerUtils.send(player, PREFIX + "You already know of this number. Maybe there’s some more.");
 					break;
@@ -87,7 +85,7 @@ public enum ComboLockNumber {
 				player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1f, 1f);
 				if (user.getFoundComboLockNumbers().size() == 11)
 					PlayerUtils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
-				break;
+			}
 		}
 	}
 

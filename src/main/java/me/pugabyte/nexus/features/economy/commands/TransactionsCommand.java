@@ -160,17 +160,11 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	private static String getName(UUID uuid, TransactionCause cause) {
 		if (uuid == null) {
-			switch (cause) {
-				case PAY:
-				case SHOP_SALE:
-				case SHOP_PURCHASE:
-					return "Unknown";
-				case MARKET_SALE:
-				case MARKET_PURCHASE:
-					return "Market";
-				default:
-					return StringUtils.camelCase(cause);
-			}
+			return switch (cause) {
+				case PAY, SHOP_SALE, SHOP_PURCHASE -> "Unknown";
+				case MARKET_SALE, MARKET_PURCHASE -> "Market";
+				default -> StringUtils.camelCase(cause);
+			};
 		}
 
 		if (StringUtils.isV4Uuid(uuid))

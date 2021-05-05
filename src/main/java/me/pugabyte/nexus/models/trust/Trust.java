@@ -40,16 +40,12 @@ public class Trust implements PlayerOwnedObject {
 	private List<UUID> teleports = new ArrayList<>();
 
 	public List<UUID> get(Type type) {
-		switch (type) {
-			case HOMES:
-				return homes;
-			case LOCKS:
-				return locks;
-			case TELEPORTS:
-				return teleports;
-			default:
-				throw new UnsupportedOperationException();
-		}
+		return switch (type) {
+			case HOMES -> homes;
+			case LOCKS -> locks;
+			case TELEPORTS -> teleports;
+			default -> throw new UnsupportedOperationException();
+		};
 	}
 
 	public Set<UUID> getAll() {

@@ -42,14 +42,11 @@ public class LagCommand extends CustomCommand {
 			if (world.getLoadedChunks().length == 0)
 				continue;
 
-			String type = "Normal";
-			switch (world.getEnvironment()) {
-				case NETHER:
-					type = "Nether";
-					break;
-				case THE_END:
-					type = "&3 &3 &3 &3 End";
-			}
+			String type = switch (world.getEnvironment()) {
+				case NETHER -> "Nether";
+				case THE_END -> "&3 &3 &3 &3 End";
+				default -> "Normal";
+			};
 
 			int tileEntities = 0;
 			try {

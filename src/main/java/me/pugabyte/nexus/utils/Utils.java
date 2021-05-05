@@ -69,19 +69,12 @@ public class Utils extends eden.utils.Utils {
 		DEGREE_270;
 
 		public static MapRotation getRotation(Rotation rotation) {
-			switch (rotation) {
-				case CLOCKWISE_45:
-				case FLIPPED_45:
-					return DEGREE_90;
-				case CLOCKWISE:
-				case COUNTER_CLOCKWISE:
-					return DEGREE_180;
-				case CLOCKWISE_135:
-				case COUNTER_CLOCKWISE_45:
-					return DEGREE_270;
-				default:
-					return DEGREE_0;
-			}
+			return switch (rotation) {
+				case CLOCKWISE_45, FLIPPED_45 -> DEGREE_90;
+				case CLOCKWISE, COUNTER_CLOCKWISE -> DEGREE_180;
+				case CLOCKWISE_135, COUNTER_CLOCKWISE_45 -> DEGREE_270;
+				default -> DEGREE_0;
+			};
 		}
 	}
 

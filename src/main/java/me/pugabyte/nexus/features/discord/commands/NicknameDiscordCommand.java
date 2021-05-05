@@ -37,19 +37,15 @@ public class NicknameDiscordCommand extends Command {
 
 				if (args.length >= 1)
 					switch (args[0].toLowerCase()) {
-						case "deny":
+						case "deny" -> {
 							Nexus.log("Denying");
 							if (event.getMessage().getReferencedMessage() == null)
 								throw new InvalidInputException("You must reply to the original message");
-
 							String referencedId = event.getMessage().getReferencedMessage().getId();
-
 							NicknameService service = new NicknameService();
 							Nickname data = service.getFromQueueId(referencedId);
-
 							if (data == null)
 								throw new InvalidInputException("No nickname queue found, did you reply to the original message?");
-
 							for (NicknameHistoryEntry entry : data.getNicknameHistory()) {
 								if (!referencedId.equals(entry.getNicknameQueueId()))
 									continue;
@@ -58,6 +54,7 @@ public class NicknameDiscordCommand extends Command {
 								event.getMessage().reply("Successfully updated reason").queue();
 								service.save(data);
 							}
+						}
 					}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));

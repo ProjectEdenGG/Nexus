@@ -35,15 +35,9 @@ public class TravelListener implements Listener {
 		ProtectedRegion region = event.getRegion();
 
 		switch (event.getRegion().getId()) {
-			case "staffhall":
-				Achievement.A_LIGHT_OF_HOPE.check(player);
-				break;
-			case "hallofhistory":
-				Achievement.BLAST_FROM_THE_PAST.check(player);
-				break;
-			case "kodahead":
-				Achievement.HIS_POINT_OF_VIEW.check(player);
-				break;
+			case "staffhall" -> Achievement.A_LIGHT_OF_HOPE.check(player);
+			case "hallofhistory" -> Achievement.BLAST_FROM_THE_PAST.check(player);
+			case "kodahead" -> Achievement.HIS_POINT_OF_VIEW.check(player);
 		}
 
 		if (region.getId().contains("warp_"))
@@ -58,9 +52,7 @@ public class TravelListener implements Listener {
 		if (event.getMovementType() == MovementType.DISCONNECT) return;
 
 		switch (region.getId()) {
-			case "spawn":
-				Achievement.JOURNEY_OF_A_THOUSAND_MILES.check(player);
-				break;
+			case "spawn" -> Achievement.JOURNEY_OF_A_THOUSAND_MILES.check(player);
 		}
 	}
 

@@ -472,21 +472,13 @@ public class MiniGolf {
 	}
 
 	private Vector getDirection(BlockFace face, double power) {
-		Vector vector = null;
-		switch (face) {
-			case NORTH:
-				vector = new Vector(0, 0, power);
-				break;
-			case SOUTH:
-				vector = new Vector(0, 0, -power);
-				break;
-			case EAST:
-				vector = new Vector(-power, 0, 0);
-				break;
-			case WEST:
-				vector = new Vector(power, 0, 0);
-				break;
-		}
+		Vector vector = switch (face) {
+			case NORTH -> new Vector(0, 0, power);
+			case SOUTH -> new Vector(0, 0, -power);
+			case EAST -> new Vector(-power, 0, 0);
+			case WEST -> new Vector(power, 0, 0);
+			default -> null;
+		};
 
 		return vector;
 	}

@@ -199,32 +199,27 @@ public class Connect4 extends CustomCommand {
 
 		if (board == 1) {
 			switch (type) {
-				case "remove":
+				case "remove" -> {
 					triggerCommandBlock(remove_1);
 					send(PREFIX + "Removed buttons from board 1");
-					break;
-				case "place":
+				}
+				case "place" -> {
 					triggerCommandBlock(place_1);
 					send(PREFIX + "Placed buttons on board 1");
-					break;
-				case "reset":
-					triggerCommandBlock(reset_1);
-					break;
+				}
+				case "reset" -> triggerCommandBlock(reset_1);
 			}
 		} else if (board == 2) {
 			switch (type) {
-				case "remove":
+				case "remove" -> {
 					triggerCommandBlock(remove_2);
 					send(PREFIX + "Removed buttons from board 2");
-					break;
-				case "place":
+				}
+				case "place" -> {
 					triggerCommandBlock(place_2);
 					send(PREFIX + "Placed buttons on board 2");
-					break;
-				case "reset":
-					triggerCommandBlock(reset_2);
-					break;
-
+				}
+				case "reset" -> triggerCommandBlock(reset_2);
 			}
 		}
 	}

@@ -228,18 +228,18 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 				PendingTameblesAction action = actions.get(uuid);
 				switch (action.getType()) {
-					case TRANSFER:
+					case TRANSFER -> {
 						checkOwner(player, entity);
 						OfflinePlayer transfer = action.getPlayer();
 						updateOwner(entity, player, transfer);
 						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + Nickname.of(transfer));
-						break;
-					case UNTAME:
+					}
+					case UNTAME -> {
 						checkOwner(player, entity);
 						updateOwner(entity, player, null);
 						send(player, PREFIX + "You have untamed your " + entityName);
-						break;
-					case MOVE:
+					}
+					case MOVE -> {
 						if (!SummonableTameableEntity.isSummonable(event.getEntityType())) {
 							send(player, PREFIX + "&cThat animal is not moveable");
 							actions.remove(uuid);
@@ -248,11 +248,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						checkOwner(player, entity);
 						moveQueue.put(player.getUniqueId(), event.getEntity());
 						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here"));
-						break;
-					case INFO:
+					}
+					case INFO -> {
 						String owner = getOwnerNames(entity);
 						send(player, PREFIX + "That " + entityName + " is " + (isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
-						break;
+					}
 				}
 				actions.remove(uuid);
 			}

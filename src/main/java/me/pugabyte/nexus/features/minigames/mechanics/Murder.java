@@ -268,20 +268,11 @@ public class Murder extends TeamMechanic {
 		// Gunner shooting handled in AnnotationsListener (see @Railgun)
 
 		switch (player.getInventory().getItemInMainHand().getType()) {
-			case IRON_SWORD:
-				throwKnife(minigamer);
-				return;
-			case TRIPWIRE_HOOK:
-				retrieveKnife(minigamer);
-				return;
-			case ENDER_EYE:
-				useBloodlust(minigamer);
-				return;
-			case ENDER_PEARL:
-				useTeleporter(minigamer);
-				return;
-			case SUGAR:
-				useAdrenaline(minigamer);
+			case IRON_SWORD -> throwKnife(minigamer);
+			case TRIPWIRE_HOOK -> retrieveKnife(minigamer);
+			case ENDER_EYE -> useBloodlust(minigamer);
+			case ENDER_PEARL -> useTeleporter(minigamer);
+			case SUGAR -> useAdrenaline(minigamer);
 		}
 	}
 

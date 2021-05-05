@@ -277,70 +277,39 @@ public class ConvertShopCommand extends CustomCommand {
 	}
 
 	public Enchantment getEnchantFromShort(String enchantShort) {
-		switch (enchantShort) {
-			case "Eff.":
-				return Enchantment.DIG_SPEED;
-			case "Silk Touch":
-				return Enchantment.SILK_TOUCH;
-			case "Unbreaking":
-				return Enchantment.DURABILITY;
-			case "Fortune":
-				return Enchantment.LOOT_BONUS_BLOCKS;
-			case "Luck":
-				return Enchantment.LUCK;
-			case "Lure":
-				return Enchantment.LURE;
-			case "Mending":
-				return Enchantment.MENDING;
-			case "C. of Vanish":
-				return Enchantment.VANISHING_CURSE;
-			case "Protection":
-				return Enchantment.PROTECTION_ENVIRONMENTAL;
-			case "Fire Prot.":
-				return Enchantment.PROTECTION_FIRE;
-			case "Feather Fall.":
-				return Enchantment.PROTECTION_FALL;
-			case "Blast Prot.":
-				return Enchantment.PROTECTION_EXPLOSIONS;
-			case "Proj. Prot.":
-				return Enchantment.PROTECTION_PROJECTILE;
-			case "Respiration":
-				return Enchantment.OXYGEN;
-			case "Aqua Affinity":
-				return Enchantment.WATER_WORKER;
-			case "Thorns":
-				return Enchantment.THORNS;
-			case "Depth Strider":
-				return Enchantment.DEPTH_STRIDER;
-			case "Frost Walker":
-				return Enchantment.FROST_WALKER;
-			case "C. of Binding":
-				return Enchantment.BINDING_CURSE;
-			case "Sharpness":
-				return Enchantment.DAMAGE_ALL;
-			case "Smite":
-				return Enchantment.DAMAGE_UNDEAD;
-			case "Bane":
-				return Enchantment.DAMAGE_ARTHROPODS;
-			case "Knockback":
-				return Enchantment.KNOCKBACK;
-			case "Fire Aspect":
-				return Enchantment.FIRE_ASPECT;
-			case "Looting":
-				return Enchantment.LOOT_BONUS_MOBS;
-			case "Sweeping":
-				return Enchantment.SWEEPING_EDGE;
-			case "Power":
-				return Enchantment.ARROW_DAMAGE;
-			case "Punch":
-				return Enchantment.ARROW_KNOCKBACK;
-			case "Flame":
-				return Enchantment.ARROW_FIRE;
-			case "Infinity":
-				return Enchantment.ARROW_INFINITE;
-			default:
-				return null;
-		}
+		return switch (enchantShort) {
+			case "Eff." -> Enchantment.DIG_SPEED;
+			case "Silk Touch" -> Enchantment.SILK_TOUCH;
+			case "Unbreaking" -> Enchantment.DURABILITY;
+			case "Fortune" -> Enchantment.LOOT_BONUS_BLOCKS;
+			case "Luck" -> Enchantment.LUCK;
+			case "Lure" -> Enchantment.LURE;
+			case "Mending" -> Enchantment.MENDING;
+			case "C. of Vanish" -> Enchantment.VANISHING_CURSE;
+			case "Protection" -> Enchantment.PROTECTION_ENVIRONMENTAL;
+			case "Fire Prot." -> Enchantment.PROTECTION_FIRE;
+			case "Feather Fall." -> Enchantment.PROTECTION_FALL;
+			case "Blast Prot." -> Enchantment.PROTECTION_EXPLOSIONS;
+			case "Proj. Prot." -> Enchantment.PROTECTION_PROJECTILE;
+			case "Respiration" -> Enchantment.OXYGEN;
+			case "Aqua Affinity" -> Enchantment.WATER_WORKER;
+			case "Thorns" -> Enchantment.THORNS;
+			case "Depth Strider" -> Enchantment.DEPTH_STRIDER;
+			case "Frost Walker" -> Enchantment.FROST_WALKER;
+			case "C. of Binding" -> Enchantment.BINDING_CURSE;
+			case "Sharpness" -> Enchantment.DAMAGE_ALL;
+			case "Smite" -> Enchantment.DAMAGE_UNDEAD;
+			case "Bane" -> Enchantment.DAMAGE_ARTHROPODS;
+			case "Knockback" -> Enchantment.KNOCKBACK;
+			case "Fire Aspect" -> Enchantment.FIRE_ASPECT;
+			case "Looting" -> Enchantment.LOOT_BONUS_MOBS;
+			case "Sweeping" -> Enchantment.SWEEPING_EDGE;
+			case "Power" -> Enchantment.ARROW_DAMAGE;
+			case "Punch" -> Enchantment.ARROW_KNOCKBACK;
+			case "Flame" -> Enchantment.ARROW_FIRE;
+			case "Infinity" -> Enchantment.ARROW_INFINITE;
+			default -> null;
+		};
 	}
 
 	public boolean isPotion(String name) {
@@ -354,46 +323,27 @@ public class ConvertShopCommand extends CustomCommand {
 
 
 	public PotionType getPotionFromShort(String potionShort) {
-		switch (potionShort) {
-			case "Water":
-				return PotionType.WATER;
-			case "Mundane":
-				return PotionType.MUNDANE;
-			case "Awkward":
-				return PotionType.AWKWARD;
-			case "Thick":
-				return PotionType.THICK;
-			case "Night Vision":
-				return PotionType.NIGHT_VISION;
-			case "Invisibility":
-				return PotionType.INVISIBILITY;
-			case "Jump Boost":
-				return PotionType.JUMP;
-			case "Fire Res.":
-				return PotionType.FIRE_RESISTANCE;
-			case "Speed":
-				return PotionType.SPEED;
-			case "Slowness":
-				return PotionType.SLOWNESS;
-			case "Water Br.":
-				return PotionType.WATER_BREATHING;
-			case "Inst. Health":
-				return PotionType.INSTANT_HEAL;
-			case "Inst. Damage":
-				return PotionType.INSTANT_DAMAGE;
-			case "Poison":
-				return PotionType.POISON;
-			case "Regen.":
-				return PotionType.REGEN;
-			case "Strength":
-				return PotionType.STRENGTH;
-			case "Weakness":
-				return PotionType.WEAKNESS;
-			case "Luck":
-				return PotionType.LUCK;
-			default:
-				return null;
-		}
+		return switch (potionShort) {
+			case "Water" -> PotionType.WATER;
+			case "Mundane" -> PotionType.MUNDANE;
+			case "Awkward" -> PotionType.AWKWARD;
+			case "Thick" -> PotionType.THICK;
+			case "Night Vision" -> PotionType.NIGHT_VISION;
+			case "Invisibility" -> PotionType.INVISIBILITY;
+			case "Jump Boost" -> PotionType.JUMP;
+			case "Fire Res." -> PotionType.FIRE_RESISTANCE;
+			case "Speed" -> PotionType.SPEED;
+			case "Slowness" -> PotionType.SLOWNESS;
+			case "Water Br." -> PotionType.WATER_BREATHING;
+			case "Inst. Health" -> PotionType.INSTANT_HEAL;
+			case "Inst. Damage" -> PotionType.INSTANT_DAMAGE;
+			case "Poison" -> PotionType.POISON;
+			case "Regen." -> PotionType.REGEN;
+			case "Strength" -> PotionType.STRENGTH;
+			case "Weakness" -> PotionType.WEAKNESS;
+			case "Luck" -> PotionType.LUCK;
+			default -> null;
+		};
 	}
 
 	public Material essentialsAliases(String name) {

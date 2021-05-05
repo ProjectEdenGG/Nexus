@@ -486,7 +486,7 @@ public class MainIsland implements Listener, Island {
 		int ndx = RandomUtils.randomInt(1, 3);
 		String reward;
 		switch (ndx) {
-			case 1:
+			case 1 -> {
 				List<String> songs = Arrays.asList("AutumnVoyage", "ForestDance", "DrunkenSailor", "Astronomia", "OwenWasHer", "Queen-BohemianRhapsody");
 				String songPerm = RandomUtils.randomElement(songs);
 				reward = "Song Coupon for " + songPerm;
@@ -494,18 +494,18 @@ public class MainIsland implements Listener, Island {
 						.name("Coupon For: " + songPerm)
 						.lore(itemLore, "&f", "&3Song: &e" + songPerm, "&3Redeem this with an admin", "&3to receive your song").amount(1).build();
 				PlayerUtils.giveItem(player, songCoupon);
-				break;
-			case 2:
+			}
+			case 2 -> {
 				reward = "50 Bear Fair Points";
 				BearFair20UserService BFService = new BearFair20UserService();
 				BearFair20User user = BFService.get(player);
 				user.givePoints(50);
 				BFService.save(user);
-				break;
-			default:
+			}
+			default -> {
 				reward = "30 Vote Points";
 				new Voter(player).givePoints(30);
-				break;
+			}
 		}
 		return reward;
 	}

@@ -226,17 +226,13 @@ public class RavensNestEstate implements Listener {
 		if (!isPlayingThis(minigamer)) return;
 		Match match = minigamer.getMatch();
 		switch (material) {
-			case RAIL:
-				playPiano(loc);
-				break;
-			case BOOKSHELF:
-				openFireplace(loc, match);
-				break;
-			case OAK_BUTTON:
+			case RAIL -> playPiano(loc);
+			case BOOKSHELF -> openFireplace(loc, match);
+			case OAK_BUTTON -> {
 				String schematic = findDoor(loc, match);
 				if (schematic != null)
 					toggleDoor(schematic, match);
-				break;
+			}
 		}
 	}
 

@@ -371,33 +371,15 @@ public class MinigameNightIsland implements Listener, Island {
 		BearFair20User user = service.get(player);
 		Material pieceType = piece.getType();
 		switch (pieceType) {
-			case IRON_TRAPDOOR:
-				user.setQuest_MGN_hasCPU(true);
-				break;
-			case DAYLIGHT_DETECTOR:
-				user.setQuest_MGN_hasProcessor(true);
-				break;
-			case IRON_INGOT:
-				user.setQuest_MGN_hasMemoryCard(true);
-				break;
-			case GREEN_CARPET:
-				user.setQuest_MGN_hasMotherBoard(true);
-				break;
-			case BLAST_FURNACE:
-				user.setQuest_MGN_hasPowerSupply(true);
-				break;
-			case NOTE_BLOCK:
-				user.setQuest_MGN_hasSpeaker(true);
-				break;
-			case HOPPER_MINECART:
-				user.setQuest_MGN_hasHardDrive(true);
-				break;
-			case REPEATER:
-				user.setQuest_MGN_hasDiode(true);
-				break;
-			case LEVER:
-				user.setQuest_MGN_hasJoystick(true);
-				break;
+			case IRON_TRAPDOOR -> user.setQuest_MGN_hasCPU(true);
+			case DAYLIGHT_DETECTOR -> user.setQuest_MGN_hasProcessor(true);
+			case IRON_INGOT -> user.setQuest_MGN_hasMemoryCard(true);
+			case GREEN_CARPET -> user.setQuest_MGN_hasMotherBoard(true);
+			case BLAST_FURNACE -> user.setQuest_MGN_hasPowerSupply(true);
+			case NOTE_BLOCK -> user.setQuest_MGN_hasSpeaker(true);
+			case HOPPER_MINECART -> user.setQuest_MGN_hasHardDrive(true);
+			case REPEATER -> user.setQuest_MGN_hasDiode(true);
+			case LEVER -> user.setQuest_MGN_hasJoystick(true);
 		}
 		service.save(user);
 	}

@@ -76,32 +76,16 @@ public class AnimalTeleportPens {
 		int price = 0;
 		for (Entity entity : entities) {
 			switch (entity.getType()) {
-				case PIG:
-				case RABBIT:
-				case FOX:
-				case TURTLE:
-					price += 100;
-					break;
-				case COW:
-				case SHEEP:
-				case MUSHROOM_COW:
-				case POLAR_BEAR:
-				case PANDA:
-					price += 150;
-					break;
-				case HORSE:
-				case DONKEY:
-				case MULE:
-				case LLAMA:
-				case TRADER_LLAMA:
-					price += 250;
-					break;
-				case VILLAGER:
-					price += 500;
-					break;
-				default:
-					price += 50;
-					break;
+				case PIG, RABBIT, FOX, TURTLE ->
+						price += 100;
+				case COW, SHEEP, MUSHROOM_COW, POLAR_BEAR, PANDA ->
+						price += 150;
+				case HORSE, DONKEY, MULE, LLAMA, TRADER_LLAMA ->
+						price += 250;
+				case VILLAGER ->
+						price += 500;
+				default ->
+						price += 50;
 			}
 		}
 		return price;

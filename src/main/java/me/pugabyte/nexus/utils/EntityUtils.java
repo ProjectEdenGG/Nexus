@@ -89,13 +89,9 @@ public class EntityUtils {
 	}
 
 	public static boolean isUnnaturalSpawn(LivingEntity entity) {
-		switch (entity.getEntitySpawnReason()) {
-			case SPAWNER_EGG:
-			case SPAWNER:
-			case CUSTOM:
-				return true;
-			default:
-				return false;
-		}
+		return switch (entity.getEntitySpawnReason()) {
+			case SPAWNER_EGG, SPAWNER, CUSTOM -> true;
+			default -> false;
+		};
 	}
 }

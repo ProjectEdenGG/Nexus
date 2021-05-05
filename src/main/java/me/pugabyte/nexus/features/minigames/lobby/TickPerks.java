@@ -124,23 +124,13 @@ public class TickPerks implements Listener {
 					if (item == null)
 						item = new ItemStack(Material.AIR);
 
-					EnumItemSlot slot;
-					switch (i) {
-						case 3:
-							slot = EnumItemSlot.HEAD;
-							break;
-						case 2:
-							slot = EnumItemSlot.CHEST;
-							break;
-						case 1:
-							slot = EnumItemSlot.LEGS;
-							break;
-						case 0:
-							slot = EnumItemSlot.FEET;
-							break;
-						default:
-							throw new IllegalStateException("Unexpected value: " + i);
-					}
+					EnumItemSlot slot = switch (i) {
+						case 3 -> EnumItemSlot.HEAD;
+						case 2 -> EnumItemSlot.CHEST;
+						case 1 -> EnumItemSlot.LEGS;
+						case 0 -> EnumItemSlot.FEET;
+						default -> throw new IllegalStateException("Unexpected value: " + i);
+					};
 					LoadoutPerk.sendPackets(player, player.getWorld().getPlayers(), item, slot);
 				}
 			}

@@ -117,15 +117,12 @@ public class DailyRewardsFeature extends Feature {
 	}
 
 	public static Reward getReward(int day, int option) {
-		switch (option) {
-			case 0:
-				return rewards1.get(day - 1);
-			case 1:
-				return rewards2.get(day - 1);
-			case 2:
-				return rewards3.get(day - 1);
-		}
-		return null;
+		return switch (option) {
+			case 0 -> rewards1.get(day - 1);
+			case 1 -> rewards2.get(day - 1);
+			case 2 -> rewards3.get(day - 1);
+			default -> null;
+		};
 	}
 
 	public static List<Reward> getRewards(int day) {

@@ -44,25 +44,20 @@ public class DiscordDiscordCommand extends Command {
 				DiscordUser author = service.getFromUserId(event.getAuthor().getId());
 
 				switch (args[0].toLowerCase()) {
-					case "lockdown":
+					case "lockdown" -> {
 						if (!event.getMember().hasPermission(Permission.KICK_MEMBERS))
 							throw new NoPermissionException();
-
 						SettingService settingService = new SettingService();
 						Setting setting = settingService.get("discord", "lockdown");
 						setting.setBoolean(!setting.getBoolean());
 						settingService.save(setting);
-
 						event.reply("Discord lockdown " + (setting.getBoolean() ? "enabled, new members will be automatically kicked" : "disabled"));
-
-						break;
-					case "link":
+					}
+					case "link" -> {
 						if (args.length < 2)
 							throw new InvalidInputException("Correct usage: `/discord link <name>`");
-
 						OfflinePlayer player = PlayerUtils.getPlayer(args[1]);
 						DiscordUser fromInput = service.get(player);
-
 						if (author != null)
 							// Author already linked
 							if (!Strings.isNullOrEmpty(fromInput.getUserId()))
@@ -78,26 +73,21 @@ public class DiscordDiscordCommand extends Command {
 								throw new InvalidInputException("This should never happen <@" + User.PUGABYTE.getId() + ">"); // Lookup by user id failed?
 							else
 								throw new InvalidInputException("That minecraft account is already linked to a different discord account. Type `/discord unlink` in-game to remove the link.");
-
 						String code = RandomStringUtils.randomAlphabetic(6);
 						Discord.getCodes().put(code, new DiscordUser(player.getUniqueId(), event.getAuthor().getId()));
 						String name = Discord.getName(event.getMember().getId());
 						Koda.console("Generated key " + code + " for " + name);
-
 						event.getAuthor().openPrivateChannel().complete().sendMessage("Hey there " + name + "! I've successfully found that minecraft account. " +
 								"Please copy and paste the following command into minecraft to confirm the link. (You can use `ctrl+v` or `cmd+v`) " +
 								"```/discord link " + code + "```").queue();
 						if (event.getMessage().getChannel().getType().isGuild())
 							event.reply(event.getAuthor().getAsMention() + " Check your direct messages with " + Bot.KODA.jda().getSelfUser().getAsMention() + " for a confirmation code! (top left of the screen)");
-						break;
-
-					case "forcelink":
+					}
+					case "forcelink" -> {
 						if (args.length < 3)
 							throw new InvalidInputException("Correct usage: `/discord forceLink <name> <mention>`");
-
 						if (!event.getMember().hasPermission(Permission.MANAGE_ROLES))
 							throw new NoPermissionException();
-
 						DiscordUser discordUser = service.get(PlayerUtils.getPlayer(args[1]));
 						String id = event.getMessage().getMentionedMembers().get(0).getUser().getId();
 						discordUser.setUserId(id);
@@ -105,8 +95,8 @@ public class DiscordDiscordCommand extends Command {
 						event.reactSuccess();
 						Tasks.wait(Time.SECOND.x(5), () -> event.getMessage().delete().queue());
 						Discord.addRole(id, DiscordId.Role.VERIFIED);
-						Discord.staffLog("**" + discordUser.getNickname() + "** Discord account force linked to **" + discordUser.getNameAndDiscrim() +  "** by " + author.getNickname() + " via Discord");
-						break;
+						Discord.staffLog("**" + discordUser.getNickname() + "** Discord account force linked to **" + discordUser.getNameAndDiscrim() + "** by " + author.getNickname() + " via Discord");
+					}
 				}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));

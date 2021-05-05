@@ -52,33 +52,31 @@ public class TicketsDiscordCommand extends Command {
 				final Ticket ticket = service.get(Integer.parseInt(id));
 
 				switch (args[0].toLowerCase()) {
-					case "view":
+					case "view" -> {
 						String message = PREFIX + "**#" + ticket.getId() + "** ";
 						message += ticket.isOpen() ? "(Open)" : "(Closed)";
 						message += nl + "**Owner:** " + ticket.getOwnerName();
 						message += nl + "**When:** " + ticket.getTimespan() + " ago";
 						message += nl + "**Description:** " + ticket.getDescription();
 						event.reply(message);
-						break;
-					case "close": {
+					}
+					case "close" -> {
 						if (!ticket.isOpen())
 							throw new InvalidInputException("Ticket already closed");
 
 						ticket.setOpen(false);
 						service.save(ticket);
 
-						Tickets.broadcast(ticket,null, player.getName() + " closed ticket #" + ticket.getId());
-						break;
+						Tickets.broadcast(ticket, null, player.getName() + " closed ticket #" + ticket.getId());
 					}
-					case "reopen": {
+					case "reopen" -> {
 						if (ticket.isOpen())
 							throw new InvalidInputException("Ticket already open");
 
 						ticket.setOpen(true);
 						service.save(ticket);
 
-						Tickets.broadcast(ticket,null, player.getName() + " reopened ticket #" + ticket.getId());
-						break;
+						Tickets.broadcast(ticket, null, player.getName() + " reopened ticket #" + ticket.getId());
 					}
 				}
 			} catch (Exception ex) {

@@ -301,15 +301,12 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	public int getPoints(String color) {
-		switch (color) {
-			case "yellow":
-				return 1;
-			case "orange":
-				return 3;
-			case "red":
-				return 5;
-		}
-		return 0;
+		return switch (color) {
+			case "yellow" -> 1;
+			case "orange" -> 3;
+			case "red" -> 5;
+			default -> 0;
+		};
 	}
 
 	public void removeTarget(Block target) {

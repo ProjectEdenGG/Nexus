@@ -43,7 +43,7 @@ public class SignListener implements Listener {
 
 		if (HEADER.equals(stripColor(sign.getLine(0)))) {
 			switch (stripColor(sign.getLine(1).toLowerCase())) {
-				case "join":
+				case "join" -> {
 					Arena arena;
 					try {
 						arena = ArenaManager.find(sign.getLine(2));
@@ -58,10 +58,10 @@ public class SignListener implements Listener {
 
 						JsonBuilder builder = new JsonBuilder(NamedTextColor.GOLD);
 						builder.newline(false).next(arena.getDisplayName(), NamedTextColor.DARK_AQUA, TextDecoration.BOLD);
-						builder.newline(false).next("Gamemode: " ).next(arena.getMechanic().getName(), NamedTextColor.YELLOW);
+						builder.newline(false).next("Gamemode: ").next(arena.getMechanic().getName(), NamedTextColor.YELLOW);
 
 						String descriptionText = arena.getMechanic().getDescription();
-						if (descriptionText != null && !descriptionText.isEmpty() && !descriptionText.equalsIgnoreCase("todo"))
+						if (!descriptionText.isEmpty() && !descriptionText.equalsIgnoreCase("todo"))
 							builder.newline(false).next("Description: ").next(descriptionText, NamedTextColor.YELLOW);
 
 						builder.newline(false).next(String.valueOf(players), NamedTextColor.YELLOW).next("/").next(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
@@ -79,16 +79,10 @@ public class SignListener implements Listener {
 						event.getPlayer().sendMessage(Identity.nil(), builder, MessageType.SYSTEM);
 					} else
 						PlayerManager.get(event.getPlayer()).join(arena);
-					break;
-				case "quit":
-					PlayerManager.get(event.getPlayer()).quit();
-					break;
-				case "lobby":
-					PlayerUtils.runCommand(event.getPlayer(), "warp minigames");
-					break;
-				case "force start":
-					PlayerUtils.runCommandAsOp(event.getPlayer(), "newmgm start");
-					break;
+				}
+				case "quit" -> PlayerManager.get(event.getPlayer()).quit();
+				case "lobby" -> PlayerUtils.runCommand(event.getPlayer(), "warp minigames");
+				case "force start" -> PlayerUtils.runCommandAsOp(event.getPlayer(), "newmgm start");
 			}
 		}
 	}
