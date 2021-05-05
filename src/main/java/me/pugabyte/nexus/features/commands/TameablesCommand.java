@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -32,6 +33,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 
@@ -247,7 +250,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here"));
 						break;
 					case INFO:
-						String owner = getOwner(entity);
+						String owner = getOwnerNames(entity);
 						send(player, PREFIX + "That " + entityName + " is " + (isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
 						break;
 				}
@@ -287,22 +290,40 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		return false;
 	}
 
-	private String getOwner(Entity entity) {
+	private List<AnimalTamer> getOwners(Entity entity) {
+		List<AnimalTamer> owners = new ArrayList<>();
 		if (entity instanceof Tameable) {
 			AnimalTamer tamer = ((Tameable) entity).getOwner();
 			if (tamer != null)
-				return tamer.getName();
+				owners.add(tamer);
 		} else if (entity instanceof Fox) {
 			Fox fox = (Fox) entity;
-			List<String> names = new ArrayList<>();
 			if (fox.getFirstTrustedPlayer() != null)
-				names.add(fox.getFirstTrustedPlayer().getName());
+				owners.add(fox.getFirstTrustedPlayer());
 			if (fox.getSecondTrustedPlayer() != null)
-				names.add(fox.getSecondTrustedPlayer().getName());
-			if (!names.isEmpty())
-				return String.join(" and ", names);
+				owners.add(fox.getSecondTrustedPlayer());
 		}
-		return null;
+		return owners;
+	}
+
+	private String getOwnerNames(Entity entity) {
+		return getOwners(entity).stream().map(AnimalTamer::getName).collect(Collectors.joining(" and "));
+	}
+
+	@EventHandler
+	public void onEntityTeleport(EntityTeleportEvent event) {
+		List<AnimalTamer> owners = getOwners(event.getEntity());
+		if (owners.isEmpty())
+			return;
+
+		for (AnimalTamer owner : owners)
+			if (Rank.of(Bukkit.getOfflinePlayer(owner.getUniqueId())).gte(Rank.NOBLE))
+				return;
+
+		if (isPerkAllowedAt(event.getFrom()) && !isPerkAllowedAt(event.getTo()))
+			return;
+
+		event.setCancelled(true);
 	}
 
 }
