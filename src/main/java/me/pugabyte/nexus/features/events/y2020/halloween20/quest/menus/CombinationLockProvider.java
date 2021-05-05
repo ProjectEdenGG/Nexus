@@ -87,7 +87,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 			if (correct[0] && correct[1] && correct[2])
 				complete(player);
 			else {
-				SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElseGet(null);
+				SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElse(null);
 				if (inv != null && inv.getProvider() == this)
 					Halloween20Menus.openComboLock(player);
 			}

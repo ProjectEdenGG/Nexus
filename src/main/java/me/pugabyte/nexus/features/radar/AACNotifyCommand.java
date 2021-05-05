@@ -64,7 +64,7 @@ public class AACNotifyCommand extends CustomCommand {
 			} else
 				discordCounts.put(uuid, discordCounts.getOrDefault(uuid, 0) + 1);
 
-			if (Rank.getOnlineMods().stream().noneMatch(nerd -> player.getPlayer() != null && !AFK.get(player.getPlayer()).isTimeAfk()))
+			if (Rank.getOnlineMods().stream().allMatch(nerd -> AFK.get(player.getPlayer()).isTimeAfk()))
 				if (totalCounts.getOrDefault(uuid, 0) > 20)
 					runCommandAsConsole("ban " + player.getName() + " 1d You have been automatically banned " +
 							"by our anti cheat. Hacking is not allowed! (C: " + totalCounts.get(uuid) + ")");

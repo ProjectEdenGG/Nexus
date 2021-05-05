@@ -152,12 +152,10 @@ public class ClientsideBlocks implements Listener {
 			if (shipColor != null) {
 				colorType = ColorType.of(shipColor);
 
-				if (colorType.getConcrete() != null)
+				if (colorType != null) {
 					concreteType = colorType.getConcrete();
-
-				if (colorType.getBed() != null)
 					bedType = colorType.getBed();
-
+				}
 			}
 
 			List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(getShipColorRegion(region)));
