@@ -124,6 +124,4 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			runCommand(event.getClicker(), "crates");
 	}
 
-
-
 }

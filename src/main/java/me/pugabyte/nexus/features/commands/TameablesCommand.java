@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static me.pugabyte.nexus.features.listeners.Restrictions.isPerkAllowedAt;
+
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
 	private static final Map<UUID, PendingTameblesAction> actions = new HashMap<>();
@@ -77,6 +79,9 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void moveHere() {
 		if (!moveQueue.containsKey(uuid()))
 			error("You do not have any animal pending teleport");
+		if (!isPerkAllowedAt(location()))
+			error("You cannot teleport that animal to this location");
+
 		Entity entity = moveQueue.remove(uuid());
 		entity.teleport(player());
 		send(PREFIX + "Summoned your " + camelCase(entity.getType()));
@@ -100,9 +105,18 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("summon <entityType>")
 	@Description("Summon the animals you own (Must be in loaded chunks)")
 	void summon(SummonableTameableEntity entityType) {
-		List<Entity> entities = list(entityType);
-		entities.forEach(entity -> entity.teleport(player()));
-		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
+		int failed = 0, succeeded = 0;
+		for (Entity entity : list(entityType))
+			if (isPerkAllowedAt(location())) {
+				entity.teleportAsync(location());
+				++succeeded;
+			} else
+				++failed;
+
+		if (succeeded > 0)
+			send(PREFIX + "Summoned &e" + succeeded + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
+		if (failed > 0)
+			send(PREFIX + "Failed to teleport &e" + failed + " " + camelCase(entityType) + "s to your location &3(not allowed here)");
 	}
 
 	@Path("find <entityType>")
