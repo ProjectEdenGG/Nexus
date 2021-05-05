@@ -64,6 +64,10 @@ public class Nickname extends eden.models.nickname.Nickname implements PlayerOwn
 		return of(player.getUniqueId());
 	}
 
+	public static String of(PlayerOwnedObject player) {
+		return of(player.getUniqueId());
+	}
+
 	public static String of(UUID uuid) {
 		return new NicknameService().get(uuid).getNickname();
 	}
