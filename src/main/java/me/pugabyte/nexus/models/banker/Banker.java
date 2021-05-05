@@ -25,7 +25,6 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

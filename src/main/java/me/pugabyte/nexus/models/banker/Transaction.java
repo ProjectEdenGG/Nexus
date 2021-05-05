@@ -12,7 +12,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
