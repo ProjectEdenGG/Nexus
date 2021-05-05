@@ -48,8 +48,11 @@ public class ShopService extends MongoService<Shop> {
 	}
 
 	@Override
-	protected boolean deleteIf(Shop object) {
-		return StringUtils.isUUID0(object.getUuid());
+	public void save(Shop object) {
+		if (StringUtils.isUUID0(object.getUuid()))
+			return;
+
+		super.save(object);
 	}
 
 }
