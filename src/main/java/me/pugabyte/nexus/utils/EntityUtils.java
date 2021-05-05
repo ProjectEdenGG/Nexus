@@ -6,6 +6,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -30,6 +31,10 @@ public class EntityUtils {
 		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
+	}
+
+	public static boolean isHostile(Entity entity) {
+		return entity instanceof Monster || getExtraHostileMobs().contains(entity.getType());
 	}
 
 	public static List<EntityType> getExtraHostileMobs() {

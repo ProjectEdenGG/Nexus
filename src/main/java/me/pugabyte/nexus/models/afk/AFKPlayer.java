@@ -59,8 +59,16 @@ public class AFKPlayer {
 		this.time = LocalDateTime.now();
 	}
 
+	public boolean isNotAfk() {
+		return !isAfk;
+	}
+
 	public boolean isTimeAfk() {
 		return time.until(LocalDateTime.now(), ChronoUnit.SECONDS) > 240;
+	}
+
+	public boolean isNotTimeAfk() {
+		return !isTimeAfk();
 	}
 
 	public void setLocation() {
