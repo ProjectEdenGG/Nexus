@@ -48,7 +48,7 @@ public class TwitterCommand extends CustomCommand {
 			TwitterService service = new TwitterService();
 			TwitterData data = service.get();
 
-			List<Status> tweets = SocialMedia.getTwitter().search().search(new Query("from:BearNationSMP")).getTweets();
+			List<Status> tweets = SocialMedia.getTwitter().search().search(new Query("from:ProjectEdenGG")).getTweets();
 			for (Status tweet : tweets) {
 				if (data.getKnownTweets().contains(tweet.getId()))
 					continue;

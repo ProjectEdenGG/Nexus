@@ -3,12 +3,12 @@ package me.pugabyte.nexus.models.vote;
 import lombok.Getter;
 
 public enum VoteSite {
-	PMC("PlanetMinecraft.com", "http://www.planetminecraft.com/server/bear-nation/vote/&username={{USERNAME}}", 24),
+	PMC("PlanetMinecraft.com", "http://www.planetminecraft.com/server/projecteden/vote/&username={{USERNAME}}", 24),
 	MCMP("Minecraft-MP.com", "http://minecraft-mp.com/server/88565/vote/", 24),
 	MCBIZ("MinecraftServers.biz", "https://minecraftservers.biz/servers/891/#vote_now", 24), // contacted
 	MCSL("MCSL", "http://minecraft-server-list.com/server/314528/vote/", 24), // contacted
 	MCSO("MinecraftServers.org", "http://minecraftservers.org/vote/248930", 24), // contacted
-	MCSN("Minecraft-Server.net", "https://minecraft-server.net/vote/BearNation/", 24),
+	MCSN("Minecraft-Server.net", "https://minecraft-server.net/vote/ProjectEden/", 24),
 	TMCS("TopMinecraftServers", "https://topminecraftservers.org/vote/3738", 24), // cookie autofill?
 	TOPG("TopG.org", "https://topg.org/Minecraft/in-505487-{{USERNAME}}", 24);
 

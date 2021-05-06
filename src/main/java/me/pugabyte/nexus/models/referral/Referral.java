@@ -31,18 +31,18 @@ public class Referral implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum Origin {
-		PLANET_MINECRAFT("PlanetMC.com", "http://www.planetminecraft.com/server/bear-nation/"),
+		PLANET_MINECRAFT("PlanetMC.com", "http://www.planetminecraft.com/server/projecteden/"),
 		MCSERVERS_BIZ("MCServers.biz", "https://minecraftservers.biz/servers/891/"),
 		TOP_MINECRAFT_SERVERS("TopMCServers.org", "https://topminecraftservers.org/server/3738"),
 		MINECRAFT_SERVER_LIST("MC-Server-List.com", "http://minecraft-server-list.com/server/314528/"),
 		MINECRAFT_MULTIPLAYER("MC-MP.com", "http://minecraft-mp.com/server/88565/"),
 		MINECRAFT_SERVERS("MCServers.org", "http://minecraftservers.org/server/248930"),
-//		MC_SERVER("MC-Server.net", "https://minecraft-server.net/vote/BearNation/"), Not enough space in book
+//		MC_SERVER("MC-Server.net", "https://minecraft-server.net/vote/ProjectEden/"), Not enough space in book
 		TOPG("TopG.org", "https://topg.org/Minecraft/server-505487"),
 		YOUTUBE("YouTube", "https://www.youtube.com/channel/UClJ8Mnz2R-1cWuwnLQGi6HA"),
-		TWITTER("Twitter", "https://twitter.com/BearNationSMP"),
-		INSTAGRAM("Instagram", "https://www.instagram.com/bearnationsmp/"),
-		REDDIT("Reddit", "https://www.reddit.com/user/BearNationNetwork/"),
+		TWITTER("Twitter", "https://twitter.com/ProjectEdenGG"),
+		INSTAGRAM("Instagram", "https://www.instagram.com/ProjectEdenGG/"),
+		REDDIT("Reddit", "https://www.reddit.com/user/ProjectEdenGG/"),
 		DISBOARD("Disboard", "https://disboard.org/server/132680070480396288"),
 		FRIEND("A friend", "A friend"),
 		OTHER("Other", "Other");

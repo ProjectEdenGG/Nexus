@@ -54,7 +54,7 @@ public class TwitterDiscordCommand extends Command {
 							event.getMessage().addReaction(EmojiManager.getForAlias("thumbsup").getUnicode()).queue();
 						}
 						case "history" -> {
-							Query query = new Query("from:BearNationSMP");
+							Query query = new Query("from:ProjectEdenGG");
 							List<Status> tweets = SocialMedia.getTwitter().search().search(query).getTweets();
 							StringBuilder reply = new StringBuilder("Tweets from past 7 days: " + (tweets.isEmpty() ? "None" : ""));
 							for (Status tweet : tweets)
