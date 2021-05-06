@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models.modreview;
 
 import eden.mongodb.annotations.PlayerClass;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -18,6 +19,10 @@ public class ModReviewService extends MongoService<ModReview> {
 
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
+	}
+
+	public ModReview get() {
+		return get(Nexus.getUUID0());
 	}
 
 }

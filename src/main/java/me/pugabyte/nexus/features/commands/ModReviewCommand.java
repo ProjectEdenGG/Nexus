@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.commands;
 
 import eden.utils.TimeUtils.Time;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -23,8 +23,13 @@ import me.pugabyte.nexus.models.modreview.ModReview.Mod;
 import me.pugabyte.nexus.models.modreview.ModReview.Mod.ModVerdict;
 import me.pugabyte.nexus.models.modreview.ModReview.ModReviewRequest;
 import me.pugabyte.nexus.models.modreview.ModReviewService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,10 +38,11 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 
+@NoArgsConstructor
 @Aliases({"modcheck", "checkmod"})
-public class ModReviewCommand extends CustomCommand {
+public class ModReviewCommand extends CustomCommand implements Listener {
 	private final ModReviewService service = new ModReviewService();
-	private final ModReview modReview = service.get(Nexus.getUUID0());
+	private final ModReview modReview = service.get();
 	private final List<Mod> mods = modReview.getMods();
 	private final List<ModReviewRequest> requests = modReview.getRequests();
 
@@ -176,6 +182,19 @@ public class ModReviewCommand extends CustomCommand {
 
 	private void save() {
 		service.save(modReview);
+	}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		if (Rank.of(event.getPlayer()) != Rank.ADMIN)
+			return;
+
+		ModReview modReview = new ModReviewService().get();
+		if (modReview.getRequests().isEmpty())
+			return;
+
+		PlayerUtils.send(event.getPlayer(), StringUtils.getPrefix("ModReview") + "&c&lThere are "
+				+ modReview.getRequests().size() + " mod review requests pending");
 	}
 
 	@ConverterFor(Mod.class)
