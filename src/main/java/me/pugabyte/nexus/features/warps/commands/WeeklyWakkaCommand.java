@@ -75,7 +75,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	@Path("info")
 	void info() {
 		send("&3Hey there, my name is &eWakka&3, an admin of this server. &eI have hidden a version of myself somewhere in spawn " +
-				"&3for you to find. If you find it, you can get a key to open up one of my crates here. My cow clone will move location " +
+				"&3for you to find. If you find it, you can get a key to open up one of my crates here. My clone will move location " +
 				"once a week, so you can get a new reward each week! If you find it, &eI'll tell you a tip about the server and give " +
 				"you a key to this crate.");
 	}
