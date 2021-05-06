@@ -36,7 +36,7 @@ public class Fishing implements Listener {
 		Map<FishingLoot, Double> lootMap = new HashMap<>();
 		for (FishingLoot loot : FishingLoot.of(category)) {
 			if (category.equals(FishingLootCategory.UNIQUE)) {
-				if (loot.timeApplies(player.getWorld()) && loot.regionApplies(player.getLocation()))
+				if (loot.applies(player))
 					lootMap.put(loot, loot.getWeight());
 			} else
 				lootMap.put(loot, loot.getWeight());

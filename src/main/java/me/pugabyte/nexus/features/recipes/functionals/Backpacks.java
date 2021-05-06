@@ -44,7 +44,7 @@ import java.util.List;
 public class Backpacks extends FunctionalRecipe {
 
 	@Getter
-	public ItemStack defaultBackpack = new ItemBuilder(Material.SHULKER_BOX).name("&rBackpack").customModelData(1).build();
+	public static ItemStack defaultBackpack = new ItemBuilder(Material.SHULKER_BOX).name("&rBackpack").customModelData(1).build();
 
 	@Override
 	public String getPermission() {
@@ -88,7 +88,7 @@ public class Backpacks extends FunctionalRecipe {
 		return null;
 	}
 
-	public String getRandomBackPackId() {
+	public static String getRandomBackPackId() {
 		return RandomStringUtils.randomAlphabetic(10);
 	}
 
@@ -148,10 +148,17 @@ public class Backpacks extends FunctionalRecipe {
 		if (event.getRecipe() == null) return;
 		if (event.getInventory().getResult() == null) return;
 		if (!event.getInventory().getResult().equals(getDefaultBackpack())) return;
-		NBTItem nbtItem = new NBTItem(event.getInventory().getResult().clone());
+		event.getInventory().setResult(getBackpack(event.getInventory().getResult().clone(), (Player) event.getView().getPlayer()));
+	}
+
+	public static ItemStack getBackpack(ItemStack backpack, Player player) {
+		if (backpack == null)
+			backpack = defaultBackpack.clone();
+
+		NBTItem nbtItem = new NBTItem(backpack);
 		nbtItem.setString("BackpackId", getRandomBackPackId());
-		nbtItem.setString("BackpackOwner", event.getView().getPlayer().getUniqueId().toString());
-		event.getInventory().setResult(nbtItem.getItem());
+		nbtItem.setString("BackpackOwner", player.getUniqueId().toString());
+		return nbtItem.getItem();
 	}
 
 	@EventHandler
