@@ -64,7 +64,7 @@ public class QueUp implements PlayerOwnedObject {
 	public static class API {
 		private static final String BASE_URL = "https://api.queup.net/";
 
-		private static final String ROOM_NAME = "bearnation";
+		private static final String ROOM_NAME = "projecteden";
 		private static final String ROOM_ID = "60553abb972f3f00068689ef";
 
 		private static final String ACTIVE_SONG_PATH = "room/" + ROOM_ID + "/playlist/active";
