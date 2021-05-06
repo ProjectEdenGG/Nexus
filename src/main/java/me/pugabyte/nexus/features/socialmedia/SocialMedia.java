@@ -137,16 +137,16 @@ public class SocialMedia extends Feature implements Listener {
 			public String getUrl() {
 				String url = "https://discord.projecteden.gg";
 				if (Discord.getGuild() != null && Discord.getGuild().getBoostTier().getKey() == 3)
-					url = "https://discord.gg/projecteden";
+					url = "https://discord.gg/ProjectEdenGG";
 				return url;
 			}
 		},
 		YOUTUBE("https://youtube.projecteden.gg"),
-		TWITTER("https://twitter.projecteden.gg"),
-		INSTAGRAM("https://instagram.projecteden.gg"),
-		REDDIT("https://reddit.projecteden.gg"),
-		STEAM("https://steam.projecteden.gg"),
-		QUEUP("https://queup.projecteden.gg");
+		TWITTER("https://twitter.com/ProjectEdenGG"),
+		INSTAGRAM("https://instagram.com/ProjectEdenGG"),
+		REDDIT("https://reddit.com/u/ProjectEdenGG"),
+		STEAM("https://steamcommunity.com/groups/ProjectEdenGG"),
+		QUEUP("https://queup.net/join/ProjectEdenGG");
 
 		@Getter
 		private String name = "&3" + camelCase(name());
