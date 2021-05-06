@@ -54,7 +54,6 @@ import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -654,11 +653,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void allowedRegionsTest() {
 		worldEditUtils.paster().file("allowedRegionsTest").at(location()).regions("allowedRegionsTest").pasteAsync();
 		send("Pasted schematic allowedRegionsTest");
-	}
-
-	@Path("copyTileEntityClientTest")
-	void copyTileEntityClient() {
-		PacketUtils.copyTileEntityClient(player(), location().getBlock(), location().add(1, 0, 0));
 	}
 
 	@Path("removeTest")

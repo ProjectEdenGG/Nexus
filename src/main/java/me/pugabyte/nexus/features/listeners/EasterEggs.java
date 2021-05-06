@@ -4,7 +4,6 @@ import com.destroystokyo.paper.ParticleBuilder;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.CitizensUtils;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -63,24 +62,27 @@ public class EasterEggs implements Listener {
 		ItemStack heldItem = clicker.getInventory().getItemInMainHand();
 
 		switch (clicked.getUniqueId().toString()) {
-			case "pugabyte", "vargskati" -> pug(clicker, heldItem, clicked);
+			case "pugabyte" -> griffin(clicker, heldItem, clicked);
 			case "wakkaflocka" -> wakka(clicker, heldItem, clicked);
-			case "porkeroni" -> pork(clicker, heldItem, clicked);
-			case "ravenonacloud", "chaioty" -> raven(clicker, heldItem, clicked);
-			case "warrior_tark" -> tark(clicker, heldItem, clicked);
+			case "porkeroni" -> dom(clicker, heldItem, clicked);
+			case "ravenonacloud" -> raven(clicker, heldItem, clicked);
 			case "blast" -> blast(clicker, heldItem, clicked);
 		}
 	}
 
-	private void pug(Player player, ItemStack heldItem, Player clicked) {
-		switch (heldItem.getType()) {
-			case BONE, PORKCHOP, COOKED_PORKCHOP, BEEF, COOKED_BEEF, CHICKEN, COOKED_CHICKEN, RABBIT, COOKED_RABBIT -> {
-				removeItem(heldItem);
-				eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT, () ->
-						player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_WOLF_AMBIENT, 0.5F, 1F));
-			}
-			case ROTTEN_FLESH -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_WOLF_GROWL, 0.5F, 1F);
+	private void griffin(Player player, ItemStack heldItem, Player clicked) {
+		if (heldItem.getType() == Material.COOKED_SALMON) {
+			removeItem(heldItem);
+			eatEffect(player, clicked);
 		}
+	}
+
+	private void wakka(Player player, ItemStack heldItem, Player clicked) {
+		if (heldItem.getType() == Material.REDSTONE) {
+			removeItem(heldItem);
+			eatEffect(player, clicked);
+		}
+
 	}
 
 	private void blast(Player player, ItemStack heldItem, Player clicked) {
@@ -96,25 +98,7 @@ public class EasterEggs implements Listener {
 		}
 	}
 
-	private void wakka(Player player, ItemStack heldItem, Player clicked) {
-		switch (heldItem.getType()) {
-			case BUCKET -> {
-				removeItem(heldItem);
-				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_MILK, 0.5F, 1F);
-				Tasks.wait(4, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_AMBIENT, 0.5F, 1F));
-				ItemStack milkBucket = new ItemBuilder(Material.MILK_BUCKET).lore("Wakka's milk").build();
-				player.getInventory().addItem(milkBucket);
-			}
-			case WHEAT -> {
-				removeItem(heldItem);
-				eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT, () ->
-						player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_AMBIENT, 0.5F, 1F));
-			}
-		}
-
-	}
-
-	private void pork(Player player, ItemStack heldItem, Player clicked) {
+	private void dom(Player player, ItemStack heldItem, Player clicked) {
 		switch (heldItem.getType()) {
 			case CARROT, BEETROOT -> {
 				removeItem(heldItem);
@@ -134,18 +118,14 @@ public class EasterEggs implements Listener {
 		}
 	}
 
-	private void tark(Player player, ItemStack heldItem, Player clicked) {
-		if (heldItem.getType().equals(Material.STONE)) {
-			removeItem(heldItem);
-			eatEffect(player, clicked, Sound.ENTITY_PARROT_EAT, () ->
-					player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_RAVAGER_CELEBRATE, 0.5F, 0.1F));
-		}
-	}
-
 	// helpers
 
 	private void removeItem(ItemStack heldItem) {
 		heldItem.setAmount(heldItem.getAmount() - 1);
+	}
+
+	private void eatEffect(Player player, Player clicked) {
+		eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PLAYER_BURP, 0.5F, 1F));
 	}
 
 	private void eatEffect(Player player, Player clicked, Sound sound, Runnable result) {
