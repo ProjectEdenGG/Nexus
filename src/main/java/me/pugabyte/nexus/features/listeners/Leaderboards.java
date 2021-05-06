@@ -13,22 +13,27 @@ import me.pugabyte.nexus.features.store.Package;
 import me.pugabyte.nexus.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
+import me.pugabyte.nexus.models.contributor.Contributor;
+import me.pugabyte.nexus.models.contributor.Contributor.Purchase;
+import me.pugabyte.nexus.models.contributor.ContributorService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.hours.HoursService.HoursTopArguments;
 import me.pugabyte.nexus.models.hours.HoursService.PageResult;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.purchase.PurchaseService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -105,23 +110,37 @@ public class Leaderboards implements Listener {
 						));
 			}
 		},
-		RECENT_DONATOR(2772, 2773, 2774) {
+		RECENT_PURCHASES(2772, 2773, 2774) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new PurchaseService().getRecent(3).stream()
+				Iterator<Purchase> recent = new ContributorService().getRecent(20).iterator();
+				Map<UUID, String> top = new LinkedHashMap<>();
+				while (top.size() != 3 && recent.hasNext()) {
+					Purchase purchase = recent.next();
+
+					String name = "";
+					Package purchasedPackage = Package.getPackage(purchase.getPackageId());
+					if (purchasedPackage != null) {
+						String category = purchasedPackage.getCategory();
+						if (!isNullOrEmpty(category))
+							name += category + " - ";
+					}
+
+					name += purchase.getPackageName().split("\\[")[0].trim();
+					name += " (" + NumberFormat.getCurrencyInstance().format(purchase.getPackagePrice()) + ")";
+					top.put(purchase.getUuid(), name);
+				}
+
+				return top;
+			}
+		},
+		TOP_CONTRIBUTORS(3835, 3837, 3836) {
+			@Override
+			Map<UUID, String> getTop() {
+				return new ContributorService().getTop(3).stream()
 						.collect(Collectors.toMap(
-								purchase -> PlayerUtils.getPlayer(purchase.getUuid()).getUniqueId(),
-								purchase -> {
-									String name = "";
-									Package purchasedPackage = Package.getPackage(purchase.getPackageId());
-									if (purchasedPackage != null) {
-										String category = purchasedPackage.getCategory();
-										if (!isNullOrEmpty(category))
-											name += category + " - ";
-									}
-									name += purchase.getPackageName().split("\\[")[0].trim();
-									return name + " (" + NumberFormat.getCurrencyInstance().format(purchase.getPrice()) + ")";
-								},
+								Contributor::getUuid,
+								Contributor::getSumFormatted,
 								(h1, h2) -> h1, LinkedHashMap::new
 						));
 			}
@@ -139,23 +158,40 @@ public class Leaderboards implements Listener {
 
 		public void update() {
 			Tasks.async(() -> {
-				Map<UUID, String> top = getTop();
-				if (top.size() != 3) {
-					Nexus.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
+				Map<UUID, String> top = validateGetTop();
+				if (top == null)
 					return;
-				}
 
 				if (!new CooldownService().check(Nexus.getUUID0(), "leaderboards_" + name(), Time.MINUTE.x(5)))
 					return;
 
-				Tasks.sync(() -> {
-					AtomicInteger i = new AtomicInteger(0);
-					top.entrySet().iterator().forEachRemaining(entry -> {
-						Nerd nerd = Nerd.of(entry.getKey());
-						CitizensUtils.updateSkin(ids[i.get()], nerd.getOfflinePlayer().getName());
-						CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
-						runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
-					});
+				updateActual();
+			});
+		}
+
+		@Nullable
+		private Map<UUID, String> validateGetTop() {
+			Map<UUID, String> top = getTop();
+			if (top.size() != 3) {
+				if (this != VOTES || LocalDate.now().getDayOfMonth() != 1) // Ignore votes for the first day of the month
+					Nexus.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
+				return null;
+			}
+			return top;
+		}
+
+		public void updateActual() {
+			Map<UUID, String> top = validateGetTop();
+			if (top == null)
+				return;
+
+			Tasks.sync(() -> {
+				AtomicInteger i = new AtomicInteger(0);
+				top.entrySet().iterator().forEachRemaining(entry -> {
+					Nerd nerd = Nerd.of(entry.getKey());
+					CitizensUtils.updateSkin(ids[i.get()], nerd.getOfflinePlayer().getName());
+					CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
+					runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
 				});
 			});
 		}

@@ -60,6 +60,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,6 +90,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("use")
 	void list(String filter) {
 		send(PREFIX + ArenaManager.getAll(filter).stream()
+				.sorted(Comparator.comparing(Arena::getName))
 				.map(arena -> (MatchManager.find(arena) != null ? "&e" : "&3") + arena.getName())
 				.collect(Collectors.joining("&3, ")));
 	}
