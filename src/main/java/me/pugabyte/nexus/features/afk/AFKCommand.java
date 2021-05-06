@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.World;
@@ -195,6 +196,12 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	private static boolean isActivatedEntity(Entity entity) {
 		int mobSpawnRange = (getMobSpawnRange(entity.getLocation().getWorld()) + 1) * 16;
+
+		if (!StringUtils.isNullOrEmpty(entity.getCustomName()))
+			return true;
+
+		if (entity.getVehicle() != null)
+			return true;
 
 		Collection<Player> players = entity.getLocation().getNearbyPlayers(mobSpawnRange, 999, mobSpawnRange);
 
