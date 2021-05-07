@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.justice.activate;
 
+import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
@@ -10,6 +11,7 @@ import me.pugabyte.nexus.features.commands.info.RulesCommand;
 import me.pugabyte.nexus.features.justice.misc._PunishmentCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -17,9 +19,11 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -44,7 +48,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Permission("group.moderator")
@@ -67,6 +75,23 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 	@Path("cleanup")
 	void cleanup() {
 		send(PREFIX + "Removed &e" + cleanup(world()) + " &3freeze stands.");
+	}
+
+	@Async
+	@Path("list [page]")
+	void list(@Arg("1") int page) {
+		List<Freeze> all = new FreezeService().getAll().stream()
+				.filter(Freeze::isFrozen)
+				.sorted(Comparator.comparing(freeze -> Nerd.of(freeze).getLastJoin()))
+				.collect(Collectors.toList());
+
+		Collections.reverse(all);
+
+		BiFunction<Freeze, String, JsonBuilder> formatter = (freeze, index) ->
+				json("&3" + index + " &e" + freeze.getNickname() + " &7- "
+						+ Timespan.of(Nerd.of(freeze).getLastJoin()).format() + " ago");
+
+		paginate(all, formatter, "/freeze list", page);
 	}
 
 	public static int cleanup(World world) {
