@@ -10,6 +10,7 @@ import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -49,13 +50,14 @@ public enum FishingLoot {
 	DRIFTWOOD(JUNK, 1, Material.STICK, 10.0, "Driftwood", 47),
 	SEAWEED(JUNK, 1, Material.KELP, 10.0, "Seaweed", 1),
 	// Treasure
-	CORAL_BRAIN(TREASURE, 1, Material.BRAIN_CORAL, 15.0),
-	CORAL_HORN(TREASURE, 1, Material.HORN_CORAL, 15.0),
-	CORAL_TUBE(TREASURE, 1, Material.TUBE_CORAL, 15.0),
-	CORAL_FIRE(TREASURE, 1, Material.FIRE_CORAL, 15.0),
-	CORAL_BUBBLE(TREASURE, 1, Material.BUBBLE_CORAL, 15.0),
-	NAUTILUS_SHELL(TREASURE, 1, Material.NAUTILUS_SHELL, 5.0),
-	TREASURE_CHEST(TREASURE, 1, Material.CHEST, 1.0, "Treasure Chest", 1),
+	GOLD_NUGGET(TREASURE, 1, Material.GOLD_NUGGET, 15.0),
+	UNBREAKING(TREASURE, 1, Material.ENCHANTED_BOOK, 10.0),
+	EFFICIENCY(TREASURE, 1, Material.ENCHANTED_BOOK, 10.0),
+	FORTUNE(TREASURE, 1, Material.ENCHANTED_BOOK, 8.0),
+	LURE(TREASURE, 1, Material.ENCHANTED_BOOK, 8.0),
+	DIAMOND(TREASURE, 1, Material.DIAMOND, 6.0),
+	NAUTILUS_SHELL(TREASURE, 1, Material.NAUTILUS_SHELL, 6.0),
+	TREASURE_CHEST(TREASURE, 1, Material.CHEST, 5.0, "Treasure Chest", 1),
 	// Unique
 	MIDNIGHT_CARP(UNIQUE, 1, Material.COD, Material.TROPICAL_FISH, 50.0, "Midnight Carp", 11, "main", NIGHT),
 	SUNFISH(UNIQUE, 1, Material.COD, Material.TROPICAL_FISH, 50.0, "Sunfish", 12, "main", DAY),
@@ -224,14 +226,34 @@ public enum FishingLoot {
 	}
 
 	public ItemStack getItem(Player player) {
-		ItemBuilder result = new ItemBuilder(this.getMaterial(player));
+		Material material = this.getMaterial(player);
+		ItemBuilder result = new ItemBuilder(material);
 
 		if (this.getCustomName() != null)
 			result.name(this.getCustomName());
 		if (this.getCustomModelData() != 0)
 			result.customModelData(this.getCustomModelData());
+		if (material.equals(Material.ENCHANTED_BOOK)) {
+			if (this.equals(UNBREAKING))
+				result.enchant(Enchantment.DURABILITY, 1);
+			if (this.equals(EFFICIENCY))
+				result.enchant(Enchantment.DIG_SPEED, 2);
+			if (this.equals(FORTUNE))
+				result.enchant(Enchantment.LOOT_BONUS_BLOCKS, 1);
+			if (this.equals(LURE))
+				result.enchant(Enchantment.LURE, 1);
+		}
 
-		return result.build();
+		return result.lore(getLore()).build();
+	}
+
+	public String getLore() {
+		return switch (category) {
+			case FISH -> "&7Fish";
+			case UNIQUE -> "&7Unique";
+			case TREASURE -> "&7Treasure";
+			case JUNK -> "&7Trash";
+		};
 	}
 
 	public static List<TradeBuilder> getTrades(Player player) {
