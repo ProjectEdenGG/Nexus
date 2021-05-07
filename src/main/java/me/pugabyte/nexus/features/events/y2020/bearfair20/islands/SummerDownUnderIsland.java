@@ -5,10 +5,11 @@ import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.SummerDownUnderIsland.SummerDownUnderNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -43,7 +44,11 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests
 
 @Region("summerdownunder")
 @NPCClass(SummerDownUnderNPCs.class)
-public class SummerDownUnderIsland implements Listener, Island {
+public class SummerDownUnderIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	public static ItemStack greatNortherns = new ItemBuilder(Material.BARREL).name("&aGreat Northerns").amount(1).lore(itemLore).build();
 	private static ItemStack goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1).build();

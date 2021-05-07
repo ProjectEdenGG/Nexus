@@ -3,11 +3,12 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland.MainNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.vote.Voter;
@@ -43,7 +44,12 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests
 
 @Region("main")
 @NPCClass(MainNPCs.class)
-public class MainIsland implements Listener, Island {
+public class MainIsland implements Listener, BearFairIsland {
+
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	public static ItemStack honeyStroopWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Honey Stroopwafel").amount(1).glow().build();
 	public static ItemStack stroofWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Stoopwafel").amount(1).build();
@@ -382,7 +388,7 @@ public class MainIsland implements Listener, Island {
 		BearFair20User user = service.get(player);
 		if (user.getQuest_Main_Step() == 0) {
 			nextStep(player); // 1
-			Talkers.startScript(player, 2670);
+			BearFairTalker.startScript(player, 2670);
 			nextStep(player); // 2
 		}
 	}

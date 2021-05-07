@@ -152,7 +152,7 @@ public class ReflectionGame {
 					loc[0] = LocationUtils.getCenteredLocation(loc[0]);
 					loc[0].setY(loc[0].getY() + 0.25);
 					Rotatable rotatable = (Rotatable) below.getBlockData();
-					BlockFace newFace = ReflectionLaser.getReflection(blockFace[0], rotatable.getRotation());
+					BlockFace newFace = getReflection(blockFace[0], rotatable.getRotation());
 					if (newFace == null) {
 						endLaser();
 						return;
@@ -205,5 +205,52 @@ public class ReflectionGame {
 
 		BearFair21.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
 		Tasks.wait(Time.SECOND.x(2), () -> active = false);
+	}
+
+	private static BlockFace getReflection(BlockFace from, BlockFace bannerFace) {
+		if (bannerFace.name().toLowerCase().contains(from.name().toLowerCase()))
+			return null;
+
+		if (from.getOppositeFace().equals(bannerFace))
+			return from.getOppositeFace();
+
+		if (from.equals(NORTH)) {
+			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
+				return from;
+
+			if (bannerFace.equals(SOUTH_WEST))
+				return WEST;
+			else
+				return EAST;
+
+		} else if (from.equals(SOUTH)) {
+			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
+				return from;
+
+			if (bannerFace.equals(NORTH_WEST))
+				return WEST;
+			else
+				return EAST;
+
+		} else if (from.equals(EAST)) {
+			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
+				return from;
+
+			if (bannerFace.equals(SOUTH_WEST))
+				return SOUTH;
+			else
+				return NORTH;
+
+		} else if (from.equals(WEST)) {
+			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
+				return from;
+
+			if (bannerFace.equals(NORTH_EAST))
+				return NORTH;
+			else
+				return SOUTH;
+		}
+
+		return from;
 	}
 }

@@ -5,12 +5,12 @@ import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.IslandType;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.EasterEggs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -50,7 +50,7 @@ public class BearFair20 implements Listener {
 	@Getter
 	private static final String region = "bearfair2020";
 	@Getter
-	private static final Set<Class<? extends Island>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(Island.class);
+	private static final Set<Class<? extends BearFairIsland>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(BearFairIsland.class);
 	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
 
 	// TODO: When BF is over, disable these, and disable block break/place on regions
@@ -106,7 +106,7 @@ public class BearFair20 implements Listener {
 					script.add("While this years event is over, you can still explore the island and play the minigames at the carnival.");
 					script.add("wait 80");
 					script.add("And if you need help figuring out where you are, check out this map to my side.");
-					Talkers.sendScript(player, MainIsland.MainNPCs.WakkaFlocka, script);
+					BearFairTalker.sendScript(player, MainIsland.MainNPCs.WakkaFlocka, script);
 				}
 			}
 		}

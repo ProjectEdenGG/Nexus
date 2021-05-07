@@ -5,10 +5,11 @@ import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.HalloweenIsland.HalloweenNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
@@ -46,7 +47,13 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests
 
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
-public class HalloweenIsland implements Listener, Island {
+public class HalloweenIsland implements Listener, BearFairIsland {
+
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
+
 	private final Map<Player, Integer> musicTaskMap = new HashMap<>();
 	private final Location halloweenMusicLoc = new Location(BearFair20.getWorld(), -921, 128, -1920);
 	private Sound[] halloweenSounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,

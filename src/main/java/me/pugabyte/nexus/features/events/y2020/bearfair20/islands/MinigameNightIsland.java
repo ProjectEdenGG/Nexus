@@ -5,11 +5,12 @@ import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.arcademachine.ArcadeMachineMenu;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
@@ -51,7 +52,12 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests
 
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
-public class MinigameNightIsland implements Listener, Island {
+public class MinigameNightIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
+
 	private static Location arcadeSoundLoc = new Location(BearFair20.getWorld(), -1170, 141, -1716);
 	private static Location arcadeSmokeLoc1 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1170, 140, -1715));
 	private static Location arcadeSmokeLoc2 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1169, 148, -1715));

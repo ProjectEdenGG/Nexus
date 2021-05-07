@@ -40,7 +40,6 @@ public class MerchantBuilder {
 	}
 
 	public static class TradeBuilder {
-		@NonNull
 		@Getter
 		private ItemStack result;
 		@NonNull

@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
 import me.pugabyte.nexus.features.events.models.BearFairIsland;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -33,4 +33,6 @@ public enum IslandType {
 
 		return null;
 	}
+
+
 }

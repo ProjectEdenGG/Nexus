@@ -11,12 +11,10 @@ import java.util.List;
 
 @Getter
 public class RecipeObject {
-	@NonNull
+	private String key;
 	private ItemStack result;
 	@NonNull
 	private final List<ItemStack> ingredients = new ArrayList<>();
-	@NonNull
-	private String key;
 
 	public RecipeObject key(String key) {
 		this.key = key;

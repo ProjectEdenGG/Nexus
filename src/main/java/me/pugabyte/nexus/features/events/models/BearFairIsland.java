@@ -1,18 +1,20 @@
-package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
+package me.pugabyte.nexus.features.events.models;
 
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.events.annotations.Region;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public interface Island {
+public interface BearFairIsland {
+
+	String getEventRegion();
+
 	default String getRegion() {
-		return BearFair20.getRegion() + "_" + getClass().getAnnotation(Region.class).value();
+		return getEventRegion() + "_" + getClass().getAnnotation(Region.class).value();
 	}
 
 	@SneakyThrows
@@ -27,7 +29,7 @@ public interface Island {
 	}
 
 	default Class<? extends Enum<? extends TalkingNPC>> getNpcGroup() {
-		return getClass().getAnnotation(NPCClass.class).value();
+		return getClass().getAnnotation(BearFairIsland.NPCClass.class).value();
 	}
 
 	@Target(ElementType.TYPE)
@@ -35,5 +37,4 @@ public interface Island {
 	@interface NPCClass {
 		Class<? extends Enum<? extends TalkingNPC>> value();
 	}
-
 }

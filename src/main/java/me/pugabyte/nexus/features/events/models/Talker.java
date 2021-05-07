@@ -1,7 +1,6 @@
-package me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs;
+package me.pugabyte.nexus.features.events.models;
 
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.IslandType;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -10,40 +9,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static eden.utils.StringUtils.camelCase;
 
-public class Talkers {
-
-	public static boolean startScript(Player player, int id) {
-		Island island = IslandType.getFromLocation(player.getLocation());
-		if (island == null)
-			return false;
-
-		TalkingNPC talker = island.getNPC(id);
-		if (talker == null)
-			return false;
-
-		sendScript(player, talker);
-		return true;
-	}
-
-	public interface TalkingNPC {
-		String name();
-
-		int getNpcId();
-
-		List<String> getScript();
-
-		default List<String> getScript(Player player) {
-			return getScript();
-		}
-
-		static TalkingNPC[] values() {
-			return null;
-		}
-	}
-
+public class Talker {
 	public static void sendScript(Player player, TalkingNPC talker) {
 		sendScript(player, talker, talker.getScript());
 	}
@@ -66,10 +34,26 @@ public class Talkers {
 				}
 				String message = "&3" + npcName.get() + " &7> &f" + line;
 				Tasks.wait(wait.get(), () -> {
-					send(message, player);
+					PlayerUtils.send(message, player);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 				});
 			}
 		});
+	}
+
+	public interface TalkingNPC {
+		String name();
+
+		int getNpcId();
+
+		List<String> getScript();
+
+		default List<String> getScript(Player player) {
+			return getScript();
+		}
+
+		static TalkingNPC[] values() {
+			return null;
+		}
 	}
 }

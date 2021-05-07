@@ -5,10 +5,11 @@ import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.PugmasIsland.PugmasNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -41,7 +42,11 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
-public class PugmasIsland implements Listener, Island {
+public class PugmasIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	private Location present_grinch_1 = new Location(BearFair20.getWorld(), -1057, 126, -1905);
 	private Location present_grinch_2 = new Location(BearFair20.getWorld(), -1058, 126, -1898);

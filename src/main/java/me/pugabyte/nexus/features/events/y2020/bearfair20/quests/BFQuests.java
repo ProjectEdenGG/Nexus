@@ -4,12 +4,12 @@ import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Merchants;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -308,7 +308,7 @@ public class BFQuests implements Listener {
 				return;
 
 			int id = event.getNPC().getId();
-			Talkers.startScript(player, id);
+			BearFairTalker.startScript(player, id);
 			Merchants.openMerchant(player, id);
 		}
 	}

@@ -9,5 +9,6 @@ public class TreasureChests {
 			-163, 110, -188 	- volcano in mgn island
 			32, 130, -121		- under connect4 stands in red tent
 			-66, 150, -88		- ceiling of wood mill
+			-78, 195, -53		- in the hot air balloon, nearest the observatory
 	 */
 }
