@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 
 import lombok.Getter;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder;
@@ -8,6 +9,7 @@ import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
@@ -120,7 +122,13 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(18))
+							.result(Quests.getBackPack(player))
+							.ingredient(goldNugget.clone().amount(1)));
+					add(new TradeBuilder()
+							.result(new ItemStack(Material.ELYTRA))
+							.ingredient(goldNugget.clone().amount(1)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE))
 							.ingredient(new ItemBuilder(Material.GOLDEN_CARROT)));
 					add(new TradeBuilder()

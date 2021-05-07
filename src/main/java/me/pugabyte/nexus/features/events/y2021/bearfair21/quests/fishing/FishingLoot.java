@@ -3,8 +3,10 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -230,6 +232,17 @@ public enum FishingLoot {
 			result.customModelData(this.getCustomModelData());
 
 		return result.build();
+	}
+
+	public static List<TradeBuilder> getTrades(Player player) {
+		return new ArrayList<>() {{
+			for (FishingLoot loot : values()) {
+				add(new TradeBuilder()
+						.result(loot.getItem(player))
+						.ingredient(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+				);
+			}
+		}};
 	}
 
 	@Getter

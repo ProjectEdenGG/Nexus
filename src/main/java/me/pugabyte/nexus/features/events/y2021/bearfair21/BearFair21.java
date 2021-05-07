@@ -54,6 +54,10 @@ public class BearFair21 {
 		return getWGUtils().getProtectedRegion(region);
 	}
 
+	public static boolean isAtBearFair(Block block) {
+		return isAtBearFair(block.getLocation());
+	}
+
 	public static boolean isAtBearFair(Entity entity) {
 		return isAtBearFair(entity.getLocation());
 	}

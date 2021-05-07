@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.menus.SignMenuFactory;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.features.Features;
@@ -260,6 +261,7 @@ public class Nexus extends JavaPlugin {
 		try { PlayerUtils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
 		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Quests.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
