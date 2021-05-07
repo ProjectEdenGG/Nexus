@@ -98,12 +98,12 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	/**
-	 * This is an overloaded method, do not override. Override {@link #usesPerk(Class, Minigamer)} instead.
+	 * Determines if a user is allowed to use a perk in a specified minigame.
 	 * @param perk a user's perk
 	 * @param minigamer the user
 	 * @return whether or not to allow the perk
 	 */
-	public boolean usesPerk(Perk perk, Minigamer minigamer) {
+	public final boolean usesPerk(Perk perk, Minigamer minigamer) {
 		return usesPerk(perk.getClass(), minigamer);
 	}
 
