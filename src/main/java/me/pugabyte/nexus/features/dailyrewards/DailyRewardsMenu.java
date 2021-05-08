@@ -164,19 +164,20 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 			if (items != null) {
 				for (ItemStack item : items) {
-					if (Reward.RequiredSubmenu.COLOR.contains(item.getType())) {
-						MenuUtils.colorSelectMenu(player, item.getType(), itemClickData -> {
-							PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), item.getAmount()));
+					ItemStack clone = item.clone();
+					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {
+						MenuUtils.colorSelectMenu(player, clone.getType(), itemClickData -> {
+							PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), clone.getAmount()));
 							saveAndReturn(day);
 							player.closeInventory();
 						});
-					} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
+					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
 						Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name").prefix(PREFIX).response(lines -> {
-							PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
+							PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(clone.getAmount()).build());
 							saveAndReturn(day);
 						}).open(player);
 					} else {
-						PlayerUtils.giveItem(player, item);
+						PlayerUtils.giveItem(player, clone);
 						saveAndReturn(day);
 					}
 				}
