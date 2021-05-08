@@ -50,6 +50,13 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class ResourceWorld implements Listener {
 
+	static {
+		World survival = Bukkit.getWorld("survival");
+		World resource = Bukkit.getWorld("resource");
+		if (survival != null && resource != null)
+			resource.setMonsterSpawnLimit((int) (survival.getMonsterSpawnLimit() * 1.5));
+	}
+
 	@EventHandler
 	public void onEnterResourceWorld(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
@@ -115,9 +122,15 @@ public class ResourceWorld implements Listener {
 						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
 				}
 
-			if (!event.isCancelled())
-				PlayerUtils.send(player, " &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
-						"&c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
+			if (!event.isCancelled()) {
+				PlayerUtils.send(player, " &4Warning |");
+				PlayerUtils.send(player, " &4Warning | &cYou are entering the resource world!");
+				PlayerUtils.send(player, " &4Warning | &cThis world is regenerated on the &c&lfirst of every month&c,");
+				PlayerUtils.send(player, " &4Warning | &cso don't leave your stuff here or you will lose it!");
+				PlayerUtils.send(player, " &4Warning |");
+				PlayerUtils.send(player, " &4Warning | &cThe darkness is dangerous in this world");
+				PlayerUtils.send(player, " &4Warning |");
+			}
 		}
 	}
 

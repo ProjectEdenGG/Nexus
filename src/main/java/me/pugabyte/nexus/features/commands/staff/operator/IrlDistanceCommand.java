@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands.staff.moderator;
+package me.pugabyte.nexus.features.commands.staff.operator;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -11,9 +11,7 @@ import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIP.Distance;
 import me.pugabyte.nexus.utils.StringUtils;
 
-import java.text.DecimalFormat;
-
-@Permission("group.moderator")
+@Permission("group.seniorstaff")
 public class IrlDistanceCommand extends CustomCommand {
 
 	public IrlDistanceCommand(@NonNull CommandEvent event) {
@@ -25,11 +23,9 @@ public class IrlDistanceCommand extends CustomCommand {
 	@Path("<player> [player]")
 	void run(GeoIP from, @Arg("self") GeoIP to) {
 		Distance distance = new Distance(from, to);
-		DecimalFormat nf = new DecimalFormat("#.00");
 
-		String mi = nf.format(distance.getMiles());
-		String km = nf.format(distance.getKilometers());
-
+		String mi = distance.getMilesFormatted();
+		String km = distance.getKilometersFormatted();
 		String message = "&e" + from.getOfflinePlayer().getName() + " &3is &e" + mi + " miles &3or &e" + km + " kilometers &3away from ";
 		send(PREFIX + message + (isSelf(to.getOfflinePlayer()) ? "you" : "&e" + to.getOfflinePlayer().getName()));
 	}

@@ -5,10 +5,12 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +126,7 @@ public class GeoIP implements PlayerOwnedObject {
 	}
 
 	@Data
-	public static class Distance {
+	public static class Distance implements Comparable<Distance> {
 		double distance;
 		double miles;
 		double kilometers;
@@ -160,5 +162,25 @@ public class GeoIP implements PlayerOwnedObject {
 
 			return Math.atan2(f, g) * 2;
 		}
+
+		public String getMilesFormatted() {
+			if (miles > 10)
+				return StringUtils.getCnf().format(miles);
+			else
+				return StringUtils.getCdf().format(miles);
+		}
+
+		public String getKilometersFormatted() {
+			if (kilometers > 10)
+				return StringUtils.getCnf().format(kilometers);
+			else
+				return StringUtils.getCdf().format(kilometers);
+		}
+
+		@Override
+		public int compareTo(@NotNull Distance other) {
+			return Double.compare(distance, other.getDistance());
+		}
+
 	}
 }
