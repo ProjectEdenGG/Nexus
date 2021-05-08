@@ -82,7 +82,9 @@ public class DeliveryUser implements PlayerOwnedObject {
 	}
 
 	public void sendNotification() {
-		String message;
+		if (!isOnline())
+			return;
+
 		List<String> groups = getDeliveries().keySet().stream()
 				.map(StringUtils::camelCase)
 				.collect(Collectors.toList());
@@ -90,6 +92,7 @@ public class DeliveryUser implements PlayerOwnedObject {
 		if (groups.isEmpty())
 			return;
 
+		String message;
 		if (groups.size() == 1)
 			message = "an unclaimed delivery in &e" + groups.get(0);
 		else {

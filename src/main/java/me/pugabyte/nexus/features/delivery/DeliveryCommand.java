@@ -68,10 +68,9 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 		List<ItemStack> items = openDeliveryMenuProvider.getDelivery().getItems(); // check against inv items and diff
 		List<ItemStack> contents = Arrays.asList(event.getInventory().getContents());
 
-		for (ItemStack item : items) {
+		for (ItemStack item : items)
 			if (contents.contains(item))
 				PlayerUtils.giveItem(player, item);
-		}
 	}
 
 	@EventHandler

@@ -56,7 +56,11 @@ public class PayDiscordCommand extends Command {
 					throw new InvalidInputException("Amount must be greater than $0.01");
 
 				try {
-					new BankerService().transfer(player, target, BigDecimal.valueOf(amount), shopGroup, TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), shopGroup, reason));
+					ShopGroup finalShopGroup = shopGroup;
+					String finalReason = reason;
+					Tasks.sync(() ->
+							new BankerService().transfer(player, target, BigDecimal.valueOf(amount), finalShopGroup,
+									TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), finalShopGroup, finalReason)));
 				} catch (NegativeBalanceException ex) {
 					throw new NotEnoughMoneyException();
 				}
