@@ -5,11 +5,13 @@ import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingEvent;
 import me.pugabyte.nexus.Nexus;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
@@ -60,5 +62,17 @@ public class Restrictions implements Listener {
 	public void onMcMMOFishing(McMMOPlayerFishingEvent event) {
 		if (!isAtBearFair(event.getPlayer())) return;
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBlockDropItemEvent(BlockDropItemEvent event) {
+		if (!BearFair21.isAtBearFair(event.getBlock()))
+			return;
+
+		event.getItems().forEach(item -> {
+			Material type = item.getItemStack().getType();
+			if (type.equals(Material.WHEAT_SEEDS) || type.equals(Material.BEETROOT_SEEDS))
+				item.remove();
+		});
 	}
 }

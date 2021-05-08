@@ -5,6 +5,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -20,7 +21,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,18 +30,14 @@ import java.util.Set;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
-/*
-	regen flowers, any flower at bf21 island
-	replace flower with random flower
-	only single block flowers
-
-	add cactus to regen
- */
 public class RegenCrops implements Listener {
 
-	private final List<Material> breakList = Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS,
-			Material.BEETROOTS, Material.MELON, Material.PUMPKIN, Material.SUGAR_CANE, Material.COCOA);
-	private final List<Material> noAge = Collections.singletonList(Material.SUGAR_CANE);
+	private final Set<Material> breakList = new HashSet<>();
+
+	private final Set<Material> crops = new HashSet<>(Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS));
+	private final Set<Material> cropSingleBlock = new HashSet<>(Arrays.asList(Material.PUMPKIN, Material.MELON));
+	private final Set<Material> cropMultiBlock = new HashSet<>(Arrays.asList(Material.SUGAR_CANE, Material.CACTUS));
+	private final Set<Material> cropFlower = new HashSet<>(MaterialTag.SMALL_FLOWERS.getValues());
 	//
 	private static final Map<Location, Material> multiRegenMap = new HashMap<>();
 	private static final Map<Location, Material> blockRegenMap = new HashMap<>();
@@ -49,6 +45,10 @@ public class RegenCrops implements Listener {
 
 	public RegenCrops() {
 		Nexus.registerListener(this);
+		breakList.addAll(crops);
+		breakList.addAll(cropSingleBlock);
+		breakList.addAll(cropMultiBlock);
+		breakList.addAll(cropFlower);
 		regenTasks();
 	}
 
@@ -195,7 +195,9 @@ public class RegenCrops implements Listener {
 		if (event.isCancelled()) return;
 		if (!isAtBearFair(block)) return;
 		if (!breakList.contains(block.getType())) {
-			if (player.hasPermission("worldguard.region.bypass.*")) return;
+			if (player.hasPermission("worldguard.region.bypass.*"))
+				return;
+
 			send(Errors.cantBreak, player);
 			event.setCancelled(true);
 			return;
@@ -208,46 +210,53 @@ public class RegenCrops implements Listener {
 
 		BlockData blockData = block.getState().getBlockData();
 		Material material = block.getType();
-		if (!(blockData instanceof Ageable) || noAge.contains(material)) {
-			switch (material) {
-				case MELON, PUMPKIN -> {
-					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-						send(Errors.decorOnly, player);
-						event.setCancelled(true);
-						return;
-					}
-					Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), material));
-				}
-				case SUGAR_CANE -> {
-					if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-						send(Errors.bottomBlock, player);
-						event.setCancelled(true);
-						return;
-					}
-					multiRegenMap.put(block.getLocation(), material);
-					Block above = block.getRelative(0, 1, 0);
-					if (above.getType().equals(material)) {
-						int yvalue = above.getLocation().getBlockY();
-						for (int i = yvalue; i < 255; i++) {
-							if (above.getType().equals(material)) {
-								Location aboveLoc = above.getLocation();
-								above.setType(Material.AIR, false);
-								above.getWorld().dropItemNaturally(aboveLoc, new ItemBuilder(material).build());
-								multiRegenMap.put(aboveLoc, material);
-							} else {
-								break;
-							}
-							above = above.getRelative(0, 1, 0);
-						}
-					}
-				}
-				default -> {
-					if (player.hasPermission("worldguard.region.bypass.*")) return;
-					send(Errors.cantBreak, player);
-					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+		if (!(blockData instanceof Ageable) || cropMultiBlock.contains(material)) {
+
+			// Flower
+			if (cropFlower.contains(material)) {
+				Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), RandomUtils.randomElement(cropFlower)));
+
+				// Single Block
+			} else if (cropSingleBlock.contains(material)) {
+				if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
+					send(Errors.decorOnly, player);
 					event.setCancelled(true);
+					return;
 				}
+				Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), material));
+
+				// Multi Block
+			} else if (cropMultiBlock.contains(material)) {
+				if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
+					send(Errors.bottomBlock, player);
+					event.setCancelled(true);
+					return;
+				}
+
+				multiRegenMap.put(block.getLocation(), material);
+				Block above = block.getRelative(0, 1, 0);
+				if (above.getType().equals(material)) {
+					int yValue = above.getLocation().getBlockY();
+					for (int i = yValue; i < 255; i++) {
+						if (!above.getType().equals(material))
+							break;
+
+						Location aboveLoc = above.getLocation();
+						above.setType(Material.AIR, false);
+						above.getWorld().dropItemNaturally(aboveLoc, new ItemBuilder(material).build());
+						multiRegenMap.put(aboveLoc, material);
+						above = above.getRelative(0, 1, 0);
+					}
+				}
+			} else {
+				if (player.hasPermission("worldguard.region.bypass.*"))
+					return;
+
+				send(Errors.cantBreak, player);
+				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+				event.setCancelled(true);
 			}
+
 			return;
 		}
 
@@ -257,6 +266,7 @@ public class RegenCrops implements Listener {
 				send(Errors.notFullyGrown, player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
+
 			event.setCancelled(true);
 			return;
 		}
