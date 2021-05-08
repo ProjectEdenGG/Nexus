@@ -6,5 +6,5 @@ public class Errors {
 	public static String notFullyGrown = prefix + "&c&lHey! &7That's not fully grown";
 	public static String bottomBlock = prefix + "&c&lHey! &7You can't break the bottom block";
 	public static String decorOnly = prefix + "&c&lHey! &7This block is just decoration";
-	public static String tool = prefix + "&c&lHey! &7You may only use BearFair20 tools!";
+	public static String inUse = prefix + "&c&lHey! &7This is already in use!";
 }

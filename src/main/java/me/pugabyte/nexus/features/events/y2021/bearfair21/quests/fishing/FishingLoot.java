@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -173,6 +174,15 @@ public enum FishingLoot {
 				result.add(loot);
 		}
 		return result;
+	}
+
+	public static boolean isTrash(Player player, ItemStack itemStack) {
+		for (FishingLoot loot : of(JUNK)) {
+			if (ItemUtils.isFuzzyMatch(loot.getItem(player), itemStack))
+				return true;
+		}
+
+		return false;
 	}
 
 	public double getChance() {
