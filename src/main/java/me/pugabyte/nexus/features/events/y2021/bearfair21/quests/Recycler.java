@@ -52,7 +52,7 @@ public class Recycler implements Listener {
 		if (lines == null)
 			return;
 
-		if (!StringUtils.stripColor(lines[0]).equals("[Recycler]"))
+		if (!StringUtils.stripColor(lines[0]).equals("[Recycle]"))
 			return;
 
 		if (active) {

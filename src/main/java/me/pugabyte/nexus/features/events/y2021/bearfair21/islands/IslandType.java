@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
-import me.pugabyte.nexus.features.events.models.BearFairIsland;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 
@@ -13,17 +12,17 @@ public enum IslandType {
 	SUMMER_DOWN_UNDER(new SummerDownUnderIsland()),
 	PUGMAS(new PugmasIsland());
 
-	private final BearFairIsland island;
+	private final BearFair21Island island;
 
-	IslandType(BearFairIsland island) {
+	IslandType(BearFair21Island island) {
 		this.island = island;
 	}
 
-	public BearFairIsland get() {
+	public BearFair21Island get() {
 		return island;
 	}
 
-	public static BearFairIsland getFromLocation(Location location) {
+	public static BearFair21Island getFromLocation(Location location) {
 		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
 		Set<String> regions = WGUtils.getRegionNamesAt(location);
 		for (IslandType island : values()) {

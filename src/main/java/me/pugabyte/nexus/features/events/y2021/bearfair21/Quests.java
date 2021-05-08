@@ -13,7 +13,6 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -25,8 +24,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getProtectedRegion;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
 public class Quests implements Listener {
@@ -55,8 +52,7 @@ public class Quests implements Listener {
 			return null;
 
 		Player player = event.getPlayer();
-		Location loc = player.getLocation();
-		if (!getWGUtils().getRegionsAt(loc).contains(getProtectedRegion()))
+		if (BearFair21.isAtBearFair(player))
 			return null;
 
 		Block block = event.getClickedBlock();
