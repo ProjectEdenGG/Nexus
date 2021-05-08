@@ -41,6 +41,7 @@ public class NicknameDiscordCommand extends Command {
 							Nexus.log("Denying");
 							if (event.getMessage().getReferencedMessage() == null)
 								throw new InvalidInputException("You must reply to the original message");
+
 							String referencedId = event.getMessage().getReferencedMessage().getId();
 							NicknameService service = new NicknameService();
 							Nickname data = service.getFromQueueId(referencedId);
