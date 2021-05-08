@@ -270,8 +270,8 @@ public enum FishingLoot {
 		return new ArrayList<>() {{
 			for (FishingLoot loot : values()) {
 				add(new TradeBuilder()
-						.result(loot.getItem(player))
-						.ingredient(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+						.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+						.ingredient(loot.getItem(player))
 				);
 			}
 		}};

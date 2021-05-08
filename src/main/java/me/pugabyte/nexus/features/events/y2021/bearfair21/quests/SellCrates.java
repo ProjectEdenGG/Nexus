@@ -79,9 +79,8 @@ public class SellCrates implements Listener {
 
 		List<ItemStack> profit = new ArrayList<>();
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item)) {
+			if (ItemUtils.isNullOrAir(item))
 				continue;
-			}
 
 			boolean foundTrade = false;
 			boolean leftovers = false;
@@ -89,6 +88,7 @@ public class SellCrates implements Listener {
 				ItemStack result = tradeBuilder.getResult();
 				List<ItemStack> ingredients = tradeBuilder.getIngredients();
 				if (ingredients.size() != 1) continue;
+
 				ItemStack ingredient = ingredients.get(0);
 				if (ItemUtils.isNullOrAir(ingredient)) continue;
 				if (ItemUtils.isNullOrAir(result)) continue;
@@ -119,12 +119,12 @@ public class SellCrates implements Listener {
 			// If trade was not found for itemstack, give item back
 			// If there were leftovers, give the edited item back
 			if (!foundTrade || leftovers)
-				PlayerUtils.giveItem((Player) event.getPlayer(), item);
+				PlayerUtils.giveItem(player, item);
 		}
 
 		if (profit.size() == 0) return;
 
 		for (ItemStack itemStack : profit)
-			PlayerUtils.giveItem((Player) event.getPlayer(), itemStack);
+			PlayerUtils.giveItem(player, itemStack);
 	}
 }

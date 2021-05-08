@@ -38,8 +38,8 @@ public enum FarmingLoot {
 		return new ArrayList<>() {{
 			for (FarmingLoot loot : values()) {
 				add(new TradeBuilder()
-						.result(loot.getDrops(loot.getAmount()))
-						.ingredient(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+						.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+						.ingredient(loot.getDrops(loot.getAmount()))
 				);
 			}
 		}};
