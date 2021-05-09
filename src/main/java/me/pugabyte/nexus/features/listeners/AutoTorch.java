@@ -19,29 +19,29 @@ import java.util.Arrays;
 
 @NoArgsConstructor
 public class AutoTorch implements Listener {
-    private static final AutoTorchService service = new AutoTorchService();
+	private static final AutoTorchService service = new AutoTorchService();
 
-    @EventHandler
-    public void onMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission("store.autosort")) return;
-        AutoTorchUser autoTorchUser = service.get(player);
-        if (!player.getInventory().containsAtLeast(new ItemStack(Material.TORCH), 1)) return;
-        Block block = player.getLocation().getBlock();
-        if (!autoTorchUser.applies(block));
-        BlockState currentState = block.getState();
-        BlockData currentData = currentState.getBlockData();
-        block.setType(Material.TORCH);
-        BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, currentState, block.getRelative(0, -1, 0), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
-        if (!placeEvent.callEvent() || !placeEvent.canBuild()) {
-            block.setBlockData(currentData);
-            return;
-        }
-        ItemStack item = Arrays.stream(player.getInventory().getStorageContents()).filter(itemStack -> itemStack.getType() == Material.TORCH && itemStack.getAmount() > 0).findFirst().orElse(null);
-        if (item == null) {
-            block.setBlockData(currentData);
-            return;
-        }
-        item.setAmount(item.getAmount()-1);
-    }
+	@EventHandler
+	public void onMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		if (!player.hasPermission("store.autosort")) return;
+		AutoTorchUser autoTorchUser = service.get(player);
+		if (!player.getInventory().containsAtLeast(new ItemStack(Material.TORCH), 1)) return;
+		Block block = player.getLocation().getBlock();
+		if (!autoTorchUser.applies(block));
+		BlockState currentState = block.getState();
+		BlockData currentData = currentState.getBlockData();
+		block.setType(Material.TORCH);
+		BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, currentState, block.getRelative(0, -1, 0), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+		if (!placeEvent.callEvent() || !placeEvent.canBuild()) {
+			block.setBlockData(currentData);
+			return;
+		}
+		ItemStack item = Arrays.stream(player.getInventory().getStorageContents()).filter(itemStack -> itemStack.getType() == Material.TORCH && itemStack.getAmount() > 0).findFirst().orElse(null);
+		if (item == null) {
+			block.setBlockData(currentData);
+			return;
+		}
+		item.setAmount(item.getAmount()-1);
+	}
 }
