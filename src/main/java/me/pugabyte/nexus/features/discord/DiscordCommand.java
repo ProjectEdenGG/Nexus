@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -73,7 +74,7 @@ public class DiscordCommand extends CustomCommand {
 			}
 		} catch (ErrorResponseException ex) {
 			if (ex.getErrorCode() == 10007)
-				error("User has linked their Discord account but is not in the Discord server");
+				error(new JsonBuilder("User has linked their Discord account but is not in the Discord server. ID: " + user.getUserId()).copy(user.getUserId()).hover("&eClick to copy"));
 			else
 				rethrow(ex);
 		}
