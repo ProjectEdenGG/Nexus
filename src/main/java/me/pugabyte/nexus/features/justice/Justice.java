@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
+import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
 import me.pugabyte.nexus.features.chat.events.PrivateChatEvent;
 import me.pugabyte.nexus.features.commands.BoopCommand;
 import me.pugabyte.nexus.features.commands.poof.PoofCommand;
@@ -21,6 +22,7 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.Punishments;
@@ -32,6 +34,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
@@ -120,33 +123,6 @@ public class Justice extends Feature implements Listener {
 	);
 
 	@EventHandler
-	public void mute_onChat(ChatEvent event) {
-		Chatter chatter = event.getChatter();
-		if (chatter == null)
-			return;
-
-		final PunishmentsService service = new PunishmentsService();
-		final Punishments punishments = service.get(chatter);
-		punishments.getActiveMute().ifPresent(mute -> {
-			event.setCancelled(true);
-			mute.received();
-			service.save(punishments);
-
-			String originalMessage = event.getOriginalMessage();
-			if (event instanceof PrivateChatEvent)
-				originalMessage = "To " + ((PrivateChatEvent) event).getRecipientNames() + ": " + originalMessage;
-			else if (event instanceof DiscordChatEvent)
-				originalMessage = "#" + ((DiscordChatEvent) event).getDiscordTextChannel().getName() + ": " + originalMessage;
-
-			String message = "&e" + punishments.getName() + " &cspoke while muted: &7" + originalMessage + " &c(" + mute.getTimeLeft() + ")";
-
-			broadcastMute(mute, message);
-
-			punishments.send("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " &c(" + mute.getTimeLeft() + ")");
-		});
-	}
-
-	@EventHandler
 	public void mute_onCommand(CommandRunEvent event) {
 		if (!(event.getSender() instanceof Player))
 			return;
@@ -164,6 +140,54 @@ public class Justice extends Feature implements Listener {
 
 			punishments.send("&cYou cannot use this command while muted (" + mute.getTimeLeft() + ")");
 		});
+	}
+
+	private String getMessageDetails(ChatEvent event) {
+		String originalMessage = event.getOriginalMessage();
+		if (event instanceof PrivateChatEvent)
+			originalMessage = "To " + ((PrivateChatEvent) event).getRecipientNames() + ": " + originalMessage;
+		else if (event instanceof DiscordChatEvent)
+			originalMessage = "#" + ((DiscordChatEvent) event).getDiscordTextChannel().getName() + ": " + originalMessage;
+		return originalMessage;
+	}
+
+	@EventHandler
+	public void mute_onChat(ChatEvent event) {
+		Chatter chatter = event.getChatter();
+		if (chatter == null)
+			return;
+
+		final PunishmentsService service = new PunishmentsService();
+		final Punishments punishments = service.get(chatter);
+		punishments.getActiveMute().ifPresent(mute -> {
+			event.setCancelled(true);
+			mute.received();
+			service.save(punishments);
+
+			String originalMessage = getMessageDetails(event);
+
+			String message = "&e" + punishments.getName() + " &cspoke while muted: &7" + originalMessage + " &c(" + mute.getTimeLeft() + ")";
+
+			broadcastMute(mute, message);
+
+			punishments.send("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " &c(" + mute.getTimeLeft() + ")");
+		});
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void mute_onMinecraftChatEvent(MinecraftChatEvent event) {
+		Nerd nerd = Nerd.of(event.getChatter());
+
+		if (nerd.getRank().gt(Rank.GUEST))
+			return;
+		if (nerd.hasMoved())
+			return;
+
+		event.setCancelled(true);
+		nerd.send("&cYou must move before you can speak in chat");
+		String message = "&e" + nerd.getNickname() + " &ctried to speak before moving: &7" + getMessageDetails(event);
+		Chat.broadcastIngame(Justice.PREFIX + message, StaticChannel.STAFF);
+		Chat.broadcastDiscord(Justice.DISCORD_PREFIX + message, StaticChannel.STAFF);
 	}
 
 	// Warning
