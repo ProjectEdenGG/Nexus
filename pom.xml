@@ -103,7 +103,7 @@
         </repository>
         <repository>
             <id>multiverse-repo</id>
-            <url>http://repo.onarandombox.com/content/groups/public/</url>
+            <url>https://repo.onarandombox.com/content/groups/public/</url>
         </repository>
         <repository>
             <id>moss-repo</id>
@@ -111,11 +111,11 @@
         </repository>
         <repository>
             <id>sk89q-repo</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
             <id>fawe-repo</id>
-            <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
+            <url>https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
         </repository>
         <repository>
             <id>aikar-repo</id>
