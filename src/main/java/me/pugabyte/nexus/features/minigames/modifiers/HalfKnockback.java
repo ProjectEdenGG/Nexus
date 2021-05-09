@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.modifiers;
 
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
+import me.pugabyte.nexus.utils.ItemUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
@@ -11,12 +12,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class HalfKnockback implements MinigameModifier {
+	private static final UUID KNOCKBACK = UUID.fromString("aa13deba-c837-46fc-94de-c122178a11c3");
+
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
 		minigamer.getPlayer().getInventory().forEach(itemStack -> {
 			if (itemStack == null) return;
 			ItemMeta meta = itemStack.getItemMeta();
-			meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(UUID.randomUUID(), "minigame_halfknockback", 0.5, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
+
+			if (ItemUtils.getDefensePoints(itemStack.getType()) > 0) return;
+
+			meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK, "minigame_halfknockback", 0.5, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
 			itemStack.setItemMeta(meta);
 		});
 	}
