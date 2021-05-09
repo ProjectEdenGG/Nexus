@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.stream.Collectors.toList;
 
 @PlayerClass(Nerd.class)
 public class NerdService extends MongoService<Nerd> {
@@ -30,16 +33,20 @@ public class NerdService extends MongoService<Nerd> {
 	public List<Nerd> find(String partialName) {
 		Query<Nerd> query = database.createQuery(Nerd.class);
 		query.and(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)));
-		if (query.count() > 50)
-			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + query.count() + ")");
+		long count = query.count();
+		if (count > 50)
+			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + count + ")");
 
-		Map<Nerd, Integer> hoursMap = new HashMap<>() {{
+		Map<UUID, Integer> hoursMap = new HashMap<>() {{
 			HoursService service = new HoursService();
 			for (Nerd nerd : query.find().toList())
-				put(nerd, service.get(nerd.getUuid()).getTotal());
+				put(nerd.getUuid(), service.get(nerd).getTotal());
 		}};
 
-		return new ArrayList<>(Utils.sortByValueReverse(hoursMap).keySet());
+		Set<UUID> sorted = Utils.sortByValueReverse(hoursMap).keySet();
+		return new ArrayList<>(sorted).stream()
+				.map(Nerd::of)
+				.collect(toList());
 	}
 
 	public List<Nerd> getNerdsWithBirthdays() {
