@@ -8,6 +8,9 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.models.punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.PunishmentType;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -47,6 +50,8 @@ public class Censor {
 							.bad(section.getBoolean("bad"))
 							.whole(section.getBoolean("whole"))
 							.cancel(section.getBoolean("cancel"))
+							.ban(section.getBoolean("ban"))
+							.banReason(section.getString("banReason"))
 							.build());
 			}
 		}
@@ -61,6 +66,8 @@ public class Censor {
 		private boolean whole;
 		private boolean bad;
 		private boolean cancel;
+		private boolean ban;
+		private String banReason;
 
 		String getCensored() {
 			return RandomUtils.randomElement(replace);
@@ -102,6 +109,15 @@ public class Censor {
 
 					if (censorItem.isCancel())
 						event.setCancelled(true);
+
+					if (censorItem.isBan()) {
+						event.setCancelled(true);
+						Punishments.of(event.getChatter().getOfflinePlayer())
+								.add(Punishment.ofType(PunishmentType.BAN)
+										.punisher(Nexus.getUUID0())
+										.input(censorItem.getBanReason())
+										.now(true));
+					}
 				}
 			}
 		}
