@@ -4,9 +4,12 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
+import me.pugabyte.nexus.features.justice.Justice;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,14 +28,22 @@ public class ChatListener implements Listener {
 
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent event) {
-		Chatter chatter = new ChatService().get(event.getPlayer());
-		Tasks.sync(() -> {
-			// Prevents "t/command"
-			if (Pattern.compile("^[tT]" + Commands.getPattern() + ".*").matcher(event.getMessage()).matches())
-				runCommand(event.getPlayer(), right(event.getMessage(), event.getMessage().length() - 2));
-			else
-				chatter.say(event.getMessage());
-		});
+		Nerd nerd = Nerd.of(event.getPlayer());
+		if (nerd.getRank().gt(Rank.GUEST) || nerd.hasMoved()) {
+			Chatter chatter = new ChatService().get(event.getPlayer());
+			Tasks.sync(() -> {
+				// Prevents "t/command"
+				if (Pattern.compile("^[tT]" + Commands.getPattern() + ".*").matcher(event.getMessage()).matches())
+					runCommand(event.getPlayer(), right(event.getMessage(), event.getMessage().length() - 2));
+				else
+					chatter.say(event.getMessage());
+			});
+		} else {
+			nerd.send("&cYou must move before you can speak in chat");
+			String message = "&e" + nerd.getNickname() + " &ctried to speak before moving: &7" + event.getMessage();
+			Chat.broadcastIngame(Justice.PREFIX + message);
+			Chat.broadcastDiscord(Justice.DISCORD_PREFIX + message);
+		}
 		event.setCancelled(true);
 	}
 

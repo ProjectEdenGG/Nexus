@@ -15,6 +15,7 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.commands.PronounsCommand;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -50,6 +51,8 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
 public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, ColoredAndNicknamed {
 
+	// Set to null after they have moved
+	private Location loginLocation;
 	private Location teleportOnLogin;
 
 	public Nerd(@NonNull UUID uuid) {
@@ -79,6 +82,16 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 			if (firstJoin == null || firstJoin.isBefore(EARLIEST_JOIN) || newFirstJoin.isBefore(firstJoin))
 				firstJoin = newFirstJoin;
 		}
+	}
+
+	public boolean hasMoved() {
+		if (isOnline() && loginLocation != null)
+			if (AFK.isSameLocation(loginLocation, getOnlinePlayer().getLocation()))
+				return false;
+			else
+				loginLocation = null;
+
+		return true;
 	}
 
 	@ToString.Include

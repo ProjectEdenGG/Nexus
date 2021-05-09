@@ -9,11 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
-import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +30,6 @@ public class Godmode implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = false;
-	private Location loginLocation;
 
 	@Getter
 	private static final List<String> disabledWorlds = new ArrayList<>(Arrays.asList("gameworld", "deathswap")) {{
@@ -40,11 +38,8 @@ public class Godmode implements PlayerOwnedObject {
 	}};
 
 	public boolean isEnabled() {
-		if (isOnline() && loginLocation != null)
-			if (AFK.isSameLocation(loginLocation, getOnlinePlayer().getLocation()))
-				return true;
-			else
-				loginLocation = null;
+		if (!Nerd.of(this).hasMoved())
+			return true;
 		if (isOnline() && !PlayerUtils.isStaffGroup(getOnlinePlayer()))
 			return false;
 		if (isOnline() && disabledWorlds.contains(getOnlinePlayer().getWorld().getName()))

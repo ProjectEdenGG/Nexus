@@ -181,6 +181,10 @@ public enum Rank implements ColoredAndNamed {
 		return ordinal() >= rank.ordinal();
 	}
 
+	public boolean gt(Rank rank) {
+		return ordinal() > rank.ordinal();
+	}
+
 	public boolean lt(Rank rank) {
 		return ordinal() < rank.ordinal();
 	}

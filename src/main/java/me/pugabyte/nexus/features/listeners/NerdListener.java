@@ -21,6 +21,7 @@ public class NerdListener implements Listener {
 
 		nerd.setLastJoin(LocalDateTime.now());
 		nerd.getPastNames().add(event.getPlayer().getName());
+		nerd.setLoginLocation(event.getPlayer().getLocation());
 
 		if (nerd.getLastQuit() != null && nerd.getLastQuit().isBefore(nerd.getLastJoin()))
 			nerd.setLastQuit(LocalDateTime.now().minusMinutes(1));

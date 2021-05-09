@@ -25,7 +25,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
@@ -132,14 +131,6 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 			if (godmode.isEnabled())
 				event.setCancelled(true);
 		}
-	}
-
-	@EventHandler
-	public void onJoin(final PlayerJoinEvent event) {
-		GodmodeService service = new GodmodeService();
-		Godmode godmode = service.get(event.getPlayer());
-		godmode.setLoginLocation(event.getPlayer().getLocation());
-		service.save(godmode);
 	}
 
 }
