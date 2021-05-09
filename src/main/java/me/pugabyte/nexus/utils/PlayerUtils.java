@@ -12,6 +12,7 @@ import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayer;
+import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -27,7 +28,6 @@ import me.pugabyte.nexus.models.nickname.NicknameService;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,7 +35,6 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
@@ -43,7 +42,18 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -53,7 +63,7 @@ import static me.pugabyte.nexus.utils.Utils.getMin;
 @UtilityClass
 public class PlayerUtils {
 
-	public enum Dev {
+	public enum Dev implements OptionalPlayerLike {
 		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
@@ -65,18 +75,24 @@ public class PlayerUtils {
 		@Getter
 		private final UUID uuid;
 
+		public @NotNull UUID getUniqueId() {return uuid;}
+
 		Dev(String uuid) {
 			this.uuid = UUID.fromString(uuid);
 		}
 
-		public Player getPlayer() {
+		public @Nullable Player getPlayer() {
+			return getOfflinePlayer().getPlayer();
+		}
+
+		public @NotNull Player getOnlinePlayer() throws PlayerNotOnlineException {
 			OfflinePlayer offlinePlayer = getOfflinePlayer();
 			if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
 				throw new PlayerNotOnlineException(offlinePlayer);
 			return offlinePlayer.getPlayer();
 		}
 
-		public OfflinePlayer getOfflinePlayer() {
+		public @NotNull OfflinePlayer getOfflinePlayer() {
 			return PlayerUtils.getPlayer(uuid);
 		}
 
@@ -85,29 +101,15 @@ public class PlayerUtils {
 		}
 
 		public void send(String message) {
-			OfflinePlayer player = getOfflinePlayer();
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), message);
+			PlayerUtils.send(getOfflinePlayer(), message);
 		}
 
-		public void send(JsonBuilder message) {
-			OfflinePlayer player = getOfflinePlayer();
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), message);
+		public void send(ComponentLike message) {
+			PlayerUtils.send(getOfflinePlayer(), message);
 		}
 
-		public void send(Component component) {
-			OfflinePlayer player = getOfflinePlayer();
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), component);
-		}
-
-		public boolean is(Entity entity) {
-			return uuid.equals(entity.getUniqueId());
-		}
-
-		public boolean is(Nerd nerd) {
-			return uuid.equals(nerd.getUuid());
+		public boolean is(HasUniqueId player) {
+			return uuid.equals(player.getUniqueId());
 		}
 	}
 
@@ -303,9 +305,9 @@ public class PlayerUtils {
 			else if (message instanceof ComponentLike)
 				((CommandSender) recipient).sendMessage(((ComponentLike) message));
 		} else if (recipient instanceof OfflinePlayer) {
-			OfflinePlayer player = (OfflinePlayer) recipient;
-			if (player.isOnline() && player.getPlayer() != null)
-				send(player.getPlayer(), message);
+			Player player = ((OfflinePlayer) recipient).getPlayer();
+			if (player != null)
+				send(player, message);
 		} else if (recipient instanceof HasOfflinePlayer) {
 			send(((HasOfflinePlayer) recipient).getOfflinePlayer(), message);
 		} else if (recipient instanceof UUID) {
