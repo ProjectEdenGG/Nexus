@@ -110,13 +110,15 @@ public class Censor {
 					if (censorItem.isCancel())
 						event.setCancelled(true);
 
-					if (censorItem.isBan()) {
-						event.setCancelled(true);
-						Punishments.of(event.getChatter().getOfflinePlayer())
-								.add(Punishment.ofType(PunishmentType.BAN)
-										.punisher(Nexus.getUUID0())
-										.input(censorItem.getBanReason())
-										.now(true));
+					if (!event.getChatter().getNerd().getRank().isStaff()) {
+						if (censorItem.isBan()) {
+							event.setCancelled(true);
+							Punishments.of(event.getChatter().getOfflinePlayer())
+									.add(Punishment.ofType(PunishmentType.BAN)
+											.punisher(Nexus.getUUID0())
+											.input(censorItem.getBanReason())
+											.now(true));
+						}
 					}
 				}
 			}
