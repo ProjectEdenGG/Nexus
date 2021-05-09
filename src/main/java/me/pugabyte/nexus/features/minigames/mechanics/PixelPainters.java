@@ -5,6 +5,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.PixelPaintersArena;
@@ -20,7 +21,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,6 +31,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,12 +50,12 @@ public class PixelPainters extends TeamlessMechanic {
 	private final int ROUND_COUNTDOWN = 45 * 20;
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Pixel Painters";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -206,7 +207,7 @@ public class PixelPainters extends TeamlessMechanic {
 			// In Lobby
 		} else {
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), 0);
 		}
 
 		return lines;

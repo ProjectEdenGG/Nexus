@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.models.geoip;
 
 import com.google.gson.Gson;
+import eden.mongodb.annotations.PlayerClass;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -15,17 +15,22 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(GeoIP.class)
-public class GeoIPService extends MongoService {
-	private final static Map<UUID, GeoIP> cache = new HashMap<>();
+public class GeoIPService extends MongoService<GeoIP> {
+	private final static Map<UUID, GeoIP> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	private final String KEY = Nexus.getInstance().getConfig().getString("tokens.ipstack");
@@ -90,6 +95,7 @@ public class GeoIPService extends MongoService {
 		return database.createQuery(GeoIP.class).find().toList();
 	}
 
+	@Override
 	public void save(GeoIP geoIp) {
 		if (geoIp != null && geoIp.getIp() != null)
 			super.save(geoIp);

@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.safecracker;
 
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;

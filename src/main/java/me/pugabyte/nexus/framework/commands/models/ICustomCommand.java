@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.framework.commands.models;
 
-import com.google.common.base.Strings;
+import eden.interfaces.PlayerOwnedObject;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -14,8 +14,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandTabEvent;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -23,7 +25,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundExcep
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -50,20 +51,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static me.pugabyte.nexus.framework.commands.models.PathParser.getPathString;
+import static me.pugabyte.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static me.pugabyte.nexus.utils.StringUtils.asParsableDecimal;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.Utils.getDefaultPrimitiveValue;
+import static me.pugabyte.nexus.utils.Utils.isBoolean;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {
 
-	public void execute(CommandEvent event) {
+	public void execute(CommandRunEvent event) {
 		try {
 			CustomCommand command = getCommand(event);
 			Method method = getMethod(event);
@@ -79,7 +86,7 @@ public abstract class ICustomCommand {
 		}
 	}
 
-	public List<String> tabComplete(TabEvent event) {
+	public List<String> tabComplete(CommandTabEvent event) {
 		try {
 			getCommand(event);
 			return new PathParser(event).tabComplete(event);
@@ -124,7 +131,7 @@ public abstract class ICustomCommand {
 		return null;
 	}
 
-	protected void invoke(Method method, CommandEvent event) {
+	protected void invoke(Method method, CommandRunEvent event) {
 		Runnable function = () -> {
 			try {
 				Object[] objects = getMethodParameters(method, event, true);
@@ -143,29 +150,93 @@ public abstract class ICustomCommand {
 		};
 
 		Confirm confirm = method.getAnnotation(Confirm.class);
-		if (confirm != null) {
+		if (event.getSender() instanceof Player && confirm != null) {
 			ConfirmationMenu.builder()
 					.onConfirm(e -> run.run())
 					.title(confirm.title())
 					.open(event.getPlayer());
-		} else {
+		} else
 			run.run();
-		}
-
 	}
 
 	Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
+		Parameter[] allParameters = method.getParameters();
+
+		List<Parameter> switches = new ArrayList<>();
+		List<Parameter> parameters = new ArrayList<>();
+
+		for (Parameter parameter : allParameters)
+			if (parameter.getDeclaredAnnotation(Switch.class) != null)
+				switches.add(parameter);
+			else
+				parameters.add(parameter);
+
+		Object[] convertedSwitches = convertSwitches(method, event, doValidation, switches);
+		Object[] convertedParameters = convertParameters(method, event, doValidation, parameters);
+
+		return new ArrayList<>() {{
+			addAll(Arrays.asList(convertedParameters));
+			addAll(Arrays.asList(convertedSwitches));
+		}}.toArray(new Object[0]);
+	}
+
+	private Object[] convertSwitches(Method method, CommandEvent event, boolean doValidation, List<Parameter> switches) {
+		Object[] objects = new Object[switches.size()];
+
+		List<String> args = new ArrayList<>(event.getArgs());
+
+		if (args.isEmpty())
+			return objects;
+
+		int i = 0;
+		for (Parameter parameter : switches) {
+			Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
+
+			Pattern pattern = getSwitchPattern(parameter);
+
+			boolean found = false;
+			for (String arg : args) {
+				Matcher matcher = pattern.matcher(arg);
+
+				if (matcher.find()) {
+					found = true;
+					String group = matcher.group();
+					String value = isNullOrEmpty(annotation.value()) ? null : annotation.value();
+					if (group.contains("="))
+						value = group.split("=", 2)[1];
+					if (value == null && isBoolean(parameter))
+						value = "true";
+
+					objects[i] = convert(value, null, parameter.getType(), parameter, parameter.getName(), event, false);
+
+					event.getArgs().remove(arg);
+				}
+			}
+
+			if (objects[i] == null && parameter.getType().isPrimitive())
+				objects[i] = getDefaultPrimitiveValue(parameter.getType());
+
+			if (!found && !isNullOrEmpty(annotation.value()))
+				objects[i] = convert(annotation.value(), null, parameter.getType(), parameter, parameter.getName(), event, false);
+		}
+		return objects;
+	}
+
+	private Object[] convertParameters(Method method, CommandEvent event, boolean doValidation, List<Parameter> parameters) {
+		Object[] objects = new Object[parameters.size()];
 		List<String> args = event.getArgs();
-		List<Parameter> parameters = Arrays.asList(method.getParameters());
 		String pathValue = method.getAnnotation(Path.class).value();
 		Iterator<String> path = Arrays.asList(pathValue.split(" ")).iterator();
-		Object[] objects = new Object[parameters.size()];
 
 		// TODO: Validate params and path have same args
 
-		int i = 1;
+		int i = 0;
 		int pathIndex = 0;
 		for (Parameter parameter : parameters) {
+			// TODO Delete - https://github.com/ProjectEdenGG/Issues/issues/641
+			Nexus.debug("Parameters for command event: " + event.getOriginalMessage());
+			Nexus.debug("  parameter.getName(): " + parameter.getName());
+			Nexus.debug("  parameter.getType(): " + parameter.getType());
 			String pathArg = "";
 			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<") && path.hasNext()) {
 				pathArg = path.next();
@@ -178,25 +249,27 @@ public abstract class ICustomCommand {
 			Object contextArg = (contextArgIndex > 0 && objects.length >= contextArgIndex) ? objects[contextArgIndex - 1] : null;
 
 			if (args.size() >= pathIndex) {
-				if (annotation == null || Strings.isNullOrEmpty(annotation.permission()) || event.getSender().hasPermission(annotation.permission()))
+				if (annotation == null || isNullOrEmpty(annotation.permission()) || event.getSender().hasPermission(annotation.permission()))
 					if (pathArg.contains("..."))
 						value = String.join(" ", args.subList(pathIndex - 1, args.size()));
 					else
 						value = args.get(pathIndex - 1);
 			}
 
-			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !Strings.isNullOrEmpty(value)));
+			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !isNullOrEmpty(value)));
 			try {
-				objects[i - 1] = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
+				Object converted = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
+				if (required && converted == null)
+					throw new MissingArgumentException();
+				objects[i++] = converted;
 			} catch (MissingArgumentException ex) {
 				event.getCommand().showUsage();
 			}
-			++i;
 		}
 		return objects;
 	}
 
-	List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
+	private static final List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
 			InvalidInputException.class,
 			PlayerNotFoundException.class,
 			PlayerNotOnlineException.class
@@ -214,28 +287,31 @@ public abstract class ICustomCommand {
 				if (!value.matches(annotation.regex()))
 					throw new InvalidInputException(camelCase(name) + " must match regex " + annotation.regex());
 
-			if (!isNumber(type)) {
-				if (value.length() < annotation.min() || value.length() > annotation.max()) {
-					DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
-					String min = formatter.format(annotation.min());
-					String max = formatter.format(annotation.max());
-					double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
-					double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
+			if (!isNumber(type))
+				if (isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass()))
+					if (value.length() < annotation.min() || value.length() > annotation.max()) {
+						DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
+						String min = formatter.format(annotation.min());
+						String max = formatter.format(annotation.max());
+						double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
+						double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
-					String error = camelCase(name) + " length must be ";
-					if (annotation.min() == minDefault && annotation.max() != maxDefault)
-						throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter");
-					else if (annotation.min() != minDefault && annotation.max() == maxDefault)
-						throw new InvalidInputException(error + "&e" + min + " &ccharacters or longer");
-					else
-						throw new InvalidInputException(error + "between &e" + min + " &cand &e" + max + " &ccharacters");
-				}
-			}
+						String error = camelCase(name) + " length must be ";
+						if (annotation.min() == minDefault && annotation.max() != maxDefault)
+							throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter");
+						else if (annotation.min() != minDefault && annotation.max() == maxDefault)
+							throw new InvalidInputException(error + "&e" + min + " &ccharacters or longer");
+						else
+							throw new InvalidInputException(error + "between &e" + min + " &cand &e" + max + " &ccharacters");
+					}
 		}
 
 		if (Collection.class.isAssignableFrom(type)) {
+			if (annotation == null)
+				throw new InvalidInputException("Collection parameter must define concrete type with @Arg");
+
 			List<Object> values = new ArrayList<>();
-			for (String index : value.split(","))
+			for (String index : value.split(COMMA_SPLIT_REGEX))
 				values.add(convert(index, context, annotation.type(), parameter, name, event, required));
 			values.removeIf(Objects::isNull);
 			return values;
@@ -260,8 +336,10 @@ public abstract class ICustomCommand {
 				return convertToPlayerOwnedObject(value, (Class<? extends PlayerOwnedObject>) type);
 			}
 		} catch (InvocationTargetException ex) {
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 			if (required)
-				if (!Strings.isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
+				if (!isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
 					throw ex;
 				else
 					throw new MissingArgumentException();
@@ -269,12 +347,12 @@ public abstract class ICustomCommand {
 				return null;
 		}
 
-		if (Strings.isNullOrEmpty(value))
+		if (isNullOrEmpty(value))
 			if (required)
 				throw new MissingArgumentException();
 			else
-				if (isPrimitiveNumber(type))
-					return 0;
+				if (type.isPrimitive())
+					return getDefaultPrimitiveValue(type);
 				else
 					return null;
 
@@ -294,38 +372,39 @@ public abstract class ICustomCommand {
 
 			if (number != null) {
 				if (annotation != null) {
+					if (isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass())) {
+						double annotationDefaultMin = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
+						double annotationDefaultMax = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
-					double annotationDefaultMin = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
-					double annotationDefaultMax = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
+						double annotationConfiguredMin = annotation.min();
+						double annotationConfiguredMax = annotation.max();
 
-					double annotationConfiguredMin = annotation.min();
-					double annotationConfiguredMax = annotation.max();
+						Number classDefaultMin = getMinValue(type);
+						Number classDefaultMax = getMaxValue(type);
 
-					Number classDefaultMin = getMinValue(type);
-					Number classDefaultMax = getMaxValue(type);
+						BigDecimal min = (annotationConfiguredMin != annotationDefaultMin ? BigDecimal.valueOf(annotationConfiguredMin) : new BigDecimal(classDefaultMin.toString()));
+						BigDecimal max = (annotationConfiguredMax != annotationDefaultMax ? BigDecimal.valueOf(annotationConfiguredMax) : new BigDecimal(classDefaultMax.toString()));
 
-					BigDecimal min = (annotationConfiguredMin != annotationDefaultMin ? BigDecimal.valueOf(annotationConfiguredMin) : new BigDecimal(classDefaultMin.toString()));
-					BigDecimal max = (annotationConfiguredMax != annotationDefaultMax ? BigDecimal.valueOf(annotationConfiguredMax) : new BigDecimal(classDefaultMax.toString()));
+						int minComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(min);
+						int maxComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(max);
 
-					int minComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(min);
-					int maxComparison = BigDecimal.valueOf(number.doubleValue()).compareTo(max);
+						if (minComparison < 0 || maxComparison > 0) {
+							DecimalFormat formatter = StringUtils.getFormatter(type);
 
-					if (minComparison < 0 || maxComparison > 0) {
-						DecimalFormat formatter = StringUtils.getFormatter(type);
+							boolean usingDefaultMin = annotationDefaultMin == annotationConfiguredMin;
+							boolean usingDefaultMax = annotationDefaultMax == annotationConfiguredMax;
 
-						boolean usingDefaultMin = annotationDefaultMin == annotationConfiguredMin;
-						boolean usingDefaultMax = annotationDefaultMax == annotationConfiguredMax;
+							String minFormatted = formatter.format(annotation.min());
+							String maxFormatted = formatter.format(annotation.max());
 
-						String minFormatted = formatter.format(annotation.min());
-						String maxFormatted = formatter.format(annotation.max());
-
-						String error = camelCase(name) + " must be ";
-						if (usingDefaultMin && !usingDefaultMax)
-							throw new InvalidInputException(error + "&e" + maxFormatted + " &cor less");
-						else if (!usingDefaultMin && usingDefaultMax)
-							throw new InvalidInputException(error + "&e" + minFormatted + " &cor greater");
-						else
-							throw new InvalidInputException(error + "between &e" + minFormatted + " &cand &e" + maxFormatted);
+							String error = camelCase(name) + " must be ";
+							if (usingDefaultMin && !usingDefaultMax)
+								throw new InvalidInputException(error + "&e" + maxFormatted + " &cor less");
+							else if (!usingDefaultMin && usingDefaultMax)
+								throw new InvalidInputException(error + "&e" + minFormatted + " &cor greater");
+							else
+								throw new InvalidInputException(error + "between &e" + minFormatted + " &cand &e" + maxFormatted);
+						}
 					}
 				}
 
@@ -384,7 +463,7 @@ public abstract class ICustomCommand {
 	@SneakyThrows
 	CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
 		CustomCommand customCommand = new ObjenesisStd().newInstance((Class<? extends CustomCommand>) clazz);
-		CommandEvent newEvent = new CommandEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>());
+		CommandRunEvent newEvent = new CommandRunEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>(), new ArrayList<>());
 		return getCommand(newEvent);
 	}
 
@@ -406,11 +485,11 @@ public abstract class ICustomCommand {
 		methods.sort(
 				Comparator.comparing(method ->
 						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-								.filter(path -> !Strings.isNullOrEmpty(path))
+								.filter(path -> !isNullOrEmpty(path))
 								.count())
 				.thenComparing(method ->
 						Arrays.stream(getPathString((Method) method).split(" "))
-								.filter(path -> !Strings.isNullOrEmpty(path))
+								.filter(path -> !isNullOrEmpty(path))
 								.count()));
 
 		List<Method> filtered = methods.stream().filter(method -> hasPermission(event.getSender(), method)).collect(Collectors.toList());
@@ -420,8 +499,7 @@ public abstract class ICustomCommand {
 		return filtered;
 	}
 
-	// TODO: Use same methods as tab complete
-	private Method getMethod(CommandEvent event) {
+	private Method getMethod(CommandRunEvent event) {
 		Method method = new PathParser(event).match(event.getArgs());
 
 		if (method == null) {
@@ -457,8 +535,9 @@ public abstract class ICustomCommand {
 	}
 
 	private void checkCooldown(CustomCommand command) {
+		Method method = ((CommandRunEvent) command.getEvent()).getMethod();
 		checkCooldown(command, command.getClass().getAnnotation(Cooldown.class), command.getName());
-		checkCooldown(command, command.getEvent().getMethod().getAnnotation(Cooldown.class), command.getName() + "#" + command.getEvent().getMethod().getName());
+		checkCooldown(command, method.getAnnotation(Cooldown.class), command.getName() + "#" + method.getName());
 	}
 
 	private void checkCooldown(CustomCommand command, Cooldown cooldown, String commandId) {
@@ -484,7 +563,7 @@ public abstract class ICustomCommand {
 		}
 	}
 
-	protected abstract <T extends PlayerOwnedObject> T convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
+	protected abstract PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
 
 	@SneakyThrows
 	protected Enum<?> convertToEnum(String filter, Class<? extends Enum<?>> clazz) {

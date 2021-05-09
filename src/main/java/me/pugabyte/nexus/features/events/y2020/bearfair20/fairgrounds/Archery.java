@@ -1,18 +1,17 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -34,17 +33,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWEUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 
 public class Archery implements Listener {
-	WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
 	private static String gameRg = BearFair20.getRegion() + "_archery";
 	private static String targetsRg = gameRg + "_targets";
 	private static boolean archeryBool = false;
 	private static int currentTargets = 0;
-	private BFPointSource SOURCE = BFPointSource.ARCHERY;
+	private BF20PointSource SOURCE = BF20PointSource.ARCHERY;
 
 	public Archery() {
 		Nexus.registerListener(this);
@@ -67,17 +66,17 @@ public class Archery implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (archeryBool) return;
 		archeryBool = true;
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (!archeryBool) return;
-		int size = WGUtils.getPlayersInRegion(gameRg).size();
+		int size = getWGUtils().getPlayersInRegion(gameRg).size();
 		if (size == 0) {
 			archeryBool = false;
 			clearTargets();
@@ -101,14 +100,14 @@ public class Archery implements Listener {
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 		if (giveDailyPoints) {
-			BearFairUser user = new BearFairService().get(player);
+			BearFair20User user = new BearFair20UserService().get(player);
 			user.giveDailyPoints(SOURCE);
-			new BearFairService().save(user);
+			new BearFair20UserService().save(user);
 		}
 	}
 
 	private List<Location> getTargetLocs() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(targetsRg));
+		List<Block> blocks = BearFair20.getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetsRg));
 		List<Location> locs = new ArrayList<>();
 		for (Block block : blocks) {
 			Location loc = block.getLocation();
@@ -173,7 +172,7 @@ public class Archery implements Listener {
 
 	private void clearTargets() {
 		currentTargets = 0;
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(targetsRg));
+		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.WHITE_CONCRETE))
 				removeTarget(block);

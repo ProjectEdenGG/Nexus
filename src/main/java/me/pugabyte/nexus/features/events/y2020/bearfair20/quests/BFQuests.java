@@ -2,15 +2,16 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Merchants;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
@@ -19,7 +20,6 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.Time;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -53,7 +53,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
@@ -193,8 +193,8 @@ public class BFQuests implements Listener {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
-		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = getWGUtils().getProtectedRegion(Beehive.beehiveRg);
+		if (getWGUtils().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -217,8 +217,8 @@ public class BFQuests implements Listener {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = WGUtils.getProtectedRegion(Beehive.beehiveRg);
-		if (WGUtils.getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = getWGUtils().getProtectedRegion(Beehive.beehiveRg);
+		if (getWGUtils().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -308,7 +308,7 @@ public class BFQuests implements Listener {
 				return;
 
 			int id = event.getNPC().getId();
-			Talkers.startScript(player, id);
+			BearFairTalker.startScript(player, id);
 			Merchants.openMerchant(player, id);
 		}
 	}
@@ -321,8 +321,8 @@ public class BFQuests implements Listener {
 		Player player = (Player) event.getPlayer();
 		if (!isAtBearFair(player)) return;
 
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		if (player.getInventory().contains(MinigameNightIsland.joystick.clone().build())) {
 			MinigameNightIsland.foundPiece(player, MinigameNightIsland.joystick.clone().build());
 			service.save(user);
@@ -349,7 +349,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
 		Location loc = event.getPlayer().getLocation();
-		if (!WGUtils.getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
+		if (!getWGUtils().getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}

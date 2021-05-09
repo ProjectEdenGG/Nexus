@@ -2,16 +2,16 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
 import me.pugabyte.nexus.features.discord.Bot;
-import me.pugabyte.nexus.features.discord.Bot.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
+import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -33,7 +33,7 @@ public class PayDiscordCommand extends Command {
 	protected void execute(CommandEvent event) {
 		Tasks.async(() -> {
 			try {
-				DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
+				DiscordUser user = new DiscordUserService().checkVerified(event.getAuthor().getId());
 
 				String[] args = event.getArgs().split(" ");
 				if (args.length < 2 || !Utils.isDouble(args[1]))
@@ -56,19 +56,22 @@ public class PayDiscordCommand extends Command {
 					throw new InvalidInputException("Amount must be greater than $0.01");
 
 				try {
-					new BankerService().transfer(player, target, BigDecimal.valueOf(amount), shopGroup, TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), shopGroup, reason));
+					ShopGroup finalShopGroup = shopGroup;
+					String finalReason = reason;
+					Tasks.sync(() ->
+							new BankerService().transfer(player, target, BigDecimal.valueOf(amount), finalShopGroup,
+									TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), finalShopGroup, finalReason)));
 				} catch (NegativeBalanceException ex) {
 					throw new NotEnoughMoneyException();
 				}
 
 				String formatted = prettyMoney(amount);
-				if (target.isOnline() && target.getPlayer() != null)
-					PlayerUtils.send(target.getPlayer(), "&a" + formatted + " has been received from " + player.getName());
+				PlayerUtils.send(target, "&a" + formatted + " has been received from " + player.getName());
 
 				event.reply("Successfully sent " + formatted + " to " + target.getName());
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}
 		});

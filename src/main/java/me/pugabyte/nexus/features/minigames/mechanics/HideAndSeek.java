@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
+import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -19,11 +20,11 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -42,6 +43,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,13 +62,13 @@ public class HideAndSeek extends Infection {
 	private static final int SOLIDIFY_PLAYER_AT = Time.SECOND.x(5);
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Hide and Seek";
 	}
 
 	@Override
-	public String getDescription() {
-		return "Hide from the hunters!";
+	public @NotNull String getDescription() {
+		return "Blocks hide from the hunters";
 	}
 
 	@Override
@@ -76,6 +79,16 @@ public class HideAndSeek extends Infection {
 	@Override
 	public GameMode getGameMode() {
 		return GameMode.SURVIVAL;
+	}
+
+	@Override
+	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+		return isZombie(minigamer);
+	}
+
+	@Override
+	public boolean canMoveArmor() {
+		return false;
 	}
 
 	@Override
@@ -168,6 +181,7 @@ public class HideAndSeek extends Infection {
 								fallingBlock.setGravity(false);
 								fallingBlock.setHurtEntities(false);
 								fallingBlock.setDropItem(false);
+								fallingBlock.setVelocity(new Vector());
 								matchData.getSolidBlocks().put(minigamer.getPlayer().getUniqueId(), fallingBlock);
 								// stop their disguise (as otherwise the hider sees 2 of their block)
 								matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).stopDisguise();
@@ -236,8 +250,8 @@ public class HideAndSeek extends Infection {
 		List<Minigamer> humans = getHumans(match);
 		lines.put("", 0);
 		lines.put("&3&lPlayer Count", 0);
-		lines.put("- " + getZombieTeam(match).getColoredName(), -1 * getZombies(match).size());
-		lines.put("- " + getHumanTeam(match).getColoredName(), -1 * humans.size());
+		lines.put("- " + getZombieTeam(match).getVanillaColoredName(), -1 * getZombies(match).size());
+		lines.put("- " + getHumanTeam(match).getVanillaColoredName(), -1 * humans.size());
 
 		lines.put("&3&lSurviving Blocks", 99);
 		Map<Material, Integer> blockCounts = new HashMap<>();

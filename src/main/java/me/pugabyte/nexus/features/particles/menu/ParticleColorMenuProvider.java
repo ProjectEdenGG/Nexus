@@ -88,7 +88,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 			contents.set(colorItem.getColumn(), colorItem.getRow(), ClickableItem.from(
 					new ItemBuilder(colorItem.getColorType().getDye()).name(name).build(),
 					e -> {
-						owner.getSettings(type).put(setting, colorItem.getColorType().getColor());
+						owner.getSettings(type).put(setting, colorItem.getColorType().getBukkitColor());
 						service.save(owner);
 						Tasks.wait(5, () -> ParticleMenu.openColor(player, type, setting));
 					}));

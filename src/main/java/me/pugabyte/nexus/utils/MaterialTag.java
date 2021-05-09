@@ -88,6 +88,9 @@ public class MaterialTag implements Tag<Material> {
 			.append(FURNACES)
 			.append(SHULKER_BOXES)
 			.append(LECTERN);
+	public static final MaterialTag MENU_BLOCKS = new MaterialTag(Material.CRAFTING_TABLE, Material.GRINDSTONE,
+			Material.ENCHANTING_TABLE, Material.STONECUTTER, Material.CARTOGRAPHY_TABLE, Material.LOOM, Material.BELL,
+			Material.ANVIL, Material.CHIPPED_ANVIL, Material.DAMAGED_ANVIL, Material.BEACON);
 
 	public static final MaterialTag COMMAND_BLOCKS = new MaterialTag("COMMAND_BLOCK", MatchMode.CONTAINS);
 	public static final MaterialTag MINECARTS = new MaterialTag("_MINECART", MatchMode.SUFFIX);
@@ -216,14 +219,20 @@ public class MaterialTag implements Tag<Material> {
 			.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 
+	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);
+
+	public static final MaterialTag INTERACTABLES = new MaterialTag(BEDS, SHULKER_BOXES, CONTAINERS, WOOD_FENCE_GATES,
+			DOORS, TRAPDOORS, BUTTONS, MENU_BLOCKS).append(
+			Material.REPEATER, Material.COMPARATOR, Material.NOTE_BLOCK, Material.JUKEBOX, Material.DAYLIGHT_DETECTOR, Material.LEVER);
+
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {
 		return collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));
 	}
 
 	@Getter
-	private static final Map<String, Tag<Material>> tags = new HashMap<String, Tag<Material>>() {{
-		List<Field> fields = new ArrayList<Field>() {{
+	private static final Map<String, Tag<Material>> tags = new HashMap<>() {{
+		List<Field> fields = new ArrayList<>() {{
 			addAll(Arrays.asList(MaterialTag.class.getFields()));
 			addAll(Arrays.asList(Tag.class.getFields()));
 		}};
@@ -237,7 +246,8 @@ public class MaterialTag implements Tag<Material> {
 					try {
 						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
 						put(field.getName(), materialTag);
-					} catch (NoSuchMethodException ignore) {}
+					} catch (NoSuchMethodException ignore) {
+					}
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

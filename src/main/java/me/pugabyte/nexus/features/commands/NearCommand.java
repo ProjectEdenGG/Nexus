@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ public class NearCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	void run(@Arg("self") Player player) {
+	void run(@Arg(value = "self", permission = "group.staff") Player player) {
 		List<Player> nearby = Bukkit.getOnlinePlayers().stream()
 				.filter(_player -> player.getUniqueId() != _player.getUniqueId()
 						 && player.getWorld() == _player.getWorld()
@@ -40,9 +40,9 @@ public class NearCommand extends CustomCommand {
 			send(message + " (&3" + nearby.size() + "&e): &f" + nearby.stream()
 					.map(_player -> {
 						if (showDistance)
-							return Nerd.of(_player).getNickname() + " (&3" + getDistance(player, _player) + "m&f)";
+							return Nickname.of(_player) + " (&3" + getDistance(player, _player) + "m&f)";
 						else
-							return Nerd.of(_player).getNickname();
+							return Nickname.of(_player);
 					})
 					.collect(Collectors.joining(", ")));
 	}

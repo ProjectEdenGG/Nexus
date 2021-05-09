@@ -25,12 +25,12 @@ public class AchievementListener implements Listener {
 		// Spammy...
 		if (achievement.getGroup() == AchievementGroup.BIOMES) return;
 
-		Nexus.log(achievementPlayer.getPlayer().getName() + " has completed the " + achievement.toString() + " achievement");
+		Nexus.log(achievementPlayer.getOnlinePlayer().getName() + " has completed the " + achievement.toString() + " achievement");
 
-		Player player = achievementPlayer.getPlayer();
+		Player player = achievementPlayer.getOnlinePlayer();
 		if (player.isOnline()) {
 			String message = StringUtils.getPrefix("Achievements") + "You have completed the &e" + achievement.toString() + " &3achievement!";
-			PlayerUtils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()).build());
+			PlayerUtils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()));
 		}
 
 	}

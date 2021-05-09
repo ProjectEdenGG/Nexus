@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.scoreboard;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.commands.PushCommand;
@@ -20,7 +22,6 @@ import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -40,7 +41,6 @@ import static me.pugabyte.nexus.utils.PlayerUtils.isStaffGroup;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.left;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 public enum ScoreboardLine {
 	ONLINE {
@@ -135,14 +135,7 @@ public enum ScoreboardLine {
 	WORLD {
 		@Override
 		public String render(Player player) {
-			String world = player.getWorld().getName();
-			if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
-				world = world.replace("world", "legacy");
-			if (world.contains("oneblock"))
-				world = world.replace("oneblock_world", "one_block");
-			if (world.contains("bskyblock"))
-				world = world.replace("bskyblock_world", "skyblock");
-			return "&3World: &e" + camelCase(world);
+			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getWorld());
 		}
 	},
 
@@ -165,7 +158,7 @@ public enum ScoreboardLine {
 	BALANCE {
 		@Override
 		public String render(Player player) {
-			ShopGroup shopGroup = ShopGroup.get(player);
+			ShopGroup shopGroup = ShopGroup.of(player);
 			if (shopGroup == null) shopGroup = ShopGroup.SURVIVAL;
 			double balance = new BankerService().getBalance(player, shopGroup);
 
@@ -211,9 +204,8 @@ public enum ScoreboardLine {
 	HOURS {
 		@Override
 		public String render(Player player) {
-			Hours hours = new HoursService().get(player);
-			int seconds = hours == null ? 0 : hours.getTotal();
-			return "&3Hours: &e" + Timespan.of(seconds).noneDisplay(true).format();
+			Hours hours = new HoursService().get(player.getUniqueId());
+			return "&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format();
 		}
 	},
 
@@ -231,7 +223,7 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			AFKPlayer afkPlayer = me.pugabyte.nexus.features.afk.AFK.get(player);
 			if (afkPlayer.isAfk())
-				return "&3AFK for: &e" + timespanDiff(afkPlayer.getTime());
+				return "&3AFK for: &e" + Timespan.of(afkPlayer.getTime()).format();
 			return null;
 		}
 	};
@@ -262,7 +254,7 @@ public enum ScoreboardLine {
 	}
 
 	public static Map<ScoreboardLine, Boolean> getDefaultLines(Player player) {
-		return new HashMap<ScoreboardLine, Boolean>() {{
+		return new HashMap<>() {{
 			if (ScoreboardLine.ONLINE.hasPermission(player)) put(ScoreboardLine.ONLINE, true);
 			if (ScoreboardLine.TICKETS.hasPermission(player)) put(ScoreboardLine.TICKETS, true);
 			if (ScoreboardLine.TPS.hasPermission(player)) put(ScoreboardLine.TPS, true);
@@ -271,7 +263,8 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.VANISHED.hasPermission(player)) put(ScoreboardLine.VANISHED, true);
 			if (ScoreboardLine.MCMMO.hasPermission(player)) put(ScoreboardLine.MCMMO, !isStaffGroup(player));
 			if (ScoreboardLine.BALANCE.hasPermission(player)) put(ScoreboardLine.BALANCE, !isStaffGroup(player));
-			if (ScoreboardLine.VOTE_POINTS.hasPermission(player)) put(ScoreboardLine.VOTE_POINTS, !isStaffGroup(player));
+			if (ScoreboardLine.VOTE_POINTS.hasPermission(player))
+				put(ScoreboardLine.VOTE_POINTS, !isStaffGroup(player));
 			if (ScoreboardLine.GAMEMODE.hasPermission(player)) put(ScoreboardLine.GAMEMODE, true);
 			if (ScoreboardLine.WORLD.hasPermission(player)) put(ScoreboardLine.WORLD, true);
 			if (ScoreboardLine.BIOME.hasPermission(player)) put(ScoreboardLine.BIOME, false);
@@ -302,50 +295,61 @@ public enum ScoreboardLine {
 
 	@Getter
 	private static final List<String> headerFrames = Arrays.asList(
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &bBear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &bBear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &3Bear Nation &e>",
-			"&e< &bB&3ear Nation&3 &e>",
-			"&e< &3B&be&3ar Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Natio&bn&3 &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3B&be&3ar Nation &e>",
-			"&e< &bB&3ear Nation&3 &e>",
-			"&e< &3B&be&3ar Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Natio&bn&3 &e>",
-			"&e< &3Bear Nati&bo&3n &e>",
-			"&e< &3Bear Nat&bi&3on &e>",
-			"&e< &3Bear Na&bt&3ion &e>",
-			"&e< &3Bear N&ba&3tion &e>",
-			"&e< &3Bear&b N&3ation &e>",
-			"&e< &3Bea&br&3 Nation &e>",
-			"&e< &3Be&ba&3r Nation &e>",
-			"&e< &3B&be&3ar Nation &e>"
+			"&a⚘ &3Project Eden &a⚘",
+			"&a⚘ &3Project Eden &a⚘",
+			"&a⚘ &3Project Eden &a⚘",
+			"&a⚘ &bProject Eden &a⚘",
+			"&a⚘ &3Project Eden &a⚘",
+			"&a⚘ &bProject Eden &a⚘",
+			"&a⚘ &3Project Eden &a⚘",
+			"&a⚘ &3Project Eden &a⚘",
+			"&a⚘ &3Project Eden &a⚘",
+
+			"&a⚘ &3&bP&3roject Eden &a⚘",
+			"&a⚘ &3P&br&3oject Eden &a⚘",
+			"&a⚘ &3Pr&bo&3ject Eden &a⚘",
+			"&a⚘ &3Pro&bj&3ect Eden &a⚘",
+			"&a⚘ &3Proj&be&3ct Eden &a⚘",
+			"&a⚘ &3Proje&bc&3t Eden &a⚘",
+			"&a⚘ &3Projec&bt&3 Eden &a⚘",
+			"&a⚘ &3Project&b &3Eden &a⚘",
+			"&a⚘ &3Project &bE&3den &a⚘",
+			"&a⚘ &3Project E&bd&3en &a⚘",
+			"&a⚘ &3Project Ed&be&3n &a⚘",
+			"&a⚘ &3Project Ede&bn&3 &a⚘",
+			"&a⚘ &3Project Ed&be&3n &a⚘",
+			"&a⚘ &3Project E&bd&3en &a⚘",
+			"&a⚘ &3Project &bE&3den &a⚘",
+			"&a⚘ &3Project&b &3Eden &a⚘",
+			"&a⚘ &3Projec&bt&3 Eden &a⚘",
+			"&a⚘ &3Proje&bc&3t Eden &a⚘",
+			"&a⚘ &3Proj&be&3ct Eden &a⚘",
+			"&a⚘ &3Pro&bj&3ect Eden &a⚘",
+			"&a⚘ &3Pr&bo&3ject Eden &a⚘",
+			"&a⚘ &3P&br&3oject Eden &a⚘",
+
+			"&a⚘ &3&bP&3roject Eden &a⚘",
+			"&a⚘ &3P&br&3oject Eden &a⚘",
+			"&a⚘ &3Pr&bo&3ject Eden &a⚘",
+			"&a⚘ &3Pro&bj&3ect Eden &a⚘",
+			"&a⚘ &3Proj&be&3ct Eden &a⚘",
+			"&a⚘ &3Proje&bc&3t Eden &a⚘",
+			"&a⚘ &3Projec&bt&3 Eden &a⚘",
+			"&a⚘ &3Project&b &3Eden &a⚘",
+			"&a⚘ &3Project &bE&3den &a⚘",
+			"&a⚘ &3Project E&bd&3en &a⚘",
+			"&a⚘ &3Project Ed&be&3n &a⚘",
+			"&a⚘ &3Project Ede&bn&3 &a⚘",
+			"&a⚘ &3Project Ed&be&3n &a⚘",
+			"&a⚘ &3Project E&bd&3en &a⚘",
+			"&a⚘ &3Project &bE&3den &a⚘",
+			"&a⚘ &3Project&b &3Eden &a⚘",
+			"&a⚘ &3Projec&bt&3 Eden &a⚘",
+			"&a⚘ &3Proje&bc&3t Eden &a⚘",
+			"&a⚘ &3Proj&be&3ct Eden &a⚘",
+			"&a⚘ &3Pro&bj&3ect Eden &a⚘",
+			"&a⚘ &3Pr&bo&3ject Eden &a⚘",
+			"&a⚘ &3P&br&3oject Eden &a⚘",
+			"&a⚘ &3&bP&3roject Eden &a⚘"
 	);
 }

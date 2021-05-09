@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.models.ticket;
 
 import com.dieselpoint.norm.serialize.DbSerializer;
+import eden.utils.TimeUtils.Timespan;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.conversations.Conversable;
@@ -71,7 +71,7 @@ public class Ticket {
 	}
 
 	public String getTimespan() {
-		return StringUtils.timespanDiff(timeOpened);
+		return Timespan.of(timeOpened).format();
 	}
 
 }

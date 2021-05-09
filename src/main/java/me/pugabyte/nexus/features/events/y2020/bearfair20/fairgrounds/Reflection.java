@@ -1,20 +1,20 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.models.Laser;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
@@ -59,7 +59,7 @@ public class Reflection implements Listener {
 	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
 	private String gameRg = BearFair20.getRegion() + "_reflection";
 	private String powderRg = gameRg + "_powder";
-	private BFPointSource SOURCE = BFPointSource.REFLECTION;
+	private BF20PointSource SOURCE = BF20PointSource.REFLECTION;
 	//
 	private boolean active = false;
 	private boolean prototypeActive = false;
@@ -86,7 +86,7 @@ public class Reflection implements Listener {
 	}
 
 	private void setLamps() {
-		ProtectedRegion region = WGUtils.getProtectedRegion(powderRg);
+		ProtectedRegion region = getWGUtils().getProtectedRegion(powderRg);
 		List<Block> blocks = WEUtils.getBlocks(region);
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.YELLOW_CONCRETE_POWDER)) {
@@ -107,7 +107,7 @@ public class Reflection implements Listener {
 	}
 
 	private void randomizeBanners() {
-		ProtectedRegion region = WGUtils.getProtectedRegion(powderRg);
+		ProtectedRegion region = getWGUtils().getProtectedRegion(powderRg);
 		List<Block> blocks = WEUtils.getBlocks(region);
 		for (Block block : blocks) {
 			if (!MaterialTag.CONCRETE_POWDERS.isTagged(block.getType())) continue;
@@ -273,7 +273,7 @@ public class Reflection implements Listener {
 
 	private void laserSound() {
 		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
-			Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
+			Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
 			for (Player player : players)
 				player.playSound(laserSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
 		});
@@ -282,7 +282,7 @@ public class Reflection implements Listener {
 	private void endLaser() {
 		Tasks.cancel(laserTaskId);
 		Tasks.cancel(soundTaskId);
-		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
+		Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 		BearFair20.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
@@ -293,14 +293,14 @@ public class Reflection implements Listener {
 		BearFair20.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_BELL, 1F, 1F);
 
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
-		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
+		Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
 		for (Player player : players)
 			send(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!", player);
 
 		if (giveDailyPoints) {
-			BearFairUser user = new BearFairService().get(buttonPresser);
+			BearFair20User user = new BearFair20UserService().get(buttonPresser);
 			user.giveDailyPoints(SOURCE);
-			new BearFairService().save(user);
+			new BearFair20UserService().save(user);
 		}
 
 		Tasks.wait(Time.SECOND.x(3), () -> {
@@ -352,14 +352,14 @@ public class Reflection implements Listener {
 	}
 
 	private void broadcastObjective() {
-		Collection<Player> players = WGUtils.getPlayersInRegion(gameRg);
+		Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
 		for (Player player : players) {
 			send(prefix + objMsg, player);
 		}
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
 			send(prefix + objMsg, event.getPlayer());

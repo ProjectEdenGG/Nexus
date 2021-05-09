@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models.afk;
 
 import com.dieselpoint.norm.serialize.DbSerializer;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -8,10 +9,12 @@ import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializ
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.afk.events.NowAFKEvent;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -56,8 +59,16 @@ public class AFKPlayer {
 		this.time = LocalDateTime.now();
 	}
 
+	public boolean isNotAfk() {
+		return !isAfk;
+	}
+
 	public boolean isTimeAfk() {
 		return time.until(LocalDateTime.now(), ChronoUnit.SECONDS) > 240;
+	}
+
+	public boolean isNotTimeAfk() {
+		return !isTimeAfk();
 	}
 
 	public void setLocation() {
@@ -110,7 +121,10 @@ public class AFKPlayer {
 	}
 
 	private void broadcast() {
-		String broadcast = "&7* &e" + Nerd.of(getPlayer()).getNickname() + " &7is " + (isAfk ? "now" : "no longer") + " AFK";
+		if (!new AFKSettingsService().get(UUID.fromString(uuid)).isBroadcasts())
+			return;
+
+		TextComponent broadcast = new JsonBuilder("&7* &e" + Nickname.of(getPlayer()) + " &7is " + (isAfk ? "now" : "no longer") + " AFK").build();
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!PlayerUtils.canSee(_player, getPlayer()))
 				return;
@@ -119,7 +133,7 @@ public class AFKPlayer {
 			if (MuteMenuUser.hasMuted(_player, MuteMenuItem.AFK))
 				return;
 
-			PlayerUtils.send(_player, broadcast);
+			_player.sendMessage(getPlayer(), broadcast, MessageType.CHAT);
 		});
 	}
 

@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Banker;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
 
@@ -24,7 +24,7 @@ public class BalanceCommand extends CustomCommand {
 		if (isSelf(banker))
 			send(PREFIX + "Your " + camelCase(shopGroup) + " balance: &e" + banker.getBalanceFormatted(shopGroup));
 		else
-			send(PREFIX + "&e" + Nerd.of(banker).getNickname() + "'s &3" + camelCase(shopGroup) + " balance: &e" + banker.getBalanceFormatted(shopGroup));
+			send(PREFIX + "&e" + Nickname.of(banker) + "'s &3" + camelCase(shopGroup) + " balance: &e" + banker.getBalanceFormatted(shopGroup));
 	}
 
 }

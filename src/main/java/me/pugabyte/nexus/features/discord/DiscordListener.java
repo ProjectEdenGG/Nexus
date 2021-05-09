@@ -1,16 +1,15 @@
 package me.pugabyte.nexus.features.discord;
 
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
+import eden.exceptions.EdenException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.DiscordId.User;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.setting.Setting;
@@ -28,7 +27,6 @@ import okhttp3.Response;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -66,11 +64,11 @@ public class DiscordListener extends ListenerAdapter {
 			else {
 				Tasks.waitAsync(5, () -> {
 					Discord.addRole(event.getUser().getId(), Role.NERD);
-					DiscordUser user = new DiscordService().getFromUserId(event.getUser().getId());
-					if (user != null && !Strings.isNullOrEmpty(user.getUuid())) {
+					DiscordUser user = new DiscordUserService().getFromUserId(event.getUser().getId());
+					if (user != null) {
 						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
 
-						if (Nerd.of(UUID.fromString(user.getUuid())).getRank() == Rank.VETERAN)
+						if (Nerd.of(user.getUuid()).getRank() == Rank.VETERAN)
 							Discord.addRole(event.getUser().getId(), Role.VETERAN);
 
 						if (Nexus.getPerms().playerHas(null, user.getOfflinePlayer(), "donated"))
@@ -94,7 +92,7 @@ public class DiscordListener extends ListenerAdapter {
 			String channel = event.getChannel().getName();
 			String message = event.getMessage().getContentRaw();
 
-			if (Arrays.asList(Channel.STAFF_BRIDGE.getId(), Channel.BRIDGE.getId()).contains(event.getChannel().getId()))
+			if (Arrays.asList(TextChannel.STAFF_BRIDGE.getId(), TextChannel.BRIDGE.getId()).contains(event.getChannel().getId()))
 				if (event.getMember().getUser().getId().equals(User.RELAY.getId()))
 					return;
 
@@ -103,16 +101,16 @@ public class DiscordListener extends ListenerAdapter {
 
 			Nexus.fileLog("discord", "[#" + channel + "] " + name + ": " + message.trim());
 
-			if (Channel.BOT_COMMANDS.getId().equals(event.getChannel().getId())) {
+			if (TextChannel.BOT_COMMANDS.getId().equals(event.getChannel().getId())) {
 				if (message.toLowerCase().startsWith(".pug")) {
 					try {
 						try (Response response = new OkHttpClient().newCall(new Request.Builder().url("http://randompug.club/loaf").build()).execute()) {
 							RandomPugClubResponse result = new Gson().fromJson(response.body().string(), RandomPugClubResponse.class);
-							Discord.koda(result.getImage(), Channel.BOT_COMMANDS);
+							Discord.koda(result.getImage(), TextChannel.BOT_COMMANDS);
 						}
 					} catch (Exception ex) {
 						event.getChannel().sendMessage(stripColor(ex.getMessage())).queue();
-						if (!(ex instanceof NexusException))
+						if (!(ex instanceof EdenException))
 							ex.printStackTrace();
 					}
 				}

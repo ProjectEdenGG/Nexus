@@ -3,9 +3,11 @@ package me.pugabyte.nexus.features.chat.bridge;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId;
-import me.pugabyte.nexus.models.discord.DiscordService;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.nickname.NicknameService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -23,17 +25,17 @@ public class IngameBridgeListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onChannelChat(PublicChatEvent event) {
-		DiscordId.Channel discordChannel = event.getChannel().getDiscordChannel();
-		if (discordChannel == null) return;
+		TextChannel discordTextChannel = event.getChannel().getDiscordTextChannel();
+		if (discordTextChannel == null) return;
 
-		Player player = event.getChatter().getPlayer();
-		DiscordUser user = new DiscordService().get(player);
+		Player player = event.getChatter().getOnlinePlayer();
+		DiscordUser user = new DiscordUserService().get(player);
 		RoleManager.update(user);
 
 		String message = event.getMessage();
 		message = discordize(message);
 		message = parseMentions(message);
-		Discord.send(user.getBridgeName() + " **>** " + message, discordChannel);
+		Discord.send(user.getBridgeName() + " **>** " + message, discordTextChannel);
 	}
 
 	public static String parseMentions(String message) {
@@ -41,11 +43,21 @@ public class IngameBridgeListener implements Listener {
 			Matcher matcher = Pattern.compile("@[A-Za-z0-9_]+").matcher(message);
 			while (matcher.find()) {
 				String group = matcher.group();
-				OfflinePlayer player = Bukkit.getOfflinePlayer(group.replace("@", ""));
-				if (player.hasPlayedBefore()) {
-					DiscordUser mentioned = new DiscordService().get(player);
-					if (mentioned.getUserId() != null)
+				String search = group.replace("@", "");
+				OfflinePlayer player = Bukkit.getOfflinePlayer(search);
+				DiscordUser mentioned = new DiscordUserService().get(player);
+				if (mentioned.getUserId() != null) {
+					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+					continue;
+				}
+
+				Nickname fromNickname = new NicknameService().getFromNickname(search);
+				if (fromNickname != null) {
+					mentioned = new DiscordUserService().get(fromNickname.getOfflinePlayer());
+					if (mentioned.getUserId() != null) {
 						message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+						continue;
+					}
 				}
 			}
 		}

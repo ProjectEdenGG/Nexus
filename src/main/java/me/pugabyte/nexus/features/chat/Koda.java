@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.chat;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -7,80 +8,95 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.commands.AgeCommand.ServerAge;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class Koda {
-	@Getter
+	@Getter @NotNull
 	private static final String PREFIX = StringUtils.getPrefix("KodaBear");
-	@Getter
-	private static final String nameFormat = "&5KodaBear";
-	@Getter
-	private static final String globalFormat = "&2[G] " + nameFormat + " &2&l> &f";
-	@Getter
-	private static final String localFormat = "&e[L] " + nameFormat + " &e&l> &f";
-	@Getter
-	private static final String dmFormat = "&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e";
-	@Getter
+	@Getter @NotNull
+	private static final String name = "KodaBear";
+	@Getter @NotNull
+	private static final ChatColor chatColor = ChatColor.DARK_PURPLE;
+	@Getter @NotNull
+	private static final Color color = chatColor.getColor();
+	@Getter @NotNull
+	private static final String coloredName = chatColor + name;
+	@Getter @NotNull
+	private static final String globalFormat = "&2[G] " + coloredName + " &2&l> &f";
+	@Getter @NotNull
+	private static final String localFormat = "&e[L] " + coloredName + " &e&l> &f";
+	@Getter @NotNull
+	private static final String dmFormat = colorize("&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e");
+	@Getter @NotNull
 	private static final String discordFormat = "<@&&f" + Role.KODA.getId() + "> **>** ";
-	@Getter
-	private static final OfflinePlayer player = Bukkit.getOfflinePlayer("KodaBear");
-	@Getter
+	@Getter @NotNull
+	private static final OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+	@Getter @NotNull
+	private static final UUID uuid = player.getUniqueId();
+	@Getter @NotNull
 	private static final Chatter chatter = new ChatService().get(player);
 
-	public static void reply(String message) {
+	public static void reply(@NotNull String message) {
 		Tasks.wait(10, () -> say(message));
 	}
 
-	public static void replyIngame(String message) {
+	public static void replyIngame(@NotNull String message) {
 		Tasks.wait(10, () -> sayIngame(message));
 	}
 
-	public static void replyDiscord(String message) {
+	public static void replyDiscord(@NotNull String message) {
 		Tasks.wait(10, () -> sayDiscord(message));
 	}
 
-	public static void say(String message) {
+	public static void say(@NotNull String message) {
 		sayIngame(message);
 		sayDiscord(message);
 	}
 
-	public static void sayIngame(String message) {
-		Chat.broadcastIngame(globalFormat + message);
+	public static void sayIngame(@NotNull String message) {
+		Chat.broadcastIngame(chatter, AdventureUtils.fromLegacyText(colorize(globalFormat + message)));
 	}
 
-	public static void sayDiscord(String message) {
+	public static void sayDiscord(@NotNull String message) {
 		Chat.broadcastDiscord(discordFormat + message);
 	}
 
-	public static void announce(String message) {
-		Discord.koda(message, Channel.ANNOUNCEMENTS);
+	public static void announce(@NotNull String message) {
+		Discord.koda(message, TextChannel.ANNOUNCEMENTS);
 	}
 
-	public static void console(String message) {
+	public static void console(@NotNull String message) {
 		Bukkit.getConsoleSender().sendMessage("[KodaBear] " + stripColor(message));
 	}
 
-	public static void dm(Player player, String message) {
+	public static void dm(@Nullable Player player, @NotNull String message) {
 		PlayerUtils.send(player, dmFormat + message);
 	}
 
@@ -161,7 +177,7 @@ public class Koda {
 				break;
 			case "canihaveop":
 				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
-					Player player = event.getChatter().getPlayer();
+					Player player = event.getChatter().getOnlinePlayer();
 					double health = player.getHealth();
 					player.setHealth(20);
 					player.getWorld().strikeLightning(player.getLocation());
@@ -177,8 +193,8 @@ public class Koda {
 				break;
 			case "canibestaff":
 				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
-					Player player = event.getChatter().getPlayer();
-					if (player.hasPermission("rank.guest")) {
+					Player player = event.getChatter().getOnlinePlayer();
+					if (Rank.of(player) == Rank.GUEST) {
 						String command = "staff";
 						if (event.getMessage().contains("mod")) command = "moderator";
 						if (event.getMessage().contains(" op")) command = "operator";
@@ -209,11 +225,11 @@ public class Koda {
 			case "griefing":
 				if (event.getChatter() != null)
 					if (!(event.getMessage().contains("not allowed") || event.getMessage().contains("isn't") || event.getMessage().contains("isnt")))
-						if (Nexus.getPerms().playerHas(null, event.getChatter().getOfflinePlayer(), "rank.guest"))
+						if (Rank.of(event.getChatter()) == Rank.GUEST)
 							respond(event, "[player], griefing is not allowed. Please take a look at the /rules for more information.");
 				break;
 			case "lag":
-				int ping = event.getChatter().getPlayer().spigot().getPing();
+				int ping = event.getChatter().getOnlinePlayer().spigot().getPing();
 				double tps = Bukkit.getTPS()[1];
 
 				if (ping > 200 && tps > 16)

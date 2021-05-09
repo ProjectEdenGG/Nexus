@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.mcmmo;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.util.player.UserManager;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -11,7 +12,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -254,45 +254,33 @@ public class McMMOListener implements Listener {
 	}
 
 	private TreeType getTreeType(TreeSpecies treeSpecies) {
-		switch (treeSpecies.getData()) {
-			case 0:
-				return TreeType.TREE;
-			case 1:
-				return TreeType.REDWOOD;
-			case 2:
-				return TreeType.BIRCH;
-			case 3:
-				return TreeType.SMALL_JUNGLE;
-			case 4:
-				return TreeType.ACACIA;
-			case 5:
-				return TreeType.DARK_OAK;
-		}
-		return null;
+		return switch (treeSpecies.getData()) {
+			case 0 -> TreeType.TREE;
+			case 1 -> TreeType.REDWOOD;
+			case 2 -> TreeType.BIRCH;
+			case 3 -> TreeType.SMALL_JUNGLE;
+			case 4 -> TreeType.ACACIA;
+			case 5 -> TreeType.DARK_OAK;
+			default -> null;
+		};
 	}
 
 	private TreeType getVariant(TreeType treeType) {
-		switch (treeType) {
-			case TREE:
-				return TreeType.BIG_TREE;
-			case BIRCH:
-				return TreeType.TALL_BIRCH;
-			case REDWOOD:
-				return TreeType.TALL_REDWOOD;
-			case SMALL_JUNGLE:
-				return TreeType.COCOA_TREE;
-		}
-		return treeType;
+		return switch (treeType) {
+			case TREE -> TreeType.BIG_TREE;
+			case BIRCH -> TreeType.TALL_BIRCH;
+			case REDWOOD -> TreeType.TALL_REDWOOD;
+			case SMALL_JUNGLE -> TreeType.COCOA_TREE;
+			default -> treeType;
+		};
 	}
 
 	private TreeType getMegaVariant(TreeType treeType) {
-		switch (treeType) {
-			case REDWOOD:
-				return TreeType.MEGA_REDWOOD;
-			case SMALL_JUNGLE:
-				return TreeType.JUNGLE;
-		}
-		return treeType;
+		return switch (treeType) {
+			case REDWOOD -> TreeType.MEGA_REDWOOD;
+			case SMALL_JUNGLE -> TreeType.JUNGLE;
+			default -> treeType;
+		};
 	}
 
 	private Location getMegaTree(Block block) {

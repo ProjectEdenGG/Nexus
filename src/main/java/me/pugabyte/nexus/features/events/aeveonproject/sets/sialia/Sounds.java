@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.events.aeveonproject.sets.sialia;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 
 import static me.pugabyte.nexus.features.events.aeveonproject.APUtils.APLoc;
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WGUtils;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
 
 public class Sounds {
 	private static final Location engineLoc = APLoc(-1294, 86, -1056);
@@ -26,7 +26,7 @@ public class Sounds {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
+				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -42,7 +42,7 @@ public class Sounds {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA.get().getRegion());
+				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;

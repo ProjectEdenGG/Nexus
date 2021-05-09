@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Timespan;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -38,7 +39,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -46,9 +46,8 @@ import java.util.function.BiFunction;
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")
@@ -72,8 +71,8 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String worldName = snapshot.getLocation().getWorld().getName();
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
 			return json("&3" + index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
-					.addHover("&3Time since: &e" + timespanDiff(snapshot.getTimestamp()))
-					.addHover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
+					.hover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
+					.hover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
 		};
 		paginate(history.getSnapshots(), formatter, "/inventorysnapshots " + history.getName(), page);
@@ -102,7 +101,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	@Path("nearbyDeaths [page]")
 	void nearbyDeaths(@Arg("1") int page) {
 		Map<InventorySnapshot, Double> nearbyDeaths = new HashMap<>();
-		for (InventoryHistory history : service.<InventoryHistory>getAll()) {
+		for (InventoryHistory history : service.getAll()) {
 			history.janitor();
 			for (InventorySnapshot snapshot : history.getSnapshots()) {
 				if (snapshot.getReason() != SnapshotReason.DEATH)
@@ -119,13 +118,13 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		BiFunction<InventorySnapshot, String, JsonBuilder> function = (snapshot, index) -> {
 			String name = getPlayer(snapshot.getUuid()).getName();
 			int distance = nearbyDeaths.get(snapshot).intValue();
-			String timeSince = timespanDiff(snapshot.getTimestamp());
+			String timeSince = Timespan.of(snapshot.getTimestamp()).format();
 			return json("&3" + index + " &e" + name + " &7- " + distance + "m / " + timeSince + " ago")
 					.hover("&eClick to teleport")
 					.command("/tppos " + getShortLocationString(snapshot.getLocation()));
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(nearbyDeaths).keySet()), function, "/inventorysnapshots nearbyDeaths", page);
+		paginate(Utils.sortByValue(nearbyDeaths).keySet(), function, "/inventorysnapshots nearbyDeaths", page);
 	}
 
 	@EventHandler

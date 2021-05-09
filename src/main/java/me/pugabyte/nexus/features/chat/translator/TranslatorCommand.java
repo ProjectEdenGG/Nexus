@@ -44,7 +44,7 @@ public class TranslatorCommand extends CustomCommand {
 		if (player() == player)
 			throw new InvalidInputException("You cannot translate yourself");
 
-		ArrayList<UUID> uuids = new ArrayList<UUID>() {{
+		ArrayList<UUID> uuids = new ArrayList<>() {{
 			add(uuid());
 			if (Translator.getMap().containsKey(player.getUniqueId()))
 				addAll(Translator.getMap().get(player.getUniqueId()));

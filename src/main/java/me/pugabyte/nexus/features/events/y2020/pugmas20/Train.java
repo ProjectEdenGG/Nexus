@@ -1,14 +1,14 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.WEUtils;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.getWEUtils;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 
 /*
@@ -121,13 +121,13 @@ public class Train {
 		Queue<Paste> pastes = new LinkedList<>();
 
 		for (int i = 1; i <= 109; i++)
-			pastes.add(WEUtils.paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
+			pastes.add(getWEUtils().paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
 
 		for (int i = 1; i <= 95; i++)
-			pastes.add(WEUtils.paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
+			pastes.add(getWEUtils().paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
 
 		for (int i = 1; i <= 110; i++)
-			pastes.add(WEUtils.paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
+			pastes.add(getWEUtils().paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
 
 		Tasks.async(() -> animate(pastes));
 	}
@@ -238,16 +238,16 @@ public class Train {
 				onComplete = () -> animateLights1 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
 				}
 			} else {
 				crossing1_closed = true;
 				animateLights1 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
 				}
 			}
 		} else if (crossing == 2) {
@@ -256,16 +256,16 @@ public class Train {
 				onComplete = () -> animateLights2 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
 				}
 			} else {
 				crossing2_closed = true;
 				animateLights2 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
-					pastes.add(WEUtils.paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
+					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
 				}
 			}
 		}
@@ -349,7 +349,7 @@ public class Train {
 			Location front = origin.getLocation();
 			Location middle = origin.getRelative(-(trainLength / 2), 0, 0).getLocation();
 			Location back = origin.getRelative(-trainLength, 0, 0).getLocation();
-			Collection<Player> players = Pugmas20.WGUtils.getPlayersInRegion("pugmas20_trainsound");
+			Collection<Player> players = Pugmas20.getWGUtils().getPlayersInRegion("pugmas20_trainsound");
 
 			if (stopped) {
 				playStationSound(front, players);
@@ -391,7 +391,7 @@ public class Train {
 	}
 
 	private static boolean isTrainMuted(Player player) {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User pugmasUser = service.get(player);
 		return pugmasUser.isMuteTrain();
 	}

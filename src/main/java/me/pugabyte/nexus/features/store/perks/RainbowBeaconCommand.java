@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.store.perks;
 
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -10,7 +11,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.rainbowbeacon.RainbowBeacon;
 import me.pugabyte.nexus.models.rainbowbeacon.RainbowBeaconService;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -120,7 +120,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 				rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
 	}
 
-	private static final List<Material> colors = new ArrayList<Material>() {{
+	private static final List<Material> colors = new ArrayList<>() {{
 		add(Material.RED_STAINED_GLASS_PANE);
 		add(Material.ORANGE_STAINED_GLASS_PANE);
 		add(Material.YELLOW_STAINED_GLASS_PANE);
@@ -134,7 +134,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	public static void startTask(RainbowBeacon rainbowBeacon) {
 		Location location = rainbowBeacon.getLocation();
 		AtomicInteger i = new AtomicInteger(0);
-		rainbowBeacon.setTaskId(Tasks.repeat(0, Time.SECOND.x(1), () -> {
+		rainbowBeacon.setTaskId(Tasks.repeat(0, Time.SECOND, () -> {
 			if (!location.getBlock().getChunk().isLoaded())
 				return;
 

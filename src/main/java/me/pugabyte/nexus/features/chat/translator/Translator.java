@@ -30,7 +30,7 @@ public class Translator implements Listener {
 
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
-		Player sender = event.getChatter().getPlayer();
+		Player sender = event.getChatter().getOnlinePlayer();
 
 		Tasks.async(() -> {
 			try {

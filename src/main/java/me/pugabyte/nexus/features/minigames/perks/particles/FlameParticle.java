@@ -1,42 +1,39 @@
 package me.pugabyte.nexus.features.minigames.perks.particles;
 
-import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
-import me.pugabyte.nexus.features.minigames.models.perks.common.TickablePerk;
+import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public class FlameParticle extends TickablePerk {
+public class FlameParticle extends PlayerParticlePerk {
 	@Override
 	public String getName() {
-		return "Flame";
+		return "Flames";
 	}
 
 	@Override
 	public ItemStack getMenuItem() {
-		return new ItemStack(Material.MAGMA_BLOCK);
+		return new ItemStack(Material.TORCH);
 	}
 
 	@Override
-	public String[] getDescription() {
-		return new String[]{"Burn like the fire",
-							"that fuels your",
-							"craving for blood!"};
-	}
-
-	@Override
-	public PerkCategory getPerkCategory() {
-		return PerkCategory.PARTICLE;
+	public @NotNull String getDescription() {
+		return "Burn like the fire that fuels your craving for blood!";
 	}
 
 	@Override
 	public int getPrice() {
-		return 0;
+		return 10;
 	}
 
 	@Override
-	public void tick(Player player) {
-		particle(player, Particle.FLAME, 0.002d);
+	public Particle getParticle() {
+		return Particle.FLAME;
+	}
+
+	@Override
+	public double getSpeed() {
+		return 0.002d;
 	}
 }

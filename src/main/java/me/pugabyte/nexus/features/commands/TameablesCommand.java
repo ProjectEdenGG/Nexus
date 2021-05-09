@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands;
 
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,11 +15,11 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.GlowTask;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -32,6 +33,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
@@ -40,6 +42,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
@@ -77,6 +82,9 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void moveHere() {
 		if (!moveQueue.containsKey(uuid()))
 			error("You do not have any animal pending teleport");
+		if (!isPerkAllowedAt(location()))
+			error("You cannot teleport that animal to this location");
+
 		Entity entity = moveQueue.remove(uuid());
 		entity.teleport(player());
 		send(PREFIX + "Summoned your " + camelCase(entity.getType()));
@@ -100,12 +108,21 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("summon <entityType>")
 	@Description("Summon the animals you own (Must be in loaded chunks)")
 	void summon(SummonableTameableEntity entityType) {
-		List<Entity> entities = list(entityType);
-		entities.forEach(entity -> entity.teleport(player()));
-		send(PREFIX + "Summoned &e" + entities.size() + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
+		int failed = 0, succeeded = 0;
+		for (Entity entity : list(entityType))
+			if (isPerkAllowedAt(location())) {
+				entity.teleportAsync(location());
+				++succeeded;
+			} else
+				++failed;
+
+		if (succeeded > 0)
+			send(PREFIX + "Summoned &e" + succeeded + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
+		if (failed > 0)
+			send(PREFIX + "Failed to teleport &e" + failed + " " + camelCase(entityType) + "s to your location &3(not allowed here)");
 	}
 
-	@Path("find [entityType]")
+	@Path("find <entityType>")
 	@Description("Make your nearby animals glow so you can find them")
 	void find(TameableEntity entityType) {
 		List<Entity> entities = list(entityType);
@@ -211,18 +228,18 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 				PendingTameblesAction action = actions.get(uuid);
 				switch (action.getType()) {
-					case TRANSFER:
+					case TRANSFER -> {
 						checkOwner(player, entity);
 						OfflinePlayer transfer = action.getPlayer();
 						updateOwner(entity, player, transfer);
-						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + Nerd.of(transfer).getNickname());
-						break;
-					case UNTAME:
+						send(player, PREFIX + "You have transferred the ownership of your " + entityName + " to " + Nickname.of(transfer));
+					}
+					case UNTAME -> {
 						checkOwner(player, entity);
 						updateOwner(entity, player, null);
 						send(player, PREFIX + "You have untamed your " + entityName);
-						break;
-					case MOVE:
+					}
+					case MOVE -> {
 						if (!SummonableTameableEntity.isSummonable(event.getEntityType())) {
 							send(player, PREFIX + "&cThat animal is not moveable");
 							actions.remove(uuid);
@@ -230,12 +247,12 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						}
 						checkOwner(player, entity);
 						moveQueue.put(player.getUniqueId(), event.getEntity());
-						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here").build());
-						break;
-					case INFO:
-						String owner = getOwner(entity);
+						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here"));
+					}
+					case INFO -> {
+						String owner = getOwnerNames(entity);
 						send(player, PREFIX + "That " + entityName + " is " + (isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
-						break;
+					}
 				}
 				actions.remove(uuid);
 			}
@@ -273,22 +290,40 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		return false;
 	}
 
-	private String getOwner(Entity entity) {
+	private List<AnimalTamer> getOwners(Entity entity) {
+		List<AnimalTamer> owners = new ArrayList<>();
 		if (entity instanceof Tameable) {
 			AnimalTamer tamer = ((Tameable) entity).getOwner();
 			if (tamer != null)
-				return tamer.getName();
+				owners.add(tamer);
 		} else if (entity instanceof Fox) {
 			Fox fox = (Fox) entity;
-			List<String> names = new ArrayList<>();
 			if (fox.getFirstTrustedPlayer() != null)
-				names.add(fox.getFirstTrustedPlayer().getName());
+				owners.add(fox.getFirstTrustedPlayer());
 			if (fox.getSecondTrustedPlayer() != null)
-				names.add(fox.getSecondTrustedPlayer().getName());
-			if (!names.isEmpty())
-				return String.join(" and ", names);
+				owners.add(fox.getSecondTrustedPlayer());
 		}
-		return null;
+		return owners;
+	}
+
+	private String getOwnerNames(Entity entity) {
+		return getOwners(entity).stream().map(AnimalTamer::getName).collect(Collectors.joining(" and "));
+	}
+
+	@EventHandler
+	public void onEntityTeleport(EntityTeleportEvent event) {
+		List<AnimalTamer> owners = getOwners(event.getEntity());
+		if (owners.isEmpty())
+			return;
+
+		for (AnimalTamer owner : owners)
+			if (Rank.of(Bukkit.getOfflinePlayer(owner.getUniqueId())).gte(Rank.NOBLE))
+				return;
+
+		if (isPerkAllowedAt(event.getFrom()) && !isPerkAllowedAt(event.getTo()))
+			return;
+
+		event.setCancelled(true);
 	}
 
 }

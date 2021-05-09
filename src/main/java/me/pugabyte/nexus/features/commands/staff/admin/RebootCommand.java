@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -10,9 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.TitleUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-@Permission("group.admin")
+@Permission("group.seniorstaff")
 public class RebootCommand extends CustomCommand {
 	@Getter
 	private static boolean queued;

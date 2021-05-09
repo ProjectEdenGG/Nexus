@@ -50,13 +50,13 @@ public class HomeCommand extends CustomCommand {
 	@ConverterFor(Home.class)
 	Home convertToHome(String value, OfflinePlayer context) {
 		if (context == null) context = player();
-		return ((HomeOwner) service.get(context)).getHome(value).orElseThrow(() -> new InvalidInputException("That home does not exist"));
+		return service.get(context).getHome(value).orElseThrow(() -> new InvalidInputException("That home does not exist"));
 	}
 
 	@TabCompleterFor(Home.class)
 	public List<String> tabCompleteHome(String filter, OfflinePlayer context) {
 		if (context == null) context = player();
-		return ((HomeOwner) service.get(context)).getNames(filter);
+		return service.get(context).getNames(filter);
 	}
 
 }

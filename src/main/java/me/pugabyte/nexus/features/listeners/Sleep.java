@@ -41,8 +41,10 @@ public class Sleep implements Listener {
 		long sleeping = players.stream().filter(player -> player.isSleeping() && this.canSleep(player)).count();
 		long active = players.stream().filter(this::canSleep).count();
 
-		if (sleeping == 0)
+		if (sleeping == 0) {
+			lastCalculatedSleeping = sleeping;
 			return;
+		}
 
 		int needed = (int) Math.ceil(active / 2d);
 
@@ -82,7 +84,7 @@ public class Sleep implements Listener {
 	}
 
 	protected boolean canSleep(Player player) {
-		return !PlayerUtils.isVanished(player) && !AFK.get(player).isAfk() && player.getGameMode() == GameMode.SURVIVAL;
+		return !PlayerUtils.isVanished(player) && !AFK.get(player).isTimeAfk() && player.getGameMode() == GameMode.SURVIVAL;
 	}
 
 	protected void handle(World world) {

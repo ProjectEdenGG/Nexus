@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.events.aeveonproject.sets.vespyr;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WGUtils;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
 
 public class Sounds {
 	private final List<Material> ignoreMaterials = Arrays.asList(Material.SNOW, Material.SNOW_BLOCK, Material.ICE, Material.PACKED_ICE,
@@ -29,7 +29,7 @@ public class Sounds {
 
 			Tasks.sync(() -> {
 
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.VESPYR.get().getRegion());
+				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.VESPYR.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;

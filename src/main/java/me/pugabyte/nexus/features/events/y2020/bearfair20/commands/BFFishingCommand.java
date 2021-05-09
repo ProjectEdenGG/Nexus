@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.models.WeightedLoot;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -72,7 +72,7 @@ public class BFFishingCommand extends CustomCommand {
 			error("You're aren't fishing!");
 
 		LocalDateTime then = timestamps.get(uuid());
-		String timeSpan = StringUtils.timespanDiff(then);
+		String timeSpan = Timespan.of(then).format();
 		timestamps.remove(uuid());
 
 		String region = getIslandRegion(location());
@@ -128,7 +128,7 @@ public class BFFishingCommand extends CustomCommand {
 	}
 
 	private String getIslandRegion(Location location) {
-		Set<ProtectedRegion> protectedRegions = BearFair20.WGUtils.getRegionsAt(location);
+		Set<ProtectedRegion> protectedRegions = BearFair20.getWGUtils().getRegionsAt(location);
 		for (ProtectedRegion protectedRegion : protectedRegions) {
 			if (protectedRegion.getId().contains(BearFair20.getRegion() + "_")) {
 				String id = protectedRegion.getId();

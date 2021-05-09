@@ -14,7 +14,7 @@ public class TradeSignsCommand extends CustomCommand {
 	@Override
 	public void help() {
 		line();
-		send(json("&eClick here &3to open the wiki on &eTrade Signs").url("https://wiki.bnn.gg/wiki/Economy#Trade_Signs"));
+		send(json("&eClick here &3to open the wiki on &eTrade Signs").url("https://wiki.projecteden.gg/wiki/Economy#Trade_Signs"));
 		line();
 	}
 }

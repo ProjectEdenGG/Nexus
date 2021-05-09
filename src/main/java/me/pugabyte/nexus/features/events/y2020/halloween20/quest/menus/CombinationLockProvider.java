@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus;
 
 import com.mysql.cj.util.StringUtils;
+import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
@@ -18,7 +19,6 @@ import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -87,7 +87,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 			if (correct[0] && correct[1] && correct[2])
 				complete(player);
 			else {
-				SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElseGet(null);
+				SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElse(null);
 				if (inv != null && inv.getProvider() == this)
 					Halloween20Menus.openComboLock(player);
 			}

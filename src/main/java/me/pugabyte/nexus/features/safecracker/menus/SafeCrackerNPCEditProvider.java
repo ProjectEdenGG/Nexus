@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.safecracker.menus;
 
+import eden.annotations.Disabled;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.safecracker.SafeCracker;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -53,7 +53,7 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 				.lore("&3" + npc.getQuestion()).build(), e -> {
 			player.closeInventory();
 			SafeCracker.adminQuestionMap.put(player, npc.getName());
-			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set " + npc.getName() + "'s question").suggest("/safecracker question ").build());
+			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set " + npc.getName() + "'s question").suggest("/safecracker question "));
 		}));
 
 		ItemBuilder builder = new ItemBuilder(Material.PAPER).name("&eAnswers:");

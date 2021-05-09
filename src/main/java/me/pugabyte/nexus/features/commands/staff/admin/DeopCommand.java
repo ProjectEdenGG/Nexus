@@ -39,8 +39,8 @@ public class DeopCommand extends CustomCommand {
 		else
 			Chat.broadcastIngame(PREFIX + oper + " deopped " + opee, StaticChannel.ADMIN);
 
-		if (player.isOnline() && !player.equals(player()))
-			send(player.getPlayer(), PREFIX + "You are no longer op");
+		if (!player.equals(player()))
+			send(player, PREFIX + "You are no longer op");
 	}
 
 	@ConverterFor(ServerOperator.class)

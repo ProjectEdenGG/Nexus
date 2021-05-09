@@ -1,19 +1,21 @@
 name: Nexus
 main: me.pugabyte.nexus.Nexus
 version: ${project.version}
-api-version: "1.16"
+api-version: 1.16
 load: POSTWORLD
+depend:
+  - Multiverse-Core
 softdepend:
+  - BentoBox
   - BlueMap
   - BuycraftX
   - Citizens
-  - Essentials
+  - GlowAPI
   - helper
   - HolographicDisplays
-  - LiteBans
+  - LibsDisguises
   - LWC
   - mcMMO
-  - Multiverse-Core
   - Multiverse-Inventories
   - NBTAPI
   - NoteBlockAPI
@@ -23,7 +25,3 @@ softdepend:
   - Vault
   - Votifier
   - WorldGuard
-  - WorldGuardRegionAPI
-  - GlowAPI
-  - LibsDisguises
-  - BentoBox

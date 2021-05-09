@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Location;
@@ -37,7 +37,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
 // TODO: Change LinkedList to ArrayList, LinkedList is better for array manipulation, and we're not doing any of that here.
-public class WebConfig extends PlayerOwnedObject {
+public class WebConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

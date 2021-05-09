@@ -1,13 +1,12 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.Pumpkin;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.QuestStage;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -65,7 +64,7 @@ public class LostPumpkins implements Listener {
 		}
 		user.getFoundPumpkins().add(event.getClickedBlock().getLocation());
 		Tasks.wait(1, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData()));
-		PacketUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
+//		PacketUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
 		user.send(PREFIX + "You have found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
 		service.save(user);
 		if (user.getFoundPumpkins().size() == 8) {
@@ -77,7 +76,7 @@ public class LostPumpkins implements Listener {
 
 	// Update Pumpkins Per User
 	@EventHandler
-	public void onEnterRegion(RegionEnteredEvent event) {
+	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!event.getRegion().getId().equalsIgnoreCase(Halloween20.getRegion())) return;
 		Halloween20Service service = new Halloween20Service();
@@ -86,7 +85,7 @@ public class LostPumpkins implements Listener {
 			Pumpkin pumpkin = Pumpkin.getByLocation(loc);
 			if (pumpkin == null) continue;
 			event.getPlayer().sendBlockChange(pumpkin.getOriginal(), Material.AIR.createBlockData());
-			PacketUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
+//			PacketUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
 		}
 	}
 

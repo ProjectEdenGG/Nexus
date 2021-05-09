@@ -14,7 +14,7 @@ public class RedstoneOnCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommand("plot set redstone true");
+		runCommand("plots flag set redstone true");
 	}
 
 }

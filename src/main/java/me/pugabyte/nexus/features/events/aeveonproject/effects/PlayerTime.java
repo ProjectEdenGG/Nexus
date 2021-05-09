@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.events.aeveonproject.effects;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.aeveonproject.APUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.Collection;
 
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.APWorld;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWorld;
 
 public class PlayerTime implements Listener {
 
@@ -37,7 +37,7 @@ public class PlayerTime implements Listener {
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
-		if (event.getFrom().equals(APWorld))
+		if (event.getFrom().equals(getWorld()))
 			event.getPlayer().resetPlayerTime();
 	}
 }

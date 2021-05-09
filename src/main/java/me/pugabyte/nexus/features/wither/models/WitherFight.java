@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.wither.models;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.Title;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -10,18 +11,51 @@ import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.Mute
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.wither.BeginningCutscene;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
-import me.pugabyte.nexus.utils.*;
-import org.bukkit.*;
+import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldEditUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Blaze;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.PiglinBrute;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -33,7 +67,12 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -65,7 +104,7 @@ public abstract class WitherFight implements Listener {
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(location -> {
 			Chat.broadcastIngame(new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
-					.command("/wither spectate").hover("&eYou will be teleported to the wither arena"), MuteMenuItem.EVENTS);
+					.command("/wither spectate").hover("&eYou will be teleported to the wither arena"), MuteMenuItem.BOSS_FIGHT);
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
 			new WorldEditUtils("events").set("witherarena-lobby", BlockTypes.NETHERRACK);
@@ -96,10 +135,8 @@ public abstract class WitherFight implements Listener {
 			for (UUID uuid : alivePlayers) {
 				try {
 					OfflinePlayer player = PlayerUtils.getPlayer(uuid).getPlayer();
-					Nexus.debug("Registering team");
 					if (!player.isOnline()) continue;
 					Team team = scoreboard.registerNewTeam("wither-" + uuid.toString().split("-")[0]);
-					Nexus.debug("Registered new Team: " + team.getName());
 					team.addEntry(player.getName());
 					player.getPlayer().setScoreboard(scoreboard);
 					scoreboardTeams.put(uuid, team);
@@ -112,7 +149,6 @@ public abstract class WitherFight implements Listener {
 				for (UUID uuid : alivePlayers) {
 					OfflinePlayer player = PlayerUtils.getPlayer(uuid).getPlayer();
 					if (!player.isOnline()) continue;
-					Nexus.debug("Setting team " + scoreboardTeams.get(uuid).getName() + "'s prefix to " + ((int) player.getPlayer().getHealth()) + " &c❤ &r");
 					scoreboardTeams.get(uuid).setPrefix(colorize(((int) player.getPlayer().getHealth()) + " &c❤ &r"));
 				}
 			}));
@@ -288,7 +324,7 @@ public abstract class WitherFight implements Listener {
 			int partySize = party.size();
 			Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode", MuteMenuItem.EVENTS);
+					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode", MuteMenuItem.BOSS_FIGHT);
 			Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 					" lost to the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode");
@@ -326,7 +362,7 @@ public abstract class WitherFight implements Listener {
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" successfully beaten the Wither in " +
-				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star"), MuteMenuItem.EVENTS);
+				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star"), MuteMenuItem.BOSS_FIGHT);
 		Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
 				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "and got the star" : "but did not get the star"));

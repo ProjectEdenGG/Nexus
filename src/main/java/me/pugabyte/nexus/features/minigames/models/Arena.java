@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.minigames.models;
 import com.google.common.base.Strings;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.interfaces.Named;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,12 +19,18 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +49,7 @@ import static me.pugabyte.nexus.utils.SerializationUtils.YML.serializeMaterialSe
 @AllArgsConstructor
 @SerializableAs("Arena")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Arena implements ConfigurationSerializable {
+public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private int id = ArenaManager.getNextId();
@@ -56,7 +63,9 @@ public class Arena implements ConfigurationSerializable {
 	@NonNull
 	private MechanicType mechanicType = MechanicType.FREE_FOR_ALL;
 	@NonNull
-	private List<Team> teams = new ArrayList<Team>() {{ add(new Team()); }};
+	private List<Team> teams = new ArrayList<>() {{
+		add(new Team());
+	}};
 	@NonNull
 	private Lobby lobby = new Lobby();
 	private Location spectateLocation;
@@ -113,7 +122,7 @@ public class Arena implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("id", getId());
 			put("name", getName());
 			put("displayName", getDisplayName());
@@ -137,6 +146,11 @@ public class Arena implements ConfigurationSerializable {
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 		}};
+	}
+
+	public @NotNull TextComponent asComponent() {
+		return Component.text(getDisplayName(), NamedTextColor.YELLOW)
+				.hoverEvent(HoverEvent.showText(Component.text(getMechanic().getName(), NamedTextColor.DARK_AQUA)));
 	}
 
 	public World getWorld() {

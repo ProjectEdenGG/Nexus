@@ -6,8 +6,8 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

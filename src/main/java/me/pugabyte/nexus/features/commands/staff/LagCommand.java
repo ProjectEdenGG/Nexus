@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -7,7 +8,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -17,7 +17,7 @@ import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Permission("group.seniorstaff")
 @Aliases({"gc", "memory", "uptime"})
@@ -30,7 +30,7 @@ public class LagCommand extends CustomCommand {
 	@Path
 	void lag() {
 		LocalDateTime startTime = Utils.epochSecond(ManagementFactory.getRuntimeMXBean().getStartTime());
-		send(json("&3Uptime: &e" + StringUtils.timespanDiff(startTime)).hover("&3" + shortDateTimeFormat(startTime)));
+		send(json("&3Uptime: &e" + Timespan.of(startTime).format()).hover("&3" + shortDateTimeFormat(startTime)));
 		send(ScoreboardLine.TPS.render(null));
 		send("&3Max ram: &e" + Runtime.getRuntime().maxMemory() / 1024 / 1024);
 		send("&3Allocated ram: &e" + Runtime.getRuntime().totalMemory() / 1024 / 1024);
@@ -42,14 +42,11 @@ public class LagCommand extends CustomCommand {
 			if (world.getLoadedChunks().length == 0)
 				continue;
 
-			String type = "Normal";
-			switch (world.getEnvironment()) {
-				case NETHER:
-					type = "Nether";
-					break;
-				case THE_END:
-					type = "&3 &3 &3 &3 End";
-			}
+			String type = switch (world.getEnvironment()) {
+				case NETHER -> "Nether";
+				case THE_END -> "&3 &3 &3 &3 End";
+				default -> "Normal";
+			};
 
 			int tileEntities = 0;
 			try {

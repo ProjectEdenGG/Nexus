@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -10,9 +11,10 @@ import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.vote.TopVoter;
@@ -22,8 +24,7 @@ import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Time.Timer;
+import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -80,14 +81,14 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private static MessageEmbed createEmbed(String username) {
-		EmbedBuilder builder = new EmbedBuilder().setTitle("https://bnn.gg/vote").setDescription("");
+		EmbedBuilder builder = new EmbedBuilder().setTitle("https://projecteden.gg/vote").setDescription("");
 		for (VoteSite value : VoteSite.values())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();
 	}
 
 	private void sendVoteReminder(Vote vote) {
-		DiscordUser discordUser = new DiscordService().get(vote.getUuid());
+		DiscordUser discordUser = new DiscordUserService().get(UUID.fromString(vote.getUuid()));
 		if (discordUser.getUserId() == null)
 			return;
 
@@ -112,7 +113,7 @@ public class Votes extends Feature implements Listener {
 		String username = event.getVote().getUsername().replaceAll(" ", "");
 		OfflinePlayer player = null;
 		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
-		String name = player != null ? Nerd.of(player).getNickname() : "Unknown";
+		String name = player != null ? Nickname.of(player) : "Unknown";
 		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
@@ -142,15 +143,14 @@ public class Votes extends Feature implements Listener {
 		if (player != null) {
 			int points = vote.getExtra() + basePoints;
 			new Voter(player).givePoints(points);
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), VPS.PREFIX + "You have received " + points + plural(" point", points));
+			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
 
 		Tasks.async(Votes::write);
 	}
 
 	private static final int basePoints = 1;
-	private static final Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
+	private static final Map<Integer, Integer> extras = new HashMap<>() {{
 		put(1500, 50);
 		put(500, 25);
 		put(200, 15);

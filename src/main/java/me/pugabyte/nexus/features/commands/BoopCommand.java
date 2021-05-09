@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
@@ -8,9 +9,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -92,10 +92,10 @@ public class BoopCommand extends CustomCommand {
 			message = " &3and said &e" + message;
 
 		if (anon) {
-			toBooper += "&3You anonymously booped &e" + Nerd.of(booped).getNickname() + message;
+			toBooper += "&3You anonymously booped &e" + Nickname.of(booped) + message;
 			toBooped += "&eSomebody &3booped you" + message;
 		} else {
-			toBooper += "&3You booped &e" + Nerd.of(booped).getNickname() + message;
+			toBooper += "&3You booped &e" + Nickname.of(booped) + message;
 			toBooped += "&e" + nickname() + " &3booped you" + message;
 		}
 

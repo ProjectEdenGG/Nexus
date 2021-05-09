@@ -12,18 +12,19 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "One Flag Capture the Flag";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Find the flag and capture it at the other team's base";
 	}
 
@@ -88,6 +89,9 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 				matchData.setFlagCarrier(null);
 
 				flagMessage(event.getMatch().getMinigamers(), minigamer, minigamer.getColoredName() + "&3 dropped the flag", true);
+
+				if (event.getAttacker() != null)
+					event.getAttacker().contributionScored(10);
 			}
 		}
 
@@ -101,6 +105,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 		flagMessage(match.getMinigamers(), minigamer.getColoredName() + "&3 captured the flag", true);
 
 		minigamer.scored();
+		minigamer.contributionScored(19);
 		minigamer.getMatch().scored(minigamer.getTeam());
 
 		matchData.setFlagCarrier(null);

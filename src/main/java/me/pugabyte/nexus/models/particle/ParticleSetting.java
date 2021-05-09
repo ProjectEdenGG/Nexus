@@ -39,26 +39,12 @@ public enum ParticleSetting {
 	RADIUS(2, 4, Material.HOPPER, Double.class, ParticleType.valuesExcept(ParticleType.BANDS, ParticleType.NYAN_CAT, ParticleType.CIRCLES, ParticleType.DOUBLE_CHAOS, ParticleType.SPIRAL, ParticleType.WINGS)) {
 		@Override
 		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
-			switch (particleType) {
-				case CIRCLE:
-				case STAR:
-				case GROWING_STARS:
-					return 2.0;
-				case TRIANGLE:
-				case SQUARE:
-				case PENTAGON:
-				case HEXAGON:
-				case SPHERE:
-				case SPRITE:
-				case CHAOS:
-				case STORM:
-					return 1.5;
-				case HALO:
-				case DISCO:
-					return 0.5;
-				default:
-					throw new InvalidInputException("Particle type does not support this particle setting");
-			}
+			return switch (particleType) {
+				case CIRCLE, STAR, GROWING_STARS -> 2.0;
+				case TRIANGLE, SQUARE, PENTAGON, HEXAGON, SPHERE, SPRITE, CHAOS, STORM -> 1.5;
+				case HALO, DISCO -> 0.5;
+				default -> throw new InvalidInputException("Particle type does not support this particle setting");
+			};
 		}
 
 		@Override
@@ -107,18 +93,11 @@ public enum ParticleSetting {
 	ROTATE_SPEED(2, 6, Material.SUGAR, Double.class, ParticleType.STAR, ParticleType.GROWING_STARS, ParticleType.TRIANGLE, ParticleType.SQUARE, ParticleType.PENTAGON, ParticleType.HEXAGON) {
 		@Override
 		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
-			switch (particleType) {
-				case STAR:
-				case GROWING_STARS:
-					return 0.2;
-				case TRIANGLE:
-				case SQUARE:
-				case PENTAGON:
-				case HEXAGON:
-					return 1.5;
-				default:
-					throw new InvalidInputException("Particle type does not support this particle setting");
-			}
+			return switch (particleType) {
+				case STAR, GROWING_STARS -> 0.2;
+				case TRIANGLE, SQUARE, PENTAGON, HEXAGON -> 1.5;
+				default -> throw new InvalidInputException("Particle type does not support this particle setting");
+			};
 		}
 
 		@Override
@@ -260,7 +239,7 @@ public enum ParticleSetting {
 		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			for (int i = 1; i <= 16; i++)
 				if (particleOwner.getOfflinePlayer().isOnline())
-					if (particleOwner.getPlayer().hasPermission("wings.style." + i))
+					if (particleOwner.getOnlinePlayer().hasPermission("wings.style." + i))
 						return WingsEffect.WingStyle.values()[i - 1];
 			return WingsEffect.WingStyle.ONE;
 		}

@@ -5,7 +5,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.models.emote.EmoteService;
 import me.pugabyte.nexus.models.emote.EmoteUser;
-import me.pugabyte.nexus.utils.RandomUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
@@ -87,27 +86,38 @@ public enum Emotes {
 		OfflinePlayer player = event.getChatter().getOfflinePlayer();
 		if (!Nexus.getPerms().playerHas(null, player, "emoticons.use"))
 			return;
-		if (!((EmoteUser) new EmoteService().get(player)).isEnabled())
+		EmoteUser user = new EmoteService().get(player);
+		if (!user.isEnabled())
 			return;
 
-		event.setMessage(process(event.getMessage(), event.getChannel().getMessageColor()));
+		event.setMessage(process(user, event.getMessage(), event.getChannel().getMessageColor()));
 	}
 
-	public static String process(String message) {
-		return process(message, null);
+	public static String process(EmoteUser user, String message) {
+		return process(user, message, null);
 	}
 
-	public static String process(String message, ChatColor resetColor) {
-		for (Emotes value : values())
-			while (indexOfIgnoreCase(message, value.getKey()) > -1) {
-				String result = value.getEmote();
+	public static String process(EmoteUser user, String message, ChatColor resetColor) {
+		Nexus.debug("Message: " + message);
+		String reset = resetColor == null ? "" : resetColor.toString();
+		for (Emotes emote : values()) {
+			if (!user.isEnabled(emote))
+				continue;
 
-				if (value.getColors().size() > 0)
-					result = RandomUtils.randomElement(value.getColors()) + result;
+			while (indexOfIgnoreCase(message, emote.getKey()) > -1) {
+				Nexus.debug("Found emote " + emote.getKey());
+				String result = emote.getEmote();
 
-				int index = indexOfIgnoreCase(message, value.getKey());
-				message = message.substring(0, index) + colorize(result) + (resetColor != null ? resetColor : "") + message.substring(index + value.getKey().length());
+				if (emote.getColors().size() > 0)
+					result = user.getRandomColor(emote) + result;
+
+				result = colorize(result + reset);
+				int index = indexOfIgnoreCase(message, emote.getKey());
+				Nexus.debug("  Index: " + index);
+				message = message.substring(0, index) + result + message.substring(index + emote.getKey().length());
+				Nexus.debug("  New message: " + message);
 			}
+		}
 		return message;
 	}
 }

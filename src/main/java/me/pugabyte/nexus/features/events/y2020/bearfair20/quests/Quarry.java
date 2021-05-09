@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

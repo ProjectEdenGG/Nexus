@@ -67,7 +67,7 @@ public class BattleshipMatchData extends MatchData {
 		for (Team team : match.getArena().getTeams()) {
 			grids.put(team, new Grid(team));
 
-			ships.put(team, new HashMap<ShipType, Ship>() {{
+			ships.put(team, new HashMap<>() {{
 				for (ShipType shipType : ShipType.values())
 					put(shipType, new Ship(team, shipType));
 			}});
@@ -242,7 +242,7 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public List<String> getChatGrid() {
-			return new ArrayList<String>(Collections.nCopies(10, "")) {{
+			return new ArrayList<>(Collections.nCopies(10, "")) {{
 				coordinates.forEach(coordinate -> {
 					ChatColor color = coordinate.getState().getColor();
 					if (coordinate.getState() == State.OCCUPIED)

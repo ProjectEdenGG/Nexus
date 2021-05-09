@@ -67,8 +67,8 @@ public class KitCommand extends CustomCommand implements Listener {
 		if (!player().hasPermission("kit." + kit.getName()))
 			error("You do not have permission to use this kit");
 		CooldownService service = new CooldownService();
-		if (!service.check(player(), "kit." + kit.getName(), kit.getDelay()))
-			error("You must wait " + service.getDiff(player(), "kit." + kit.getName()) + " before you can receive that kit again");
+		if (!service.check(player(), "kit-" + kit.getName(), kit.getDelay()))
+			error("You must wait " + service.getDiff(player(), "kit-" + kit.getName()) + " before you can receive that kit again");
 		PlayerUtils.giveItems(player(), Arrays.asList(kit.getItems()));
 		send(PREFIX + "You have been given the &e" + StringUtils.camelCase(kit.getName()) + " &3kit");
 	}
@@ -80,7 +80,7 @@ public class KitCommand extends CustomCommand implements Listener {
 		for (Kit kit : kits)
 			if (player().hasPermission("kit." + kit.getName().replace(" ", "_")))
 				list.add(kit.getName().replace(" ", "_"));
-		return list.stream().filter(name -> name.contains(filter)).collect(Collectors.toList());
+		return list.stream().filter(name -> name.toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toList());
 	}
 
 	@ConverterFor(Kit.class)

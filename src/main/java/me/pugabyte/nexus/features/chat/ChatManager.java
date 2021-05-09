@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.chat;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.Setter;
 import me.pugabyte.nexus.features.chat.events.PrivateChatEvent;
@@ -13,10 +14,11 @@ import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import net.kyori.adventure.audience.MessageType;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -47,7 +49,7 @@ public class ChatManager {
 	}
 
 	public static Optional<PublicChannel> getChannelByDiscordId(String id) {
-		return channels.stream().filter(_channel -> _channel.getDiscordChannel() != null && _channel.getDiscordChannel().getId().equalsIgnoreCase(id)).findFirst();
+		return channels.stream().filter(_channel -> _channel.getDiscordTextChannel() != null && _channel.getDiscordTextChannel().getId().equalsIgnoreCase(id)).findFirst();
 	}
 
 	public static void addChannel(PublicChannel channel) {
@@ -60,7 +62,7 @@ public class ChatManager {
 
 		message = message.trim();
 
-		if (!PlayerUtils.isAdminGroup(chatter.getPlayer()))
+		if (!PlayerUtils.isAdminGroup(chatter.getOnlinePlayer()))
 			message = stripColor(message);
 
 		if (message.length() == 0)
@@ -96,7 +98,7 @@ public class ChatManager {
 					process(event);
 			}
 		} catch (InvalidInputException ex) {
-			PlayerUtils.send(chatter.getPlayer(), Chat.PREFIX + "&c" + ex.getMessage());
+			PlayerUtils.send(chatter.getOnlinePlayer(), Chat.PREFIX + "&c" + ex.getMessage());
 		}
 	}
 
@@ -109,9 +111,18 @@ public class ChatManager {
 		JsonBuilder staff = new JsonBuilder(chatterFormat);
 
 		Nerd nerd = Nerd.of(event.getChatter());
-		if (nerd.hasNickname()) {
-			json.hover("&3Real name: &e" + nerd.getName()).group();
-			staff.hover("&3Real name: &e" + nerd.getName()).group();
+
+		List<String> hoverLines = new ArrayList<>();
+		if (nerd.hasNickname())
+			hoverLines.add("&3Real name: &e" + nerd.getName());
+		// disabled until pride month
+//		if (!nerd.getPronouns().isEmpty())
+//			hoverLines.add("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e"+pronoun+"&3").collect(Collectors.joining(", ")));
+
+		if (!hoverLines.isEmpty()) {
+			String hover = String.join("\n", hoverLines);
+			json.hover(hover).group();
+			staff.hover(hover).group();
 		}
 
 		json.next(event.getMessage());
@@ -119,26 +130,24 @@ public class ChatManager {
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")
-					.addHover("&cChat message was filtered")
-					.addHover("&cClick to see original message")
+					.hover("&cChat message was filtered")
+					.hover("&cClick to see original message")
 					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
 
 		event.getRecipients().forEach(recipient -> {
-			if (Rank.of(recipient.getPlayer()).isStaff())
-				recipient.send(staff);
+			if (Rank.of(recipient.getOnlinePlayer()).isStaff())
+				recipient.send(event, staff, MessageType.CHAT);
 			else
-				recipient.send(json);
+				recipient.send(event, json, MessageType.CHAT);
 		});
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}
 
 	public static void process(PrivateChatEvent event) {
-		Set<String> othersNames = event.getChannel().getOthersNames(event.getChatter());
-
-		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> ")
+		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + event.getRecipientNames() + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
-		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nerd.of(event.getChatter().getOfflinePlayer()).getNickname() + " &b&l> ")
+		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nickname.of(event.getChatter()) + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 
 		int seen = 0;
@@ -147,23 +156,24 @@ public class ChatManager {
 
 			if (!recipient.equals(event.getChatter())) {
 				boolean canSee = canSee(event.getChatter().getOfflinePlayer(), recipient.getOfflinePlayer());
-				String notOnline = new PlayerNotOnlineException(recipient.getOfflinePlayer()).getMessage();
+				JsonBuilder notOnline = new JsonBuilder(Chat.PREFIX).next(new PlayerNotOnlineException(recipient.getOfflinePlayer()).getJson());
+
 				if (!recipient.getOfflinePlayer().isOnline())
-					event.getChatter().send(Chat.PREFIX + notOnline);
+					event.getChatter().send(notOnline);
 				else {
-					recipient.send(from);
+					recipient.send(event, from, MessageType.CHAT);
 					if (canSee)
 						++seen;
 					else
-						event.getChatter().send(Chat.PREFIX + notOnline);
+						event.getChatter().send(notOnline);
 				}
 			}
 		}
 
 		if (seen > 0)
-			event.getChatter().send(to);
+			event.getChatter().send(event, to, MessageType.CHAT);
 
-		Bukkit.getConsoleSender().sendMessage(event.getChatter().getOfflinePlayer().getName() + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
+		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + event.getRecipientNames() + ": " + event.getMessage());
 	}
 
 }

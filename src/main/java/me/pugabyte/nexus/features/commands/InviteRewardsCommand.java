@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.commands;
 
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
@@ -10,14 +9,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.inviterewards.InviteRewards;
+import me.pugabyte.nexus.models.inviterewards.InviteRewardsService;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.vote.Voter;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.configuration.Configuration;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -35,17 +33,17 @@ public class InviteRewardsCommand extends CustomCommand {
 		if (inviter.equals(invited))
 			error(colorize("You cannot invite yourself!"));
 
-		if (inviter.getFirstPlayed() >= invited.getFirstPlayed())
-			error("You joined after &e" + invited.getName() + "&3, so you can't have invited them!");
+		if (Nerd.of(inviter).getFirstJoin().isAfter(Nerd.of(invited).getFirstJoin()))
+			error("You joined after &e" + invited.getName() + "&c, so you can't have invited them!");
 
 		if (hasBeenInvitedBefore(invited))
-			error("&e" + invited.getName() + "&3 has already confirmed being invited by someone else");
+			error("&e" + invited.getName() + "&c has already confirmed being invited by someone else");
 
 		if (!invited.hasPermission("invite.rewards.confirm"))
-			error("The person you are inviting must be a &fMember &3or above.");
+			error("The person you are inviting must be a &fMember &cor above.");
 
 		if (getMinutesPlayed(invited) < 60)
-			error("&e" + invited.getName() + "&3 has to play for an hour before you can do that.");
+			error("&e" + invited.getName() + "&c has to play for an hour before you can do that.");
 
 		sendInviteConfirmation(inviter, invited);
 	}
@@ -55,21 +53,21 @@ public class InviteRewardsCommand extends CustomCommand {
 	@Path("confirm <inviter>")
 	void confirm(Player inviter) {
 		Player invited = player();
-		if (inviter.getFirstPlayed() >= invited.getFirstPlayed())
-			error("&e" + inviter.getName() + " &3joined after you, so you can't have been invited by them!");
+		if (Nerd.of(inviter).getFirstJoin().isAfter(Nerd.of(invited).getFirstJoin()))
+			error("&e" + inviter.getName() + " &cjoined after you, so you can't have been invited by them!");
 
-		if (!hasBeenInvitedBefore(invited))
-			error("&3You have already confirmed being invited by someone else");
+		if (hasBeenInvitedBefore(invited))
+			error("&cYou have already confirmed being invited by someone else");
 
 		if (getMinutesPlayed(invited) < 60)
 			error("You have to play for an hour before you can do that.");
 
-		send(inviter, "&e" + invited.getName() + "&3 has confirmed your invite; thank you for " +
-				"helping Bear Nation grow! You earned &e15 vote points");
-		send(invited, "You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you " +
-				"for flying Bear Nation!");
+		send(inviter, PREFIX + "&e" + invited.getName() + "&3 has confirmed your invite; thank you for " +
+				"helping Project Eden grow! You earned &e15 vote points");
+		send(invited, PREFIX + "You have confirmed &e" + inviter.getName() + "'s &3invite. Thank you " +
+				"for flying Project Eden!");
 		reward(inviter);
-		saveInvitation(invited, inviter);
+		saveInvitation(inviter, invited);
 	}
 
 	@HideFromHelp
@@ -82,58 +80,31 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	private static boolean hasBeenInvitedBefore(Player invited) {
-		Configuration config = Nexus.getInstance().getConfig();
-		try {
-			for (String _inviter : config.getConfigurationSection("inviterewards.invited").getKeys(false)) {
-				for (String _invited : config.getStringList("inviterewards.invited." + _inviter)) {
-					if (_invited.contains(invited.getUniqueId().toString())) {
-						return true;
-					}
-				}
-			}
-		} catch (NullPointerException ex) {
-			return false;
-		}
-		return false;
+		return new InviteRewardsService().hasBeenInvited(invited.getUniqueId());
 	}
 
 	private void sendInviteConfirmation(Player inviter, Player invited) {
-		// Inviter
-		send(inviter, "Invite confirmation sent to &e" + invited.getName());
-
 		// Invited player
 		send(invited, "");
-		send(invited, new ComponentBuilder("")
-				.append("  Did ").color(ChatColor.DARK_AQUA)
-				.append(inviter.getName()).color(ChatColor.YELLOW)
-				.append(" invite you to Bear Nation?").color(ChatColor.DARK_AQUA)
-				.create());
+		send(invited, json("  &3Did &e" + Nickname.of(inviter) + " &3invite you to Project Eden?"));
 
-		send(invited, new ComponentBuilder("")
-				.append("  Click one  ||").color(ChatColor.DARK_AQUA)
-				.append("  Yes  ").color(ChatColor.GREEN).bold(true)
-				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ("/invited confirm " + inviter.getName())))
-				.append("||").color(ChatColor.DARK_AQUA).bold(false)
-				.append("  No  ").color(ChatColor.RED).bold(true)
-				.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ("/invited deny " + inviter.getName())))
-				.create());
+		send(invited, json()
+				.next("  &3Click one  ||").color(NamedTextColor.DARK_AQUA)
+				.next("  &a&lYes  ").command("/invited confirm " + inviter.getName())
+				.group()
+				.next("&3||")
+				.group()
+				.next("  &c&lNo  ").command("/invited deny " + inviter.getName()));
+		send(invited, "");
+
+		// Inviter
+		send(inviter, PREFIX + "Invite confirmation sent to &e" + invited.getName());
 	}
 
-	static void saveInvitation(Player invitee, Player inviter) {
-		String UUIDer = inviter.getUniqueId().toString();
-		String UUIDed = invitee.getUniqueId().toString();
-
-		Configuration config = Nexus.getInstance().getConfig();
-
-		List<String> invited = config.getStringList("inviterewards.invited." + UUIDer);
-		invited.add(UUIDed);
-		config.set("inviterewards.invited." + UUIDer, invited);
-
-		try {
-			Nexus.getInstance().saveConfig();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	static void saveInvitation(Player inviter, Player invitee) {
+		InviteRewards inviteRewards = new InviteRewardsService().get(inviter);
+		inviteRewards.getInvited().add(invitee.getUniqueId());
+		new InviteRewardsService().save(inviteRewards);
 	}
 
 	private void reward(Player inviter) {
@@ -141,7 +112,7 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	private long getMinutesPlayed(Player player) {
-		Hours hours = new HoursService().get(player);
+		Hours hours = new HoursService().get(player.getUniqueId());
 		return hours.getTotal() / 60;
 	}
 

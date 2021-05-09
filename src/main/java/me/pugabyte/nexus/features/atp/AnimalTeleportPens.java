@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.atp;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
@@ -10,7 +11,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.nexus.utils.CitizensUtils.isNPC;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
@@ -28,17 +29,19 @@ public class AnimalTeleportPens {
 
 	public AnimalTeleportPens(Player player) {
 		this.player = player;
-		WGUtils = new WorldGuardUtils(player);
+		this.WGUtils = new WorldGuardUtils(player);
 	}
 
 	public boolean multiplePlayers() {
-		return WGUtils.getPlayersInRegion(getRegion(player).getId()).size() > 1;
+		return WGUtils.getPlayersInRegion(getRegion(player)).size() > 1;
 	}
 
 	public List<Entity> getEntities() {
 		List<Entity> finalEntities = new ArrayList<>();
-		for (Entity entity : WGUtils.getEntitiesInRegion(getRegion(player).getId())) {
-			if (CitizensAPI.getNPCRegistry().isNPC(entity)) continue;
+		for (Entity entity : WGUtils.getEntitiesInRegion(getRegion(player))) {
+			if (isNPC(entity))
+				continue;
+
 			switch (entity.getType()) {
 				case BEE:
 				case FOX:
@@ -60,6 +63,7 @@ public class AnimalTeleportPens {
 				case RABBIT:
 				case POLAR_BEAR:
 				case VILLAGER:
+				case MUSHROOM_COW:
 					finalEntities.add(entity);
 					break;
 				default:
@@ -72,62 +76,46 @@ public class AnimalTeleportPens {
 		int price = 0;
 		for (Entity entity : entities) {
 			switch (entity.getType()) {
-				case PIG:
-				case RABBIT:
-				case FOX:
-				case TURTLE:
-					price += 100;
-					break;
-				case COW:
-				case SHEEP:
-				case POLAR_BEAR:
-				case PANDA:
-					price += 150;
-					break;
-				case HORSE:
-				case DONKEY:
-				case MULE:
-				case LLAMA:
-				case TRADER_LLAMA:
-					price += 250;
-					break;
-				case VILLAGER:
-					price += 500;
-					break;
-				default:
-					price += 50;
-					break;
+				case PIG, RABBIT, FOX, TURTLE ->
+						price += 100;
+				case COW, SHEEP, MUSHROOM_COW, POLAR_BEAR, PANDA ->
+						price += 150;
+				case HORSE, DONKEY, MULE, LLAMA, TRADER_LLAMA ->
+						price += 250;
+				case VILLAGER ->
+						price += 500;
+				default ->
+						price += 50;
 			}
 		}
 		return price;
 	}
 
 	public ProtectedRegion getRegion(Player player) {
-		for (ProtectedRegion region : WGUtils.getRegionsAt(player.getLocation())) {
-			if (region.getId().contains("atp_")) return region;
-		}
-		return null;
+		return WGUtils.getRegionsLikeAt("atp_.*", player.getLocation()).stream().findFirst().orElse(null);
 	}
 
 	public void confirm(Player player, Location toLoc) {
 		ProtectedRegion region = getRegion(player);
 		if (region == null) {
-			PlayerUtils.send(player, PREFIX + "You are not inside an ATP region");
+			PlayerUtils.send(player, PREFIX + "&cYou are not inside an ATP region");
 			return;
 		}
+
 		if (multiplePlayers()) {
 			player.closeInventory();
 			PlayerUtils.send(player, PREFIX + "&cDetected multiple players. Cancelling.");
 			return;
 		}
+
 		List<Entity> entities = getEntities();
 		if (entities.size() == 0) {
 			PlayerUtils.send(player, PREFIX + "&cThere are no entities to teleport");
 			return;
 		}
+
 		int price = getPrice(entities);
-		double balance = new BankerService().getBalance(player, ShopGroup.SURVIVAL);
-		if (balance < price) {
+		if (!Banker.of(player).has(price, ShopGroup.of(player))) {
 			PlayerUtils.send(player, PREFIX + "&cYou do not have enough money to use the ATP");
 			return;
 		}

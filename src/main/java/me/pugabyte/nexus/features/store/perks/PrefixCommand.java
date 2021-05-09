@@ -5,13 +5,13 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.emote.EmoteService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.OfflinePlayer;
 
 import java.util.regex.Matcher;
 
@@ -46,19 +46,19 @@ public class PrefixCommand extends CustomCommand {
 	}
 
 	@Path("expire <player>")
-	void expire(OfflinePlayer player) {
+	@Permission("group.admin")
+	void expire(Nerd nerd) {
 		console();
-		nerd = Nerd.of(player);
 		nerd.setPrefix(null);
 		service.save(nerd);
-		send(PREFIX + "Reset prefix");
+		send(PREFIX + "Reset prefix of " + nerd.getNickname());
 	}
 
 	@Path("<prefix...>")
 	@Permission("set.my.prefix")
 	void prefix(String input) {
 		if (player().hasPermission("emoticons.use"))
-			input = Emotes.process(input);
+			input = Emotes.process(new EmoteService().get(player()), input);
 
 		if (stripColor(input).length() > 10)
 			error("Your prefix cannot be more than 10 characters");

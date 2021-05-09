@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.menus;
 
+import eden.exceptions.EdenException;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.SmartInventory;
@@ -13,10 +14,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -68,8 +71,20 @@ public abstract class MenuUtils {
 		return isClickType(e, ClickType.LEFT);
 	}
 
-	protected boolean isClickType(ItemClickData e, ClickType clickType) {
-		return e.getEvent() instanceof InventoryClickEvent && ((InventoryClickEvent) e.getEvent()).getClick() == clickType;
+	protected boolean isShiftClick(ItemClickData e) {
+		return isClickType(e, ClickType.SHIFT_LEFT, ClickType.SHIFT_RIGHT);
+	}
+
+	protected boolean isShiftLeftClick(ItemClickData e) {
+		return isClickType(e, ClickType.SHIFT_LEFT);
+	}
+
+	protected boolean isShiftRightClick(ItemClickData e) {
+		return isClickType(e, ClickType.SHIFT_RIGHT);
+	}
+
+	protected boolean isClickType(ItemClickData e, ClickType... clickTypes) {
+		return e.getEvent() instanceof InventoryClickEvent && Arrays.asList(clickTypes).contains(((InventoryClickEvent) e.getEvent()).getClick());
 	}
 
 	protected ItemStack addGlowing(ItemStack itemStack) {
@@ -143,9 +158,13 @@ public abstract class MenuUtils {
 
 	public static void handleException(Player player, String prefix, Throwable ex) {
 		if (ex.getCause() != null && ex.getCause() instanceof NexusException)
-			PlayerUtils.send(player, prefix + "&c" + ex.getCause().getMessage());
+			PlayerUtils.send(player, new JsonBuilder(prefix + "&c").next(((NexusException) ex.getCause()).getJson()));
 		else if (ex instanceof NexusException)
-			PlayerUtils.send(player, prefix + "&c" + ex.getMessage());
+			PlayerUtils.send(player, new JsonBuilder(prefix + "&c").next(((NexusException) ex).getJson()));
+		else if (ex.getCause() != null && ex.getCause() instanceof EdenException)
+			PlayerUtils.send(player, new JsonBuilder(prefix + "&c").next(ex.getCause().getMessage()));
+		else if (ex instanceof EdenException)
+			PlayerUtils.send(player, new JsonBuilder(prefix + "&c").next(ex.getMessage()));
 		else {
 			PlayerUtils.send(player, "&cAn internal error occurred while attempting to execute this command");
 			ex.printStackTrace();
@@ -183,14 +202,30 @@ public abstract class MenuUtils {
 		int curPage = page.getPage() + 1;
 
 		String[] lore = {"&f", "&7Right click to jump to a page"};
+		boolean hasResourcePack = ResourcePack.isEnabledFor(player);
+
+		int prevPage = Math.max(curPage - 1, 1);
+		int nextPage = curPage + 1;
+
+		ItemBuilder prev = new ItemBuilder(Material.ARROW).name("&fPrevious Page").lore(lore);
+		ItemBuilder next = new ItemBuilder(Material.ARROW).name("&fNext Page").lore(lore);
+
+		if (hasResourcePack) {
+			prev.customModelData(4000 + prevPage);
+			next.customModelData(4000 + nextPage);
+		} else {
+			prev.amount(prevPage);
+			next.amount(nextPage);
+		}
+
 		addPagination(contents, items, perPage,
-				ClickableItem.from(new ItemBuilder(Material.ARROW).amount(Math.max(curPage - 1, 1)).name("&fPrevious Page").lore(lore).build(), e -> {
+				ClickableItem.from(prev.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else
 						open(player, page.previous().getPage());
 				}),
-				ClickableItem.from(new ItemBuilder(Material.ARROW).amount(curPage + 1).name("&fNext Page").lore(lore).build(), e -> {
+				ClickableItem.from(next.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else
@@ -262,6 +297,7 @@ public abstract class MenuUtils {
 		private Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@NonNull
 		private Consumer<ItemClickData> onConfirm;
+		private Consumer<ItemClickData> onFinally;
 
 		public static class ConfirmationMenuBuilder {
 
@@ -295,6 +331,9 @@ public abstract class MenuUtils {
 
 				if (title.equals(e.getPlayer().getOpenInventory().getTitle()))
 					e.getPlayer().closeInventory();
+
+				if (onFinally != null)
+					onFinally.accept(e);
 			}));
 
 			contents.set(1, 6, ClickableItem.from(confirmItem, e -> {
@@ -302,6 +341,9 @@ public abstract class MenuUtils {
 
 				if (colorize(title).equals(e.getPlayer().getOpenInventory().getTitle()))
 					e.getPlayer().closeInventory();
+
+				if (onFinally != null)
+					onFinally.accept(e);
 			}));
 		}
 	}

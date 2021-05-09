@@ -3,19 +3,19 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.models;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class Ingredient {
 	@NonNull
 	private ItemStack itemStack;
-	@NonNull
 	private char character;
 
-	public Ingredient(String character, ItemStack ingredient) {
+	public Ingredient(String character, @NotNull ItemStack ingredient) {
 		this.character = character.charAt(0);
 		this.itemStack = ingredient;
 	}
 
-	public Ingredient(char character, ItemStack ingredient) {
+	public Ingredient(char character, @NotNull ItemStack ingredient) {
 		this.character = character;
 		this.itemStack = ingredient;
 	}
@@ -49,6 +49,7 @@ public class Ingredient {
 		return character;
 	}
 
+	@NotNull
 	public ItemStack getItemStack() {
 		return itemStack;
 	}

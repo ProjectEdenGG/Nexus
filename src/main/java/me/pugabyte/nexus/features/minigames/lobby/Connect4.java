@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.lobby;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -10,7 +11,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -199,32 +199,27 @@ public class Connect4 extends CustomCommand {
 
 		if (board == 1) {
 			switch (type) {
-				case "remove":
+				case "remove" -> {
 					triggerCommandBlock(remove_1);
 					send(PREFIX + "Removed buttons from board 1");
-					break;
-				case "place":
+				}
+				case "place" -> {
 					triggerCommandBlock(place_1);
 					send(PREFIX + "Placed buttons on board 1");
-					break;
-				case "reset":
-					triggerCommandBlock(reset_1);
-					break;
+				}
+				case "reset" -> triggerCommandBlock(reset_1);
 			}
 		} else if (board == 2) {
 			switch (type) {
-				case "remove":
+				case "remove" -> {
 					triggerCommandBlock(remove_2);
 					send(PREFIX + "Removed buttons from board 2");
-					break;
-				case "place":
+				}
+				case "place" -> {
 					triggerCommandBlock(place_2);
 					send(PREFIX + "Placed buttons on board 2");
-					break;
-				case "reset":
-					triggerCommandBlock(reset_2);
-					break;
-
+				}
+				case "reset" -> triggerCommandBlock(reset_2);
 			}
 		}
 	}

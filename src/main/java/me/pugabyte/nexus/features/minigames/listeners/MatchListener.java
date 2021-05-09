@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.minigames.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
@@ -17,9 +16,11 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwnerService;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
+import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -33,18 +34,22 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.text.DecimalFormat;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsOp;
+import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 public class MatchListener implements Listener {
 
@@ -87,7 +92,7 @@ public class MatchListener implements Listener {
 				return;
 
 		event.setCancelled(true);
-		Nexus.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + event.getFrom() + " to " + event.getTo());
+		Nexus.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
 		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 
@@ -115,13 +120,20 @@ public class MatchListener implements Listener {
 		minigamer.getMatch().getMechanic().onPlayerInteract(minigamer, event);
 	}
 
-	@EventHandler
-	public void onInventoryMove(InventoryInteractEvent event) {
+	@EventHandler(ignoreCancelled = true)
+	public void onInventoryClick(InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player)) return;
 		Minigamer minigamer = PlayerManager.get((Player) event.getWhoClicked());
 		if (!minigamer.isPlaying()) return;
+		Mechanic mechanic = minigamer.getMatch().getMechanic();
+		ItemStack item = event.getCurrentItem();
 
-		event.setCancelled(true);
+		if (event.getClickedInventory() instanceof PlayerInventory) {
+			if (event.getSlotType() == InventoryType.SlotType.ARMOR && (!mechanic.canMoveArmor() || (item != null && !MaterialTag.WEARABLE.isTagged(item.getType()))))
+				event.setCancelled(true);
+		} else if (!mechanic.canOpenInventoryBlocks()) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(ignoreCancelled = true)
@@ -282,7 +294,7 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterKillRegion(RegionEnteredEvent event) {
+	public void onEnterKillRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying()) return;
 		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
@@ -326,12 +338,26 @@ public class MatchListener implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler(ignoreCancelled = true)
-	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+	public void onShootProjectile(Player player, Projectile projectile) {
+		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying())
 			return;
-		PerkOwner owner = new PerkOwnerService().get(event.getPlayer());
-		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, event.getProjectile()));
+		Minigames.getModifier().onProjectileSpawn(projectile);
+		PerkOwner owner = new PerkOwnerService().get(player);
+		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile, minigamer.getMatch()));
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onBowShoot(EntityShootBowEvent event) {
+		if (!(event.getEntity() instanceof Player))
+			return;
+		if (!(event.getProjectile() instanceof Projectile))
+			return;
+		onShootProjectile((Player) event.getEntity(), (Projectile) event.getProjectile());
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
+		onShootProjectile(event.getPlayer(), event.getProjectile());
 	}
 }

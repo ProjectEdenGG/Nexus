@@ -3,13 +3,14 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland.MainNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -37,13 +38,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
 @Region("main")
 @NPCClass(MainNPCs.class)
-public class MainIsland implements Listener, Island {
+public class MainIsland implements Listener, BearFairIsland {
+
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	public static ItemStack honeyStroopWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Honey Stroopwafel").amount(1).glow().build();
 	public static ItemStack stroofWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Stoopwafel").amount(1).build();
@@ -147,8 +153,8 @@ public class MainIsland implements Listener, Island {
 						script.add("It should only be one more day before we find what we are looking for.");
 						break;
 					case 5:
-						BearFairService service = new BearFairService();
-						BearFairUser user = service.get(player);
+						BearFair20UserService service = new BearFair20UserService();
+						BearFair20User user = service.get(player);
 						int wait = 0;
 
 						if (!user.isSafeCracker_talkedWith_Supervisor()) {
@@ -178,8 +184,8 @@ public class MainIsland implements Listener, Island {
 		Miner(2743) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				if (user.isQuest_talkedWith_Miner())
 					return null;
 				user.setQuest_talkedWith_Miner(true);
@@ -195,8 +201,8 @@ public class MainIsland implements Listener, Island {
 		Collector(2750) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				if (user.isQuest_talkedWith_Collector())
 					return null;
 				user.setQuest_talkedWith_Collector(true);
@@ -213,7 +219,7 @@ public class MainIsland implements Listener, Island {
 			@Override
 			public List<String> getScript(Player player) {
 				List<String> script = new ArrayList<>();
-				script.add("Welcome to Bear Fair, Bear Nation's anniversary event!");
+				script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
 				script.add("wait 80");
 				script.add("This year features several islands to explore, find easter eggs, and do quests!");
 				script.add("wait 80");
@@ -232,8 +238,8 @@ public class MainIsland implements Listener, Island {
 		Witch(2670) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_Main_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -378,32 +384,32 @@ public class MainIsland implements Listener, Island {
 	}
 
 	public static void acceptWitchQuest(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		if (user.getQuest_Main_Step() == 0) {
 			nextStep(player); // 1
-			Talkers.startScript(player, 2670);
+			BearFairTalker.startScript(player, 2670);
 			nextStep(player); // 2
 		}
 	}
 
 	public static void setStep(Player player, int step) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		user.setQuest_Main_Step(step);
 		service.save(user);
 	}
 
 	public static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		int step = user.getQuest_Main_Step() + 1;
 		user.setQuest_Main_Step(step);
 		service.save(user);
 	}
 
 	public static void witchQuestCraft() {
-		Collection<Player> players = WGUtils.getPlayersInRegion(witchDwellingRg);
+		Collection<Player> players = getWGUtils().getPlayersInRegion(witchDwellingRg);
 		for (Player player : players) {
 			if (hasAllIngredients(player)) {
 				endMainQuest(player);
@@ -446,8 +452,8 @@ public class MainIsland implements Listener, Island {
 			player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
 		});
 
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		user.setQuest_Main_Finish(true);
 		service.save(user);
 	}
@@ -464,8 +470,8 @@ public class MainIsland implements Listener, Island {
 		event.getItem().setAmount(event.getItem().getAmount() - 1);
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 
 		user.givePoints(500);
 		service.save(user);
@@ -486,7 +492,7 @@ public class MainIsland implements Listener, Island {
 		int ndx = RandomUtils.randomInt(1, 3);
 		String reward;
 		switch (ndx) {
-			case 1:
+			case 1 -> {
 				List<String> songs = Arrays.asList("AutumnVoyage", "ForestDance", "DrunkenSailor", "Astronomia", "OwenWasHer", "Queen-BohemianRhapsody");
 				String songPerm = RandomUtils.randomElement(songs);
 				reward = "Song Coupon for " + songPerm;
@@ -494,18 +500,18 @@ public class MainIsland implements Listener, Island {
 						.name("Coupon For: " + songPerm)
 						.lore(itemLore, "&f", "&3Song: &e" + songPerm, "&3Redeem this with an admin", "&3to receive your song").amount(1).build();
 				PlayerUtils.giveItem(player, songCoupon);
-				break;
-			case 2:
+			}
+			case 2 -> {
 				reward = "50 Bear Fair Points";
-				BearFairService BFService = new BearFairService();
-				BearFairUser user = BFService.get(player);
+				BearFair20UserService BFService = new BearFair20UserService();
+				BearFair20User user = BFService.get(player);
 				user.givePoints(50);
 				BFService.save(user);
-				break;
-			default:
+			}
+			default -> {
 				reward = "30 Vote Points";
 				new Voter(player).givePoints(30);
-				break;
+			}
 		}
 		return reward;
 	}

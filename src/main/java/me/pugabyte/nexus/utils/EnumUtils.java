@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.utils;
 
+import eden.utils.Env;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,18 +89,12 @@ public class EnumUtils {
 	}
 
 	private static String interpolate(String word) {
-		String character = null;
-		switch (word.toLowerCase()) {
-			case "period":
-				character = ".";
-				break;
-			case "excl":
-				character = "!";
-				break;
-			case "comma":
-				character = ",";
-				break;
-		}
+		String character = switch (word.toLowerCase()) {
+			case "period" -> ".";
+			case "excl" -> "!";
+			case "comma" -> ",";
+			default -> null;
+		};
 		return character;
 	}
 

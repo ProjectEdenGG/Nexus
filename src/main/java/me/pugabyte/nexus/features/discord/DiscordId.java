@@ -8,7 +8,7 @@ public class DiscordId {
 
 	@Getter
 	@AllArgsConstructor
-	public enum Channel {
+	public enum TextChannel {
 		INFO("819817990249644032"),
 		ANNOUNCEMENTS("133970047382061057"),
 		CHANGELOG("819818214313689098"),
@@ -18,19 +18,41 @@ public class DiscordId {
 
 		BRIDGE("331277920729432065"),
 		STAFF_BRIDGE("331842528854802443"),
-		STAFF_OPS_BRIDGE("331846903266279424"),
+		STAFF_OPERATORS("151881902813478914"),
 		STAFF_ADMINS("133950052249894913"),
 
 		STAFF_LOG("256866302176526336"),
 		ADMIN_LOG("390751748261937152"),
 
+		STAFF_SOCIAL_MEDIA("525363810811248666"),
 		STAFF_PROMOTIONS("133949148251553792"),
 		STAFF_WATCHLIST("134162415536308224"),
 		STAFF_NICKNAME_QUEUE("824454559756713994"),
 
+		ARCHIVED_OPS_BRIDGE("331846903266279424"),
 		TEST("241774576822910976");
 
 		private final String id;
+
+		public net.dv8tion.jda.api.entities.TextChannel get() {
+			return get(Bot.KODA);
+		}
+
+		public net.dv8tion.jda.api.entities.TextChannel get(Bot bot) {
+			return bot.jda().getGuildById(DiscordId.Guild.PROJECT_EDEN.getId()).getTextChannelById(id);
+		}
+
+		public static TextChannel of(net.dv8tion.jda.api.entities.TextChannel textChannel) {
+			return of(textChannel.getId());
+		}
+
+		public static TextChannel of(String id) {
+			for (TextChannel textChannel : values())
+				if (textChannel.getId().equals(id))
+					return textChannel;
+
+			return null;
+		}
 	}
 
 	@Getter
@@ -70,7 +92,7 @@ public class DiscordId {
 	@Getter
 	@AllArgsConstructor
 	public enum Guild {
-		BEAR_NATION("132680070480396288");
+		PROJECT_EDEN("132680070480396288");
 
 		private final String id;
 	}
@@ -99,6 +121,18 @@ public class DiscordId {
 
 		public net.dv8tion.jda.api.entities.Role get() {
 			return Discord.getGuild().getRoleById(id);
+		}
+
+		public static Role of(net.dv8tion.jda.api.entities.Role role) {
+			return of(role.getId());
+		}
+
+		public static Role of(String id) {
+			for (Role role : values())
+				if (role.getId().equals(id))
+					return role;
+
+			return null;
 		}
 	}
 }

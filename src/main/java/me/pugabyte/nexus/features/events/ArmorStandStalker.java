@@ -1,23 +1,24 @@
 package me.pugabyte.nexus.features.events;
 
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArmorStandStalker {
-	public static final List<Stalker> stalkers = new ArrayList<Stalker>() {{
+	public static final List<Stalker> stalkers = new ArrayList<>() {{
 		add(new Stalker(new Location(Bukkit.getWorld("survival"), 15, 15, -8), 10, -30, 30)); // Wakka Crate
 	}};
 
@@ -25,8 +26,6 @@ public class ArmorStandStalker {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(2), () -> {
 			for (Stalker stalker : stalkers) {
 				Location location = stalker.getLocation();
-				if (location == null)
-					continue;
 
 				ArmorStand armorStand;
 				try {
@@ -57,7 +56,7 @@ public class ArmorStandStalker {
 		private Double minYaw = null;
 		private Double maxYaw = null;
 
-		public Stalker(Location location, int radius, int minPitch, int maxPitch) {
+		public Stalker(@NotNull Location location, int radius, int minPitch, int maxPitch) {
 			this.location = location;
 			this.radius = radius;
 			this.minPitch = (double) minPitch;

@@ -5,6 +5,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -43,7 +43,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @RequiredArgsConstructor
 @Entity("pugmas20_user")
 @Converters({UUIDConverter.class, ItemStackConverter.class})
-public class Pugmas20User extends PlayerOwnedObject {
+public class Pugmas20User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -93,7 +93,7 @@ public class Pugmas20User extends PlayerOwnedObject {
 	public void storeInventory() {
 		if (!isOnline()) return;
 
-		PlayerInventory playerInventory = getPlayer().getInventory();
+		PlayerInventory playerInventory = getOnlinePlayer().getInventory();
 		for (ItemStack item : playerInventory.getContents()) {
 			if (isNullOrAir(item) || Utils.isNullOrEmpty(item.getLore()))
 				continue;
@@ -107,12 +107,12 @@ public class Pugmas20User extends PlayerOwnedObject {
 
 	public void applyInventory() {
 		if (!isOnline()) return;
-		if (!isAtPugmas(getPlayer())) return;
+		if (!isAtPugmas(getOnlinePlayer())) return;
 		if (this.inventory.isEmpty()) return;
 
 		ArrayList<ItemStack> inventory = new ArrayList<>(this.inventory);
 		this.inventory.clear();
-		this.inventory.addAll(PlayerUtils.giveItemsGetExcess(getPlayer(), inventory));
+		this.inventory.addAll(PlayerUtils.giveItemsGetExcess(getOnlinePlayer(), inventory));
 
 		if (this.inventory.isEmpty())
 			send(Pugmas20.PREFIX + "Inventory applied");

@@ -25,6 +25,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
@@ -42,7 +43,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@Path("[enable] [player]")
 	void run(Boolean enable, @Arg("self") Godmode godmode) {
-		Player player = godmode.getPlayer();
+		Player player = godmode.getOnlinePlayer();
 		if (Godmode.getDisabledWorlds().contains(player.getWorld().getName()))
 			error("Godmode disabled here");
 
@@ -131,6 +132,14 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 			if (godmode.isEnabled())
 				event.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void onJoin(final PlayerJoinEvent event) {
+		GodmodeService service = new GodmodeService();
+		Godmode godmode = service.get(event.getPlayer());
+		godmode.setLoginLocation(event.getPlayer().getLocation());
+		service.save(godmode);
 	}
 
 }

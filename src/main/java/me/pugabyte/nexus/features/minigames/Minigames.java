@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
@@ -20,14 +21,20 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSetting;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -36,6 +43,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
@@ -50,19 +58,8 @@ import java.util.stream.Collectors;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
+	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
 	public static final int PERK_TICK_DELAY = 4;
-	@Getter
-	private static final World world = Bukkit.getWorld("gameworld");
-	@Getter
-	private static final Location lobby = new Location(world, 1861.5, 38.1, 247.5, 0, 0);
-	@Getter
-	@Deprecated // Use Match#getWGUtils or Arena#getWGUtils
-	private static final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(world);
-	@Getter
-	@Deprecated // Use Match#getWEUtils or Arena#getWEUtils
-	private static final WorldEditUtils worldEditUtils = new WorldEditUtils(world);
-	@Getter
-	private static final ProtectedRegion lobbyRegion = worldGuardUtils.getProtectedRegion("minigamelobby");
 	@Getter
 	public static final MinigamesMenus menus = new MinigamesMenus();
 	@Getter
@@ -82,6 +79,28 @@ public class Minigames extends Feature {
 		new Basketball();
 		new Parkour();
 		new TickPerks();
+	}
+
+	public static World getWorld() {
+		return Bukkit.getWorld("gameworld");
+	}
+
+	@Deprecated // Use Match#getWGUtils or Arena#getWGUtils
+	public static WorldGuardUtils getWorldGuardUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	@Deprecated // Use Match#getWEUtils or Arena#getWEUtils
+	public static WorldEditUtils getWorldEditUtils() {
+		return new WorldEditUtils(getWorld());
+	}
+
+	public static Location getLobby() {
+		return new Location(getWorld(), 1861.5, 38.1, 247.5, 0, 0);
+	}
+
+	public static ProtectedRegion getLobbyRegion() {
+		return getWorldGuardUtils().getProtectedRegion("minigamelobby");
 	}
 
 	@Override
@@ -112,6 +131,10 @@ public class Minigames extends Feature {
 		// TODO: If arena is public, announce to discord and whole server
 	}
 
+	public static void broadcast(ComponentLike component) {
+		getPlayers().forEach(player -> player.sendMessage(Minigames.COMPONENT_PREFIX.append(component)));
+	}
+
 	// Registration
 
 	private String getPath() {
@@ -119,13 +142,8 @@ public class Minigames extends Feature {
 	}
 
 	private void registerListeners() {
-		for (Class<? extends Listener> clazz : new Reflections(getPath() + ".listeners").getSubTypesOf(Listener.class)) {
-			try {
-				Nexus.registerListener(clazz.newInstance());
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+		for (Class<? extends Listener> clazz : new Reflections(getPath() + ".listeners").getSubTypesOf(Listener.class))
+			Utils.tryRegisterListener(clazz);
 	}
 
 	private void registerSerializables() {
@@ -160,6 +178,17 @@ public class Minigames extends Feature {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public static @NotNull MinigameModifier getModifier() {
+		return new MinigamesSettingService().get().getModifier();
+	}
+
+	public static void setModifier(@NotNull MinigameModifier modifier) {
+		MinigamesSettingService service = new MinigamesSettingService();
+		MinigamesSetting setting = service.get();
+		setting.setModifier(modifier);
+		service.save(setting);
 	}
 
 }

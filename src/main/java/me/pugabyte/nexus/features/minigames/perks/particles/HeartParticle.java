@@ -1,13 +1,12 @@
 package me.pugabyte.nexus.features.minigames.perks.particles;
 
-import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
-import me.pugabyte.nexus.features.minigames.models.perks.common.TickablePerk;
+import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public class HeartParticle extends TickablePerk {
+public class HeartParticle extends PlayerParticlePerk {
 	@Override
 	public String getName() {
 		return "Heart";
@@ -19,24 +18,27 @@ public class HeartParticle extends TickablePerk {
 	}
 
 	@Override
-	public String[] getDescription() {
-		return new String[]{"Someone's falling madly",
-							"in love with that",
-							"enemy team..."};
-	}
-
-	@Override
-	public PerkCategory getPerkCategory() {
-		return PerkCategory.PARTICLE;
+	public @NotNull String getDescription() {
+		return "Someone's falling madly in love with that enemy team...";
 	}
 
 	@Override
 	public int getPrice() {
-		return 1;
+		return 20;
 	}
 
 	@Override
-	public void tick(Player player) {
-		particle(player, Particle.HEART, 0.7d);
+	public Particle getParticle() {
+		return Particle.HEART;
+	}
+
+	@Override
+	public double getSpeed() {
+		return 0.7d;
+	}
+
+	@Override
+	public int getCount() {
+		return 2;
 	}
 }

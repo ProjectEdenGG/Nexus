@@ -3,16 +3,17 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 import me.pugabyte.nexus.features.minigames.mechanics.common.DeathmatchMechanic;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public final class FourTeamDeathmatch extends DeathmatchMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Four Team Deathmatch";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Kill the other teams";
 	}
 

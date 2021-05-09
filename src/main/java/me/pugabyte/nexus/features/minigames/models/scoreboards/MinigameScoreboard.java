@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public interface MinigameScoreboard {
 
@@ -46,7 +47,7 @@ public interface MinigameScoreboard {
 		MINIGAMER(MinigamerSidebar.class);
 
 		@Getter
-		private Class<? extends MinigameScoreboard> type;
+		private final Class<? extends MinigameScoreboard> type;
 
 		Type(Class<? extends MinigameScoreboard> clazz) {
 			this.type = clazz;
@@ -69,12 +70,17 @@ public interface MinigameScoreboard {
 			}
 		}
 
+		/**
+		 * Get the scoreboard team corresponding to a team
+		 * @param team a minigame team
+		 * @return a scoreboard team
+		 */
 		ScoreboardTeam getScoreboardTeam(Team team);
 	}
 
 	class Teams implements ITeams {
-		private Match match;
-		private Map<Team, ScoreboardTeam> scoreboardTeams = new HashMap<>();
+		private final Match match;
+		private final Map<Team, ScoreboardTeam> scoreboardTeams = new HashMap<>();
 
 		public Teams(Match match) {
 			this.match = match;
@@ -84,8 +90,8 @@ public interface MinigameScoreboard {
 		public ScoreboardTeam getScoreboardTeam(Team team) {
 			scoreboardTeams.computeIfAbsent(team, $ -> {
 				ScoreboardTeam scoreboardTeam = Minigames.getScoreboard().createTeam(match.getArena().getName() + "-" + team.getColoredName(), false);
-				scoreboardTeam.setColor(ColorType.toBukkit(team.getColor()));
-				scoreboardTeam.setPrefix(team.getColor().toString());
+				scoreboardTeam.setColor(Objects.requireNonNull(ColorType.toBukkit(team.getVanillaChatColor())));
+				scoreboardTeam.setPrefix(team.getChatColor().toString());
 				scoreboardTeam.setNameTagVisibility(team.getNameTagVisibility());
 				return scoreboardTeam;
 			});
@@ -96,10 +102,13 @@ public interface MinigameScoreboard {
 		@Override
 		public void update() {
 			match.getMinigamers().forEach(minigamer -> {
-				if (!minigamer.isAlive() || minigamer.getTeam() == null) {
-					scoreboardTeams.values().forEach(scoreboardTeam -> scoreboardTeam.removePlayer(minigamer.getPlayer()));
-					return;
-				}
+				boolean removePlayer = !minigamer.isAlive() || minigamer.getTeam() == null;
+				scoreboardTeams.forEach((team, scoreboardTeam) -> {
+					if (removePlayer || !minigamer.getTeam().equals(team))
+						scoreboardTeam.removePlayer(minigamer.getPlayer());
+				});
+				if (removePlayer) return;
+
 				getScoreboardTeam(minigamer.getTeam()).addPlayer(minigamer.getPlayer());
 			});
 
@@ -117,18 +126,16 @@ public interface MinigameScoreboard {
 		@Override
 		public void handleQuit(Minigamer minigamer) {
 			if (minigamer.getTeam() == null) return;
-			scoreboardTeams.forEach((team, scoreboardTeam) ->
-					scoreboardTeam.removePlayer(minigamer.getPlayer()));
+			ScoreboardTeam scoreboardTeam = getScoreboardTeam(minigamer.getTeam());
+			scoreboardTeam.removePlayer(minigamer.getPlayer());
+			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleEnd() {
 			scoreboardTeams.forEach((team, scoreboardTeam) -> {
-				Bukkit.getOnlinePlayers().forEach(player -> {
-					scoreboardTeam.removePlayer(player);
-					scoreboardTeam.unsubscribe(player);
-				});
-
+				scoreboardTeam.getPlayers().forEach(scoreboardTeam::removePlayer);
+				Bukkit.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
 				Minigames.getScoreboard().removeTeam(scoreboardTeam.getId());
 			});
 		}

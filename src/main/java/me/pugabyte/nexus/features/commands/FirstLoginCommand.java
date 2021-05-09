@@ -6,7 +6,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.models.nickname.Nickname;
+
+import static me.pugabyte.nexus.utils.TimeUtils.longDateTimeFormat;
 
 @Aliases("firstjoin")
 public class FirstLoginCommand extends CustomCommand {
@@ -17,6 +19,6 @@ public class FirstLoginCommand extends CustomCommand {
 
 	@Path("[player]")
 	void firstJoin(@Arg("self") Nerd nerd) {
-		send("&e&l" + nerd.getNickname() + " &3first joined Bear Nation on &e" + StringUtils.longDateTimeFormat(nerd.getFirstJoin()) + " &3US Eastern Time");
+		send("&e&l" + Nickname.of(nerd) + " &3first joined Project Eden on &e" + longDateTimeFormat(nerd.getFirstJoin()) + " &3US Eastern Time");
 	}
 }

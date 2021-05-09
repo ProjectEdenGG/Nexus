@@ -6,8 +6,8 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
-import me.pugabyte.nexus.features.minigames.models.perks.PerkOwner;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
+import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import org.bukkit.Material;
@@ -30,7 +30,6 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 
 	@Override
 	public void open(Player viewer, int page) {
-		PerkOwner perkOwner = service.get(viewer);
 		SmartInventory.builder()
 				.provider(this)
 				.title("Purchase Collectibles")
@@ -67,28 +66,26 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 				lore.add(2, "");
 
 			ItemStack item = getItem(perk, lore);
-			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType)));
+			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType, contents)));
 		});
 		addPagination(player, contents, clickableItems);
 	}
 
-	protected void buyItem(Player player, PerkType perkType) {
+	protected void buyItem(Player player, PerkType perkType, InventoryContents contents) {
 		Perk perk = perkType.getPerk();
 		PerkOwner perkOwner = service.get(player);
-		if (perkOwner.getPurchasedPerks().containsKey(perkType)) {
-			send(player, "&cYou already own that item");
-			SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, 0.8f, 1.0f);
-		}
-		else if (perkOwner.getTokens() >= perk.getPrice()) {
-			perkOwner.setTokens(perkOwner.getTokens() - perk.getPrice());
-			perkOwner.getPurchasedPerks().put(perkType, false);
-			service.save(perkOwner);
+		if (perkOwner.getPurchasedPerks().containsKey(perkType))
+			error(player, "You already own that item");
+		else if (perkOwner.purchase(perkType)) {
 			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+ plural(" token", perk.getPrice()));
-			open(player);
-		} else {
-			send(player, "&cYou don't have enough tokens to purchase that");
-			SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, 0.8f, 1.0f);
-		}
+			open(player, contents.pagination().getPage());
+		} else
+			error(player, "You don't have enough tokens to purchase that");
+	}
+
+	protected static void error(Player player, String message) {
+		send(player, "&c"+message);
+		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, 0.8f, 1.0f);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -15,6 +14,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -33,6 +33,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +42,12 @@ import java.util.Set;
 public class GrabAJumbuck extends TeamlessMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Grab-A-Jumbuck";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Grab as many sheep as possible! Colored sheep are worth more points!";
 	}
 
@@ -198,7 +199,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		Arena arena = minigamer.getMatch().getArena();

@@ -1,6 +1,10 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics;
 
+import eden.interfaces.Named;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
@@ -15,15 +19,25 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
+import me.pugabyte.nexus.framework.interfaces.HasDescription;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -39,19 +53,21 @@ import static me.pugabyte.nexus.utils.StringUtils.left;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
-public abstract class Mechanic implements Listener {
+public abstract class Mechanic implements Listener, Named, HasDescription, ComponentLike {
 
 	public Mechanic() {
 		Nexus.registerListener(this);
 	}
 
-	public abstract String getName();
+	public abstract @NotNull String getName();
+
+	public @NotNull TextComponent asComponent() {
+		return Component.text(getName(), NamedTextColor.YELLOW);
+	}
 
 	public String getPrefix() {
 		return StringUtils.getPrefix(this.getClass());
 	}
-
-	public abstract String getDescription();
 
 	public abstract ItemStack getMenuItem();
 
@@ -68,6 +84,33 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public boolean usesAlternativeRegen() {
+		return false;
+	}
+
+	/**
+	 * Determines if a user is allowed to use a perk in a specified minigame.
+	 * @param perk a user's perk
+	 * @param minigamer the user
+	 * @return whether or not to allow the perk
+	 */
+	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+		return true;
+	}
+
+	/**
+	 * Determines if a user is allowed to use a perk in a specified minigame.
+	 * @param perk a user's perk
+	 * @param minigamer the user
+	 * @return whether or not to allow the perk
+	 */
+	public final boolean usesPerk(Perk perk, Minigamer minigamer) {
+		return usesPerk(perk.getClass(), minigamer);
+	}
+
+	/**
+	 * Whether or not to hide the colors of team-colored perks.
+	 */
+	public boolean hideTeamLoadoutColors() {
 		return false;
 	}
 
@@ -196,6 +239,10 @@ public abstract class Mechanic implements Listener {
 		String mechanicName = arena.getMechanic().getName();
 		String arenaName = arena.getDisplayName();
 		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equals(arenaName) ? "" : " &3on &e" + arenaName));
+		MinigameModifier modifier = Minigames.getModifier();
+		if (modifier.getClass() != NoModifier.class) {
+			TitleUtils.sendTitle(minigamer.getPlayer(), "&3Modifier: &e" + modifier.getName(), "&6" + modifier.getDescription(), 5, Time.SECOND.x(5), 10);
+		}
 	}
 
 	public abstract void announceWinners(Match match);
@@ -231,7 +278,7 @@ public abstract class Mechanic implements Listener {
 
 		if (renderTeamNames() && match.getMechanic() instanceof TeamMechanic) {
 			for (Team team : match.getAliveTeams()) {
-				lines.put("- " + team.getColoredName(), team.getScore(match));
+				lines.put("- " + team.getVanillaColoredName(), team.getScore(match));
 
 				lineCount++;
 				if (lineCount == 15) return lines;
@@ -248,8 +295,8 @@ public abstract class Mechanic implements Listener {
 				int minScore = getMin(lines.values(), Integer::intValue).getObject();
 				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), minScore-1);
 				break;
-			 } else if (minigamer.isAlive())
-				lines.put("&f" + minigamer.getColoredName(), minigamer.getScore());
+			} else if (minigamer.isAlive())
+				lines.put("&f" + minigamer.getVanillaColoredName(), minigamer.getScore());
 			else
 				// &r to force last
 				lines.put("&r&c&m" + minigamer.getNickname(), minigamer.getScore());
@@ -292,15 +339,7 @@ public abstract class Mechanic implements Listener {
 	// Reflection utils
 
 	public List<Class<? extends Mechanic>> getSuperclasses() {
-		List<Class<? extends Mechanic>> superclasses = new ArrayList<>();
-		Class<? extends Mechanic> clazz = this.getClass();
-		while (clazz.getSuperclass() != Object.class) {
-			superclasses.add(clazz);
-
-			clazz = (Class<? extends Mechanic>) clazz.getSuperclass();
-		}
-
-		return superclasses;
+		return Utils.getSuperclasses(this.getClass());
 	}
 
 	public <T> T getAnnotation(Class<? extends Annotation> annotation) {
@@ -318,6 +357,10 @@ public abstract class Mechanic implements Listener {
 		return false;
 	}
 
+	public boolean canMoveArmor() {
+		return true;
+	}
+
 	public boolean isInRegion(Match match, Block block, String region) {
 		return match.getArena().isInRegion(block, region);
 	}
@@ -329,7 +372,7 @@ public abstract class Mechanic implements Listener {
 	}
 
 	public void sendBarWithTimer(Minigamer minigamer, String message) {
-		sendActionBar(minigamer.getPlayer(), message + "&r (" + StringUtils.Timespan.of(minigamer.getMatch().getTimer().getTime()).format()+")");
+		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.of(minigamer.getMatch().getTimer().getTime()).format() + ")");
 	}
 
 }

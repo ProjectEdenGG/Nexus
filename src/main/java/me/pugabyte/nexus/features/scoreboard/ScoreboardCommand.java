@@ -79,7 +79,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		JsonBuilder json = new JsonBuilder();
 		for (ScoreboardLine line : ScoreboardLine.values()) {
 			if (!line.isOptional()) continue;
-			if (!line.hasPermission(player())) continue;
+			if (!line.hasPermission(player()) && !user.getLines().containsKey(line)) continue;
 			json.next((user.getLines().containsKey(line) && user.getLines().get(line)) ? "&a✔" : "&c✗")
 					.command("/scoreboard edit toggle " + line.name().toLowerCase())
 					.hover("&eClick to toggle")
@@ -117,7 +117,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		String collect = Bukkit.getOnlinePlayers().stream()
 				.map(player -> (ScoreboardUser) new ScoreboardService().get(player))
 				.filter(ScoreboardUser::isActive)
-				.map(user -> user.getPlayer().getName())
+				.map(user -> user.getOnlinePlayer().getName())
 				.collect(Collectors.joining("&3, &e"));
 		send(PREFIX + "Active scoreboards: ");
 		send("&e" + collect);

@@ -19,11 +19,13 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.MurderMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +51,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,16 +65,16 @@ import static me.pugabyte.nexus.utils.LocationUtils.getBlockHit;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Railgun
-@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = true)
+@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = false)
 public class Murder extends TeamMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Murder";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "One of these villagers is not who they claim to be...";
 	}
 
@@ -93,6 +96,11 @@ public class Murder extends TeamMechanic {
 	@Override
 	public boolean usesTeamChannels() {
 		return false;
+	}
+
+	@Override
+	public boolean hideTeamLoadoutColors() {
+		return true;
 	}
 
 	@Override
@@ -160,15 +168,20 @@ public class Murder extends TeamMechanic {
 		Minigamer murderer = getMurderer(match);
 		Minigamer hero = matchData.getHero();
 
-		String broadcast;
+		JsonBuilder builder = new JsonBuilder();
 		if (!murderer.isAlive())
-			broadcast = murderer.getColoredName() + "&3 has been stopped by " + hero.getColoredName() + "&3 on";
+			builder.next(murderer)
+					.next(" has been stopped by ")
+					.next(hero)
+					.next(" on ");
 		else if (match.getTimer().getTime() != 0)
-			broadcast = murderer.getColoredName() + "&3 has won";
+			builder.next(murderer).next(" has won on ");
 		else
-			broadcast = "The &9innocents &3have won";
+			builder.content("The ")
+					.next("innocents", NamedTextColor.BLUE)
+					.next(" have won");
 
-		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
+		Minigames.broadcast(builder.next(match.getArena()).build());
 	}
 
 	@Override
@@ -191,7 +204,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	public Map<String, Integer> getScoreboardLines(Match match) {
-		return new HashMap<String, Integer>() {{
+		return new HashMap<>() {{
 			match.getMinigamers().stream().filter(Minigamer::isAlive)
 					.forEach(minigamer -> put(minigamer.getNickname(), 0));
 		}};
@@ -239,7 +252,9 @@ public class Murder extends TeamMechanic {
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
-			List<Material> allowedRedstone = new ArrayList<Material>() {{ add(Material.LEVER); }};
+			List<Material> allowedRedstone = new ArrayList<>() {{
+				add(Material.LEVER);
+			}};
 			allowedRedstone.addAll(MaterialTag.BUTTONS.getValues());
 			if (allowedRedstone.contains(event.getClickedBlock().getType()))
 				return;
@@ -253,20 +268,11 @@ public class Murder extends TeamMechanic {
 		// Gunner shooting handled in AnnotationsListener (see @Railgun)
 
 		switch (player.getInventory().getItemInMainHand().getType()) {
-			case IRON_SWORD:
-				throwKnife(minigamer);
-				return;
-			case TRIPWIRE_HOOK:
-				retrieveKnife(minigamer);
-				return;
-			case ENDER_EYE:
-				useBloodlust(minigamer);
-				return;
-			case ENDER_PEARL:
-				useTeleporter(minigamer);
-				return;
-			case SUGAR:
-				useAdrenaline(minigamer);
+			case IRON_SWORD -> throwKnife(minigamer);
+			case TRIPWIRE_HOOK -> retrieveKnife(minigamer);
+			case ENDER_EYE -> useBloodlust(minigamer);
+			case ENDER_PEARL -> useTeleporter(minigamer);
+			case SUGAR -> useAdrenaline(minigamer);
 		}
 	}
 

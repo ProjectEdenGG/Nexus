@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.tickets;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -16,7 +16,6 @@ import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 
 import java.util.Arrays;
@@ -24,9 +23,8 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-@Aliases({"helpop", "report"})
 public class TicketCommand extends CustomCommand {
-	private TicketService service = new TicketService();
+	private final TicketService service = new TicketService();
 
 	public TicketCommand(CommandEvent event) {
 		super(event);
@@ -61,10 +59,11 @@ public class TicketCommand extends CustomCommand {
 			send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
 
 			List<Nerd> onlineMods = Rank.getOnlineMods();
-			Discord.staffLog("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription());
-			Discord.staffBridge("**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription() + (onlineMods.size() == 0 ? " [ @here ]" : ""));
+			String message = "**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription();
+			Discord.staffLog(message);
+			Discord.staffBridge(message + (onlineMods.size() == 0 ? " [ @here ]" : ""));
 
-			onlineMods.forEach(mod -> Jingle.PING.play(mod.getPlayer()));
+			onlineMods.forEach(mod -> Jingle.PING.play(mod.getOnlinePlayer()));
 			Chat.broadcastIngame("", StaticChannel.STAFF);
 			Chat.broadcastIngame(PREFIX + "&e" + name() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), StaticChannel.STAFF);
 			Chat.broadcastIngame(Tickets.getTicketButtons(ticket), StaticChannel.STAFF);

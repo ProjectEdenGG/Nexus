@@ -1,14 +1,14 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -148,7 +148,7 @@ public class AdventChests implements Listener {
 			return;
 		}
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		int chestDay = adventChest.getDay();
@@ -267,7 +267,7 @@ public class AdventChests implements Listener {
 	}
 
 	@EventHandler
-	public void onDistrictEnter(RegionEnteredEvent event) {
+	public void onDistrictEnter(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!Pugmas20.isAtPugmas(player)) return;
 
@@ -280,7 +280,7 @@ public class AdventChests implements Listener {
 	}
 
 	@EventHandler
-	public void onDistrictExit(RegionLeavingEvent event) {
+	public void onDistrictExit(PlayerLeavingRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!Pugmas20.isAtPugmas(player)) return;
 

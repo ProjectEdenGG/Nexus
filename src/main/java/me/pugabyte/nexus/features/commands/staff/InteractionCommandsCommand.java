@@ -52,7 +52,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 
 		if (interactionCommand == null) {
 			interactionCommand = new InteractionCommand(location);
-			config.getInteractionCommands().add(interactionCommand);
+			config.add(interactionCommand);
 		}
 		interactionCommand.getCommands().put(index, command);
 		save();

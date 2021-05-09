@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -209,23 +209,21 @@ public class RegenCrops implements Listener {
 		Material material = block.getType();
 		if (!(blockData instanceof Ageable) || noAge.contains(material)) {
 			switch (material) {
-				case MELON:
-				case PUMPKIN:
+				case MELON, PUMPKIN -> {
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
 						send(decorOnlyError, player);
 						event.setCancelled(true);
 						return;
 					}
 					Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), material));
-					break;
-				case SUGAR_CANE:
+				}
+				case SUGAR_CANE -> {
 					if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
 						send(bottomBlockError, player);
 						event.setCancelled(true);
 						return;
 					}
 					multiRegenMap.put(block.getLocation(), material);
-
 					Block above = block.getRelative(0, 1, 0);
 					if (above.getType().equals(material)) {
 						int yvalue = above.getLocation().getBlockY();
@@ -241,12 +239,13 @@ public class RegenCrops implements Listener {
 							above = above.getRelative(0, 1, 0);
 						}
 					}
-					break;
-				default:
+				}
+				default -> {
 					if (player.hasPermission("worldguard.region.bypass.*")) return;
 					send(cantBreakError, player);
 					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					event.setCancelled(true);
+				}
 			}
 			return;
 		}

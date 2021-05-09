@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.radar;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public class AACNotifyCommand extends CustomCommand {
 			} else
 				discordCounts.put(uuid, discordCounts.getOrDefault(uuid, 0) + 1);
 
-			if (Rank.getOnlineMods().stream().noneMatch(nerd -> player.getPlayer() != null && !AFK.get(player.getPlayer()).isTimeAfk()))
+			if (Rank.getOnlineMods().stream().allMatch(nerd -> AFK.get(player.getPlayer()).isTimeAfk()))
 				if (totalCounts.getOrDefault(uuid, 0) > 20)
 					runCommandAsConsole("ban " + player.getName() + " 1d You have been automatically banned " +
 							"by our anti cheat. Hacking is not allowed! (C: " + totalCounts.get(uuid) + ")");

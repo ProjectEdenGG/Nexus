@@ -35,18 +35,13 @@ public class EmptyCommand extends CustomCommand {
 
 		ItemStack bucketType;
 		switch (type) {
-			case "lava":
-				bucketType = new ItemStack(Material.LAVA_BUCKET);
-				break;
-			case "water":
-				bucketType = new ItemStack(Material.WATER_BUCKET);
-				break;
-			case "milk":
-				bucketType = new ItemStack(Material.MILK_BUCKET);
-				break;
-			default:
+			case "lava" -> bucketType = new ItemStack(Material.LAVA_BUCKET);
+			case "water" -> bucketType = new ItemStack(Material.WATER_BUCKET);
+			case "milk" -> bucketType = new ItemStack(Material.MILK_BUCKET);
+			default -> {
 				error("/empty [lava|water|milk]");
 				return;
+			}
 		}
 
 		if (playerInv.all(bucketType).size() != 0) {

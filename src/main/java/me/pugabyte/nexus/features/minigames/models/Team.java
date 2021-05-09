@@ -8,28 +8,30 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
 import me.pugabyte.nexus.utils.ColorType;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
+import me.pugabyte.nexus.utils.LocationUtils;
 import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static me.pugabyte.nexus.features.minigames.menus.teams.TeamColorMenu.COLOR_TYPES;
-import static me.pugabyte.nexus.utils.PlayerUtils.getNearestPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
@@ -37,13 +39,13 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @AllArgsConstructor
 @SerializableAs("Team")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Team implements ConfigurationSerializable {
+public class Team implements ConfigurationSerializable, ColoredAndNamed {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private String name = "Default";
 	@NonNull
 	@EqualsAndHashCode.Include
-	private ChatColor color = ChatColor.WHITE;
+	private ChatColor chatColor = ChatColor.WHITE;
 	private String objective;
 	private Loadout loadout = new Loadout();
 	private List<Location> spawnpoints = new ArrayList<>();
@@ -63,7 +65,7 @@ public class Team implements ConfigurationSerializable {
 
 	public Team(Map<String, Object> map) {
 		this.name = (String) map.getOrDefault("name", name);
-		this.color = ChatColor.valueOf(((String) map.getOrDefault("color", color.name())).toUpperCase());
+		this.chatColor = ChatColor.valueOf(((String) map.getOrDefault("color", chatColor.name())).toUpperCase());
 		this.objective = (String) map.get("objective");
 		this.loadout = (Loadout) map.getOrDefault("loadout", loadout);
 		this.spawnpoints = (List<Location>) map.getOrDefault("spawnpoints", spawnpoints);
@@ -77,9 +79,9 @@ public class Team implements ConfigurationSerializable {
 	@Override
 	@NotNull
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("name", stripColor(getName()));
-			put("color", getColor().name());
+			put("color", getChatColor().name());
 			put("objective", getObjective());
 			put("loadout", getLoadout());
 			put("spawnpoints", getSpawnpoints());
@@ -91,8 +93,8 @@ public class Team implements ConfigurationSerializable {
 		}};
 	}
 
-	public String getColoredName() {
-		return color + name;
+	public @NotNull Color getColor() {
+		return chatColor.getColor();
 	}
 
 	public void spawn(Match match) {
@@ -123,34 +125,48 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public void toSpawnpoints(List<Minigamer> members) {
+		Validate.notEmpty(members, "Members argument should not be empty");
+		members = new ArrayList<>(members);
+		Match match = members.get(0).getMatch();
+		Validate.notNull(match, "Minigamers must be in a match");
+		// convoluted sanity checking of inputs but honestly this is extra and just a waste of CPU
+//		Match match = members.stream().filter(minigamer -> minigamer.getMatch() != null).findFirst().orElseThrow(() -> new IllegalArgumentException("Minigamers must be in a match")).getMatch();
+//		assert match != null;
+//		if (!members.stream().allMatch(minigamer -> match.equals(minigamer.getMatch())))
+//			throw new IllegalArgumentException("All minigamers must be in the same match");
+
+		Validate.notEmpty(spawnpoints, "Team " + getName() + " has no spawnpoints!");
+
 		if (spawnpoints.size() == 1) {
+			Location spawnpoint = spawnpoints.get(0);
 			for (Minigamer minigamer : members)
-				minigamer.teleport(spawnpoints.get(0));
+				minigamer.teleport(spawnpoint);
 			return;
 		}
 
-		int SAFETY = 0;
-		while (members.size() > 0) {
-			List<Location> locs = new ArrayList<>(spawnpoints);
-			if (members.get(0).getMatch().getMechanic().shuffleSpawnpoints())
-				Collections.shuffle(locs);
+		Set<Location> usedSpawnpoints = match.getUsedSpawnpoints();
+		List<Location> locations = null;
+		boolean shuffle = match.getMechanic().shuffleSpawnpoints();
 
-			List<Minigamer> toRemove = new ArrayList<>();
-			for (Minigamer minigamer : members) {
-				if (SAFETY < 50) {
-					MinMaxResult<Player> result = getNearestPlayer(minigamer.getPlayer());
-					if (result.getValue().doubleValue() < 1)
-						continue;
+		while (!members.isEmpty()) {
+			if (locations == null || locations.isEmpty()) {
+				locations = new ArrayList<>(spawnpoints);
+				if (!usedSpawnpoints.isEmpty()) {
+					// remove spawnpoints from the same block/location
+					locations.removeIf(location1 -> usedSpawnpoints.stream().anyMatch(location2 -> LocationUtils.blockLocationsEqual(location1, location2)));
+
+					if (locations.isEmpty()) {
+						// we have run out of spawns, time to clear the used spawnpoints
+						usedSpawnpoints.clear();
+						locations = new ArrayList<>(spawnpoints);
+					}
 				}
-				minigamer.teleport(locs.get(0));
-				locs.remove(0);
-				if (locs.size() == 0)
-					locs.addAll(new ArrayList<>(spawnpoints));
-
-				toRemove.add(minigamer);
+				if (shuffle)
+					Collections.shuffle(locations);
 			}
-			members.removeAll(toRemove);
-			++SAFETY;
+			Location spawnpoint = locations.remove(0);
+			members.remove(0).teleport(spawnpoint);
+			usedSpawnpoints.add(spawnpoint);
 		}
 	}
 
@@ -166,10 +182,20 @@ public class Team implements ConfigurationSerializable {
 		return ensureThisTeam(match.getMinigamers());
 	}
 
+	/**
+	 * Returns a list containing all minigamers from the input list that are on this team.
+	 * @param minigamers input minigamers of varying teams
+	 * @return new list of minigamers on this team
+	 */
 	public List<Minigamer> ensureThisTeam(List<Minigamer> minigamers) {
 		return ensureThisTeam(minigamers.stream());
 	}
 
+	/**
+	 * Returns a list containing all minigamers from the input stream that are on this team.
+	 * @param minigamers input minigamers of varying teams
+	 * @return new list of minigamers on this team
+	 */
 	public List<Minigamer> ensureThisTeam(Stream<Minigamer> minigamers) {
 		return minigamers
 				.filter(minigamer -> this.equals(minigamer.getTeam()))
@@ -181,9 +207,9 @@ public class Team implements ConfigurationSerializable {
 	}
 
 	public ColorType getColorType() {
-		ColorType colorType = COLOR_TYPES.stream().filter(colorType1 -> getColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
+		ColorType colorType = COLOR_TYPES.stream().filter(colorType1 -> getChatColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
 		if (colorType == null)
-			Nexus.warn("Could not find a matching color type for team "+getName()+" (Color: "+getColor().getName()+")");
+			Nexus.warn("Could not find a matching color type for team "+getName()+" (Color: "+ getChatColor().getName()+")");
 		return colorType;
 	}
 

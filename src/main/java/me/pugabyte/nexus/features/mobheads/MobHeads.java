@@ -1,16 +1,14 @@
 package me.pugabyte.nexus.features.mobheads;
 
+import eden.annotations.Environments;
+import eden.utils.Env;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.framework.annotations.Environments;
 import me.pugabyte.nexus.framework.features.Feature;
-import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -26,6 +24,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,22 +36,26 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 @Environments(Env.PROD)
 public class MobHeads extends Feature implements Listener {
 
+	private static final List<UUID> handledEntities = new ArrayList<>();
+
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public static void onKillEntity(EntityDeathEvent event) {
+	public void onKillEntity(EntityDeathEvent event) {
 		if (event.isCancelled())
 			return;
 
 		LivingEntity victim = event.getEntity();
 		Player killer = victim.getKiller();
 		if (killer == null) return;
-		if (WorldGroup.get(killer) != WorldGroup.SURVIVAL) return;
-		if (isUnnaturalSpawn(victim)) return;
-		if (isBaby(victim)) return;
-		if (!new CooldownService().check(victim.getUniqueId(), "mobHead_entityId_death", Time.SECOND.x(2))) return;
 
 		// TODO: Remove when done
 		if (!Dev.WAKKA.is(killer)) return;
 		//
+
+		if (WorldGroup.get(killer) != WorldGroup.SURVIVAL) return;
+		if (isUnnaturalSpawn(victim)) return;
+		if (isBaby(victim)) return;
+		if (handledEntities.contains(victim.getUniqueId())) return;
+		handledEntities.add(victim.getUniqueId());
 
 		EntityType type = victim.getType();
 		MobHeadType mobHeadType = MobHeadType.of(type);

@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -15,21 +17,18 @@ import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import static me.pugabyte.nexus.utils.StringUtils.getLocationString;
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"whotf", "whothefuck"})
 @Permission("group.staff")
@@ -49,17 +48,13 @@ public class WhoIsCommand extends CustomCommand {
 		HoursService hoursService = new HoursService();
 		GeoIPService geoIpService = new GeoIPService();
 
-		int history = 0;
-		List<String> alts = new ArrayList<>();
-		try {
-			LiteBansService liteBansService = new LiteBansService();
-			history = liteBansService.getHistory(nerd.getUuid().toString());
-			alts = liteBansService.getAlts(nerd.getUuid().toString());
-		} catch (Exception ignore) {}
+		Punishments punishments = Punishments.of(nerd);
+		boolean history = punishments.hasHistory();
+		JsonBuilder alts = punishments.getAltsMessage();
 
-		String nickname = nerd.getNickname();
+		String nickname = Nickname.of(nerd);
 		Hours hours = hoursService.get(nerd);
-		String rank = nerd.getRank().withColor();
+		String rank = nerd.getRank().getColoredName();
 		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());
 		String lastJoinQuitLabel = null;
 		String lastJoinQuitDate = null;
@@ -71,12 +66,12 @@ public class WhoIsCommand extends CustomCommand {
 			if (nerd.getLastQuit() != null) {
 				lastJoinQuitLabel = "Last Quit";
 				lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
-				lastJoinQuitDiff = timespanDiff(nerd.getLastQuit());
+				lastJoinQuitDiff = Timespan.of(nerd.getLastQuit()).format();
 			}
 		} else {
 			lastJoinQuitLabel = "Last Join";
 			lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
-			lastJoinQuitDiff = timespanDiff(nerd.getLastJoin());
+			lastJoinQuitDiff = Timespan.of(nerd.getLastJoin()).format();
 		}
 		Set<String> pastNames = nerd.getPastNames();
 		Godmode godmode = new GodmodeService().get(nerd);
@@ -93,13 +88,13 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate);
 
 		if (hours.getTotal() > 0)
-			json.newline().next("&3Hours: &e" + Timespan.of(hours.getTotal()).noneDisplay(true).format());
+			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
 
-		if (history > 0)
-			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("&eClick to view history");
+		if (history)
+			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history");
 
-		if (!alts.isEmpty())
-			json.newline().next("&3Alts: &e" + String.join(", ", alts));
+		if (alts != null)
+			json.newline().next("&3Alts: &e").next(alts);
 
 		if (!pastNames.isEmpty())
 			json.newline().next("&3Past Names: &e" + String.join("&3, &e", pastNames));
@@ -123,6 +118,8 @@ public class WhoIsCommand extends CustomCommand {
 				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup));
 
 		if (offlinePlayer.isOnline() && player != null) {
+			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName());
+
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode()));
 
 			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw());

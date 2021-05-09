@@ -1,25 +1,31 @@
 package me.pugabyte.nexus.models.shop;
 
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @PlayerClass(Shop.class)
-public class ShopService extends MongoService {
-	private final static Map<UUID, Shop> cache = new HashMap<>();
+public class ShopService extends MongoService<Shop> {
+	private final static Map<UUID, Shop> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Shop> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	static {
@@ -39,6 +45,14 @@ public class ShopService extends MongoService {
 
 	public Shop getMarket() {
 		return get(Nexus.getUUID0());
+	}
+
+	@Override
+	public void save(Shop object) {
+		if (StringUtils.isUUID0(object.getUuid()))
+			return;
+
+		super.save(object);
 	}
 
 }

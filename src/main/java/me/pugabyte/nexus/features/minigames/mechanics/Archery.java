@@ -4,6 +4,7 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -22,7 +23,6 @@ import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +38,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,12 +52,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Archery extends TeamlessMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Archery";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -300,15 +301,12 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	public int getPoints(String color) {
-		switch (color) {
-			case "yellow":
-				return 1;
-			case "orange":
-				return 3;
-			case "red":
-				return 5;
-		}
-		return 0;
+		return switch (color) {
+			case "yellow" -> 1;
+			case "orange" -> 3;
+			case "red" -> 5;
+			default -> 0;
+		};
 	}
 
 	public void removeTarget(Block target) {

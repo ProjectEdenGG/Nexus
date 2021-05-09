@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
+import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
@@ -11,17 +13,15 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -140,7 +140,7 @@ public class OrnamentVendor implements Listener {
 
 		event.setCancelled(true);
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		if (user.getOrnamentVendorStage() == QuestStage.NOT_STARTED)
@@ -178,9 +178,9 @@ public class OrnamentVendor implements Listener {
 		if (treeType == null)
 			return;
 
-		Set<ProtectedRegion> regions = Pugmas20.WGUtils.getRegionsLike("pugmas20_trees_" + treeType.name() + "_[0-9]+");
+		Set<ProtectedRegion> regions = Pugmas20.getWGUtils().getRegionsLike("pugmas20_trees_" + treeType.name() + "_[0-9]+");
 
-		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.WGUtils.toLocation(region.getMinimumPoint())));
+		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.getWGUtils().toLocation(region.getMinimumPoint())));
 
 		ProtectedRegion region = result.getObject();
 		double distance = result.getValue().doubleValue();
@@ -278,7 +278,7 @@ public class OrnamentVendor implements Listener {
 				if (region == null)
 					return null;
 
-				Location base = Pugmas20.WEUtils.toLocation(region.getMinimumPoint());
+				Location base = Pugmas20.getWEUtils().toLocation(region.getMinimumPoint());
 				Queue<Location> queue = createDistanceSortedQueue(base);
 				queue.addAll(getBlocks(id).keySet());
 				return queue;
@@ -298,7 +298,7 @@ public class OrnamentVendor implements Listener {
 					return null;
 
 				String schematicName = region.getId().replaceAll("_", "/");
-				return Pugmas20.WEUtils.paster()
+				return Pugmas20.getWEUtils().paster()
 						.air(false)
 						.at(region.getMinimumPoint())
 						.duration(animationTime)
@@ -313,7 +313,7 @@ public class OrnamentVendor implements Listener {
 			regions.computeIfAbsent(id, $ -> {
 				try {
 					String regionName = "pugmas20_trees_" + name().toLowerCase() + "_" + id;
-					return Pugmas20.WGUtils.getProtectedRegion(regionName);
+					return Pugmas20.getWGUtils().getProtectedRegion(regionName);
 				} catch (InvalidInputException ex) {
 					return null;
 				}
@@ -364,7 +364,7 @@ public class OrnamentVendor implements Listener {
 		public static String taskId = "pugmas-tree-regen";
 
 		public void onBreak(int id) {
-			new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
+			new TaskService().save(new Task(taskId, new HashMap<>() {{
 				put("tree", name());
 				put("id", id);
 			}}, LocalDateTime.now().plusSeconds(randomInt(3 * 60, 5 * 60))));
@@ -430,7 +430,7 @@ public class OrnamentVendor implements Listener {
 		if (event.isShiftClick())
 			resultAmount = source.getAmount() / Ornament.logsPerOrnament;
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		user.getOrnamentTradeCount().put(ornament, user.getOrnamentTradeCount().getOrDefault(ornament, 0) + resultAmount);

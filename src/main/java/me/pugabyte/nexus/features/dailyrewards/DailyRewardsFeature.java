@@ -1,23 +1,23 @@
 package me.pugabyte.nexus.features.dailyrewards;
 
-import fr.minuskube.inv.SmartInventory;
+import eden.utils.TimeUtils.Time;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
 import me.pugabyte.nexus.models.dailyreward.Reward;
-import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
@@ -46,24 +46,47 @@ public class DailyRewardsFeature extends Feature {
 		Nexus.getCron().schedule("00 00 * * *", DailyRewardsFeature::dailyReset);
 	}
 
+	@Getter
+	private static LocalDateTime lastTaskTime;
+
 	private void scheduler() {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(5), () -> {
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(6), () -> {
+			lastTaskTime = LocalDateTime.now();
+
+			DailyRewardService service = new DailyRewardService();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				try {
-					if (((Hours) new HoursService().get(player)).getDaily() < Time.MINUTE.x(15) / 20) continue;
+					if (new HoursService().get(player.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+						continue;
 
-					DailyRewardService service = new DailyRewardService();
 					DailyReward dailyReward = service.get(player);
-					if (dailyReward.isEarnedToday()) continue;
+					if (dailyReward.isEarnedToday())
+						continue;
 
 					Tasks.sync(() -> {
 						dailyReward.increaseStreak();
 						service.save(dailyReward);
 					});
 				} catch (Exception ex) {
-					Nexus.warn("Error in DailyRewards scheduler: " + ex.getMessage());
+					ex.printStackTrace();
 				}
 			}
+
+			Tasks.waitAsync(Time.SECOND.x(3), () -> {
+				for (DailyReward dailyReward : service.getAllNotEarnedToday()) {
+					try {
+						if (new HoursService().get(dailyReward.getOfflinePlayer().getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+							continue;
+
+						Tasks.sync(() -> {
+							dailyReward.increaseStreak();
+							service.save(dailyReward);
+						});
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			});
 		});
 	}
 
@@ -78,7 +101,7 @@ public class DailyRewardsFeature extends Feature {
 			}
 
 			dailyReward.setEarnedToday(false);
-			if (dailyReward.getPlayer().isOnline())
+			if (dailyReward.getOfflinePlayer().isOnline())
 				dailyReward.increaseStreak();
 
 			service.save(dailyReward);
@@ -90,43 +113,30 @@ public class DailyRewardsFeature extends Feature {
 	}
 
 	public static void menu(Player player, DailyReward dailyReward) {
-		SmartInventory inv = SmartInventory.builder()
-				.provider(new DailyRewardsMenu(dailyReward))
-				.size(3, 9)
-				.title(ChatColor.DARK_AQUA + "Daily Rewards")
-				.build();
-
-		inv.open(player);
+		new DailyRewardsMenu(dailyReward).open(player);
 	}
 
 	public static Reward getReward(int day, int option) {
-		switch(option){
-			case 0:
-				return getReward1(day);
-			case 1:
-				return getReward2(day);
-			case 2:
-				return getReward3(day);
-		}
-		return null;
+		return switch (option) {
+			case 0 -> rewards1.get(day - 1);
+			case 1 -> rewards2.get(day - 1);
+			case 2 -> rewards3.get(day - 1);
+			default -> null;
+		};
 	}
 
-	public static Reward getReward1(int day) {
-		return rewards1.get(day - 1);
-	}
-
-	public static Reward getReward2(int day) {
-		return rewards2.get(day - 1);
-	}
-
-	public static Reward getReward3(int day) {
-		return rewards3.get(day - 1);
+	public static List<Reward> getRewards(int day) {
+		return Arrays.asList(
+				getReward(day, 0),
+				getReward(day, 1),
+				getReward(day, 2)
+		);
 	}
 
 	// @formatter:off
 	@SuppressWarnings("DuplicatedCode")
 	private void setupDailyRewards() {
-		rewards1 = new ArrayList<Reward>() {{
+		rewards1 = new ArrayList<>() {{
 			/*   1 */ add(new Reward("5 Cooked Chicken")						.item(COOKED_CHICKEN, 5));
 			/*   2 */ add(new Reward("5 Steak")									.item(COOKED_BEEF, 5));
 			/*   3 */ add(new Reward("10 Leather")								.item(LEATHER, 10));
@@ -229,7 +239,7 @@ public class DailyRewardsFeature extends Feature {
 			/* 100 */ add(new Reward("$20,000")									.money(20000));
 		}};
 
-		rewards2 = new ArrayList<Reward>() {{
+		rewards2 = new ArrayList<>() {{
 			/*   1 */ add(new Reward("1 Coal Block")							.item(COAL_BLOCK, 1));
 			/*   2 */ add(new Reward("1 Redstone Block")						.item(REDSTONE_BLOCK, 1));
 			/*   3 */ add(new Reward("1 Iron Block")							.item(IRON_BLOCK, 1));
@@ -332,7 +342,7 @@ public class DailyRewardsFeature extends Feature {
 			/* 100 */ add(new Reward("10 Diamond Blocks")						.item(DIAMOND_BLOCK, 10));
 		}};
 
-		rewards3 = new ArrayList<Reward>() {{
+		rewards3 = new ArrayList<>() {{
 			/*   1 */ add(new Reward("1 Workbench")								.item(CRAFTING_TABLE, 1));
 			/*   2 */ add(new Reward("1 Chest")									.item(CHEST, 1));
 			/*   3 */ add(new Reward("1 Furnace")								.item(FURNACE, 1));

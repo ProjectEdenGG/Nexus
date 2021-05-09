@@ -1,22 +1,23 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.PugmasIsland.PugmasNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,14 +35,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
-public class PugmasIsland implements Listener, Island {
+public class PugmasIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	private Location present_grinch_1 = new Location(BearFair20.getWorld(), -1057, 126, -1905);
 	private Location present_grinch_2 = new Location(BearFair20.getWorld(), -1058, 126, -1898);
@@ -82,8 +87,8 @@ public class PugmasIsland implements Listener, Island {
 		MAYOR(2959) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_Pugmas_Step();
 				int presents = user.getPresentLocs().size();
 
@@ -152,8 +157,8 @@ public class PugmasIsland implements Listener, Island {
 		GRINCH(2958) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_Pugmas_Step();
 				int presents = user.getPresentLocs().size();
 
@@ -253,8 +258,8 @@ public class PugmasIsland implements Listener, Island {
 	}
 
 	private static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		int step = user.getQuest_Pugmas_Step() + 1;
 		user.setQuest_Pugmas_Step(step);
 		service.save(user);
@@ -262,10 +267,10 @@ public class PugmasIsland implements Listener, Island {
 
 	private void effectTasks() {
 		Tasks.repeat(0, Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream()
-				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
+				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
-					BearFairService service = new BearFairService();
-					BearFairUser user = service.get(player);
+					BearFair20UserService service = new BearFair20UserService();
+					BearFair20User user = service.get(player);
 					int step = user.getQuest_Pugmas_Step();
 					boolean startedQuest = user.isQuest_Pugmas_Start();
 					boolean finishedQuest = user.isQuest_Pugmas_Finish();
@@ -308,15 +313,15 @@ public class PugmasIsland implements Listener, Island {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
-		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
+		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 
 		if (user.isQuest_Pugmas_Finish())
 			return;
@@ -373,19 +378,19 @@ public class PugmasIsland implements Listener, Island {
 	}
 
 	private boolean isTreePresent(Location location) {
-		ProtectedRegion treeRg = WGUtils.getProtectedRegion(presents_treeRg);
-		return WGUtils.getRegionsAt(location).contains(treeRg);
+		ProtectedRegion treeRg = getWGUtils().getProtectedRegion(presents_treeRg);
+		return getWGUtils().getRegionsAt(location).contains(treeRg);
 	}
 
 	private boolean isFoundPresent(Location location, Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		return user.getPresentLocs().contains(location);
 	}
 
 	private boolean hasFoundTreePresent(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		for (Location presentLoc : user.getPresentLocs()) {
 			if (isTreePresent(presentLoc))
 				return true;
@@ -396,8 +401,8 @@ public class PugmasIsland implements Listener, Island {
 	//
 
 	public static void switchQuest(Player player, boolean mayor) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		if (user.isQuest_Pugmas_Finish()) return;
 		if (user.isQuest_Pugmas_Switched()) return;
 
@@ -413,8 +418,8 @@ public class PugmasIsland implements Listener, Island {
 	}
 
 	public static void acceptQuest(Player player, boolean mayor) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		if (user.isQuest_Pugmas_Finish()) return;
 		if (user.isQuest_Pugmas_Switched()) return;
 
@@ -432,8 +437,8 @@ public class PugmasIsland implements Listener, Island {
 	//
 
 	private static List<String> completeQuest(Player player, List<String> thanks) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		user.setQuest_Pugmas_Finish(true);
 		service.save(user);
 

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -12,13 +13,12 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -31,12 +31,12 @@ import java.util.List;
 public class WelcomeCommand extends CustomCommand {
 	private static String lastMessage = null;
 
-	List<String> messages = new ArrayList<String>() {{
+	List<String> messages = new ArrayList<>() {{
 		add("Welcome to the server [player]! Make sure to read the /rules and feel free to ask questions.");
-		add("Welcome to Bear Nation [player]! Please take a moment to read the /rules and feel free to ask any questions you have.");
-		add("Hi [player], welcome to Bear Nation :) Please read the /rules and ask if you have any questions.");
-		add("Hey [player]! Welcome to Bear Nation. Be sure to read the /rules and don't be afraid to ask questions ^^");
-		add("Hi there [player] :D Welcome to Bear Nation. Make sure to read the /rules and feel free to ask questions.");
+		add("Welcome to Project Eden [player]! Please take a moment to read the /rules and feel free to ask any questions you have.");
+		add("Hi [player], welcome to Project Eden :) Please read the /rules and ask if you have any questions.");
+		add("Hey [player]! Welcome to Project Eden. Be sure to read the /rules and don't be afraid to ask questions ^^");
+		add("Hi there [player] :D Welcome to Project Eden. Make sure to read the /rules and feel free to ask questions.");
 	}};
 
 	public WelcomeCommand(@NonNull CommandEvent event) {
@@ -66,9 +66,9 @@ public class WelcomeCommand extends CustomCommand {
 	@Path("[player]")
 	void welcome(Player player) {
 		if (player != null) {
-			if (!player.hasPermission("rank.guest"))
+			if (Rank.of(player) != Rank.GUEST)
 				error("Prevented accidental welcome");
-			if (((Hours) new HoursService().get(player)).getTotal() > (60 * 60))
+			if (new HoursService().get(player.getUniqueId()).getTotal() > (60 * 60))
 				error("Prevented accidental welcome");
 		}
 

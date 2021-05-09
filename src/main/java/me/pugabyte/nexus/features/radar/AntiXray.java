@@ -27,7 +27,7 @@ import java.util.UUID;
 
 //TODO: Prevent false positives with silktouch/fortune somehow
 public class AntiXray implements Listener {
-	private final static Map<Material, Integer> countMap = new HashMap<Material, Integer>() {{
+	private final static Map<Material, Integer> countMap = new HashMap<>() {{
 		// @formatter:off
 		//										// Amount per chunk is not guaranteed, but is max
 		put(Material.ANCIENT_DEBRIS, 	3);		// vein of 1-3, 	2 per chunk
@@ -39,7 +39,7 @@ public class AntiXray implements Listener {
 		put(Material.GILDED_BLACKSTONE, 20);	// generates in bastian remnants
 		// @formatter:on;
 	}};
-	private static Map<UUID, List<XRayLog>> XRayLogs = new HashMap<>();
+	private static final Map<UUID, List<XRayLog>> XRayLogs = new HashMap<>();
 	private final static int minuteThreshold = 5;
 
 	@EventHandler
@@ -95,7 +95,7 @@ public class AntiXray implements Listener {
 
 	@Getter
 	@AllArgsConstructor
-	class XRayLog {
+	static class XRayLog {
 		Material material;
 		LocalDateTime timestamp;
 		Location location;

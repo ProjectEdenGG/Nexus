@@ -144,30 +144,14 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 
 		switch (menu) {
-			case MAIN:
-				contents.set(0, 0, ClickableItem.of(closeItem(), e -> contents.inventory().close(player)));
-				break;
-			case VANILLA_OR_CUSTOM:
-				contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.MAIN)));
-				break;
-			case VANILLA_ADD_REMOVE:
-				contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_OR_CUSTOM)));
-				break;
-			case VANILLA_ADD:
-				contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_ADD_REMOVE)));
-				break;
-			case VANILLA_REMOVE:
-				contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_ADD_REMOVE)));
-				break;
-			case CUSTOM_ADD_REMOVE:
-				contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_OR_CUSTOM)));
-				break;
-			case CUSTOM_ADD:
-				contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.CUSTOM_ADD_REMOVE)));
-				break;
-			case CUSTOM_REMOVE:
-				contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.CUSTOM_ADD_REMOVE)));
-				break;
+			case MAIN -> contents.set(0, 0, ClickableItem.of(closeItem(), e -> contents.inventory().close(player)));
+			case VANILLA_OR_CUSTOM -> contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.MAIN)));
+			case VANILLA_ADD_REMOVE -> contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_OR_CUSTOM)));
+			case VANILLA_ADD -> contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_ADD_REMOVE)));
+			case VANILLA_REMOVE -> contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_ADD_REMOVE)));
+			case CUSTOM_ADD_REMOVE -> contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.VANILLA_OR_CUSTOM)));
+			case CUSTOM_ADD -> contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.CUSTOM_ADD_REMOVE)));
+			case CUSTOM_REMOVE -> contents.set(0, 0, ClickableItem.of(backItem(), e -> openItemEditor(player, ItemEditMenu.CUSTOM_ADD_REMOVE)));
 		}
 		switch (menu) {
 			case MAIN:

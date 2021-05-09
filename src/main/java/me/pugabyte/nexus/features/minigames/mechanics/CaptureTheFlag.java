@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Optional;
@@ -22,12 +23,12 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Capture the Flag";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Capture the other team's flag to win the game";
 	}
 
@@ -105,6 +106,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 			Match match = event.getMatch();
 			flagMessage(match, minigamer.getTeam(), minigamer, minigamer.getColoredName() + " &3dropped " + carriedFlag.getTeam().getColoredName() + "&3's flag", true);
 			flagMessage(match, carriedFlag.getTeam(), event.getAttacker(), minigamer.getColoredName() + "&3 dropped your flag", false);
+			if (event.getAttacker() != null)
+				event.getAttacker().contributionScored(5);
 		}
 		super.onDeath(event);
 	}
@@ -123,6 +126,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Flag flag = matchData.getFlag(minigamer.getTeam());
 		flag.respawn();
 		match.getTasks().cancel(flag.getTaskId());
+
+		minigamer.contributionScored(3);
 	}
 
 	private void captureFlag(Minigamer minigamer, Team team) {
@@ -133,6 +138,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		flagMessage(match, team, minigamer.getColoredName() + "&3 captured your flag", Sound.ENTITY_ENDER_DRAGON_GROWL, 0.4f, false);
 
 		minigamer.scored();
+		minigamer.contributionScored(19); // above line adds 1 so let's add 19 more
 		minigamer.getMatch().scored(minigamer.getTeam());
 
 		matchData.removeFlagCarrier(minigamer);

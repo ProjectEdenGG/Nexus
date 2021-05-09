@@ -1,16 +1,16 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 
@@ -37,7 +37,7 @@ public class PugDunk implements Listener {
 	private static Location buttonLoc = new Location(BearFair20.getWorld(), -960, 139, -1594);
 	private static Location dropBlock = new Location(BearFair20.getWorld(), -963, 142, -1588);
 	private static Location delArrowsLoc = new Location(BearFair20.getWorld(), -961, 135, -1594);
-	private BFPointSource SOURCE = BFPointSource.PUGDUNK;
+	private BF20PointSource SOURCE = BF20PointSource.PUGDUNK;
 	private static String gameRg = BearFair20.getRegion() + "_pugdunk";
 	private static String targetRg = gameRg + "_target";
 
@@ -72,7 +72,7 @@ public class PugDunk implements Listener {
 
 	public static void start() {
 		if (!enabled) {
-			if (WGUtils.getPlayersInRegion(gameRg).size() > 0) {
+			if (getWGUtils().getPlayersInRegion(gameRg).size() > 0) {
 				enabled = true;
 			} else {
 				enabled = false;
@@ -84,7 +84,7 @@ public class PugDunk implements Listener {
 	private void buttonTask() {
 		Tasks.repeat(0, 5, () -> {
 			if (enabled) {
-				if (WGUtils.getPlayersInRegion(gameRg).size() == 0)
+				if (getWGUtils().getPlayersInRegion(gameRg).size() == 0)
 					setPugDunkBool(false);
 				else {
 					if (RandomUtils.chanceOf(25)) {
@@ -110,9 +110,9 @@ public class PugDunk implements Listener {
 		BearFair20.getWorld().playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
 		if (giveDailyPoints) {
-			BearFairUser user = new BearFairService().get(player);
+			BearFair20User user = new BearFair20UserService().get(player);
 			user.giveDailyPoints(SOURCE);
-			new BearFairService().save(user);
+			new BearFair20UserService().save(user);
 		}
 
 		dropNPC();
@@ -124,7 +124,7 @@ public class PugDunk implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
 			if (enabled)
@@ -134,10 +134,10 @@ public class PugDunk implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionLeave(RegionLeftEvent event) {
+	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = WGUtils.getPlayersInRegion(gameRg).size();
+			int size = getWGUtils().getPlayersInRegion(gameRg).size();
 			if (size == 0)
 				setPugDunkBool(false);
 		}

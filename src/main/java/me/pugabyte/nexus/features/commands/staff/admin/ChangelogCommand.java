@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.commands.staff.admin;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
+import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.StringUtils.shortDateTimeFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Permission("group.admin")
 public class ChangelogCommand extends CustomCommand {
@@ -50,12 +50,12 @@ public class ChangelogCommand extends CustomCommand {
 	@Confirm
 	@Path("diff [from] [to]")
 	void diff(ChangelogEntry from, ChangelogEntry to) {
-		Discord.send(getMessage(from, to), Channel.CHANGELOG);
+		Discord.send(getMessage(from, to), TextChannel.CHANGELOG);
 	}
 
 	@Path("diff test [from] [to]")
 	void diffTest(ChangelogEntry from, ChangelogEntry to) {
-		Discord.send(getMessage(from, to), Channel.TEST);
+		Discord.send(getMessage(from, to), TextChannel.TEST);
 	}
 
 	private String getMessage(ChangelogEntry from, ChangelogEntry to) {
@@ -77,9 +77,9 @@ public class ChangelogCommand extends CustomCommand {
 			String timestamp = shortDateTimeFormat(entry.getTimestamp());
 			String timestampIso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(entry.getTimestamp());
 			return json("&3" + index + " &e" + timestamp + " &7- &3" + entry.getMinecraftVersion() + " #" + entry.getPaperVersion())
-					.addHover("&3Plugins: &e" + entry.getPluginVersions().size())
-					.addHover("&3Plugin Notes: &e" + entry.getPluginNotes().size())
-					.addHover("&3Commits: &e" + entry.getCommits().size())
+					.hover("&3Plugins: &e" + entry.getPluginVersions().size())
+					.hover("&3Plugin Notes: &e" + entry.getPluginNotes().size())
+					.hover("&3Commits: &e" + entry.getCommits().size())
 					.command("/changelog database debug " + timestampIso);
 		};
 		paginate(changelog.getEntries(), formatter, "/changelog list ", page);

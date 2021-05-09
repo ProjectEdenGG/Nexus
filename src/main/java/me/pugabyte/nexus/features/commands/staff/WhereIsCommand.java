@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -89,7 +89,7 @@ public class WhereIsCommand extends CustomCommand {
 			return;
 		}
 
-		if (!WorldGroup.STAFF.contains(viewer.getWorld())) {
+		if (!WorldGroup.STAFF.contains(viewer.getWorld()) && !WorldGroup.EVENTS.contains(viewer.getWorld())) {
 			unglow(viewer);
 			return;
 		}

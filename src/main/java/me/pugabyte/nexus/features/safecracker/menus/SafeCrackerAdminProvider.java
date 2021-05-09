@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.safecracker.menus;
 
+import eden.annotations.Disabled;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.safecracker.NPCHandler;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -83,7 +83,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 
 		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
 			player.closeInventory();
-			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle ").build());
+			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle "));
 		}));
 
 		int row = 1;

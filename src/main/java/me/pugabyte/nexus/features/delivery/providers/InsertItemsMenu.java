@@ -39,20 +39,20 @@ public class InsertItemsMenu implements Listener {
 			inv.setContents(items.toArray(new ItemStack[0]));
 
 		Nexus.registerTempListener(this);
-		user.getPlayer().openInventory(inv);
+		user.getOnlinePlayer().openInventory(inv);
 	}
 
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		if (event.getInventory().getHolder() != null) return;
 		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
-		if (!event.getPlayer().equals(user.getPlayer())) return;
+		if (!event.getPlayer().equals(user.getOnlinePlayer())) return;
 
 		items = Arrays.stream(event.getInventory().getContents())
 				.filter(item -> !ItemUtils.isNullOrAir(item)).collect(Collectors.toList());
 
 		Nexus.unregisterTempListener(this);
 		event.getPlayer().closeInventory();
-		Tasks.wait(1, () -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(user.getPlayer()));
+		Tasks.wait(1, () -> new SendDeliveryMenuProvider(user, worldGroup, sendTo, items, message).open(user.getOnlinePlayer()));
 	}
 }

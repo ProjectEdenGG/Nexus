@@ -16,6 +16,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -28,6 +29,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -37,15 +39,15 @@ import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
+@Permission("group.moderator")
 public class DyeBombCommand extends CustomCommand implements Listener {
-	private static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").build();
+	public static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
 
 	public DyeBombCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("give <amount> [player]")
-	@Permission("group.moderator")
 	public void give(@Arg int amount, @Arg("self") Player player) {
 		giveDyeBomb(player, amount);
 	}
@@ -69,16 +71,17 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 
 		String itemName = StringUtils.stripColor(meta.getDisplayName());
 		if (!"Dye Bomb".equalsIgnoreCase(itemName)) return;
-		if (meta.getLore() == null) return;
-		if (!meta.getLore().contains(StringUtils.colorize("&bEvent Item"))) return;
+		if (!((meta.getLore() != null && meta.getLore().contains(StringUtils.colorize("&bEvent Item"))) || meta.isUnbreakable())) return;
 
 		Player player = event.getPlayer();
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(player, "throwDyeBomb", 2 * 20))
 			return;
 
-		int amount = event.getItem().getAmount();
-		event.getItem().setAmount(amount - 1);
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			int amount = event.getItem().getAmount();
+			event.getItem().setAmount(amount - 1);
+		}
 
 		Location location = player.getLocation().add(0, 1.5, 0);
 		location.add(player.getLocation().getDirection());
@@ -119,7 +122,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		ColorType[] colorTypes = ColorType.values();
 		List<Color> colors = new ArrayList<>();
 		for (ColorType colortype : colorTypes) {
-			colors.add(colortype.getColor());
+			colors.add(colortype.getBukkitColor());
 		}
 		return RandomUtils.randomElement(removeUglies(colors));
 	}

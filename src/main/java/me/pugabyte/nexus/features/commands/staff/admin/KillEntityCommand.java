@@ -132,7 +132,7 @@ public class KillEntityCommand extends CustomCommand {
 
 	@TabCompleterFor(KillEntityArg.class)
 	List<String> tabCompleteKillEntityArg(String value) {
-		return new ArrayList<String>() {{
+		return new ArrayList<>() {{
 			addAll(tabCompleteLivingEntity(value));
 			addAll(tabCompleteEnum(value, KillableEntityGroup.class));
 			add(EntityType.DROPPED_ITEM.name().toLowerCase());

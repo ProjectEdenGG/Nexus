@@ -1,18 +1,23 @@
 package me.pugabyte.nexus.models.vote;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(VotePoints.class)
-public class VotePointsService extends MongoService {
-	private final static Map<UUID, VotePoints> cache = new HashMap<>();
+public class VotePointsService extends MongoService<VotePoints> {
+	private final static Map<UUID, VotePoints> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, VotePoints> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 }

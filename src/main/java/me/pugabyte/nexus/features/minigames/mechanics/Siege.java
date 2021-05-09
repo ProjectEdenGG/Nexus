@@ -7,10 +7,14 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.Flag;
 import me.pugabyte.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -20,12 +24,12 @@ import static me.pugabyte.nexus.utils.Utils.getMax;
 public final class Siege extends OneFlagCaptureTheFlag {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Siege";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "One team protects their flag while the other tries to capture it";
 	}
 
@@ -56,17 +60,18 @@ public final class Siege extends OneFlagCaptureTheFlag {
 
 		int winningScore = getWinningScore(scores.values());
 
-		String announcement;
 		Team winningTeam;
+		JsonBuilder builder = new JsonBuilder();
 		if (winningScore == 0) {
 			winningTeam = getDefendingTeam(match);
-			announcement = winningTeam == null ? "Defenders" : winningTeam.getColoredName();
-			announcement += "&3 protected the flag on &e" + match.getArena().getName();
+			builder.next(winningTeam == null ? Component.text("Defenders", NamedTextColor.BLUE) : winningTeam);
+			builder.next(" protected the flag on ");
 		} else {
 			winningTeam = getMax(match.getAliveTeams(), team -> team.getScore(match)).getObject();
-			announcement = winningTeam.getColoredName() + "&3 captured the flag on &e" + match.getArena().getName();
+			builder.next(winningTeam).next(" captured the flag on ");
 		}
-		Minigames.broadcast(announcement);
+		builder.next(match.getArena());
+		Minigames.broadcast(builder);
 	}
 
 	@Override

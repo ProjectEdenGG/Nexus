@@ -7,7 +7,11 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,7 +31,7 @@ public class MysteryCrate extends Crate {
 
 	@Override
 	public List<String> getCrateHologramLines() {
-		return new ArrayList<String>() {{
+		return new ArrayList<>() {{
 			add("&3&l--=[+]=--");
 			add("&3[+] &e&lMystery Crate &3[+]");
 			add("&3&l--=[+]=--");
@@ -49,9 +53,9 @@ public class MysteryCrate extends Crate {
 	public void onSpawnItem(CrateSpawnItemEvent event) {
 		if (event.getCrateType() != getCrateType()) return;
 		if (!event.getCrateLoot().getItems().contains(new ItemStack(Material.BEACON))) return;
-		Chat.broadcastIngame(Crates.PREFIX + "&e" + event.getPlayer().getName() +
-				" &3has gotten a &eBeacon &3from the &eMystery Crate", MuteMenuItem.EVENTS);
-		Chat.broadcastDiscord("**[Crates]** " + player.getName() + " has gotten a Beacon from the Mystery Crate");
+		String message = "&e" + event.getPlayer().getName() + " &3has received a &eBeacon &3from the &eMystery Crate";
+		Chat.broadcastIngame(Crates.PREFIX + message, MuteMenuItem.CRATES);
+		Chat.broadcastDiscord("**[Crates]** " + message);
 	}
 
 	@Override
@@ -68,6 +72,6 @@ public class MysteryCrate extends Crate {
 
 	@Override
 	public Color[] getBandColors() {
-		return new Color[]{ColorType.CYAN.getColor(), Color.YELLOW};
+		return new Color[]{ColorType.CYAN.getBukkitColor(), Color.YELLOW};
 	}
 }

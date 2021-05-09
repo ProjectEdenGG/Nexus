@@ -1,8 +1,7 @@
 package me.pugabyte.nexus.features.discord;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.discord.DiscordId.Channel;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -14,11 +13,11 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.discord.DiscordCaptcha;
 import me.pugabyte.nexus.models.discord.DiscordCaptchaService;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
-import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -30,8 +29,10 @@ import org.bukkit.OfflinePlayer;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+
 public class DiscordCommand extends CustomCommand {
-	DiscordService service = new DiscordService();
+	DiscordUserService service = new DiscordUserService();
 	DiscordUser user;
 
 	public DiscordCommand(@NonNull CommandEvent event) {
@@ -46,11 +47,11 @@ public class DiscordCommand extends CustomCommand {
 		Guild guild = Discord.getGuild();
 		if (guild == null)
 			error("Discord bot is not connected");
-		TextChannel channel = guild.getTextChannelById(Channel.GENERAL.getId());
-		if (channel == null)
+		TextChannel textChannel = guild.getTextChannelById(DiscordId.TextChannel.GENERAL.getId());
+		if (textChannel == null)
 			error("General channel not found");
 
-		send(json().next("&e" + channel.createInvite().complete().getUrl()));
+		send(json().next("&e" + textChannel.createInvite().complete().getUrl()));
 	}
 
 	@Async
@@ -73,7 +74,7 @@ public class DiscordCommand extends CustomCommand {
 			}
 		} catch (ErrorResponseException ex) {
 			if (ex.getErrorCode() == 10007)
-				error("User has linked their Discord account but is not in the Discord server");
+				error(new JsonBuilder("User has linked their Discord account but is not in the Discord server. ID: " + user.getUserId()).copy(user.getUserId()).hover("&eClick to copy"));
 			else
 				rethrow(ex);
 		}
@@ -84,8 +85,8 @@ public class DiscordCommand extends CustomCommand {
 	@Permission("group.seniorstaff")
 	void updateRoles() {
 		int errors = 0;
-		Role verified = Discord.getGuild().getRoleById(DiscordId.Role.VERIFIED.getId());
-		for (DiscordUser discordUser : new DiscordService().getAll()) {
+		Role verified = DiscordId.Role.VERIFIED.get();
+		for (DiscordUser discordUser : new DiscordUserService().getAll()) {
 			if (!isNullOrEmpty(discordUser.getUserId())) {
 				try {
 					Member member = discordUser.getMember();
@@ -106,14 +107,15 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("forceLink <player> <id>")
+	@Permission("group.staff")
 	void forceLink(OfflinePlayer player, String id) {
-		DiscordService service = new DiscordService();
+		DiscordUserService service = new DiscordUserService();
 		DiscordUser user = service.get(player);
 		user.setUserId(id);
-		if (user.getName() == null)
+		if (user.getUser() == null)
 			error("Could not find user from userId &e" + id);
 		service.save(user);
-		send("Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
+		send("&3Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
 		Discord.addRole(id, DiscordId.Role.VERIFIED);
 		Discord.staffLog("**" + user.getIngameName() + "** Discord account force linked to **" + user.getNameAndDiscrim() +  "** by " + name());
 	}
@@ -126,7 +128,7 @@ public class DiscordCommand extends CustomCommand {
 				User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
 				if (userById == null)
 					send(PREFIX + "Your minecraft account is linked to a Discord account, but I could not find that account. " +
-							"Are you in our Discord server? &e" + BNSocialMediaSite.DISCORD.getUrl());
+							"Are you in our Discord server? &e" + EdenSocialMediaSite.DISCORD.getUrl());
 				else
 					send(PREFIX + "Your minecraft account is linked to " + user.getName());
 				send(PREFIX + "You can unlink your account with &c/discord unlink");
@@ -141,7 +143,7 @@ public class DiscordCommand extends CustomCommand {
 		} else {
 			if (Discord.getCodes().containsKey(code)) {
 				DiscordUser newUser = Discord.getCodes().get(code);
-				if (!uuid().toString().equals(newUser.getUuid()))
+				if (!uuid().equals(newUser.getUuid()))
 					error("There is no pending confirmation with this account");
 
 				user.setUserId(newUser.getUserId());
@@ -316,15 +318,15 @@ public class DiscordCommand extends CustomCommand {
 
 		captcha.getUnconfirmed().forEach((id, date) -> {
 			String name = Discord.getName(id);
-			send("ID: " + name + " / Date: " + StringUtils.shortDateTimeFormat(date));
+			send("ID: " + name + " / Date: " + shortDateTimeFormat(date));
 		});
 	}
 
 	@ConverterFor(DiscordUser.class)
 	DiscordUser convertToDiscordUser(String value) {
 		if (value.length() == 18)
-			return new DiscordService().getFromUserId(value);
-		return new DiscordService().get(convertToOfflinePlayer(value));
+			return new DiscordUserService().getFromUserId(value);
+		return new DiscordUserService().get(convertToOfflinePlayer(value));
 	}
 
 	@TabCompleterFor(DiscordUser.class)

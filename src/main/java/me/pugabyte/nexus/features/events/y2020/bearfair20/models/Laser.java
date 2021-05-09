@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.models;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;

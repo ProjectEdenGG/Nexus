@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.events.aeveonproject.sets.sialiaCrashing;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.aeveonproject.AeveonProject;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 
 import static me.pugabyte.nexus.features.events.aeveonproject.APUtils.APLoc;
-import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.WGUtils;
+import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
 
 public class Sounds {
 	private static final Location engineLoc = APLoc(-823, 86, -1062);
@@ -30,7 +30,7 @@ public class Sounds {
 
 			Tasks.sync(() -> {
 
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
+				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -46,7 +46,7 @@ public class Sounds {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
+				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -63,7 +63,7 @@ public class Sounds {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = WGUtils.getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
+				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -80,7 +80,7 @@ public class Sounds {
 
 			Tasks.sync(() ->
 					Particles.pipes.forEach(pipe ->
-							AeveonProject.getAPWorld().playSound(pipe, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.1F, 0.5F)));
+							AeveonProject.getWorld().playSound(pipe, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.1F, 0.5F)));
 		});
 	}
 

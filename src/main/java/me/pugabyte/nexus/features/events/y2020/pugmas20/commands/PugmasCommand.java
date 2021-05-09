@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.AdventChests;
@@ -32,8 +33,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -56,7 +57,6 @@ import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPu
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @Aliases("pugmas")
 @NoArgsConstructor
@@ -64,8 +64,8 @@ import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 @Redirect(from = "/district", to = "/pugmas district")
 @Redirect(from = "/waypoint", to = "/pugmas waypoint")
 public class PugmasCommand extends CustomCommand implements Listener {
-	private final String timeLeft = timespanDiff(Pugmas20.openingDay);
-	private final Pugmas20Service pugmasService = new Pugmas20Service();
+	private final String timeLeft = Timespan.of(Pugmas20.openingDay).format();
+	private final Pugmas20UserService pugmasService = new Pugmas20UserService();
 	private Pugmas20User pugmasUser;
 	private final EventUserService eventUserService = new EventUserService();
 	private EventUser eventUser;
@@ -207,7 +207,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 
 		line();
 		if (day < 25) {
-			send("&3Next day begins in &e" + timespanDiff(now.plusDays(1)));
+			send("&3Next day begins in &e" + Timespan.of(now.plusDays(1)).format());
 			line();
 		}
 	}
@@ -283,7 +283,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 	void adventFoundAll() {
 		send(PREFIX + "Found counts:");
 		new HashMap<Integer, List<String>>() {{
-			pugmasService.<Pugmas20User>getAll().forEach(user -> {
+			pugmasService.getAll().forEach(user -> {
 				List<String> names = getOrDefault(user.getLocatedDays().size(), new ArrayList<>());
 				names.add(user.getName());
 				put(user.getLocatedDays().size(), names);

@@ -34,9 +34,9 @@ public class MapCommand extends CustomCommand {
 			if (!names.isEmpty() && !names.containsKey(world))
 				subdomain = "staffmap";
 
-		String link = "http://" + subdomain + ".bnn.gg/#" + names.getOrDefault(world, world) + ":" + x + ":" + z + ":0:30:0";
+		String link = "http://" + subdomain + ".projecteden.gg/#" + names.getOrDefault(world, world) + ":" + x + ":0:" + z + ":30:0:0:0:0:perspective";
 
-		send(json("&3Map: &ehttp://map.bnn.gg").url("http://map.bnn.gg"));
+		send(json("&3Map: &ehttp://map.projecteden.gg").url("http://map.projecteden.gg"));
 		send(json("&3Current Location: &e" + link).url(link));
 		send("&eTip: &3Zoom in, right click and drag");
 	}

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -7,11 +8,15 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -21,6 +26,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +39,34 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 public class Restrictions implements Listener {
 	private static final String PREFIX = Koda.getLocalFormat();
 
+	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE,
+			WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
+	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
+
+	public static boolean isPerkAllowedAt(Location location) {
+		WorldGroup worldGroup = WorldGroup.get(location);
+		if (!allowedWorldGroups.contains(worldGroup))
+			return false;
+
+		if (blockedWorlds.contains(location.getWorld().getName()))
+			return false;
+
+		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(location);
+		if (!worldGuardUtils.getRegionsAt(location).isEmpty())
+			return false;
+
+		return true;
+	}
+
 	@EventHandler
 	public void onPortalEvent(PlayerPortalEvent event) {
 		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.get(event.getPlayer())))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onEndPortalCreate(PortalCreateEvent event) {
+		if (WorldGroup.get(event.getWorld()) != WorldGroup.SURVIVAL)
 			event.setCancelled(true);
 	}
 
@@ -80,6 +111,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
+		event.getPlayer().closeInventory();
 		if (event.getFrom().getWorld().getEnvironment() == Environment.THE_END || event.getTo().getWorld().getEnvironment() != Environment.THE_END)
 			return;
 
@@ -142,6 +174,7 @@ public class Restrictions implements Listener {
 			Material.ALLIUM,
 			Material.ANVIL,
 			Material.AZURE_BLUET,
+			Material.BAMBOO,
 			Material.BEETROOTS,
 			Material.BIRCH_BUTTON,
 			Material.BIRCH_DOOR,
@@ -173,6 +206,7 @@ public class Restrictions implements Listener {
 			Material.COCOA,
 			Material.COMPARATOR,
 			Material.CORNFLOWER,
+			Material.CRIMSON_FUNGUS,
 			Material.CYAN_BANNER,
 			Material.CYAN_CARPET,
 			Material.CYAN_CONCRETE_POWDER,
@@ -186,10 +220,8 @@ public class Restrictions implements Listener {
 			Material.DARK_OAK_SIGN,
 			Material.DARK_OAK_WALL_SIGN,
 			Material.DEAD_BUSH,
-			Material.DEAD_BUSH,
 			Material.DETECTOR_RAIL,
 			Material.DRAGON_EGG,
-			Material.END_PORTAL,
 			Material.END_PORTAL,
 			Material.FERN,
 			Material.FLOWER_POT,
@@ -236,7 +268,6 @@ public class Restrictions implements Listener {
 			Material.MAGENTA_CONCRETE_POWDER,
 			Material.MAGENTA_WALL_BANNER,
 			Material.MELON_STEM,
-			Material.NETHER_PORTAL,
 			Material.NETHER_PORTAL,
 			Material.NETHER_WART,
 			Material.OAK_BUTTON,
@@ -296,6 +327,7 @@ public class Restrictions implements Listener {
 			Material.TORCH,
 			Material.TRAPPED_CHEST,
 			Material.VINE,
+			Material.WARPED_FUNGUS,
 			Material.WHEAT,
 			Material.WHITE_BANNER,
 			Material.WHITE_CARPET,
@@ -308,5 +340,11 @@ public class Restrictions implements Listener {
 			Material.YELLOW_CONCRETE_POWDER,
 			Material.YELLOW_WALL_BANNER
 	);
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onVanillaAchievement(PlayerAdvancementCriterionGrantEvent event) {
+		if (!WorldGroup.SURVIVAL.contains(event.getPlayer().getWorld()) || event.getPlayer().getGameMode() != GameMode.SURVIVAL)
+			event.setCancelled(true);
+	}
 
 }

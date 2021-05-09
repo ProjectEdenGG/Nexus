@@ -23,7 +23,7 @@ public class PlayerTimeCommand extends CustomCommand {
 	}
 
 	@Path("<time> [player]")
-	public void time(String time, @Arg("self") Player player) {
+	public void time(String time, @Arg(value = "self", permission = "group.staff") Player player) {
 		long ticks = PlayerUtils.setPlayerTime(player, time);
 		if (isSelf(player))
 			send(PREFIX + "Player time set to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");

@@ -8,16 +8,17 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public final class Spleef extends SpleefMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Spleef";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Spleef other players off the map to win!";
 	}
 

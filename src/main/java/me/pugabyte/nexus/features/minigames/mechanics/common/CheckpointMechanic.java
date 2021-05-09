@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics.common;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Arena;
@@ -11,7 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTick
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 	}
 
 	@EventHandler
-	public void onEnterWinRegion(RegionEnteredEvent event) {
+	public void onEnterWinRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
@@ -51,7 +51,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 	}
 
 	@EventHandler
-	public void onEnterCheckpointRegion(RegionEnteredEvent event) {
+	public void onEnterCheckpointRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 

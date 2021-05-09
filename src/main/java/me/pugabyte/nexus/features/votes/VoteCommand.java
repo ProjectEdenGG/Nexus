@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.votes;
 
+import eden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -19,7 +20,6 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
@@ -55,23 +55,25 @@ public class VoteCommand extends CustomCommand {
 		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
 				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		line();
-		send(json("&3Server goal: " + progressBar(sum, 4000, NONE, 75) + " &e" + sum + "&3/&e4000")
+		int goal = 6000;
+		send(json("&3Server goal: " + progressBar(sum, goal, NONE, 75) + " &e" + sum + "&3/&e" + goal)
 				.hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
 		send(json(PLUS + "Visit the &eVote Points Store").command("/vps"));
-		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://bnn.gg/vote"));
+		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://projecteden.gg/vote"));
 	}
 
-	@Path("time")
-	void time() {
+	@Path("time [player]")
+	void time(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+		voter = new VoteService().get(player);
 		line();
 		for (VoteSite site : VoteSite.values()) {
 			Optional<Vote> first = voter.getActiveVotes().stream().filter(_vote -> _vote.getSite() == site).findFirst();
 			if (first.isPresent()) {
 				LocalDateTime expirationTime = first.get().getTimestamp().plusHours(site.getExpirationHours());
-				send("&e" + site.name() + " &7- &3You can vote in &e" + StringUtils.timespanDiff(expirationTime));
+				send("&e" + site.name() + " &7- &3You can vote in &e" + Timespan.of(expirationTime).format());
 			} else {
 				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(Nerd.of(player()).getName())));
 			}

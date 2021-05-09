@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.mojang.datafixers.util.Pair;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.utils.MaterialTag;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
@@ -21,22 +22,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A perk that gives a user fake armor items. As this is usually used for hats, most subclasses should only need to
+ * override {@link #getMaterial()} or {@link #getItem()}. More complex loadouts should override {@link #getLoadout()}
+ * and {@link #getMenuItem()}.
+ */
 public abstract class LoadoutPerk extends TickablePerk {
-	public Map<EnumItemSlot, ItemStack> getLoadout() {
-		try {
-			return basicHatMap();
-		} catch (IncompleteLoadout e) {
-			e.printStackTrace();
-			return new HashMap<>();
-		}
+	@Override
+	public PerkCategory getPerkCategory() {
+		return PerkCategory.HAT;
 	}
 
-	public Map<EnumItemSlot, ItemStack> basicHatMap() throws IncompleteLoadout {
+	public Map<EnumItemSlot, ItemStack> getLoadout() {
 		Map<EnumItemSlot, ItemStack> loadout = new HashMap<>();
-		Material material = getMaterial();
-		if (material == null)
-			throw new IncompleteLoadout();
-		loadout.put(EnumItemSlot.HEAD, new ItemStack(material));
+		loadout.put(EnumItemSlot.HEAD, getItem());
 		return loadout;
 	}
 
@@ -44,17 +43,44 @@ public abstract class LoadoutPerk extends TickablePerk {
 		return null;
 	}
 
+	public ItemStack getItem() {
+		if (getMaterial() == null || !getMaterial().isItem())
+			throw new IncompleteLoadout();
+		return new ItemStack(getMaterial());
+	}
+
+	@Override
+	public ItemStack getMenuItem() {
+		return getItem();
+	}
+
 	@Override
 	public void tick(Minigamer minigamer) {
-		getLoadout().forEach((itemSlot, itemStack) -> sendPackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
+		getLoadout().forEach((itemSlot, itemStack) -> sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
 	}
 
 	@Override
 	public void tick(Player player) {
-		getLoadout().forEach(((itemSlot, itemStack) -> sendPackets(player, player.getWorld().getPlayers(), itemStack, itemSlot)));
+		getLoadout().forEach(((itemSlot, itemStack) -> sendColorablePackets(player, player.getWorld().getPlayers(), itemStack, itemSlot)));
+	}
+
+	protected boolean isColorable(ItemStack item) {
+		return false;
+	}
+
+	/**
+	 * Same as {@link #sendPackets(Player, List, ItemStack, EnumItemSlot)} but uses {@link #isColorable(ItemStack)} to
+	 * allow overriding
+	 */
+	protected void sendColorablePackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
+		sendPackets(player, players, item, slot, isColorable(item));
 	}
 
 	public static void sendPackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
+		sendPackets(player, players, item, slot, MaterialTag.COLORABLE.isTagged(item.getType()));
+	}
+
+	public static void sendPackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot, boolean overrideColorables) {
 		PlayerInventory inventory = player.getInventory();
 
 		ItemStack currentStack;
@@ -77,9 +103,10 @@ public abstract class LoadoutPerk extends TickablePerk {
 
 		// don't overwrite banners and don't overwrite colored armor (if the current item isn't colorable)
 		if (currentStack != null && (
+				currentStack.getType() == Material.ZOMBIE_HEAD ||
 				MaterialTag.ALL_BANNERS.isTagged(currentStack.getType()) ||
-						(MaterialTag.COLORABLE.isTagged(currentStack.getType()) && !MaterialTag.COLORABLE.isTagged(item.getType())
-						)))
+						(MaterialTag.COLORABLE.isTagged(currentStack.getType()) && !overrideColorables)
+						))
 			return;
 
 		// self packet avoids playing the armor equip sound effect
@@ -106,7 +133,7 @@ public abstract class LoadoutPerk extends TickablePerk {
 	}
 
 	/**
-	 * Thrown when a team loadout perk using {@link #basicHatMap()} has neglected to override {@link #getMaterial()}
+	 * Thrown when a team loadout perk using the default {@link #getLoadout()} has neglected to override {@link #getMaterial()}
 	 */
-	protected static class IncompleteLoadout extends Exception {}
+	public static class IncompleteLoadout extends RuntimeException {}
 }

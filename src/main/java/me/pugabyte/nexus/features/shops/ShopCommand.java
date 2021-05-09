@@ -17,9 +17,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.banker.Transactions;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
@@ -46,8 +46,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.economy.commands.TransactionsCommand.getFormatter;
-import static me.pugabyte.nexus.features.shops.ShopUtils.isSimilar;
 import static me.pugabyte.nexus.models.banker.Transaction.combine;
+import static me.pugabyte.nexus.utils.ItemUtils.isSimilar;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -60,7 +60,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	public ShopCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isCommandEvent()) {
-			shopGroup = ShopGroup.get(world());
+			shopGroup = ShopGroup.of(world());
 			if (shopGroup == null)
 				error("Shops are not enabled in this world");
 		}
@@ -103,7 +103,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("history [player] [page]")
-	void history(@Arg("self") Banker banker, @Arg("1") int page) {
+	void history(@Arg("self") Transactions banker, @Arg("1") int page) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
 				.stream().filter(transaction ->
 						transaction.getShopGroup() == shopGroup &&

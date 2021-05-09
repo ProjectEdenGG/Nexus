@@ -1,147 +1,115 @@
 package me.pugabyte.nexus.models;
 
-import dev.morphia.Datastore;
-import dev.morphia.query.Sort;
-import dev.morphia.query.UpdateException;
-import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
-import me.pugabyte.nexus.framework.persistence.MongoDBDatabase;
-import me.pugabyte.nexus.framework.persistence.MongoDBPersistence;
-import org.apache.commons.lang.Validate;
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.AggregateIterable;
+import dev.morphia.mapping.MappingException;
+import eden.utils.TimeUtils.Time;
+import lombok.SneakyThrows;
+import me.pugabyte.nexus.utils.Tasks;
+import org.bson.Document;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.pugabyte.nexus.utils.StringUtils.isV4Uuid;
-
-public abstract class MongoService extends DatabaseService {
-	protected static Datastore database;
-	protected static String _id = "_id";
+public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mongodb.MongoService<T> {
 
 	static {
-		database = MongoDBPersistence.getConnection(MongoDBDatabase.BEARNATION);
-		if (database != null)
-			database.ensureIndexes();
+		loadServices("me.pugabyte.nexus.models");
 	}
 
-	public abstract <T extends PlayerOwnedObject> Map<UUID, T> getCache();
-
-	public void clearCache() {
-		getCache().clear();
-	}
-
-	public <T extends PlayerOwnedObject> void cache(T object) {
-		getCache().put(object.getUuid(), object);
+	public void save(T object) {
+		if (Bukkit.isPrimaryThread())
+			Tasks.async(() -> super.save(object));
+		else
+			super.save(object);
 	}
 
 	@Override
-	@NotNull
-	public <T> T get(UUID uuid) {
-//		if (isEnableCache())
-			return (T) getCache(uuid);
-//		else
-//			return getNoCache(uuid);
+	@SneakyThrows
+	protected void handleSaveException(T object, Exception ex, String type) {
+		if (isCME(ex))
+			throw ex;
+
+		super.handleSaveException(object, ex, type);
 	}
 
-	@NotNull
-	protected <T extends PlayerOwnedObject> T getCache(UUID uuid) {
-		Validate.notNull(getPlayerClass(), "You must provide a player owned class or override get(UUID)");
-		if (getCache().containsKey(uuid) && getCache().get(uuid) == null)
-			getCache().remove(uuid);
-		getCache().computeIfAbsent(uuid, $ -> getNoCache(uuid));
-		return (T) getCache().get(uuid);
+	private boolean isCME(Exception ex) {
+		return ex instanceof ConcurrentModificationException ||
+				(ex instanceof MappingException && ex.getCause() instanceof ConcurrentModificationException);
 	}
 
-	protected <T extends PlayerOwnedObject> T getNoCache(UUID uuid) {
-		Object object = database.createQuery(getPlayerClass()).field(_id).equal(uuid).first();
-		if (object == null)
-			object = createPlayerObject(uuid);
-		if (object == null)
-			Nexus.log("New instance of " + getPlayerClass().getSimpleName() + " is null");
-		return (T) object;
-	}
-
-	protected Object createPlayerObject(UUID uuid) {
+	@Override
+	public void saveSync(T object) {
 		try {
-			Constructor<? extends PlayerOwnedObject> constructor = getPlayerClass().getDeclaredConstructor(UUID.class);
-			constructor.setAccessible(true);
-			return constructor.newInstance(uuid);
-		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
-			ex.printStackTrace();
-			throw new NexusException(this.getClass().getSimpleName() + " not implemented correctly");
-		}
-	}
-
-	@Override
-	public <T> List<T> getAll() {
-		return (List<T>) database.createQuery(getPlayerClass()).find().toList();
-	}
-
-	public <T> List<T> getAllSortedBy(Sort... sorts) {
-		return (List<T>) database.createQuery(getPlayerClass())
-				.order(sorts)
-				.find().toList();
-	}
-
-	@Override
-	public <T> void saveSync(T object) {
-		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
-		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
-			return;
-
-		String toString = object.toString();
-		boolean hideDebug = toString.length() >= Short.MAX_VALUE;
-		String debug = hideDebug ? "" : ": " + toString;
-
-		try {
-			database.merge(object);
-		} catch (UpdateException doesntExistYet) {
-			try {
-				database.save(object);
-			} catch (Exception ex2) {
-				Nexus.log("Error saving " + object.getClass().getSimpleName() + debug);
-				ex2.printStackTrace();
-			}
-		} catch (Exception ex3) {
-			Nexus.log("Error updating " + object.getClass().getSimpleName() + debug);
-			ex3.printStackTrace();
-		}
-	}
-
-	@Override
-	public <T> void deleteSync(T object) {
-		PlayerOwnedObject playerOwnedObject = (PlayerOwnedObject) object;
-
-		if (!isV4Uuid(playerOwnedObject.getUuid()) && !playerOwnedObject.getUuid().equals(Nexus.getUUID0()))
-			return;
-
-		database.delete(object);
-		getCache().remove(playerOwnedObject.getUuid());
-	}
-
-	@Override
-	public void deleteAllSync() {
-		database.getCollection(getPlayerClass()).drop();
-		clearCache();
-	}
-
-	/*
-	public void log(String name) {
-		try {
-			try {
-				throw new BNException("Stacktrace");
-			} catch (BNException ex) {
-				StringWriter sw = new StringWriter();
-				ex.printStackTrace(new PrintWriter(sw));
-				Nexus.fileLogSync("pugmas-db-debug", "[Primary thread: " + Bukkit.isPrimaryThread() + "] MongoDB Pugmas20 " + name + "\n" + sw.toString() + "\n");
-			}
+			super.saveSync(object);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			if (!isCME(ex))
+				throw ex;
+
+			queueSaveSync(Time.SECOND.x(3), object);
 		}
 	}
-	*/
+
+	protected abstract Map<UUID, Integer> getSaveQueue();
+
+	public void queueSave(int delayTicks, T object) {
+		Tasks.async(() -> queueSaveSync(delayTicks, object));
+	}
+
+	public void queueSaveSync(int delayTicks, T object) {
+		UUID uuid = object.getUuid();
+		AtomicInteger taskId = new AtomicInteger(0);
+
+		Runnable resave = () -> {
+			synchronized (object) {
+				if (getSaveQueue().containsKey(uuid))
+					if (getSaveQueue().get(uuid).equals(taskId.get()))
+						saveSync(object);
+			}
+		};
+
+		if (Bukkit.isPrimaryThread())
+			taskId.set(Tasks.wait(delayTicks, resave));
+		else
+			taskId.set(Tasks.waitAsync(delayTicks, resave));
+
+		getSaveQueue().put(uuid, taskId.get());
+	}
+
+	public void delete(T object) {
+		if (Bukkit.isPrimaryThread())
+			Tasks.async(() -> super.delete(object));
+		else
+			super.delete(object);
+	}
+
+	public void deleteAll() {
+		if (Bukkit.isPrimaryThread())
+			Tasks.async(super::deleteAll);
+		else
+			super.deleteAll();
+	}
+
+	public List<T> getOnline() {
+		List<T> online = new ArrayList<>();
+		for (Player player : Bukkit.getOnlinePlayers())
+			online.add(get(player));
+		return online;
+	}
+
+	@NotNull
+	protected <U> List<U> map(AggregateIterable<Document> documents, Class<U> clazz) {
+		return new ArrayList<>() {{
+			for (Document purchase : documents)
+				add(database.getMapper().fromDBObject(database, clazz, new BasicDBObject(purchase), null));
+		}};
+	}
+
 }

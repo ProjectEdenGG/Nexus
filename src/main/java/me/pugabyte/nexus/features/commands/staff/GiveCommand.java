@@ -16,7 +16,7 @@ public class GiveCommand extends CustomCommand {
 	}
 
 	@Path("<player> <type> [amount] [nbt...]")
-	void run(Player player, Material material, @Arg("64") int amount, @Arg(permission = "group.staff") String nbt) {
+	void run(Player player, Material material, @Arg(value = "64", min = 1, max = 2304, minMaxBypass = "group.staff") int amount, @Arg(permission = "group.staff") String nbt) {
 		if (!player().hasPermission("essentials.give"))
 			if (!player().hasPermission("essentials.item"))
 				permissionError();

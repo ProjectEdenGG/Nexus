@@ -15,7 +15,7 @@ public class QuickActionCommand extends CustomCommand {
 	void quickAction(Player player) {
 		line();
 		String playerName = player.getName();
-		send("&8&l[&eQuickAction&8&l] &6&l" + playerName);
+		send(PREFIX + "&6&l" + playerName);
 		line();
 		send(json()
 				.next("  &3|&3|  ")

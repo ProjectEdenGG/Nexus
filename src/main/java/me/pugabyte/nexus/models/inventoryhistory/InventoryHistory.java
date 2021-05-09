@@ -4,6 +4,8 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,12 +15,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.commands.staff.InventorySnapshotsCommand.PREFIX;
 import static me.pugabyte.nexus.utils.ItemUtils.isInventoryEmpty;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Data
 @Builder
@@ -43,7 +43,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isInventoryEmpty;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class InventoryHistory extends PlayerOwnedObject {
+public class InventoryHistory implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -54,12 +54,12 @@ public class InventoryHistory extends PlayerOwnedObject {
 	public InventorySnapshot getSnapshot(LocalDateTime timestamp) {
 		Optional<InventorySnapshot> snapshot = snapshots.stream().filter(_snapshot -> _snapshot.getTimestamp().equals(timestamp)).findFirst();
 		if (!snapshot.isPresent())
-			throw new InvalidInputException("Snapshot from timestamp &e" + StringUtils.shortDateTimeFormat(timestamp) + " &3not found");
+			throw new InvalidInputException("Snapshot from timestamp &e" + shortDateTimeFormat(timestamp) + " &3not found");
 		return snapshot.get();
 	}
 
 	public InventorySnapshot takeSnapshot(SnapshotReason reason) {
-		return takeSnapshot(new InventorySnapshot(getPlayer(), reason));
+		return takeSnapshot(new InventorySnapshot(getOnlinePlayer(), reason));
 	}
 
 	public InventorySnapshot takeSnapshot(InventorySnapshot snapshot) {

@@ -195,6 +195,7 @@ public class Shops extends Feature {
 			addBuyItem(ShopGroup.SURVIVAL, true, Material.LAPIS_ORE, 8, 500);
 			addBuyItem(ShopGroup.SURVIVAL, true, Material.REDSTONE_ORE, 32, 200);
 			addBuyItem(ShopGroup.SURVIVAL, true, Material.DIAMOND_ORE, 8, 900);
+			addBuyItem(ShopGroup.SURVIVAL, true, Material.EMERALD_ORE, 8, 1000);
 			addBuyItem(ShopGroup.SURVIVAL, true, Material.NETHER_QUARTZ_ORE, 32, 250);
 			addBuyItem(ShopGroup.SURVIVAL, true, Material.GLOWSTONE, 32, 120);
 			addBuyItem(ShopGroup.SURVIVAL, true, Material.SAND, 64, 30);
@@ -219,7 +220,6 @@ public class Shops extends Feature {
 			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
 		}
 
-
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
 			addBuyItem(shopGroup, isResourceWorld, new ItemStack(material, quantity), price);
 		}
@@ -227,7 +227,6 @@ public class Shops extends Feature {
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
 			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price));
 		}
-
 
 		private void add(Product product) {
 			new ShopService().getMarket().getProducts().add(product);

@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
+import org.bukkit.OfflinePlayer;
 
 @Aliases({"m", "msg", "w", "whisper", "t", "tell", "pm", "dm"})
 public class MessageCommand extends CustomCommand {
@@ -21,11 +22,11 @@ public class MessageCommand extends CustomCommand {
 	}
 
 	@Path("<player> [message...]")
-	void message(Chatter to, String message) {
-		if (chatter == to)
+	void message(OfflinePlayer to, String message) {
+		if (isSelf(to))
 			error("You cannot message yourself");
 
-		PrivateChannel dm = new PrivateChannel(chatter, to);
+		PrivateChannel dm = new PrivateChannel(chatter, new ChatService().get(to));
 		if (isNullOrEmpty(message))
 			chatter.setActiveChannel(dm);
 		else

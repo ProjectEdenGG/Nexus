@@ -1,13 +1,12 @@
 package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.CitizensUtils;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,49 +61,28 @@ public class EasterEggs implements Listener {
 		Player clicker = event.getPlayer();
 		ItemStack heldItem = clicker.getInventory().getItemInMainHand();
 
-		switch (clicked.getName().toLowerCase()) {
-			case "pugabyte":
-			case "vargskati":
-				pug(clicker, heldItem, clicked);
-				break;
-			case "wakkaflocka":
-				wakka(clicker, heldItem, clicked);
-				break;
-			case "porkeroni":
-				pork(clicker, heldItem, clicked);
-				break;
-			case "ravenonacloud":
-			case "chaioty":
-				raven(clicker, heldItem, clicked);
-				break;
-			case "warrior_tark":
-				tark(clicker, heldItem, clicked);
-				break;
-			case "blast":
-				blast(clicker, heldItem, clicked);
+		switch (clicked.getUniqueId().toString()) {
+			case "pugabyte" -> griffin(clicker, heldItem, clicked);
+			case "wakkaflocka" -> wakka(clicker, heldItem, clicked);
+			case "porkeroni" -> dom(clicker, heldItem, clicked);
+			case "ravenonacloud" -> raven(clicker, heldItem, clicked);
+			case "blast" -> blast(clicker, heldItem, clicked);
 		}
 	}
 
-	private void pug(Player player, ItemStack heldItem, Player clicked) {
-		switch (heldItem.getType()) {
-			case BONE:
-			case PORKCHOP:
-			case COOKED_PORKCHOP:
-			case BEEF:
-			case COOKED_BEEF:
-			case CHICKEN:
-			case COOKED_CHICKEN:
-			case RABBIT:
-			case COOKED_RABBIT:
-				removeItem(heldItem);
-
-				eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT,
-						() -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_WOLF_AMBIENT, 0.5F, 1F));
-				break;
-			case ROTTEN_FLESH:
-				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_WOLF_GROWL, 0.5F, 1F);
-				break;
+	private void griffin(Player player, ItemStack heldItem, Player clicked) {
+		if (heldItem.getType() == Material.COOKED_SALMON) {
+			removeItem(heldItem);
+			eatEffect(player, clicked);
 		}
+	}
+
+	private void wakka(Player player, ItemStack heldItem, Player clicked) {
+		if (heldItem.getType() == Material.REDSTONE) {
+			removeItem(heldItem);
+			eatEffect(player, clicked);
+		}
+
 	}
 
 	private void blast(Player player, ItemStack heldItem, Player clicked) {
@@ -120,58 +98,23 @@ public class EasterEggs implements Listener {
 		}
 	}
 
-	private void wakka(Player player, ItemStack heldItem, Player clicked) {
+	private void dom(Player player, ItemStack heldItem, Player clicked) {
 		switch (heldItem.getType()) {
-			case BUCKET:
+			case CARROT, BEETROOT -> {
 				removeItem(heldItem);
-
-				player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_MILK, 0.5F, 1F);
-				Tasks.wait(4, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_AMBIENT, 0.5F, 1F));
-
-				ItemStack milkBucket = new ItemBuilder(Material.MILK_BUCKET).lore("Wakka's milk").build();
-				player.getInventory().addItem(milkBucket);
-				break;
-			case WHEAT:
-				removeItem(heldItem);
-
-				eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT,
-						() -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_COW_AMBIENT, 0.5F, 1F));
-				break;
-		}
-
-	}
-
-	private void pork(Player player, ItemStack heldItem, Player clicked) {
-		switch (heldItem.getType()) {
-			case CARROT:
-			case BEETROOT:
-				removeItem(heldItem);
-
-				eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT,
-						() -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PIG_AMBIENT, 0.5F, 1F));
-				break;
+				eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT, () ->
+						player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PIG_AMBIENT, 0.5F, 1F));
+			}
 		}
 	}
 
 	private void raven(Player player, ItemStack heldItem, Player clicked) {
 		switch (heldItem.getType()) {
-			case WHEAT_SEEDS:
-			case BEETROOT_SEEDS:
-			case MELON_SEEDS:
-			case PUMPKIN_SEEDS:
+			case WHEAT_SEEDS, BEETROOT_SEEDS, MELON_SEEDS, PUMPKIN_SEEDS -> {
 				removeItem(heldItem);
-
-				eatEffect(player, clicked, Sound.ENTITY_PARROT_EAT,
-						() -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PARROT_AMBIENT, 0.5F, 1F));
-				break;
-		}
-	}
-
-	private void tark(Player player, ItemStack heldItem, Player clicked) {
-		if (heldItem.getType().equals(Material.STONE)) {
-			removeItem(heldItem);
-			eatEffect(player, clicked, Sound.ENTITY_PARROT_EAT,
-					() -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_RAVAGER_CELEBRATE, 0.5F, 0.1F));
+				eatEffect(player, clicked, Sound.ENTITY_PARROT_EAT, () ->
+						player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PARROT_AMBIENT, 0.5F, 1F));
+			}
 		}
 	}
 
@@ -179,6 +122,10 @@ public class EasterEggs implements Listener {
 
 	private void removeItem(ItemStack heldItem) {
 		heldItem.setAmount(heldItem.getAmount() - 1);
+	}
+
+	private void eatEffect(Player player, Player clicked) {
+		eatEffect(player, clicked, Sound.ENTITY_GENERIC_EAT, () -> player.getWorld().playSound(clicked.getLocation(), Sound.ENTITY_PLAYER_BURP, 0.5F, 1F));
 	}
 
 	private void eatEffect(Player player, Player clicked, Sound sound, Runnable result) {

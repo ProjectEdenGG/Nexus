@@ -1,15 +1,17 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.SummerDownUnderIsland.SummerDownUnderNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -18,7 +20,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,13 +38,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
 @Region("summerdownunder")
 @NPCClass(SummerDownUnderNPCs.class)
-public class SummerDownUnderIsland implements Listener, Island {
+public class SummerDownUnderIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	public static ItemStack greatNortherns = new ItemBuilder(Material.BARREL).name("&aGreat Northerns").amount(1).lore(itemLore).build();
 	private static ItemStack goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1).build();
@@ -68,8 +73,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		ROLEX(2907) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -96,8 +101,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		SIR_JACK(2908) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -140,7 +145,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				return startQuest;
 			}
 		},
-		FARMER(2752, new ArrayList<String>() {{
+		FARMER(2752, new ArrayList<>() {{
 			add("G’day g’day, the crops are fresh and lookin’ real mean");
 			add("wait 80");
 			add("Oh you need it for the ANZAC Biscuit? Crikey, we haven’t had those around here for months! " +
@@ -151,8 +156,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		LACHLAN(2747) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -202,15 +207,15 @@ public class SummerDownUnderIsland implements Listener, Island {
 		ROBERT_MENZIES(2911) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hello mate. Golden Syrup hey? Hmm well. I think I should have some for you.");
 				startQuest.add("wait 80");
 				startQuest.add("Aha! Here it is. Have this mate. Fresh from a place called Landfall. Not really sure where that is on " +
-						"Bear Nation, but their syrup is to die for!");
+						"Project Eden, but their syrup is to die for!");
 
 				if (!user.isQuest_SDU_Start() || step < 4)
 					return Collections.singletonList(RandomUtils.randomElement(greetings));
@@ -229,8 +234,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		BRI(2744) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -305,8 +310,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		MANAGER(2745) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -333,8 +338,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		PROSPECTOR(2753) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_SDU_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -394,8 +399,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 	}
 
 	private static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		int step = user.getQuest_SDU_Step() + 1;
 		user.setQuest_SDU_Step(step);
 		service.save(user);
@@ -474,8 +479,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 	public void onClickBarrel(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
+		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		Block clicked = event.getClickedBlock();
@@ -488,8 +493,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 		if (!under.equals(Material.EMERALD_BLOCK)) return;
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		int step = user.getQuest_SDU_Step();
 
 		if (step == 3 && !player.getInventory().contains(greatNortherns)) {
@@ -503,8 +508,8 @@ public class SummerDownUnderIsland implements Listener, Island {
 	public void onSift(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
+		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 

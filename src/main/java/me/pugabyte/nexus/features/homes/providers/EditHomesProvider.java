@@ -40,7 +40,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 				.size((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 2), 9)
 				.title(StringUtils.colorize("&3Home Editor"))
 				.build()
-				.open(homeOwner.getPlayer(), page);
+				.open(homeOwner.getOnlinePlayer(), page);
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 						.name("&eEdit Trusts")
 						.loreize(false)
 						.lore("&fManage access to||&fall your homes").build(),
-				e -> TrustProvider.openMenu(homeOwner.getPlayer(), this::refresh)
+				e -> TrustProvider.openMenu(homeOwner.getOnlinePlayer(), this::refresh)
 		));
 	}
 
@@ -140,7 +140,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			items.add(ClickableItem.from(item.build(), e -> HomesMenu.edit(home)));
 		});
 
-		addPagination(homeOwner.getPlayer(), contents, items);
+		addPagination(homeOwner.getOnlinePlayer(), contents, items);
 	}
 
 }

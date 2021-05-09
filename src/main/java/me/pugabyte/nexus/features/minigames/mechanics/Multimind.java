@@ -22,6 +22,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -31,12 +32,12 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 public final class Multimind extends SingleplayerMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Mastermind Duel";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 

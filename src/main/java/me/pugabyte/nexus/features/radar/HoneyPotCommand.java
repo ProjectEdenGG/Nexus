@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.radar;
 
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -8,14 +7,20 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.worldedit.ExpandAllCommand;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.*;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -23,7 +28,12 @@ import me.pugabyte.nexus.models.honeypot.HoneyPotBans;
 import me.pugabyte.nexus.models.honeypot.HoneyPotBansService;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGriefer;
 import me.pugabyte.nexus.models.honeypot.HoneyPotGrieferService;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldEditUtils;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -331,7 +341,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().contains("hp_")) return;
 		HoneyPotGriefer griefer = grieferService.get(event.getPlayer());
 		if (griefer.getTriggered() <= 0) return;

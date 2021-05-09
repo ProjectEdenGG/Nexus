@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -34,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +42,12 @@ import java.util.stream.Collectors;
 
 public final class DeathSwap extends TeamlessMechanic {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Death Swap";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Trap players by swapping with them!";
 	}
 

@@ -2,8 +2,10 @@ package me.pugabyte.nexus.features.events;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
@@ -13,9 +15,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.events.y2021.easter21.EasterCommand.END;
+import static me.pugabyte.nexus.utils.PlayerUtils.send;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 public class ScavHuntLegacy implements Listener {
@@ -56,11 +61,11 @@ public class ScavHuntLegacy implements Listener {
 		Sign sign = (Sign) block.getState();
 		Player player = event.getPlayer();
 		if ("[Scav Hunt '16]".equals(stripColor(sign.getLine(0)))) {
-			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!");
+			send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!");
 		} else if ("[Scav Hunt '18]".equals(stripColor(sign.getLine(0)))) {
-			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
+			send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
 		} else if ("[Easter 2020]".equals(stripColor(sign.getLine(0)))) {
-			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg Hunt!");
+			send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg Hunt!");
 		}
 	}
 
@@ -76,10 +81,32 @@ public class ScavHuntLegacy implements Listener {
 		if (skull.getOwningPlayer() == null) return;
 		Player player = event.getPlayer();
 		if (easter17.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!");
+			send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!");
 		} else if (easter19.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!");
+			send(player, SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!");
 		}
+	}
+
+	@EventHandler
+	public void onEggInteract(PlayerInteractEvent event) {
+		if (!ActionGroup.CLICK_BLOCK.applies(event))
+			return;
+
+		Block block = event.getClickedBlock();
+		if (block == null)
+			return;
+
+		if (block.getType() != Material.DRAGON_EGG)
+			return;
+
+		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(block.getWorld());
+		if (!worldGuardUtils.isInRegion(block.getLocation(), "spawn"))
+			return;
+
+		event.setCancelled(true);
+
+		if (LocalDateTime.now().isAfter(END))
+			send(event.getPlayer(), SCAVHUNT_PREFIX + "You've found an easter egg from the &e2021 Easter egg Hunt!");
 	}
 
 }

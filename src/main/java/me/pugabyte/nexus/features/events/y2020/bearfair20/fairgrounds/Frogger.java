@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
-import me.pugabyte.nexus.models.bearfair.BearFairUser.BFPointSource;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
@@ -52,7 +52,7 @@ public class Frogger implements Listener {
 	private static Set<Player> checkpointList = new HashSet<>();
 	private static boolean doAnimation = false;
 	private static WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
-	private BFPointSource SOURCE = BFPointSource.FROGGER;
+	private BF20PointSource SOURCE = BF20PointSource.FROGGER;
 	//
 	private static Map<Location, Material> logSpawnMap = new HashMap<>();
 	private static List<Integer> logTasks = new ArrayList<>();
@@ -70,7 +70,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadLogSpawns() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(logsRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -79,7 +79,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadCarSpawns() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(carsRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(carsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				carSpawnMap.put(block.getLocation(), block.getType());
@@ -274,7 +274,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearLogs() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(logsRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -282,7 +282,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearCars() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) WGUtils.getRegion(roadRg));
+		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(roadRg));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);
@@ -290,7 +290,7 @@ public class Frogger implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		Player player = event.getPlayer();
 		if (regionId.equalsIgnoreCase(gameRg)) {
@@ -326,9 +326,9 @@ public class Frogger implements Listener {
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 
 			if (giveDailyPoints) {
-				BearFairUser user = new BearFairService().get(player);
+				BearFair20User user = new BearFair20UserService().get(player);
 				user.giveDailyPoints(SOURCE);
-				new BearFairService().save(user);
+				new BearFair20UserService().save(user);
 			}
 
 			checkpointList.remove(player);
@@ -336,10 +336,10 @@ public class Frogger implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = WGUtils.getPlayersInRegion(gameRg).size();
+			int size = getWGUtils().getPlayersInRegion(gameRg).size();
 			if (size == 0) {
 				doAnimation = false;
 				stopAnimations();

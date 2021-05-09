@@ -4,6 +4,9 @@ import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +16,10 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
@@ -34,7 +34,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Entity("discord_captcha")
 @Converters({UUIDConverter.class, LocalDateTimeConverter.class})
-public class DiscordCaptcha extends PlayerOwnedObject {
+public class DiscordCaptcha implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -55,7 +55,7 @@ public class DiscordCaptcha extends PlayerOwnedObject {
 					.addReaction(EmojiManager.getForAlias("thumbsup").getUnicode()).queue();
 		}
 
-		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
+		new TaskService().save(new Task(taskId, new HashMap<>() {{
 			put("id", id);
 		}}, LocalDateTime.now().plusMinutes(9)));
 	}

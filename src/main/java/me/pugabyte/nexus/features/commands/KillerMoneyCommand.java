@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
@@ -21,7 +22,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
@@ -167,7 +167,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			playerBoost = km.getBoost();
 
 		double money = mob.getRandomValue() * BOOST * playerBoost;
-		new BankerService().deposit(player, money, ShopGroup.get(player), TransactionCause.KILLER_MONEY);
+		new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.KILLER_MONEY);
 		if (!km.isMuted())
 			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
 					"&3 and received &e" + formatter.format(money));

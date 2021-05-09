@@ -1,11 +1,12 @@
 package me.pugabyte.nexus.utils;
 
+import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -15,6 +16,14 @@ public class CitizensUtils {
 
 	public static NPC getNPC(int id) {
 		return CitizensAPI.getNPCRegistry().getById(id);
+	}
+
+	public static NPC getNPC(Entity entity) {
+		return CitizensAPI.getNPCRegistry().getNPC(entity);
+	}
+
+	public static boolean isNPC(Entity entity) {
+		return CitizensAPI.getNPCRegistry().isNPC(entity);
 	}
 
 	public static void updateNameAndSkin(int id, String name) {
@@ -31,9 +40,9 @@ public class CitizensUtils {
 	 * @param npc NPC to update
 	 * @param player a server member
 	 */
-	public static void updateNameAndSkin(NPC npc, OfflinePlayer player) {
-		updateName(npc, Nerd.of(player).getNickname());
-		updateSkin(npc, player.getName());
+	public static void updateNameAndSkin(NPC npc, OptionalPlayerLike player) {
+		updateName(npc, Nickname.of(player));
+		updateSkin(npc, player.getOfflinePlayer().getName());
 	}
 
 	/**
@@ -42,7 +51,7 @@ public class CitizensUtils {
 	 * @param nerd a server member
 	 */
 	public static void updateNameAndSkin(NPC npc, Nerd nerd) {
-		updateName(npc, nerd.getNickname());
+		updateName(npc, Nickname.of(nerd));
 		updateSkin(npc, nerd.getOfflinePlayer().getName());
 	}
 
@@ -72,10 +81,6 @@ public class CitizensUtils {
 				((SkinnableEntity) npcEntity).getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
 			}
 		});
-	}
-
-	public static boolean isNPC(Entity entity) {
-		return entity.hasMetadata("NPC");
 	}
 
 	public static NPC getSelectedNPC(Player player) {

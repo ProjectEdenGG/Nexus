@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models;
 
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public abstract class DatabaseService {
 
-	public Class<? extends PlayerOwnedObject> getPlayerClass() {
+	public Class<? extends eden.interfaces.PlayerOwnedObject> getPlayerClass() {
 		PlayerClass annotation = getClass().getAnnotation(PlayerClass.class);
 		return annotation == null ? null : annotation.value();
 	}

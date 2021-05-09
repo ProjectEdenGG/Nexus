@@ -9,9 +9,11 @@ import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +22,12 @@ import java.util.stream.Collectors;
 public class Infection extends TeamMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Infection";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Zombies kill humans";
 	}
 
@@ -45,12 +47,12 @@ public class Infection extends TeamMechanic {
 	}
 
 	public Team getZombieTeam(Arena arena) {
-		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getColor() == ChatColor.RED).findFirst();
+		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getChatColor() == ChatColor.RED).findFirst();
 		return teamOptional.orElse(null);
 	}
 
 	public Team getHumanTeam(Arena arena) {
-		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getColor() != ChatColor.RED).findFirst();
+		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getChatColor() != ChatColor.RED).findFirst();
 		return teamOptional.orElse(null);
 	}
 
@@ -63,19 +65,19 @@ public class Infection extends TeamMechanic {
 	}
 
 	public List<Minigamer> getZombies(Match match) {
-		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() == ChatColor.RED).collect(Collectors.toList());
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() == ChatColor.RED).collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getHumans(Match match) {
-		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer.getTeam().getColor() != ChatColor.RED).collect(Collectors.toList());
+		return match.getAliveMinigamers().stream().filter(minigamer -> minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() != ChatColor.RED).collect(Collectors.toList());
 	}
 
 	public boolean isZombie(Minigamer minigamer) {
-		return minigamer.getTeam().getColor() == ChatColor.RED;
+		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() == ChatColor.RED;
 	}
 
 	public boolean isHuman(Minigamer minigamer) {
-		return !isZombie(minigamer);
+		return minigamer != null && minigamer.getTeam() != null && minigamer.getTeam().getChatColor() != ChatColor.RED;
 	}
 
 	@Override
@@ -88,16 +90,11 @@ public class Infection extends TeamMechanic {
 	public void announceWinners(Match match) {
 		boolean humansAlive = getHumans(match).size() > 0;
 
-		String broadcast;
-		if (!humansAlive)
-			broadcast = String.format("The %s &3have won", getZombieTeam(match).getColoredName());
-		else
-			if (match.getTimer().getTime() != 0)
-				broadcast = String.format("The %s &3have won", getZombieTeam(match).getColoredName());
-			else
-				broadcast = String.format("The %s &3have won", getHumanTeam(match).getColoredName());
+		Team winningTeam = !humansAlive || match.getTimer().getTime() != 0 ? getZombieTeam(match) : getHumanTeam(match);
+		Component broadcast = Component.text("The ").append(winningTeam.asComponent())
+				.append(Component.text(" have won "));
 
-		Minigames.broadcast(broadcast + " &e" + match.getArena().getDisplayName());
+		Minigames.broadcast(broadcast.append(match.getArena().asComponent()));
 	}
 
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)

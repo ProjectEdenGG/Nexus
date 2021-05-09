@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
@@ -34,6 +35,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static me.pugabyte.nexus.utils.StringUtils.getTeleportCommand;
+
 @NoArgsConstructor
 @Aliases({"tp", "tppos"})
 @Redirect(from = "/tpo", to = "/tp override")
@@ -52,8 +55,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	@Path("getCoords")
 	void getCoords() {
-		Location location = location();
-		String message = "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() + " " + location.getWorld().getName();
+		String message = getTeleportCommand(location());
 		send(json(message).suggest(message));
 	}
 
@@ -64,7 +66,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.bnn.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){6}.*")) {
+		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.projecteden.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){8}.*")) {
 			String[] split = arg1.split("#");
 			String[] coords = split[1].split(":");
 			AtomicReference<String> worldName = new AtomicReference<>(coords[0]);
@@ -75,8 +77,8 @@ public class TeleportCommand extends CustomCommand implements Listener {
 				error("World &e" + worldName + " &cnot found");
 
 			double x = Double.parseDouble(coords[1]);
-			double z = Double.parseDouble(coords[2]);
-			double terrainHeight = Double.parseDouble(coords[6]);
+			double z = Double.parseDouble(coords[3]);
+			double terrainHeight = Double.parseDouble(coords[2]);
 			double aboveGround = Double.parseDouble(coords[4]);
 			double y = terrainHeight + aboveGround;
 			if (y > 275) y = 275;
@@ -114,7 +116,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 						return;
 
 					player1.getPlayer().teleportAsync(Nerd.of(player2).getLocation(), TeleportCause.COMMAND);
-					send(PREFIX + "Poofing to &e" + Nerd.of(player2).getNickname() + (player2.isOnline() ? "" : " &3(Offline)"));
+					send(PREFIX + "Poofing to &e" + Nickname.of(player2) + (player2.isOnline() ? "" : " &3(Offline)"));
 				} else
 					throw new PlayerNotOnlineException(player1);
 			} else {
@@ -122,7 +124,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 					return;
 
 				player().teleportAsync(location1, TeleportCause.COMMAND);
-				send(PREFIX + "Poofing to &e" + Nerd.of(player1).getNickname() + (player1.isOnline() ? "" : " &3(Offline)"));
+				send(PREFIX + "Poofing to &e" + Nickname.of(player1) + (player1.isOnline() ? "" : " &3(Offline)"));
 			}
 		} else {
 			send("&c/" + getAliasUsed() + " <player> [player]");
@@ -140,8 +142,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 				if (!(Arrays.asList(Rank.BUILDER, Rank.ARCHITECT).contains(toRank) && fromRank == Rank.MODERATOR))
 					return false;
 
-			if (to.isOnline() && to.getPlayer() != null)
-				PlayerUtils.send(to.getPlayer(), PREFIX + "&c" + from.getName() + " tried to teleport to you, but you have teleports disabled");
+			PlayerUtils.send(to, PREFIX + "&c" + from.getName() + " tried to teleport to you, but you have teleports disabled");
 
 			send(PREFIX + "&cThat player has teleports disabled. Sending a request instead");
 			runCommand(from, "tpa " + argsString());

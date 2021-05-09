@@ -1,17 +1,19 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.arcademachine.ArcadeMachineMenu;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -19,7 +21,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,13 +46,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
-public class MinigameNightIsland implements Listener, Island {
+public class MinigameNightIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
+
 	private static Location arcadeSoundLoc = new Location(BearFair20.getWorld(), -1170, 141, -1716);
 	private static Location arcadeSmokeLoc1 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1170, 140, -1715));
 	private static Location arcadeSmokeLoc2 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1169, 148, -1715));
@@ -87,8 +93,8 @@ public class MinigameNightIsland implements Listener, Island {
 		AXEL(2755) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 				int step = user.getQuest_MGN_Step();
 
 				List<String> startQuest = new ArrayList<>();
@@ -182,8 +188,8 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	public static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		int step = user.getQuest_MGN_Step() + 1;
 		user.setQuest_MGN_Step(step);
 		service.save(user);
@@ -196,14 +202,14 @@ public class MinigameNightIsland implements Listener, Island {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(arcadeRg);
-		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(arcadeRg);
+		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		event.setCancelled(true);
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 
 		if (!user.isQuest_MGN_Start()) return;
 
@@ -214,8 +220,8 @@ public class MinigameNightIsland implements Listener, Island {
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
+		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		ItemStack tool = ItemUtils.getTool(event.getPlayer());
@@ -236,8 +242,8 @@ public class MinigameNightIsland implements Listener, Island {
 
 		Player player = event.getPlayer();
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
+		if (!getWGUtils().getRegionsAt(player.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		Entity clicked = event.getRightClicked();
@@ -263,8 +269,8 @@ public class MinigameNightIsland implements Listener, Island {
 		}
 
 		if (piece == null) return;
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		ItemStack arcadePiece = getArcadePiece(piece);
 		if (!user.isQuest_MGN_Start()) return;
 		if (getFoundPieces(player).contains(arcadePiece)) return;
@@ -276,14 +282,14 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (!regionId.equalsIgnoreCase(basementRg)) return;
 		if (!BearFair20.enableQuests) return;
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 
 		if (user.isQuest_MGN_Start() && player.getInventory().contains(solderingIron)) return;
 
@@ -298,15 +304,15 @@ public class MinigameNightIsland implements Listener, Island {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(solderRg);
-		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(solderRg);
+		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 
 		event.setCancelled(true);
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 
 		if (!user.isQuest_MGN_Start()) return;
 
@@ -322,7 +328,7 @@ public class MinigameNightIsland implements Listener, Island {
 
 		ArmorStand armorStand = null;
 		for (Entity nearbyEntity : player.getNearbyEntities(7, 7, 7)) {
-			if (nearbyEntity instanceof ArmorStand && WGUtils.getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
+			if (nearbyEntity instanceof ArmorStand && getWGUtils().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
 				armorStand = (ArmorStand) nearbyEntity;
 				break;
 			}
@@ -342,8 +348,8 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	private static List<ItemStack> getFoundPieces(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		List<ItemStack> foundPieces = new ArrayList<>();
 		if (user.isQuest_MGN_hasCPU())
 			foundPieces.add(cpu.build());
@@ -367,37 +373,19 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	public static void foundPiece(Player player, ItemStack piece) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		Material pieceType = piece.getType();
 		switch (pieceType) {
-			case IRON_TRAPDOOR:
-				user.setQuest_MGN_hasCPU(true);
-				break;
-			case DAYLIGHT_DETECTOR:
-				user.setQuest_MGN_hasProcessor(true);
-				break;
-			case IRON_INGOT:
-				user.setQuest_MGN_hasMemoryCard(true);
-				break;
-			case GREEN_CARPET:
-				user.setQuest_MGN_hasMotherBoard(true);
-				break;
-			case BLAST_FURNACE:
-				user.setQuest_MGN_hasPowerSupply(true);
-				break;
-			case NOTE_BLOCK:
-				user.setQuest_MGN_hasSpeaker(true);
-				break;
-			case HOPPER_MINECART:
-				user.setQuest_MGN_hasHardDrive(true);
-				break;
-			case REPEATER:
-				user.setQuest_MGN_hasDiode(true);
-				break;
-			case LEVER:
-				user.setQuest_MGN_hasJoystick(true);
-				break;
+			case IRON_TRAPDOOR -> user.setQuest_MGN_hasCPU(true);
+			case DAYLIGHT_DETECTOR -> user.setQuest_MGN_hasProcessor(true);
+			case IRON_INGOT -> user.setQuest_MGN_hasMemoryCard(true);
+			case GREEN_CARPET -> user.setQuest_MGN_hasMotherBoard(true);
+			case BLAST_FURNACE -> user.setQuest_MGN_hasPowerSupply(true);
+			case NOTE_BLOCK -> user.setQuest_MGN_hasSpeaker(true);
+			case HOPPER_MINECART -> user.setQuest_MGN_hasHardDrive(true);
+			case REPEATER -> user.setQuest_MGN_hasDiode(true);
+			case LEVER -> user.setQuest_MGN_hasJoystick(true);
 		}
 		service.save(user);
 	}
@@ -434,14 +422,14 @@ public class MinigameNightIsland implements Listener, Island {
 
 	private void soundTasks() {
 		Tasks.repeat(0, Time.SECOND.x(5), () -> Bukkit.getOnlinePlayers().stream()
-				.filter(player -> BearFair20.getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
+				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(MinigameNightIsland::playArcadeEffects));
 	}
 
 	private static void playArcadeEffects(Player player) {
 		int ran;
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		boolean completedQuest = user.isQuest_MGN_Finish();
 		int step = user.getQuest_MGN_Step();
 

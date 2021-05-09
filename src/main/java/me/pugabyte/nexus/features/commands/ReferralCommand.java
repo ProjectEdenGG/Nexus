@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands;
 
 import com.google.common.base.Strings;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -10,6 +11,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -19,7 +21,6 @@ import me.pugabyte.nexus.models.referral.Referral.Origin;
 import me.pugabyte.nexus.models.referral.ReferralService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -91,6 +92,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("debug [player]")
+	@Permission("group.admin")
 	void debug(@Arg("self") Referral referral) {
 		send(toPrettyString(referral));
 	}
@@ -98,7 +100,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("extraInputs")
 	void others() {
-		List<Referral> referrals = service.<Referral>getAll().stream()
+		List<Referral> referrals = service.getAll().stream()
 				.filter(_referral -> !isNullOrEmpty(_referral.getExtra()))
 				.collect(Collectors.toList());
 
@@ -168,8 +170,8 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			hostname = hostname.split(":")[0];
 		if (hostname.endsWith("."))
 			hostname = hostname.substring(0, hostname.length() - 1);
-		if (hostname.equalsIgnoreCase("server.bnn.gg"))
-			hostname = "bnn.gg";
+		if (hostname.equalsIgnoreCase("server.projecteden.gg"))
+			hostname = "projecteden.gg";
 
 		referral.setIp(hostname);
 		service.save(referral);

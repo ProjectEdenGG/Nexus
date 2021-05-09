@@ -2,9 +2,9 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
 import me.pugabyte.nexus.features.discord.Bot;
-import me.pugabyte.nexus.features.discord.Bot.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
+import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.utils.Tasks;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -25,7 +25,7 @@ public class SocialMediaDiscordCommand extends Command {
 
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}
 		});

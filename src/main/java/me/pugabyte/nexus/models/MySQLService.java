@@ -18,7 +18,7 @@ public abstract class MySQLService extends DatabaseService {
 	}
 
 	public String getTable() {
-		Class<? extends PlayerOwnedObject> playerClass = getPlayerClass();
+		Class<? extends eden.interfaces.PlayerOwnedObject> playerClass = getPlayerClass();
 		Table annotation = playerClass.getAnnotation(Table.class);
 		if (annotation != null && !Strings.isNullOrEmpty(annotation.name()))
 			return annotation.name();
@@ -31,7 +31,7 @@ public abstract class MySQLService extends DatabaseService {
 
 	@Override
 	public <T> T get(UUID uuid) {
-		return (T) get(uuid.toString());
+		return get(uuid.toString());
 	}
 
 	@Override

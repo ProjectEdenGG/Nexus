@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import com.google.common.base.Strings;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -10,7 +11,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -24,7 +24,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 
-import static me.pugabyte.nexus.utils.StringUtils.*;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
+import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @NoArgsConstructor
 public class StaffHallCommand extends CustomCommand implements Listener {
@@ -76,7 +78,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		line(4);
 
 		send("&e&lIGN: &3" + nerd.getName());
-		send("&e&lRank: &3" + nerd.getRank().withColor());
+		send("&e&lRank: &3" + nerd.getRank().getColoredName());
 		if (!isNullOrEmpty(nerd.getPreferredName()))
 			send("&e&lPreferred name: &3" + nerd.getPreferredName());
 		if (nerd.getBirthday() != null)
@@ -93,7 +95,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			line();
 		}
 		if (nerd.isMeetMeVideo()) {
-			send(json("&eMeet me! &chttps://bnn.gg/meet/" + nerd.getName().toLowerCase()).url("https://bnn.gg/meet/" + nerd.getName().toLowerCase()));
+			send(json("&eMeet me! &chttps://projecteden.gg/meet/" + nerd.getName().toLowerCase()).url("https://projecteden.gg/meet/" + nerd.getName().toLowerCase()));
 			line();
 		}
 	}
@@ -121,7 +123,5 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		else if (npc.getId() == 2990)
 			runCommand(event.getClicker(), "crates");
 	}
-
-
 
 }

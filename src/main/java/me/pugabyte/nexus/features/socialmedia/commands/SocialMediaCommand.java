@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.socialmedia.commands;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -21,7 +21,7 @@ public class SocialMediaCommand extends CustomCommand {
 	@Path
 	void run() {
 		line();
-		for (BNSocialMediaSite site : BNSocialMediaSite.values())
+		for (EdenSocialMediaSite site : EdenSocialMediaSite.values())
 			send(json().next(site.getName() + " &7- &e" + site.getUrl()));
 	}
 

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.trust;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -31,7 +31,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class Trust extends PlayerOwnedObject {
+public class Trust implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -40,20 +40,16 @@ public class Trust extends PlayerOwnedObject {
 	private List<UUID> teleports = new ArrayList<>();
 
 	public List<UUID> get(Type type) {
-		switch (type) {
-			case HOMES:
-				return homes;
-			case LOCKS:
-				return locks;
-			case TELEPORTS:
-				return teleports;
-			default:
-				throw new UnsupportedOperationException();
-		}
+		return switch (type) {
+			case HOMES -> homes;
+			case LOCKS -> locks;
+			case TELEPORTS -> teleports;
+			default -> throw new UnsupportedOperationException();
+		};
 	}
 
 	public Set<UUID> getAll() {
-		return new HashSet<UUID>() {{
+		return new HashSet<>() {{
 			for (Trust.Type type : Trust.Type.values())
 				addAll(get(type));
 		}};

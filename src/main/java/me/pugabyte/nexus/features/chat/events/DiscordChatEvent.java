@@ -6,16 +6,15 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Data
 @AllArgsConstructor
@@ -54,8 +53,8 @@ public class DiscordChatEvent extends ChatEvent {
 	@Override
 	public Chatter getChatter() {
 		if (member != null) {
-			DiscordUser user = new DiscordService().getFromUserId(member.getUser().getId());
-			if (user != null && !isNullOrEmpty(user.getUuid()))
+			DiscordUser user = new DiscordUserService().getFromUserId(member.getUser().getId());
+			if (user != null)
 				return new ChatService().get(PlayerUtils.getPlayer(user.getUuid()));
 		}
 		return null;
@@ -66,6 +65,10 @@ public class DiscordChatEvent extends ChatEvent {
 		if (getChatter() != null)
 			return getChatter().getOfflinePlayer().getName();
 		return Discord.getName(member);
+	}
+
+	public TextChannel getDiscordTextChannel() {
+		return channel.getDiscordTextChannel().get();
 	}
 
 	@Override

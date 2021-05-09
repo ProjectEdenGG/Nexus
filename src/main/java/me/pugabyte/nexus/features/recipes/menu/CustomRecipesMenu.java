@@ -68,7 +68,7 @@ public class CustomRecipesMenu {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			switch (type) {
-				case MAIN:
+				case MAIN -> {
 					addCloseItem(contents);
 					int row = 1;
 					int column = 1;
@@ -80,13 +80,14 @@ public class CustomRecipesMenu {
 							row++;
 						} else column++;
 					}
-					break;
-				default:
+				}
+				default -> {
 					if (type == RecipeType.FUNCTIONAL && recipe == null) break;
 					contents.fill(ClickableItem.empty(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).name(" ").build()));
 					for (int i : inputSlots)
 						contents.set(i, ClickableItem.NONE);
 					addBackItem(contents, e -> CustomRecipesMenu.open(RecipeType.MAIN, player));
+				}
 			}
 			if (type == RecipeType.FUNCTIONAL) {
 				if (recipe == null) {

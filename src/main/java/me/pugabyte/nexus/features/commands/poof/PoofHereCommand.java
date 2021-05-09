@@ -4,7 +4,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.poof.Poof;
 import me.pugabyte.nexus.models.poof.PoofService;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class PoofHereCommand extends CustomCommand {
 
 		Poof request = new Poof(player(), target, Poof.PoofType.POOF_HERE);
 		service.save(request);
-		send(json("&ePoof-here &3request sent to " + Nerd.of(target).getNickname() + ". ").next("&eClick to cancel").command("poof cancel"));
+		send(json("&ePoof-here &3request sent to " + Nickname.of(target) + ". ").next("&eClick to cancel").command("poof cancel"));
 		send(target, "  &e" + nickname() + " &3is asking you to poof &eto them&3.");
 		send(target, json("&3  Click one  ||  &a&lAccept")
 				.command("/poof accept")

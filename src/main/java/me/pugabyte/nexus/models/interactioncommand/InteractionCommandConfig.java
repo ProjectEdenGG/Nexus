@@ -3,12 +3,13 @@ package me.pugabyte.nexus.models.interactioncommand;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PostLoad;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.Tasks;
@@ -32,17 +33,26 @@ import static me.pugabyte.nexus.utils.StringUtils.right;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class InteractionCommandConfig extends PlayerOwnedObject {
+public class InteractionCommandConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	private final List<InteractionCommand> interactionCommands = new ArrayList<>();
+	private final transient Map<Location, InteractionCommand> locationMap = new HashMap<>();
+
+	@PostLoad
+	void postLoad() {
+		for (InteractionCommand command : interactionCommands)
+			locationMap.put(command.getLocation(), command);
+	}
 
 	public InteractionCommand get(Location location) {
-		for (InteractionCommand interactionCommand : interactionCommands)
-			if (location.getBlock().getLocation().equals(interactionCommand.getLocation()))
-				return interactionCommand;
-		return null;
+		return locationMap.get(location);
+	}
+
+	public void add(InteractionCommand command) {
+		interactionCommands.add(command);
+		locationMap.put(command.getLocation(), command);
 	}
 
 	public boolean delete(Location location) {
@@ -51,6 +61,7 @@ public class InteractionCommandConfig extends PlayerOwnedObject {
 			return false;
 
 		interactionCommands.remove(interactionCommand);
+		locationMap.remove(interactionCommand.getLocation());
 		return true;
 	}
 

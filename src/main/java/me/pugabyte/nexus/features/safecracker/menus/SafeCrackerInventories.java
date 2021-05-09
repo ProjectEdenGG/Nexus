@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.safecracker.menus;
 
+import eden.annotations.Disabled;
 import fr.minuskube.inv.SmartInventory;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent;
 import org.bukkit.entity.Player;
 

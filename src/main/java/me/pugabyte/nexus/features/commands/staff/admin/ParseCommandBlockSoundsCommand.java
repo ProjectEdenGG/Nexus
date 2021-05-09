@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -100,7 +100,9 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 
 			if (relative.getState() instanceof CommandBlock) {
 				CommandBlock commandBlock = (CommandBlock) relative.getState();
-				sounds.put(wait, new ArrayList<String>(sounds.getOrDefault(wait, new ArrayList<>())) {{ add(commandBlock.getCommand()); }});
+				sounds.put(wait, new ArrayList<>(sounds.getOrDefault(wait, new ArrayList<>())) {{
+					add(commandBlock.getCommand());
+				}});
 				treeWait.put(relative.getLocation(), wait);
 				found(relative);
 				look(relative, direction.getOppositeFace());
@@ -125,7 +127,7 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 				.location(getCenteredLocation(block.getLocation().add(0, 1, 0)).add(0, .5, 0))
 				.speed(0.1)
 				.ticks(Time.SECOND.x(5))
-				.color(EnumUtils.random(ColorType.class).getColor())
+				.color(EnumUtils.random(ColorType.class).getBukkitColor())
 				.start();
 	}
 

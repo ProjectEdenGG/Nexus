@@ -16,12 +16,13 @@ import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.mcmmo.McMMOPrestige;
 import me.pugabyte.nexus.models.mcmmo.McMMOService;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -72,7 +73,11 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"A godly rod that increases your catch") {
 				@Override
 				void onClick(Player player) {
-					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.FISHING_ROD.name() + " lure:4 luck:5 unbreaking:3 mending:1");
+					PlayerUtils.giveItem(player, new ItemBuilder(Material.FISHING_ROD)
+							.enchant(Enchantment.LURE, 4)
+							.enchant(Enchantment.LUCK, 5)
+							.enchant(Enchantment.DURABILITY, 3)
+							.enchant(Enchantment.MENDING).build());
 				}
 		},
 		ACROBATICS(3, 3, Material.DIAMOND_BOOTS,
@@ -251,7 +256,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		// TODO Koda Broadcast
 		if (broadcast)
-			Koda.say(Nerd.of(player).getNickname() + " has reset their " + skill.name().toLowerCase() + " skill for the " +
+			Koda.say(Nickname.of(player) + " has reset their " + skill.name().toLowerCase() + " skill for the " +
 					StringUtils.getNumberWithSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!");
 	}
 }

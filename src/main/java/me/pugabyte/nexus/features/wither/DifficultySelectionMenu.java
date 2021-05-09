@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class DifficultySelectionMenu extends MenuUtils implements InventoryProvider {
 
@@ -32,7 +31,7 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 					return;
 				}
 				fight.setHost(player.getUniqueId());
-				fight.setParty(new ArrayList<UUID>() {{
+				fight.setParty(new ArrayList<>() {{
 					add(player.getUniqueId());
 				}});
 				WitherChallenge.currentFight = fight;

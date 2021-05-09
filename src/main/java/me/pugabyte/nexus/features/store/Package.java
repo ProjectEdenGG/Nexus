@@ -1,23 +1,45 @@
 package me.pugabyte.nexus.features.store;
 
+import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.store.annotations.Category;
 import me.pugabyte.nexus.features.store.annotations.Commands.Command;
 import me.pugabyte.nexus.features.store.annotations.ExpirationCommands.ExpirationCommand;
 import me.pugabyte.nexus.features.store.annotations.ExpirationDays;
 import me.pugabyte.nexus.features.store.annotations.Id;
+import me.pugabyte.nexus.features.store.annotations.PermissionGroup;
 import me.pugabyte.nexus.features.store.annotations.Permissions.Permission;
+import me.pugabyte.nexus.models.task.Task;
+import me.pugabyte.nexus.models.task.TaskService;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public enum Package {
 
 	@Id("2589641")
 	CUSTOM_DONATION,
+
+	@Id("4425727")
+	@Permission("nickname.use")
+	NICKNAME_LIFETIME,
+
+	@Id("4425728")
+	@Permission("nickname.use")
+	@ExpirationDays(30)
+	@ExpirationCommand("nickname expire [player]")
+	NICKNAME_ONE_MONTH,
 
 	@Id("1922887")
 	@Permission("set.my.prefix")
@@ -30,21 +52,11 @@ public enum Package {
 	CUSTOM_PREFIX_ONE_MONTH,
 
 	@Id("2019251")
-	@Permission("automaticinventory.sortinventory")
-	@Permission("automaticinventory.sortchests")
-	@Permission("automaticinventory.quickdeposit")
-	@Permission("automaticinventory.depositall")
-	@Permission("automaticinventory.autocraft")
-	@Permission("automaticinventory.autotrash")
+	@PermissionGroup("store.autosort")
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
-	@Permission("automaticinventory.sortinventory")
-	@Permission("automaticinventory.sortchests")
-	@Permission("automaticinventory.quickdeposit")
-	@Permission("automaticinventory.depositall")
-	@Permission("automaticinventory.autocraft")
-	@Permission("automaticinventory.autotrash")
+	@PermissionGroup("store.autosort")
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
 
@@ -79,26 +91,7 @@ public enum Package {
 	FIVE_SETHOMES,
 
 	@Id("2559650")
-	@Permission("citizens.help")
-	@Permission("citizens.npc")
-	@Permission("citizens.npc.help")
-	@Permission("citizens.npc.create")
-	@Permission("citizens.npc.create.*")
-	@Permission("citizens.npc.profession")
-	@Permission("citizens.npc.remove")
-	@Permission("citizens.npc.rename")
-	@Permission("citizens.npc.edit.equip")
-	@Permission("citizens.npc.select")
-	@Permission("citizens.npc.skin")
-	@Permission("citizens.npc.lookclose")
-	@Permission("citizens.npc.skeletontype")
-	@Permission("citizens.npc.zombiemodifier")
-	@Permission("citizens.npc.age")
-	@Permission("citizens.npc.tphere")
-	@Permission("citizens.npc.type")
-	@Permission("citizens.npc.power")
-	@Permission("citizens.npc.edit.path")
-	@Permission("citizens.npc.edit.text")
+	@PermissionGroup("store.npc")
 	@Command("/permhelper npcs add [player] 1")
 	NPC,
 
@@ -152,236 +145,42 @@ public enum Package {
 
 	@Id("2495867")
 	@Category("Pets")
-	@Permission("pet.type.chicken")
-	@Permission("pet.type.chicken.hat")
-	@Permission("pet.type.chicken.data.*")
-	@Permission("pet.type.cow")
-	@Permission("pet.type.cow.hat")
-	@Permission("pet.type.cow.data.*")
-	@Permission("pet.type.mooshroom")
-	@Permission("pet.type.mooshroom.hat")
-	@Permission("pet.type.mooshroom.data.*")
-	@Permission("pet.type.sheep")
-	@Permission("pet.type.sheep.hat")
-	@Permission("pet.type.sheep.data.*")
-	@Permission("pet.type.pig")
-	@Permission("pet.type.pig.hat")
-	@Permission("pet.type.pig.data.*")
-	@Permission("pet.type.rabbit")
-	@Permission("pet.type.rabbit.hat")
-	@Permission("pet.type.rabbit.data.*")
-	@Permission("pet.type.bee")
-	@Permission("pet.type.bee.hat")
-	@Permission("pet.type.bee.data.*")
+	@PermissionGroup("store.pets.farm")
 	PETS_FARM,
 
 	@Id("2495869")
 	@Category("Pets")
-	@Permission("pet.type.fox")
-	@Permission("pet.type.fox.hat")
-	@Permission("pet.type.fox.data.*")
-	@Permission("pet.type.ocelot")
-	@Permission("pet.type.ocelot.hat")
-	@Permission("pet.type.ocelot.data.*")
-	@Permission("pet.type.wolf")
-	@Permission("pet.type.wolf.hat")
-	@Permission("pet.type.wolf.data.*")
-	@Permission("pet.type.cat")
-	@Permission("pet.type.cat.hat")
-	@Permission("pet.type.cat.data.*")
-	@Permission("pet.type.parrot")
-	@Permission("pet.type.parrot.hat")
-	@Permission("pet.type.parrot.data.*")
-	@Permission("pet.type.bat")
-	@Permission("pet.type.bat.hat")
-	@Permission("pet.type.bat.data.*")
-	@Permission("pet.type.panda")
-	@Permission("pet.type.panda.hat")
-	@Permission("pet.type.panda.data.*")
+	@PermissionGroup("store.pets.cuties")
 	PETS_CUTIES,
 
 	@Id("2495876")
 	@Category("Pets")
-	@Permission("pet.type.wanderingtrader")
-	@Permission("pet.type.wanderingtrader.hat")
-	@Permission("pet.type.wanderingtrader.data.*")
-	@Permission("pet.type.vex")
-	@Permission("pet.type.vex.hat")
-	@Permission("pet.type.vex.data.*")
-	@Permission("pet.type.villager")
-	@Permission("pet.type.villager.hat")
-	@Permission("pet.type.villager.data.*")
-	@Permission("pet.type.zombievillager")
-	@Permission("pet.type.zombievillager.hat")
-	@Permission("pet.type.zombievillager.data.*")
-	@Permission("pet.type.evoker")
-	@Permission("pet.type.evoker.hat")
-	@Permission("pet.type.evoker.data.*")
-	@Permission("pet.type.illusioner")
-	@Permission("pet.type.illusioner.hat")
-	@Permission("pet.type.illusioner.data.*")
-	@Permission("pet.type.ravager")
-	@Permission("pet.type.ravager.hat")
-	@Permission("pet.type.ravager.data.*")
-	@Permission("pet.type.vindicator")
-	@Permission("pet.type.vindicator.hat")
-	@Permission("pet.type.vindicator.data.*")
-	@Permission("pet.type.pillager")
-	@Permission("pet.type.pillager.hat")
-	@Permission("pet.type.pillager.data.*")
+	@PermissionGroup("store.pets.natives")
 	PETS_NATIVES,
 
 	@Id("3919092")
 	@Category("Pets")
-	@Permission("pet.type.dolphin")
-	@Permission("pet.type.dolphin.hat")
-	@Permission("pet.type.dolphin.data.*")
-	@Permission("pet.type.squid")
-	@Permission("pet.type.squid.hat")
-	@Permission("pet.type.squid.data.*")
-	@Permission("pet.type.turtle")
-	@Permission("pet.type.turtle.hat")
-	@Permission("pet.type.turtle.data.*")
-	@Permission("pet.type.drowned")
-	@Permission("pet.type.drowned.hat")
-	@Permission("pet.type.drowned.data.*")
-	@Permission("pet.type.guardian")
-	@Permission("pet.type.guardian.hat")
-	@Permission("pet.type.guardian.data.*")
-	@Permission("pet.type.polarbear")
-	@Permission("pet.type.polarbear.hat")
-	@Permission("pet.type.polarbear.data.*")
-	@Permission("pet.type.pufferfish")
-	@Permission("pet.type.pufferfish.hat")
-	@Permission("pet.type.pufferfish.data.*")
-	@Permission("pet.type.cod")
-	@Permission("pet.type.cod.hat")
-	@Permission("pet.type.cod.data.*")
-	@Permission("pet.type.salmon")
-	@Permission("pet.type.salmon.hat")
-	@Permission("pet.type.salmon.data.*")
+	@PermissionGroup("store.pets.aquatic")
 	PETS_AQUATIC,
 
 	@Id("2495873")
 	@Category("Pets")
-	@Permission("pet.type.witherskeleton")
-	@Permission("pet.type.witherskeleton.hat")
-	@Permission("pet.type.witherskeleton.data.*")
-	@Permission("pet.type.ghast")
-	@Permission("pet.type.ghast.hat")
-	@Permission("pet.type.ghast.data.*")
-	@Permission("pet.type.blaze")
-	@Permission("pet.type.blaze.hat")
-	@Permission("pet.type.blaze.data.*")
-	@Permission("pet.type.magmacube")
-	@Permission("pet.type.magmacube.hat")
-	@Permission("pet.type.magmacube.data.*")
-	@Permission("pet.type.hoglin")
-	@Permission("pet.type.hoglin.hat")
-	@Permission("pet.type.hoglin.data.*")
-	@Permission("pet.type.piglin")
-	@Permission("pet.type.piglin.hat")
-	@Permission("pet.type.piglin.data.*")
-	@Permission("pet.type.zombifiedpiglin")
-	@Permission("pet.type.zombifiedpiglin.hat")
-	@Permission("pet.type.zombifiedpiglin.data.*")
-	@Permission("pet.type.zoglin")
-	@Permission("pet.type.zoglin.hat")
-	@Permission("pet.type.zoglin.data.*")
-	@Permission("pet.type.strider")
-	@Permission("pet.type.strider.hat")
-	@Permission("pet.type.strider.data.*")
-	@Permission("pet.type.pigzombie")
-	@Permission("pet.type.pigzombie.hat")
-	@Permission("pet.type.pigzombie.data.*")
+	@PermissionGroup("store.pets.nether")
 	PETS_NETHER,
 
 	@Id("2495872")
 	@Category("Pets")
-	@Permission("pet.type.cavespider")
-	@Permission("pet.type.cavespider.hat")
-	@Permission("pet.type.cavespider.data.*")
-	@Permission("pet.type.creeper")
-	@Permission("pet.type.creeper.hat")
-	@Permission("pet.type.creeper.data.*")
-	@Permission("pet.type.skeleton")
-	@Permission("pet.type.skeleton.hat")
-	@Permission("pet.type.skeleton.data.*")
-	@Permission("pet.type.spider")
-	@Permission("pet.type.spider.hat")
-	@Permission("pet.type.spider.data.*")
-	@Permission("pet.type.witch")
-	@Permission("pet.type.witch.hat")
-	@Permission("pet.type.witch.data.*")
-	@Permission("pet.type.zombie")
-	@Permission("pet.type.zombie.hat")
-	@Permission("pet.type.zombie.data.*")
-	@Permission("pet.type.husk")
-	@Permission("pet.type.husk.hat")
-	@Permission("pet.type.husk.data.*")
-	@Permission("pet.type.stray")
-	@Permission("pet.type.stray.hat")
-	@Permission("pet.type.stray.data.*")
+	@PermissionGroup("store.pets.monsters")
 	PETS_MONSTERS,
 
 	@Id("2495871")
 	@Category("Pets")
-	@Permission("pet.type.horse")
-	@Permission("pet.type.horse.mount")
-	@Permission("pet.type.horse.hat")
-	@Permission("pet.type.horse.data.*")
-	@Permission("pet.type.skeletonhorse")
-	@Permission("pet.type.skeletonhorse.mount")
-	@Permission("pet.type.skeletonhorse.hat")
-	@Permission("pet.type.skeletonhorse.data.*")
-	@Permission("pet.type.zombiehorse")
-	@Permission("pet.type.zombiehorse.mount")
-	@Permission("pet.type.zombiehorse.hat")
-	@Permission("pet.type.zombiehorse.data.*")
-	@Permission("pet.type.donkey")
-	@Permission("pet.type.donkey.mount")
-	@Permission("pet.type.donkey.hat")
-	@Permission("pet.type.donkey.data.*")
-	@Permission("pet.type.mule")
-	@Permission("pet.type.mule.mount")
-	@Permission("pet.type.mule.hat")
-	@Permission("pet.type.mule.data.*")
-	@Permission("pet.type.llama")
-	@Permission("pet.type.llama.mount")
-	@Permission("pet.type.llama.hat")
-	@Permission("pet.type.llama.data.*")
-	@Permission("pet.type.traderllama")
-	@Permission("pet.type.traderllama.mount")
-	@Permission("pet.type.traderllama.hat")
-	@Permission("pet.type.traderllama.data.*")
+	@PermissionGroup("store.pets.mounts")
 	PETS_MOUNTS,
 
 	@Id("2495870")
 	@Category("Pets")
-	@Permission("pet.type.enderman")
-	@Permission("pet.type.enderman.hat")
-	@Permission("pet.type.enderman.data.*")
-	@Permission("pet.type.endermite")
-	@Permission("pet.type.endermite.hat")
-	@Permission("pet.type.endermite.data.*")
-	@Permission("pet.type.shulker")
-	@Permission("pet.type.shulker.hat")
-	@Permission("pet.type.shulker.data.*")
-	@Permission("pet.type.phantom")
-	@Permission("pet.type.phantom.hat")
-	@Permission("pet.type.phantom.data.*")
-	@Permission("pet.type.silverfish")
-	@Permission("pet.type.silverfish.hat")
-	@Permission("pet.type.silverfish.data.*")
-	@Permission("pet.type.slime")
-	@Permission("pet.type.slime.hat")
-	@Permission("pet.type.slime.data.*")
-	@Permission("pet.type.snowman")
-	@Permission("pet.type.snowman.hat")
-	@Permission("pet.type.snowman.data.*")
-	@Permission("pet.type.irongolem")
-	@Permission("pet.type.irongolem.hat")
-	@Permission("pet.type.irongolem.data.*")
+	@PermissionGroup("store.pets.other")
 	PETS_OTHER,
 
 	@Id("2496219")
@@ -462,99 +261,42 @@ public enum Package {
 
 	@Id("2495938")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.chicken.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.cow.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.mushroom_cow.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.pig.setSaddled.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.rabbit.setType.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.sheep.setColor.setSheared.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.farm")
 	DISGUISES_FARM,
 
 	@Id("2495940")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.bat.setHanging.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.cat.setCollarColor.setLookingUp.setLyingDown.setTamed.setType.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.fox.setCrouching.setHeadTilted.setSpringing.setType.setTipToeing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.ocelot.setType.setSitting.setTamed.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.panda.setHeadShaking.setHiddenGene.setMainGene.setSneeze.setTumble.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.parrot.setSitting.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.wolf.setSneaking.setTamed.setAngry.setBegging.setCollarColor.setSitting.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.cuties")
 	DISGUISES_CUTIES,
 
 	@Id("2495948")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.evoker.setSpellTicks.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.illusioner.setSpellTicks.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.pillager.setAimingBow.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.ravager.setCastingSpell.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.vex.setAngry.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.villager.setBiome.setProfession.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.vindicator.setJohnny.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.wandering_trader.setAngry.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.zombie_villager.setBiome.setArmor.setItemInMainHand.setItemInOffHand.setAggressive.setProfession.setShaking.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.natives")
 	DISGUISES_NATIVES,
 
 	@Id("3919103")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.cod.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.dolphin.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.drowned.setConverting.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.guardian.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.polar_bear.setStanding.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.pufferfish.setPuffState.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.salmon.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.squid.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.turtle.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.aquatic")
 	DISGUISES_AQUATIC,
 
 	@Id("2495945")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.hoglin.todo")
-	@Permission("libsdisguises.disguise.piglin.todo")
-	@Permission("libsdisguises.disguise.zombified_piglin.todo")
-	@Permission("libsdisguises.disguise.zoglin.todo")
-	@Permission("libsdisguises.disguise.strider.todo")
-	@Permission("libsdisguises.disguise.blaze.setBlazing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.ghast.setAggressive.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.magma_cube.setSize.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.pigman.setItemInMainHand.setItemInOffHand.setAggressive.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.wither_skeleton.setSwingArms.setItemInMainHand.setItemInOffHand.setArmor.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.nether")
 	DISGUISES_NETHER,
 
 	@Id("2495944")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.cave_spider.setClimbing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.creeper.setIgnited.setPowered.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.husk.setProfession.setShaking.setAggressive.setArmor.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.skeleton.setArmor.setItemInMainHand.setItemInOffHand.setSwingArms.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.spider.setClimbing.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.stray.setSwingArms.setArmor.setItemInMainHand.setItemInOffHand.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.witch.setAggressive.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.zombie.setArmor.setItemInMainHand.setItemInOffHand.setAggressive.setProfession.setShaking.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.monsters")
 	DISGUISES_MONSTERS,
 
 	@Id("2495942")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.skeleton_horse.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.zombie_horse.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.donkey.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.horse.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.llama.setCarryingChest.setColor.setGrazing.setEating.setCarpet.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.mule.setCarryingChest.setColor.setGrazing.setEating.setHorseArmor.setMouthOpen.setRearing.setSaddled.setStyle.setTamed.setVariant.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.trader_llama.setCarpet.setCarryingChest.setColor.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.mounts")
 	DISGUISES_MOUNTS,
 
 	@Id("2495941")
 	@Category("Disguises")
-	@Permission("libsdisguises.disguise.enderman.setAggressive.setItemInMainHand.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.endermite.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.iron_golem.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.phantom.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.shulker.setFacingDirection.setShieldHeight.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.silverfish.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.slime.setSize.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
-	@Permission("libsdisguises.disguise.snowman.setHat.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning")
+	@PermissionGroup("store.pets.other")
 	DISGUISES_OTHER;
 
 	@SneakyThrows
@@ -575,6 +317,12 @@ public enum Package {
 		return Arrays.stream(getField().getAnnotationsByType(Permission.class))
 				.map(Permission::value)
 				.collect(Collectors.toList());
+	}
+
+	public String getPermissionGroup() {
+		if (getField().getAnnotation(PermissionGroup.class) != null)
+			return getField().getAnnotation(PermissionGroup.class).value();
+		return null;
 	}
 
 	public List<String> getCommands() {
@@ -602,6 +350,37 @@ public enum Package {
 			if (value.getId().equals(id))
 				return value;
 		return null;
+	}
+
+	public void apply(OfflinePlayer player) {
+		getPermissions().forEach(permission -> PermissionChange.set().player(player).permission(permission).run());
+
+		String permissionGroup = getPermissionGroup();
+		if (!isNullOrEmpty(permissionGroup))
+			PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent add " + permissionGroup);
+
+		getCommands().stream()
+				.map(command -> command.replaceAll("\\[player]", player.getName()))
+				.forEach(PlayerUtils::runCommandAsConsole);
+
+		if (getExpirationDays() > 0)
+			new TaskService().save(new Task("package-expire", new HashMap<>() {{
+				put("uuid", player.getUniqueId().toString());
+				put("packageId", String.valueOf(getId()));
+			}}, LocalDateTime.now().plusDays(getExpirationDays())));
+	}
+
+	public void expire(OfflinePlayer player) {
+		getPermissions().forEach(permission -> PermissionChange.unset().player(player).permission(permission).run());
+
+		String permissionGroup = getPermissionGroup();
+		if (!Strings.isNullOrEmpty(permissionGroup))
+			PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent remove " + permissionGroup);
+
+		getExpirationCommands().stream()
+				.map(StringUtils::trimFirst)
+				.map(command -> command.replaceAll("\\[player]", player.getName()))
+				.forEach(command -> Tasks.sync(() -> PlayerUtils.runCommandAsConsole(command)));
 	}
 
 }

@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.commands.BattleshipCommand;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
@@ -30,9 +32,7 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.StringUtils.Timespan;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
@@ -50,6 +50,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -64,7 +65,6 @@ import java.util.function.Consumer;
 import static me.pugabyte.nexus.utils.ItemUtils.getTool;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 import static me.pugabyte.nexus.utils.Utils.attempt;
 
 /*
@@ -89,7 +89,7 @@ public class Battleship extends TeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
 	public static final String SCHEMATIC_FOLDER = "minigames/battleship";
-	public static final List<String> COORDINATES = new ArrayList<String>() {{
+	public static final List<String> COORDINATES = new ArrayList<>() {{
 		for (int number = 0; number < 10; number++)
 			for (String letter : LETTERS.split(""))
 				add(letter + number);
@@ -102,13 +102,13 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Battleship";
 	}
 
 	@Override
-	public String getDescription() {
-		return null;
+	public @NotNull String getDescription() {
+		return "";
 	}
 
 	@Override
@@ -150,10 +150,11 @@ public class Battleship extends TeamMechanic {
 		if (matchData.isPlacingKits()) {
 			lines.add("&cPlace your kits!");
 		} else {
-			lines.add("&cTime: &e" + timespanDiff(matchData.getStart(), matchData.getEnd() == null ? LocalDateTime.now() : matchData.getEnd()));
+			LocalDateTime to = matchData.getEnd() == null ? LocalDateTime.now() : matchData.getEnd();
+			lines.add("&cTime: &e" + Timespan.of(matchData.getStart(), to).format());
 
 			if (matchData.isEnding()) {
-				lines.add("&cWinner: " + matchData.getWinnerTeam().getColoredName());
+				lines.add("&cWinner: " + matchData.getWinnerTeam().getVanillaColoredName());
 			} else {
 				long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
 				String timeLeft = Timespan.of(arena.getTurnTime() - turnDuration).format();
@@ -183,7 +184,7 @@ public class Battleship extends TeamMechanic {
 			lines.add(line);
 		}
 
-		return new HashMap<String, Integer>() {{
+		return new HashMap<>() {{
 			for (int i = lines.size(); i > 0; i--)
 				put(lines.get(lines.size() - i), i);
 		}};

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.bridge.IngameBridgeListener;
@@ -14,11 +15,10 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.Time;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.md_5.bungee.api.ChatColor;
@@ -51,12 +51,12 @@ public class ShowEnchantsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("(hand|offhand|helmet|chestplate|leggings|boots) [message...]")
+	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
 	@Permission("showenchants.use")
 	@Cooldown(value = @Part(Time.MINUTE), bypass = "showenchants.bypasscooldown")
-	void run(String message) {
+	void run(String type, String message) {
 		Player player = player();
-		ItemStack item = getItem(player, arg(1));
+		ItemStack item = getItem(player, type);
 		if (ItemUtils.isNullOrAir(item))
 			error("You're not holding anything in that slot");
 
@@ -91,7 +91,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 		channel.broadcastIngame(chatter, json);
 
 		// Discord
-		if (channel.getDiscordChannel() != null) {
+		if (channel.getDiscordTextChannel() != null) {
 			getEnchants(item, data);
 			String enchants = getEnchantsDiscord(data);
 
@@ -110,7 +110,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 			if (!durability.equals("0/0"))
 				embed.setFooter(durability);
 
-			DiscordUser user = new DiscordService().get(player);
+			DiscordUser user = new DiscordUserService().get(player);
 
 			String discordMessage = discordize(message);
 			discordMessage = IngameBridgeListener.parseMentions(discordMessage);
@@ -119,7 +119,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 					.setContent(stripColor(user.getBridgeName() + " **>** " + discordMessage))
 					.setEmbed(embed.build());
 
-			Discord.send(content, channel.getDiscordChannel());
+			Discord.send(content, channel.getDiscordTextChannel());
 		}
 	}
 

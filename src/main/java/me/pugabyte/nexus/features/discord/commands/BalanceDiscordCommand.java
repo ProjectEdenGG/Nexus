@@ -2,12 +2,12 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
 import me.pugabyte.nexus.features.discord.Bot;
-import me.pugabyte.nexus.features.discord.Bot.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
+import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.models.banker.BankerService;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -28,7 +28,7 @@ public class BalanceDiscordCommand extends Command {
 	protected void execute(CommandEvent event) {
 		Tasks.async(() -> {
 			try {
-				DiscordUser user = new DiscordService().checkVerified(event.getAuthor().getId());
+				DiscordUser user = new DiscordUserService().checkVerified(event.getAuthor().getId());
 				OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 				ShopGroup shopGroup = ShopGroup.SURVIVAL;
 
@@ -43,7 +43,7 @@ public class BalanceDiscordCommand extends Command {
 				event.reply(camelCase(shopGroup) + " balance" + (isSelf ? "" : " of " + player.getName()) + ": " + formatted);
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}
 		});

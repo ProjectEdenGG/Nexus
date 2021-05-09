@@ -24,6 +24,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -35,12 +36,12 @@ import java.util.function.Function;
 public final class Mastermind extends SingleplayerMechanic {
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Mastermind";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -199,7 +200,7 @@ public final class Mastermind extends SingleplayerMechanic {
 		}
 
 		public static Set<Material> getMaterials(Function<MastermindColor, Material> function) {
-			return new LinkedHashSet<Material>() {{
+			return new LinkedHashSet<>() {{
 				for (MastermindColor color : values())
 					add(function.apply(color));
 			}};

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.emote;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,13 +11,16 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.chat.Emotes;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.RandomUtils;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 @Data
 @Builder
@@ -25,7 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class EmoteUser extends PlayerOwnedObject {
+public class EmoteUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -36,7 +40,7 @@ public class EmoteUser extends PlayerOwnedObject {
 	public String getKey(Emotes emote, ChatColor color) {
 		String key = emote.name();
 		if (color != null)
-			key += "-" + color.name();
+			key += "-" + color.getName().toUpperCase();
 		return key;
 	}
 
@@ -46,6 +50,14 @@ public class EmoteUser extends PlayerOwnedObject {
 
 	public boolean isEnabled(Emotes emote, ChatColor color) {
 		return !disabled.contains(getKey(emote, color));
+	}
+
+	public List<ChatColor> getEnabledColors(Emotes emote) {
+		return emote.getColors().stream().filter(color -> isEnabled(emote, color)).collect(toList());
+	}
+
+	public ChatColor getRandomColor(Emotes emote) {
+		return RandomUtils.randomElement(getEnabledColors(emote));
 	}
 
 	public boolean enable(Emotes emote, ChatColor color) {

@@ -12,8 +12,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	@NonNull
 	private LocalDate date;
-	private final Pugmas20Service service = new Pugmas20Service();
+	private final Pugmas20UserService service = new Pugmas20UserService();
 	private Pugmas20User user;
 	private AdventChest adventChest;
 	private boolean located;
@@ -93,7 +93,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private void found(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, ItemBuilder skull, String name, String district, boolean located) {
 		if (located)
 			contents.set(slotPos, ClickableItem.from(skull.clone().name(name).lore(showWaypoint(district)).build(),
-					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(skull.clone().name(name).lore(district).build()));
 	}
@@ -101,7 +101,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private void find(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
 			contents.set(slotPos, ClickableItem.from(toFind.clone().name(name).lore(showWaypoint("&aFind me!", district)).build(),
-					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore("&aFind me!", district).build()));
 	}
@@ -109,7 +109,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private void locked(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
 			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", district)).build(),
-					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
 	}
@@ -117,7 +117,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private void locked25(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
 			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build(),
-					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous||&cchests to unlock").build()));
 	}
@@ -125,14 +125,14 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private void missed(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
 			contents.set(slotPos, ClickableItem.from(missed.clone().name(name).lore(showWaypoint("&cMissed")).build(),
-					e -> Pugmas20.showWaypoint(adventChest, user.getPlayer())));
+					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore("&cMissed").build()));
 	}
 
 	@NotNull
 	private List<String> showWaypoint(String... lines) {
-		return new ArrayList<String>(Arrays.asList(lines)) {{
+		return new ArrayList<>(Arrays.asList(lines)) {{
 			add("&f||&aClick to show waypoint");
 		}};
 	}

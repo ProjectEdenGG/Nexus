@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
@@ -12,13 +13,12 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -38,14 +38,14 @@ public enum QuestNPC {
 	TICKET_MASTER(3104) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			Pugmas20User user = service.get(player);
 
 			user.getNextStepNPCs().remove(TICKET_MASTER.getId());
 			service.save(user);
 
 			return Arrays.asList(
-					Script.wait("Welcome to Pugmas, Bear Nation's month and a half long holiday event!"),
+					Script.wait("Welcome to Pugmas, Project Eden's month and a half long holiday event!"),
 
 					Script.wait(80, "There is tons to explore and many quests to complete for rewards!"),
 
@@ -64,7 +64,7 @@ public enum QuestNPC {
 	CINNAMON(3078) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service pugmasService = new Pugmas20Service();
+			Pugmas20UserService pugmasService = new Pugmas20UserService();
 			Pugmas20User pugmasUser = pugmasService.get(player);
 
 			switch (pugmasUser.getLightTreeStage()) {
@@ -118,7 +118,7 @@ public enum QuestNPC {
 	NOUGAT(3079) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			Pugmas20User user = service.get(player);
 
 			switch (user.getLightTreeStage()) {
@@ -195,7 +195,7 @@ public enum QuestNPC {
 	FORELF(3080) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			Pugmas20User user = service.get(player);
 
 			if (user.getLightTreeStage() == QuestStage.STEP_THREE) {
@@ -244,7 +244,7 @@ public enum QuestNPC {
 	QA_ELF(3081) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			Pugmas20User user = service.get(player);
 
 			EventUserService eventUserService = new EventUserService();
@@ -303,7 +303,7 @@ public enum QuestNPC {
 	HAZELNUT(3082) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			Pugmas20User user = service.get(player);
 
 			EventUserService eventUserService = new EventUserService();
@@ -367,7 +367,7 @@ public enum QuestNPC {
 	LUMBERJACK(3108) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			Pugmas20User user = service.get(player);
 
 			if (user.getOrnamentVendorStage().equals(QuestStage.STARTED)) {
@@ -389,7 +389,7 @@ public enum QuestNPC {
 	JADE(3110) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20Service service = new Pugmas20Service();
+			Pugmas20UserService service = new Pugmas20UserService();
 			Pugmas20User user = service.get(player);
 
 			if (user.getGiftGiverStage() == QuestStage.NOT_STARTED) {

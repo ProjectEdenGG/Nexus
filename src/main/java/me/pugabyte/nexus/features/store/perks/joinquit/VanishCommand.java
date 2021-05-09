@@ -17,8 +17,6 @@ import java.util.List;
 @Redirect(from = {"/ni", "/nointeract"}, to = "/nexus:vanish ni")
 @Redirect(from = {"/np", "/nopickup"}, to = "/nexus:vanish np")
 public class VanishCommand extends CustomCommand {
-	private static final String pickupPermission = "pv.toggleitems";
-	private static final List<String> interact_permissions = Arrays.asList("pv.interact", "pv.useblocks", "pv.damage", "pv.breakblocks", "pv.placeblocks", "pv.dropitems");
 
 	public VanishCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -38,6 +36,9 @@ public class VanishCommand extends CustomCommand {
 		JoinQuit.quit(player());
 		runCommand("vanish on");
 	}
+
+	private static final List<String> interact_permissions = Arrays.asList("pv.interact", "pv.useblocks",
+			"pv.damage", "pv.breakblocks", "pv.placeblocks", "pv.dropitems");
 
 	@Path("(ni|nointeract)")
 	@Permission("pv.use")
@@ -60,4 +61,5 @@ public class VanishCommand extends CustomCommand {
 	void togglePickup() {
 		runCommand("premiumvanish:vanish tipu");
 	}
+
 }

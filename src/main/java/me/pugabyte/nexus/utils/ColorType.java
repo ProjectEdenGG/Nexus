@@ -1,11 +1,16 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.framework.interfaces.Colored;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.inventivetalent.glow.GlowAPI;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -14,295 +19,374 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 @Getter
-public enum ColorType {
+@AllArgsConstructor
+public enum ColorType implements Colored {
 
 	WHITE(
 			"white",
 			Color.WHITE,
 			ChatColor.WHITE,
+			ChatColor.WHITE,
 			DyeColor.WHITE,
-			0
+			GlowAPI.Color.WHITE
 	),
 	LIGHT_GRAY(
 			"light gray",
 			Color.SILVER,
 			ChatColor.GRAY,
+			ChatColor.GRAY,
 			DyeColor.LIGHT_GRAY,
-			8
+			GlowAPI.Color.GRAY
 	),
 	GRAY(
 			"gray",
 			Color.GRAY,
 			ChatColor.DARK_GRAY,
+			ChatColor.DARK_GRAY,
 			DyeColor.GRAY,
-			7
+			GlowAPI.Color.DARK_GRAY
 	),
 	BLACK(
 			"black",
 			Color.BLACK,
 			ChatColor.BLACK,
+			ChatColor.BLACK,
 			DyeColor.BLACK,
-			15
+			GlowAPI.Color.BLACK
 	),
 	BROWN(
 			"brown",
 			Color.fromRGB(139, 69, 42),
-			null,
+			ChatColor.of(new java.awt.Color(139, 69, 42)),
+			ChatColor.GOLD,
 			DyeColor.BROWN,
-			12
+			null
 	),
 	RED(
 			"red",
 			Color.RED,
 			ChatColor.DARK_RED,
+			ChatColor.DARK_RED,
 			DyeColor.RED,
-			14
+			GlowAPI.Color.DARK_RED
 	),
 	LIGHT_RED(
 			"light red",
 			Color.fromRGB(255, 85, 85),
 			ChatColor.RED,
+			ChatColor.RED,
 			null,
 			DyeColor.RED,
-			14
+			GlowAPI.Color.RED
 	),
 	ORANGE(
 			"orange",
 			Color.ORANGE,
 			ChatColor.GOLD,
+			ChatColor.GOLD,
 			DyeColor.ORANGE,
-			1
+			GlowAPI.Color.GOLD
 	),
 	YELLOW(
 			"yellow",
 			Color.YELLOW,
 			ChatColor.YELLOW,
+			ChatColor.YELLOW,
 			DyeColor.YELLOW,
-			4
+			GlowAPI.Color.YELLOW
 	),
 	LIGHT_GREEN(
 			"lime",
 			Color.LIME,
 			ChatColor.GREEN,
+			ChatColor.GREEN,
 			DyeColor.LIME,
-			5
+			GlowAPI.Color.GREEN
 	),
 	GREEN(
 			"green",
 			Color.GREEN,
 			ChatColor.DARK_GREEN,
+			ChatColor.DARK_GREEN,
 			DyeColor.GREEN,
-			13
+			GlowAPI.Color.DARK_GREEN
 	),
 	CYAN(
 			"cyan",
 			Color.TEAL,
 			ChatColor.DARK_AQUA,
+			ChatColor.DARK_AQUA,
 			DyeColor.CYAN,
-			9
+			GlowAPI.Color.DARK_AQUA
 	),
 	LIGHT_BLUE(
 			"light blue",
 			Color.AQUA,
 			ChatColor.AQUA,
+			ChatColor.AQUA,
 			DyeColor.LIGHT_BLUE,
-			3
+			GlowAPI.Color.AQUA
 	),
 	BLUE(
 			"blue",
 			Color.BLUE,
 			ChatColor.BLUE,
+			ChatColor.BLUE,
 			DyeColor.BLUE,
-			11
+			GlowAPI.Color.BLUE
 	),
 	PURPLE(
 			"purple",
 			Color.PURPLE,
 			ChatColor.DARK_PURPLE,
+			ChatColor.DARK_PURPLE,
 			DyeColor.PURPLE,
-			10
+			GlowAPI.Color.DARK_PURPLE
 	),
 	MAGENTA(
 			"magenta",
 			Color.FUCHSIA,
-			null,
+			ChatColor.of(new java.awt.Color(0xFF, 0, 0xFF)),
+			ChatColor.LIGHT_PURPLE,
 			DyeColor.MAGENTA,
-			2
+			GlowAPI.Color.PURPLE
 	),
 	PINK(
 			"pink",
 			Color.fromRGB(255, 105, 180),
 			ChatColor.LIGHT_PURPLE,
+			ChatColor.LIGHT_PURPLE,
 			DyeColor.PINK,
-			6
+			GlowAPI.Color.PURPLE
 	);
 
-	private final String name;
-	private final Color color;
-	private final ChatColor chatColor;
-	private final DyeColor dyeColor;
-	private final DyeColor similarDyeColor;
-	private final Integer durability;
+	private final @NotNull String name;
+	private final @NotNull Color bukkitColor;
+	private final @NotNull ChatColor chatColor;
+	/**
+	 * A similar official vanilla chat color
+	 */
+	private final @NotNull ChatColor vanillaChatColor;
+	private final @Nullable DyeColor dyeColor;
+	private final @NotNull DyeColor similarDyeColor;
+	private final @Nullable GlowAPI.Color glowColor;
 
-	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, int durability) {
-		this(name, color, chatColor, dyeColor, dyeColor, durability);
+	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
+		this(name, bukkitColor, chatColor, bukkitChatColor, dyeColor, dyeColor, glowColor);
 	}
 
-	ColorType(String name, Color color, ChatColor chatColor, DyeColor dyeColor, DyeColor similarDyeColor, int durability) {
-		this.name = name;
-		this.color = color;
-		this.chatColor = chatColor;
-		this.dyeColor = dyeColor;
-		this.similarDyeColor = similarDyeColor;
-		this.durability = durability;
+	@Override
+	@NotNull
+	public java.awt.Color getColor() {
+		return new java.awt.Color(bukkitColor.asRGB());
 	}
 
-	public static ColorType of(String name) {
-		return Arrays.stream(values()).filter(colorType -> name.equals(colorType.getName())).findFirst().orElse(null);
+	@Nullable
+	public static ColorType of(@Nullable String name) {
+		if (name == null) return null;
+		return Arrays.stream(values()).filter(colorType -> colorType.getName().equals(name)).findFirst().orElse(null);
 	}
 
-	public static ColorType of(Color color) {
-		return Arrays.stream(values()).filter(colorType -> color.equals(colorType.getColor())).findFirst().orElse(null);
+	@Nullable
+	public static ColorType of(@Nullable Color color) {
+		if (color == null) return null;
+		return Arrays.stream(values()).filter(colorType -> colorType.getBukkitColor().equals(color)).findFirst().orElse(null);
 	}
 
-	public static ColorType of(ChatColor chatColor) {
-		return Arrays.stream(values()).filter(colorType -> chatColor.equals(colorType.getChatColor())).findFirst().orElse(null);
+	@Nullable
+	public static ColorType of(@Nullable ChatColor chatColor) {
+		if (chatColor == null) return null;
+		return Arrays.stream(values()).filter(colorType -> colorType.getChatColor().getColor().equals(chatColor.getColor())).findFirst().orElse(null);
 	}
 
-	public static ColorType of(DyeColor dyeColor) {
-		return Arrays.stream(values()).filter(colorType -> dyeColor.equals(colorType.getDyeColor())).findFirst().orElse(null);
+	@Nullable
+	public static ColorType of(@Nullable DyeColor dyeColor) {
+		if (dyeColor == null) return null;
+		return Arrays.stream(values()).filter(colorType -> colorType.getDyeColor() != null && colorType.getDyeColor().equals(dyeColor)).findFirst().orElse(null);
 	}
 
-	public static ColorType of(Material material) {
+	@Nullable
+	public static ColorType of(@Nullable GlowAPI.Color glowColor) {
+		if (glowColor == null) return null;
+		return Arrays.stream(values()).filter(colorType -> colorType.getGlowColor() != null && colorType.getGlowColor().equals(glowColor)).findFirst().orElse(null);
+	}
+
+	@Nullable
+	public static ColorType of(@Nullable Material material) {
+		if (material == null) return null;
 		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
-	public Material switchColor(Material material) {
+	@Nullable
+	public Material switchColor(@NotNull Material material) {
 		return switchColor(material, this);
 	}
 
-	public static Material switchColor(Material material, ColorType colorType) {
+	@Nullable
+	public static Material switchColor(@NotNull Material material, @NotNull ColorType colorType) {
 		return switchColor(material, colorType.getSimilarDyeColor());
 	}
 
-	public static Material switchColor(Material material, DyeColor dyeColor) {
-		return Material.valueOf(material.name().replace(of(material).getSimilarDyeColor().name(), dyeColor.name()));
+	@Nullable
+	public static Material switchColor(@NotNull Material material, @NotNull DyeColor dyeColor) {
+		ColorType colorType = of(material);
+		if (colorType == null)
+			return null;
+		return Material.valueOf(material.name().replace(colorType.getSimilarDyeColor().name(), dyeColor.name()));
 	}
 
+	@NotNull
 	private static String generic(Material material) {
 		return material.name().replace("WHITE", "");
 	}
 
+	@NotNull
 	public Material getWool() {
 		return getWool(this);
 	}
 
-	public static Material getWool(ColorType colorType) {
+	@NotNull
+	public static Material getWool(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_WOOL));
 	}
 
+	@NotNull
 	public Material getDye() {
 		return getDye(this);
 	}
 
-	public static Material getDye(ColorType colorType) {
+	@NotNull
+	public static Material getDye(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_DYE));
 	}
 
+	@NotNull
 	public Material getCarpet() {
 		return getCarpet(this);
 	}
 
-	public static Material getCarpet(ColorType colorType) {
+	@NotNull
+	public static Material getCarpet(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CARPET));
 	}
 
+	@NotNull
 	public Material getBed() {
 		return getBed(this);
 	}
 
-	public static Material getBed(ColorType colorType) {
+	@NotNull
+	public static Material getBed(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_BED));
 	}
 
+	@NotNull
 	public Material getBanner() {
 		return getBanner(this);
 	}
 
-	public static Material getBanner(ColorType colorType) {
+	@NotNull
+	public static Material getBanner(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_BANNER));
 	}
 
+	@NotNull
 	public Material getWallBanner() {
 		return getWallBanner(this);
 	}
 
-	public static Material getWallBanner(ColorType colorType) {
+	@NotNull
+	public static Material getWallBanner(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_WALL_BANNER));
 	}
 
+	@NotNull
 	public Material getStainedGlass() {
 		return getStainedGlass(this);
 	}
 
-	public static Material getStainedGlass(ColorType colorType) {
+	@NotNull
+	public static Material getStainedGlass(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_STAINED_GLASS));
 	}
 
+	@NotNull
 	public Material getStainedGlassPane() {
 		return getStainedGlassPane(this);
 	}
 
-	public static Material getStainedGlassPane(ColorType colorType) {
+	@NotNull
+	public static Material getStainedGlassPane(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_STAINED_GLASS_PANE));
 	}
 
+	@NotNull
 	public Material getTerracotta() {
 		return getTerracotta(this);
 	}
 
-	public static Material getTerracotta(ColorType colorType) {
+	@NotNull
+	public static Material getTerracotta(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_TERRACOTTA));
 	}
 
+	@NotNull
 	public Material getGlazedTerracotta() {
 		return getGlazedTerracotta(this);
 	}
 
-	public static Material getGlazedTerracotta(ColorType colorType) {
+	@NotNull
+	public static Material getGlazedTerracotta(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_GLAZED_TERRACOTTA));
 	}
 
+	@NotNull
 	public Material getConcrete() {
 		return getConcrete(this);
 	}
 
-	public static Material getConcrete(ColorType colorType) {
+	@NotNull
+	public static Material getConcrete(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CONCRETE));
 	}
 
+	@NotNull
 	public Material getConcretePowder() {
 		return getConcretePowder(this);
 	}
 
-	public static Material getConcretePowder(ColorType colorType) {
+	@NotNull
+	public static Material getConcretePowder(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CONCRETE_POWDER));
 	}
 
+	@NotNull
 	public Material getShulkerBox() {
 		return getShulkerBox(this);
 	}
 
-	public static Material getShulkerBox(ColorType colorType) {
+	@NotNull
+	public static Material getShulkerBox(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_SHULKER_BOX));
 	}
 
+	@NotNull
 	public String getDisplayName() {
-		return chatColor == null ? "" : chatColor + StringUtils.camelCase(name);
+		return chatColor + StringUtils.camelCase(name);
 	}
 
-	public static org.bukkit.ChatColor toBukkit(ChatColor color) {
-		return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
+	@Nullable
+	public org.bukkit.ChatColor toBukkit() {
+		return toBukkit(getVanillaChatColor());
+	}
+
+	@Nullable
+	public static org.bukkit.ChatColor toBukkit(@NotNull ChatColor color) {
+		try {
+			return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 
 	@Getter

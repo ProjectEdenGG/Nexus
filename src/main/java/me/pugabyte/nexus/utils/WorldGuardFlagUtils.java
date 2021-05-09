@@ -20,10 +20,12 @@ import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import lombok.AllArgsConstructor;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldGuardFlagUtils {
 
@@ -110,15 +112,16 @@ public class WorldGuardFlagUtils {
 //		}
 //	}
 
-	public static boolean test(Player player, Flags flag) {
+	public static boolean test(HasPlayer player, Flags flag) {
 		return test(player, (StateFlag) flag.get());
 	}
 
-	public static boolean test(Player player, StateFlag flag) {
+	public static boolean test(@NotNull HasPlayer player, @NotNull StateFlag flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 
-		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-		Location loc = BukkitAdapter.adapt(player.getLocation());
+		Player _player = player.getPlayer();
+		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(_player);
+		Location loc = BukkitAdapter.adapt(_player.getLocation());
 		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 		return container.createQuery().testState(loc, localPlayer, flag);
 	}
@@ -136,14 +139,14 @@ public class WorldGuardFlagUtils {
 		return query.testState(loc, new DelayedRegionOverlapAssociation(query, loc), flag);
 	}
 
-	public static State query(Player player, Flags flag) {
+	public static State query(HasPlayer player, Flags flag) {
 		return query(player, (StateFlag) flag.get());
 	}
 
-	public static State query(Player player, StateFlag flag) {
+	public static State query(HasPlayer player, StateFlag flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 
-		Location loc = BukkitAdapter.adapt(player.getLocation());
+		Location loc = BukkitAdapter.adapt(player.getPlayer().getLocation());
 		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 		RegionQuery query = container.createQuery();
 		return query.queryState(loc, new DelayedRegionOverlapAssociation(query, loc), flag);
@@ -179,9 +182,10 @@ public class WorldGuardFlagUtils {
 		return query.queryValue(loc, Associables.constant(Association.NON_MEMBER), flag);
 	}
 
-	public static <T> T getValueFor(Player player, Flag<T> flag) {
-		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(player.getLocation());
+	public static <T> T getValueFor(HasPlayer player, Flag<T> flag) {
+		Player _player = player.getPlayer();
+		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(_player);
+		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(_player.getLocation());
 		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
 		return container.createQuery().queryValue(loc, localPlayer, flag);
 	}

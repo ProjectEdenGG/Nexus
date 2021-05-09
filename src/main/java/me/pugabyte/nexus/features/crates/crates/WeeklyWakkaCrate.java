@@ -23,7 +23,7 @@ public class WeeklyWakkaCrate extends Crate {
 
 	@Override
 	public List<String> getCrateHologramLines() {
-		return new ArrayList<String>() {{
+		return new ArrayList<>() {{
 			add("&3&l--=[+]=--");
 			add("&3[+] &e&lWeekly Wakka Crate &3[+]");
 			add("&3Find &eWakka's NPC &3around");

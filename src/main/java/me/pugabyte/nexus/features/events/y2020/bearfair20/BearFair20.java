@@ -1,23 +1,23 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.IslandType;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.EasterEggs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
-import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
-import me.pugabyte.nexus.utils.Time.Timer;
+import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
@@ -48,15 +48,9 @@ import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 @Data
 public class BearFair20 implements Listener {
 	@Getter
-	private static final World world = Bukkit.getWorld("safepvp");
-	@Getter
 	private static final String region = "bearfair2020";
 	@Getter
-	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);
-	@Getter
-	private static final ProtectedRegion protectedRegion = WGUtils.getProtectedRegion(region);
-	@Getter
-	private static final Set<Class<? extends Island>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(Island.class);
+	private static final Set<Class<? extends BearFairIsland>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(BearFairIsland.class);
 	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
 
 	// TODO: When BF is over, disable these, and disable block break/place on regions
@@ -77,6 +71,22 @@ public class BearFair20 implements Listener {
 		}
 	}
 
+	public static World getWorld() {
+		return Bukkit.getWorld("safepvp");
+	}
+
+	public static WorldGuardUtils getWGUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public static WorldEditUtils getWEUtils() {
+		return new WorldEditUtils(getWorld());
+	}
+
+	public static ProtectedRegion getProtectedRegion() {
+		return getWGUtils().getProtectedRegion(region);
+	}
+
 	@EventHandler
 	public void onRightClickWakka(NPCRightClickEvent event) {
 		Player player = event.getClicker();
@@ -89,14 +99,14 @@ public class BearFair20 implements Listener {
 				int id = event.getNPC().getId();
 				if (id == MainIsland.MainNPCs.WakkaFlocka.getNpcId()) {
 					List<String> script = new ArrayList<>();
-					script.add("Welcome to Bear Fair, Bear Nation's anniversary event!");
+					script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
 					script.add("wait 80");
 					script.add("This event starts every year on June 29th and lasts until the 5th!");
 					script.add("wait 80");
 					script.add("While this years event is over, you can still explore the island and play the minigames at the carnival.");
 					script.add("wait 80");
 					script.add("And if you need help figuring out where you are, check out this map to my side.");
-					Talkers.sendScript(player, MainIsland.MainNPCs.WakkaFlocka, script);
+					BearFairTalker.sendScript(player, MainIsland.MainNPCs.WakkaFlocka, script);
 				}
 			}
 		}
@@ -110,7 +120,7 @@ public class BearFair20 implements Listener {
 	}
 
 //	@EventHandler
-//	public void onRegionEnter(RegionEnteredEvent event) {
+//	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 //		Player player = event.getPlayer();
 //		if(!isAtBearFair(player)) return;
 //		if (player.hasPermission("worldguard.region.bypass.*")) {
@@ -157,7 +167,7 @@ public class BearFair20 implements Listener {
 	}
 
 //	@EventHandler
-//	public void onRegionEnterYacht(RegionEnteredEvent event) {
+//	public void onRegionEnterYacht(PlayerEnteredRegionEvent event) {
 //		if (!allowWarp) return;
 //		if (!event.getRegion().getId().equalsIgnoreCase("spawn_spaceyacht")) return;
 //		Player player = event.getPlayer();
@@ -167,7 +177,7 @@ public class BearFair20 implements Listener {
 //	}
 
 //	@EventHandler
-//	public void onRegionEnterQuarters(RegionEnteredEvent event) {
+//	public void onRegionEnterQuarters(PlayerEnteredRegionEvent event) {
 //		if (!allowWarp) return;
 //		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
 //
@@ -206,7 +216,7 @@ public class BearFair20 implements Listener {
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";
-		if (((Godmode) new GodmodeService().get(player)).isEnabled()) return "godemode";
+		if (new GodmodeService().get(player).isEnabled()) return "godemode";
 
 		return null;
 	}
@@ -232,7 +242,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return location.getWorld().equals(BearFair20.getWorld()) && WGUtils.isInRegion(location, region);
+		return location.getWorld().equals(BearFair20.getWorld()) && getWGUtils().isInRegion(location, region);
 	}
 
 	public static boolean isBFItem(ItemStack item) {

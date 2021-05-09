@@ -1,25 +1,30 @@
 package me.pugabyte.nexus.models.safecracker;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.annotations.Disabled;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(SafeCrackerPlayer.class)
 @Disabled
-public class SafeCrackerPlayerService extends MongoService {
-	private final static Map<UUID, SafeCrackerPlayer> cache = new HashMap<>();
+public class SafeCrackerPlayerService extends MongoService<SafeCrackerPlayer> {
+	private final static Map<UUID, SafeCrackerPlayer> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, SafeCrackerPlayer> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public LinkedHashMap<OfflinePlayer, Integer> getScores(SafeCrackerEvent.SafeCrackerGame game) {

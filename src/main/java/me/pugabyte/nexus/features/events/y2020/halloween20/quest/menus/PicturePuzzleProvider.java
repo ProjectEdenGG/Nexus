@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus;
 
+import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

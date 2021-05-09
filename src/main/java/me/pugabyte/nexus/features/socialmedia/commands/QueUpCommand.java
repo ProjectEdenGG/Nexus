@@ -1,10 +1,12 @@
 package me.pugabyte.nexus.features.socialmedia.commands;
 
+import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -12,15 +14,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.queup.QueUp;
 import me.pugabyte.nexus.models.queup.QueUpService;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 
 @Aliases("dubtrack")
 @SuppressWarnings("SameParameterValue")
 public class QueUpCommand extends CustomCommand {
-	private static final String URL = BNSocialMediaSite.QUEUP.getUrl();
+	private static final String URL = EdenSocialMediaSite.QUEUP.getUrl();
 
 	private static boolean enabled = true;
 	private static final QueUpService service = new QueUpService();
@@ -54,20 +54,23 @@ public class QueUpCommand extends CustomCommand {
 				if (!enabled)
 					return;
 
-				String currentSong = queup.getCurrentSong();
+				try {
+					String currentSong = queup.getCurrentSong();
 
-				if (currentSong != null && currentSong.equals(queup.getLastSong()))
-					return;
+					if (currentSong != null && currentSong.equals(queup.getLastSong()))
+						return;
 
-				queup.setLastSong(currentSong);
-				service.save(queup);
+					queup.setLastSong(currentSong);
+					service.save(queup);
 
-				if (currentSong == null)
-					return;
+					if (currentSong == null)
+						return;
 
-				String hover = "&eClick me to join &dQueUp&e!";
-				Chat.broadcastIngame(new JsonBuilder("&3Now playing on &d" + URL + "&3:").hover(hover).url(URL), MuteMenuItem.QUEUP);
-				Chat.broadcastIngame(new JsonBuilder(" " + currentSong).hover(hover).url(URL), MuteMenuItem.QUEUP);
+					String hover = "&eClick me to join &dQueUp&e!";
+					Chat.broadcastIngame(new JsonBuilder("&3Now playing on &d" + URL + "&3:").hover(hover).url(URL), MuteMenuItem.QUEUP);
+					Chat.broadcastIngame(new JsonBuilder(" " + currentSong).hover(hover).url(URL), MuteMenuItem.QUEUP);
+				} catch (Exception ignored) {
+				}
 			});
 	}
 

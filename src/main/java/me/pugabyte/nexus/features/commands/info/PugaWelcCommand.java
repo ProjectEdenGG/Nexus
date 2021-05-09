@@ -17,7 +17,7 @@ public class PugaWelcCommand extends CustomCommand {
 		send("&3Here's a few resources you may find helpful as you explore our server. Just &e&lclick &3to open them");
 		send(json("&3[+] &eFAQ").command("/faq"));
 		send(json("&3[+] &eRules").command("/rules"));
-		send(json("&3[+] &eWiki").url("https://wiki.bnn.gg/"));
+		send(json("&3[+] &eWiki").url("https://wiki.projecteden.gg/"));
 		runCommandAsConsole("curiosity cookies " + name());
 	}
 

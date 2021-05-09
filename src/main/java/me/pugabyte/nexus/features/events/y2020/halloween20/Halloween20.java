@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.SoundButton;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.Gate;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
@@ -17,9 +18,9 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
@@ -38,15 +39,24 @@ public class Halloween20 implements Listener {
 	@Getter
 	public static final String region = "halloween20";
 	@Getter
-	public static final World world = Bukkit.getWorld("safepvp");
-	@Getter
 	public static final String PREFIX = StringUtils.getPrefix("Halloween 2020");
-	public WorldGuardUtils utils = new WorldGuardUtils(world);
 
 	public Halloween20() {
 		new LostPumpkins();
 		new ShootingRange();
 		Nexus.registerListener(this);
+	}
+
+	public static World getWorld() {
+		return Bukkit.getWorld("safepvp");
+	}
+
+	public static WorldGuardUtils getWGUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public static WorldEditUtils getWEUtils() {
+		return new WorldEditUtils(getWorld());
 	}
 
 	public static void start(Player player) {
@@ -77,7 +87,7 @@ public class Halloween20 implements Listener {
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (!utils.getPlayersInRegion(region).contains(event.getPlayer())) return;
+		if (!getWGUtils().getPlayersInRegion(region).contains(event.getPlayer())) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		ComboLockNumber number = ComboLockNumber.getByLocation(event.getClickedBlock().getLocation());
 		if (number == null) return;
@@ -89,12 +99,12 @@ public class Halloween20 implements Listener {
 	@EventHandler
 	public void onComboLockInteract(PlayerInteractEvent event) {
 		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (utils.isInRegion(event.getClickedBlock().getLocation(), region + "_combolock"))
+		if (getWGUtils().isInRegion(event.getClickedBlock().getLocation(), region + "_combolock"))
 			Halloween20Menus.openComboLock(event.getPlayer());
 	}
 
 	@EventHandler
-	public void onEnterGateRegion(RegionEnteredEvent event) {
+	public void onEnterGateRegion(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(region + "_gate_open")) return;
 		Halloween20User user = new Halloween20Service().get(event.getPlayer());
 		if (user.getCombinationStage() != QuestStage.Combination.NOT_STARTED) return;

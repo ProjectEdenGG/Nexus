@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.features.listeners;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.models.afk.events.AFKEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -49,7 +49,7 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		Nerd nerd = Nerd.of(player);
-		String name = nerd.getNicknameFormat();
+		String name = nerd.getColoredName();
 		if (AFK.get(player).isAfk())
 			name += " &7&o[AFK]";
 		if (nerd.isVanished())

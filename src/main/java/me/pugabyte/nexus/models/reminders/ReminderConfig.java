@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.models.reminders;
 
 import com.google.common.base.Strings;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +11,8 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.models.discord.DiscordService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
@@ -21,6 +22,7 @@ import me.pugabyte.nexus.models.wallsofgrace.WallsOfGraceService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -52,7 +54,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("reminders", reminders);
 		}};
 	}
@@ -99,6 +101,23 @@ public class ReminderConfig implements ConfigurationSerializable {
 			throw new InvalidInputException("Reminder with id &e" + id + " &cnot found");
 
 		reminders.removeIf(reminder -> reminder.getId().equalsIgnoreCase(id));
+	}
+
+	public void showMotd(Player player) {
+		player.sendMessage("§3 §6 §3 §6 §3 §6 §e  §3 §6 §3 §6 §3 §6 §d"); // disable voxelmap radar
+
+		Tasks.waitAsync(Time.SECOND, () -> {
+			if (!player.isOnline())
+				return;
+
+			List<Reminder> motds = getMotds(player);
+			if (motds.isEmpty())
+				return;
+
+			player.sendMessage("");
+			motds.forEach(motd -> motd.send(player));
+			player.sendMessage("");
+		});
 	}
 
 	@Data
@@ -150,7 +169,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 
 		@Override
 		public Map<String, Object> serialize() {
-			return new LinkedHashMap<String, Object>() {{
+			return new LinkedHashMap<>() {{
 				put("id", id);
 				put("text", text);
 				put("command", command);
@@ -242,7 +261,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 				return voter.getActiveVotes().size() < VoteSite.values().length - 2;
 			}),
 			DISCORD_LINK(player -> {
-				DiscordUser user = new DiscordService().get(player);
+				DiscordUser user = new DiscordUserService().get(player);
 				return user.getUserId() == null;
 			}),
 			WALLS_OF_GRACE(player -> {

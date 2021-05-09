@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.menus.teams;
 
-import com.google.common.collect.ImmutableSet;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
@@ -9,20 +8,17 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.utils.ColorType;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 public class TeamColorMenu extends MenuUtils implements InventoryProvider {
-	public static final Set<ColorType> COLOR_TYPES = ImmutableSet.copyOf(Arrays.stream(ColorType.values()).filter(
-			colorType -> colorType.getChatColor() != null &&
-					colorType.getDurability() != null &&
-					colorType.getChatColor() != ChatColor.BLACK)
-			.collect(Collectors.toSet()));
+	public static final LinkedHashSet<ColorType> COLOR_TYPES = new LinkedHashSet<>(Arrays.stream(ColorType.values()).filter(
+			colorType -> colorType != ColorType.BLACK)
+			.collect(Collectors.toList()));
 
 	Arena arena;
 	Team team;
@@ -42,11 +38,11 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 		for (ColorType colorType : COLOR_TYPES) {
 			ItemStack item = nameItem(colorType.getWool(), colorType.getDisplayName());
 
-			if (colorType.getChatColor() == team.getColor())
+			if (colorType.getChatColor() == team.getChatColor())
 				addGlowing(item);
 
 			contents.set(row, column, ClickableItem.from(item, e -> {
-				team.setColor(colorType.getChatColor());
+				team.setChatColor(colorType.getChatColor());
 				arena.write();
 				teamMenus.openTeamsColorMenu(player, arena, team);
 			}));
@@ -54,7 +50,7 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 			if (column != 8) {
 				column++;
 			} else {
-				column = 2;
+				column = 1;
 				row++;
 			}
 		}

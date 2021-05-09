@@ -2,11 +2,13 @@ package me.pugabyte.nexus.features.minigames.models;
 
 import com.google.common.base.Strings;
 import de.myzelyam.api.vanish.VanishAPI;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import me.lexikiq.PlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -16,24 +18,30 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
+import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.Objects;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
 import static me.pugabyte.nexus.utils.PlayerUtils.hidePlayer;
@@ -42,13 +50,19 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer {
+public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 	@NonNull
 	private Player player;
 	@ToString.Exclude
 	private Match match;
+	@Nullable
 	private Team team;
 	private int score = 0;
+	/**
+	 * Number that represents the player's participation in the game. Should be used to track events like kills,
+	 * capturing flags, etc. Mostly used for team games where participation is more complex than just kill counts.
+	 */
+	private int contributionScore = 0;
 	@Accessors(fluent = true)
 	private boolean canTeleport;
 	private boolean respawning = false;
@@ -61,9 +75,19 @@ public class Minigamer {
 	private static final double HEALTH_PER_TICK = (1d/2d)/ Time.SECOND.x(2);
 	private static final int IMMOBILE_SECONDS = Time.SECOND.x(3);
 
+	@Override
+	public @NotNull OfflinePlayer getOfflinePlayer() {
+		return player;
+	}
+
+	@Override
+	public @NotNull UUID getUniqueId() {
+		return player.getUniqueId();
+	}
+
 	/**
 	 * Returns the Minigamer's Minecraft username.
-	 * You should consider using {@link #getNickname()} instead.
+	 * @deprecated You should probably be using {@link #getNickname()} instead.
 	 */
 	@Deprecated
 	@NotNull
@@ -71,17 +95,14 @@ public class Minigamer {
 		return player.getName();
 	}
 
-	/**
-	 * Returns this minigamer's nickname, or player name if absent
-	 */
-	public String getNickname() {
-		return Nerd.of(player).getNickname();
+	public @NotNull String getNickname() {
+		return Nickname.of(player);
 	}
 
-	public String getColoredName() {
+	public @NotNull Color getColor() {
 		if (team == null)
-			return getNickname();
-		return team.getColor() + getNickname();
+			return Color.WHITE;
+		return team.getColor();
 	}
 
 	public void join(String name) {
@@ -194,7 +215,7 @@ public class Minigamer {
 		boolean staff = PlayerUtils.isStaffGroup(player);
 
 		player.setGameMode(GameMode.SURVIVAL);
-		player.setFallDistance(0f);
+		player.setFallDistance(0);
 		player.setAllowFlight(staff);
 		player.setFlying(staff);
 
@@ -235,13 +256,19 @@ public class Minigamer {
 
 	public void setTeam(Team team) {
 		this.team = team;
+		assert match != null;
 
 		// join new team channel
-		if (match.getMechanic() instanceof TeamMechanic && team != null)
-			((TeamMechanic)match.getMechanic()).joinTeamChannel(this);
+		if (match.getMechanic() instanceof TeamMechanic && team != null) {
+			((TeamMechanic) match.getMechanic()).joinTeamChannel(this);
+			if (team.getObjective() != null && !team.getObjective().isEmpty()) {
+				send("&6Team Objective: &e" + team.getObjective());
+				TitleUtils.sendTitle(player, "&6Team Objective", "&e" + team.getObjective(), 10, Time.SECOND.x(4), 20);
+			}
+		}
 
-		if (this.getMatch().getScoreboardTeams() != null)
-			this.match.getScoreboardTeams().update();
+		if (match.getScoreboardTeams() != null)
+			match.getScoreboardTeams().update();
 	}
 
 	public void scored() {
@@ -252,8 +279,13 @@ public class Minigamer {
 		setScore(score + scored);
 	}
 
+	public void contributionScored(int amount) {
+		setContributionScore(contributionScore + amount);
+	}
+
 	public void setScore(int score) {
 		int diff = score - this.score;
+		contributionScored(diff);
 
 		MinigamerScoredEvent event = new MinigamerScoredEvent(this, diff);
 		if (!event.callEvent()) return;
@@ -406,7 +438,7 @@ public class Minigamer {
 		player.setLevel(0);
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
-		player.setFallDistance(0f);
+		player.setFallDistance(0);
 		player.setAllowFlight(mechanic.allowFly());
 		player.setFlying(mechanic.allowFly());
 		if (VanishAPI.isInvisible(player))
@@ -419,6 +451,14 @@ public class Minigamer {
 
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
+	}
+
+	public boolean usesPerk(Class<? extends Perk> perk) {
+		return match.getMechanic().usesPerk(perk, this);
+	}
+
+	public boolean usesPerk(Perk perk) {
+		return match.getMechanic().usesPerk(perk, this);
 	}
 
 	@Override

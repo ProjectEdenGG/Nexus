@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20;
 import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
@@ -14,8 +15,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -24,7 +25,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
@@ -59,11 +59,7 @@ import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 public class Pugmas20 implements Listener {
 	@Getter
 	public static final String region = "pugmas20";
-	@Getter
-	public static final World world = Bukkit.getWorld("safepvp");
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2020");
-	public static final WorldGuardUtils WGUtils = new WorldGuardUtils(world);
-	public static final WorldEditUtils WEUtils = new WorldEditUtils(world);
 	// Dates
 	public static final LocalDate openingDay = LocalDate.of(2020, 12, 1);
 	public static final LocalDate secondChance = LocalDate.of(2020, 12, 25);
@@ -100,6 +96,26 @@ public class Pugmas20 implements Listener {
 		npcParticles();
 	}
 
+	public static World getWorld() {
+		return Bukkit.getWorld("safepvp");
+	}
+
+	public static WorldGuardUtils getWGUtils() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public static WorldEditUtils getWEUtils() {
+		return new WorldEditUtils(getWorld());
+	}
+
+	public static Location getInitialSpawn() {
+		return location(898.5, 52, 356.5);
+	}
+
+	public static Location getSubsequentSpawn() {
+		return location(909.5, 52, 368.5);
+	}
+
 	public void shutdown() {
 		deleteNpcHolograms();
 	}
@@ -119,11 +135,11 @@ public class Pugmas20 implements Listener {
 	}
 
 	private void npcParticles() {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Particle particle = Particle.VILLAGER_HAPPY;
 
 		Tasks.repeatAsync(0, Time.SECOND.x(2), () -> {
-			for (Player player : WGUtils.getPlayersInRegion(region)) {
+			for (Player player : getWGUtils().getPlayersInRegion(region)) {
 				Pugmas20User user = service.get(player);
 				for (Integer npcId : user.getNextStepNPCs()) {
 					NPC npc = CitizensUtils.getNPC(npcId);
@@ -161,11 +177,11 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static Location location(double x, double y, double z) {
-		return new Location(world, x, y, z);
+		return new Location(getWorld(), x, y, z);
 	}
 
 	public static Location location(double x, double y, double z, float yaw, float pitch) {
-		return new Location(world, x, y, z, yaw, pitch);
+		return new Location(getWorld(), x, y, z, yaw, pitch);
 	}
 
 	public static ItemBuilder questItem(Material material) {
@@ -210,7 +226,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isInPugmasWorld(Location location) {
-		return location.getWorld().equals(world);
+		return location.getWorld().equals(getWorld());
 	}
 
 	public static boolean isAtPugmas(Player player) {
@@ -218,7 +234,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isAtPugmas(Location location) {
-		return isInPugmasWorld(location) && WGUtils.isInRegion(location, region);
+		return isInPugmasWorld(location) && getWGUtils().isInRegion(location, region);
 	}
 
 	public static boolean isAtPugmas(Player player, String name) {
@@ -226,7 +242,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isAtPugmas(Location location, String name) {
-		return isInPugmasWorld(location) && !WGUtils.getRegionsLikeAt(getRegion() + "_" + name + "(_[0-9]+)?", location).isEmpty();
+		return isInPugmasWorld(location) && !getWGUtils().getRegionsLikeAt(getRegion() + "_" + name + "(_[0-9]+)?", location).isEmpty();
 	}
 
 	@EventHandler
@@ -242,7 +258,7 @@ public class Pugmas20 implements Listener {
 
 //	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 
 		if (isAtPugmas(event.getFrom()) && !isAtPugmas(event.getTo())) {
 			Pugmas20User user = service.get(event.getPlayer());

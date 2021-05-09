@@ -1,14 +1,17 @@
 package me.pugabyte.nexus.features.delivery.providers;
 
+import com.google.common.base.Strings;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -38,7 +41,7 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 				.size(6, 9)
 				.title(colorize("&3Your Deliveries"))
 				.build()
-				.open(user.getPlayer(), page);
+				.open(user.getOnlinePlayer(), page);
 	}
 
 	@Override
@@ -58,11 +61,15 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 		List<Delivery> deliveries = user.get(worldGroup);
 		if (!Utils.isNullOrEmpty(deliveries)) {
 			for (Delivery delivery : deliveries) {
+				boolean hasMessage = !Strings.isNullOrEmpty(delivery.getMessage());
+				boolean hasItems = !Utils.isNullOrEmpty(delivery.getItems());
+
 				List<String> lore = new ArrayList<>();
-				if (delivery.getMessage() != null)
+
+				if (hasMessage)
 					lore.add("&e1 &7Message");
 
-				if (!Utils.isNullOrEmpty(delivery.getItems())) {
+				if (hasItems) {
 					int count = 1;
 					int size = delivery.getItems().size();
 					for (ItemStack item : delivery.getItems()) {
@@ -78,7 +85,10 @@ public class ViewDeliveriesMenuProvider extends MenuUtils implements InventoryPr
 				items.add(ClickableItem.from(item, e -> {
 					user.remove(worldGroup, delivery);
 					service.save(user);
-					new OpenDeliveryMenuProvider(user, worldGroup, delivery).open(player);
+					if (hasItems)
+						new OpenDeliveryMenuProvider(user, worldGroup, delivery).open(player);
+					else
+						PlayerUtils.send(user, DeliveryCommand.PREFIX + "From: &e" + delivery.getFrom() + System.lineSeparator() + " &7" + delivery.getMessage());
 				}));
 			}
 		}

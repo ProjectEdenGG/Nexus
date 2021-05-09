@@ -5,8 +5,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.MerchantBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Material;
@@ -23,7 +23,7 @@ public class Merchants {
 		if (merchantNPC == null)
 			return;
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
 		List<TradeBuilder> trades = merchantNPC.getTrades(user);
@@ -39,7 +39,7 @@ public class Merchants {
 		ORNAMENT_VENDOR(3083) {
 			@Override
 			public List<TradeBuilder> getTrades(Pugmas20User user) {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					for (Ornament ornament : Ornament.values()) {
 						if (!user.canTradeOrnament(ornament))
 							continue;
@@ -55,7 +55,7 @@ public class Merchants {
 		BLACKSMITH(3109) {
 			@Override
 			public List<TradeBuilder> getTrades(Pugmas20User user) {
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(LightTheTree.steel_ingot)
 							.ingredient(OreType.COAL.getIngot(1))
@@ -67,7 +67,7 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(Pugmas20User user) {
 				Ornament.loadHeads();
-				return new ArrayList<TradeBuilder>() {{
+				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(Pugmas20.questItem(Material.GOLD_INGOT))
 							.ingredient(OreType.LIGHT_ANIMICA.getIngot(15)));

@@ -1,23 +1,24 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.HalloweenIsland.HalloweenNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
-import me.pugabyte.nexus.models.bearfair.BearFairService;
-import me.pugabyte.nexus.models.bearfair.BearFairUser;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import me.pugabyte.nexus.models.bearfair20.BearFair20User;
+import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -40,13 +41,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.WGUtils;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
-public class HalloweenIsland implements Listener, Island {
+public class HalloweenIsland implements Listener, BearFairIsland {
+
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
+
 	private final Map<Player, Integer> musicTaskMap = new HashMap<>();
 	private final Location halloweenMusicLoc = new Location(BearFair20.getWorld(), -921, 128, -1920);
 	private Sound[] halloweenSounds = {Sound.AMBIENT_CAVE, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_VEX_AMBIENT,
@@ -74,13 +81,13 @@ public class HalloweenIsland implements Listener, Island {
 		TOUR_GUIDE(2675) {
 			@Override
 			public List<String> getScript(Player player) {
-				BearFairService service = new BearFairService();
-				BearFairUser user = service.get(player);
+				BearFair20UserService service = new BearFair20UserService();
+				BearFair20User user = service.get(player);
 
 				List<String> startQuest = new ArrayList<>();
 				startQuest.add("Hey there! Welcome to the historic Ravens' Nest Estate Museum!");
 				startQuest.add("wait 80");
-				startQuest.add("Here, we safely preserve the very location where the supernatural events that lead to the kidnap and resuce of the bear nation staff occured in 2018!");
+				startQuest.add("Here, we safely preserve the very location where the supernatural events that lead to the kidnap and resuce of the Project Eden staff occured in 2018!");
 				startQuest.add("wait 120");
 				startQuest.add("<self> Hey! I was wondering if you could tell me where I might find a halloween candy basket?");
 				startQuest.add("wait 80");
@@ -136,8 +143,8 @@ public class HalloweenIsland implements Listener, Island {
 	}
 
 	private static void nextStep(Player player) {
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		int step = user.getQuest_Halloween_Step() + 1;
 		user.setQuest_Halloween_Step(step);
 		service.save(user);
@@ -150,15 +157,15 @@ public class HalloweenIsland implements Listener, Island {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion skullRegion = WGUtils.getProtectedRegion(basketRg);
-		if (!WGUtils.getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
+		ProtectedRegion skullRegion = getWGUtils().getProtectedRegion(basketRg);
+		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
 
 		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
 
 		Player player = event.getPlayer();
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 
 		if (!user.isQuest_Halloween_Start() || user.getQuest_Halloween_Step() != 1) return;
 
@@ -191,8 +198,8 @@ public class HalloweenIsland implements Listener, Island {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(getRegion());
-		if (!WGUtils.getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
+		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (event.getClickedBlock() == null) return;
 
@@ -205,13 +212,13 @@ public class HalloweenIsland implements Listener, Island {
 	}
 
 	@EventHandler
-	public void onHalloweenRegionEnter(RegionEnteredEvent event) {
+	public void onHalloweenRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(getRegion())) return;
 		startSoundsTask(event.getPlayer());
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(getRegion())) return;
 		stopSoundsTask(event.getPlayer());
 	}
@@ -237,8 +244,8 @@ public class HalloweenIsland implements Listener, Island {
 
 		Player player = event.getPlayer();
 
-		ProtectedRegion region = WGUtils.getProtectedRegion(BearFair20.getRegion());
-		if (!WGUtils.getRegionsAt(player.getLocation()).contains(region)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
+		if (!getWGUtils().getRegionsAt(player.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 
@@ -250,8 +257,8 @@ public class HalloweenIsland implements Listener, Island {
 
 		if (!item.equals(atticKey)) return;
 
-		BearFairService service = new BearFairService();
-		BearFairUser user = service.get(player);
+		BearFair20UserService service = new BearFair20UserService();
+		BearFair20User user = service.get(player);
 		if (user.isQuest_Halloween_Key()) return;
 
 		user.setQuest_Halloween_Key(true);
@@ -262,7 +269,7 @@ public class HalloweenIsland implements Listener, Island {
 	}
 
 	@EventHandler
-	public void onAtticRegionEnter(RegionEnteredEvent event) {
+	public void onAtticRegionEnter(PlayerEnteredRegionEvent event) {
 		if (event.getRegion().getId().equalsIgnoreCase(atticRg)) {
 			if (!BearFair20.enableQuests) return;
 			Player player = event.getPlayer();

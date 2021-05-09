@@ -4,21 +4,36 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.util.concurrent.AtomicDouble;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
 import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.utils.*;
-import org.bukkit.*;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -89,10 +104,8 @@ public abstract class Crate implements Listener {
 		this.player = player;
 		inUse = true;
 		pickCrateLoot();
-		if (!canHoldItems(player)) {
-			Nexus.debug(player.getName() + " cannot hold the loot");
+		if (!canHoldItems(player))
 			return;
-		}
 
 		takeKey();
 		hideHologram();
@@ -116,6 +129,7 @@ public abstract class Crate implements Listener {
 				.onConfirm(e -> {
 					player.closeInventory();
 					try {
+						if (inUse) return;
 						inUse = true;
 						pickCrateLoot();
 						if (!canHoldItems(player)) return;
@@ -197,47 +211,7 @@ public abstract class Crate implements Listener {
 		if (original.size() == 0)
 			throw new CrateOpeningException("&3Coming soon...");
 
-		LinkedHashMap<CrateLoot, Double> sorted = new LinkedHashMap<>();
-		original.entrySet().stream().sorted(Map.Entry.comparingByValue())
-				.forEachOrdered(e -> sorted.put(e.getKey(), e.getValue()));
-
-		LinkedHashMap<CrateLoot, Double> percentages = new LinkedHashMap<>();
-		double max = 0;
-		for (double i : sorted.values())
-			max += i;
-		for (Map.Entry<CrateLoot, Double> entry : sorted.entrySet())
-			percentages.put(entry.getKey(), ((entry.getValue() / max) * 100));
-
-		LinkedHashMap<CrateLoot, Integer> normalized = new LinkedHashMap<>();
-		LinkedHashMap<CrateLoot, Double> temp = new LinkedHashMap<>();
-		while (percentages.values().toArray(new Double[0])[0] < 1) {
-			for (Map.Entry<CrateLoot, Double> entry : percentages.entrySet()) {
-				temp.put(entry.getKey(), percentages.get(entry.getKey()) * 10);
-			}
-			percentages = temp;
-		}
-		percentages.forEach((key, value) -> normalized.put(key, value.intValue()));
-
-		LinkedHashMap<Integer, List<CrateLoot>> combined = new LinkedHashMap<>();
-		normalized.forEach((key, value) -> {
-			if (!combined.containsKey(value))
-				combined.put(value, new ArrayList<>());
-			combined.get(value).add(key);
-		});
-
-		int rarity = 0;
-		Integer[] percents = normalized.values().toArray(new Integer[0]);
-		int random = (int) (Math.random() * percents[percents.length - 1]) + 1;
-		for (int i : percents)
-			if (random <= i) {
-				rarity = i;
-				break;
-			}
-
-		List<CrateLoot> list = combined.get(rarity);
-		int random2 = (int) (Math.random() * list.size());
-		loot = list.get(random2);
-		Nexus.debug(loot.getTitle());
+		loot = RandomUtils.getWeightedRandom(original);
 	}
 
 	public Particle getParticleType() {

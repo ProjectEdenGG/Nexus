@@ -1,18 +1,17 @@
 package me.pugabyte.nexus.features.listeners;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import eden.utils.TimeUtils.Time;
 import joptsimple.internal.Strings;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
-import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -22,7 +21,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -41,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static me.pugabyte.nexus.utils.EntityUtils.isHostile;
 import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.*;
 
 public class WorldGuardFlags implements Listener {
@@ -92,7 +91,7 @@ public class WorldGuardFlags implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if (event.getEntity() instanceof Monster || EntityUtils.getExtraHostileMobs().contains(event.getEntity().getType()))
+		if (isHostile(event.getEntity()))
 			if (WorldGuardFlagUtils.query(event.getLocation(), HOSTILE_SPAWN) == State.DENY)
 				event.setCancelled(true);
 	}
@@ -108,7 +107,7 @@ public class WorldGuardFlags implements Listener {
 	public void onEntityTame(EntityTameEvent event) {
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), TAMING) == State.DENY) {
 			event.setCancelled(true);
-			PlayerUtils.send((Player) event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
+			PlayerUtils.send(event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
 		}
 	}
 
@@ -150,7 +149,7 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onEnterRegion(RegionEnteredEvent event) {
+	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 
 		// Action Bar
@@ -191,7 +190,7 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onExitRegion(RegionLeftEvent event) {
+	public void onExitRegion(PlayerLeftRegionEvent event) {
 		Player player = event.getPlayer();
 
 		World world = WorldGuardUtils.getWorld(event.getRegion());

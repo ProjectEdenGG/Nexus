@@ -4,182 +4,81 @@ import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.LocalDateConverter;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
+import me.pugabyte.nexus.features.commands.PronounsCommand;
+import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.discord.DiscordUser;
+import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Utils;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.CHECK;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
-import static me.pugabyte.nexus.utils.StringUtils.shortishDateTimeFormat;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.StringUtils.timespanDiff;
 
 @Data
-@Entity("nerd")
+@Entity(value = "nerd", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends PlayerOwnedObject {
-	@Id
-	@NonNull
-	private UUID uuid;
-	private String name;
-	private String preferredName;
-	private String prefix;
-	private boolean checkmark;
-	private LocalDate birthday;
-	private LocalDateTime firstJoin;
-	private LocalDateTime lastJoin;
-	private LocalDateTime lastQuit;
-	private LocalDate promotionDate;
-	private String about;
-	private boolean meetMeVideo;
-	private Set<String> aliases = new HashSet<>();
-	private Set<String> pastNames = new HashSet<>();
+public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, ColoredAndNicknamed {
 
-	private String nickname;
-	private List<NicknameData> pastNicknames = new ArrayList<>();
+	private Location teleportOnLogin;
 
-	@Data
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class NicknameData {
-		private String nickname;
-		private LocalDateTime requestedTimestamp;
-		private String nicknameQueueId;
-		private LocalDateTime responseTimestamp;
-		private boolean pending = true;
-		private boolean accepted;
-		private boolean seenResult;
-		private String response;
-
-		public NicknameData(String nickname) {
-			this(nickname, null);
-		}
-
-		public NicknameData(String nickname, String nicknameQueueId) {
-			this.nickname = nickname;
-			this.requestedTimestamp = LocalDateTime.now();
-			if (isNullOrEmpty(nicknameQueueId)) {
-				pending = false;
-				accepted = true;
-				seenResult = true;
-			} else
-				this.nicknameQueueId = nicknameQueueId;
-		}
-
-		public static MessageBuilder buildQueueMessage(Nerd nerd, String nickname) {
-			EmbedBuilder embed = new EmbedBuilder()
-					.setThumbnail("https://minotar.net/helm/" + nerd.getName() + "/100.png")
-					.setColor(nerd.getRank().getDiscordColor());
-
-			if (!nerd.getPastNicknames().isEmpty()) {
-				LocalDateTime lastChange = nerd.getPastNicknames().get(nerd.getPastNicknames().size() - 1).getRequestedTimestamp();
-				embed.appendDescription("**Time since last change:** " + timespanDiff(lastChange) + System.lineSeparator());
-				embed.appendDescription("**Past nick names:**" + System.lineSeparator());
-				nerd.getPastNicknames().forEach(data -> {
-					String timestamp = shortishDateTimeFormat(data.getRequestedTimestamp());
-					String status = data.isPending() ? "Pending" : data.isAccepted() ? "Accepted" : "Denied";
-					embed.appendDescription("\t" + timestamp + " - " + data.getNickname() + " (" + status + ")" + System.lineSeparator());
-				});
-			} else {
-				embed.appendDescription("No past nicknames found");
-			}
-
-			return new MessageBuilder()
-					.setContent("@everyone **" + nerd.getName() + "** has requested a new nickname: **" + nickname + "**")
-					.setEmbed(embed.build());
-		}
+	public Nerd(@NonNull UUID uuid) {
+		super(uuid);
 	}
 
 	public static Nerd of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static Nerd of(UUID uuid) {
-		return of(PlayerUtils.getPlayer(uuid));
-	}
-
-	public static Nerd of(PlayerOwnedObject player) {
-		return of(player.getUuid());
-	}
-
-	public static Nerd of(OfflinePlayer player) {
-		Nerd nerd = new NerdService().get(player);
-		nerd.fromPlayer(player);
+	public static Nerd of(HasUniqueId uuid) {
+		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid.getUniqueId());
+		Nerd nerd = new NerdService().get(offlinePlayer);
+		nerd.fromPlayer(offlinePlayer);
 		return nerd;
+	}
+
+	public static Nerd of(UUID uuid) {
+		return new NerdService().get(uuid);
 	}
 
 	public void fromPlayer(OfflinePlayer player) {
 		uuid = player.getUniqueId();
 		name = player.getName();
-		LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
-		if (firstJoin == null || newFirstJoin.isBefore(firstJoin))
-			firstJoin = newFirstJoin;
-		fixPastNicknames();
-	}
-
-	public boolean hasNickname() {
-		return !isNullOrEmpty(nickname);
-	}
-
-	public String getNickname() {
-		fromPlayer(getOfflinePlayer());
-		if (hasNickname())
-			return nickname;
-		return name;
-	}
-
-	public void setNickname(String nickname) {
-		nickname = stripColor(nickname);
-		if (!isNullOrEmpty(nickname)) {
-			this.nickname = nickname;
-			this.pastNicknames.add(new NicknameData(nickname));
-		} else
-			this.nickname = null;
-	}
-
-	public void fixPastNicknames() {
-		if (hasNickname())
-			if (!pastNicknames.isEmpty()) {
-				pastNicknames.add(new NicknameData(nickname));
-				for (NicknameData pastNickname : new ArrayList<>(pastNicknames))
-					if (pastNickname.getRequestedTimestamp() == null)
-						pastNickname.setRequestedTimestamp(LocalDateTime.now());
-			}
+		if (player.getFirstPlayed() > 0) {
+			LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
+			if (firstJoin == null || firstJoin.isBefore(EARLIEST_JOIN) || newFirstJoin.isBefore(firstJoin))
+				firstJoin = newFirstJoin;
+		}
 	}
 
 	@ToString.Include
@@ -187,15 +86,28 @@ public class Nerd extends PlayerOwnedObject {
 		return Rank.of(getOfflinePlayer());
 	}
 
+	/**
+	 * Returns the user's name formatted with a color formatting code
+	 * @deprecated you're probably looking for {@link Nerd#getColoredName()}
+	 */
 	@ToString.Include
+	@Deprecated
 	public String getNameFormat() {
-		return getRank().getColor() + getName();
+		return getRank().getChatColor() + getName();
 	}
 
-	public String getNicknameFormat() {
+	/**
+	 * Returns the user's nickname with their rank color prefixed. Formerly known as getNicknameFormat.
+	 */
+	@Override
+	public @NotNull String getColoredName() {
 		if (isKoda())
-			return Koda.getNameFormat();
-		return getRank().getColor() + getNickname();
+			return Koda.getColoredName();
+		return getChatColor() + getNickname();
+	}
+
+	public @NotNull Color getColor() {
+		return getRank().getColor();
 	}
 
 	private boolean isKoda() {
@@ -205,7 +117,7 @@ public class Nerd extends PlayerOwnedObject {
 	@ToString.Include
 	public String getChatFormat() {
 		if (isKoda())
-			return Koda.getNameFormat();
+			return Koda.getColoredName();
 
 		Rank rank = getRank();
 
@@ -218,14 +130,14 @@ public class Nerd extends PlayerOwnedObject {
 
 		if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmark)
 			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (rank.getColor() + getNickname()).trim())).trim();
+		return colorize((prefix.trim() + " " + (rank.getChatColor() + Nickname.of(getOfflinePlayer())).trim())).trim();
 	}
 
 	@ToString.Include
 	public boolean isVanished() {
 		if (!isOnline())
 			return false;
-		return PlayerUtils.isVanished(getPlayer());
+		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
 	@SneakyThrows
@@ -260,7 +172,7 @@ public class Nerd extends PlayerOwnedObject {
 
 	public Location getLocation() {
 		if (getOfflinePlayer().isOnline())
-			return getPlayer().getPlayer().getLocation();
+			return getOnlinePlayer().getPlayer().getLocation();
 
 		try {
 			NBTFile file = getDataFile();
@@ -280,8 +192,27 @@ public class Nerd extends PlayerOwnedObject {
 		}
 	}
 
+	public void addPronoun(String pronoun) {
+		pronoun = PronounsCommand.getPronoun(pronoun);
+		pronouns.add(pronoun);
+		Discord.staffLog(getNickname() + " added the pronoun `" + pronoun + "`");
+		updatePronouns();
+	}
+
+	public void removePronoun(String pronoun) {
+		pronoun = PronounsCommand.getPronoun(pronoun);
+		pronouns.remove(pronoun);
+		Discord.staffLog(getNickname() + " removed the pronoun `" + pronoun + "`");
+		updatePronouns();
+	}
+
+	public void updatePronouns() {
+		new DiscordUserService().<DiscordUser>get(this).updatePronouns(pronouns);
+		new NerdService().save(this);
+	}
+
 	@Data
-	public static class StaffMember extends PlayerOwnedObject {
+	public static class StaffMember implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
 	}

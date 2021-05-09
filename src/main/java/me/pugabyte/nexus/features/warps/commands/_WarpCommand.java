@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.warps.commands;
 
+import eden.utils.Utils.MinMaxResult;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -8,11 +9,11 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.Location;
 
 import java.util.List;
@@ -31,8 +32,23 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	public abstract WarpType getWarpType();
 
+	public String getPermission() {
+		return null;
+	}
+
+	private void checkPermission() {
+		if (!isPlayer())
+			return;
+
+		String permission = getPermission();
+		if (!isNullOrEmpty(permission))
+			if (!sender().hasPermission(permission))
+				throw new NoPermissionException();
+	}
+
 	@Path("(list|warps) [filter]")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
+		checkPermission();
 		List<String> warps = tabCompleteWarp(filter);
 		JsonBuilder builder = new JsonBuilder();
 		for (String warp : warps) {
@@ -53,6 +69,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Path("set <name>")
 	@Permission(value = "group.staff", absolute = true)
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
+		checkPermission();
 		Warp warp = service.get(name, getWarpType());
 		if (warp != null)
 			error("That warp is already set.");
@@ -64,6 +81,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Path("reset <name>")
 	@Permission(value = "group.staff", absolute = true)
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
+		checkPermission();
 		service.save(new Warp(name, location(), getWarpType().name()));
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
@@ -71,28 +89,35 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Path("(rm|remove|delete|del) <name>")
 	@Permission(value = "group.staff", absolute = true)
 	public void delete(Warp warp) {
+		checkPermission();
 		service.delete(warp);
 		send(PREFIX + "Successfully deleted warp &e" + warp.getName());
 	}
 
 	@Path("(teleport|tp|warp) <name>")
 	public void teleport(Warp warp) {
+		checkPermission();
+		if (warp == null)
+			error("That warp is not set");
 		warp.teleport(player());
 		send(PREFIX + "&3Warping to &e" + warp.getName());
 	}
 
 	@Path("<name>")
 	public void tp(Warp warp) {
+		checkPermission();
 		teleport(warp);
 	}
 
 	@Path("tp nearest")
 	public void teleportNearest() {
+		checkPermission();
 		getNearestWarp(location()).ifPresent(this::teleport);
 	}
 
 	@Path("nearest")
 	public void nearest() {
+		checkPermission();
 		Optional<Warp> warp = getNearestWarp(location());
 		if (!warp.isPresent())
 			error("No nearest warp found");

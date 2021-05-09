@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
@@ -27,6 +26,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.matchdata.ThimbleMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -47,6 +47,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,12 +82,12 @@ public final class Thimble extends TeamlessMechanic {
 	private final int MAX_TURNS = 49;
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Thimble";
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -97,6 +98,11 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public boolean shouldClearInventory() {
+		return false;
+	}
+
+	@Override
+	public boolean canMoveArmor() {
 		return false;
 	}
 
@@ -154,7 +160,7 @@ public final class Thimble extends TeamlessMechanic {
 			lines.put("&1", 0);
 			lines.put("&2Jumping:", 0);
 			if (matchData.getTurnMinigamer() != null) {
-				lines.put("&a" + matchData.getTurnMinigamer().getColoredName(), 0);
+				lines.put("&a" + matchData.getTurnMinigamer().getVanillaColoredName(), 0);
 			} else {
 				lines.put("&f", 0);
 			}
@@ -163,7 +169,7 @@ public final class Thimble extends TeamlessMechanic {
 		if (!match.isStarted()) {
 			// Shows players in lobby
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), 0);
 		} else {
 			// Shows players scores
 			for (Minigamer minigamer : match.getMinigamers())
@@ -353,7 +359,7 @@ public final class Thimble extends TeamlessMechanic {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
-	public void onEnterRegion(RegionEnteredEvent event) {
+	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
@@ -381,7 +387,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			blockLocation.getBlock().setType(concreteType);
 
-			Color color = ColorType.of(concreteType).getColor();
+			Color color = ColorType.of(concreteType).getBukkitColor();
 			Location fireworkLocation = blockLocation.clone().add(0.0, 2.0, 0.0);
 
 			new FireworkLauncher(fireworkLocation)
@@ -558,7 +564,7 @@ public final class Thimble extends TeamlessMechanic {
 		void editPool(Match match) {
 			ThimbleArena arena = match.getArena();
 			ThimbleMatchData matchData = match.getMatchData();
-			Thimble mechanic = (Thimble) arena.getMechanic();
+			Thimble mechanic = arena.getMechanic();
 
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();

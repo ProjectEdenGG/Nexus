@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
@@ -8,8 +9,8 @@ import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
-import me.pugabyte.nexus.models.pugmas20.Pugmas20Service;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
+import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -22,7 +23,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -102,7 +102,7 @@ public class TheMines implements Listener {
 
 		if (crateType == null) return;
 
-		Pugmas20Service service = new Pugmas20Service();
+		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 		if (QuestStage.COMPLETE.equals(user.getMinesStage())) return;
 
@@ -273,7 +273,7 @@ public class TheMines implements Listener {
 	}
 
 	public void scheduleRegen(Block block) {
-		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
+		new TaskService().save(new Task(taskId, new HashMap<>() {{
 			put("location", JSON.serializeLocation(block.getLocation()));
 			put("material", block.getType());
 		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));

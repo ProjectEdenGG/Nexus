@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
 import me.pugabyte.nexus.utils.SerializationUtils;
@@ -40,7 +41,7 @@ public class Loadout implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("inventory", SerializationUtils.YML.serializeItems(inventory));
 			put("effects", effects);
 		}};
@@ -66,6 +67,8 @@ public class Loadout implements ConfigurationSerializable {
 
 		if (effects != null && effects.size() > 0)
 			player.addPotionEffects(effects);
+
+		Minigames.getModifier().afterLoadout(minigamer);
 	}
 
 

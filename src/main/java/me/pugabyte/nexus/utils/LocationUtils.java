@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +26,10 @@ import java.util.List;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class LocationUtils {
+	/**
+	 * Returns a copy of the provided location with X and Z coordinates centered to the block (set to .5),
+	 * with pitch set to 0, and with yaw set to the closest cardinal direction.
+	 */
 	public static Location getCenteredLocation(Location location) {
 		double x = Math.floor(location.getX()) + .5;
 		double y = Math.floor(location.getY());
@@ -34,9 +39,13 @@ public class LocationUtils {
 		return new Location(location.getWorld(), x, y, z, yaw, 0F);
 	}
 
+	/**
+	 * Returns a copy of the provided location with X and Z coordinates centered to the block (set to .5).
+	 * Leaves pitch and yaw untouched.
+	 *
+	 * @deprecated inaccurate and obsoleted by {@link #getCenteredLocation(Location)}
+	 */
 	@Deprecated
-	// The above method seems to be more accurate, but neither are 100% accurate
-	// Doesn't do yaw/pitch
 	public static Location getBlockCenter(Location location) {
 		double x = Math.floor(location.getX());
 		double y = Math.floor(location.getY());
@@ -48,18 +57,75 @@ public class LocationUtils {
 		return new Location(location.getWorld(), x, y, z);
 	}
 
-	@NotNull
-	public static List<Location> getRandomPointInCircle(World world, int radius) {
-		return getRandomPointInCircle(world, radius, 0, 0);
+	/**
+	 * Returns a copy of the provided location with pitch and yaw values set to 0
+	 */
+	public static Location clearRotation(Location location) {
+		return new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
 	}
 
+	/**
+	 * Returns a copy of the provided location with X and Z coordinates centered to the block (set to .5) and with
+	 * pitch and yaw set to 0.
+	 */
+	public static Location getCenteredRotationlessLocation(Location location) {
+		return clearRotation(getCenteredLocation(location));
+	}
+
+	/**
+	 * Returns a list of 10 random locations in a world, within the specified radius of a circle, centered at 0,0,0.
+	 * <br>
+	 * No guarantees are made on the validity of these locations. They may be air, in unloaded chunks, etc.
+	 * <br>
+	 * Locations may contain decimals and may also be duplicated. Consider mapping using {@link #getCenteredLocation(Location)}
+	 * and collecting to a set if unique locations are required.
+	 * @param world the world to set the locations to
+	 * @param radius circle radius
+	 * @return list of 10 random locations
+	 */
 	@NotNull
-	public static List<Location> getRandomPointInCircle(World world, int radius, double xOffset, double zOffset) {
+	public static List<Location> getRandomPointInCircle(World world, int radius) {
+		return getRandomPointInCircle(world, radius, 0, 0, 0);
+	}
+
+	/**
+	 * Returns a list of 10 random locations within the specified radius of a circle centered at the provided location.
+	 * <br>
+	 * No guarantees are made on the validity of these locations. They may be air, in unloaded chunks, etc.
+	 * <br>
+	 * Locations may contain decimals and may also be duplicated. Consider mapping using {@link #getCenteredLocation(Location)}
+	 * and collecting to a set if unique locations are required.
+	 * @param location the location to center the circle on
+	 * @param radius circle radius
+	 * @return list of 10 random locations
+	 */
+	@NotNull
+	public static List<Location> getRandomPointInCircle(Location location, int radius) {
+		return getRandomPointInCircle(location.getWorld(), radius, location.getX(), location.getY(), location.getZ());
+	}
+
+	/**
+	 * Returns a list of 10 random locations in a world, within the specified radius of a circle, centered at the
+	 * specified coordinates.
+	 * <br>
+	 * No guarantees are made on the validity of these locations. They may be air, in unloaded chunks, etc.
+	 * <br>
+	 * Locations may contain decimals and may also be duplicated. Consider mapping using {@link #getCenteredLocation(Location)}
+	 * and collecting to a set if unique locations are required.
+	 * @param world the world to set the locations to
+	 * @param radius circle radius
+	 * @param xOffset center X coordinate
+	 * @param yOffset y coordinate
+	 * @param zOffset center Z coordinate
+	 * @return list of 10 random locations
+	 */
+	@NotNull
+	public static List<Location> getRandomPointInCircle(World world, int radius, double xOffset, double yOffset, double zOffset) {
 		List<Location> locationList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			double angle = Math.random() * Math.PI * 2;
 			double r = Math.sqrt(Math.random());
-			locationList.add(new Location(world, r * Math.cos(angle) * radius, 0, r * Math.sin(angle) * radius));
+			locationList.add(new Location(world, xOffset + (r * Math.cos(angle) * radius), yOffset, zOffset + (r * Math.sin(angle) * radius)));
 		}
 		return locationList;
 	}
@@ -77,7 +143,11 @@ public class LocationUtils {
 		return blockHit;
 	}
 
-	public static void lookAt(Player player, Location lookAt) {
+	/**
+	 * Sets a player's pitch and yaw to look at the provided location.
+	 */
+	public static void lookAt(HasPlayer hasPlayer, Location lookAt) {
+		Player player = hasPlayer.getPlayer();
 		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.add(0.5, 0.5, 0.5).toVector()).normalize();
 		double x = direction.getX();
 		double y = direction.getY();
@@ -116,8 +186,8 @@ public class LocationUtils {
 			return CardinalDirection.valueOf(blockFace.name());
 		}
 
-		public static CardinalDirection of(Player player) {
-			return of(player.getLocation());
+		public static CardinalDirection of(HasPlayer player) {
+			return of(player.getPlayer().getLocation());
 		}
 
 		public static CardinalDirection of(Location location) {

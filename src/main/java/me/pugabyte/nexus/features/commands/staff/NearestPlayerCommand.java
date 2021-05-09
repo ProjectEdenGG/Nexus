@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.Utils.MinMaxResult;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import org.bukkit.entity.Player;
 
 @Permission("group.staff")

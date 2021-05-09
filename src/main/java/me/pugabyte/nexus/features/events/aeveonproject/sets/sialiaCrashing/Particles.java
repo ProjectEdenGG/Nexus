@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.events.aeveonproject.sets.sialiaCrashing;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSetType;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Time;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 

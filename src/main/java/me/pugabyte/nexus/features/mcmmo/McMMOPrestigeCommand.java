@@ -9,7 +9,7 @@ import me.pugabyte.nexus.models.mcmmo.McMMOService;
 import org.bukkit.OfflinePlayer;
 
 public class McMMOPrestigeCommand extends CustomCommand {
-	private McMMOService service = new McMMOService();
+	private static final McMMOService service = new McMMOService();
 
 	public McMMOPrestigeCommand(CommandEvent event) {
 		super(event);
