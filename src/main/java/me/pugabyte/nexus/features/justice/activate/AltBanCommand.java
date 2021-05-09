@@ -7,9 +7,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
+import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Permission("group.moderator")
@@ -27,6 +31,37 @@ public class AltBanCommand extends _PunishmentCommand {
 	@Override
 	protected PunishmentType getType() {
 		return PunishmentType.ALT_BAN;
+	}
+
+	@Permission("group.admin")
+	@Path("bots [--dryrun]")
+	void bots(@Switch boolean dryrun) {
+		// Put names here
+		List<String> names = Arrays.asList();
+
+		int banned = 0;
+		int ignored = 0;
+		for (String name : names) {
+			try {
+				Nerd nerd = Nerd.of(name);
+				if (!nerd.getPastNames().contains(name))
+					throw new PlayerNotFoundException(name);
+
+				++banned;
+				if (dryrun)
+					send("Banning " + name);
+				else
+					Punishments.of(nerd).add(Punishment.ofType(PunishmentType.ALT_BAN).punisher(uuid()).input("Spam bot").now(true));
+
+			} catch (PlayerNotFoundException ex) {
+				send("Ignoring " + name);
+				++ignored;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		send("Banned " + banned + ", ignored " + ignored);
 	}
 
 }
