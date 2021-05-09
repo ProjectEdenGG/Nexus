@@ -68,7 +68,7 @@ public class SuggestDiscordCommand extends Command {
 				String hoursMonthly = TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format();
 				String history = "None";
 				if (Punishments.of(nerd).hasHistory())
-					 history = Punishments.of(nerd).getPunishments().size() + " [View](https://justice.projecteden.gg/history/" + nerd.getUuid() + ")";
+					 history = Punishments.of(nerd).getPunishments().size() + " [View](https://justice.projecteden.gg/history/" + nerd.getName() + ")";
 
 				EmbedBuilder embed = new EmbedBuilder()
 						.appendDescription("\n:information_source: **Rank**: " + nerd.getRank().getName())
