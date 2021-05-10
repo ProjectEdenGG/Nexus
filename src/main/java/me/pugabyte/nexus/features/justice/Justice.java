@@ -289,7 +289,6 @@ public class Justice extends Feature implements Listener {
 
 		if (fraudScore >= 75) {
 			punishments.add(Punishment.ofType(PunishmentType.MUTE)
-					.uuid(event.getUniqueId())
 					.punisher(Nexus.getUUID0())
 					.input("Compromised account")
 					.now(true));

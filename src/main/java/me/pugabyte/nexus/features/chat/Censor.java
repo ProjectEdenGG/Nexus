@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
+import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.punishments.Punishment;
@@ -50,8 +51,8 @@ public class Censor {
 							.bad(section.getBoolean("bad"))
 							.whole(section.getBoolean("whole"))
 							.cancel(section.getBoolean("cancel"))
-							.ban(section.getBoolean("ban"))
-							.banReason(section.getString("banReason"))
+							.punish(section.getBoolean("punish"))
+							.punishReason(section.getString("punishReason"))
 							.build());
 			}
 		}
@@ -66,8 +67,8 @@ public class Censor {
 		private boolean whole;
 		private boolean bad;
 		private boolean cancel;
-		private boolean ban;
-		private String banReason;
+		private boolean punish;
+		private String punishReason;
 
 		String getCensored() {
 			return RandomUtils.randomElement(replace);
@@ -110,14 +111,21 @@ public class Censor {
 					if (censorItem.isCancel())
 						event.setCancelled(true);
 
-					if (!event.getChatter().getNerd().getRank().isStaff()) {
-						if (censorItem.isBan()) {
+					if (censorItem.isPunish()) {
+						if (!event.getChatter().getNerd().getRank().isStaff()) {
 							event.setCancelled(true);
-							Punishments.of(event.getChatter().getOfflinePlayer())
-									.add(Punishment.ofType(PunishmentType.BAN)
-											.punisher(Nexus.getUUID0())
-											.input(censorItem.getBanReason() + ": " + event.getOriginalMessage())
-											.now(true));
+
+							PunishmentType type;
+
+							if (event instanceof PublicChatEvent && !StaticChannel.LOCAL.getChannel().equals(event.getChannel()))
+								type = PunishmentType.BAN;
+							else
+								type = PunishmentType.WARN;
+
+							Punishments.of(event.getChatter().getOfflinePlayer()).add(Punishment.ofType(type)
+									.punisher(Nexus.getUUID0())
+									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
+									.now(true));
 						}
 					}
 				}

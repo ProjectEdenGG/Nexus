@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -246,6 +247,14 @@ public class PublicChannel implements Channel {
 		if (permission == null)
 			return "chat.use." + name.toLowerCase();
 		return permission;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		PublicChannel that = (PublicChannel) o;
+		return Objects.equals(name, that.name);
 	}
 
 }
