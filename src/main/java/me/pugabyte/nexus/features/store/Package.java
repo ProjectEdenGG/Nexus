@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.store;
 
 import com.google.common.base.Strings;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.features.commands.AutoTorchCommand;
 import me.pugabyte.nexus.features.store.annotations.Category;
 import me.pugabyte.nexus.features.store.annotations.Commands.Command;
 import me.pugabyte.nexus.features.store.annotations.ExpirationCommands.ExpirationCommand;
@@ -59,6 +60,10 @@ public enum Package {
 	@PermissionGroup("store.autosort")
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
+
+	@Id("4471430")
+	@Permission(AutoTorchCommand.PERMISSION)
+	AUTO_TORCH,
 
 	@Id("2965488")
 	@Permission("jq.custom")

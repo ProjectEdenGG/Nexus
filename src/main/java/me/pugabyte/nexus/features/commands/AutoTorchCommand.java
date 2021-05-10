@@ -13,15 +13,14 @@ import me.pugabyte.nexus.models.autotorch.AutoTorchUser;
 @NoArgsConstructor
 @Permission("automaticinventory.autotorch")
 public class AutoTorchCommand extends CustomCommand {
-	public static final String PERMISSION = "automaticinventory.autotrash";
+	public static final String PERMISSION = "nexus.autotorch";
 
 	private final AutoTorchService service = new AutoTorchService();
 	private AutoTorchUser autoTorch;
 
 	public AutoTorchCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayer())
-			autoTorch = service.get(player());
+		autoTorch = service.get(player());
 	}
 
 	@Path("<on|off>")
