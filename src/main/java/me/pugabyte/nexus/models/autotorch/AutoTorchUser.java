@@ -43,6 +43,7 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	 * @return whether or not to place an auto torch
 	 */
 	public boolean applies(Block block) {
-		return applies(block.getLightFromBlocks()) && block.isReplaceable() && block.getRelative(0, -1, 0).isBuildable();
+		Block relative = block.getRelative(0, -1, 0);
+		return applies(block.getLightFromBlocks()) && block.isReplaceable() && relative.isBuildable() && relative.isSolid();
 	}
 }
