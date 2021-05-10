@@ -15,6 +15,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
 
@@ -94,5 +97,14 @@ public class BearFair21 {
 		if (new GodmodeService().get(player).isEnabled()) return "godmode";
 
 		return null;
+	}
+
+	public static Set<Player> getPlayers() {
+		Set<Player> result = new HashSet<>();
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (isAtBearFair(player))
+				result.add(player);
+		}
+		return result;
 	}
 }

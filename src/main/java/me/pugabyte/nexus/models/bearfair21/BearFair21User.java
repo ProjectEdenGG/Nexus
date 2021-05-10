@@ -9,11 +9,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.bukkit.Location;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
@@ -24,7 +28,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters(UUIDConverter.class)
+@Converters({UUIDConverter.class, LocationConverter.class})
 public class BearFair21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -33,6 +37,7 @@ public class BearFair21User implements PlayerOwnedObject {
 	public transient static final int DAILY_SOURCE_POINTS = 5;
 	public transient static final int DAILY_SOURCE_MAX = 5;
 	private Map<BF21PointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
+	private Set<Location> clientsideLocations = new HashSet<>();
 	//
 
 	public void giveDailyPoints(BF21PointSource source) {

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.models.BearFairTalker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.SellCrates;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming.RegenCrops;
@@ -33,10 +34,16 @@ public class Quests implements Listener {
 		new RegenCrops();
 		new SellCrates();
 		new Recycler();
+		new ClientsideContentManager();
+	}
+
+	public static void startup() {
+		ClientsideContentManager.startup();
 	}
 
 	public static void shutdown() {
 		RegenCrops.shutdown();
+		ClientsideContentManager.shutdown();
 	}
 
 	public static ItemStack getBackPack(Player player) {

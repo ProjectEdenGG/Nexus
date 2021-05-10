@@ -12,6 +12,8 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
@@ -74,5 +76,14 @@ public class Restrictions implements Listener {
 			if (type.equals(Material.WHEAT_SEEDS) || type.equals(Material.BEETROOT_SEEDS))
 				item.remove();
 		});
+	}
+
+	@EventHandler
+	public void onWitherRoseDamageEvent(EntityDamageEvent event) {
+		if (!BearFair21.isAtBearFair(event.getEntity()))
+			return;
+
+		if (event.getCause().equals(DamageCause.WITHER))
+			event.setCancelled(true);
 	}
 }

@@ -251,6 +251,7 @@ public class Nexus extends JavaPlugin {
 				commands = new Commands(this, "me.pugabyte.nexus.features");
 				commands.registerAll();
 			});
+			new Timer(" BearFair Quests", Quests::startup);
 		});
 	}
 

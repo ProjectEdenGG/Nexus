@@ -16,6 +16,7 @@ import net.minecraft.server.v1_16_R3.EntityPlayer;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EnumDirection;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
@@ -53,7 +54,7 @@ public class PacketUtils {
 	}
 	 */
 
-	public static void spawnItemFrame(@NonNull HasPlayer player, @NonNull Location location, BlockFace blockFace, ItemStack content, int rotation, boolean makeSound, boolean invisible) {
+	public static EntityItemFrame spawnItemFrame(@NonNull HasPlayer player, @NonNull Location location, BlockFace blockFace, ItemStack content, int rotation, boolean makeSound, boolean invisible) {
 		if (content == null) content = new ItemStack(Material.AIR);
 		if (blockFace == null) blockFace = BlockFace.NORTH;
 
@@ -72,6 +73,7 @@ public class PacketUtils {
 				itemFrame.getId(), itemFrame.getDataWatcher(), true);
 
 		sendPackets(player, rawSpawnPacket, rawMetadataPacket);
+		return itemFrame;
 	}
 
 	public static void updateItemFrame(@NonNull HasPlayer player, @NonNull ItemFrame entity, ItemStack content, int rotation) {
@@ -89,10 +91,14 @@ public class PacketUtils {
 		sendPacket(player, rawMetadataPacket);
 	}
 
+	public static void killItemFrame(@NonNull HasPlayer player, @NonNull EntityItemFrame itemFrame) {
+		PacketPlayOutEntityDestroy rawDestroyEntityPacket = new PacketPlayOutEntityDestroy(itemFrame.getId());
+		sendPacket(player, rawDestroyEntityPacket);
+	}
+
+	// TODO: if possible
 	public static void updateNPCName(@NonNull HasPlayer player, org.bukkit.entity.NPC npc, String name) {
 		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-
-
 	}
 
 	public static void spawnArmorStand(HasPlayer player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible) {
