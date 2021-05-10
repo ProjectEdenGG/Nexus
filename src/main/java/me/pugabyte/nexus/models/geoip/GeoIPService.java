@@ -50,18 +50,23 @@ public class GeoIPService extends MongoService<GeoIP> {
 			save(geoip);
 		}
 
+		cache(geoip);
 		return geoip;
 	}
 
 	@SneakyThrows
 	private GeoIP call(UUID uuid, String ip) {
+		GeoIP original = get(uuid);
+
 		if (ignore.contains(uuid.toString()))
-			return get(uuid);
+			return original;
 
 		Nexus.log("Requesting GeoIP info for " + Nickname.of(uuid) + " (" + ip + ")");
 
 		GeoIP geoip = HttpUtils.mapJson(GeoIP.class, URL, ip, KEY);
+		geoip.setUuid(uuid);
 		geoip.setTimestamp(LocalDateTime.now());
+		geoip.setSecurity(original.getSecurity());
 		return geoip;
 	}
 
