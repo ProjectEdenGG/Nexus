@@ -77,7 +77,7 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private boolean isLeatherArmour(ItemStack item) {
+	private static boolean isLeatherArmour(ItemStack item) {
 		if (isNullOrAir(item))
 			return false;
 		if (CustomModel.exists(item))
@@ -145,19 +145,19 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		inv.setArmorContents(armour);
 	}
 
-	private ItemStack getColor(ItemStack itemStack, Color color) {
+	private static ItemStack getColor(ItemStack itemStack, Color color) {
 		LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();
 		meta.setColor(color);
 		itemStack.setItemMeta(meta);
 		return itemStack;
 	}
 
-	private void stopArmour(RainbowArmourPlayer rbaPlayer) {
+	private static void stopArmour(RainbowArmourPlayer rbaPlayer) {
 		Bukkit.getScheduler().cancelTask(rbaPlayer.getTaskId());
 		removeColor(rbaPlayer.getPlayer().getInventory());
 	}
 
-	private int startArmour(RainbowArmourPlayer rbaPlayer) {
+	private static int startArmour(RainbowArmourPlayer rbaPlayer) {
 		Player player = rbaPlayer.getPlayer();
 
 		return Bukkit.getScheduler().scheduleSyncRepeatingTask(Nexus.getInstance(), () -> {
@@ -211,7 +211,7 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 
 	@Getter
 	@Setter
-	public static class RainbowArmourPlayer {
+	public static final class RainbowArmourPlayer {
 		private final Player player;
 		private int taskId;
 		private boolean enabled;
