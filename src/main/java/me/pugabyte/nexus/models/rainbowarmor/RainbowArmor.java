@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
+import me.pugabyte.nexus.features.particles.MathUtils;
 import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -95,13 +96,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 	}
 
 	public boolean canUse() {
-		if (!isOnline())
-			return false;
-
-		if (PlayerManager.get(getOnlinePlayer()).isPlaying())
-			return false;
-
-		return true;
+		return isOnline() && !PlayerManager.get(getOnlinePlayer()).isPlaying();
 	}
 
 	private static final int rate = 12;
@@ -112,36 +107,24 @@ public class RainbowArmor implements PlayerOwnedObject {
 		int b = color.getBlue();
 
 		if (r > 0 && b == 0) {
-			if (r == 255 && g < 255) {
-				g += rate;
-			} else {
+			if (r != 255 || g >= 255)
 				r -= rate;
-				g += rate;
-			}
+			g += rate;
 		}
 		if (g > 0 && r == 0) {
-			if (g == 255 && b < 255) {
-				b += rate;
-			} else {
+			if (g != 255 || b >= 255)
 				g -= rate;
-				b += rate;
-			}
+			b += rate;
 		}
 		if (b > 0 && g == 0) {
-			if (b == 255 && r < 255) {
-				r += rate;
-			} else {
+			if (b != 255 || r >= 255)
 				b -= rate;
-				r += rate;
-			}
+			r += rate;
 		}
 
-		if (r < 0) r = 0;
-		if (r > 255) r = 255;
-		if (g < 0) g = 0;
-		if (g > 255) g = 255;
-		if (b < 0) b = 0;
-		if (b > 255) b = 255;
+		r = MathUtils.clamp(r, 0, 255);
+		g = MathUtils.clamp(g, 0, 255);
+		b = MathUtils.clamp(b, 0, 255);
 
 		color = Color.fromRGB(r, g, b);
 	}
