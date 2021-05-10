@@ -67,6 +67,7 @@ public class GeoIPService extends MongoService<GeoIP> {
 		geoip.setUuid(uuid);
 		geoip.setTimestamp(LocalDateTime.now());
 		geoip.setSecurity(original.getSecurity());
+		geoip.setMitigated(original.isMitigated());
 		return geoip;
 	}
 
