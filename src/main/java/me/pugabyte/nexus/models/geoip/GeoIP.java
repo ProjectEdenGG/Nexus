@@ -60,16 +60,15 @@ public class GeoIP implements PlayerOwnedObject {
 	private Connection connection;
 	@SerializedExclude // Using ipqualityscore instead of ipstack for this
 	private Security security;
+	private boolean mitigated;
 
 	public Security getSecurity(String ip) {
-		if (security == null) {
-			if (ip == null)
-				throw new InvalidInputException("Cannot check IP security on null IP");
+		if (ip == null)
+			throw new InvalidInputException("Cannot check IP security on null IP");
 
-			if (!ip.equals(this.ip)) {
-				this.ip = ip;
-				security = Security.call(ip);
-			}
+		if (!ip.equals(this.ip) || security == null) {
+			this.ip = ip;
+			security = Security.call(ip);
 		}
 
 		return security;

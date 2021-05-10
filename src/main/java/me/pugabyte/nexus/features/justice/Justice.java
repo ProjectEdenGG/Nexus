@@ -270,25 +270,37 @@ public class Justice extends Feature implements Listener {
 		Security security = geoip.getSecurity(ip);
 		service.save(geoip);
 
+		String name = event.getName();
 		if (security == null) {
-			Nexus.warn("Security data for " + event.getName() + " on " + ip + " is null");
+			Nexus.warn("Security data for " + name + " on " + ip + " is null");
 			return;
 		}
 
 		int fraudScore = security.getFraudScore();
-		Nexus.log("Fraud score for " + event.getName() + ": " + fraudScore);
+		Nexus.log("Fraud score for " + name + ": " + fraudScore);
+
+		if (geoip.isMitigated())
+			return;
 
 		Punishments punishments = Punishments.of(event.getUniqueId());
 
-		if (punishments.getAnyActiveBan().isPresent())
+		if (punishments.getActiveMute().isPresent())
 			return;
 
 		if (fraudScore >= 75) {
-			punishments.add(Punishment.ofType(PunishmentType.ALT_BAN)
+			punishments.add(Punishment.ofType(PunishmentType.MUTE)
 					.uuid(event.getUniqueId())
 					.punisher(Nexus.getUUID0())
 					.input("Compromised account")
 					.now(true));
+
+			geoip.setMitigated(true);
+			service.save(geoip);
+
+			String message = "&e" + name + " &chas a fraud score of &e" + fraudScore + "&c, they have been automatically muted";
+
+			Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
+			Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
 		}
 
 	}

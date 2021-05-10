@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.commands.staff.admin;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -14,7 +13,6 @@ import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.models.skincache.SkinCacheService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,7 +50,7 @@ public class SkinCacheCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("updateAll")
 	void updateAll() {
-		send(updateOnline());
+		send(updateAll(new SkinCacheService().getOnline()));
 	}
 
 	@Async
@@ -71,14 +69,6 @@ public class SkinCacheCommand extends CustomCommand implements Listener {
 	void deleteAll() {
 		service.deleteAll();
 		send(PREFIX + "Cleared database");
-	}
-
-	static {
-		Nexus.getCron().schedule("0 */6 * * *", () -> Tasks.async(() -> Nexus.log(updateOnline())));
-	}
-
-	private static String updateOnline() {
-		return updateAll(new SkinCacheService().getOnline());
 	}
 
 	@NotNull
