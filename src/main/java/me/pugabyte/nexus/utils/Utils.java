@@ -1,15 +1,12 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
-import lombok.SneakyThrows;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-import okio.BufferedSink;
-import okio.Okio;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.entity.EntityType;
@@ -20,7 +17,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.objenesis.ObjenesisStd;
 
-import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -124,36 +124,27 @@ public class Utils extends eden.utils.Utils {
 		return viewTitle;
 	}
 
-	@SneakyThrows
-	public static File downloadFile(String url, String destination) {
-		Response response = callUrl(url);
-		if (response.body() == null)
-			throw new NexusException("Response body is null");
-
-		return saveFile(response.body(), destination);
+	public static boolean isPrimitiveNumber(Class<?> type) {
+		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
 	}
 
-	public static File saveFile(String url, String destination) {
-		return saveFile(callUrl(url).body(), Nexus.getFile(destination));
-	}
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public @interface SerializedExclude {}
 
-	public static File saveFile(ResponseBody body, String destination) {
-		return saveFile(body, Nexus.getFile(destination));
-	}
-
-	@SneakyThrows
-	public static File saveFile(ResponseBody body, File destination) {
-		try (BufferedSink sink = Okio.buffer(Okio.sink(destination))) {
-			sink.writeAll(body.source());
+	private static ExclusionStrategy strategy = new ExclusionStrategy() {
+		@Override
+		public boolean shouldSkipClass(Class<?> clazz) {
+			return false;
 		}
-		return destination;
-	}
 
-	private static final OkHttpClient okHttpClient = new OkHttpClient();
+		@Override
+		public boolean shouldSkipField(FieldAttributes field) {
+			return field.getAnnotation(SerializedExclude.class) != null;
+		}
+	};
 
-	@SneakyThrows
-	public static Response callUrl(String url) {
-		return okHttpClient.newCall(new Request.Builder().url(url).build()).execute();
-	}
+	@Getter
+	private static Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
 
 }

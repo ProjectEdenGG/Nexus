@@ -8,22 +8,34 @@ import eden.mongodb.serializers.UUIDConverter;
 import eden.utils.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.HttpUtils;
+import me.pugabyte.nexus.utils.Utils.SerializedExclude;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
 @Entity("geoip")
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Converters(UUIDConverter.class)
 public class GeoIP implements PlayerOwnedObject {
 	@Id
+	@NonNull
 	private UUID uuid;
 	private String ip;
+	private LocalDateTime timestamp;
+
 	private String type;
 	@SerializedName("continent_code")
 	private String continentCode;
@@ -46,6 +58,22 @@ public class GeoIP implements PlayerOwnedObject {
 	private Timezone timezone;
 	private Currency currency;
 	private Connection connection;
+	@SerializedExclude // Using ipqualityscore instead of ipstack for this
+	private Security security;
+
+	public Security getSecurity(String ip) {
+		if (security == null) {
+			if (ip == null)
+				throw new InvalidInputException("Cannot check IP security on null IP");
+
+			if (!ip.equals(this.ip)) {
+				this.ip = ip;
+				security = Security.call(ip);
+			}
+		}
+
+		return security;
+	}
 
 	@Data
 	public static class Location {
@@ -103,22 +131,55 @@ public class GeoIP implements PlayerOwnedObject {
 
 	@Data
 	public static class Security {
-		@SerializedName("is_proxy")
-		private boolean isProxy;
-		@SerializedName("proxy_type")
-		private String proxyType;
+		private static final String parameters = HttpUtils.formatParameters(Map.of(
+				"strictness", "1",
+				"fast", "true"
+		));
+
+		private static final String URL = "https://www.ipqualityscore.com/api/json/ip/%s/%s?" + parameters;
+		private static final String API_KEY = Nexus.getInstance().getConfig().getString("tokens.ipqualityscore");
+
+		@SneakyThrows
+		public static Security call(String ip) {
+			return HttpUtils.mapJson(Security.class, URL, API_KEY, ip);
+		}
+
+		@SerializedName("request_id")
+		private String requestId;
+		private LocalDateTime timestamp = LocalDateTime.now();
+		private boolean success;
+		private String message;
+		@SerializedName("fraud_score")
+		private int fraudScore;
+		@SerializedName("country_code")
+		private String countryCode;
+		private String region;
+		private String city;
+		private String isp;
+		private int asn;
+		private String organization;
+		private double latitude;
+		private double longitude;
 		@SerializedName("is_crawler")
 		private boolean isCrawler;
-		@SerializedName("crawler_name")
-		private String crawlerName;
-		@SerializedName("crawler_type")
-		private String crawlerType;
-		@SerializedName("is_tor")
-		private boolean isTor;
-		@SerializedName("threat_level")
-		private String threatLevel;
-		@SerializedName("threat_types")
-		private String threatTypes;
+		private String timezone;
+		private boolean mobile;
+		private String host;
+		private boolean proxy;
+		private boolean vpn;
+		private boolean tor;
+		@SerializedName("active_vpn")
+		private boolean activeVpn;
+		@SerializedName("active_tor")
+		private boolean activeTor;
+		@SerializedName("recent_abuse")
+		private boolean recentAbuse;
+		@SerializedName("bot_status")
+		private boolean botStatus;
+		@SerializedName("connection_type")
+		private String connectionType;
+		@SerializedName("abuse_velocity")
+		private String abuseVelocity;
 	}
 
 	public String getFriendlyLocationString() {

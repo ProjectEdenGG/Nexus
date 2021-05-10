@@ -17,6 +17,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUser;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
+import me.pugabyte.nexus.utils.HttpUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -134,7 +135,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	void menuReload() {
 		closeZip();
-		file = Utils.saveFile(URL, fileName);
+		file = HttpUtils.saveFile(URL, fileName);
 		openZip();
 		CustomModelMenu.load();
 		send(PREFIX + "Menu updated");

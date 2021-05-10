@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.justice;
 
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
@@ -21,10 +23,15 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.geoip.GeoIP;
+import me.pugabyte.nexus.models.geoip.GeoIP.Security;
+import me.pugabyte.nexus.models.geoip.GeoIPService;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.PunishmentsService;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -68,6 +75,15 @@ public class Justice extends Feature implements Listener {
 
 	private JsonBuilder historyClick(Punishment punishment, JsonBuilder ingame) {
 		return ingame.hover("&eClick for more information").command("/history " + punishment.getName());
+	}
+
+	private boolean isNewPlayer(Nerd nerd) {
+		if (nerd.getRank().gt(Rank.GUEST))
+			return false;
+		if (new HoursService().get(nerd).getTotal() >= Time.HOUR.get() / 20)
+			return false;
+
+		return true;
 	}
 
 	// Ban
@@ -177,8 +193,7 @@ public class Justice extends Feature implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void mute_onMinecraftChatEvent(MinecraftChatEvent event) {
 		Nerd nerd = Nerd.of(event.getChatter());
-
-		if (nerd.getRank().gt(Rank.GUEST))
+		if (!isNewPlayer(nerd))
 			return;
 		if (nerd.hasMoved())
 			return;
@@ -239,6 +254,43 @@ public class Justice extends Feature implements Listener {
 
 			Punishments.of(player).sendAltsMessage(json -> Chat.broadcastIngame(json, StaticChannel.STAFF));
 		});
+	}
+
+	// Bot prevention
+	@SneakyThrows
+	@EventHandler(priority = EventPriority.LOW)
+	public void bots_onJoin(AsyncPlayerPreLoginEvent event) {
+		if (!isNewPlayer(Nerd.of(event.getUniqueId())))
+			return;
+
+		String ip = event.getAddress().getHostAddress();
+
+		GeoIPService service = new GeoIPService();
+		GeoIP geoip = service.get(event.getUniqueId());
+		Security security = geoip.getSecurity(ip);
+		service.save(geoip);
+
+		if (security == null) {
+			Nexus.warn("Security data for " + event.getName() + " on " + ip + " is null");
+			return;
+		}
+
+		int fraudScore = security.getFraudScore();
+		Nexus.log("Fraud score for " + event.getName() + ": " + fraudScore);
+
+		Punishments punishments = Punishments.of(event.getUniqueId());
+
+		if (punishments.getAnyActiveBan().isPresent())
+			return;
+
+		if (fraudScore >= 75) {
+			punishments.add(Punishment.ofType(PunishmentType.ALT_BAN)
+					.uuid(event.getUniqueId())
+					.punisher(Nexus.getUUID0())
+					.input("Compromised account")
+					.now(true));
+		}
+
 	}
 
 }

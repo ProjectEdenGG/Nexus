@@ -418,10 +418,6 @@ public abstract class ICustomCommand {
 		return value;
 	}
 
-	private boolean isPrimitiveNumber(Class<?> type) {
-		return Arrays.asList(Integer.TYPE, Double.TYPE, Float.TYPE, Short.TYPE, Long.TYPE, Byte.TYPE).contains(type);
-	}
-
 	@SneakyThrows
 	private Number getMaxValue(Class<?> type) {
 		return (Number) getMinMaxHolder(type).getDeclaredField("MAX_VALUE").get(null);

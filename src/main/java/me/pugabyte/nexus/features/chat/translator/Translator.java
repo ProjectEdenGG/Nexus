@@ -23,8 +23,9 @@ public class Translator implements Listener {
 	@Getter
 	private static HashMap<UUID, ArrayList<UUID>> map = new HashMap<>();
 
-	private static String apiKey = Nexus.getInstance().getConfig().getString("tokens.yandex");
-	public static TranslatorHandler handler = new TranslatorHandler(apiKey);
+	@Getter
+	private static final String apiKey = Nexus.getInstance().getConfig().getString("tokens.yandex");
+	public static TranslatorHandler handler = new TranslatorHandler();
 
 	public static final String PREFIX = StringUtils.getPrefix("Translator");
 

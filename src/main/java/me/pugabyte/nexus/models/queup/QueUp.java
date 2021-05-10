@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.models.queup;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -13,13 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.queup.QueUp.API.ActiveSong;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import me.pugabyte.nexus.utils.HttpUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.UUID;
@@ -70,19 +66,12 @@ public class QueUp implements PlayerOwnedObject {
 		private static final String ACTIVE_SONG_PATH = "room/" + ROOM_ID + "/playlist/active";
 		private static final String USER_PATH = "user/";
 
-		private static final Request REQUEST = new Request.Builder().url(BASE_URL + ACTIVE_SONG_PATH).build();
-
-		private static final Gson gson = new Gson();
-		private static final OkHttpClient client = new OkHttpClient();
-
 		@Data
 		static class ActiveSong {
 			private ActiveSongData data;
 
-			private static final Request REQUEST = new Request.Builder().url(BASE_URL + ACTIVE_SONG_PATH).build();
-
 			public static ActiveSong call() {
-				return API.call(REQUEST, ActiveSong.class);
+				return HttpUtils.mapJson(ActiveSong.class, BASE_URL + ACTIVE_SONG_PATH);
 			}
 
 			@Data
@@ -96,7 +85,7 @@ public class QueUp implements PlayerOwnedObject {
 					private String userId;
 
 					String getUserName() {
-						return API.call(BASE_URL + USER_PATH + userId, User.class).getData().getUsername();
+						return HttpUtils.mapJson(User.class, BASE_URL + USER_PATH + userId).getData().getUsername();
 					}
 				}
 
@@ -117,20 +106,6 @@ public class QueUp implements PlayerOwnedObject {
 			}
 		}
 
-		private static <T> T call(String url, Class<T> responseClass) {
-			return call(new Request.Builder().url(url).build(), responseClass);
-		}
-
-		private static <T> T call(Request request, Class<T> responseClass) {
-			try (Response response = client.newCall(request).execute()) {
-				if (response.body() == null)
-					throw new InvalidInputException("QueUp API response is null");
-
-				return gson.fromJson(response.body().string(), responseClass);
-			} catch (Exception ex) {
-				throw new RuntimeException(ex);
-			}
-		}
 	}
 
 }
