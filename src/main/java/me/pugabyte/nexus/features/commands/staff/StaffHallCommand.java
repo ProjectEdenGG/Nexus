@@ -112,9 +112,10 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		Location location = event.getClicker().getLocation();
 		WorldGuardUtils wgUtils = new WorldGuardUtils(location);
 
-		if (wgUtils.getRegionsLikeAt("staffhall", location).size() > 0)
-			runCommand(event.getClicker(), "staffhall view " + stripColor(npc.getName()));
-		else if (wgUtils.getRegionsLikeAt("hallofhistory", location).size() > 0)
+		if (wgUtils.getRegionsLikeAt("staffhall", location).size() > 0) {
+			if (!npc.getName().contains(" "))
+				runCommand(event.getClicker(), "staffhall view " + stripColor(npc.getName()));
+		} else if (wgUtils.getRegionsLikeAt("hallofhistory", location).size() > 0)
 			runCommand(event.getClicker(), "hoh view " + stripColor(npc.getName()));
 		else if (npc.getId() == 2678)
 			runCommand(event.getClicker(), "pugawelc");

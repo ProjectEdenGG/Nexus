@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
@@ -24,6 +25,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Permission("group.staff")
 @NoArgsConstructor
@@ -78,6 +80,15 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 				"&3for you to find. If you find it, you can get a key to open up one of my crates here. My clone will move location " +
 				"once a week, so you can get a new reward each week! If you find it, &eI'll tell you a tip about the server and give " +
 				"you a key to this crate.");
+	}
+
+	@Path("found")
+	@Permission("group.admin")
+	void whoFound() {
+		send(PREFIX + "Found: " + new WeeklyWakkaService().get()
+				.getFoundPlayers().stream()
+				.map(Nickname::of)
+				.collect(Collectors.joining(", ")));
 	}
 
 	@Path("tp")
