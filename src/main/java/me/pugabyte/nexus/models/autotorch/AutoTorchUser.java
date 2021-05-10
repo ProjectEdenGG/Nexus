@@ -25,7 +25,7 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private int lightLevel = 7;
-	private boolean enabled = true;
+	private boolean enabled = false;
 
 	/**
 	 * Whether or not auto torches should apply at the supplied light level
