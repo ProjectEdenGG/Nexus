@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.justice;
 
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
@@ -18,13 +20,20 @@ import me.pugabyte.nexus.features.tickets.ReportCommand;
 import me.pugabyte.nexus.features.tickets.TicketCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.geoip.GeoIP;
+import me.pugabyte.nexus.models.geoip.GeoIP.Security;
+import me.pugabyte.nexus.models.geoip.GeoIPService;
+import me.pugabyte.nexus.models.hours.Hours;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.punishments.PunishmentsService;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -177,8 +186,11 @@ public class Justice extends Feature implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void mute_onMinecraftChatEvent(MinecraftChatEvent event) {
 		Nerd nerd = Nerd.of(event.getChatter());
+		Hours hours = new HoursService().get(nerd);
 
 		if (nerd.getRank().gt(Rank.GUEST))
+			return;
+		if (hours.getTotal() >= Time.HOUR.get() / 20)
 			return;
 		if (nerd.hasMoved())
 			return;
@@ -239,6 +251,34 @@ public class Justice extends Feature implements Listener {
 
 			Punishments.of(player).sendAltsMessage(json -> Chat.broadcastIngame(json, StaticChannel.STAFF));
 		});
+	}
+
+	// Bot prevention
+//	@EventHandler(priority = EventPriority.LOW)
+	@SneakyThrows
+	public void bots_onJoin(AsyncPlayerPreLoginEvent event) {
+		if (Rank.of(event.getUniqueId()).gt(Rank.GUEST))
+			return;
+		String ip = event.getAddress().getHostAddress();
+
+		GeoIPService service = new GeoIPService();
+		GeoIP geoip = service.get(event.getUniqueId());
+		geoip.setIp(ip);
+		Security security = geoip.getSecurity();
+
+		if (security == null)
+			throw new InvalidInputException("Security data for " + event.getName() + " on " + ip + " is null");
+
+		service.save(geoip);
+
+		if (security.getFraudScore() >= 75) {
+			Punishments.of(event.getUniqueId()).add(Punishment.ofType(PunishmentType.ALT_BAN)
+					.uuid(event.getUniqueId())
+					.punisher(Nexus.getUUID0())
+					.input("Compromised account")
+					.now(true));
+		}
+
 	}
 
 }

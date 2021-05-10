@@ -1,6 +1,11 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
@@ -21,6 +26,10 @@ import org.bukkit.inventory.InventoryView;
 import org.objenesis.ObjenesisStd;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -155,5 +164,24 @@ public class Utils extends eden.utils.Utils {
 	public static Response callUrl(String url) {
 		return okHttpClient.newCall(new Request.Builder().url(url).build()).execute();
 	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public @interface SerializedExclude {}
+
+	private static ExclusionStrategy strategy = new ExclusionStrategy() {
+		@Override
+		public boolean shouldSkipClass(Class<?> clazz) {
+			return false;
+		}
+
+		@Override
+		public boolean shouldSkipField(FieldAttributes field) {
+			return field.getAnnotation(SerializedExclude.class) != null;
+		}
+	};
+
+	@Getter
+	private static Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
 
 }
