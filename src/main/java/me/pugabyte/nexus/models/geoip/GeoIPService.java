@@ -1,14 +1,11 @@
 package me.pugabyte.nexus.models.geoip;
 
-import com.google.gson.Gson;
 import eden.mongodb.annotations.PlayerClass;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.MongoService;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import me.pugabyte.nexus.utils.HttpUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -80,15 +77,9 @@ public class GeoIPService extends MongoService<GeoIP> {
 			return null;
 		Nexus.log("Requesting GeoIP info for " + player.getName() + " (" + ip + ")");
 
-		Request request = new Request.Builder()
-				.url("https://api.ipstack.com/" + ip + "?access_key=" + KEY)
-				.build();
-
-		try (Response response = new OkHttpClient().newCall(request).execute()) {
-			GeoIP geoIp = new Gson().fromJson(response.body().string(), GeoIP.class);
-			geoIp.setUuid(player.getUniqueId());
-			return geoIp;
-		}
+		GeoIP geoip = HttpUtils.mapJson(GeoIP.class, "https://api.ipstack.com/%s?access_key=%s", ip, KEY);
+		geoip.setUuid(player.getUniqueId());
+		return geoip;
 	}
 
 	public List<GeoIP> getAll() {

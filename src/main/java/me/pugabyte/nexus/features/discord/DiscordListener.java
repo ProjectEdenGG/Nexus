@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.discord;
 
-import com.google.gson.Gson;
 import eden.exceptions.EdenException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +13,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.utils.HttpUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -21,9 +21,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -104,10 +101,8 @@ public class DiscordListener extends ListenerAdapter {
 			if (TextChannel.BOT_COMMANDS.getId().equals(event.getChannel().getId())) {
 				if (message.toLowerCase().startsWith(".pug")) {
 					try {
-						try (Response response = new OkHttpClient().newCall(new Request.Builder().url("http://randompug.club/loaf").build()).execute()) {
-							RandomPugClubResponse result = new Gson().fromJson(response.body().string(), RandomPugClubResponse.class);
-							Discord.koda(result.getImage(), TextChannel.BOT_COMMANDS);
-						}
+						RandomPugClubResponse result = HttpUtils.mapJson(RandomPugClubResponse.class, "http://randompug.club/loaf");
+						Discord.koda(result.getImage(), TextChannel.BOT_COMMANDS);
 					} catch (Exception ex) {
 						event.getChannel().sendMessage(stripColor(ex.getMessage())).queue();
 						if (!(ex instanceof EdenException))

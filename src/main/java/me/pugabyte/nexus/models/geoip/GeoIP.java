@@ -12,16 +12,13 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.HttpUtils;
 import me.pugabyte.nexus.utils.Utils.SerializedExclude;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Request.Builder;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -54,7 +51,7 @@ public class GeoIP implements PlayerOwnedObject {
 	private Timezone timezone;
 	private Currency currency;
 	private Connection connection;
-	@SerializedExclude
+	@SerializedExclude // Using ipqualityscore instead of ipstack for this
 	private Security security;
 
 	public Security getSecurity() {
@@ -124,15 +121,17 @@ public class GeoIP implements PlayerOwnedObject {
 
 	@Data
 	public static class Security {
-		private static final String URL = "https://www.ipqualityscore.com/api/json/ip/%s/%s";
+		private static final String parameters = HttpUtils.formatParameters(Map.of(
+				"strictness", "1",
+				"fast", "true"
+		));
+
+		private static final String URL = "https://www.ipqualityscore.com/api/json/ip/%s/%s?" + parameters;
 		private static final String API_KEY = Nexus.getInstance().getConfig().getString("tokens.ipqualityscore");
-		private static final OkHttpClient client = new OkHttpClient();
 
 		@SneakyThrows
 		public static Security call(String ip) {
-			Request request = new Builder().url(String.format(URL, API_KEY, ip)).build();
-			Response response = client.newCall(request).execute();
-			return Utils.getGson().fromJson(response.body().toString(), Security.class);
+			return HttpUtils.mapJson(Security.class, URL, API_KEY, ip);
 		}
 
 		@SerializedName("request_id")

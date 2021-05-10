@@ -2,7 +2,6 @@ package me.pugabyte.nexus.models.skincache;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import com.google.gson.Gson;
 import dev.dbassett.skullcreator.SkullCreator;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -20,12 +19,10 @@ import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.HttpUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -118,32 +115,17 @@ public class SkinCache implements PlayerOwnedObject {
 			return profile;
 		}
 
-		private static String URL = "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false";
-
-		@SneakyThrows
-		static Response call(UUID uuid) {
-			String url = String.format(URL, uuidUnformat(uuid.toString()));
-			Request request = new Request.Builder().url(url).build();
-			return new OkHttpClient().newCall(request).execute();
-		}
 	}
+
+	private static String URL = "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false";
 
 	@SneakyThrows
 	private @NotNull ProfileProperty getCurrentProperty() {
 		if (isOnline())
 			return getTextureProperty(getOnlinePlayer().getPlayerProfile());
 
-		Response response = FakePlayerProfile.call(uuid);
-
-		if (response.body() != null) {
-			String body = response.body().string();
-			FakePlayerProfile fakeProfile = new Gson().fromJson(body, FakePlayerProfile.class);
-			if (fakeProfile == null)
-				throw new NexusException("Response body could not be mapped to a player profile object: " + body);
-			return getTextureProperty(fakeProfile.getPlayerProfile());
-		}
-
-		throw new NexusException("Response body from is null");
+		FakePlayerProfile fakeProfile = HttpUtils.mapJson(FakePlayerProfile.class, URL, uuidUnformat(uuid.toString()));
+		return getTextureProperty(fakeProfile.getPlayerProfile());
 	}
 
 	private @NotNull ProfileProperty getTextureProperty(PlayerProfile profile) {

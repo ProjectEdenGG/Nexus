@@ -1,57 +1,31 @@
 package me.pugabyte.nexus.features.chat.translator;
 
-import com.google.gson.Gson;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import me.pugabyte.nexus.utils.HttpUtils;
 
-import java.net.URLEncoder;
-
+@NoArgsConstructor
 public class TranslatorHandler {
-	private static String apiUrl = "https://translate.yandex.net/api/v1.5/tr.json/";
-	String apiKey;
-
-	public TranslatorHandler(String apiKey) {
-		this.apiKey = apiKey;
-	}
+	private static final String API_URL = "https://translate.yandex.net/api/v1.5/tr.json/";
 
 	@SneakyThrows
 	public Language detect(String message) {
-		String link = Detection.getUrl()
-				.replace("{{key}}", apiKey)
-				.replace("{{text}}", URLEncoder.encode(message, "UTF-8"));
-
-		Request request = new Request.Builder().url(link).build();
-
-		try (Response response = new OkHttpClient().newCall(request).execute()) {
-			Detection.Response result = new Gson().fromJson(response.body().string(), Detection.Response.class);
-			return Language.valueOf(result.getLang().toUpperCase());
-		}
+		Detection.Response response = HttpUtils.mapJson(Detection.Response.class, Detection.getURL(), Translator.getApiKey(), message);
+		return Language.valueOf(response.getLang().toUpperCase());
 	}
 
 	@SneakyThrows
 	public String translate(String message, Language from, Language to) {
 		String language = (from == Language.UNKNOWN) ? to.toString() : from.toString() + "-" + to.toString();
-
-		String link = Translation.getUrl()
-				.replace("{{key}}", apiKey)
-				.replace("{{text}}", URLEncoder.encode(message, "UTF-8"))
-				.replace("{{language}}", language.toLowerCase());
-
-		Request request = new Request.Builder().url(link).build();
-
-		try (Response response = new OkHttpClient().newCall(request).execute()) {
-			Translation.Response result = new Gson().fromJson(response.body().string(), Translation.Response.class);
-			return String.join("", result.getText()).trim();
-		}
+		Translation.Response response = HttpUtils.mapJson(Translation.Response.class, Detection.getURL(), Translator.getApiKey(), message, language.toLowerCase());
+		return String.join("", response.getText()).trim();
 	}
 
 	private static class Detection {
 		@Getter
-		private static String url = apiUrl + "detect?key={{key}}&text={{text}}";
+		private static final String URL = API_URL + "detect?key=%s&text=%s";
 
 		@Data
 		private static class Response {
@@ -62,7 +36,7 @@ public class TranslatorHandler {
 
 	private static class Translation {
 		@Getter
-		private static String url = apiUrl + "translate?key={{key}}&text={{text}}&lang={{language}}";
+		private static final String URL = API_URL + "translate?key=%s&text=%s&lang=%s";
 
 		@Data
 		private static class Response {

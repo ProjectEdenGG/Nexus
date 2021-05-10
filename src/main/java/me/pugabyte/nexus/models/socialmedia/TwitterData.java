@@ -18,17 +18,15 @@ import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.ReactionVoter;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.HttpUtils;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.TwitterException;
 import twitter4j.UploadedMedia;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -125,12 +123,10 @@ public class TwitterData implements PlayerOwnedObject {
 							.trim());
 
 					if (!message.getAttachments().isEmpty()) {
-						OkHttpClient client = new OkHttpClient();
 						List<Long> mediaIds = new ArrayList<>();
 
 						for (Attachment attachment : message.getAttachments()) {
-							Request request = new Request.Builder().url(attachment.getUrl()).build();
-							Response response = client.newCall(request).execute();
+							Response response = HttpUtils.callUrl(attachment.getUrl());
 
 							if (response.body() != null) {
 								UploadedMedia uploadedMedia = SocialMedia.getTwitter().tweets().uploadMedia(attachment.getFileName(), response.body().byteStream());
@@ -150,7 +146,7 @@ public class TwitterData implements PlayerOwnedObject {
 					TwitterData data = service.get();
 					data.getPendingTweets().remove(this);
 					service.save(data);
-				} catch (TwitterException | IOException ex) {
+				} catch (TwitterException ex) {
 					ex.printStackTrace();
 				}
 			});
