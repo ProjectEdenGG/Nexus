@@ -50,7 +50,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private void playerBlockTask() {
-		Tasks.repeat(0, Time.SECOND, () -> {
+		Tasks.repeat(0, Time.TICK.x(10), () -> {
 			if (!active)
 				return;
 
@@ -69,7 +69,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private static boolean isNear(Player player, Content content) {
-		return content.getLocation().distance(player.getLocation()) < 25;
+		return content.getLocation().distance(player.getLocation()) < 50;
 	}
 
 	private static boolean canSee(Player player, Content content) {
