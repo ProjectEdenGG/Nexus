@@ -36,7 +36,13 @@ public class AutoTorchUser implements PlayerOwnedObject {
 		return enabled && lightLevel <= this.lightLevel;
 	}
 
+	/**
+	 * Whether or not auto torches apple to the specified block. Considers the block's light level,
+	 * if it's replaceable (i.e. air or grass), and if the block below supports placing torches.
+	 * @param block any block
+	 * @return whether or not to place an auto torch
+	 */
 	public boolean applies(Block block) {
-		return applies(block.getLightLevel()) && block.isReplaceable() && block.getRelative(0, -1, 0).isBuildable();
+		return applies(block.getLightFromBlocks()) && block.isReplaceable() && block.getRelative(0, -1, 0).isBuildable();
 	}
 }

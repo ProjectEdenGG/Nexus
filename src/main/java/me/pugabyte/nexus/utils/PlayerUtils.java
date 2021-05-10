@@ -363,7 +363,7 @@ public class PlayerUtils {
 	}
 
 	@NotNull
-	public static Set<ItemStack> getAllInventoryContents(HasPlayer player) {
+	public static Set<@Nullable ItemStack> getAllInventoryContents(HasPlayer player) {
 		Player _player = player.getPlayer();
 		Set<ItemStack> items = new HashSet<>();
 		items.addAll(Arrays.asList(_player.getInventory().getContents()));
@@ -371,6 +371,11 @@ public class PlayerUtils {
 		items.addAll(Arrays.asList(_player.getInventory().getExtraContents()));
 		items.add(_player.getInventory().getItemInOffHand());
 		return items;
+	}
+
+	@NotNull
+	public static Set<@NotNull ItemStack> getNonNullInventoryContents(HasPlayer player) {
+		return getAllInventoryContents(player).stream().filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 
 	@Deprecated
