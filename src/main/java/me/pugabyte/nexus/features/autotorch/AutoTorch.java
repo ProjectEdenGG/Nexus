@@ -26,7 +26,7 @@ public class AutoTorch extends Feature {
 
 	@Override
 	public void onStart() {
-		taskId = Tasks.repeat(5, 5, () -> {
+		taskId = Tasks.repeatAsync(5, 5, () -> {
 			Bukkit.getOnlinePlayers().forEach(player -> {
 				GameModeWrapper gameMode = GameModeWrapper.of(player);
 				// basic checks to ensure player can use the command and is in survival + the survival world.
@@ -39,23 +39,26 @@ public class AutoTorch extends Feature {
 
 				AutoTorchUser autoTorchUser = service.get(player);
 				Block block = player.getLocation().getBlock();
-				if (!autoTorchUser.applies(player, block)) return; // checks light level and if block is replaceable
 
-				// copies current data to send in event and to restore if event is cancelled
-				BlockState currentState = block.getState();
-				BlockData currentData = currentState.getBlockData();
-				block.setType(Material.TORCH);
+				Tasks.sync(() -> {
+					if (!autoTorchUser.applies(player, block)) return; // checks light level and if a torch can be placed here
 
-				// ensure no plugins are blocking placing here
-				BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, currentState, block.getRelative(0, -1, 0), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
-				if (!placeEvent.callEvent() || !placeEvent.canBuild()) {
-					block.setBlockData(currentData);
-					return;
-				}
+					// copies current data to send in event and to restore if event is cancelled
+					BlockState currentState = block.getState();
+					BlockData currentData = currentState.getBlockData();
+					block.setType(Material.TORCH);
 
-				// remove a torch from player's inventory
-				if (gameMode.isSurvival())
-					item.setAmount(item.getAmount()-1);
+					// ensure no plugins are blocking placing here
+					BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, currentState, block.getRelative(0, -1, 0), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+					if (!placeEvent.callEvent() || !placeEvent.canBuild()) {
+						block.setBlockData(currentData);
+						return;
+					}
+
+					// remove a torch from player's inventory
+					if (gameMode.isSurvival())
+						item.setAmount(item.getAmount()-1);
+				});
 			});
 		});
 	}
