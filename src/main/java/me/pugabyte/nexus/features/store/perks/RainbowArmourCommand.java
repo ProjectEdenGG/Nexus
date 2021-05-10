@@ -27,15 +27,14 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import java.util.HashMap;
 
 @NoArgsConstructor
-@Permission("rainbow.armour")
+@Permission("rainbowarmour.use")
 @Aliases({"rainbowarmor", "rba"})
 public class RainbowArmourCommand extends CustomCommand implements Listener {
 	@Getter
-	private static HashMap<Player, RainbowArmourPlayer> enabledPlayers = new HashMap<>();
-	private int rate = 12;
-	private int id = 0;
+	private static final HashMap<Player, RainbowArmourPlayer> enabledPlayers = new HashMap<>();
+	private final int rate = 12;
 
-	RainbowArmourCommand(CommandEvent event) {
+	public RainbowArmourCommand(CommandEvent event) {
 		super(event);
 	}
 
