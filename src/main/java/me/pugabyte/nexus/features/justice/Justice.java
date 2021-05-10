@@ -20,14 +20,12 @@ import me.pugabyte.nexus.features.tickets.ReportCommand;
 import me.pugabyte.nexus.features.tickets.TicketCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIP.Security;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
-import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -77,6 +75,15 @@ public class Justice extends Feature implements Listener {
 
 	private JsonBuilder historyClick(Punishment punishment, JsonBuilder ingame) {
 		return ingame.hover("&eClick for more information").command("/history " + punishment.getName());
+	}
+
+	private boolean isNewPlayer(Nerd nerd) {
+		if (nerd.getRank().gt(Rank.GUEST))
+			return false;
+		if (new HoursService().get(nerd).getTotal() >= Time.HOUR.get() / 20)
+			return false;
+
+		return true;
 	}
 
 	// Ban
@@ -186,11 +193,7 @@ public class Justice extends Feature implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void mute_onMinecraftChatEvent(MinecraftChatEvent event) {
 		Nerd nerd = Nerd.of(event.getChatter());
-		Hours hours = new HoursService().get(nerd);
-
-		if (nerd.getRank().gt(Rank.GUEST))
-			return;
-		if (hours.getTotal() >= Time.HOUR.get() / 20)
+		if (!isNewPlayer(nerd))
 			return;
 		if (nerd.hasMoved())
 			return;
@@ -254,25 +257,34 @@ public class Justice extends Feature implements Listener {
 	}
 
 	// Bot prevention
-//	@EventHandler(priority = EventPriority.LOW)
 	@SneakyThrows
+	@EventHandler(priority = EventPriority.LOW)
 	public void bots_onJoin(AsyncPlayerPreLoginEvent event) {
-		if (Rank.of(event.getUniqueId()).gt(Rank.GUEST))
+		if (!isNewPlayer(Nerd.of(event.getUniqueId())))
 			return;
+
 		String ip = event.getAddress().getHostAddress();
 
 		GeoIPService service = new GeoIPService();
 		GeoIP geoip = service.get(event.getUniqueId());
-		geoip.setIp(ip);
-		Security security = geoip.getSecurity();
-
-		if (security == null)
-			throw new InvalidInputException("Security data for " + event.getName() + " on " + ip + " is null");
-
+		Security security = geoip.getSecurity(ip);
 		service.save(geoip);
 
-		if (security.getFraudScore() >= 75) {
-			Punishments.of(event.getUniqueId()).add(Punishment.ofType(PunishmentType.ALT_BAN)
+		if (security == null) {
+			Nexus.warn("Security data for " + event.getName() + " on " + ip + " is null");
+			return;
+		}
+
+		int fraudScore = security.getFraudScore();
+		Nexus.log("Fraud score for " + event.getName() + ": " + fraudScore);
+
+		Punishments punishments = Punishments.of(event.getUniqueId());
+
+		if (punishments.getAnyActiveBan().isPresent())
+			return;
+
+		if (fraudScore >= 75) {
+			punishments.add(Punishment.ofType(PunishmentType.ALT_BAN)
 					.uuid(event.getUniqueId())
 					.punisher(Nexus.getUUID0())
 					.input("Compromised account")

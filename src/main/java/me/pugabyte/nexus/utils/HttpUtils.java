@@ -34,7 +34,13 @@ public class HttpUtils {
 
 	private static Object[] encode(Object[] objects) {
 		return Arrays.stream(objects)
-				.map(parameter -> Utils.isPrimitiveNumber(parameter.getClass()) ? parameter : encode(parameter.toString()))
+				.map(parameter -> {
+					if (parameter == null)
+						return "null";
+					if (Utils.isPrimitiveNumber(parameter.getClass()))
+						return parameter;
+					return encode(parameter.toString());
+				})
 				.toArray(Object[]::new);
 	}
 

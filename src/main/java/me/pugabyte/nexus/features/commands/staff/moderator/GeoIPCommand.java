@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.geoip.GeoIPService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -57,7 +58,11 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Tasks.async(() -> new GeoIPService().get(event.getPlayer()));
+		Tasks.async(() -> {
+			Player player = event.getPlayer();
+			String ip = player.getAddress().getHostString();
+			new GeoIPService().request(player.getUniqueId(), ip);
+		});
 	}
 
 	@Async

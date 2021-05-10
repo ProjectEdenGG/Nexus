@@ -8,6 +8,8 @@ import eden.mongodb.serializers.UUIDConverter;
 import eden.utils.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -16,6 +18,7 @@ import me.pugabyte.nexus.utils.HttpUtils;
 import me.pugabyte.nexus.utils.Utils.SerializedExclude;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +27,15 @@ import java.util.UUID;
 @Data
 @Entity("geoip")
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Converters(UUIDConverter.class)
 public class GeoIP implements PlayerOwnedObject {
 	@Id
+	@NonNull
 	private UUID uuid;
 	private String ip;
+	private LocalDateTime timestamp;
+
 	private String type;
 	@SerializedName("continent_code")
 	private String continentCode;
@@ -54,12 +61,15 @@ public class GeoIP implements PlayerOwnedObject {
 	@SerializedExclude // Using ipqualityscore instead of ipstack for this
 	private Security security;
 
-	public Security getSecurity() {
+	public Security getSecurity(String ip) {
 		if (security == null) {
 			if (ip == null)
 				throw new InvalidInputException("Cannot check IP security on null IP");
 
-			security = Security.call(ip);
+			if (!ip.equals(this.ip)) {
+				this.ip = ip;
+				security = Security.call(ip);
+			}
 		}
 
 		return security;
@@ -136,6 +146,7 @@ public class GeoIP implements PlayerOwnedObject {
 
 		@SerializedName("request_id")
 		private String requestId;
+		private LocalDateTime timestamp = LocalDateTime.now();
 		private boolean success;
 		private String message;
 		@SerializedName("fraud_score")
