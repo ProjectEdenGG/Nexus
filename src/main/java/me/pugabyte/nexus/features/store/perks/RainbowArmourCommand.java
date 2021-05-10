@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -25,6 +26,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.HashMap;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
 @Permission("rainbowarmour.use")
@@ -60,7 +63,13 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private boolean isLeatherArmour(Material material) {
+	private boolean isLeatherArmour(ItemStack item) {
+		if (isNullOrAir(item))
+			return false;
+		if (CustomModel.exists(item))
+			return false;
+
+		Material material = item.getType();
 		return material == Material.LEATHER_HELMET ||
 				material == Material.LEATHER_CHESTPLATE ||
 				material == Material.LEATHER_LEGGINGS ||
@@ -74,7 +83,7 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		if (player.getGameMode() != GameMode.SURVIVAL) return;
 		if (getEnabledPlayers().containsKey(player) && getEnabledPlayers().get(player).isEnabled()) {
 			ItemStack item = event.getCurrentItem();
-			if (event.getSlotType() == InventoryType.SlotType.ARMOR && isLeatherArmour(item.getType())) {
+			if (event.getSlotType() == InventoryType.SlotType.ARMOR && isLeatherArmour(item)) {
 				RainbowArmourCommand.removeColor(item);
 			}
 		}
@@ -85,7 +94,7 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		Player player = event.getEntity();
 		if (getEnabledPlayers().containsKey(player) && getEnabledPlayers().get(player).isEnabled()) {
 			for (ItemStack itemStack : event.getDrops()) {
-				if (isLeatherArmour(itemStack.getType())) {
+				if (isLeatherArmour(itemStack)) {
 					LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();
 					meta.setColor(null);
 					itemStack.setItemMeta(meta);
@@ -181,9 +190,8 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 
 			int counter = 0;
 			for (ItemStack itemStack : armour) {
-				if (itemStack != null && itemStack.getType().toString().toLowerCase().startsWith("leather_")) {
+				if (isLeatherArmour(itemStack))
 					armour[counter] = getColor(itemStack, color);
-				}
 				counter++;
 			}
 
