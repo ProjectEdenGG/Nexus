@@ -218,6 +218,8 @@ public abstract class ICustomCommand {
 
 			if (!found && !isNullOrEmpty(annotation.value()))
 				objects[i] = convert(annotation.value(), null, parameter.getType(), parameter, parameter.getName(), event, false);
+
+			i++;
 		}
 		return objects;
 	}

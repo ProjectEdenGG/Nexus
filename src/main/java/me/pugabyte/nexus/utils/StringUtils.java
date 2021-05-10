@@ -166,6 +166,22 @@ public class StringUtils extends eden.utils.StringUtils {
 		return last.toLowerCase();
 	}
 
+	public static String applyFormattingToAll(String input, boolean bold, boolean strikethrough, boolean underline, boolean italic, boolean magic) {
+		if (input == null)
+			return null;
+
+		if (bold) input = applyFormattingToAll(input, ChatColor.BOLD);
+		if (strikethrough) input = applyFormattingToAll(input, ChatColor.STRIKETHROUGH);
+		if (underline) input = applyFormattingToAll(input, ChatColor.UNDERLINE);
+		if (italic) input = applyFormattingToAll(input, ChatColor.ITALIC);
+		if (magic) input = applyFormattingToAll(input, ChatColor.MAGIC);
+		return input;
+	}
+
+	public static String applyFormattingToAll(String input, ChatColor formatting) {
+		return StringUtils.getColorGroupPattern().matcher(input).replaceAll(result -> result.group() + formatting);
+	}
+
 	public static String pretty(ItemStack item) {
 		return pretty(item, 1);
 	}
