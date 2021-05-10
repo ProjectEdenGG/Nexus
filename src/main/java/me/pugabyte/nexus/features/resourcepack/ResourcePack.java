@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URI;
@@ -84,8 +86,8 @@ public class ResourcePack extends Feature implements Listener {
 			zipFile.close();
 	}
 
-	public static boolean isCustomItem(ItemStack item) {
-		return new NBTItem(item).hasKey("CustomModelData");
+	public static boolean isCustomItem(@Nullable ItemStack item) {
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && new NBTItem(item).hasKey("CustomModelData");
 	}
 
 	@EventHandler
