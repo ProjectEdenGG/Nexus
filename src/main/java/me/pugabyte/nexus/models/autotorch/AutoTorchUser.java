@@ -9,8 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasHumanEntity;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
@@ -42,8 +47,7 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	 * @param block any block
 	 * @return whether or not to place an auto torch
 	 */
-	public boolean applies(Block block) {
-		Block relative = block.getRelative(0, -1, 0);
-		return applies(block.getLightFromBlocks()) && block.isReplaceable() && relative.isBuildable() && relative.isSolid();
+	public boolean applies(HasHumanEntity player, Block block) {
+		return applies(block.getLightFromBlocks()) && block.isReplaceable() && CraftItemStack.asCraftCopy(new ItemStack(Material.TORCH)).canPlaceOn(player, block.getRelative(BlockFace.DOWN), BlockFace.UP);
 	}
 }
