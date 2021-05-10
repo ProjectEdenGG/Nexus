@@ -12,6 +12,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -29,7 +30,7 @@ public class AutoTorch extends Feature {
 	public void onStart() {
 		taskId = Tasks.repeatAsync(5, TimeUtils.Time.SECOND.x(1/3), () -> {
 			Bukkit.getOnlinePlayers().forEach(player -> {
-				if (!WorldGroup.SURVIVAL.contains(player.getWorld()) || !player.hasPermission(AutoTorchCommand.PERMISSION) || !WorldGuardFlagUtils.canPlace(player)) return;
+				if (player.getGameMode() == GameMode.ADVENTURE || !WorldGroup.SURVIVAL.contains(player.getWorld()) || !player.hasPermission(AutoTorchCommand.PERMISSION) || !WorldGuardFlagUtils.canPlace(player)) return;
 
 				AutoTorchUser autoTorchUser = service.get(player);
 
