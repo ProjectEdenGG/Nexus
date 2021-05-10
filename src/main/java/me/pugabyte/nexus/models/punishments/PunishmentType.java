@@ -19,6 +19,7 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -171,8 +172,15 @@ public enum PunishmentType implements ColoredAndNamed {
 	}
 
 	void kick(OfflinePlayer player, Punishment punishment) {
-		if (player.isOnline() && player.getPlayer() != null)
-			player.getPlayer().kick(punishment.getDisconnectMessage());
+		Runnable task = () -> {
+			if (player.isOnline() && player.getPlayer() != null)
+				player.getPlayer().kick(punishment.getDisconnectMessage());
+		};
+
+		if (!Bukkit.isPrimaryThread())
+			Tasks.sync(task);
+		else
+			task.run();
 	}
 
 	public JsonBuilder getHistoryDisplay(Punishment punishment) {

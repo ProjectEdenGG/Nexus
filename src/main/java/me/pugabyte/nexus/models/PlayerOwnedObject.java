@@ -2,9 +2,7 @@ package me.pugabyte.nexus.models;
 
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayerLike;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
@@ -86,10 +84,8 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 	@Override
 	default @NotNull String getName() {
 		String name = getOfflinePlayer().getName();
-		if (name == null) {
-			if (Nexus.isDebug()) try { throw new InvalidInputException("Stacktrace"); } catch (InvalidInputException ex) { ex.printStackTrace(); }
-			name = "nexus-" + getUuid().toString();
-		}
+		if (name == null)
+			name = Nerd.of(getUuid()).getName();
 		return name;
 	}
 
