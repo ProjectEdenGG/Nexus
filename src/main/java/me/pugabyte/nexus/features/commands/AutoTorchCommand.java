@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.commands;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.store.Package;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -36,11 +35,6 @@ public class AutoTorchCommand extends CustomCommand {
 		autoTorch.setLightLevel(level);
 		service.save(autoTorch);
 		send(PREFIX + "Torches will now be automatically placed at your feet at light level &e"+level+"&3 or lower");
-	}
-
-	@Path("test")
-	void test() {
-		Package.AUTO_TORCH.apply(player());
 	}
 
 }

@@ -10,8 +10,8 @@ public enum PackageConsumers implements Consumer<HasUniqueId> {
 	AUTO_TORCH {
 		// this automatically enables auto torches
 		// "you could just have the boolean default to true" i could! but i didn't want to annoy admins,
-		//   as that would also turn it on for all admins by default rather than just direct purchasers.
-		// yeah it's kinda silly but i don't like being intrusive so fight me
+		//     as that would also turn it on for all admins by default rather than just direct purchasers.
+		// yeah it's kinda silly reasoning but i don't like being intrusive, please understand <3
 		// -lexi
 
 		@Override
