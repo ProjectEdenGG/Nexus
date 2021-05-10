@@ -27,7 +27,7 @@ public class AutoTorch extends Feature {
 
 	@Override
 	public void onStart() {
-		taskId = Tasks.repeatAsync(5, TimeUtils.Time.SECOND.x(1/3), () -> {
+		taskId = Tasks.repeatAsync(5, TimeUtils.Time.SECOND.x(1d/3d), () -> {
 			Bukkit.getOnlinePlayers().forEach(player -> {
 				GameModeWrapper gameMode = GameModeWrapper.of(player);
 				if (!gameMode.canBuild() || !WorldGroup.SURVIVAL.contains(player.getWorld()) || !player.hasPermission(AutoTorchCommand.PERMISSION) || !WorldGuardFlagUtils.canPlace(player)) return;
