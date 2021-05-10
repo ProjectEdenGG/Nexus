@@ -48,6 +48,8 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	 * @return whether or not to place an auto torch
 	 */
 	public boolean applies(HasHumanEntity player, Block block) {
-		return applies(block.getLightFromBlocks()) && block.isReplaceable() && CraftItemStack.asCraftCopy(new ItemStack(Material.TORCH)).canPlaceOn(player, block.getRelative(BlockFace.DOWN), BlockFace.UP);
+		return applies(block.getLightFromBlocks()) &&
+				/* todo: remove this check next parchment update */ block.isReplaceable() &&
+				CraftItemStack.asCraftCopy(new ItemStack(Material.TORCH)).canPlaceOn(player, block.getRelative(BlockFace.DOWN), BlockFace.UP);
 	}
 }
