@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.commands.AutoTorchCommand;
 import me.pugabyte.nexus.features.store.annotations.Category;
 import me.pugabyte.nexus.features.store.annotations.Commands.Command;
+import me.pugabyte.nexus.features.store.annotations.Consumers.Consumer;
 import me.pugabyte.nexus.features.store.annotations.ExpirationCommands.ExpirationCommand;
 import me.pugabyte.nexus.features.store.annotations.ExpirationDays;
 import me.pugabyte.nexus.features.store.annotations.Id;
@@ -63,6 +64,7 @@ public enum Package {
 
 	@Id("4471430")
 	@Permission(AutoTorchCommand.PERMISSION)
+	@Consumer(PackageConsumers.AUTO_TORCH)
 	AUTO_TORCH,
 
 	@Id("2965488")
@@ -324,6 +326,12 @@ public enum Package {
 				.collect(Collectors.toList());
 	}
 
+	public List<PackageConsumers> getConsumers() {
+		return Arrays.stream(getField().getAnnotationsByType(Consumer.class))
+				.map(Consumer::value)
+				.collect(Collectors.toList());
+	}
+
 	public String getPermissionGroup() {
 		if (getField().getAnnotation(PermissionGroup.class) != null)
 			return getField().getAnnotation(PermissionGroup.class).value();
@@ -368,6 +376,11 @@ public enum Package {
 				.map(command -> command.replaceAll("\\[player]", player.getName()))
 				.forEach(PlayerUtils::runCommandAsConsole);
 
+		getConsumers().forEach(packageConsumers -> {
+			try { packageConsumers.accept(player);
+			} catch (Throwable ignored) {}
+		});
+
 		if (getExpirationDays() > 0)
 			new TaskService().save(new Task("package-expire", new HashMap<>() {{
 				put("uuid", player.getUniqueId().toString());
@@ -381,6 +394,11 @@ public enum Package {
 		String permissionGroup = getPermissionGroup();
 		if (!Strings.isNullOrEmpty(permissionGroup))
 			PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent remove " + permissionGroup);
+
+		getConsumers().forEach(packageConsumers -> {
+			try { packageConsumers.expire(player);
+			} catch (Throwable ignored) {}
+		});
 
 		getExpirationCommands().stream()
 				.map(StringUtils::trimFirst)
