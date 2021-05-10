@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 
+import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
@@ -28,8 +29,12 @@ public class Merchants {
 		if (bfMerchant == null)
 			return;
 
+		List<TradeBuilder> trades = bfMerchant.getTrades(player);
+		if (Utils.isNullOrEmpty(trades))
+			return;
+
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.name()))
-				.trades(bfMerchant.getTrades(player))
+				.trades(trades)
 				.open(player);
 	}
 
