@@ -3,8 +3,6 @@ package me.pugabyte.nexus.features.store.perks;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -12,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -29,7 +26,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
@@ -38,28 +34,18 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 @Aliases({"rainbowarmor", "rba"})
 public class RainbowArmourCommand extends CustomCommand implements Listener {
 	@Getter
-	private static final HashMap<UUID, RainbowArmourPlayer> enabledPlayers = new HashMap<>();
-	private static final int rate = 12;
+	private static final HashMap<Player, RainbowArmourPlayer> enabledPlayers = new HashMap<>();
+	private final int rate = 12;
 
 	public RainbowArmourCommand(CommandEvent event) {
 		super(event);
 	}
 
-	public static RainbowArmourPlayer getPlayer(HasPlayer hasPlayer) {
-		Player player = hasPlayer.getPlayer();
-		UUID uuid = player.getUniqueId();
-		if (!enabledPlayers.containsKey(uuid))
-			enabledPlayers.put(uuid, new RainbowArmourPlayer(player, -1));
+	public static RainbowArmourPlayer getPlayer(Player player) {
+		if (!enabledPlayers.containsKey(player))
+			enabledPlayers.put(player, new RainbowArmourPlayer(player, -1));
 
-		return enabledPlayers.get(uuid);
-	}
-
-	public static boolean isEnabled(UUID uuid) {
-		return getEnabledPlayers().containsKey(uuid) && getEnabledPlayers().get(uuid).isEnabled();
-	}
-
-	public static boolean isEnabled(HasUniqueId uuid) {
-		return isEnabled(uuid.getUniqueId());
+		return enabledPlayers.get(player);
 	}
 
 	@Path
@@ -70,10 +56,10 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 			send("&cRainbow armour unequipped!");
 			rbaPlayer.setEnabled(false);
 		} else {
-			rbaPlayer.setTaskId(startArmour(rbaPlayer));
+			rbaPlayer.setTaskID(startArmour(rbaPlayer));
 			rbaPlayer.setEnabled(true);
 			send("&cR&6a&ei&an&bb&5o&dw &earmour equipped!");
-			getEnabledPlayers().put(uuid(), rbaPlayer);
+			getEnabledPlayers().put(player(), rbaPlayer);
 		}
 	}
 
@@ -95,7 +81,7 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		if (!(event.getWhoClicked() instanceof Player)) return;
 		Player player = (Player) event.getWhoClicked();
 		if (player.getGameMode() != GameMode.SURVIVAL) return;
-		if (isEnabled(player)) {
+		if (getEnabledPlayers().containsKey(player) && getEnabledPlayers().get(player).isEnabled()) {
 			ItemStack item = event.getCurrentItem();
 			if (event.getSlotType() == InventoryType.SlotType.ARMOR && isLeatherArmour(item)) {
 				RainbowArmourCommand.removeColor(item);
@@ -106,7 +92,7 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if (isEnabled(player)) {
+		if (getEnabledPlayers().containsKey(player) && getEnabledPlayers().get(player).isEnabled()) {
 			for (ItemStack itemStack : event.getDrops()) {
 				if (isLeatherArmour(itemStack)) {
 					LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();
@@ -120,7 +106,7 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onLogout(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		if (isEnabled(player))
+		if (getEnabledPlayers().containsKey(player) && getEnabledPlayers().get(player).isEnabled())
 			RainbowArmourCommand.removeColor(player.getInventory());
 	}
 
@@ -161,29 +147,33 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		Player player = rbaPlayer.getPlayer();
 
 		return Bukkit.getScheduler().scheduleSyncRepeatingTask(Nexus.getInstance(), () -> {
-			if (WorldGroup.MINIGAMES.contains(rbaPlayer.getPlayer().getWorld())) return;
-
 			int r = rbaPlayer.getR();
 			int g = rbaPlayer.getG();
 			int b = rbaPlayer.getB();
 
 			if (r > 0 && b == 0) {
-				if (r != 255 || g >= 255) {
+				if (r == 255 && g < 255) {
+					g += rate;
+				} else {
 					r -= rate;
+					g += rate;
 				}
-				g += rate;
 			}
 			if (g > 0 && r == 0) {
-				if (g != 255 || b >= 255) {
+				if (g == 255 && b < 255) {
+					b += rate;
+				} else {
 					g -= rate;
+					b += rate;
 				}
-				b += rate;
 			}
 			if (b > 0 && g == 0) {
-				if (b != 255 || r >= 255) {
+				if (b == 255 && r < 255) {
+					r += rate;
+				} else {
 					b -= rate;
+					r += rate;
 				}
-				r += rate;
 			}
 
 			if (r < 0) r = 0;
@@ -209,19 +199,41 @@ public class RainbowArmourCommand extends CustomCommand implements Listener {
 		}, 4, 2);
 	}
 
-	@Getter
-	@Setter
 	public static class RainbowArmourPlayer {
 		private final Player player;
 		private int taskId;
-		private boolean enabled;
+		private boolean enabled = false;
+		@Getter
+		@Setter
 		private int r = 255;
+		@Getter
+		@Setter
 		private int g, b = 0;
 
 		public RainbowArmourPlayer(Player player, int taskId) {
 			this.player = player;
 			this.taskId = taskId;
 			this.enabled = taskId > 0;
+		}
+
+		public Player getPlayer() {
+			return player;
+		}
+
+		public int getTaskId() {
+			return taskId;
+		}
+
+		public void setTaskID(int taskId) {
+			this.taskId = taskId;
+		}
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
 		}
 
 		public void setRGB(Color color) {
