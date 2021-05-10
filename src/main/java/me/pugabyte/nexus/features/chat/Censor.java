@@ -116,7 +116,7 @@ public class Censor {
 							Punishments.of(event.getChatter().getOfflinePlayer())
 									.add(Punishment.ofType(PunishmentType.BAN)
 											.punisher(Nexus.getUUID0())
-											.input(censorItem.getBanReason())
+											.input(censorItem.getBanReason() + ": " + event.getOriginalMessage())
 											.now(true));
 						}
 					}
