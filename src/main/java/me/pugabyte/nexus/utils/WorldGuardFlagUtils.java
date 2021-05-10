@@ -7,6 +7,7 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.Association;
 import com.sk89q.worldguard.protection.association.Associables;
+import com.sk89q.worldguard.protection.association.RegionAssociable;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.IntegerFlag;
 import com.sk89q.worldguard.protection.flags.RegistryFlag;
@@ -17,9 +18,10 @@ import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.sk89q.worldguard.protection.regions.RegionQuery;
 import lombok.AllArgsConstructor;
+import lombok.experimental.UtilityClass;
 import me.lexikiq.HasPlayer;
+import me.lexikiq.OptionalPlayer;
 import me.pugabyte.nexus.Nexus;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.Block;
@@ -30,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Utilities for getting the state
  */
+@UtilityClass
 public class WorldGuardFlagUtils {
 
 	/**
@@ -172,6 +175,91 @@ public class WorldGuardFlagUtils {
 //		}
 //	}
 
+	@Nullable
+	private static LocalPlayer getLocalPlayer(@Nullable OptionalPlayer player) {
+		if (player != null && player.getPlayer() != null)
+			return WorldGuardPlugin.inst().wrapPlayer(player.getPlayer());
+		return null;
+	}
+
+	// Main Methods //
+
+	/**
+	 * Test if the effective value for a list of flags is {@code ALLOW}.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param associable object to check for region membership
+	 * @param flags flags to check
+	 * @return true if the result was {@code ALLOW}
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static boolean test(@NotNull org.bukkit.Location location, @Nullable RegionAssociable associable, @NotNull StateFlag... flags) {
+		Validate.notNull(location, "Location cannot be null");
+		Validate.notNull(flags, "Flags cannot be null");
+
+		Location loc = BukkitAdapter.adapt(location);
+		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		return container.createQuery().testState(loc, associable, flags);
+	}
+
+	/**
+	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * @param location location of interaction
+	 * @param associable object to check for region membership
+	 * @param flags flags to check
+	 * @return effective state
+	 */
+	public static State query(@NotNull org.bukkit.Location location, @Nullable RegionAssociable associable, @NotNull StateFlag... flags) {
+		Validate.notNull(location, "Location cannot be null");
+		Validate.notNull(flags, "Flags cannot be null");
+
+		Location loc = BukkitAdapter.adapt(location);
+		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		return container.createQuery().queryState(loc, associable, flags);
+	}
+
+	/**
+	 * Gets the effective value of a flag.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param associable object to check for region membership
+	 * @param flag flag to check
+	 * @return effective value
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static <T> T queryValue(@NotNull org.bukkit.Location location, @Nullable RegionAssociable associable, @NotNull Flag<T> flag) {
+		Validate.notNull(location, "Location cannot be null");
+		Validate.notNull(flag, "Flag cannot be null");
+
+		Location loc = BukkitAdapter.adapt(location);
+		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		return container.createQuery().queryValue(loc, associable, flag);
+	}
+
+	// Overloads //
+
+	/**
+	 * Test if the effective value of a flag is {@code ALLOW}.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param player player to check region membership, assumes non-membership if null
+	 * @param flag flag to check
+	 * @return true if the result was {@code ALLOW}
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static boolean test(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, Flags flag) {
+		Validate.notNull(flag, "Flag cannot be null");
+		return test(location, player, (StateFlag) flag.get());
+	}
+
 	/**
 	 * Test if the effective value of a flag is {@code ALLOW}.
 	 *
@@ -182,8 +270,25 @@ public class WorldGuardFlagUtils {
 	 * @return true if the result was {@code ALLOW}
 	 * @see #hasBypass(HasPlayer)
 	 */
-	public static boolean test(HasPlayer player, Flags flag) {
-		return test(player, (StateFlag) flag.get());
+	public static boolean test(@NotNull HasPlayer player, Flags flag) {
+		Validate.notNull(player, "Player cannot be null");
+		Validate.notNull(flag, "Flag cannot be null");
+		return test(player.getPlayer().getLocation(), player, (StateFlag) flag.get());
+	}
+
+	/**
+	 * Test whether the (effective) value for a list of state flags equals {@code ALLOW}.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param player player to check region membership, assumes non-membership if null
+	 * @param flags flags to check
+	 * @return true if the result was {@code ALLOW}
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static boolean test(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, @NotNull StateFlag... flags) {
+		return test(location, getLocalPlayer(player), flags);
 	}
 
 	/**
@@ -197,13 +302,8 @@ public class WorldGuardFlagUtils {
 	 * @see #hasBypass(HasPlayer)
 	 */
 	public static boolean test(@NotNull HasPlayer player, @NotNull StateFlag... flags) {
-		Validate.notNull(flags, "Flag cannot be null");
-
-		Player _player = player.getPlayer();
-		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(_player);
-		Location loc = BukkitAdapter.adapt(_player.getLocation());
-		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		return container.createQuery().testState(loc, localPlayer, flags);
+		Validate.notNull(player, "Player cannot be null");
+		return test(player.getPlayer().getLocation(), player, flags);
 	}
 
 	/**
@@ -215,7 +315,8 @@ public class WorldGuardFlagUtils {
 	 * @param flag flag to check
 	 * @return true if the result was {@code ALLOW}
 	 */
-	public static boolean test(org.bukkit.Location location, Flags flag) {
+	public static boolean test(@NotNull org.bukkit.Location location, @NotNull Flags flag) {
+		Validate.notNull(flag, "Flag cannot be null");
 		return test(location, (StateFlag) flag.get());
 	}
 
@@ -228,101 +329,223 @@ public class WorldGuardFlagUtils {
 	 * @param flags flags to check
 	 * @return true if the result was {@code ALLOW}
 	 */
-	public static boolean test(org.bukkit.Location location, StateFlag... flags) {
-		Validate.notNull(flags, "Flag cannot be null");
-
-		Location loc = BukkitAdapter.adapt(location);
-		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		RegionQuery query = container.createQuery();
-		return query.testState(loc, Associables.constant(Association.OWNER), flags);
+	public static boolean test(@NotNull org.bukkit.Location location, @NotNull StateFlag... flags) {
+		return test(location, Associables.constant(Association.OWNER), flags);
 	}
 
 	/**
-	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
-	 * {@code ALLOW} overrides {@code NONE}.
-	 *
-	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
-	 *
-	 * @param player player to check region membership and location
-	 * @param flag flag to check
-	 * @return effective state
-	 * @see #hasBypass(HasPlayer)
-	 */
-	@Nullable
-	public static State query(HasPlayer player, Flags flag) {
-		return query(player, (StateFlag) flag.get());
-	}
-
-	/**
-	 * Gets the effective state for a list of flags. This follows state rules, where {@code DENY} overrides
-	 * {@code ALLOW} overrides {@code NONE}.
-	 *
-	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
-	 *
-	 * @param player player to check region membership and location
-	 * @param flags flags to check
-	 * @return effective state
-	 * @see #hasBypass(HasPlayer)
-	 */
-	@Nullable
-	public static State query(HasPlayer player, StateFlag... flags) {
-		Validate.notNull(flags, "Flag cannot be null");
-
-		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player.getPlayer());
-		Location loc = BukkitAdapter.adapt(player.getPlayer().getLocation());
-		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		RegionQuery query = container.createQuery();
-		return query.queryState(loc, localPlayer, flags);
-	}
-
-	/**
-	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
-	 * {@code ALLOW} overrides {@code NONE}.
-	 *
-	 * <p>This method assumes it is being run by the owner of a region.</p>
-	 *
-	 * @param location location to check from
-	 * @param flag flag to check
-	 * @return effective state
-	 */
-	@Nullable
-	public static State query(org.bukkit.Location location, Flags flag) {
-		return query(location, (StateFlag) flag.get());
-	}
-
-	/**
-	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
-	 * {@code ALLOW} overrides {@code NONE}.
+	 * Test if the effective value of a flag is {@code ALLOW}.
 	 *
 	 * <p>This method assumes it is being run by the owner of a region.</p>
 	 *
 	 * @param block location to check from
 	 * @param flag flag to check
-	 * @return effective state
+	 * @return true if the result was {@code ALLOW}
 	 */
-	@Nullable
-	public static State query(Block block, Flags flag) {
-		return query(block.getLocation(), (StateFlag) flag.get());
+	public static boolean test(@NotNull Block block, @NotNull Flags flag) {
+		Validate.notNull(block, "Block cannot be null");
+		return test(block.getLocation(), flag);
 	}
 
 	/**
-	 * Gets the effective state for a list of flags. This follows state rules, where {@code DENY} overrides
+	 * Test whether the (effective) value for a list of state flags equals {@code ALLOW}.
+	 *
+	 * <p>This method assumes it is being run by the owner of a region.</p>
+	 *
+	 * @param block location to check from
+	 * @param flags flags to check
+	 * @return true if the result was {@code ALLOW}
+	 */
+	public static boolean test(@NotNull Block block, @NotNull StateFlag... flags) {
+		Validate.notNull(block, "Block cannot be null");
+		return test(block.getLocation(), flags);
+	}
+
+	/**
+	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param player player to check region membership, assumes non-membership if null
+	 * @param flag flag to check
+	 * @return effective state
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static State query(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, Flags flag) {
+		Validate.notNull(flag, "Flag cannot be null");
+		return query(location, player, (StateFlag) flag.get());
+	}
+
+	/**
+	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param player player to check region membership and location
+	 * @param flag flag to check
+	 * @return effective state
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static State query(@NotNull HasPlayer player, Flags flag) {
+		Validate.notNull(player, "Player cannot be null");
+		Validate.notNull(flag, "Flag cannot be null");
+		return query(player.getPlayer().getLocation(), player, (StateFlag) flag.get());
+	}
+
+	/**
+	 * Gets the effective state of a list of flags. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param player player to check region membership, assumes non-membership if null
+	 * @param flags flags to check
+	 * @return effective state
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static State query(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, @NotNull StateFlag... flags) {
+		return query(location, getLocalPlayer(player), flags);
+	}
+
+	/**
+	 * Gets the effective state of a list of flags. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param player player to check region membership and location
+	 * @param flags flags to check
+	 * @return effective state
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static State query(@NotNull HasPlayer player, @NotNull StateFlag... flags) {
+		Validate.notNull(player, "Player cannot be null");
+		return query(player.getPlayer().getLocation(), player, flags);
+	}
+
+	/**
+	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
 	 * {@code ALLOW} overrides {@code NONE}.
 	 *
 	 * <p>This method assumes it is being run by the owner of a region.</p>
 	 *
-	 * @param location location to check from
+	 * @param location location of interaction
+	 * @param flag flags to check
+	 * @return effective state
+	 */
+	public static State query(@NotNull org.bukkit.Location location, @NotNull Flags flag) {
+		Validate.notNull(flag, "Flag cannot be null");
+		return query(location, (StateFlag) flag.get());
+	}
+
+	/**
+	 * Gets the effective state of a list of flags. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * <p>This method assumes it is being run by the owner of a region.</p>
+	 *
+	 * @param location location of interaction
 	 * @param flags flags to check
 	 * @return effective state
 	 */
-	@Nullable
-	public static State query(org.bukkit.Location location, StateFlag... flags) {
-		Validate.notNull(flags, "Flag cannot be null");
+	public static State query(@NotNull org.bukkit.Location location, @NotNull StateFlag... flags) {
+		return query(location, Associables.constant(Association.OWNER), flags);
+	}
 
-		Location loc = BukkitAdapter.adapt(location);
-		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		RegionQuery query = container.createQuery();
-		return query.queryState(loc, Associables.constant(Association.OWNER), flags);
+	/**
+	 * Gets the effective state of a flag. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * <p>This method assumes it is being run by the owner of a region.</p>
+	 *
+	 * @param block location of interaction
+	 * @param flag flags to check
+	 * @return effective state
+	 */
+	public static State query(@NotNull Block block, @NotNull Flags flag) {
+		Validate.notNull(block, "Block cannot be null");
+		return query(block.getLocation(), flag);
+	}
+
+	/**
+	 * Gets the effective state of a list of flags. This follows state rules, where {@code DENY} overrides
+	 * {@code ALLOW} overrides {@code NONE}.
+	 *
+	 * <p>This method assumes it is being run by the owner of a region.</p>
+	 *
+	 * @param block location of interaction
+	 * @param flags flags to check
+	 * @return effective state
+	 */
+	public static State query(@NotNull Block block, @NotNull StateFlag... flags) {
+		Validate.notNull(block, "Block cannot be null");
+		return query(block.getLocation(), flags);
+	}
+
+	/**
+	 * Gets the effective value of a flag.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param player player to check region membership, assumes non-membership if null
+	 * @param flag flag to check
+	 * @return effective value
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static <T> T queryValue(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, Flags flag) {
+		Validate.notNull(flag, "Flag cannot be null");
+		return queryValue(location, player, (Flag<T>) flag.get());
+	}
+
+	/**
+	 * Gets the effective value of a flag.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param player player to check region membership and location
+	 * @param flag flag to check
+	 * @return effective value
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static <T> T queryValue(@NotNull HasPlayer player, Flags flag) {
+		Validate.notNull(player, "Player cannot be null");
+		Validate.notNull(flag, "Flag cannot be null");
+		return queryValue(player.getPlayer().getLocation(), player, (Flag<T>) flag.get());
+	}
+
+	/**
+	 * Gets the effective value of a flag.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param location location of interaction
+	 * @param player player to check region membership, assumes non-membership if null
+	 * @param flag flag to check
+	 * @return effective value
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static <T> T queryValue(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, @NotNull Flag<T> flag) {
+		return queryValue(location, getLocalPlayer(player), flag);
+	}
+
+	/**
+	 * Gets the effective value of a flag.
+	 *
+	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 *
+	 * @param player player to check region membership and location
+	 * @param flag flag to check
+	 * @return effective value
+	 * @see #hasBypass(HasPlayer)
+	 */
+	public static <T> T queryValue(@NotNull HasPlayer player, @NotNull Flag<T> flag) {
+		Validate.notNull(player, "Player cannot be null");
+		return queryValue(player.getPlayer().getLocation(), player, flag);
 	}
 
 	/**
@@ -334,8 +557,8 @@ public class WorldGuardFlagUtils {
 	 * @param flag flag to check
 	 * @return effective value
 	 */
-	@Nullable
-	public static <T> T queryValue(org.bukkit.Location location, Flags flag) {
+	public static <T> T queryValue(@NotNull org.bukkit.Location location, @NotNull Flags flag) {
+		Validate.notNull(flag, "Flag cannot be null");
 		return queryValue(location, (Flag<T>) flag.get());
 	}
 
@@ -348,33 +571,36 @@ public class WorldGuardFlagUtils {
 	 * @param flag flag to check
 	 * @return effective value
 	 */
-	@Nullable
-	public static <T> T queryValue(org.bukkit.Location location, Flag<T> flag) {
-		Validate.notNull(flag, "Flag cannot be null");
-
-		Location loc = BukkitAdapter.adapt(location);
-		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		RegionQuery query = container.createQuery();
-		return query.queryValue(loc, Associables.constant(Association.OWNER), flag);
+	public static <T> T queryValue(@NotNull org.bukkit.Location location, @NotNull Flag<T> flag) {
+		return queryValue(location, Associables.constant(Association.OWNER), flag);
 	}
 
 	/**
 	 * Gets the effective value of a flag.
 	 *
-	 * <p>This method does not check the region bypass permission. That must be done by the calling code.</p>
+	 * <p>This method assumes it is being run by the owner of a region.</p>
 	 *
-	 * @param player player to check region membership and location
+	 * @param block location to check from
 	 * @param flag flag to check
 	 * @return effective value
-	 * @see #hasBypass(HasPlayer)
 	 */
-	@Nullable
-	public static <T> T getValueFor(HasPlayer player, Flag<T> flag) {
-		Player _player = player.getPlayer();
-		LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(_player);
-		com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(_player.getLocation());
-		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		return container.createQuery().queryValue(loc, localPlayer, flag);
+	public static <T> T queryValue(@NotNull Block block, @NotNull Flag<T> flag) {
+		Validate.notNull(block, "Block cannot be null");
+		return queryValue(block.getLocation(), flag);
+	}
+
+	/**
+	 * Gets the effective value of a flag.
+	 *
+	 * <p>This method assumes it is being run by the owner of a region.</p>
+	 *
+	 * @param block location to check from
+	 * @param flag flag to check
+	 * @return effective value
+	 */
+	public static <T> T queryValue(@NotNull Block block, @NotNull Flags flag) {
+		Validate.notNull(block, "Block cannot be null");
+		return queryValue(block.getLocation(), flag);
 	}
 
 	/**
@@ -382,26 +608,70 @@ public class WorldGuardFlagUtils {
 	 * @param player player
 	 * @return if the player bypasses world guard flags
 	 */
-	public static boolean hasBypass(HasPlayer player) {
+	public static boolean hasBypass(@NotNull HasPlayer player) {
+		Validate.notNull(player, "Player cannot be null");
 		Player _player = player.getPlayer();
 		return WorldGuard.getInstance().getPlatform().getSessionManager().hasBypass(WorldGuardPlugin.inst().wrapPlayer(_player), BukkitAdapter.adapt(_player.getWorld()));
 	}
 
 	/**
 	 * Tests if a player can place blocks in their current region(s)
+	 * @param location location of block placement
 	 * @return true if the player can place blocks
 	 */
-	public static boolean canPlace(HasPlayer player) {
-		// TODO: test block location too (requires some rewriting)
-		return hasBypass(player) || test(player, com.sk89q.worldguard.protection.flags.Flags.BUILD, com.sk89q.worldguard.protection.flags.Flags.BLOCK_PLACE);
+	public static boolean canPlace(@NotNull HasPlayer player, @NotNull org.bukkit.Location location) {
+		Validate.notNull(player, "Player cannot be null");
+		Validate.notNull(location, "Location cannot be null");
+		return hasBypass(player) || test(location, player, com.sk89q.worldguard.protection.flags.Flags.BUILD, com.sk89q.worldguard.protection.flags.Flags.BLOCK_PLACE);
+	}
+
+	/**
+	 * Tests if a player can place blocks in their current region(s)
+	 * @param block location of block placement
+	 * @return true if the player can place blocks
+	 */
+	public static boolean canPlace(@NotNull HasPlayer player, @NotNull Block block) {
+		Validate.notNull(block, "Block cannot be null");
+		return canPlace(player, block.getLocation());
+	}
+
+	/**
+	 * Tests if a player can place blocks in their current region(s) at their feet
+	 * @return true if the player can place blocks
+	 */
+	public static boolean canPlace(@NotNull HasPlayer player) {
+		Validate.notNull(player, "Player cannot be null");
+		return canPlace(player, player.getPlayer().getLocation());
 	}
 
 	/**
 	 * Tests if a player can break blocks in their current region(s)
+	 * @param location location of block breaking
 	 * @return true if the player can break blocks
 	 */
-	public static boolean canBreak(HasPlayer player) {
-		return hasBypass(player) || test(player, com.sk89q.worldguard.protection.flags.Flags.BUILD, com.sk89q.worldguard.protection.flags.Flags.BLOCK_BREAK);
+	public static boolean canBreak(@NotNull HasPlayer player, @NotNull org.bukkit.Location location) {
+		Validate.notNull(player, "Player cannot be null");
+		Validate.notNull(location, "Location cannot be null");
+		return hasBypass(player) || test(location, player, com.sk89q.worldguard.protection.flags.Flags.BUILD, com.sk89q.worldguard.protection.flags.Flags.BLOCK_BREAK);
+	}
+
+	/**
+	 * Tests if a player can break blocks in their current region(s)
+	 * @param block location of block breaking
+	 * @return true if the player can break blocks
+	 */
+	public static boolean canBreak(@NotNull HasPlayer player, @NotNull Block block) {
+		Validate.notNull(block, "Location cannot be null");
+		return canBreak(player, block.getLocation());
+	}
+
+	/**
+	 * Tests if a player can break blocks in their current region(s) at their feet
+	 * @return true if the player can break blocks
+	 */
+	public static boolean canBreak(@NotNull HasPlayer player) {
+		Validate.notNull(player, "Player cannot be null");
+		return canBreak(player, player.getPlayer().getLocation());
 	}
 
 }
