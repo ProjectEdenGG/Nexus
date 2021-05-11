@@ -125,62 +125,68 @@ public class PVPCommand extends CustomCommand implements Listener {
 			event.setCancelled(true);
 	}
 
+	@Nullable
+	public PVP getDamageCause(EntityDamageEvent event) {
+		if (event == null) return null;
+		if (event.getEntity() instanceof Player && ((Player) event.getEntity()).getKiller() != null)
+			return service.get(((Player) event.getEntity()).getKiller());
+
+		PVP attacker = null;
+		Projectile projectile;
+		if (event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent) event;
+			if (entityEvent.getDamager() instanceof Player) {
+				attacker = service.get(entityEvent.getDamager());
+			} else if (entityEvent.getDamager() instanceof Projectile) {
+				projectile = (Projectile) entityEvent.getDamager();
+				if (projectile.getShooter() instanceof Player)
+					attacker = service.get((Player) projectile.getShooter());
+			} else if (entityEvent.getDamager() instanceof EnderCrystal) {
+				EnderCrystal crystal = (EnderCrystal) entityEvent.getDamager();
+				// find last user to damage the end crystal
+				EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
+				if (crystalDamage == null) return null;
+				if (!(crystalDamage instanceof EntityDamageByEntityEvent)) return null;
+				Entity damager = ((EntityDamageByEntityEvent) crystalDamage).getDamager();
+				if (damager instanceof Player)
+					attacker = service.get(damager);
+					// check if last damager was a projectile shot by a player
+				else if (damager instanceof Projectile) {
+					projectile = (Projectile) damager;
+					if (projectile.getShooter() != null && projectile.getShooter() instanceof Player)
+						attacker = service.get((Player) projectile.getShooter());
+				}
+			} else if (entityEvent.getDamager() instanceof TNTPrimed) {
+				TNTPrimed tnt = (TNTPrimed) entityEvent.getDamager();
+				if (tnt.getSource() instanceof Player)
+					attacker = service.get(tnt.getSource());
+			}
+		} else if (event instanceof EntityDamageByBlockEvent) {
+			Location location = ((EntityDamageByBlockEvent) event).getLocation();
+			if (location == null || event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || !(event.getEntity() instanceof Player)) return null;
+
+			for (Map.Entry<UUID, Location> entry : bedLocations.entrySet()) {
+				UUID uuid = entry.getKey();
+				Location location1 = entry.getValue();
+
+				if (!LocationUtils.blockLocationsEqual(location, location1)) continue;
+				if (uuid.equals(event.getEntity().getUniqueId())) continue;
+				attacker = service.get(uuid);
+				break;
+			}
+		}
+		return attacker;
+	}
+
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
 		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
 		if (!(event.getEntity() instanceof Player)) return;
 		PVP victim = service.get(event.getEntity());
-
-		PVP attacker = null;
-		Projectile projectile;
-
-		if (event.getDamager() instanceof Player) {
-			attacker = service.get(event.getDamager());
-		} else if (event.getDamager() instanceof Projectile) {
-			projectile = (Projectile) event.getDamager();
-			if (projectile.getShooter() instanceof Player)
-				attacker = service.get((Player) projectile.getShooter());
-		} else if (event.getDamager() instanceof EnderCrystal) {
-			EnderCrystal crystal = (EnderCrystal) event.getDamager();
-			// find last user to damage the end crystal
-			EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
-			if (crystalDamage == null) return;
-			if (!(crystalDamage instanceof EntityDamageByEntityEvent)) return;
-			Entity damager = ((EntityDamageByEntityEvent) crystalDamage).getDamager();
-			if (damager instanceof Player)
-				attacker = service.get(damager);
-			// check if last damager was a projectile shot by a player
-			else if (damager instanceof Projectile) {
-				projectile = (Projectile) damager;
-				if (projectile.getShooter() != null && projectile.getShooter() instanceof Player)
-					attacker = service.get((Player) projectile.getShooter());
-			}
-		} else if (event.getDamager() instanceof TNTPrimed) {
-			TNTPrimed tnt = (TNTPrimed) event.getDamager();
-			if (tnt.getSource() instanceof Player)
-				attacker = service.get(tnt.getSource());
-		}
+		PVP attacker = getDamageCause(event);
 
 		processAttack(event, victim, attacker);
-	}
-
-	@EventHandler
-	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
-		if (event.getEntity().getKiller() == null) return;
-		PVP victim = service.get(event.getEntity());
-		if (!victim.isEnabled()) return;
-		// For some reason, spigots PlayerDeathEvent#setKeepInventory() method
-		// duplicates the items, and md_5 does not see this as a bug
-		// We must clear the drops as well to keep them from duping
-		if (victim.isKeepInventory()) {
-			event.setKeepInventory(true);
-			event.getDrops().clear();
-			event.setKeepLevel(true);
-			event.setDroppedExp(0);
-		} else
-			event.setKeepInventory(false);
 	}
 
 	@EventHandler
@@ -195,12 +201,25 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onDamageByBlock(EntityDamageByBlockEvent event) {
-		if (event.getLocation() == null || event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || !(event.getEntity() instanceof Player)) return;
-		bedLocations.forEach((uuid, location) -> {
-			if (!LocationUtils.blockLocationsEqual(location, event.getLocation())) return;
-			if (uuid.equals(event.getEntity().getUniqueId())) return;
-			processAttack(event, service.get(event.getEntity()), service.get(uuid));
-		});
+		processAttack(event, service.get(event.getEntity()), getDamageCause(event));
+	}
+
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (getDamageCause(event.getEntity().getLastDamageCause()) == null) return;
+		PVP victim = service.get(event.getEntity());
+		if (!victim.isEnabled()) return;
+		// For some reason, spigots PlayerDeathEvent#setKeepInventory() method
+		// duplicates the items, and md_5 does not see this as a bug
+		// We must clear the drops as well to keep them from duping
+		if (victim.isKeepInventory()) {
+			event.setKeepInventory(true);
+			event.getDrops().clear();
+			event.setKeepLevel(true);
+			event.setDroppedExp(0);
+		} else
+			event.setKeepInventory(false);
 	}
 
 }
