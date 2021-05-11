@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactab
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -22,11 +23,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Permission("group.staff")
 @Aliases("bf21")
 public class BearFair21Command extends CustomCommand {
 	ClientsideContentService contentService = new ClientsideContentService();
@@ -38,30 +39,35 @@ public class BearFair21Command extends CustomCommand {
 		super(event);
 	}
 
+	@Permission("group.staff")
 	@Path
 	void warp() {
 		runCommand("bearfair21warp");
 	}
 
-	@Path("strengthTest")
 	@Permission("group.admin")
+	@Path("strengthTest")
 	void strengthTest() {
 		commandBlock();
 		Interactables.strengthTest();
 	}
 
+	@Permission("group.admin")
 	@Path("seeker")
 	void seeker() {
 		send("Find the crimson button");
 		Seeker.addPlayer(player());
 	}
 
+
+	@Permission("group.admin")
 	@Path("rides enable")
 	void ridesEnable() {
 		for (String ride : Fairgrounds.rides)
 			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " enable");
 	}
 
+	@Permission("group.admin")
 	@Path("rides disable")
 	void ridesDisable() {
 		for (String ride : Fairgrounds.rides)
@@ -70,27 +76,38 @@ public class BearFair21Command extends CustomCommand {
 
 	//
 
-	@Path("clientside clearUser")
 	@Confirm
-	void clientsideClear() {
+	@Permission("group.admin")
+	@Path("clientside clearUser [category]")
+	void clientsideClear(ContentCategory category) {
 		for (BearFair21User user : userService.getAll()) {
-			user.getClientsideLocations().clear();
+			if (category == null)
+				user.getClientsideLocations().clear();
+			else {
+				for (Content content : contentList) {
+					if (content.getCategory().equals(category))
+						user.getClientsideLocations().remove(content.getLocation());
+				}
+			}
+
 			userService.save(user);
 		}
 	}
 
-	@Path("clientside add <category>")
-	void clientsideAddAll(ContentCategory category) {
+	@Permission("group.admin")
+	@Path("clientside add <category> [player]")
+	void clientsideAddAll(ContentCategory category, @Arg("self") Player player) {
 
-		BearFair21User user = userService.get(uuid());
+		BearFair21User user = userService.get(player.getUniqueId());
 		for (Content content : contentList) {
 			if (content.getCategory().equals(category))
 				user.getClientsideLocations().add(content.getLocation());
 		}
 		userService.save(user);
-		send("user can now see " + user.getClientsideLocations().size() + " locations");
+		send(player.getName() + " can now see " + user.getClientsideLocations().size() + " locations");
 	}
 
+	@Permission("group.admin")
 	@Path("clientside new <category>")
 	void clientsideSelect(ContentCategory category) {
 		Entity entity = getTargetEntity();
@@ -109,6 +126,7 @@ public class BearFair21Command extends CustomCommand {
 		}
 	}
 
+	@Permission("group.admin")
 	@Path("clientside list")
 	void clientsideList() {
 		List<Content> food = new ArrayList<>();
@@ -149,6 +167,7 @@ public class BearFair21Command extends CustomCommand {
 		send(json("&e&l[Click to Open]").url(url).hover(url));
 	}
 
+	@Permission("group.admin")
 	@Path("clientside remove")
 	void clientsideRemove() {
 		int count = 0;
