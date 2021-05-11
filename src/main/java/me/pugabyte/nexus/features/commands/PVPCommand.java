@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import eden.utils.TimeUtils.Time;
 import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import lombok.NoArgsConstructor;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -11,6 +12,7 @@ import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.models.pvp.PVP;
 import me.pugabyte.nexus.models.pvp.PVPService;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -18,18 +20,27 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -189,14 +200,45 @@ public class PVPCommand extends CustomCommand implements Listener {
 		processAttack(event, victim, attacker);
 	}
 
+	private void saveBed(HasPlayer player, Block block) {
+		UUID key = player.getPlayer().getUniqueId();
+		Location value = block.getLocation();
+		bedLocations.put(key, value);
+		Tasks.waitAsync(1, () -> bedLocations.remove(key, value));
+		PlayerUtils.Dev.LEXI.send("bed saved");
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onFailedRespawnAnchorEvent(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block))
+			return;
+
+		if (!block.getType().equals(Material.RESPAWN_ANCHOR))
+			return;
+
+		if (event.useInteractedBlock() == Event.Result.DENY)
+			return;
+
+		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+			return;
+
+		RespawnAnchor respawnAnchor = (RespawnAnchor) block.getBlockData();
+		ItemStack heldItem = event.getItem();
+		if ((respawnAnchor.getCharges() > 0 && (heldItem == null || heldItem.getType() != Material.GLOWSTONE))
+				|| respawnAnchor.getCharges() == respawnAnchor.getMaximumCharges()) {
+
+			if (WorldGroup.SURVIVAL.contains(block.getWorld()))
+				saveBed(event, block);
+			else
+				event.setCancelled(true);
+		}
+	}
+
 	@EventHandler
 	public void onBedFailure(PlayerBedFailEnterEvent event) {
-		if (event.getFailReason() == PlayerBedFailEnterEvent.FailReason.NOT_POSSIBLE_HERE) {
-			UUID key = event.getPlayer().getUniqueId();
-			Location value = LocationUtils.getCenteredRotationlessLocation(event.getBed().getLocation());
-			bedLocations.put(key, value);
-			Tasks.waitAsync(1, () -> bedLocations.remove(key, value));
-		}
+		if (event.getFailReason() == PlayerBedFailEnterEvent.FailReason.NOT_POSSIBLE_HERE)
+			saveBed(event, event.getBed());
 	}
 
 	@EventHandler

@@ -97,32 +97,6 @@ public class Misc implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onRespawnAnchorInteract(PlayerInteractEvent event) {
-		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block))
-			return;
-
-		if (!block.getType().equals(Material.RESPAWN_ANCHOR))
-			return;
-
-		if (event.isCancelled())
-			return;
-
-		World.Environment environment = block.getWorld().getEnvironment();
-		if (environment.equals(World.Environment.NETHER))
-			return;
-
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-			return;
-
-		RespawnAnchor respawnAnchor = (RespawnAnchor) block.getBlockData();
-		ItemStack heldItem = event.getItem();
-		if ((respawnAnchor.getCharges() > 0 && (heldItem == null || heldItem.getType() != Material.GLOWSTONE))
-				|| respawnAnchor.getCharges() == respawnAnchor.getMaximumCharges())
-			event.setCancelled(true);
-	}
-
 	@EventHandler
 	public void onHorseLikeDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof AbstractHorse)
