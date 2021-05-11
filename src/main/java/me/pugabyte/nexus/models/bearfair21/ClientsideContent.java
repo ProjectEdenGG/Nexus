@@ -52,6 +52,8 @@ public class ClientsideContent implements PlayerOwnedObject {
 	@AllArgsConstructor
 	public static class Content {
 		private Location location;
+		private ContentCategory category;
+		//
 		private Material material;
 		private ItemStack itemStack;
 		// item frame specific
@@ -65,5 +67,14 @@ public class ClientsideContent implements PlayerOwnedObject {
 		public Boolean isItemFrame() {
 			return this.material.equals(Material.ITEM_FRAME);
 		}
+
+		public enum ContentCategory {
+			FOOD,
+			BALLOON,
+			FESTOON,
+			BANNER
+		}
 	}
+
+
 }

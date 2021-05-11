@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Fairgrounds;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.ClientsideContentManager;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
@@ -14,6 +13,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
+import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -23,12 +23,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Permission("group.staff")
 @Aliases("bf21")
 public class BearFair21Command extends CustomCommand {
 	ClientsideContentService contentService = new ClientsideContentService();
+	BearFair21UserService userService = new BearFair21UserService();
 	ClientsideContent clientsideContent = contentService.get();
 	List<Content> contentList = clientsideContent.getContentList();
 
@@ -66,75 +68,119 @@ public class BearFair21Command extends CustomCommand {
 			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " disable");
 	}
 
-	@Path("clientside <boolean>")
-	void clientside(boolean bool) {
-		ClientsideContentManager.active = bool;
-		send("Set ClientsideContentManager.active to " + bool);
-	}
+	//
 
-	@Path("clientside clear")
+	@Path("clientside clearUser")
 	@Confirm
 	void clientsideClear() {
-		contentService.clearCache();
-		contentService.deleteAll();
-		contentService.clearCache();
-		send("deleted all");
-
-		BearFair21UserService service = new BearFair21UserService();
-		for (BearFair21User user : service.getAll()) {
+		for (BearFair21User user : userService.getAll()) {
 			user.getClientsideLocations().clear();
-			service.save(user);
+			userService.save(user);
 		}
-
 	}
 
-	@Path("clientside addAll")
-	void clientsideAddAll() {
-		BearFair21UserService service = new BearFair21UserService();
-		BearFair21User user = service.get(uuid());
+	@Path("clientside add <category>")
+	void clientsideAddAll(ContentCategory category) {
+
+		BearFair21User user = userService.get(uuid());
 		for (Content content : contentList) {
-			user.getClientsideLocations().add(content.getLocation());
+			if (content.getCategory().equals(category))
+				user.getClientsideLocations().add(content.getLocation());
 		}
-		service.save(user);
+		userService.save(user);
 		send("user can now see " + user.getClientsideLocations().size() + " locations");
 	}
 
-	@Path("clientside list")
-	void clientsideList() {
-		for (Content content : contentList) {
-			send(StringUtils.getShortLocationString(content.getLocation()));
-		}
-	}
-
-	@Path("clientside add")
-	void clientsideSelect() {
+	@Path("clientside new <category>")
+	void clientsideSelect(ContentCategory category) {
 		Entity entity = getTargetEntity();
 		if (entity == null) {
 			Block block = getTargetBlock();
 			if (BlockUtils.isNullOrAir(block))
 				error("Entity is null && Block is null or air");
 
-			setupBlockContent(block);
+			setupBlockContent(block, category);
 			send("Added block: " + block.getType());
 		} else if (entity instanceof ItemFrame) {
-			setupItemFrameContent((ItemFrame) entity);
+			setupItemFrameContent((ItemFrame) entity, category);
 			send("Added item frame");
 		} else {
 			error("That's not a supported entity type: " + entity.getType().name());
 		}
 	}
 
-	private void setupBlockContent(Block block) {
+	@Path("clientside list")
+	void clientsideList() {
+		List<Content> food = new ArrayList<>();
+		List<Content> balloons = new ArrayList<>();
+		List<Content> festoon = new ArrayList<>();
+		List<Content> banners = new ArrayList<>();
+		for (Content content : contentList) {
+			switch (content.getCategory()) {
+				case FOOD -> food.add(content);
+				case BALLOON -> balloons.add(content);
+				case FESTOON -> festoon.add(content);
+				case BANNER -> banners.add(content);
+			}
+		}
+
+		send("Food: " + food.size());
+		send("Balloons: " + balloons.size());
+		send("Festoon: " + festoon.size());
+		send("Banner: " + banners.size());
+
+		List<Content> contentList = new ArrayList<>();
+		contentList.addAll(food);
+		contentList.addAll(balloons);
+		contentList.addAll(festoon);
+		contentList.addAll(banners);
+
+		StringBuilder string = new StringBuilder();
+		for (Content content : contentList) {
+			string.append("\n")
+					.append(StringUtils.camelCase(content.getCategory().name()))
+					.append(": ")
+					.append(StringUtils.camelCase(content.getMaterial().name()))
+					.append(" - ")
+					.append(StringUtils.getShortLocationString(content.getLocation()));
+		}
+
+		String url = StringUtils.paste(string.toString());
+		send(json("&e&l[Click to Open]").url(url).hover(url));
+	}
+
+	@Path("clientside remove")
+	void clientsideRemove() {
+		int count = 0;
+		for (Content content : contentList) {
+			if (content.getLocation().equals(location().toBlockLocation())) {
+				contentList.remove(content);
+				count++;
+			}
+		}
+
+		if (count == 0)
+			error("There is no content at " + StringUtils.getShortLocationString(location().toBlockLocation()));
+
+		clientsideContent.setContentList(contentList);
+		contentService.save(clientsideContent);
+	}
+
+	private void setupBlockContent(Block block, ContentCategory category) {
 		ClientsideContent.Content content = new ClientsideContent.Content();
-		content.setMaterial(block.getType());
 		content.setLocation(block.getLocation().toBlockLocation());
+		content.setCategory(category);
+		//
+		content.setMaterial(block.getType());
 		addContent(content);
 	}
 
-	private void setupItemFrameContent(ItemFrame itemFrame) {
+	private void setupItemFrameContent(ItemFrame itemFrame, ContentCategory category) {
 		ClientsideContent.Content content = new ClientsideContent.Content();
-		content.setMaterial(Material.ITEM_FRAME);
 		content.setLocation(itemFrame.getLocation().toBlockLocation());
+		content.setCategory(category);
+		//
+		content.setMaterial(Material.ITEM_FRAME);
 		content.setItemStack(itemFrame.getItem());
 		content.setBlockFace(itemFrame.getFacing());
 		content.setRotation(itemFrame.getRotation());
