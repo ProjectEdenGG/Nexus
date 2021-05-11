@@ -11,7 +11,7 @@ import me.pugabyte.nexus.models.autotorch.AutoTorchService;
 import me.pugabyte.nexus.models.autotorch.AutoTorchUser;
 
 @NoArgsConstructor
-@Permission("automaticinventory.autotorch")
+@Permission("nexus.autotorch")
 public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
 
