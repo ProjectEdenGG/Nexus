@@ -217,7 +217,7 @@ public enum FishingLoot {
 		if (this.getRegion() == null)
 			return true;
 
-		return BearFair21.getWGUtils().isInRegion(location, this.getRegion());
+		return BearFair21.getWGUtils().isInRegion(location, BearFair21.getRegion() + "_" + this.getRegion());
 	}
 
 	private boolean yValueApplies(Player player) {
@@ -261,7 +261,7 @@ public enum FishingLoot {
 		return switch (category) {
 			case FISH -> "&7Fish";
 			case UNIQUE -> "&7Unique";
-			case TREASURE -> "&7Treasure";
+			case TREASURE -> "";
 			case JUNK -> "&7Trash";
 		};
 	}
@@ -282,8 +282,8 @@ public enum FishingLoot {
 	public enum FishingLootCategory {
 		FISH(50.0),
 		JUNK(25.0),
-		UNIQUE(15.0),
-		TREASURE(10.0);
+		UNIQUE(17.0),
+		TREASURE(8.0);
 
 		double weight;
 
