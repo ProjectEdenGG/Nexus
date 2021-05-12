@@ -19,6 +19,7 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -27,6 +28,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Aliases("bf21")
 public class BearFair21Command extends CustomCommand {
@@ -80,18 +82,25 @@ public class BearFair21Command extends CustomCommand {
 	@Permission("group.admin")
 	@Path("clientside clearUser [category]")
 	void clientsideClear(ContentCategory category) {
-		for (BearFair21User user : userService.getAll()) {
-			if (category == null)
-				user.getClientsideLocations().clear();
-			else {
-				for (Content content : contentList) {
-					if (content.getCategory().equals(category))
-						user.getClientsideLocations().remove(content.getLocation());
+		BearFair21User user = userService.get(uuid());
+		int count = 0;
+		if (category == null) {
+			user.getClientsideLocations().clear();
+			send("removed all locations");
+			return;
+		} else {
+			Set<Location> locations = user.getClientsideLocations();
+			for (Content content : contentList) {
+				if (content.getCategory().equals(category)) {
+					locations.remove(content.getLocation());
+					count++;
 				}
 			}
-
-			userService.save(user);
+			user.setClientsideLocations(locations);
 		}
+
+		userService.save(user);
+		send("removed " + count + " locations");
 	}
 
 	@Permission("group.admin")
