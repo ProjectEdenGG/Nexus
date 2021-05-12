@@ -22,7 +22,7 @@ public enum TrashLoot {
 	SOGGY_NEWSPAPER(Material.PAPER, Material.STRING),
 	DRIFTWOOD(Material.STICK, Material.BONE_MEAL),
 	SEAWEED(Material.GREEN_DYE, Material.BONE_MEAL),
-	TREASURE(Material.GOLD_NUGGET, Material.GOLD_NUGGET, Material.LEATHER, Material.BONE_MEAL);
+	TREASURE(Material.GOLD_NUGGET);
 
 	List<Material> materials;
 
@@ -51,7 +51,6 @@ public enum TrashLoot {
 
 		return null;
 	}
-
 
 	private ItemStack getItemStack() {
 		return new ItemBuilder(RandomUtils.randomElement(this.materials)).build();
