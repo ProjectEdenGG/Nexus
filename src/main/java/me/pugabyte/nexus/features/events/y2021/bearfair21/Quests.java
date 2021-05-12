@@ -59,7 +59,7 @@ public class Quests implements Listener {
 			return null;
 
 		Player player = event.getPlayer();
-		if (BearFair21.isAtBearFair(player))
+		if (!BearFair21.isAtBearFair(player))
 			return null;
 
 		Block block = event.getClickedBlock();
