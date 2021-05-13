@@ -108,10 +108,12 @@ public class BearFair21Command extends CustomCommand {
 	void clientsideAddAll(ContentCategory category, @Arg("self") Player player) {
 
 		BearFair21User user = userService.get(player.getUniqueId());
+		Set<Location> locations = user.getClientsideLocations();
 		for (Content content : contentList) {
 			if (content.getCategory().equals(category))
-				user.getClientsideLocations().add(content.getLocation());
+				locations.add(content.getLocation());
 		}
+		user.setClientsideLocations(locations);
 		userService.save(user);
 		send(player.getName() + " can now see " + user.getClientsideLocations().size() + " locations");
 	}
