@@ -14,6 +14,7 @@ import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -36,6 +37,8 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Async
 	@Cooldown(value = @Part(value = Time.SECOND, x = 30), bypass = "group.admin")
 	void rtp() {
+		if (world().getEnvironment() != Environment.NORMAL)
+			error("You must be in a survival overworld to run this command");
 		if (!Arrays.asList("world", "survival", "resource").contains(world().getName()))
 			error("You must be in the survival world to run this command");
 
