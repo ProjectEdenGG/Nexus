@@ -22,7 +22,6 @@ public class Merchants {
 	public static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET);
 	public static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT);
 	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK);
-	public static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").amount(1);
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
@@ -33,19 +32,19 @@ public class Merchants {
 		if (Utils.isNullOrEmpty(trades))
 			return;
 
-		new MerchantBuilder(StringUtils.camelCase(bfMerchant.name()))
+		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getName()))
 				.trades(trades)
 				.open(player);
 	}
 
 	public enum BFMerchant {
-		ARTIST(2657) {
+		ARTIST("Sage", 2657) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return null;
 			}
 		},
-		BAKER(2659) {
+		BAKER("Rye", 2659) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -55,7 +54,7 @@ public class Merchants {
 				}};
 			}
 		},
-		BARTENDER(2655) {
+		BARTENDER("Cosmo", 2655) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -71,7 +70,7 @@ public class Merchants {
 				}};
 			}
 		},
-		BLACKSMITH(2656) {
+		BLACKSMITH("Alvor", 2656) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -84,7 +83,7 @@ public class Merchants {
 				}};
 			}
 		},
-		BOTANIST(2661) {
+		BOTANIST("Fern", 2661) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -112,7 +111,7 @@ public class Merchants {
 				}};
 			}
 		},
-		BREWER(2662) {
+		BREWER("Charlie", 2662) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -122,7 +121,7 @@ public class Merchants {
 				}};
 			}
 		},
-		COLLECTOR(2750) {
+		COLLECTOR("Pluto", 2750) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -151,7 +150,7 @@ public class Merchants {
 				}};
 			}
 		},
-		FISHERMAN(2653) {
+		FISHERMAN("Gage", 2653) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -161,13 +160,13 @@ public class Merchants {
 				}};
 			}
 		},
-		INVENTOR(2660) {
+		INVENTOR("Joshua", 2660) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return null;
 			}
 		},
-		PASTRY_CHEF(2654) {
+		PASTRY_CHEF("Maple", 2654) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -180,7 +179,7 @@ public class Merchants {
 				}};
 			}
 		},
-		SORCERER(2658) {
+		SORCERER("Lucian", 2658) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -192,9 +191,13 @@ public class Merchants {
 		};
 
 		@Getter
+		private final String name;
+		@Getter
 		private final int npcId;
 
-		BFMerchant(int npcId) {
+
+		BFMerchant(String name, int npcId) {
+			this.name = name;
 			this.npcId = npcId;
 		}
 

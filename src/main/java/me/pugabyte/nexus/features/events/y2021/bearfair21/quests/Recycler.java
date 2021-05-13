@@ -6,6 +6,8 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.TrashLoot;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -40,6 +42,7 @@ public class Recycler implements Listener {
 	private static final String title = "&aRecycler";
 	private static final Location composterLoc = new Location(BearFair21.getWorld(), 14, 138, -146);
 	private static final Location soundLoc = new Location(BearFair21.getWorld(), 12, 136, -145);
+	private static final BearFair21UserService userService = new BearFair21UserService();
 	private static boolean active = false;
 
 	public Recycler() {
@@ -100,12 +103,16 @@ public class Recycler implements Listener {
 			return;
 		}
 
-		recycle(player, trash);
+		recycle(userService.get(player), trash);
 	}
 
-	private void recycle(Player player, List<ItemStack> trash) {
-		int count = getCount(trash);
+	private void recycle(BearFair21User user, List<ItemStack> trash) {
 		active = true;
+		int count = getCount(trash);
+
+		user.addRecycledItems(count);
+		userService.save(user);
+
 		AtomicInteger wait = new AtomicInteger(0);
 		Block composter = composterLoc.getBlock();
 		Levelled levelled = (Levelled) composter.getBlockData();
@@ -165,12 +172,12 @@ public class Recycler implements Listener {
 		Tasks.wait(wait.addAndGet(10), () -> {
 			List<ItemStack> rewards = new ArrayList<>();
 			for (ItemStack itemStack : trash) {
-				List<ItemStack> trashLoot = TrashLoot.from(player, itemStack);
+				List<ItemStack> trashLoot = TrashLoot.from(user.getPlayer(), itemStack);
 				if (trashLoot != null && !trashLoot.isEmpty())
 					rewards.addAll(trashLoot);
 			}
 
-			PlayerUtils.giveItems(player, rewards);
+			PlayerUtils.giveItems(user.getPlayer(), rewards);
 
 			active = false;
 		});

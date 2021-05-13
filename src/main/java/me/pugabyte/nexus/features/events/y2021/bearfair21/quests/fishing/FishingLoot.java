@@ -281,7 +281,7 @@ public enum FishingLoot {
 	@AllArgsConstructor
 	public enum FishingLootCategory {
 		FISH(50.0),
-		JUNK(25.0),
+		JUNK(JunkWeight.MAX.getWeight()),
 		UNIQUE(17.0),
 		TREASURE(8.0);
 
@@ -300,6 +300,18 @@ public enum FishingLoot {
 		DAY,
 		NIGHT,
 		BOTH
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum JunkWeight {
+		MAX(25.0),
+		EIGHTY_PERCENT(20.0),
+		SIXTY_PERCENT(15.0),
+		MIN(10.0);
+
+		double weight;
+
 	}
 
 }

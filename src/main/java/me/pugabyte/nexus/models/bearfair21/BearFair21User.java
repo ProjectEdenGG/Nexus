@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.JunkWeight;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Location;
@@ -37,7 +38,11 @@ public class BearFair21User implements PlayerOwnedObject {
 	public transient static final int DAILY_SOURCE_POINTS = 5;
 	public transient static final int DAILY_SOURCE_MAX = 5;
 	private Map<BF21PointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
+	// Quest Stuff
 	private Set<Location> clientsideLocations = new HashSet<>();
+	private JunkWeight junkWeight = JunkWeight.MAX;
+	private int recycledItems = 0;
+	private Set<Integer> metNPCs = new HashSet<>();
 	//
 
 	public void giveDailyPoints(BF21PointSource source) {
@@ -67,6 +72,11 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	public void givePoints(int points) {
 		send("TODO BF21: +" + points);
+	}
+
+	public void addRecycledItems(int count) {
+		this.recycledItems += count;
+		// TODO BF21: Decrease user junkWeight depending on their recycled items
 	}
 
 	public enum BF21PointSource {
