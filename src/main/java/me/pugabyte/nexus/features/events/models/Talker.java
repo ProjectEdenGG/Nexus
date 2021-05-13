@@ -13,17 +13,19 @@ import static eden.utils.StringUtils.camelCase;
 
 public class Talker {
 	public static void sendScript(Player player, TalkingNPC talker) {
-		sendScript(player, talker, talker.getScript());
+		sendScript(player, talker, talker.getScript(player));
 	}
 
 	public static void sendScript(Player player, TalkingNPC talker, List<String> script) {
-		if (script == null) return;
+		if (script == null || script.isEmpty())
+			return;
+
 		AtomicReference<String> npcName = new AtomicReference<>("");
+		npcName.set(camelCase(talker.getName().replaceAll("_", " ")));
+		npcName.set(npcName.get().replaceAll("[0-9]+", ""));
 
 		AtomicInteger wait = new AtomicInteger(0);
 		script.forEach(line -> {
-			npcName.set(camelCase(talker.name().replaceAll("_", " ")));
-			npcName.set(npcName.get().replaceAll("[0-9]+", ""));
 			if (line.toLowerCase().matches("^wait \\d+$"))
 				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 			else {
@@ -34,7 +36,7 @@ public class Talker {
 				}
 				String message = "&3" + npcName.get() + " &7> &f" + line;
 				Tasks.wait(wait.get(), () -> {
-					PlayerUtils.send(message, player);
+					PlayerUtils.send(player, message);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 				});
 			}
@@ -42,7 +44,7 @@ public class Talker {
 	}
 
 	public interface TalkingNPC {
-		String name();
+		String getName();
 
 		int getNpcId();
 

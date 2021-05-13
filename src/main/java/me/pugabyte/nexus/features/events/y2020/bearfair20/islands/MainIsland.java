@@ -372,6 +372,11 @@ public class MainIsland implements Listener, BearFairIsland {
 		@Getter
 		private final List<String> script;
 
+		@Override
+		public String getName() {
+			return this.name();
+		}
+
 		MainNPCs(int npcId) {
 			this.npcId = npcId;
 			this.script = new ArrayList<>();

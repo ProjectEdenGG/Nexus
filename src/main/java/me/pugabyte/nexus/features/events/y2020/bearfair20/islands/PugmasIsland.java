@@ -246,6 +246,11 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		@Getter
 		private final List<String> script;
 
+		@Override
+		public String getName() {
+			return this.name();
+		}
+
 		PugmasNPCs(int npcId) {
 			this.npcId = npcId;
 			this.script = new ArrayList<>();
