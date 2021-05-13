@@ -90,10 +90,12 @@ public class ClientsideContentManager implements Listener {
 	@EventHandler
 	public void onLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(player))
-			return;
+		Tasks.wait(1, () -> {
+			if (!BearFair21.isAtBearFair(player))
+				return;
 
-		sendSpawnItemFrames(player);
+			sendSpawnItemFrames(player);
+		});
 	}
 
 	private static void sendSpawnItemFrames(Player player) {
