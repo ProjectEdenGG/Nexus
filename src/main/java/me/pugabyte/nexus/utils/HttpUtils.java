@@ -10,6 +10,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSink;
 import okio.Okio;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -26,6 +28,11 @@ public class HttpUtils {
 				.map(entry -> encode(entry.getKey()) + "=" + encode(entry.getValue()))
 				.reduce((p1, p2) -> p1 + "&" + p2)
 				.orElse("");
+	}
+
+	@NotNull
+	public static String unescapeHtml(String html) {
+		return StringEscapeUtils.unescapeHtml(html).replaceAll("&apos;", "'"); // it doesnt know what &apos; is??
 	}
 
 	public static String encode(String parameter) {

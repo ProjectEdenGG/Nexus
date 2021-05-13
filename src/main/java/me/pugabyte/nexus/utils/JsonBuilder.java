@@ -464,7 +464,7 @@ public class JsonBuilder implements ComponentLike {
 	 */
 	@NotNull @Contract("-> this")
 	public JsonBuilder newline() {
-		return newline(true);
+		return newline(false);
 	}
 
 	/**
