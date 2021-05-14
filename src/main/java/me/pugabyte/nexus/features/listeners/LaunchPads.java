@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -145,7 +146,7 @@ public class LaunchPads implements Listener {
 				}
 
 				if (player.isOnGround()) {
-					Tasks.wait(5, () -> {
+					Tasks.wait(Time.SECOND, () -> {
 						if (player.isOnGround()) {
 							player.sendMessage("");
 							player.sendMessage("Ending launch because:");
