@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static eden.utils.StringUtils.camelCase;
-
 public class Talker {
 	public static void sendScript(Player player, TalkingNPC talker) {
 		sendScript(player, talker, talker.getScript(player));
@@ -20,10 +18,7 @@ public class Talker {
 		if (script == null || script.isEmpty())
 			return;
 
-		AtomicReference<String> npcName = new AtomicReference<>("");
-		npcName.set(camelCase(talker.getName().replaceAll("_", " ")));
-		npcName.set(npcName.get().replaceAll("[0-9]+", ""));
-
+		AtomicReference<String> npcName = new AtomicReference<>(talker.getName());
 		AtomicInteger wait = new AtomicInteger(0);
 		script.forEach(line -> {
 			if (line.toLowerCase().matches("^wait \\d+$"))

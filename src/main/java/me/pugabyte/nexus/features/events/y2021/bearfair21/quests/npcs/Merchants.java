@@ -3,8 +3,11 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming.FarmingLoot;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
+import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.MerchantBuilder;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -41,7 +44,13 @@ public class Merchants {
 		ARTIST("Sage", 2657) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
-				return null;
+				return new ArrayList<>() {{
+					for (Material material : MaterialTag.DYES.getValues()) {
+						add(new TradeBuilder()
+								.result(goldNugget.clone().amount(1))
+								.ingredient(new ItemBuilder(material).amount(8)));
+					}
+				}};
 			}
 		},
 		BAKER("Rye", 2659) {
@@ -86,39 +95,13 @@ public class Merchants {
 		BOTANIST("Fern", 2661) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
-				return new ArrayList<>() {{
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.MELON).amount(8)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(12)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.SUGAR_CANE).amount(48)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.POTATO).amount(64)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.CARROT).amount(64)));
-				}};
+				return FarmingLoot.getTrades();
 			}
 		},
 		BREWER("Charlie", 2662) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
-				return new ArrayList<>() {{
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(2))
-							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(12)));
-				}};
+				return null;
 			}
 		},
 		COLLECTOR("Pluto", 2750) {
@@ -184,8 +167,17 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(3))
-							.ingredient(new ItemBuilder(Material.CAULDRON)));
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3)));
 				}};
 			}
 		};

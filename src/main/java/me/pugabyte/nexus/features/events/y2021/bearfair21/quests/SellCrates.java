@@ -4,6 +4,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming.FarmingLoot;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants.BFMerchant;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -70,6 +71,8 @@ public class SellCrates implements Listener {
 			tradeBuilders = FishingLoot.getTrades(player);
 		else if (crateType.contains("farming"))
 			tradeBuilders = FarmingLoot.getTrades();
+		else if (crateType.contains("dyes"))
+			tradeBuilders = BFMerchant.ARTIST.getTrades(player);
 
 		// Give items back if no trades found
 		if (tradeBuilders.isEmpty()) {

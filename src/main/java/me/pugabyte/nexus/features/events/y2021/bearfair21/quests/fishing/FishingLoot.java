@@ -5,13 +5,13 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.resourcepack.ResourcePack;
+import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -245,13 +245,13 @@ public enum FishingLoot {
 			result.customModelData(this.getCustomModelData());
 		if (material.equals(Material.ENCHANTED_BOOK)) {
 			if (this.equals(UNBREAKING))
-				result.enchant(Enchantment.DURABILITY, 1);
+				result.enchant(Enchant.UNBREAKING, 1);
 			if (this.equals(EFFICIENCY))
-				result.enchant(Enchantment.DIG_SPEED, 2);
+				result.enchant(Enchant.EFFICIENCY, 2);
 			if (this.equals(FORTUNE))
-				result.enchant(Enchantment.LOOT_BONUS_BLOCKS, 1);
+				result.enchant(Enchant.FORTUNE, 1);
 			if (this.equals(LURE))
-				result.enchant(Enchantment.LURE, 1);
+				result.enchant(Enchant.LURE, 1);
 		}
 
 		return result.lore(getLore()).build();
