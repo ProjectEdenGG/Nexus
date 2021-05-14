@@ -9,6 +9,7 @@ import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
+import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -246,8 +247,12 @@ public enum FishingLoot {
 		if (material.equals(Material.ENCHANTED_BOOK)) {
 			if (this.equals(UNBREAKING))
 				result.enchant(Enchant.UNBREAKING, 1);
-			if (this.equals(EFFICIENCY))
-				result.enchant(Enchant.EFFICIENCY, 2);
+			if (this.equals(EFFICIENCY)) {
+				if (RandomUtils.chanceOf(20))
+					result.enchant(Enchant.EFFICIENCY, 3);
+				else
+					result.enchant(Enchant.EFFICIENCY, 2);
+			}
 			if (this.equals(FORTUNE))
 				result.enchant(Enchant.FORTUNE, 1);
 			if (this.equals(LURE))

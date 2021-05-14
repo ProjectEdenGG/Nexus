@@ -4,7 +4,6 @@ import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming.FarmingLoot;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
 import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -84,11 +83,8 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(16))
-							.ingredient(new ItemBuilder(Material.ANVIL)));
-					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.COAL_BLOCK).amount(2).build())
-							.ingredient(new ItemBuilder(Material.IRON_BLOCK).amount(1).build()));
+							.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
 				}};
 			}
 		},
@@ -114,33 +110,13 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(new ItemStack(Material.ELYTRA))
 							.ingredient(goldNugget.clone().amount(1)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE))
-							.ingredient(new ItemBuilder(Material.GOLDEN_CARROT)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.TIGER_TROUT.getItem(player)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.GLACIERFISH.getItem(player)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.CRIMSONFISH.getItem(player)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.BLOBFISH.getItem(player)));
 				}};
 			}
 		},
 		FISHERMAN("Gage", 2653) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
-				return new ArrayList<>() {{
-					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.FISHING_ROD))
-							.ingredient(goldIngot.clone().amount(2)));
-				}};
+				return null;
 			}
 		},
 		INVENTOR("Joshua", 2660) {
@@ -167,17 +143,17 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3))
+							.ingredient(goldNugget.clone().amount(1)));
 				}};
 			}
 		};
