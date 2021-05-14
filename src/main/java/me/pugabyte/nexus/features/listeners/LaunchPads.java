@@ -43,19 +43,20 @@ public class LaunchPads implements Listener {
 		if (block == null) return;
 		if (!event.getAction().equals(Action.PHYSICAL)) return;
 		if (!block.getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) return;
-		if (event.getPlayer().isSneaking()) return;
+
+		Player player = event.getPlayer();
+		if (player.isSneaking()) return;
 
 		Block below = block.getRelative(0, -1, 0).getLocation().getBlock();
-		if (!(below.getType().equals(Material.REDSTONE_ORE) || below.getType().equals(Material.REDSTONE_ORE)))
-			return;
+		if (!(below.getType().equals(Material.REDSTONE_ORE))) return;
 
 		event.setCancelled(true);
 		event.setUseInteractedBlock(Event.Result.DENY);
 
 		Block belowBelow = below.getRelative(0, -1, 0).getLocation().getBlock();
-		if (ItemUtils.isNullOrAir(belowBelow.getType())) return;
+		Material belowBelowType = belowBelow.getType();
 
-		if (MaterialTag.SIGNS.isTagged(belowBelow.getType())) {
+		if (!ItemUtils.isNullOrAir(belowBelowType) && MaterialTag.SIGNS.isTagged(belowBelowType)) {
 			Sign sign = (Sign) belowBelow.getState();
 			String[] lines = sign.getLines();
 
@@ -67,12 +68,12 @@ public class LaunchPads implements Listener {
 
 			if (!lines[3].equalsIgnoreCase("")) {
 				double direction = Double.parseDouble(lines[3]);
-				launchPlayer(event.getPlayer(), power, angle, direction);
+				launchPlayer(player, power, angle, direction);
 			}
 
-			launchPlayer(event.getPlayer(), power, angle);
-		} else if (Minigames.isMinigameWorld(event.getPlayer().getWorld()))
-			launchPlayer(event.getPlayer());
+			launchPlayer(player, power, angle);
+		} else if (Minigames.isMinigameWorld(player.getWorld()))
+			launchPlayer(player);
 	}
 
 	public void launchPlayer(Player player) {

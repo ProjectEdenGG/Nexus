@@ -1,12 +1,11 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing;
 
 import lombok.AllArgsConstructor;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -30,9 +29,9 @@ public enum TrashLoot {
 		this.materials = Arrays.asList(materials);
 	}
 
-	public static List<ItemStack> from(Player player, ItemStack itemStack) {
+	public static List<ItemStack> from(ItemStack itemStack) {
 		for (FishingLoot fishingLoot : FishingLoot.of(FishingLootCategory.JUNK)) {
-			if (ItemUtils.isFuzzyMatch(fishingLoot.getItem(player), itemStack)) {
+			if (ItemUtils.isFuzzyMatch(fishingLoot.getItem(), itemStack)) {
 				for (TrashLoot trashLoot : values()) {
 					if (fishingLoot.name().equalsIgnoreCase(trashLoot.name())) {
 						List<ItemStack> result = new ArrayList<>();

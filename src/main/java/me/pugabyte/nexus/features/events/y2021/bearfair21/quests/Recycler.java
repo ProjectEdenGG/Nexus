@@ -3,8 +3,8 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.TrashLoot;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.TrashLoot;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
@@ -84,7 +84,7 @@ public class Recycler implements Listener {
 		List<ItemStack> giveBack = new ArrayList<>();
 		for (ItemStack itemStack : event.getInventory().getContents()) {
 			if (!ItemUtils.isNullOrAir(itemStack)) {
-				if (FishingLoot.isTrash(player, itemStack))
+				if (FishingLoot.isTrash(itemStack))
 					trash.add(itemStack);
 				else
 					giveBack.add(itemStack);
@@ -172,7 +172,7 @@ public class Recycler implements Listener {
 		Tasks.wait(wait.addAndGet(10), () -> {
 			List<ItemStack> rewards = new ArrayList<>();
 			for (ItemStack itemStack : trash) {
-				List<ItemStack> trashLoot = TrashLoot.from(user.getPlayer(), itemStack);
+				List<ItemStack> trashLoot = TrashLoot.from(itemStack);
 				if (trashLoot != null && !trashLoot.isEmpty())
 					rewards.addAll(trashLoot);
 			}

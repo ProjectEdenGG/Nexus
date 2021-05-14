@@ -1,7 +1,7 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing;
 
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -30,7 +30,7 @@ public class Fishing implements Listener {
 		if (fishingLoot == null)
 			return null;
 
-		return fishingLoot.getItem(player);
+		return fishingLoot.getItem();
 	}
 
 	public static FishingLoot getFishingLoot(Player player) {
@@ -79,7 +79,7 @@ public class Fishing implements Listener {
 
 		ItemStack loot = getLoot(player);
 		if (loot == null)
-			loot = FishingLoot.CARP.getItem(player);
+			loot = FishingLoot.CARP.getItem();
 
 		Item item = (Item) caught;
 		ItemStack itemStack = item.getItemStack();

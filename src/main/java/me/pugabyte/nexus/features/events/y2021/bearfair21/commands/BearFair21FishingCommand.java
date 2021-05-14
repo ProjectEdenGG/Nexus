@@ -2,9 +2,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.Fishing;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;

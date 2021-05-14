@@ -1,8 +1,10 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Fairgrounds;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -19,9 +21,13 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -74,6 +80,29 @@ public class BearFair21Command extends CustomCommand {
 	void ridesDisable() {
 		for (String ride : Fairgrounds.rides)
 			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " disable");
+	}
+
+	// Command Blocks
+
+	@Path("moveCollector")
+	@Permission("group.admin")
+	public void moveCollector() {
+		commandBlock();
+		Collector.move();
+	}
+
+	@Path("yachtHorn")
+	@Permission("group.admin")
+	public void yachtHorn() {
+		commandBlock();
+		BlockCommandSender sender = (BlockCommandSender) event.getSender();
+		Location loc = sender.getBlock().getLocation();
+		World world = loc.getWorld();
+		if (world == null)
+			return;
+
+		world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F);
+		Tasks.wait(Time.SECOND.x(2), () -> world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F));
 	}
 
 	//

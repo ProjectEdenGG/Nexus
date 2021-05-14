@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
