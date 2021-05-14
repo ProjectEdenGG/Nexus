@@ -14,14 +14,12 @@ import me.pugabyte.nexus.models.pvp.PVP;
 import me.pugabyte.nexus.models.pvp.PVPService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.EnderCrystal;
@@ -38,7 +36,6 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -205,7 +202,6 @@ public class PVPCommand extends CustomCommand implements Listener {
 		Location value = block.getLocation();
 		bedLocations.put(key, value);
 		Tasks.waitAsync(1, () -> bedLocations.remove(key, value));
-		PlayerUtils.Dev.LEXI.send("bed saved");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
