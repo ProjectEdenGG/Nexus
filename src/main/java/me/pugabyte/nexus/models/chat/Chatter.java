@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.ChatManager;
+import me.pugabyte.nexus.features.chat.translator.Language;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -32,6 +33,7 @@ public class Chatter implements PlayerOwnedObject {
 	private Set<PublicChannel> joinedChannels = new HashSet<>();
 	private Set<PublicChannel> leftChannels = new HashSet<>();
 	private PrivateChannel lastPrivateMessage;
+	private Language language;
 
 	public void playSound() {
 		if (isOnline())

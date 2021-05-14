@@ -14,17 +14,15 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum FarmingLoot {
-	WHEAT(Material.WHEAT, 1, 1),
-	HAYBALE(Material.HAY_BLOCK, 1, 1),
-	BEETROOT(Material.BEETROOT, 1, 1),
-	CARROT(Material.CARROT, 1, 1),
-	POTATO(Material.POTATO, 1, 1),
-	SUGAR_CANE(Material.SUGAR_CANE, 1, 1),
-	PUMPKIN(Material.PUMPKIN, 1, 1),
-	MELON(Material.MELON, 1, 1),
-	MELON_SLICE(Material.MELON_SLICE, 1, 1),
+	HAY_BALE(Material.HAY_BLOCK, 16, 1),
+	BEETROOT(Material.BEETROOT, 32, 1),
+	CARROT(Material.CARROT, 64, 1),
+	POTATO(Material.POTATO, 64, 1),
+	SUGAR_CANE(Material.SUGAR_CANE, 48, 1),
+	PUMPKIN(Material.PUMPKIN, 12, 1),
+	MELON(Material.MELON, 8, 1),
+	COCOA_BEANS(Material.COCOA_BEANS, 6, 1),
 	;
-
 
 	Material material;
 	int amount;

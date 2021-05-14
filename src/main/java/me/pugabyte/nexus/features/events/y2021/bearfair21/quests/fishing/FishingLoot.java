@@ -5,13 +5,13 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.resourcepack.ResourcePack;
+import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -217,7 +217,7 @@ public enum FishingLoot {
 		if (this.getRegion() == null)
 			return true;
 
-		return BearFair21.getWGUtils().isInRegion(location, this.getRegion());
+		return BearFair21.getWGUtils().isInRegion(location, BearFair21.getRegion() + "_" + this.getRegion());
 	}
 
 	private boolean yValueApplies(Player player) {
@@ -245,13 +245,13 @@ public enum FishingLoot {
 			result.customModelData(this.getCustomModelData());
 		if (material.equals(Material.ENCHANTED_BOOK)) {
 			if (this.equals(UNBREAKING))
-				result.enchant(Enchantment.DURABILITY, 1);
+				result.enchant(Enchant.UNBREAKING, 1);
 			if (this.equals(EFFICIENCY))
-				result.enchant(Enchantment.DIG_SPEED, 2);
+				result.enchant(Enchant.EFFICIENCY, 2);
 			if (this.equals(FORTUNE))
-				result.enchant(Enchantment.LOOT_BONUS_BLOCKS, 1);
+				result.enchant(Enchant.FORTUNE, 1);
 			if (this.equals(LURE))
-				result.enchant(Enchantment.LURE, 1);
+				result.enchant(Enchant.LURE, 1);
 		}
 
 		return result.lore(getLore()).build();
@@ -261,7 +261,7 @@ public enum FishingLoot {
 		return switch (category) {
 			case FISH -> "&7Fish";
 			case UNIQUE -> "&7Unique";
-			case TREASURE -> "&7Treasure";
+			case TREASURE -> "";
 			case JUNK -> "&7Trash";
 		};
 	}
@@ -281,9 +281,9 @@ public enum FishingLoot {
 	@AllArgsConstructor
 	public enum FishingLootCategory {
 		FISH(50.0),
-		JUNK(25.0),
-		UNIQUE(15.0),
-		TREASURE(10.0);
+		JUNK(JunkWeight.MAX.getWeight()),
+		UNIQUE(17.0),
+		TREASURE(8.0);
 
 		double weight;
 
@@ -300,6 +300,18 @@ public enum FishingLoot {
 		DAY,
 		NIGHT,
 		BOTH
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum JunkWeight {
+		MAX(25.0),
+		EIGHTY_PERCENT(20.0),
+		SIXTY_PERCENT(15.0),
+		MIN(10.0);
+
+		double weight;
+
 	}
 
 }

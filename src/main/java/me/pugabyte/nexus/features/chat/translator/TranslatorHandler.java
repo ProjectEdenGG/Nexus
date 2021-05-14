@@ -13,7 +13,7 @@ public class TranslatorHandler {
 	@SneakyThrows
 	public Language detect(String message) {
 		Detection.Response response = HttpUtils.mapJson(Detection.Response.class, Detection.getURL(), Translator.getApiKey(), message);
-		return Language.valueOf(response.getLang().toUpperCase());
+		return response.getLang() != null ? Language.valueOf(response.getLang().toUpperCase()) : null;
 	}
 
 	@SneakyThrows

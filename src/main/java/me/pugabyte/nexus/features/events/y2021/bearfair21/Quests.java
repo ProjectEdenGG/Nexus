@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.models.BearFairTalker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.SellCrates;
@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming.RegenCr
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.Fishing;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -28,6 +29,8 @@ import org.bukkit.inventory.ItemStack;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
 public class Quests implements Listener {
+	BearFair21UserService userService = new BearFair21UserService();
+
 	public Quests() {
 		Nexus.registerListener(this);
 		new Fishing();
@@ -59,7 +62,7 @@ public class Quests implements Listener {
 			return null;
 
 		Player player = event.getPlayer();
-		if (BearFair21.isAtBearFair(player))
+		if (!BearFair21.isAtBearFair(player))
 			return null;
 
 		Block block = event.getClickedBlock();
@@ -85,14 +88,15 @@ public class Quests implements Listener {
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
-		if (isAtBearFair(player)) {
-			CooldownService cooldownService = new CooldownService();
-			if (!cooldownService.check(player, "BF21_NPCInteract", Time.SECOND.x(2)))
-				return;
+		if (!isAtBearFair(player))
+			return;
 
-			int id = event.getNPC().getId();
-			BearFairTalker.startScript(player, id);
-			Merchants.openMerchant(player, id);
-		}
+		CooldownService cooldownService = new CooldownService();
+		if (!cooldownService.check(player, "BF21_NPCInteract", Time.SECOND.x(2)))
+			return;
+
+		int id = event.getNPC().getId();
+		BearFair21Talker.startScript(userService.get(player), id);
+		Merchants.openMerchant(player, id);
 	}
 }

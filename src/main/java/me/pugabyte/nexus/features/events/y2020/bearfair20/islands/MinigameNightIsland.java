@@ -176,6 +176,11 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		@Getter
 		private final List<String> script;
 
+		@Override
+		public String getName() {
+			return this.name();
+		}
+
 		MinigameNightNPCs(int npcId) {
 			this.npcId = npcId;
 			this.script = new ArrayList<>();

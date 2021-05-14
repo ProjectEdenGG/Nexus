@@ -16,10 +16,10 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConver
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.queup.QueUp.API.ActiveSong;
 import me.pugabyte.nexus.utils.HttpUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.UUID;
 
+import static me.pugabyte.nexus.utils.HttpUtils.unescapeHtml;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
@@ -51,8 +51,8 @@ public class QueUp implements PlayerOwnedObject {
 		String song = activeSong.getData().getSongInfo().getName();
 		String user = activeSong.getData().getSong().getUserName();
 
-		song = stripColor(StringEscapeUtils.unescapeHtml(song).replaceAll("&apos;", "'")); // it doesnt know what &apos; is??
-		user = stripColor(StringEscapeUtils.unescapeHtml(user).replaceAll("&apos;", "'"));
+		song = stripColor(unescapeHtml(song));
+		user = stripColor(unescapeHtml(user));
 
 		return "&e" + song + " &3(Queued by &e" + user + "&3)";
 	}

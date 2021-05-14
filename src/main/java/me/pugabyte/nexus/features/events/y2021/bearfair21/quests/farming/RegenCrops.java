@@ -34,7 +34,7 @@ public class RegenCrops implements Listener {
 
 	private final Set<Material> breakList = new HashSet<>();
 
-	private final Set<Material> crops = new HashSet<>(Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS));
+	private final Set<Material> crops = new HashSet<>(Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS, Material.COCOA));
 	private final Set<Material> cropSingleBlock = new HashSet<>(Arrays.asList(Material.PUMPKIN, Material.MELON));
 	private final Set<Material> cropMultiBlock = new HashSet<>(Arrays.asList(Material.SUGAR_CANE, Material.CACTUS));
 	private final Set<Material> cropFlower = new HashSet<>(MaterialTag.SMALL_FLOWERS.getValues());
@@ -198,7 +198,10 @@ public class RegenCrops implements Listener {
 			if (player.hasPermission("worldguard.region.bypass.*"))
 				return;
 
-			send(Errors.cantBreak, player);
+			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+				send(Errors.cantBreak, player);
+				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+			}
 			event.setCancelled(true);
 			return;
 		}
@@ -219,7 +222,10 @@ public class RegenCrops implements Listener {
 				// Single Block
 			} else if (cropSingleBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-					send(Errors.decorOnly, player);
+					if (new CooldownService().check(player, "BF21_decorOnly", Time.MINUTE)) {
+						send(Errors.decorOnly, player);
+						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+					}
 					event.setCancelled(true);
 					return;
 				}
@@ -228,7 +234,10 @@ public class RegenCrops implements Listener {
 				// Multi Block
 			} else if (cropMultiBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-					send(Errors.bottomBlock, player);
+					if (new CooldownService().check(player, "BF21_bottomBlock", Time.MINUTE)) {
+						send(Errors.bottomBlock, player);
+						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+					}
 					event.setCancelled(true);
 					return;
 				}
@@ -252,8 +261,10 @@ public class RegenCrops implements Listener {
 				if (player.hasPermission("worldguard.region.bypass.*"))
 					return;
 
-				send(Errors.cantBreak, player);
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+				if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+					send(Errors.cantBreak, player);
+					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+				}
 				event.setCancelled(true);
 			}
 

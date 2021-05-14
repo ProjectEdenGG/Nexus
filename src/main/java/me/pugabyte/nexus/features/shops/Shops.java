@@ -107,6 +107,7 @@ public class Shops extends Feature {
 			addSellItem(ShopGroup.SURVIVAL, false, Material.DRAGON_HEAD, 1, 50000);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.ELYTRA, 1, 10000);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.GLASS, 32, 50);
+			addSellItem(ShopGroup.SURVIVAL, false, Material.HONEY_BLOCK, 4, 1000);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.TERRACOTTA, 32, 100);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.WHITE_WOOL, 16, 45);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.NETHERRACK, 32, 64);
@@ -147,6 +148,8 @@ public class Shops extends Feature {
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.GOLD_BLOCK, 16, 100);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.EMERALD_BLOCK, 16, 144);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.DIAMOND_BLOCK, 3, 800);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.POISONOUS_POTATO, 16, 30);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.HAY_BLOCK, 64, 10);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.DARK_OAK_LOG, 32, 40);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.ACACIA_LOG, 32, 45);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.JUNGLE_LOG, 32, 40);
@@ -159,6 +162,7 @@ public class Shops extends Feature {
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.ZOMBIE_HEAD, 1, 1000);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.ELYTRA, 1, 1000);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.GLASS, 32, 25);
+			addBuyItem(ShopGroup.SURVIVAL, false, Material.HONEY_BLOCK, 4, 60);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.WHITE_WOOL, 32, 60);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.NETHERRACK, 64, 32);
 			addBuyItem(ShopGroup.SURVIVAL, false, Material.SOUL_SAND, 64, 64);

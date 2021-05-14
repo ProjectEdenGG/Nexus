@@ -1,28 +1,38 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import lombok.Getter;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
-import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.MinigameNightNPCs;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
 import java.util.List;
 
+// TODO BF21: Quest + Dialog
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
 public class MinigameNightIsland implements Listener, BearFair21Island {
 
-	public enum MinigameNightNPCs implements TalkingNPC {
+	public enum MinigameNightNPCs implements BearFair21TalkingNPC {
 		;
 
-		@Override
-		public int getNpcId() {
-			return 0;
-		}
+		@Getter
+		private final int npcId;
+		private final String name;
+		@Getter
+		private final List<String> script;
 
 		@Override
-		public List<String> getScript() {
-			return null;
+		public String getName() {
+			return this.name;
+		}
+
+		MinigameNightNPCs(String name, int npcId) {
+			this.name = name;
+			this.npcId = npcId;
+			this.script = new ArrayList<>();
 		}
 	}
 }

@@ -21,7 +21,8 @@ public enum TrashLoot {
 	LOST_BOOK(Material.PAPER, Material.LEATHER, Material.STRING),
 	SOGGY_NEWSPAPER(Material.PAPER, Material.STRING),
 	DRIFTWOOD(Material.STICK, Material.BONE_MEAL),
-	SEAWEED(Material.GREEN_DYE, Material.BONE_MEAL);
+	SEAWEED(Material.GREEN_DYE, Material.BONE_MEAL),
+	TREASURE(Material.GOLD_NUGGET);
 
 	List<Material> materials;
 
@@ -36,6 +37,9 @@ public enum TrashLoot {
 					if (fishingLoot.name().equalsIgnoreCase(trashLoot.name())) {
 						List<ItemStack> result = new ArrayList<>();
 						for (int i = 0; i < itemStack.getAmount(); i++) {
+							if (RandomUtils.chanceOf(5))
+								result.add(TREASURE.getItemStack());
+
 							result.add(trashLoot.getItemStack());
 						}
 
@@ -47,7 +51,6 @@ public enum TrashLoot {
 
 		return null;
 	}
-
 
 	private ItemStack getItemStack() {
 		return new ItemBuilder(RandomUtils.randomElement(this.materials)).build();

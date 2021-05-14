@@ -120,7 +120,7 @@ public class HasReadRules implements PlayerOwnedObject {
 					add(new JsonBuilder("&e6. &3Give nearby players a reasonable amount of space. When in doubt, ask the build owner."));
 					add(new JsonBuilder("&e7. &3No mods/hacks, except OptiFine and Shaders. &eHover for more info").hover("&3Please ask about other mods\n&3you may wish to use."));
 					add(new JsonBuilder("&e8. &3No random 1x1 towers/holes, block spam or obscene structures/skins"));
-					add(new JsonBuilder("&e9. &3Project Eden has the right to use & modify all builds produced on the server"));
+					add(new JsonBuilder("&e9. &3The staff have the right to use & modify all builds produced on the server"));
 				}}
 		),
 		MINIGAMES(

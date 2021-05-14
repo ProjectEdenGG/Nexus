@@ -2,6 +2,8 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -31,8 +33,8 @@ public class Fishing implements Listener {
 		return fishingLoot.getItem(player);
 	}
 
-	private static FishingLoot getFishingLoot(Player player) {
-		FishingLootCategory category = getLootCategory();
+	public static FishingLoot getFishingLoot(Player player) {
+		FishingLootCategory category = getLootCategory(player);
 		Map<FishingLoot, Double> lootMap = new HashMap<>();
 		for (FishingLoot loot : FishingLoot.of(category)) {
 			if (category.equals(FishingLootCategory.UNIQUE)) {
@@ -48,10 +50,16 @@ public class Fishing implements Listener {
 		return RandomUtils.getWeightedRandom(lootMap);
 	}
 
-	private static FishingLootCategory getLootCategory() {
+	private static FishingLootCategory getLootCategory(Player player) {
+		BearFair21UserService userService = new BearFair21UserService();
+		BearFair21User user = userService.get(player);
 		Map<FishingLootCategory, Double> categoryMap = new HashMap<>();
-		for (FishingLootCategory category : FishingLootCategory.values())
-			categoryMap.put(category, category.getWeight());
+		for (FishingLootCategory category : FishingLootCategory.values()) {
+			double weight = category.getWeight();
+			if (category.equals(FishingLootCategory.JUNK))
+				weight = user.getJunkWeight().getWeight();
+			categoryMap.put(category, weight);
+		}
 
 		return RandomUtils.getWeightedRandom(categoryMap);
 	}

@@ -5,7 +5,6 @@ import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.models.BearFairIsland;
 import me.pugabyte.nexus.features.events.models.BearFairTalker;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.IslandType;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
@@ -35,11 +34,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -50,7 +47,7 @@ public class BearFair20 implements Listener {
 	@Getter
 	private static final String region = "bearfair2020";
 	@Getter
-	private static final Set<Class<? extends BearFairIsland>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(BearFairIsland.class);
+//	private static final Set<Class<? extends BearFairIsland>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(BearFairIsland.class);
 	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
 
 	// TODO: When BF is over, disable these, and disable block break/place on regions
