@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
+import me.pugabyte.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
@@ -31,7 +32,11 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@Override
 	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
-		return !(PlayerParticlePerk.class.isAssignableFrom(perk)) || ((CaptureTheFlagMatchData) minigamer.getMatch().getMatchData()).getFlagByCarrier(minigamer) != null;
+		return !(PlayerParticlePerk.class.isAssignableFrom(perk)) || (
+				minigamer.getMatch().getMatchData() instanceof CaptureTheFlagMatchData ?
+						((CaptureTheFlagMatchData) minigamer.getMatch().getMatchData()).getFlagByCarrier(minigamer) != null
+						: minigamer.equals(((OneFlagCaptureTheFlagMatchData) minigamer.getMatch().getMatchData()).getFlagCarrier())
+				);
 	}
 
 	@Override
