@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.listeners;
 
+import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
@@ -28,6 +29,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -35,6 +37,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -359,5 +362,23 @@ public class MatchListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
 		onShootProjectile(event.getPlayer(), event.getProjectile());
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onProjectileCollide(ProjectileCollideEvent event) {
+		if (!(event.getCollidedWith() instanceof Player)) return;
+		if (!(event.getEntity().getShooter() instanceof Player)) return;
+		Minigamer victim = PlayerManager.get((Player) event.getCollidedWith());
+		if (!victim.isPlaying()) return;
+		if (victim.isRespawning() || !victim.isAlive()) {
+			event.setCancelled(true);
+			return;
+		}
+		if (victim.getTeam() == null) return;
+		if (!victim.getMatch().getMechanic().isTeamGame()) return;
+		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		if (!attacker.isPlaying(victim.getMatch())) return;
+		if (!victim.getTeam().equals(attacker.getTeam())) return;
+		event.setCancelled(true);
 	}
 }
