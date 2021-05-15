@@ -27,6 +27,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -48,8 +49,8 @@ public class McMMOListener implements Listener {
 		scheduler();
 	}
 
-	private static final LocalDate boostEnd = LocalDate.of(2021, 3, 17);
-	@EventHandler
+	private static final LocalDate boostEnd = LocalDate.of(2021, 5, 17);
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onMcMMOExpGain(McMMOPlayerXpGainEvent event) {
 		if (boostEnd.atStartOfDay().isBefore(LocalDateTime.now()))
 			return;
