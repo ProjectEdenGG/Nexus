@@ -313,7 +313,7 @@ public class SoundUtils {
 		public abstract void play(PlayerLike player);
 
 		public void play(Collection<? extends HasPlayer> players) {
-			players.stream().map(HasPlayer::getPlayer).forEach(this::play);
+			players.stream().map(HasPlayer::getPlayer).forEach(player -> play((PlayerLike) player));
 		}
 
 		public void playAll() {
