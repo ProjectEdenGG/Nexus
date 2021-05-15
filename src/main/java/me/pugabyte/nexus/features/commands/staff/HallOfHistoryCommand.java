@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.features.commands.AgeCommand.ServerAge;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -20,8 +22,6 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 
@@ -85,7 +85,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			send("  &eAbout me: &3" + nerd.getAbout());
 		if (nerd.isMeetMeVideo()) {
 			line();
-			String url = "https://bnn.gg/meet/" + nerd.getName().toLowerCase();
+			String url = "https://projecteden.gg/meet/" + nerd.getName().toLowerCase();
 			send(json("  &eMeet Me!&c " + url).url(url));
 		}
 	}
@@ -239,7 +239,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> staffTimeMap = new HashMap<>();
 
-		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
+		for (HallOfHistory hallOfHistory : service.getAll()) {
 			long days = 0;
 			days: for (LocalDate date = ServerAge.getEpoch().toLocalDate(); date.isBefore(now); date = date.plusDays(1)) {
 				for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
@@ -270,7 +270,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			return json("&3" + index + " &e" + time + " &7- " + Nerd.of(uuid).getNameFormat());
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValueReverse(staffTimeMap).keySet()), formatter, "/hoh staffTime", page);
+		paginate(Utils.sortByValueReverse(staffTimeMap).keySet(), formatter, "/hoh staffTime", page);
 	}
 
 	@Path("promotionTimes [page]")
@@ -279,7 +279,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();
 
-		for (HallOfHistory hallOfHistory : service.<HallOfHistory>getAll()) {
+		for (HallOfHistory hallOfHistory : service.getAll()) {
 			Nerd nerd = Nerd.of(hallOfHistory.getUuid());
 			List<RankHistory> history = hallOfHistory.getRankHistory();
 			history.sort(Comparator.comparing(RankHistory::getPromotionDate));
@@ -301,7 +301,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			return json("&3" + index + " &e" + Nickname.of(uuid) + " &7- " + time);
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(promotionTimeMap).keySet()), formatter, "/hoh promotionTimes", page);
+		paginate(Utils.sortByValue(promotionTimeMap).keySet(), formatter, "/hoh promotionTimes", page);
 	}
 
 }

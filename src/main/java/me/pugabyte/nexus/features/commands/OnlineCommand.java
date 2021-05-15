@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands;
 
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -14,7 +15,6 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -62,12 +62,12 @@ public class OnlineCommand extends CustomCommand {
 	}
 
 	private boolean canSee(Nerd nerd) {
-		return PlayerUtils.canSee(player(), nerd.getPlayer()) && player().canSee(nerd.getPlayer());
+		return PlayerUtils.canSee(player(), nerd.getOnlinePlayer()) && player().canSee(nerd.getOnlinePlayer());
 	}
 
 	void getNameWithModifiers(Nerd nerd, JsonBuilder builder) {
-		boolean vanished = PlayerUtils.isVanished(nerd.getPlayer());
-		boolean afk = AFK.get(nerd.getPlayer()).isAfk();
+		boolean vanished = PlayerUtils.isVanished(nerd.getOnlinePlayer());
+		boolean afk = AFK.get(nerd.getOnlinePlayer()).isAfk();
 
 		String modifiers = "";
 		if (vanished)
@@ -90,13 +90,13 @@ public class OnlineCommand extends CustomCommand {
 	}
 
 	String getInfo(Nerd nerd, String modifiers) {
-		Player player = nerd.getPlayer();
-		Hours hours = new HoursService().get(player);
+		Player player = nerd.getOnlinePlayer();
+		Hours hours = new HoursService().get(player.getUniqueId());
 
 		int ping = PlayerUtils.getPing(player);
 		String onlineFor = Timespan.of(nerd.getLastJoin()).format();
 		WorldGroup world = WorldGroup.get(player);
-		ShopGroup shopGroup = ShopGroup.get(player);
+		ShopGroup shopGroup = ShopGroup.of(player);
 		if (shopGroup == null)
 			shopGroup = ShopGroup.SURVIVAL;
 		String balance = new BankerService().getBalanceFormatted(player, shopGroup);

@@ -1,6 +1,10 @@
 package me.pugabyte.nexus.features.commands;
 
+import eden.utils.TimeUtils.Time;
+import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import lombok.NoArgsConstructor;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.event.player.PlayerUseRespawnAnchorEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -9,24 +13,32 @@ import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.models.pvp.PVP;
 import me.pugabyte.nexus.models.pvp.PVPService;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -35,6 +47,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @Aliases({"spvp", "duel", "fight"})
 public class PVPCommand extends CustomCommand implements Listener {
 	public final PVPService service = new PVPService();
+	private final Map<UUID, Location> bedLocations = new HashMap<>();
 	public PVP pvp;
 
 	static {
@@ -97,12 +110,12 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (isVanished(victim.getPlayer()) || isVanished(attacker.getPlayer())) {
+		if (isVanished(victim.getOnlinePlayer()) || isVanished(attacker.getOnlinePlayer())) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (victim.getPlayer().getGameMode() != GameMode.SURVIVAL || attacker.getPlayer().getGameMode() != GameMode.SURVIVAL) {
+		if (victim.getOnlinePlayer().getGameMode() != GameMode.SURVIVAL || attacker.getOnlinePlayer().getGameMode() != GameMode.SURVIVAL) {
 			event.setCancelled(true);
 			return;
 		}
@@ -115,50 +128,106 @@ public class PVPCommand extends CustomCommand implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@Nullable
+	public PVP getDamageCause(EntityDamageEvent event) {
+		if (event == null) return null;
+		if (event.getEntity() instanceof Player && ((Player) event.getEntity()).getKiller() != null)
+			return service.get(((Player) event.getEntity()).getKiller());
+
+		PVP attacker = null;
+		if (event instanceof EntityDamageByEntityEvent entityEvent) {
+			if (entityEvent.getDamager() instanceof Player player) {
+				attacker = service.get(player);
+			} else if (entityEvent.getDamager() instanceof Projectile projectile) {
+				if (projectile.getShooter() instanceof Player)
+					attacker = service.get((Player) projectile.getShooter());
+			} else if (entityEvent.getDamager() instanceof EnderCrystal crystal) {
+				// find last user to damage the end crystal
+				EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
+				if (crystalDamage == null) return null;
+				if (!(crystalDamage instanceof EntityDamageByEntityEvent)) return null;
+				Entity damager = ((EntityDamageByEntityEvent) crystalDamage).getDamager();
+				if (damager instanceof Player)
+					attacker = service.get(damager);
+				// check if last damager was a projectile shot by a player
+				else if (damager instanceof Projectile projectile) {
+					if (projectile.getShooter() != null && projectile.getShooter() instanceof Player shooter)
+						attacker = service.get(shooter);
+				}
+			} else if (entityEvent.getDamager() instanceof TNTPrimed tnt) {
+				if (tnt.getSource() instanceof Player player)
+					attacker = service.get(player);
+			} else if (entityEvent.getDamager() instanceof Firework firework) {
+				if (firework.getBoostedEntity() != null || firework.getSpawningEntity() == null) {
+					event.setCancelled(true);
+					return null;
+				} else {
+					Entity entity = Bukkit.getEntity(firework.getSpawningEntity());
+					if (entity instanceof Player)
+						attacker = service.get(entity);
+				}
+			}
+		} else if (event instanceof EntityDamageByBlockEvent) {
+			Location location = ((EntityDamageByBlockEvent) event).getLocation();
+			if (location == null || event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || !(event.getEntity() instanceof Player)) return null;
+
+			for (Map.Entry<UUID, Location> entry : bedLocations.entrySet()) {
+				UUID uuid = entry.getKey();
+				Location location1 = entry.getValue();
+
+				if (!LocationUtils.blockLocationsEqual(location, location1)) continue;
+				if (uuid.equals(event.getEntity().getUniqueId())) continue;
+				attacker = service.get(uuid);
+				break;
+			}
+		}
+		return attacker;
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
 		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
 		if (!(event.getEntity() instanceof Player)) return;
-		PVP victim = service.get((Player) event.getEntity());
-
-		PVP attacker = null;
-		Projectile projectile;
-
-		if (event.getDamager() instanceof Player) {
-			attacker = service.get((Player) event.getDamager());
-		} else if (event.getDamager() instanceof Projectile) {
-			projectile = (Projectile) event.getDamager();
-			if (projectile.getShooter() instanceof Player)
-				attacker = service.get((Player) projectile.getShooter());
-		} else if (event.getDamager() instanceof EnderCrystal) {
-			EnderCrystal crystal = (EnderCrystal) event.getDamager();
-			// find last user to damage the end crystal
-			EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
-			if (crystalDamage == null) return;
-			if (!(crystalDamage instanceof EntityDamageByEntityEvent)) return;
-			Entity damager = ((EntityDamageByEntityEvent) crystalDamage).getDamager();
-			if (damager instanceof Player)
-				attacker = service.get((Player) damager);
-			// check if last damager was a projectile shot by a player
-			else if (damager instanceof Projectile) {
-				projectile = (Projectile) damager;
-				if (projectile.getShooter() != null && projectile.getShooter() instanceof Player)
-					attacker = service.get((Player) projectile.getShooter());
-			}
-		} else if (event.getDamager() instanceof TNTPrimed) {
-			TNTPrimed tnt = (TNTPrimed) event.getDamager();
-			if (tnt.getSource() instanceof Player)
-				attacker = service.get((Player) tnt.getSource());
-		}
+		PVP victim = service.get(event.getEntity());
+		PVP attacker = getDamageCause(event);
 
 		processAttack(event, victim, attacker);
+	}
+
+	private void saveBed(HasPlayer player, Block block) {
+		UUID key = player.getPlayer().getUniqueId();
+		Location value = block.getLocation();
+		bedLocations.put(key, value);
+		Tasks.waitAsync(1, () -> bedLocations.remove(key, value));
+	}
+
+	@EventHandler
+	public void onAnchorExplode(PlayerUseRespawnAnchorEvent event) {
+		if (event.getRespawnAnchorResult() != PlayerUseRespawnAnchorEvent.RespawnAnchorResult.EXPLODE)
+			return;
+		if (!WorldGroup.SURVIVAL.contains(event.getRespawnAnchor().getWorld())) {
+			event.setCancelled(true);
+			return;
+		}
+		saveBed(event.getPlayer(), event.getRespawnAnchor());
+	}
+
+	@EventHandler
+	public void onBedFailure(PlayerBedFailEnterEvent event) {
+		if (event.getFailReason() == PlayerBedFailEnterEvent.FailReason.NOT_POSSIBLE_HERE)
+			saveBed(event, event.getBed());
+	}
+
+	@EventHandler
+	public void onDamageByBlock(EntityDamageByBlockEvent event) {
+		processAttack(event, service.get(event.getEntity()), getDamageCause(event));
 	}
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
-		if (event.getEntity().getKiller() == null) return;
+		if (getDamageCause(event.getEntity().getLastDamageCause()) == null) return;
 		PVP victim = service.get(event.getEntity());
 		if (!victim.isEnabled()) return;
 		// For some reason, spigots PlayerDeathEvent#setKeepInventory() method

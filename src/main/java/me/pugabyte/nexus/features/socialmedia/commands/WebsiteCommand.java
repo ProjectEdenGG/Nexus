@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.socialmedia.commands;
 
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -15,7 +15,7 @@ public class WebsiteCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().next("&e" + BNSocialMediaSite.WEBSITE.getUrl()));
+		send(json().next("&e" + EdenSocialMediaSite.WEBSITE.getUrl()));
 	}
 
 }

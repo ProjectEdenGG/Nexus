@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.mobheads.MobHeadType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -48,33 +49,28 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 		Pagination page = contents.pagination();
 
 		switch (menu) {
-			case MAIN:
-				addCloseItem(contents);
-				break;
-			default:
-				addBackItem(contents, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.MAIN, 0, targetPlayer));
+			case MAIN -> addCloseItem(contents);
+			default -> addBackItem(contents, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.MAIN, 0, targetPlayer));
 		}
 
 		switch (menu) {
-			case MAIN:
+			case MAIN -> {
 				ItemStack general = nameItem(Material.DIAMOND, "&3General", "&eView stats like movement,||&einteractions, and more");
 				ItemStack blocks = nameItem(Material.GRASS_BLOCK, "&3Blocks", "&eView stats for blocks like||&etimes mined, placed, and crafted");
 				ItemStack items = nameItem(Material.TOTEM_OF_UNDYING, "&3Items", "&eView stats for items like||&etimes crafted, used, and picked up");
 				ItemStack mobs = nameItem(Material.ZOMBIE_HEAD, "&3Mobs", "&eView stats for mobs like||&etimes killed and times killed by");
-
 				contents.set(1, 1, ClickableItem.from(general, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.GENERAL, 0, targetPlayer)));
 				contents.set(1, 3, ClickableItem.from(blocks, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.BLOCKS, 0, targetPlayer)));
 				contents.set(1, 5, ClickableItem.from(items, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.ITEMS, 0, targetPlayer)));
 				contents.set(1, 7, ClickableItem.from(mobs, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.MOBS, 0, targetPlayer)));
 				return;
-			case GENERAL:
+			}
+			case GENERAL -> {
 				getGeneralStats(contents);
 				return;
-			case MOBS:
-				page.setItems(getMobStats());
-				break;
-			case BLOCKS:
-			case ITEMS:
+			}
+			case MOBS -> page.setItems(getMobStats());
+			case BLOCKS, ITEMS -> {
 				List<Material> materials;
 				if (menu == StatisticsMenu.StatsMenus.BLOCKS)
 					materials = Arrays.stream(Material.values()).filter(Material::isBlock).filter(Material::isItem).filter(material -> !MaterialTag.UNOBTAINABLE.isTagged(material)).collect(Collectors.toList());
@@ -84,7 +80,6 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 							return false;
 						return !MaterialTag.SPAWN_EGGS.isTagged(material);
 					}).collect(Collectors.toList());
-
 				List<ClickableItem> menuItems = new ArrayList<>();
 				for (int i = startIndex; i < startIndex + itemsPerPage; i++) {
 					if (i >= materials.size())
@@ -131,15 +126,14 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 					} else
 						column++;
 				}
-
 				if (startIndex > 0)
 					contents.set(5, 0, ClickableItem.from(nameItem(Material.ARROW, "<- Page"), e ->
 							StatisticsMenu.open(player, menu, targetPlayer, Math.max(0, startIndex - itemsPerPage))));
 				if (startIndex + itemsPerPage < materials.size())
 					contents.set(5, 8, ClickableItem.from(nameItem(Material.ARROW, "Page ->"), e ->
 							StatisticsMenu.open(player, menu, targetPlayer, startIndex + itemsPerPage)));
-
 				return;
+			}
 		}
 
 		page.setItemsPerPage(36);
@@ -171,20 +165,18 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 					case MUSHROOM_COW:
 						material = new ItemStack(Material.MOOSHROOM_SPAWN_EGG);
 						break;
-					case ENDER_DRAGON:
-						material = new ItemStack(Material.DRAGON_HEAD);
-						break;
-					case WITHER:
-						material = new ItemStack(Material.WITHER_SKELETON_SKULL);
-						break;
-					case IRON_GOLEM:
-						material = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Golem").build();
-						break;
 					case SNOWMAN:
 						material = new ItemStack(Material.PUMPKIN);
 						break;
+					case GIANT:
+						material = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
+						break;
 					default:
-						material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
+						try {
+							material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
+						} catch (IllegalArgumentException e) {
+							material = MobHeadType.of(entity).getGeneric();
+						}
 				}
 				ItemStack item = new ItemBuilder(material)
 						.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))

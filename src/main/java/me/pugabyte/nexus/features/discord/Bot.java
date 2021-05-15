@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.discord;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.vdurmont.emoji.EmojiManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -11,6 +12,7 @@ import me.pugabyte.nexus.features.commands.NicknameCommand.NicknameApprovalListe
 import me.pugabyte.nexus.features.discord.DiscordId.User;
 import me.pugabyte.nexus.features.discord.commands.TwitterDiscordCommand.TweetApprovalListener;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -103,14 +105,19 @@ public enum Bot {
 				.setPrefix("/")
 				.setAlternativePrefix("!")
 				.setOwnerId(User.PUGABYTE.getId())
+				.setEmojis(EmojiManager.getForAlias("white_check_mark").getUnicode(), EmojiManager.getForAlias("warning").getUnicode(), EmojiManager.getForAlias("x").getUnicode())
 				.setActivity(Activity.playing("Minecraft"));
 
 		Reflections reflections = new Reflections(getClass().getPackage().getName());
-		for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class)) {
-			HandledBy handledBy = command.getAnnotation(HandledBy.class);
-			if (handledBy != null && handledBy.value() == this)
-				commands.addCommand(command.newInstance());
-		}
+		for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class))
+			if (Utils.canEnable(command))
+				for (Class<? extends Command> superclass : Utils.getSuperclasses(command)) {
+					HandledBy handledBy = superclass.getAnnotation(HandledBy.class);
+					if (handledBy != null && handledBy.value() == this) {
+						commands.addCommand(command.newInstance());
+						break;
+					}
+				}
 		return commands;
 	}
 

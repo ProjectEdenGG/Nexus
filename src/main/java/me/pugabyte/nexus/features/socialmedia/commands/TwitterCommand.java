@@ -1,18 +1,19 @@
 package me.pugabyte.nexus.features.socialmedia.commands;
 
+import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.socialmedia.TwitterData;
 import me.pugabyte.nexus.models.socialmedia.TwitterService;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import twitter4j.Query;
@@ -28,9 +29,10 @@ public class TwitterCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		send(json().next("&e" + BNSocialMediaSite.TWITTER.getUrl()));
+		send(json().next("&e" + EdenSocialMediaSite.TWITTER.getUrl()));
 	}
 
+	@Async
 	@Path("lookForNewTweets")
 	void lookForNewTweets() {
 		lookForNewTweets0();
@@ -38,7 +40,7 @@ public class TwitterCommand extends CustomCommand {
 
 	static {
 		if (Nexus.getEnv() == Env.PROD)
-			Tasks.repeat(Time.MINUTE, Time.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
+			Tasks.repeatAsync(Time.MINUTE, Time.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
 	}
 
 	private static void lookForNewTweets0() {
@@ -46,7 +48,7 @@ public class TwitterCommand extends CustomCommand {
 			TwitterService service = new TwitterService();
 			TwitterData data = service.get();
 
-			List<Status> tweets = SocialMedia.getTwitter().search().search(new Query("from:BearNationSMP")).getTweets();
+			List<Status> tweets = SocialMedia.getTwitter().search().search(new Query("from:ProjectEdenGG")).getTweets();
 			for (Status tweet : tweets) {
 				if (data.getKnownTweets().contains(tweet.getId()))
 					continue;

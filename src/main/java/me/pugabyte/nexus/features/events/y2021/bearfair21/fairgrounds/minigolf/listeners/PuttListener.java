@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -45,7 +45,7 @@ public class PuttListener implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(event.getPlayer().getLocation())) {
+		if (!BearFair21.isAtBearFair(event.getPlayer())) {
 			return;
 		}
 
@@ -100,8 +100,7 @@ public class PuttListener implements Listener {
 			for (Entity entity : entities) {
 
 				// Are we allowed to hit this ball?
-				if (entity instanceof Snowball) {
-					Snowball ball = (Snowball) entity;
+				if (entity instanceof Snowball ball) {
 
 					// Check this again, cuz NPE for some reason
 					if (user.getSnowball() == null) {
@@ -194,7 +193,7 @@ public class PuttListener implements Listener {
 
 				user.setSnowball(ball);
 				if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-					GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getPlayer());
+					GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
 
 				// Remove golf ball from inventory
 				ItemStack itemInHand = event.getItem();

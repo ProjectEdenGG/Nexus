@@ -37,8 +37,7 @@ public class RenameChests implements Listener {
 					}
 				})
 				.onCancel(e -> {
-					if (block.getState() instanceof BlockInventoryHolder) {
-						BlockInventoryHolder state = (BlockInventoryHolder) block.getState();
+					if (block.getState() instanceof BlockInventoryHolder state) {
 						event.getPlayer().closeInventory();
 						event.getPlayer().openInventory(state.getInventory());
 					}

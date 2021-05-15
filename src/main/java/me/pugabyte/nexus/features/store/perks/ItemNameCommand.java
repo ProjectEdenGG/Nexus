@@ -5,12 +5,15 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
+
+import static me.pugabyte.nexus.utils.StringUtils.applyFormattingToAll;
 
 @Aliases("nameitem")
 @Permission("itemname.use")
@@ -22,25 +25,48 @@ public class ItemNameCommand extends CustomCommand {
 
 	@Path("(null|none|reset)")
 	void reset() {
-		name(null);
+		name(null, false, false, false, false, false);
 	}
 
 	@Path("<name...>")
-	void name(String name) {
-		verify(name);
-		ItemBuilder.setName(getToolRequired(), name);
+	void name(
+			String input,
+			@Switch boolean bold,
+			@Switch boolean strikethrough,
+			@Switch boolean underline,
+			@Switch boolean italic,
+			@Switch boolean magic
+	) {
+		verify(input);
+		ItemBuilder.setName(getToolRequired(), applyFormattingToAll(input, bold, strikethrough, underline, italic, magic));
 	}
 
 	@Path("gradient <color1> <color2> <name...>")
-	void gradient(ChatColor color1, ChatColor color2, String input) {
+	void gradient(
+			ChatColor color1,
+			ChatColor color2,
+			String input,
+			@Switch boolean bold,
+			@Switch boolean strikethrough,
+			@Switch boolean underline,
+			@Switch boolean italic,
+			@Switch boolean magic
+	) {
 		verify(input);
-		name(Gradient.of(color1, color2).apply(input));
+		name(Gradient.of(color1, color2).apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
 	@Path("rainbow <name...>")
-	void rainbow(String input) {
+	void rainbow(
+			String input,
+			@Switch boolean bold,
+			@Switch boolean strikethrough,
+			@Switch boolean underline,
+			@Switch boolean italic,
+			@Switch boolean magic
+	) {
 		verify(input);
-		name(Rainbow.apply(input));
+		name(Rainbow.apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
 	private void verify(String input) {

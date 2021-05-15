@@ -1,16 +1,16 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -124,7 +124,7 @@ public class PugDunk implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
 			if (enabled)
@@ -134,7 +134,7 @@ public class PugDunk implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionLeave(RegionLeftEvent event) {
+	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
 			int size = getWGUtils().getPlayersInRegion(gameRg).size();

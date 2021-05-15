@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -15,18 +17,14 @@ import me.pugabyte.nexus.models.godmode.Godmode;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
-import me.pugabyte.nexus.models.litebans.LiteBansService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import static me.pugabyte.nexus.utils.StringUtils.getLocationString;
@@ -50,13 +48,9 @@ public class WhoIsCommand extends CustomCommand {
 		HoursService hoursService = new HoursService();
 		GeoIPService geoIpService = new GeoIPService();
 
-		int history = 0;
-		List<String> alts = new ArrayList<>();
-		try {
-			LiteBansService liteBansService = new LiteBansService();
-			history = liteBansService.getHistory(nerd.getUuid().toString());
-			alts = liteBansService.getAlts(nerd.getUuid().toString());
-		} catch (Exception ignore) {}
+		Punishments punishments = Punishments.of(nerd);
+		boolean history = punishments.hasHistory();
+		JsonBuilder alts = punishments.getAltsMessage();
 
 		String nickname = Nickname.of(nerd);
 		Hours hours = hoursService.get(nerd);
@@ -96,11 +90,11 @@ public class WhoIsCommand extends CustomCommand {
 		if (hours.getTotal() > 0)
 			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
 
-		if (history > 0)
-			json.newline().next("&3History: &e" + history).command("/history " + nerd.getName()).hover("&eClick to view history");
+		if (history)
+			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history");
 
-		if (!alts.isEmpty())
-			json.newline().next("&3Alts: &e" + String.join(", ", alts));
+		if (alts != null)
+			json.newline().next("&3Alts: &e").next(alts);
 
 		if (!pastNames.isEmpty())
 			json.newline().next("&3Past Names: &e" + String.join("&3, &e", pastNames));

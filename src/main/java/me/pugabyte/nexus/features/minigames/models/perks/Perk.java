@@ -1,14 +1,14 @@
 package me.pugabyte.nexus.features.minigames.models.perks;
 
 import lombok.EqualsAndHashCode;
+import me.pugabyte.nexus.framework.interfaces.HasDescription;
 import org.bukkit.inventory.ItemStack;
 
 @EqualsAndHashCode
-public abstract class Perk implements IHasPerkCategory {
+public abstract class Perk implements IHasPerkCategory, HasDescription {
 	@EqualsAndHashCode.Include
 	public abstract String getName();
 	public abstract ItemStack getMenuItem();
-	public abstract String getDescription();
 	@EqualsAndHashCode.Include
 	public abstract PerkCategory getPerkCategory();
 	public abstract int getPrice();

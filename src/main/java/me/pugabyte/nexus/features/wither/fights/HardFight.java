@@ -54,7 +54,7 @@ public class HardFight extends WitherFight {
 
 	@Override
 	public List<ItemStack> getAlternateDrops() {
-		return new ArrayList<ItemStack>() {{
+		return new ArrayList<>() {{
 			ItemStack key = CrateType.BOSS.getKey();
 			key.setAmount(3);
 			add(key);
@@ -66,8 +66,7 @@ public class HardFight extends WitherFight {
 		if (event.getEntity() != this.wither) return;
 		Wither wither = (Wither) event.getEntity();
 		if (!shouldRegen) {
-			if (event.getDamager() instanceof Player) {
-				Player player = (Player) event.getDamager();
+			if (event.getDamager() instanceof Player player) {
 				PlayerUtils.send(player, WitherChallenge.PREFIX + "&cThe wither cannot be damaged while the blaze shield is up! &eKill the blazes to continue the fight!");
 			}
 		}

@@ -1,15 +1,19 @@
 package me.pugabyte.nexus.features.minigames.mechanics.common;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
+import me.pugabyte.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TitleUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -27,6 +31,15 @@ import java.util.stream.Collectors;
 public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@Override
+	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+		return !(PlayerParticlePerk.class.isAssignableFrom(perk)) || (
+				minigamer.getMatch().getMatchData() instanceof CaptureTheFlagMatchData ?
+						((CaptureTheFlagMatchData) minigamer.getMatch().getMatchData()).getFlagByCarrier(minigamer) != null
+						: minigamer.equals(((OneFlagCaptureTheFlagMatchData) minigamer.getMatch().getMatchData()).getFlagCarrier())
+				);
+	}
+
+	@Override
 	public boolean usesAlternativeRegen() {
 		return true;
 	}
@@ -40,7 +53,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 	protected boolean canPickupFlag(Minigamer minigamer, Sign sign) {
 		if (minigamer.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) {
 			if (sign.getLine(1).equalsIgnoreCase(ChatColor.GREEN + "Flag")) {
-				minigamer.send(ChatColor.RED + "You must be unarmed to interact with flags!");
+				minigamer.sendMessage(ChatColor.RED + "You must be unarmed to interact with flags!");
 			}
 			return false;
 		}
@@ -70,7 +83,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 	}
 
 	@EventHandler
-	public void onRegionEvent(RegionEnteredEvent event) {
+	public void onRegionEvent(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion(), "kill")) return;

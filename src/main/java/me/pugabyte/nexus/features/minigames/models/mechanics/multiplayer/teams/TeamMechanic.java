@@ -1,8 +1,10 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams;
 
 import com.google.common.collect.ImmutableSet;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.lexikiq.OptionalPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
@@ -22,15 +24,13 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 public abstract class TeamMechanic extends MultiplayerMechanic {
 	public static final Set<String> TEAM_VOICE_CHANNELS;
 	public static final Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
-	private static final BaseComponent[] RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
+	private static final Component RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
 
 	static {
 		Set<String> channels = new HashSet<>();
@@ -71,7 +71,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		return true;
 	}
 
-	public static Member getVoiceChannelMember(Player player) {
+	public static @Nullable Member getVoiceChannelMember(@NotNull OptionalPlayer hasPlayer) {
+		Player player = hasPlayer.getPlayer();
+		if (player == null) return null;
+
 		Guild guild = Discord.getGuild();
 		if (guild == null) return null;
 
@@ -125,15 +128,15 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 //		if (teamChannel == null && !voiceMessageBuilder.isInitialized()) return;
 
-		BaseComponent[] message;
+		Component message;
 		if (voiceMessageBuilder.isInitialized())
 			message = voiceMessageBuilder.build();
 		else
-			message = new BaseComponent[]{}; // not rly necessary but it makes IDE stop yelling that it's not initialized
+			message = Component.text().asComponent(); // not rly necessary but it makes IDE stop yelling that it's not initialized
 
 		teamMembers.forEach(minigamer -> {
 			// add voice channel text if present and if user is in voice
-			Member member = getVoiceChannelMember(minigamer.getPlayer());
+			Member member = getVoiceChannelMember(minigamer);
 			if (member != null) {
 				// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
 				assert member.getVoiceState() != null;
@@ -156,7 +159,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	public void leaveTeamVoiceChannel(Minigamer minigamer) {
 		if (!usesTeamChannels()) return;
 
-		Member member = getVoiceChannelMember(minigamer.getPlayer());
+		Member member = getVoiceChannelMember(minigamer);
 		if (member == null) return;
 		// getVoiceChannelMember ensures these aren't null, but IDE is silly, so let's help it out
 		assert member.getVoiceState() != null;
@@ -199,13 +202,13 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		else if (arena.getTeams().size() == winners.size())
 			announcement = "All teams tied in ";
 
-		TextComponent.Builder builder = Component.text();
-		builder.append(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
-		builder.append(arena.getComponent());
+		JsonBuilder builder = new JsonBuilder();
+		builder.next(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
+		builder.next(arena);
 		if (winningScore != 0)
-			builder.append(Component.text(" (" + winningScore + ")"));
+			builder.next(" (" + winningScore + ")");
 
-		Minigames.broadcast(builder.build());
+		Minigames.broadcast(builder);
 	}
 
 	protected List<Team> getWinningTeams(int winningScore, Map<Team, Integer> scores) {

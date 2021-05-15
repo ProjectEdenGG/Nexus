@@ -1,34 +1,39 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.ProjectileListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.PuttListener;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.RegionListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User.BF21PointSource;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -50,29 +55,52 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MiniGolf {
 	// @formatter:off
-	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter
+	private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+	@Getter
+	private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	//
-	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
-	@Getter private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
+	@Getter
+	private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
+	@Getter
+	private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
 	//
-	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
-	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
-	@Getter private static final double floorOffset = 0.05;
-	@Getter private static final double maxVelLen = 2;
-	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE, Material.PETRIFIED_OAK_SLAB);
-	@Getter private static final String regionHole = "bearfair21_minigolf_hole_";
+	@Getter
+	private static final MiniGolf21UserService service = new MiniGolf21UserService();
+	@Getter
+	private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
+	@Getter
+	private static final double floorOffset = 0.05;
+	@Getter
+	private static final double maxVelLen = 2;
+	@Getter
+	private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
+			Material.PETRIFIED_OAK_SLAB, Material.SAND, Material.RED_SAND, Material.SOUL_SOIL, Material.BLUE_ICE,
+			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
+			Material.REDSTONE_BLOCK, Material.SPRUCE_FENCE);
+	@Getter
+	private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
+	@Getter
+	private static final String regionHole = gameRegion + "_hole_";
+	//
+	private BF21PointSource SOURCE = BF21PointSource.MINIGOLF;
 	// @formatter:on
 
+	// TODO BF21:
+	//  - Give points for playing
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
+		new RegionListener();
 
 		ballTask();
-		powerTask();
+		playerTasks();
 		redstoneTask();
 	}
 
@@ -90,11 +118,11 @@ public class MiniGolf {
 		List<ItemStack> kit = Arrays.asList(getPutter(), getWedge(), getWhistle(),
 				getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build(), getScoreBook());
 
-		PlayerUtils.giveItems(user.getPlayer(), kit);
+		PlayerUtils.giveItems(user.getOnlinePlayer(), kit);
 	}
 
 	public static void takeKit(MiniGolf21User user) {
-		PlayerInventory inventory = user.getPlayer().getInventory();
+		PlayerInventory inventory = user.getOnlinePlayer().getInventory();
 		inventory.remove(getPutter());
 		inventory.remove(getWedge());
 		inventory.remove(getWhistle());
@@ -106,26 +134,51 @@ public class MiniGolf {
 		if (!Nexus.getEnv().equals(Env.PROD))
 			return;
 
-		String hole13 = regionHole + "13_activate";
+		// Hole 13
+		String hole13 = MiniGolfHole.THIRTEEN.getRegionId() + "_activate";
 		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
-
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
 			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
 				hole13Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
+
+		// Hole 17
+		Location hole17Loc = new Location(BearFair21.getWorld(), 107, 117, -9);
+		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(38), () -> {
+			if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
+				hole17Loc.getBlock().setType(Material.REDSTONE_BLOCK);
+		});
 	}
 
-	private void powerTask() {
+	private void playerTasks() {
+		// Kit
+		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				if (!BearFair21.isAtBearFair(player))
+					continue;
+
+				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
+
+				MiniGolf21User user = service.get(player);
+				if (user.isPlaying() && regions == 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+					PlayerUtils.runCommand(player, "minigolf quit");
+				} else if (!user.isPlaying() && regions > 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+					PlayerUtils.runCommand(player, "minigolf play");
+				}
+
+			}
+		});
+
+		// Power
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
-				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(user.getUuid());
-				if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
+				if (!user.isOnline())
 					continue;
 
 				if (user.getSnowball() == null)
 					continue;
 
-				Player player = offlinePlayer.getPlayer();
+				Player player = user.getOnlinePlayer();
 				ItemStack tool = ItemUtils.getTool(player);
 				if (ItemUtils.isNullOrAir(tool))
 					continue;
@@ -187,7 +240,7 @@ public class MiniGolf {
 
 				// Check block underneath
 				Location loc = ball.getLocation();
-				Block block = loc.subtract(0, 0.1, 0).getBlock();
+				Block below = loc.subtract(0, 0.1, 0).getBlock();
 
 				Vector vel = ball.getVelocity();
 
@@ -217,11 +270,17 @@ public class MiniGolf {
 				// Rainbow Glow
 				if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
 					if (updateRainbow)
-						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getPlayer());
+						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getOnlinePlayer());
+				}
+
+				Material _type = loc.getBlock().getType();
+				if (_type.equals(Material.LAVA) || _type.equals(Material.WATER)) {
+					MiniGolfUtils.respawnBall(ball);
+					continue;
 				}
 
 				// Act upon block type
-				Material type = block.getType();
+				Material type = below.getType();
 				MiniGolfHole ballHole = MiniGolfUtils.getHole(ball.getLocation());
 				switch (type) {
 					case CAULDRON:
@@ -261,10 +320,12 @@ public class MiniGolf {
 
 						if (user.getScore().containsKey(ballHole)) {
 							int score = user.getScore().get(ballHole);
-							if (strokes < score)
+							if (strokes < score) {
 								user.getScore().put(ballHole, strokes);
-						} else
+							}
+						} else {
 							user.getScore().put(ballHole, strokes);
+						}
 
 						user.setCurrentHole(null);
 						user.setCurrentStrokes(0);
@@ -275,6 +336,7 @@ public class MiniGolf {
 					case LAVA:
 					case CRIMSON_HYPHAE:
 					case PURPLE_STAINED_GLASS:
+					case BARRIER:
 						// Fall
 						ball.setGravity(true);
 						break;
@@ -306,67 +368,41 @@ public class MiniGolf {
 						break;
 					case MAGENTA_GLAZED_TERRACOTTA:
 						// Get Direction
-						Directional directional = (Directional) block.getBlockData();
+						Directional directional = (Directional) below.getBlockData();
 
-						Vector newVel;
-						switch (directional.getFacing()) {
-							case NORTH:
-								newVel = new Vector(0, 0, 0.1);
-								break;
-							case SOUTH:
-								newVel = new Vector(0, 0, -0.1);
-								break;
-							case EAST:
-								newVel = new Vector(-0.1, 0, 0);
-								break;
-							case WEST:
-								newVel = new Vector(0.1, 0, 0);
-								break;
-							default:
-								continue;
-						}
+						Vector dir = getDirection(directional.getFacing(), 0.1);
+						if (dir == null)
+							continue;
 
 						// Push ball
-						ball.setVelocity(vel.multiply(9.0).add(newVel).multiply(0.1)); // 9.0
+						ball.setVelocity(vel.multiply(9.0).add(dir).multiply(0.1)); // 9.0
 
 						break;
 					case OBSERVER:
 						// Get Direction
-						directional = (Directional) block.getBlockData();
-
-						switch (directional.getFacing()) {
-							case NORTH:
-								newVel = new Vector(0, 0, 0.5);
-								break;
-							case SOUTH:
-								newVel = new Vector(0, 0, -0.5);
-								break;
-							case EAST:
-								newVel = new Vector(-0.5, 0, 0);
-								break;
-							case WEST:
-								newVel = new Vector(0.5, 0, 0);
-								break;
-							default:
-								continue;
-						}
+						directional = (Directional) below.getBlockData();
+						dir = getDirection(directional.getFacing(), 0.5);
+						if (dir == null)
+							continue;
 
 						if (vel.length() < maxVelLen) {
 							// Push ball
-							ball.setVelocity(vel.multiply(9.3).add(newVel).multiply(0.1));
+							ball.setVelocity(vel.multiply(9.3).add(dir).multiply(0.1));
 						}
 
 						break;
 					case DISPENSER:
-						Block below = block.getRelative(BlockFace.DOWN);
-						if (MaterialTag.SIGNS.isTagged(below.getType())) {
-							Sign sign = (Sign) below.getState();
+						Block under = below.getRelative(BlockFace.DOWN);
+						if (MaterialTag.SIGNS.isTagged(under.getType())) {
+							Sign sign = (Sign) under.getState();
 							String line4 = sign.getLine(3);
 							String[] split = line4.split(",");
 							if (split.length == 3) {
 								try {
-									Location newLoc = new Location(ball.getWorld(),
-											Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+									int x = Integer.parseInt(split[0]);
+									int y = Integer.parseInt(split[1]);
+									int z = Integer.parseInt(split[2]);
+									Location newLoc = new Location(ball.getWorld(), x, y, z);
 									ball.setVelocity(new Vector(0, 0, 0));
 									ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 									ball.setGravity(true);
@@ -376,10 +412,43 @@ public class MiniGolf {
 						}
 
 						break;
+					case SMOKER:
+						// Get Direction
+						under = below;
+						directional = (Directional) under.getBlockData();
+						BlockFace facing = directional.getFacing();
+						under = under.getRelative(facing.getOppositeFace());
+						if (MaterialTag.SIGNS.isTagged(under.getType())) {
+							Sign sign = (Sign) under.getState();
+							String heightStr = sign.getLine(2).replaceAll("height", "");
+							String powerStr = sign.getLine(3).replaceAll("power", "");
+							try {
+								Location newLoc = LocationUtils.getCenteredLocation(below.getRelative(facing).getLocation());
+								ball.setVelocity(new Vector(0, 0, 0));
+								ball.teleport(LocationUtils.getCenteredLocation(newLoc));
+								ball.setGravity(true);
+
+								double height = Double.parseDouble(heightStr);
+								double power = Double.parseDouble(powerStr);
+								Vector newVel = getDirection(facing.getOppositeFace(), power);
+
+								ball.setVelocity(ball.getVelocity().multiply(9.3).add(newVel).setY(height));
+								SoundUtils.playSound(ball.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 3, 1);
+								new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(ball.getLocation()).count(25).spawn();
+							} catch (Exception ignored) {
+
+							}
+						}
+						break;
 					default:
 						// Check if floating above slabs
-						if (MiniGolfUtils.isBottomSlab(block) && loc.getY() > block.getY() + 0.5)
+						if (MiniGolfUtils.isBottomSlab(below) && loc.getY() > below.getY() + 0.5)
 							ball.setGravity(true);
+
+						if (ball.getLocation().getY() < 0) {
+							MiniGolfUtils.respawnBall(ball);
+							break;
+						}
 
 						// Stop & respawn ball if slow enough
 						if (vel.getY() >= 0 && vel.length() <= 0.01) {
@@ -400,6 +469,18 @@ public class MiniGolf {
 				}
 			}
 		});
+	}
+
+	private Vector getDirection(BlockFace face, double power) {
+		Vector vector = switch (face) {
+			case NORTH -> new Vector(0, 0, power);
+			case SOUTH -> new Vector(0, 0, -power);
+			case EAST -> new Vector(-power, 0, 0);
+			case WEST -> new Vector(power, 0, 0);
+			default -> null;
+		};
+
+		return vector;
 	}
 
 }

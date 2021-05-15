@@ -11,8 +11,8 @@ import org.bukkit.event.HandlerList;
 public class MinigameEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	@NonNull
-	private Arena arena;
-	private boolean cancelled = false;
+	protected Arena arena;
+	protected boolean cancelled = false;
 
 	public static HandlerList getHandlerList() {
 		return handlers;

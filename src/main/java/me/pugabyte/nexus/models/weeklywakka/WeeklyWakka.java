@@ -4,9 +4,13 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import lombok.*;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocalDateTimeConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
+import eden.mongodb.serializers.LocalDateTimeConverter;
+import eden.mongodb.serializers.UUIDConverter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.ArrayList;
@@ -19,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocalDateTimeConverter.class})
-public class WeeklyWakka extends PlayerOwnedObject {
+public class WeeklyWakka implements PlayerOwnedObject {
 
 	@Id
 	@NonNull

@@ -16,6 +16,6 @@ public class SkinifyCommand extends CustomCommand {
 
 	@Path("[player]")
 	void skin(@Arg("self") OfflinePlayer player) {
-		send(json("&eClick here &3to Bear Nation-ify your skin!").url("http://bnn.gg/skins/?uuid=" + player.getUniqueId()));
+		send(json("&eClick here &3to Project Eden-ify your skin!").url("http://projecteden.gg/skins/?uuid=" + player.getUniqueId()));
 	}
 }

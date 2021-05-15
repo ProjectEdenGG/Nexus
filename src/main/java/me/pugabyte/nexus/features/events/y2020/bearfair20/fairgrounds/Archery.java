@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
@@ -66,14 +66,14 @@ public class Archery implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (archeryBool) return;
 		archeryBool = true;
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (!archeryBool) return;
 		int size = getWGUtils().getPlayersInRegion(gameRg).size();
@@ -91,9 +91,8 @@ public class Archery implements Listener {
 		if (hitBlock == null) return;
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE)) return;
 		if (!isInRegion(hitBlock, targetsRg)) return;
-		if (!(projectile.getShooter() instanceof Player)) return;
+		if (!(projectile.getShooter() instanceof Player player)) return;
 
-		Player player = (Player) projectile.getShooter();
 		projectile.remove();
 		--currentTargets;
 		removeTarget(hitBlock);

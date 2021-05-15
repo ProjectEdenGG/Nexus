@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.features.minigames.mechanics.PixelDrop;
@@ -15,7 +16,6 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -189,10 +189,9 @@ public class PixelDropMatchData extends MatchData {
 
 	public String getWord(Location location) {
 		BlockState blockState = location.getBlock().getState();
-		if (!(blockState instanceof Sign))
+		if (!(blockState instanceof Sign sign))
 			throw new NexusException("PixelDrop could not parse sign at: " + StringUtils.getLocationString(location));
 
-		Sign sign = (Sign) blockState;
 		String[] lines = sign.getLines();
 		StringBuilder word = new StringBuilder();
 		for (String line : lines) {

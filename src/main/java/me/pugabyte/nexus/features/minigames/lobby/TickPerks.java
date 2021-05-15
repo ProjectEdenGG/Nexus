@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.minigames.lobby;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
@@ -16,7 +18,6 @@ import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.GameMode;
@@ -87,10 +88,9 @@ public class TickPerks implements Listener {
 					if (perk instanceof LoadoutPerk)
 						loadoutUsers.add(perkOwner);
 
-					if (perk instanceof TickablePerk) {
-						if (minigamer.isPlaying() && (minigamer.isRespawning() || !minigamer.usesPerk(perk))) return;
+					if (perk instanceof TickablePerk tickablePerk) {
+						if (minigamer.isPlaying() && (minigamer.isRespawning() || !minigamer.usesPerk(perk)) || PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR) return;
 
-						TickablePerk tickablePerk = (TickablePerk) perk;
 						if (minigamer.isPlaying())
 							tickablePerk.tick(minigamer);
 						else
@@ -111,7 +111,8 @@ public class TickPerks implements Listener {
 			perkOwner = service.get(perkOwner.getUuid()); // update loadout perks...? not sure if necessary
 			OfflinePlayer _player = PlayerUtils.getPlayer(perkOwner.getUuid());
 			Minigamer minigamer = _player.isOnline() ? PlayerManager.get(_player.getPlayer()) : null;
-			if (!_player.isOnline() || (!minigamer.isPlaying() && !isInRegion((Player) _player)) || (minigamer.isPlaying() && !minigamer.usesPerk(LoadoutPerk.class)) || perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty()) {
+			if (!_player.isOnline() || (!minigamer.isPlaying() && !isInRegion((Player) _player)) || (minigamer.isPlaying() && !minigamer.usesPerk(LoadoutPerk.class))
+					|| perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty() || PlayerUtils.isVanished((Player) _player) || ((Player) _player).getGameMode() == GameMode.SPECTATOR) {
 				loadoutUsers.remove(perkOwner);
 				// send true packets
 				Player player = _player.getPlayer();
@@ -123,23 +124,13 @@ public class TickPerks implements Listener {
 					if (item == null)
 						item = new ItemStack(Material.AIR);
 
-					EnumItemSlot slot;
-					switch (i) {
-						case 3:
-							slot = EnumItemSlot.HEAD;
-							break;
-						case 2:
-							slot = EnumItemSlot.CHEST;
-							break;
-						case 1:
-							slot = EnumItemSlot.LEGS;
-							break;
-						case 0:
-							slot = EnumItemSlot.FEET;
-							break;
-						default:
-							throw new IllegalStateException("Unexpected value: " + i);
-					}
+					EnumItemSlot slot = switch (i) {
+						case 3 -> EnumItemSlot.HEAD;
+						case 2 -> EnumItemSlot.CHEST;
+						case 1 -> EnumItemSlot.LEGS;
+						case 0 -> EnumItemSlot.FEET;
+						default -> throw new IllegalStateException("Unexpected value: " + i);
+					};
 					LoadoutPerk.sendPackets(player, player.getWorld().getPlayers(), item, slot);
 				}
 			}
@@ -232,7 +223,7 @@ public class TickPerks implements Listener {
 	private static class CooldownWrapper {
 		private final UUID uuid;
 		private final GadgetPerk perk;
-		public static CooldownWrapper of(OfflinePlayer player, GadgetPerk perk) {
+		public static CooldownWrapper of(HasUniqueId player, GadgetPerk perk) {
 			return new CooldownWrapper(player.getUniqueId(), perk);
 		}
 	}

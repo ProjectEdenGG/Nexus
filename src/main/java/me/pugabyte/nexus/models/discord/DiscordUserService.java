@@ -1,20 +1,26 @@
 package me.pugabyte.nexus.models.discord;
 
+import dev.morphia.query.Query;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(DiscordUser.class)
-public class DiscordUserService extends MongoService {
-	private final static Map<UUID, DiscordUser> cache = new HashMap<>();
+public class DiscordUserService extends MongoService<DiscordUser> {
+	private final static Map<UUID, DiscordUser> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, DiscordUser> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public DiscordUser checkVerified(String userId) {
@@ -27,13 +33,17 @@ public class DiscordUserService extends MongoService {
 	}
 
 	public DiscordUser getFromUserId(String userId) {
-		DiscordUser user = database.createQuery(DiscordUser.class).filter("userId", userId).find().tryNext();
+		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
+		query.and(query.criteria("userId").equalIgnoreCase(userId));
+		DiscordUser user = query.find().tryNext();
 		cache(user);
 		return user;
 	}
 
 	public DiscordUser getFromRoleId(String roleId) {
-		DiscordUser user = database.createQuery(DiscordUser.class).filter("roleId", roleId).find().tryNext();
+		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
+		query.and(query.criteria("roleId").equalIgnoreCase(roleId));
+		DiscordUser user = query.find().tryNext();
 		cache(user);
 		return user;
 	}

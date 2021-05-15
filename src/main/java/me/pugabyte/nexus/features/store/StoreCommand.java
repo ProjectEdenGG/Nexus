@@ -41,7 +41,7 @@ public class StoreCommand extends CustomCommand {
 		send("&3Enjoying the server? &3Share the love by &edonating&3! We are always extremely grateful for donations, " +
 				"and they come with some cool &erewards&3!");
 		line();
-		send(json().next("&3Visit our store: &ehttps://store.bnn.gg"));
+		send(json().next("&3Visit our store: &ehttps://store.projecteden.gg"));
 		line();
 		send(json(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you donate for anything.").command("/donate tac"));
 	}

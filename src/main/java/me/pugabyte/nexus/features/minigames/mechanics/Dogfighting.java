@@ -14,7 +14,7 @@ public class Dogfighting extends Quake {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 

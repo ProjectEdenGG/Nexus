@@ -76,7 +76,7 @@ public class CrateLoot implements ConfigurationSerializable {
 
 	@Override
 	public @NotNull Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("title", title);
 			put("items", SerializationUtils.YML.serializeItems(items.toArray(getItems().toArray(new ItemStack[0]))));
 			put("weight", weight);

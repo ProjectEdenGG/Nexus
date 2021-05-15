@@ -1,15 +1,17 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.arcademachine.ArcadeMachineMenu;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -19,7 +21,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +52,12 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests
 
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
-public class MinigameNightIsland implements Listener, Island {
+public class MinigameNightIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
+
 	private static Location arcadeSoundLoc = new Location(BearFair20.getWorld(), -1170, 141, -1716);
 	private static Location arcadeSmokeLoc1 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1170, 140, -1715));
 	private static Location arcadeSmokeLoc2 = LocationUtils.getCenteredLocation(new Location(BearFair20.getWorld(), -1169, 148, -1715));
@@ -170,6 +176,11 @@ public class MinigameNightIsland implements Listener, Island {
 		@Getter
 		private final List<String> script;
 
+		@Override
+		public String getName() {
+			return this.name();
+		}
+
 		MinigameNightNPCs(int npcId) {
 			this.npcId = npcId;
 			this.script = new ArrayList<>();
@@ -241,9 +252,8 @@ public class MinigameNightIsland implements Listener, Island {
 
 		if (!BearFair20.enableQuests) return;
 		Entity clicked = event.getRightClicked();
-		if (!(clicked instanceof ItemFrame)) return;
+		if (!(clicked instanceof ItemFrame itemFrame)) return;
 
-		ItemFrame itemFrame = (ItemFrame) clicked;
 		ItemStack item = itemFrame.getItem();
 
 		ItemStack piece = null;
@@ -276,7 +286,7 @@ public class MinigameNightIsland implements Listener, Island {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (!regionId.equalsIgnoreCase(basementRg)) return;
 		if (!BearFair20.enableQuests) return;
@@ -371,33 +381,15 @@ public class MinigameNightIsland implements Listener, Island {
 		BearFair20User user = service.get(player);
 		Material pieceType = piece.getType();
 		switch (pieceType) {
-			case IRON_TRAPDOOR:
-				user.setQuest_MGN_hasCPU(true);
-				break;
-			case DAYLIGHT_DETECTOR:
-				user.setQuest_MGN_hasProcessor(true);
-				break;
-			case IRON_INGOT:
-				user.setQuest_MGN_hasMemoryCard(true);
-				break;
-			case GREEN_CARPET:
-				user.setQuest_MGN_hasMotherBoard(true);
-				break;
-			case BLAST_FURNACE:
-				user.setQuest_MGN_hasPowerSupply(true);
-				break;
-			case NOTE_BLOCK:
-				user.setQuest_MGN_hasSpeaker(true);
-				break;
-			case HOPPER_MINECART:
-				user.setQuest_MGN_hasHardDrive(true);
-				break;
-			case REPEATER:
-				user.setQuest_MGN_hasDiode(true);
-				break;
-			case LEVER:
-				user.setQuest_MGN_hasJoystick(true);
-				break;
+			case IRON_TRAPDOOR -> user.setQuest_MGN_hasCPU(true);
+			case DAYLIGHT_DETECTOR -> user.setQuest_MGN_hasProcessor(true);
+			case IRON_INGOT -> user.setQuest_MGN_hasMemoryCard(true);
+			case GREEN_CARPET -> user.setQuest_MGN_hasMotherBoard(true);
+			case BLAST_FURNACE -> user.setQuest_MGN_hasPowerSupply(true);
+			case NOTE_BLOCK -> user.setQuest_MGN_hasSpeaker(true);
+			case HOPPER_MINECART -> user.setQuest_MGN_hasHardDrive(true);
+			case REPEATER -> user.setQuest_MGN_hasDiode(true);
+			case LEVER -> user.setQuest_MGN_hasJoystick(true);
 		}
 		service.save(user);
 	}

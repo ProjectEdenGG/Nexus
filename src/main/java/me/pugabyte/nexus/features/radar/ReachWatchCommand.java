@@ -50,10 +50,8 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onDamage(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player))
+		if (!(event.getDamager() instanceof Player attacker))
 			return;
-
-		Player attacker = (Player) event.getDamager();
 
 		if (watchMap.get(attacker) == null || watchMap.get(attacker).size() == 0)
 			return;

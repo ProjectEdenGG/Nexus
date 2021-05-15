@@ -1,62 +1,64 @@
 package me.pugabyte.nexus.utils;
 
+import io.papermc.paper.text.PaperComponents;
+import lombok.experimental.UtilityClass;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class AdventureUtils {
-	public static Component stripColor(Component component) {
+	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().build();
+	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').build();
+
+	public static Component stripColor(ComponentLike componentLike) {
+		Component component = componentLike.asComponent();
 		component = component.style(Style.empty());
-		if (component instanceof TranslatableComponent) {
-			TranslatableComponent tComponent = (TranslatableComponent) component;
+		if (component instanceof TranslatableComponent tComponent) {
 			component = tComponent.args(stripColor(tComponent.args()));
 		}
 		return component.children(stripColor(component.children()));
 	}
 
-	public static List<Component> stripColor(Collection<Component> components) {
+	public static List<Component> stripColor(List<Component> components) {
 		return components.stream().map(AdventureUtils::stripColor).collect(Collectors.toList());
 	}
 
-	public static String asPlainText(Component component) {
-		return PlainComponentSerializer.plain().serialize(component);
+	public static String asPlainText(ComponentLike component) {
+		return PaperComponents.plainSerializer().serialize(component.asComponent());
 	}
 
-	public static String asLegacyText(Component component) {
-		return LegacyComponentSerializer.legacySection().serialize(component);
+	public static String asLegacyText(ComponentLike component) {
+		return PaperComponents.legacySectionSerializer().serialize(component.asComponent());
 	}
 
 	public static Component fromLegacyText(String string) {
-		return LegacyComponentSerializer.legacySection().deserialize(string);
+		return LEGACY_SERIALIZER.deserialize(string);
 	}
 
 	public static Component fromLegacyAmpersandText(String string) {
-		return LegacyComponentSerializer.legacyAmpersand().deserialize(string);
-	}
-
-	public static Component fromJson(JsonBuilder json) {
-		return GsonComponentSerializer.gson().deserialize(json.serialize());
+		return LEGACY_AMPERSAND_SERIALIZER.deserialize(string);
 	}
 
 	public static Identity identityOf(Identified object) {
@@ -67,7 +69,7 @@ public class AdventureUtils {
 		return Identity.identity(uuid);
 	}
 
-	public static Identity identityOf(OfflinePlayer player) {
+	public static Identity identityOf(HasUniqueId player) {
 		return identityOf(player.getUniqueId());
 	}
 
@@ -79,38 +81,93 @@ public class AdventureUtils {
 				.append(Component.text(" ", NamedTextColor.DARK_AQUA));
 	}
 
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable Color color) {
+		if (color == null)
+			return null;
+		return TextColor.color(color.getRGB());
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable org.bukkit.Color color) {
+		if (color == null)
+			return null;
+		return TextColor.color(color.asRGB());
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable ChatColor color) {
+		if (color == null)
+			return null;
+		return textColorOf(color.getColor());
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable Colored color) {
+		if (color == null)
+			return null;
+		return color.getTextColor();
+	}
+
+	/**
+	 * Parses a hexadecimal number
+	 * @param string number in the format "#FFFFFF" (# optional)
+	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 * @return corresponding text color
+	 */
+	@Contract("null -> null; !null -> !null")
+	public static TextColor textColorOf(@Nullable String string) throws IllegalArgumentException {
+		if (string == null)
+			return null;
+		if (string.startsWith("#"))
+			string = string.substring(1);
+		try {
+			return TextColor.color(Integer.parseInt(string, 16));
+		} catch ( NumberFormatException ex ) {
+			throw new IllegalArgumentException("Illegal hex string " + string);
+		}
+	}
+
+	@NotNull
 	public static TextComponent colorText(@Nullable ChatColor color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getColor().getRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
-	public static TextComponent colorText(@Nullable ColorType color, @NotNull String text) {
-		if (color == null || color.getColor() == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getColor().asRGB()));
-	}
-
+	@NotNull
 	public static TextComponent colorText(@Nullable Color color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.getRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
+	@NotNull
 	public static TextComponent colorText(@Nullable org.bukkit.Color color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, TextColor.color(color.asRGB()));
+		return Component.text(text, textColorOf(color));
 	}
 
+	@NotNull
 	public static TextComponent colorText(@Nullable Colored color, @NotNull String text) {
-		if (color == null)
-			return Component.text(text);
-		return Component.text(text, color.getTextColor());
+		return Component.text(text, textColorOf(color));
 	}
 
+	/**
+	 * Parses a hexadecimal number
+	 * @param color number in the format "#FFFFFF" (# optional)
+	 * @param text text to color
+	 * @throws IllegalArgumentException string contained an invalid hexadecimal number
+	 * @return corresponding text color
+	 */
+	@NotNull
+	public static TextComponent colorText(@Nullable String color, @NotNull String text) throws IllegalArgumentException {
+		return Component.text(text, textColorOf(color));
+	}
+
+	@NotNull
 	public static TextComponent colorText(@NotNull ColoredAndNamed coloredAndNamed) {
 		return Component.text(coloredAndNamed.getName(), coloredAndNamed.getTextColor());
+	}
+
+	@NotNull
+	public static TextComponent colorText(@NotNull ColoredAndNicknamed coloredAndNicknamed) {
+		return Component.text(coloredAndNicknamed.getNickname(), coloredAndNicknamed.getTextColor());
 	}
 
 	/**
@@ -127,7 +184,7 @@ public class AdventureUtils {
 	 * @param color optional color to use for the commas
 	 * @return a formatted TextComponent
 	 */
-	public static TextComponent commaJoinText(List<Component> components, @Nullable TextColor color) {
+	public static TextComponent commaJoinText(List<? extends ComponentLike> components, @Nullable TextColor color) {
 		TextComponent component = Component.text("", color);
 
 		if (components.isEmpty())
@@ -163,7 +220,14 @@ public class AdventureUtils {
 	 * @param components components to separate by commas.
 	 * @return a formatted TextComponent
 	 */
-	public static TextComponent commaJoinText(List<Component> components) {
+	public static TextComponent commaJoinText(List<? extends ComponentLike> components) {
 		return commaJoinText(components, null);
+	}
+
+	/**
+	 * Maps a list of {@link ComponentLike} to {@link Component}
+	 */
+	public static List<Component> asComponentList(List<? extends ComponentLike> components) {
+		return components.stream().map(ComponentLike::asComponent).collect(Collectors.toList());
 	}
 }

@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePe
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class SplashParticle extends PlayerParticlePerk {
 	@Override
@@ -17,7 +18,7 @@ public class SplashParticle extends PlayerParticlePerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Summon water particles like a fish in water";
 	}
 

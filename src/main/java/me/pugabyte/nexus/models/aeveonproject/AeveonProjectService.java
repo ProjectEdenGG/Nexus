@@ -1,20 +1,25 @@
 package me.pugabyte.nexus.models.aeveonproject;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import org.bukkit.OfflinePlayer;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(AeveonProjectUser.class)
-public class AeveonProjectService extends MongoService {
-	private final static Map<UUID, AeveonProjectUser> cache = new HashMap<>();
+public class AeveonProjectService extends MongoService<AeveonProjectUser> {
+	private final static Map<UUID, AeveonProjectUser> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, AeveonProjectUser> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 
 	public boolean hasStarted(OfflinePlayer player) {

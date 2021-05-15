@@ -1,13 +1,15 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.SummerDownUnderIsland.SummerDownUnderNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -18,7 +20,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,7 +44,11 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests
 
 @Region("summerdownunder")
 @NPCClass(SummerDownUnderNPCs.class)
-public class SummerDownUnderIsland implements Listener, Island {
+public class SummerDownUnderIsland implements Listener, BearFairIsland {
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	public static ItemStack greatNortherns = new ItemBuilder(Material.BARREL).name("&aGreat Northerns").amount(1).lore(itemLore).build();
 	private static ItemStack goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore).amount(1).build();
@@ -140,7 +145,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				return startQuest;
 			}
 		},
-		FARMER(2752, new ArrayList<String>() {{
+		FARMER(2752, new ArrayList<>() {{
 			add("G’day g’day, the crops are fresh and lookin’ real mean");
 			add("wait 80");
 			add("Oh you need it for the ANZAC Biscuit? Crikey, we haven’t had those around here for months! " +
@@ -210,7 +215,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 				startQuest.add("Hello mate. Golden Syrup hey? Hmm well. I think I should have some for you.");
 				startQuest.add("wait 80");
 				startQuest.add("Aha! Here it is. Have this mate. Fresh from a place called Landfall. Not really sure where that is on " +
-						"Bear Nation, but their syrup is to die for!");
+						"Project Eden, but their syrup is to die for!");
 
 				if (!user.isQuest_SDU_Start() || step < 4)
 					return Collections.singletonList(RandomUtils.randomElement(greetings));
@@ -382,6 +387,11 @@ public class SummerDownUnderIsland implements Listener, Island {
 		@Getter
 		private final List<String> script;
 
+		@Override
+		public String getName() {
+			return this.name();
+		}
+
 		SummerDownUnderNPCs(int npcId) {
 			this.npcId = npcId;
 			this.script = new ArrayList<>();
@@ -515,8 +525,7 @@ public class SummerDownUnderIsland implements Listener, Island {
 			water = true;
 		else {
 			Block clicked = event.getClickedBlock();
-			if (!BlockUtils.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged) {
-				Waterlogged waterlogged = (Waterlogged) clicked.getBlockData();
+			if (!BlockUtils.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged waterlogged) {
 				if (waterlogged.isWaterlogged())
 					water = true;
 			}

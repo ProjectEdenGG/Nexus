@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
@@ -20,17 +21,20 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSetting;
+import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -39,6 +43,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
@@ -126,7 +131,7 @@ public class Minigames extends Feature {
 		// TODO: If arena is public, announce to discord and whole server
 	}
 
-	public static void broadcast(Component component) {
+	public static void broadcast(ComponentLike component) {
 		getPlayers().forEach(player -> player.sendMessage(Minigames.COMPONENT_PREFIX.append(component)));
 	}
 
@@ -173,6 +178,17 @@ public class Minigames extends Feature {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public static @NotNull MinigameModifier getModifier() {
+		return new MinigamesSettingService().get().getModifier();
+	}
+
+	public static void setModifier(@NotNull MinigameModifier modifier) {
+		MinigamesSettingService service = new MinigamesSettingService();
+		MinigamesSetting setting = service.get();
+		setting.setModifier(modifier);
+		service.save(setting);
 	}
 
 }

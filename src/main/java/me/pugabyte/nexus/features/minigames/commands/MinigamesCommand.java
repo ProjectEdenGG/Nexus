@@ -14,6 +14,8 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -34,10 +36,14 @@ import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
+import me.pugabyte.nexus.models.punishments.Punishment;
+import me.pugabyte.nexus.models.punishments.PunishmentType;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -54,6 +60,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,6 +90,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("use")
 	void list(String filter) {
 		send(PREFIX + ArenaManager.getAll(filter).stream()
+				.sorted(Comparator.comparing(Arena::getName))
 				.map(arena -> (MatchManager.find(arena) != null ? "&e" : "&3") + arena.getName())
 				.collect(Collectors.joining("&3, ")));
 	}
@@ -97,6 +105,17 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("use")
 	void quit() {
 		minigamer.quit();
+	}
+
+	@Path("warn <player> [reason]")
+	@Permission(value = "group.moderator", absolute = true)
+	void warn(Player player, String reason) {
+		if (!Minigames.isMinigameWorld(player.getWorld()))
+			error("Target player is not in minigames");
+
+		player.getWorld().strikeLightningEffect(player.getLocation());
+		Punishments.of(player).add(Punishment.ofType(PunishmentType.WARN).punisher(uuid())
+				.input("Please obey the rules of our minigames" + (isNullOrEmpty(reason) ? "" : ": " + reason)));
 	}
 
 	@Path("testMode [boolean]")
@@ -481,7 +500,6 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens [user]")
-	@Permission("group.seniorstaff")
 	void getTokens(@Arg("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(nerd);
@@ -545,6 +563,19 @@ public class MinigamesCommand extends CustomCommand {
 		owner.setHideParticle(type);
 		service.save(owner);
 		send(Minigames.PREFIX + "Now hiding "+type.toString().toLowerCase()+" particles");
+	}
+
+	@Path("modifier <type>")
+	@Permission("group.staff")
+	void modifier(MinigameModifier type) {
+		Minigames.setModifier(type);
+		send(PREFIX + "Minigame modifier set to &e" + type.getName());
+	}
+
+	@Path("modifier random")
+	@Permission("group.staff")
+	void modifierRandom() {
+		modifier(RandomUtils.randomElement(Arrays.stream(MinigameModifiers.values()).map(MinigameModifiers::getModifier).collect(Collectors.toList())));
 	}
 
 	private Match getRunningMatch(Arena arena) {
@@ -615,6 +646,19 @@ public class MinigamesCommand extends CustomCommand {
 		return context.getTeams().stream()
 				.map(Team::getName)
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
+	}
+
+	@ConverterFor({MinigameModifier.class})
+	MinigameModifier convertToModifier(String value) {
+		return MinigameModifiers.valueOf(value.toUpperCase()).getModifier();
+	}
+
+	@TabCompleterFor({MinigameModifier.class})
+	List<String> tabCompleteModifier(String filter) {
+		return Arrays.stream(MinigameModifiers.values())
+				.map(modifier -> modifier.name().toLowerCase())
+				.filter(modifier -> modifier.startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 }

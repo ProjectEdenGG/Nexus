@@ -25,7 +25,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
@@ -43,7 +42,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@Path("[enable] [player]")
 	void run(Boolean enable, @Arg("self") Godmode godmode) {
-		Player player = godmode.getPlayer();
+		Player player = godmode.getOnlinePlayer();
 		if (Godmode.getDisabledWorlds().contains(player.getWorld().getName()))
 			error("Godmode disabled here");
 
@@ -65,8 +64,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onEntityDamage(final EntityDamageEvent event) {
-		if (event.getEntity() instanceof Player) {
-			final Player player = (Player) event.getEntity();
+		if (event.getEntity() instanceof final Player player) {
 			Godmode godmode = new GodmodeService().get(player);
 			if (godmode.isEnabled()) {
 				player.setFireTicks(0);
@@ -87,8 +85,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntityCombustByEntity(final EntityCombustByEntityEvent event) {
-		if (event.getCombuster() instanceof Arrow && event.getEntity() instanceof Player) {
-			Arrow combuster = (Arrow) event.getCombuster();
+		if (event.getCombuster() instanceof Arrow combuster && event.getEntity() instanceof Player) {
 			if (combuster.getShooter() instanceof Player) {
 				Godmode godmode = new GodmodeService().get((Player) event.getEntity());
 				if (godmode.isEnabled())
@@ -99,8 +96,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onFoodLevelChange(final FoodLevelChangeEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = (Player) event.getEntity();
+		if (event.getEntity() instanceof Player player) {
 			Godmode godmode = new GodmodeService().get(player);
 			if (godmode.isEnabled()) {
 				player.setFoodLevel(20);
@@ -113,8 +109,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onPotionSplashEvent(final PotionSplashEvent event) {
 		for (LivingEntity entity : event.getAffectedEntities())
-			if (entity instanceof Player) {
-				Player player = (Player) entity;
+			if (entity instanceof Player player) {
 				Godmode godmode = new GodmodeService().get(player);
 				if (godmode.isEnabled() || player.getGameMode() == GameMode.CREATIVE || isVanished(player))
 					event.setIntensity(player, 0f);
@@ -126,20 +121,11 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 		if (event.getEntity().getType() == EntityType.EXPERIENCE_ORB)
 			return;
 
-		if (event.getTarget() instanceof Player) {
-			Player player = (Player) event.getTarget();
+		if (event.getTarget() instanceof Player player) {
 			Godmode godmode = new GodmodeService().get(player);
 			if (godmode.isEnabled())
 				event.setCancelled(true);
 		}
-	}
-
-	@EventHandler
-	public void onJoin(final PlayerJoinEvent event) {
-		GodmodeService service = new GodmodeService();
-		Godmode godmode = service.get(event.getPlayer());
-		godmode.setLoginLocation(event.getPlayer().getLocation());
-		service.save(godmode);
 	}
 
 }

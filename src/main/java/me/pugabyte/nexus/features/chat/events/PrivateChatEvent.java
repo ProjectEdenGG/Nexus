@@ -31,4 +31,8 @@ public class PrivateChatEvent extends MinecraftChatEvent {
 		return true;
 	}
 
+	public String getRecipientNames() {
+		return String.join(", ", channel.getOthersNames(chatter));
+	}
+
 }

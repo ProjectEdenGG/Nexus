@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 public enum VPSMenu {
 	SURVIVAL {
 		@Getter
-		final List<VPSPage> pages = new ArrayList<VPSPage>() {{
-			add(VPSPage.builder().items(new HashMap<Integer, VPSSlotBuilder>() {{
+		final List<VPSPage> pages = new ArrayList<>() {{
+			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 						.name("$250")
 						.display(Material.IRON_NUGGET)
@@ -65,7 +65,7 @@ public enum VPSMenu {
 							KillerMoney km = service.get(player);
 							km.setBoost(3);
 							service.save(km);
-							new TaskService().save(new Task(KillerMoneyCommand.getExpireTaskId(), new HashMap<String, Object>() {{
+							new TaskService().save(new Task(KillerMoneyCommand.getExpireTaskId(), new HashMap<>() {{
 								put("uuid", player.getUniqueId().toString());
 							}}, LocalDateTime.now().plusDays(3)));
 							return true;
@@ -161,7 +161,7 @@ public enum VPSMenu {
 						.price(10));
 			}}).build());
 
-			add(VPSPage.builder().items(new HashMap<Integer, VPSSlotBuilder>() {{
+			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 						.name("Enchanted Book")
 						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.FROST_WALKER, 2))
@@ -255,7 +255,7 @@ public enum VPSMenu {
 						.price(2));
 			}}).build());
 
-			add(VPSPage.builder().items(new HashMap<Integer, VPSSlotBuilder>() {{
+			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 						.name("2 Horse Spawn Eggs")
 						.displayAndGive(Material.HORSE_SPAWN_EGG, 2)
@@ -341,7 +341,7 @@ public enum VPSMenu {
 						.price(2));
 			}}).build());
 
-			add(VPSPage.builder().items(new HashMap<Integer, VPSSlotBuilder>() {{
+			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 						.name("8 Blue Ice")
 						.displayAndGive(Material.BLUE_ICE, 8)
@@ -430,7 +430,7 @@ public enum VPSMenu {
 						.price(5));
 			}}).build());
 
-			add(VPSPage.builder().items(new HashMap<Integer, VPSSlotBuilder>() {{
+			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 						.name("4 Oak Saplings")
 						.displayAndGive(Material.OAK_SAPLING, 4)
@@ -515,10 +515,10 @@ public enum VPSMenu {
 
 	CREATIVE {
 		@Getter
-		final List<VPSPage> pages = new ArrayList<VPSPage>() {{
+		final List<VPSPage> pages = new ArrayList<>() {{
 			add(VPSPage.builder()
 					.rows(3)
-					.items(new HashMap<Integer, VPSSlotBuilder>() {{
+					.items(new HashMap<>() {{
 						put(13, VPSSlot.builder()
 								.name("+1 Plot")
 								.display(new ItemBuilder(Material.SANDSTONE_SLAB)
@@ -535,10 +535,10 @@ public enum VPSMenu {
 
 	SKYBLOCK {
 		@Getter
-		final List<VPSPage> pages = new ArrayList<VPSPage>() {{
+		final List<VPSPage> pages = new ArrayList<>() {{
 			add(VPSPage.builder()
 					.rows(5)
-					.items(new HashMap<Integer, VPSSlotBuilder>() {{
+					.items(new HashMap<>() {{
 						put(10, VPSSlot.builder()
 								.name("5 dirt")
 								.displayAndGive(Material.DIRT, 5)

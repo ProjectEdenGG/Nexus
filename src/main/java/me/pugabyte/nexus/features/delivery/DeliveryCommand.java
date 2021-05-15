@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.delivery;
 
+import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
@@ -62,16 +62,14 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 		Player player = (Player) event.getPlayer();
 		Optional<SmartInventory> inv = SmartInvsPlugin.manager().getInventory(player);
 		if (!inv.isPresent()) return;
-		if (!(inv.get().getProvider() instanceof OpenDeliveryMenuProvider)) return;
+		if (!(inv.get().getProvider() instanceof OpenDeliveryMenuProvider openDeliveryMenuProvider)) return;
 
-		OpenDeliveryMenuProvider openDeliveryMenuProvider = (OpenDeliveryMenuProvider) inv.get().getProvider();
 		List<ItemStack> items = openDeliveryMenuProvider.getDelivery().getItems(); // check against inv items and diff
 		List<ItemStack> contents = Arrays.asList(event.getInventory().getContents());
 
-		for (ItemStack item : items) {
+		for (ItemStack item : items)
 			if (contents.contains(item))
 				PlayerUtils.giveItem(player, item);
-		}
 	}
 
 	@EventHandler

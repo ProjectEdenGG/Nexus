@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.eventuser;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,15 +11,14 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.events.Events;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 @Data
@@ -36,7 +36,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 		Add a way to differentiate between event-world only items and survival items
 		Add a way to send survival items back to survival (delivery service)
  */
-public class EventUser extends PlayerOwnedObject {
+public class EventUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -72,10 +72,10 @@ public class EventUser extends PlayerOwnedObject {
 
 	public void giveTokens(int tokens, boolean actionBar) {
 		this.tokens += tokens;
-		send(Events.PREFIX + "You have received &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
+		sendMessage(Events.PREFIX + "You have received &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
 
 		if (isOnline() && actionBar)
-			sendActionBar(getPlayer(), "&e+" + tokens + plural(" event token", tokens));
+			ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + tokens + plural(" event token", tokens));
 	}
 
 	public void takeTokens(int tokens) {

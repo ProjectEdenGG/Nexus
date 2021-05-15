@@ -39,8 +39,7 @@ public class MiscListener implements Listener {
 
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		Material material = event.getItem().getItemStack().getType();
 
 		if (MaterialTag.ITEMS_MUSIC_DISCS.isTagged(material))

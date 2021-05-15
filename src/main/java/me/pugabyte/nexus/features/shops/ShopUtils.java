@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.shops;
 
+import eden.utils.TimeUtils.Time;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -24,7 +26,8 @@ public class ShopUtils {
 			List<ItemStack> excess = PlayerUtils.giveItemsGetExcess(player.getPlayer(), items);
 			shop.addHolding(excess);
 			if (!excess.isEmpty())
-				PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Excess items added to item collection menu, click to view").command("/shops collect"));
+				if (new CooldownService().check(player, "shop-excess-items", Time.SECOND.x(2)))
+					PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Excess items added to item collection menu, click to view").command("/shops collect"));
 		} else
 			shop.addHolding(items);
 	}

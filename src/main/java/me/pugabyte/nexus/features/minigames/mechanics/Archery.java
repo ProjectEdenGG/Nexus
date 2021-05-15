@@ -4,6 +4,7 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -22,7 +23,6 @@ import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +57,7 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -281,10 +281,9 @@ public class Archery extends TeamlessMechanic {
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE))
 			return;
 
-		if (!(projectile.getShooter() instanceof Player))
+		if (!(projectile.getShooter() instanceof Player player))
 			return;
 
-		Player player = (Player) projectile.getShooter();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this))
 			return;
@@ -301,15 +300,12 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	public int getPoints(String color) {
-		switch (color) {
-			case "yellow":
-				return 1;
-			case "orange":
-				return 3;
-			case "red":
-				return 5;
-		}
-		return 0;
+		return switch (color) {
+			case "yellow" -> 1;
+			case "orange" -> 3;
+			case "red" -> 5;
+			default -> 0;
+		};
 	}
 
 	public void removeTarget(Block target) {

@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.minigames.utils;
 
 import lombok.Data;
-import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
 import org.bukkit.OfflinePlayer;
 
@@ -32,7 +31,7 @@ public class MinigameNight {
 		}
 
 		public NextMGN(OfflinePlayer player) {
-			this(new GeoIPService().<GeoIP>get(player).getTimezone() == null ? ZoneId.systemDefault() : ZoneId.of((new GeoIPService().<GeoIP>get(player).getTimezone().getId())));
+			this(new GeoIPService().get(player).getTimezone() == null ? ZoneId.systemDefault() : ZoneId.of((new GeoIPService().get(player).getTimezone().getId())));
 		}
 
 		public NextMGN(ZoneId zoneId) {

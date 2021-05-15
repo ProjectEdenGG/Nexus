@@ -1,7 +1,10 @@
 package me.pugabyte.nexus.features.particles;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.Random;
 
+@UtilityClass
 public final class MathUtils {
 
 	static public final float nanoToSec = 1 / 1000000000f;
@@ -52,28 +55,28 @@ public final class MathUtils {
 	/**
 	 * Returns the sine in radians from a lookup table.
 	 */
-	static public final float sin(float radians) {
+	static public float sin(float radians) {
 		return Sin.table[(int) (radians * radToIndex) & SIN_MASK];
 	}
 
 	/**
 	 * Returns the cosine in radians from a lookup table.
 	 */
-	static public final float cos(float radians) {
+	static public float cos(float radians) {
 		return Sin.table[(int) ((radians + PI / 2) * radToIndex) & SIN_MASK];
 	}
 
 	/**
 	 * Returns the sine in radians from a lookup table.
 	 */
-	static public final float sinDeg(float degrees) {
+	static public float sinDeg(float degrees) {
 		return Sin.table[(int) (degrees * degToIndex) & SIN_MASK];
 	}
 
 	/**
 	 * Returns the cosine in radians from a lookup table.
 	 */
-	static public final float cosDeg(float degrees) {
+	static public float cosDeg(float degrees) {
 		return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
 	}
 
@@ -103,7 +106,7 @@ public final class MathUtils {
 	/**
 	 * Returns atan2 in radians from a lookup table.
 	 */
-	static public final float atan2(float y, float x) {
+	static public float atan2(float y, float x) {
 		float add, mul;
 		if (x < 0) {
 			if (y < 0) {
@@ -123,7 +126,7 @@ public final class MathUtils {
 			}
 			add = 0;
 		}
-		float invDiv = 1 / ((x < y ? y : x) * INV_ATAN2_DIM_MINUS_1);
+		float invDiv = 1 / ((Math.max(x, y)) * INV_ATAN2_DIM_MINUS_1);
 
 		if (invDiv == Float.POSITIVE_INFINITY) {
 			return ((float) Math.atan2(y, x) + add) * mul;
@@ -140,49 +143,49 @@ public final class MathUtils {
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (inclusive).
 	 */
-	static public final int random(int range) {
+	static public int random(int range) {
 		return random.nextInt(range + 1);
 	}
 
 	/**
 	 * Returns a random number between start (inclusive) and end (inclusive).
 	 */
-	static public final int random(int start, int end) {
+	static public int random(int start, int end) {
 		return start + random.nextInt(end - start + 1);
 	}
 
 	/**
 	 * Returns a random boolean value.
 	 */
-	static public final boolean randomBoolean() {
+	static public boolean randomBoolean() {
 		return random.nextBoolean();
 	}
 
 	/**
 	 * Returns true if a random value between 0 and 1 is less than the specified value.
 	 */
-	static public final boolean randomBoolean(float chance) {
+	static public boolean randomBoolean(float chance) {
 		return MathUtils.random() < chance;
 	}
 
 	/**
 	 * Returns random number between 0.0 (inclusive) and 1.0 (exclusive).
 	 */
-	static public final float random() {
+	static public float random() {
 		return random.nextFloat();
 	}
 
 	/**
 	 * Returns a random number between 0 (inclusive) and the specified value (exclusive).
 	 */
-	static public final float random(float range) {
+	static public float random(float range) {
 		return random.nextFloat() * range;
 	}
 
 	/**
 	 * Returns a random number between start (inclusive) and end (exclusive).
 	 */
-	static public final float random(float start, float end) {
+	static public float random(float start, float end) {
 		return start + random.nextFloat() * (end - start);
 	}
 
@@ -210,32 +213,26 @@ public final class MathUtils {
 
 	// ---
 	static public int clamp(int value, int min, int max) {
-		if (value < min) {
+		if (value < min)
 			return min;
-		}
-		if (value > max) {
+		if (value > max)
 			return max;
-		}
 		return value;
 	}
 
 	static public short clamp(short value, short min, short max) {
-		if (value < min) {
+		if (value < min)
 			return min;
-		}
-		if (value > max) {
+		if (value > max)
 			return max;
-		}
 		return value;
 	}
 
 	static public float clamp(float value, float min, float max) {
-		if (value < min) {
+		if (value < min)
 			return min;
-		}
-		if (value > max) {
+		if (value > max)
 			return max;
-		}
 		return value;
 	}
 

@@ -90,8 +90,7 @@ public class BackCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onDeath(EntityDeathEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!PlayerUtils.isStaffGroup(player)) return;
 		if (CitizensUtils.isNPC(player)) return;
 

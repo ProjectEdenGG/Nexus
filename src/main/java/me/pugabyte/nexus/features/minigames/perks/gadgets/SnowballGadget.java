@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.minigames.perks.gadgets;
 import me.pugabyte.nexus.features.minigames.models.perks.common.GadgetPerk;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class SnowballGadget extends GadgetPerk {
 	@Override
@@ -11,7 +12,7 @@ public class SnowballGadget extends GadgetPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "An endless supply of snowballs to toss at your friends";
 	}
 

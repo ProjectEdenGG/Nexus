@@ -24,7 +24,7 @@ public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Find the flag and capture it at the other team's base";
 	}
 

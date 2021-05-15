@@ -66,7 +66,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 						return;
 
 				if (item.getMoney() > 0)
-					new BankerService().deposit(player, item.getMoney(), ShopGroup.get(player), TransactionCause.VOTE_POINT_STORE);
+					new BankerService().deposit(player, item.getMoney(), ShopGroup.of(player), TransactionCause.VOTE_POINT_STORE);
 				if (item.getConsoleCommand() != null && item.getConsoleCommand().length() > 0)
 					PlayerUtils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)

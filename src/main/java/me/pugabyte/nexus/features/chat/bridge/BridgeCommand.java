@@ -87,7 +87,7 @@ public class BridgeCommand extends CustomCommand {
 	@Path("updateRoleColors <rank>")
 	void updateRoleColors(Rank rank) {
 		int updated = 0;
-		for (DiscordUser user : service.<DiscordUser>getAll()) {
+		for (DiscordUser user : service.getAll()) {
 			if (user.getRoleId() == null || user.getUuid() == null)
 				continue;
 
@@ -184,9 +184,9 @@ public class BridgeCommand extends CustomCommand {
 					.hover("Shift+Click to insert");
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(new HashMap<String, Integer>() {{
+		paginate(Utils.sortByValue(new HashMap<String, Integer>() {{
 			archive.getRoleMap().forEach((k, v) -> put(k, v.size()));
-		}}).keySet()), formatter, "/bridge archive leastUsedRoles", page);
+		}}).keySet(), formatter, "/bridge archive leastUsedRoles", page);
 	}
 
 	@Async
@@ -239,7 +239,7 @@ public class BridgeCommand extends CustomCommand {
 	@Async
 	@Path("archive findDuplicateRoles [page]")
 	void archive_findDuplicateRoles(@Arg("1") int page) {
-		Map<UUID, List<String>> duplicates = new HashMap<UUID, List<String>>() {{
+		Map<UUID, List<String>> duplicates = new HashMap<>() {{
 			for (String roleId : archive.getRoleMap().keySet()) {
 				Role role = Discord.getGuild().getRoleById(roleId);
 				DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
@@ -271,9 +271,9 @@ public class BridgeCommand extends CustomCommand {
 			return json;
 		};
 
-		paginate(new ArrayList<>(Utils.sortByValue(new HashMap<UUID, Integer>() {{
+		paginate(Utils.sortByValue(new HashMap<UUID, Integer>() {{
 			duplicates.forEach((k, v) -> put(k, v.size()));
-		}}).keySet()), formatter, "/bridge archive findDuplicateRoles", page);
+		}}).keySet(), formatter, "/bridge archive findDuplicateRoles", page);
 	}
 
 	private static final OffsetDateTime grandfather = TimeUtil.getTimeCreated(Long.parseLong("352232748955729930"));

@@ -8,6 +8,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.radio.RadioFeature;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Location;
 
@@ -37,7 +37,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class RadioConfig extends PlayerOwnedObject {
+public class RadioConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -96,7 +96,7 @@ public class RadioConfig extends PlayerOwnedObject {
 
 		public Playlist getPlaylist() {
 			Set<String> unloadedSongs = new HashSet<>(songs);
-			Set<File> loadedSongs = new HashSet<File>() {{
+			Set<File> loadedSongs = new HashSet<>() {{
 				for (String songName : songs)
 					for (RadioSong song : RadioFeature.getAllSongs())
 						if (song.getName().equals(songName)) {
@@ -108,7 +108,6 @@ public class RadioConfig extends PlayerOwnedObject {
 
 			if (!unloadedSongs.isEmpty())
 				Nexus.log("[Radio] [" + id + "] " + loadedSongs.size() + " unloaded songs: " + String.join(", ", unloadedSongs));
-			Nexus.log("[Radio] " + id + " loaded");
 
 			ArrayList<File> list = new ArrayList<>(loadedSongs);
 			Collections.shuffle(list);
@@ -119,6 +118,9 @@ public class RadioConfig extends PlayerOwnedObject {
 				Song song = NBSDecoder.parse(new File(songFile.getPath()));
 				songList.add(song);
 			}
+
+			if (songList.isEmpty())
+				return null;
 
 			return new Playlist(songList.toArray(new Song[0]));
 		}

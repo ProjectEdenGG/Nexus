@@ -1,34 +1,40 @@
 package me.pugabyte.nexus.features.minigames.models.events.matches.minigamers;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
 
+@Getter
 public class MinigamerDeathEvent extends MinigamerEvent {
-	@Getter
-	private Minigamer attacker;
-	@Getter
-	private Event originalEvent;
-	@Getter
+	@Nullable
+	private final Minigamer attacker;
+	@Nullable
+	private final Event originalEvent;
 	@Setter
 	private String deathMessage = "";
 
-	public MinigamerDeathEvent(Minigamer victim) {
+	public MinigamerDeathEvent(@NonNull Minigamer victim) {
 		super(victim);
+		attacker = null;
+		originalEvent = null;
 	}
 
-	public MinigamerDeathEvent(Minigamer victim, Minigamer attacker) {
+	public MinigamerDeathEvent(@NonNull Minigamer victim, @Nullable Minigamer attacker) {
 		super(victim);
 		this.attacker = attacker;
+		originalEvent = null;
 	}
 
-	public MinigamerDeathEvent(Minigamer victim, Event originalEvent) {
+	public MinigamerDeathEvent(@NonNull Minigamer victim, @Nullable Event originalEvent) {
 		super(victim);
+		attacker = null;
 		this.originalEvent = originalEvent;
 	}
 
-	public MinigamerDeathEvent(Minigamer victim, Minigamer attacker, Event originalEvent) {
+	public MinigamerDeathEvent(@NonNull Minigamer victim, @Nullable Minigamer attacker, @Nullable Event originalEvent) {
 		super(victim);
 		this.attacker = attacker;
 		this.originalEvent = originalEvent;

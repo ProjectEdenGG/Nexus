@@ -56,6 +56,6 @@ public class MiniGolfParticleMenu extends MenuUtils implements InventoryProvider
 
 		MiniGolfUtils.send(user, "Set particle to: &e" + StringUtils.camelCase(user.getMiniGolfParticle()));
 
-		user.getPlayer().closeInventory();
+		user.getOnlinePlayer().closeInventory();
 	}
 }

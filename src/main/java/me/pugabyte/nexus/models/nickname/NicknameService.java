@@ -1,28 +1,38 @@
 package me.pugabyte.nexus.models.nickname;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import dev.morphia.query.Query;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(Nickname.class)
-public class NicknameService extends MongoService {
-	private final static Map<UUID, Nickname> cache = new HashMap<>();
+public class NicknameService extends MongoService<Nickname> {
+	private final static Map<UUID, Nickname> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Nickname> getCache() {
 		return cache;
 	}
 
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
+	}
+
 	public Nickname getFromNickname(String nickname) {
-		Nickname data = database.createQuery(Nickname.class).filter("nickname", sanitize(nickname)).find().tryNext();
+		Query<Nickname> query = database.createQuery(Nickname.class);
+		query.and(query.criteria("nickname").equalIgnoreCase(nickname));
+		Nickname data = query.find().tryNext();
 		cache(data);
 		return data;
 	}
 
 	public Nickname getFromQueueId(String queueId) {
-		Nickname data = database.createQuery(Nickname.class).filter("nicknameHistory.nicknameQueueId", sanitize(queueId)).find().tryNext();
+		Query<Nickname> query = database.createQuery(Nickname.class);
+		query.and(query.criteria("nicknameHistory.nicknameQueueId").equalIgnoreCase(queueId));
+		Nickname data = query.find().tryNext();
 		cache(data);
 		return data;
 	}

@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.store;
 
 import com.google.gson.Gson;
+import eden.utils.TimeUtils.Time;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
@@ -10,16 +11,17 @@ import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.contributor.Contributor;
+import me.pugabyte.nexus.models.contributor.Contributor.Purchase;
+import me.pugabyte.nexus.models.contributor.ContributorService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
-import me.pugabyte.nexus.models.purchase.Purchase;
-import me.pugabyte.nexus.models.purchase.PurchaseService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -71,9 +73,9 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 		String[] args = data.split("\\|");
 		Purchase purchase = Purchase.builder()
-				.id(UUID.randomUUID().toString())
+				.id(UUID.randomUUID())
 				.name(args[0])
-				.uuid(uuidFormat(args[1]))
+				.uuid(UUID.fromString(uuidFormat(args[1])))
 				.transactionId(args[2])
 				.price(Double.parseDouble(args[3]))
 				.currency(args[4])
@@ -85,7 +87,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 				.packageExpiry(args[11])
 				.packageName(args[12])
 				.purchaserName(args[13])
-				.purchaserUuid(uuidFormat(args[14]))
+				.purchaserUuid(UUID.fromString(uuidFormat(args[14])))
 				.build();
 
 		String discordMessage = purchase.toDiscordString();
@@ -105,10 +107,10 @@ public class HandlePurchaseCommand extends CustomCommand {
 					Koda.say("Thank you for your purchase, " + purchase.getName() + "! " +
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
-				if (purchase.getPurchaserUuid().length() == 36) {
+				if (StringUtils.isV4Uuid(purchase.getPurchaserUuid())) {
 					PermissionChange.set().uuid(purchase.getPurchaserUuid()).permission("donated").run();
 
-					DiscordUser user = new DiscordUserService().get(UUID.fromString(purchase.getPurchaserUuid()));
+					DiscordUser user = new DiscordUserService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)
 						Discord.addRole(user.getUserId(), Role.SUPPORTER);
 					else
@@ -116,14 +118,18 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 			}
 
-			OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(purchase.getUuid()));
+			OfflinePlayer player = Bukkit.getOfflinePlayer(purchase.getUuid());
 			packageType.apply(player);
 
 			discordMessage += "\nPurchase successfully processed.";
 		}
 
 		Discord.send(discordMessage, TextChannel.ADMIN_LOG);
-		new PurchaseService().save(purchase);
+
+		ContributorService contributorService = new ContributorService();
+		Contributor contributor = contributorService.get(purchase.getPurchaserUuid());
+		contributor.add(purchase);
+		contributorService.save(contributor);
 	}
 
 }

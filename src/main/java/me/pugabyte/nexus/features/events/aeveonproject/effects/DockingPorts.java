@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.events.aeveonproject.effects;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +17,7 @@ public class DockingPorts implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterRegion_DockingPort(RegionEnteredEvent event) {
+	public void onEnterRegion_DockingPort(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 
@@ -28,7 +28,7 @@ public class DockingPorts implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterRegion_DockingTube(RegionEnteredEvent event) {
+	public void onEnterRegion_DockingTube(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 
@@ -39,7 +39,7 @@ public class DockingPorts implements Listener {
 	}
 
 	@EventHandler
-	public void onExitRegion_DockingTube(RegionLeftEvent event) {
+	public void onExitRegion_DockingTube(PlayerLeftRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!isInWorld(player)) return;
 

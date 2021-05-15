@@ -33,12 +33,9 @@ public class RecipeUtils {
 
 	private static boolean match(Recipe recipe1, Recipe recipe2) {
 		if (((Keyed) recipe1).getKey().toString().equals(((Keyed) recipe2).getKey().toString())) return true;
-		if (recipe1 instanceof ShapedRecipe) {
-			if (!(recipe2 instanceof ShapedRecipe))
+		if (recipe1 instanceof ShapedRecipe r1) {
+			if (!(recipe2 instanceof ShapedRecipe r2))
 				return false;
-
-			ShapedRecipe r1 = (ShapedRecipe) recipe1;
-			ShapedRecipe r2 = (ShapedRecipe) recipe2;
 
 			ItemStack[] matrix1 = shapeToMatrix(r1.getShape(), r1.getIngredientMap());
 			ItemStack[] matrix2 = shapeToMatrix(r2.getShape(), r2.getIngredientMap());
@@ -73,12 +70,9 @@ public class RecipeUtils {
 			} catch (Exception ignore) {
 				return false;
 			}
-		} else if (recipe1 instanceof FurnaceRecipe) {
-			if (!(recipe2 instanceof FurnaceRecipe))
+		} else if (recipe1 instanceof FurnaceRecipe r1) {
+			if (!(recipe2 instanceof FurnaceRecipe r2))
 				return false;
-
-			FurnaceRecipe r1 = (FurnaceRecipe) recipe1;
-			FurnaceRecipe r2 = (FurnaceRecipe) recipe2;
 
 			return r1.getInput().getType() == r2.getInput().getType();
 		} else return false;

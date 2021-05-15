@@ -8,7 +8,11 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MurderMatchData;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -30,7 +34,7 @@ public class Gun {
 	private double lastShot;
 	private double hitbox = 1;
 	private boolean shouldDamageWithConsole;
-	private Set<Material> passthroughMaterials = new HashSet<Material>() {{
+	private Set<Material> passthroughMaterials = new HashSet<>() {{
 		add(Material.AIR);
 		add(Material.TRIPWIRE_HOOK);
 		add(Material.TRIPWIRE);

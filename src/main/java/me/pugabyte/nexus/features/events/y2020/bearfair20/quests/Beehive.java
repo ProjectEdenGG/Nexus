@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -46,7 +46,7 @@ public class Beehive implements Listener {
 	}
 
 	@EventHandler
-	public void onHiveRegionsEnter(RegionEnteredEvent event) {
+	public void onHiveRegionsEnter(PlayerEnteredRegionEvent event) {
 		String id = event.getRegion().getId();
 		Player player = event.getPlayer();
 

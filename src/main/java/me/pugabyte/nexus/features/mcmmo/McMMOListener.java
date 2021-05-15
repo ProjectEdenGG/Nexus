@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.mcmmo;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.util.player.UserManager;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -11,7 +12,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,6 +27,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -48,8 +49,8 @@ public class McMMOListener implements Listener {
 		scheduler();
 	}
 
-	private static final LocalDate boostEnd = LocalDate.of(2021, 3, 17);
-	@EventHandler
+	private static final LocalDate boostEnd = LocalDate.of(2021, 5, 17);
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onMcMMOExpGain(McMMOPlayerXpGainEvent event) {
 		if (boostEnd.atStartOfDay().isBefore(LocalDateTime.now()))
 			return;
@@ -131,8 +132,7 @@ public class McMMOListener implements Listener {
 
 	boolean growCrop(Block block) {
 		BlockData blockData = block.getBlockData();
-		if (!(blockData instanceof Ageable)) return false;
-		Ageable ageable = (Ageable) blockData;
+		if (!(blockData instanceof Ageable ageable)) return false;
 
 		int maxAge = ageable.getMaximumAge();
 		int age = ageable.getAge();
@@ -254,45 +254,33 @@ public class McMMOListener implements Listener {
 	}
 
 	private TreeType getTreeType(TreeSpecies treeSpecies) {
-		switch (treeSpecies.getData()) {
-			case 0:
-				return TreeType.TREE;
-			case 1:
-				return TreeType.REDWOOD;
-			case 2:
-				return TreeType.BIRCH;
-			case 3:
-				return TreeType.SMALL_JUNGLE;
-			case 4:
-				return TreeType.ACACIA;
-			case 5:
-				return TreeType.DARK_OAK;
-		}
-		return null;
+		return switch (treeSpecies.getData()) {
+			case 0 -> TreeType.TREE;
+			case 1 -> TreeType.REDWOOD;
+			case 2 -> TreeType.BIRCH;
+			case 3 -> TreeType.SMALL_JUNGLE;
+			case 4 -> TreeType.ACACIA;
+			case 5 -> TreeType.DARK_OAK;
+			default -> null;
+		};
 	}
 
 	private TreeType getVariant(TreeType treeType) {
-		switch (treeType) {
-			case TREE:
-				return TreeType.BIG_TREE;
-			case BIRCH:
-				return TreeType.TALL_BIRCH;
-			case REDWOOD:
-				return TreeType.TALL_REDWOOD;
-			case SMALL_JUNGLE:
-				return TreeType.COCOA_TREE;
-		}
-		return treeType;
+		return switch (treeType) {
+			case TREE -> TreeType.BIG_TREE;
+			case BIRCH -> TreeType.TALL_BIRCH;
+			case REDWOOD -> TreeType.TALL_REDWOOD;
+			case SMALL_JUNGLE -> TreeType.COCOA_TREE;
+			default -> treeType;
+		};
 	}
 
 	private TreeType getMegaVariant(TreeType treeType) {
-		switch (treeType) {
-			case REDWOOD:
-				return TreeType.MEGA_REDWOOD;
-			case SMALL_JUNGLE:
-				return TreeType.JUNGLE;
-		}
-		return treeType;
+		return switch (treeType) {
+			case REDWOOD -> TreeType.MEGA_REDWOOD;
+			case SMALL_JUNGLE -> TreeType.JUNGLE;
+			default -> treeType;
+		};
 	}
 
 	private Location getMegaTree(Block block) {
@@ -333,8 +321,7 @@ public class McMMOListener implements Listener {
 	}
 
 	private TreeType getTreeType(Location location) {
-		if ((location.getBlock().getState().getData() instanceof Sapling)) {
-			Sapling sapling = (Sapling) location.getBlock().getState().getData();
+		if ((location.getBlock().getState().getData() instanceof Sapling sapling)) {
 			return getTreeType(sapling.getSpecies());
 		} else if (location.getBlock().getType().equals(Material.BROWN_MUSHROOM)) {
 			return TreeType.BROWN_MUSHROOM;

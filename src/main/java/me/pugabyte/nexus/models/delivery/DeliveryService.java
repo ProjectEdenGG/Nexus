@@ -1,27 +1,30 @@
 package me.pugabyte.nexus.models.delivery;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static eden.utils.Utils.isNullOrEmpty;
 
 @PlayerClass(DeliveryUser.class)
-public class DeliveryService extends MongoService {
-	private final static Map<UUID, DeliveryUser> cache = new HashMap<>();
+public class DeliveryService extends MongoService<DeliveryUser> {
+	private final static Map<UUID, DeliveryUser> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, DeliveryUser> getCache() {
 		return cache;
 	}
 
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
+	}
+
 	@Override
-	public <T> void saveSync(T object) {
-		DeliveryUser user = (DeliveryUser) object;
-		if (!user.getDeliveries().isEmpty())
-			super.saveSync(object);
-		else
-			super.delete(object);
+	protected boolean deleteIf(DeliveryUser user) {
+		return isNullOrEmpty(user.getDeliveries());
 	}
 
 }

@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.warps.WarpMenu;
 import me.pugabyte.nexus.features.warps.WarpsMenu;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.warps.WarpType;
@@ -30,6 +31,14 @@ public class WarpsCommand extends _WarpCommand {
 	@Path
 	void menu() {
 		WarpsMenu.open(player(), WarpMenu.MAIN);
+	}
+
+	@Path("types")
+	@Permission("group.staff")
+	void types() {
+		send(PREFIX + "Valid warp types:");
+		for (WarpType type : WarpType.values())
+			send(" " + camelCase(type));
 	}
 
 }

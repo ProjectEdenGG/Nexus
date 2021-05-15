@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.perks.loadouts;
 
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 public class SkeletonSkull extends LoadoutPerk {
 	@Override
@@ -10,7 +11,7 @@ public class SkeletonSkull extends LoadoutPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Snipe your foes with the incredible prowess of a skeleton";
 	}
 

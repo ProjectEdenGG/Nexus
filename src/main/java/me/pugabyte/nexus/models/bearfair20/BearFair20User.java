@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,8 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 @Data
@@ -31,7 +31,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
-public class BearFair20User extends PlayerOwnedObject {
+public class BearFair20User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -90,7 +90,7 @@ public class BearFair20User extends PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			sendActionBar(getPlayer(), "&e+" + points + plural(" point", points));
+			ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
 		givePoints(points);
 	}
 
@@ -103,7 +103,7 @@ public class BearFair20User extends PlayerOwnedObject {
 	}
 
 	public void giveDailyPoints(BF20PointSource source) {
-		pointsReceivedToday.putIfAbsent(source, new HashMap<LocalDate, Integer>() {{
+		pointsReceivedToday.putIfAbsent(source, new HashMap<>() {{
 			put(LocalDate.now(), 0);
 		}});
 
@@ -113,12 +113,12 @@ public class BearFair20User extends PlayerOwnedObject {
 			return;
 
 		if ((timesCompleted + 1) == DAILY_SOURCE_MAX)
-			send(BearFair20.PREFIX + "Max daily points reached for &e" + StringUtils.camelCase(source.name()));
+			sendMessage(BearFair20.PREFIX + "Max daily points reached for &e" + StringUtils.camelCase(source.name()));
 
 		getPointsReceivedToday().get(source).put(LocalDate.now(), timesCompleted + 1);
 
 		givePoints(DAILY_SOURCE_POINTS);
-		sendActionBar(getPlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
+		ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
 	}
 
 	public enum BF20PointSource {

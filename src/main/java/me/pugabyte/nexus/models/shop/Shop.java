@@ -6,6 +6,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +19,8 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.ShopUtils;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
@@ -57,6 +58,7 @@ import static me.pugabyte.nexus.features.shops.ShopUtils.giveItems;
 import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
+import static me.pugabyte.nexus.utils.PlayerUtils.hasRoomFor;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -67,7 +69,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, ItemStackConverter.class})
-public class Shop extends PlayerOwnedObject {
+public class Shop implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -88,7 +90,7 @@ public class Shop extends PlayerOwnedObject {
 	}
 
 	public void setDescription(List<String> description) {
-		this.description = new ArrayList<String>() {{
+		this.description = new ArrayList<>() {{
 			for (String line : description)
 				if (!isNullOrEmpty(stripColor(line).replace(StringUtils.getColorChar(), "")))
 					add(line.startsWith("&") ? line : "&f" + line);
@@ -136,15 +138,15 @@ public class Shop extends PlayerOwnedObject {
 		SKYBLOCK,
 		ONEBLOCK;
 
-		public static ShopGroup get(org.bukkit.entity.Entity entity) {
-			return get(entity.getWorld());
+		public static ShopGroup of(org.bukkit.entity.Entity entity) {
+			return of(entity.getWorld());
 		}
 
-		public static ShopGroup get(World world) {
-			return get(world.getName());
+		public static ShopGroup of(World world) {
+			return of(world.getName());
 		}
 
-		public static ShopGroup get(String world) {
+		public static ShopGroup of(String world) {
 			if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
 				return SURVIVAL;
 			if (WorldGroup.get(world) == WorldGroup.SKYBLOCK)
@@ -236,40 +238,54 @@ public class Shop extends PlayerOwnedObject {
 			return getExchange().canFulfillPurchase();
 		}
 
-		@SneakyThrows
-		public void process(Player customer) {
+		private void validateProcess(Player customer) {
 			if (uuid.equals(customer.getUniqueId()))
 				throw new InvalidInputException("You cannot buy items from yourself");
 
 			if (editing)
 				throw new InvalidInputException("You cannot buy this item right now, it is being edited by the shop owner");
+		}
 
+		public void process(Player customer) {
+			validateProcess(customer);
 			getExchange().process(customer);
 			log(customer);
 		}
 
+		public void processAll(Player customer) {
+			validateProcess(customer);
+			int count = getExchange().processAll(customer);
+			log(customer, count);
+		}
+
 		public void log(Player customer) {
-			List<String> columns = new ArrayList<>(Arrays.asList(
-					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
-					getUuid().toString(),
-					getShop().getOfflinePlayer().getName(),
-					customer.getUniqueId().toString(),
-					customer.getName(),
-					getShopGroup().name(),
-					item.getType().name(),
-					String.valueOf(item.getAmount()),
-					exchangeType.name()
-			));
+			log(customer, 1);
+		}
 
-			if (price instanceof ItemStack) {
-				columns.add(((ItemStack) price).getType().name());
-				columns.add(String.valueOf(((ItemStack) price).getAmount()));
-			} else {
-				columns.add(String.valueOf(price));
-				columns.add("");
+		public void log(Player customer, int times) {
+			for (int i = 0; i < times; i++) {
+				List<String> columns = new ArrayList<>(Arrays.asList(
+						DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
+						getUuid().toString(),
+						getShop().getOfflinePlayer().getName(),
+						customer.getUniqueId().toString(),
+						customer.getName(),
+						getShopGroup().name(),
+						item.getType().name(),
+						String.valueOf(item.getAmount()),
+						exchangeType.name()
+				));
+
+				if (price instanceof ItemStack) {
+					columns.add(((ItemStack) price).getType().name());
+					columns.add(String.valueOf(((ItemStack) price).getAmount()));
+				} else {
+					columns.add(String.valueOf(price));
+					columns.add("");
+				}
+
+				Nexus.csvLog("exchange", String.join(",", columns));
 			}
-
-			Nexus.csvLog("exchange", String.join(",", columns));
 		}
 
 		@NotNull
@@ -287,16 +303,13 @@ public class Shop extends PlayerOwnedObject {
 			if (item.getType() == Material.ENCHANTED_BOOK || maxDurability > 0)
 				builder.lore("&7Repair Cost: " + ((Repairable) item.getItemMeta()).getRepairCost());
 
-			if (item.getItemMeta() instanceof Damageable) {
-				Damageable meta = (Damageable) item.getItemMeta();
+			if (item.getItemMeta() instanceof Damageable meta) {
 				if (meta.hasDamage())
 					builder.lore("&7Durability: " + (maxDurability - meta.getDamage()) + " / " + maxDurability);
 			}
 
-			if (item.getItemMeta() instanceof BlockStateMeta) {
-				BlockStateMeta meta = (BlockStateMeta) item.getItemMeta();
-				if (meta.getBlockState() instanceof Beehive) {
-					Beehive beehive = (Beehive) meta.getBlockState();
+			if (item.getItemMeta() instanceof BlockStateMeta meta) {
+				if (meta.getBlockState() instanceof Beehive beehive) {
 					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
 				}
 			}
@@ -317,7 +330,13 @@ public class Shop extends PlayerOwnedObject {
 			if (!purchasable)
 				return new ItemBuilder(item).lore("&f").lore("&cNot Purchasable");
 
-			return getItemWithLore().lore(getExchange().getLore());
+			ItemBuilder builder = getItemWithLore().lore(getExchange().getLore());
+
+			builder.lore("")
+					.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
+					.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
+
+			return builder;
 		}
 
 		public ItemBuilder getItemWithOwnLore() {
@@ -406,9 +425,52 @@ public class Shop extends PlayerOwnedObject {
 	public interface Exchange {
 
 		Product getProduct();
+		Object getPrice();
 
-		void process(Player customer);
+		void validateProcessOne(Player customer);
+		void validateProcessAll(Player customer);
+
+		void processOne(Player customer);
+
+		default void process(Player customer) {
+			processOne(customer);
+			new ShopService().save(getProduct().getShop());
+			PlayerUtils.send(customer, PREFIX + explainPurchase());
+		}
+
+		default int processAll(Player customer) {
+			int count = 0;
+			while (true) {
+				try {
+					validateProcessAll(customer);
+					processOne(customer);
+					++count;
+				} catch (InvalidInputException ex) {
+					if (count == 0)
+						throw ex;
+					break;
+				}
+			}
+
+			new ShopService().queueSave(5, getProduct().getShop());
+			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
+			return count;
+		}
+
+		default String prettyPrice() {
+			return prettyPrice(1);
+		}
+
+		default String explainPurchase() {
+			return explainPurchase(1);
+		}
+
+		String prettyPrice(int count);
+		String explainPurchase(int count);
+
 		boolean canFulfillPurchase();
+
+		String getCustomerAction();
 
 		List<String> getLore();
 		List<String> getOwnLore();
@@ -428,7 +490,7 @@ public class Shop extends PlayerOwnedObject {
 	public static class SellExchange implements Exchange {
 		@NonNull
 		private final Product product;
-		private final double price;
+		private final Double price;
 
 		public SellExchange(@NonNull Product product) {
 			this.product = product;
@@ -436,17 +498,36 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
-		public void process(Player customer) {
+		public void validateProcessOne(Player customer) {
 			checkStock();
 
-			if (!new BankerService().has(customer, price, product.getShopGroup()))
+			if (!Banker.of(customer).has(price, product.getShopGroup()))
 				throw new InvalidInputException("You do not have enough money to purchase this item");
+		}
+
+		@Override
+		public void validateProcessAll(Player customer) {
+			if (!hasRoomFor(customer, getProduct().getItem()))
+				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
+		}
+
+		@Override
+		public void processOne(Player customer) {
+			validateProcessOne(customer);
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			transaction(customer);
 			giveItems(customer, product.getItem());
-			new ShopService().save(product.getShop());
-			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + prettyMoney(price));
+		}
+
+		@Override
+		public String prettyPrice(int count) {
+			return prettyMoney(price * count);
+		}
+
+		@Override
+		public String explainPurchase(int count) {
+			return "You purchased &e" + pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
 		}
 
 		private void transaction(Player customer) {
@@ -463,9 +544,14 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
+		public String getCustomerAction() {
+			return "Purchase";
+		}
+
+		@Override
 		public List<String> getLore() {
 			int stock = (int) product.getStock();
-			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price);
+			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
 
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
@@ -484,7 +570,7 @@ public class Shop extends PlayerOwnedObject {
 		public List<String> getOwnLore() {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
-					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
+					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
 					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
 			);
 		}
@@ -503,18 +589,37 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
-		public void process(Player customer) {
+		public void validateProcessOne(Player customer) {
 			checkStock();
 
 			if (!customer.getInventory().containsAtLeast(price, price.getAmount()))
-				throw new InvalidInputException("You do not have " + pretty(price) + " to purchase this item");
+				throw new InvalidInputException("You do not have " + prettyPrice() + " to purchase this item");
+		}
+
+		@Override
+		public void validateProcessAll(Player customer) {
+			if (!hasRoomFor(customer, getProduct().getItem()))
+				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
+		}
+
+		@Override
+		public void processOne(Player customer) {
+			validateProcessOne(customer);
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
 			product.getShop().addHolding(price);
 			giveItems(customer, product.getItem());
-			new ShopService().save(product.getShop());
-			PlayerUtils.send(customer, PREFIX + "You purchased " + pretty(product.getItem()) + " for " + pretty(price));
+		}
+
+		@Override
+		public String prettyPrice(int count) {
+			return pretty(price, count);
+		}
+
+		@Override
+		public String explainPurchase(int count) {
+			return "You purchased &e" + pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
 		}
 
 		@Override
@@ -523,9 +628,14 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
+		public String getCustomerAction() {
+			return "Purchase";
+		}
+
+		@Override
 		public List<String> getLore() {
 			int stock = (int) product.getStock();
-			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + pretty(price);
+			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
 						desc,
@@ -543,7 +653,7 @@ public class Shop extends PlayerOwnedObject {
 		public List<String> getOwnLore() {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
-					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + pretty(price),
+					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
 					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
 			);
 		}
@@ -562,18 +672,35 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
-		public void process(Player customer) {
+		public void validateProcessOne(Player customer) {
 			checkStock();
 
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
+		}
+
+		@Override
+		public void validateProcessAll(Player customer) {
+		}
+
+		@Override
+		public void processOne(Player customer) {
+			validateProcessOne(customer);
 
 			product.setStock(product.getStock() - price);
 			transaction(customer);
 			customer.getInventory().removeItem(product.getItem());
 			product.getShop().addHolding(product.getItem());
-			new ShopService().save(product.getShop());
-			PlayerUtils.send(customer, PREFIX + "You sold " + pretty(product.getItem()) + " for " + prettyMoney(price));
+		}
+
+		@Override
+		public String prettyPrice(int count) {
+			return prettyMoney(price * count);
+		}
+
+		@Override
+		public String explainPurchase(int count) {
+			return "You sold &e" + pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
 		}
 
 		private void transaction(Player customer) {
@@ -590,8 +717,13 @@ public class Shop extends PlayerOwnedObject {
 		}
 
 		@Override
+		public String getCustomerAction() {
+			return "Sell";
+		}
+
+		@Override
 		public List<String> getLore() {
-			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price);
+			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
 			if (product.getUuid().equals(Nexus.getUUID0()))
 				return Arrays.asList(
 						desc,
@@ -608,7 +740,7 @@ public class Shop extends PlayerOwnedObject {
 		@Override
 		public List<String> getOwnLore() {
 			return Arrays.asList(
-					"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyMoney(price),
+					"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
 					"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false)
 			);
 		}

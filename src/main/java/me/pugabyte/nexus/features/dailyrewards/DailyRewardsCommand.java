@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.dailyrewards;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -12,12 +13,13 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownExce
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+
+import static eden.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")
@@ -37,6 +39,12 @@ public class DailyRewardsCommand extends CustomCommand {
 			error("&cYou must be in the survival worlds to claim this reward.");
 
 		DailyRewardsFeature.menu(player(), dailyReward);
+	}
+
+	@Path("getLastTaskTime")
+	@Permission(value = "group.admin", absolute = true)
+	void getLastTaskTime() {
+		send(shortDateTimeFormat(DailyRewardsFeature.getLastTaskTime()));
 	}
 
 	@Path("getAll")
@@ -120,7 +128,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		send(PREFIX + "Top streaks:");
 		int i = (page - 1) * 10 + 1;
 		for (DailyReward dailyReward : results) {
-			send("&3" + i + " &e" + dailyReward.getPlayer().getName() + " &7- " + dailyReward.getStreak());
+			send("&3" + i + " &e" + dailyReward.getOfflinePlayer().getName() + " &7- " + dailyReward.getStreak());
 			++i;
 		}
 	}

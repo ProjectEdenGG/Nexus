@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff;
 
+import eden.utils.TimeUtils.Time;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -7,7 +8,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 
 @Permission("group.staff")
 public class IGoSleepCommand extends CustomCommand {

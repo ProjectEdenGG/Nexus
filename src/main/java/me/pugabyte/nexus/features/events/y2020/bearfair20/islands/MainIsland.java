@@ -3,11 +3,12 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.islands;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
+import me.pugabyte.nexus.features.events.models.BearFairIsland;
+import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
+import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.Island.NPCClass;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland.MainNPCs;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers.TalkingNPC;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.vote.Voter;
@@ -43,7 +44,12 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests
 
 @Region("main")
 @NPCClass(MainNPCs.class)
-public class MainIsland implements Listener, Island {
+public class MainIsland implements Listener, BearFairIsland {
+
+	@Override
+	public String getEventRegion() {
+		return BearFair20.getRegion();
+	}
 
 	public static ItemStack honeyStroopWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Honey Stroopwafel").amount(1).glow().build();
 	public static ItemStack stroofWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Stoopwafel").amount(1).build();
@@ -213,7 +219,7 @@ public class MainIsland implements Listener, Island {
 			@Override
 			public List<String> getScript(Player player) {
 				List<String> script = new ArrayList<>();
-				script.add("Welcome to Bear Fair, Bear Nation's anniversary event!");
+				script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
 				script.add("wait 80");
 				script.add("This year features several islands to explore, find easter eggs, and do quests!");
 				script.add("wait 80");
@@ -366,6 +372,11 @@ public class MainIsland implements Listener, Island {
 		@Getter
 		private final List<String> script;
 
+		@Override
+		public String getName() {
+			return this.name();
+		}
+
 		MainNPCs(int npcId) {
 			this.npcId = npcId;
 			this.script = new ArrayList<>();
@@ -382,7 +393,7 @@ public class MainIsland implements Listener, Island {
 		BearFair20User user = service.get(player);
 		if (user.getQuest_Main_Step() == 0) {
 			nextStep(player); // 1
-			Talkers.startScript(player, 2670);
+			BearFairTalker.startScript(player, 2670);
 			nextStep(player); // 2
 		}
 	}
@@ -486,7 +497,7 @@ public class MainIsland implements Listener, Island {
 		int ndx = RandomUtils.randomInt(1, 3);
 		String reward;
 		switch (ndx) {
-			case 1:
+			case 1 -> {
 				List<String> songs = Arrays.asList("AutumnVoyage", "ForestDance", "DrunkenSailor", "Astronomia", "OwenWasHer", "Queen-BohemianRhapsody");
 				String songPerm = RandomUtils.randomElement(songs);
 				reward = "Song Coupon for " + songPerm;
@@ -494,18 +505,18 @@ public class MainIsland implements Listener, Island {
 						.name("Coupon For: " + songPerm)
 						.lore(itemLore, "&f", "&3Song: &e" + songPerm, "&3Redeem this with an admin", "&3to receive your song").amount(1).build();
 				PlayerUtils.giveItem(player, songCoupon);
-				break;
-			case 2:
+			}
+			case 2 -> {
 				reward = "50 Bear Fair Points";
 				BearFair20UserService BFService = new BearFair20UserService();
 				BearFair20User user = BFService.get(player);
 				user.givePoints(50);
 				BFService.save(user);
-				break;
-			default:
+			}
+			default -> {
 				reward = "30 Vote Points";
 				new Voter(player).givePoints(30);
-				break;
+			}
 		}
 		return reward;
 	}

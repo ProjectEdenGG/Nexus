@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.discord;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -17,6 +17,7 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -73,7 +74,7 @@ public class DiscordCommand extends CustomCommand {
 			}
 		} catch (ErrorResponseException ex) {
 			if (ex.getErrorCode() == 10007)
-				error("User has linked their Discord account but is not in the Discord server");
+				error(new JsonBuilder("User has linked their Discord account but is not in the Discord server. ID: " + user.getUserId()).copy(user.getUserId()).hover("&eClick to copy"));
 			else
 				rethrow(ex);
 		}
@@ -85,7 +86,7 @@ public class DiscordCommand extends CustomCommand {
 	void updateRoles() {
 		int errors = 0;
 		Role verified = DiscordId.Role.VERIFIED.get();
-		for (DiscordUser discordUser : new DiscordUserService().<DiscordUser>getAll()) {
+		for (DiscordUser discordUser : new DiscordUserService().getAll()) {
 			if (!isNullOrEmpty(discordUser.getUserId())) {
 				try {
 					Member member = discordUser.getMember();
@@ -106,14 +107,15 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("forceLink <player> <id>")
+	@Permission("group.staff")
 	void forceLink(OfflinePlayer player, String id) {
 		DiscordUserService service = new DiscordUserService();
 		DiscordUser user = service.get(player);
 		user.setUserId(id);
-		if (user.getName() == null)
+		if (user.getUser() == null)
 			error("Could not find user from userId &e" + id);
 		service.save(user);
-		send("Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
+		send("&3Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
 		Discord.addRole(id, DiscordId.Role.VERIFIED);
 		Discord.staffLog("**" + user.getIngameName() + "** Discord account force linked to **" + user.getNameAndDiscrim() +  "** by " + name());
 	}
@@ -126,7 +128,7 @@ public class DiscordCommand extends CustomCommand {
 				User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
 				if (userById == null)
 					send(PREFIX + "Your minecraft account is linked to a Discord account, but I could not find that account. " +
-							"Are you in our Discord server? &e" + BNSocialMediaSite.DISCORD.getUrl());
+							"Are you in our Discord server? &e" + EdenSocialMediaSite.DISCORD.getUrl());
 				else
 					send(PREFIX + "Your minecraft account is linked to " + user.getName());
 				send(PREFIX + "You can unlink your account with &c/discord unlink");

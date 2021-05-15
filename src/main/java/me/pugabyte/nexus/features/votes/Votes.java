@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -23,7 +24,6 @@ import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -81,7 +81,7 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private static MessageEmbed createEmbed(String username) {
-		EmbedBuilder builder = new EmbedBuilder().setTitle("https://bnn.gg/vote").setDescription("");
+		EmbedBuilder builder = new EmbedBuilder().setTitle("https://projecteden.gg/vote").setDescription("");
 		for (VoteSite value : VoteSite.values())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();
@@ -150,7 +150,7 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private static final int basePoints = 1;
-	private static final Map<Integer, Integer> extras = new HashMap<Integer, Integer>() {{
+	private static final Map<Integer, Integer> extras = new HashMap<>() {{
 		put(1500, 50);
 		put(500, 25);
 		put(200, 15);

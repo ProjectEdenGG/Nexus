@@ -16,7 +16,7 @@ public class SpawnLeaderboardsCommand extends CustomCommand {
 
 	@Path("update <leaderboard>")
 	void update(Leaderboard leaderboard) {
-		leaderboard.update();
+		leaderboard.updateActual();
 		send(PREFIX + "Updated");
 	}
 

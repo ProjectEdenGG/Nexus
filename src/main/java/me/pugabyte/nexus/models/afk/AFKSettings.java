@@ -3,13 +3,13 @@ package me.pugabyte.nexus.models.afk;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.UUID;
@@ -21,10 +21,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class AFKSettings extends PlayerOwnedObject {
+public class AFKSettings implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	private boolean mobTargeting = false;
+	private boolean mobSpawning = false;
+	private boolean broadcasts = true;
 
 }

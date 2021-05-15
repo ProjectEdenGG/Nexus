@@ -11,8 +11,10 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import lombok.Data;
 import lombok.NonNull;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -61,6 +63,10 @@ public class WorldGuardUtils {
 		this.manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld);
 	}
 
+	public RegionContainer getContainer() {
+		return WorldGuard.getInstance().getPlatform().getRegionContainer();
+	}
+
 	public ProtectedRegion getProtectedRegion(String name) {
 		ProtectedRegion region = manager.getRegion(name.toLowerCase());
 		if (region == null)
@@ -103,17 +109,21 @@ public class WorldGuardUtils {
 	}
 
 	public Set<ProtectedRegion> getRegionsAt(Location location) {
-		if (!isSameWorld(location)) return new HashSet<>();
+		if (!isSameWorld(location))
+			return new HashSet<>();
+
 		return manager.getApplicableRegions(toBlockVector3(location)).getRegions();
 	}
 
 	public Set<String> getRegionNamesAt(Location location) {
-		if (!isSameWorld(location)) return new HashSet<>();
-		return manager.getApplicableRegions(toBlockVector3(location)).getRegions().stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
+		if (!isSameWorld(location))
+			return new HashSet<>();
+
+		return getRegionsAt(location).stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}
 
-	public boolean isInRegion(Player player, String region) {
-		return isInRegion(player.getLocation(), region);
+	public boolean isInRegion(HasPlayer player, String region) {
+		return isInRegion(player.getPlayer().getLocation(), region);
 	}
 
 	public boolean isInRegion(Location location, String region) {
@@ -133,27 +143,29 @@ public class WorldGuardUtils {
 	}
 
 	public Collection<Entity> getEntitiesInRegion(String region) {
-		if (world != null)
-			return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
-		return null;
+		return getEntitiesInRegion(getProtectedRegion(region));
 	}
 
-	public Set<ProtectedRegion> getRegionsLike(String name) {
+	public Collection<Entity> getEntitiesInRegion(ProtectedRegion region) {
+		return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
+	}
+
+	public Set<ProtectedRegion> getRegionsLike(String regex) {
 		Map<String, ProtectedRegion> regions = manager.getRegions();
-		return regions.keySet().stream().filter(id -> id.matches(name.toLowerCase())).map(regions::get).collect(Collectors.toSet());
+		return regions.keySet().stream().filter(id -> id.matches(regex.toLowerCase())).map(regions::get).collect(Collectors.toSet());
 	}
 
-	public Set<ProtectedRegion> getRegionsLikeAt(String name, Location location) {
+	public Set<ProtectedRegion> getRegionsLikeAt(String regex, Location location) {
 		if (!isSameWorld(location)) return new HashSet<>();
-		return getRegionsAt(location).stream().filter(region -> region.getId().matches(name.toLowerCase())).collect(Collectors.toSet());
+		return getRegionsAt(location).stream().filter(region -> region.getId().matches(regex.toLowerCase())).collect(Collectors.toSet());
 	}
 
 	public boolean isSameWorld(Location location) {
 		return location.getWorld().equals(world);
 	}
 
-	public ProtectedRegion getRegionLike(String name) {
-		Set<ProtectedRegion> matches = getRegionsLike(name);
+	public ProtectedRegion getRegionLike(String regex) {
+		Set<ProtectedRegion> matches = getRegionsLike(regex);
 		if (matches.size() == 0)
 			throw new InvalidInputException("No regions found");
 		return matches.iterator().next();
@@ -212,6 +224,5 @@ public class WorldGuardUtils {
 		}
 		return blocks;
 	}
-
 
 }

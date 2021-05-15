@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.models.achievement;
 
 import me.pugabyte.nexus.features.achievements.events.AchievementCompletedEvent;
+import me.pugabyte.nexus.framework.interfaces.HasDescription;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
@@ -10,12 +11,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public enum Achievement {
+public enum Achievement implements HasDescription {
 	// New achievement: "You put the 'fun' in 'funeral'..." -> get every death message (PYROPEGUIN)
 	KILL_DA_DRAGON(
 			"Kill a dragon",
@@ -405,7 +407,7 @@ public enum Achievement {
 		this.required = required;
 	}
 
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return description;
 	}
 
@@ -480,10 +482,10 @@ public enum Achievement {
 			case NUMBER:
 				return (int) progress;
 			case HOURS:
-				Hours hours = new HoursService().get(achievementPlayer.getPlayer());
+				Hours hours = new HoursService().get(achievementPlayer);
 				return hours.getTotal() / 60 / 60;
 			case BALANCE:
-				return (int) new BankerService().getBalance(achievementPlayer.getPlayer(), ShopGroup.get(achievementPlayer.getPlayer()));
+				return (int) new BankerService().getBalance(achievementPlayer.getOnlinePlayer(), ShopGroup.of(achievementPlayer.getOnlinePlayer()));
 		}
 		return 0;
 	}

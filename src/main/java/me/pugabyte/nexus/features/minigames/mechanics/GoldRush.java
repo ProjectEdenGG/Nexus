@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -16,6 +15,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBeginEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -45,7 +45,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Mine all the blocks to the finish!";
 	}
 
@@ -91,7 +91,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	public void createMineStacks(int mineStackHeight, List<Location> locations) {
-		Map<BlockType, Double> pattern = new HashMap<BlockType, Double>() {{
+		Map<BlockType, Double> pattern = new HashMap<>() {{
 			put(BlockTypes.COBBLESTONE, 10.0);
 			put(BlockTypes.GOLD_ORE, 40.0);
 			put(BlockTypes.DIRT, 20.0);
@@ -147,7 +147,7 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (minigamer.getMatch().getArena().ownsRegion(event.getRegion().getId(), "win")) {

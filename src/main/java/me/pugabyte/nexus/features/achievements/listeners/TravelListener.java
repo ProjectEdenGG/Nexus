@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.achievements.listeners;
 
-import com.mewin.worldguardregionapi.MovementType;
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.features.achievements.events.travel.WarpEvent;
+import me.pugabyte.nexus.features.regionapi.MovementType;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.achievement.Achievement;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -30,20 +30,14 @@ public class TravelListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		ProtectedRegion region = event.getRegion();
 
 		switch (event.getRegion().getId()) {
-			case "staffhall":
-				Achievement.A_LIGHT_OF_HOPE.check(player);
-				break;
-			case "hallofhistory":
-				Achievement.BLAST_FROM_THE_PAST.check(player);
-				break;
-			case "kodahead":
-				Achievement.HIS_POINT_OF_VIEW.check(player);
-				break;
+			case "staffhall" -> Achievement.A_LIGHT_OF_HOPE.check(player);
+			case "hallofhistory" -> Achievement.BLAST_FROM_THE_PAST.check(player);
+			case "kodahead" -> Achievement.HIS_POINT_OF_VIEW.check(player);
 		}
 
 		if (region.getId().contains("warp_"))
@@ -51,16 +45,14 @@ public class TravelListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onRegionLeave(RegionLeftEvent event) {
+	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		Player player = event.getPlayer();
 		ProtectedRegion region = event.getRegion();
 
 		if (event.getMovementType() == MovementType.DISCONNECT) return;
 
 		switch (region.getId()) {
-			case "spawn":
-				Achievement.JOURNEY_OF_A_THOUSAND_MILES.check(player);
-				break;
+			case "spawn" -> Achievement.JOURNEY_OF_A_THOUSAND_MILES.check(player);
 		}
 	}
 

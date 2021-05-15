@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.safecracker;
 
-import me.pugabyte.nexus.framework.annotations.Disabled;
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEvent;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerEventService;
 import me.pugabyte.nexus.models.safecracker.SafeCrackerPlayer;
@@ -33,24 +33,24 @@ public class NPCHandler implements Listener {
 			SafeCrackerPlayer player = playerService.get(event.getClicker());
 
 			if (player.getGames() == null || !player.getGames().containsKey(safeCrackerEvent.getName())) {
-				player.send(SafeCracker.PREFIX + "You must start the event by doing &c/safecracker start");
+				player.sendMessage(SafeCracker.PREFIX + "You must start the event by doing &c/safecracker start");
 				return;
 			}
 
 			SafeCrackerPlayer.Game game = player.getActiveGame();
 
 			if (game.isFinished()) {
-				player.send(SafeCracker.PREFIX + "&cYou have already correctly solved the riddle and finished the game");
+				player.sendMessage(SafeCracker.PREFIX + "&cYou have already correctly solved the riddle and finished the game");
 				return;
 			}
 
 			if (game.getNpcs().containsKey(npc.getName()) && game.getNpcs().get(npc.getName()).isCorrect()) {
-				player.send(SafeCracker.PREFIX + "You have already solved my question, look for some other NPCs!");
+				player.sendMessage(SafeCracker.PREFIX + "You have already solved my question, look for some other NPCs!");
 				return;
 			}
 
-			player.send(SafeCracker.PREFIX + npc.getQuestion());
-			player.send(new JsonBuilder("&f[&aClick to answer&f]").suggest("/safecracker answer "));
+			player.sendMessage(SafeCracker.PREFIX + npc.getQuestion());
+			player.sendMessage(new JsonBuilder("&f[&aClick to answer&f]").suggest("/safecracker answer "));
 
 			SafeCracker.playerClickedNPC.put(event.getClicker(), npc.getName());
 			if (!game.getNpcs().containsKey(npc.getName())) {

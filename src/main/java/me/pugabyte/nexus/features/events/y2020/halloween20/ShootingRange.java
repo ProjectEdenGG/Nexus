@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -64,7 +64,7 @@ public class ShootingRange implements Listener {
     }
 
     @EventHandler
-    public void onRegionEnter(RegionEnteredEvent event) {
+    public void onRegionEnter(PlayerEnteredRegionEvent event) {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         giveItem(event.getPlayer(), Item.BOW);
         giveItem(event.getPlayer(), Item.ARROW);
@@ -72,7 +72,7 @@ public class ShootingRange implements Listener {
     }
 
     @EventHandler
-    public void onRegionExit(RegionLeftEvent event) {
+    public void onRegionExit(PlayerLeftRegionEvent event) {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         removeItems(event.getPlayer());
         PlayerUtils.send(event.getPlayer(), PREFIX + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
@@ -99,10 +99,9 @@ public class ShootingRange implements Listener {
         Block block = event.getHitBlock();
         if (block == null) return;
         if(!targets.containsKey(block.getLocation())) return;
-        if (!(projectile.getShooter() instanceof Player)) return;
-        Player player = (Player) projectile.getShooter();
+        if (!(projectile.getShooter() instanceof Player player)) return;
 
-        projectile.remove();
+		projectile.remove();
         clearTargets();
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0F, 1.0F);
         lastUpdateTicks = -1;
@@ -156,7 +155,7 @@ public class ShootingRange implements Listener {
     }
 
     private Location getRandomTarget(){
-        ArrayList<Location> locations = new ArrayList<Location>(targets.keySet());
+        ArrayList<Location> locations = new ArrayList<>(targets.keySet());
         return RandomUtils.randomElement(locations);
     }
 

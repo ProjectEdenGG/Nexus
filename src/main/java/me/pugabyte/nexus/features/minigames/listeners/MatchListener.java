@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.minigames.listeners;
 
+import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
@@ -18,6 +18,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -28,6 +29,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -49,6 +51,7 @@ import java.text.DecimalFormat;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsOp;
+import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 public class MatchListener implements Listener {
 
@@ -91,7 +94,7 @@ public class MatchListener implements Listener {
 				return;
 
 		event.setCancelled(true);
-		Nexus.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + event.getFrom() + " to " + event.getTo());
+		Nexus.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
 		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 
@@ -247,8 +250,7 @@ public class MatchListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onDamage(EntityDamageEvent event) {
-		if (event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
+		if (event instanceof EntityDamageByEntityEvent entityDamageByEntityEvent) {
 			if (!(entityDamageByEntityEvent.getDamager() instanceof FallingBlock)) {
 				onDamage(entityDamageByEntityEvent);
 				return;
@@ -293,7 +295,7 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterKillRegion(RegionEnteredEvent event) {
+	public void onEnterKillRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying()) return;
 		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
@@ -308,13 +310,12 @@ public class MatchListener implements Listener {
 	public void onItemPickup(EntityPickupItemEvent event) {
 		if (!Minigames.isMinigameWorld(event.getEntity().getWorld())) return;
 		// TODO: Entity pickups?
-		if (!(event.getEntity() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
 
 		Arena arena = ArenaManager.getFromLocation(event.getItem().getLocation());
 		if (arena == null) return;
 		Match match = MatchManager.find(arena);
 		if (match == null) return;
-		Player player = (Player) event.getEntity();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isIn(match))
 			event.setCancelled(true);
@@ -341,6 +342,7 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying())
 			return;
+		Minigames.getModifier().onProjectileSpawn(projectile);
 		PerkOwner owner = new PerkOwnerService().get(player);
 		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile, minigamer.getMatch()));
 	}
@@ -357,5 +359,23 @@ public class MatchListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onProjectileFire(PlayerLaunchProjectileEvent event) {
 		onShootProjectile(event.getPlayer(), event.getProjectile());
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onProjectileCollide(ProjectileCollideEvent event) {
+		if (!(event.getCollidedWith() instanceof Player)) return;
+		if (!(event.getEntity().getShooter() instanceof Player)) return;
+		Minigamer victim = PlayerManager.get((Player) event.getCollidedWith());
+		if (!victim.isPlaying()) return;
+		if (victim.isRespawning() || !victim.isAlive()) {
+			event.setCancelled(true);
+			return;
+		}
+		if (victim.getTeam() == null) return;
+		if (!victim.getMatch().getMechanic().isTeamGame()) return;
+		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		if (!attacker.isPlaying(victim.getMatch())) return;
+		if (!victim.getTeam().equals(attacker.getTeam())) return;
+		event.setCancelled(true);
 	}
 }

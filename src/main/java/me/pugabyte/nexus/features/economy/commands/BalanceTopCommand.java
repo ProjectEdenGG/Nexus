@@ -42,7 +42,7 @@ public class BalanceTopCommand extends CustomCommand {
 		else
 			processing.add(uuid());
 
-		List<Banker> bankers = service.<Banker>getAll().stream()
+		List<Banker> bankers = service.getAll().stream()
 				.filter(banker -> !banker.isMarket() && banker.getBalance(shopGroup).compareTo(BigDecimal.valueOf(500)) != 0)
 				.sorted(Comparator.comparing(banker -> banker.getBalance(shopGroup), Comparator.reverseOrder()))
 				.collect(Collectors.toList());
@@ -54,7 +54,7 @@ public class BalanceTopCommand extends CustomCommand {
 
 		send(PREFIX + "Top " + camelCase(shopGroup) + " balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
 		BiFunction<Banker, String, JsonBuilder> formatter = (banker, index) ->
-				json("&3" + index + " &e" + (banker.getName() == null ? banker.getUuid() : Nickname.of(banker)) + " &7- " + banker.getBalanceFormatted(shopGroup));
+				json("&3" + index + " &e" + Nickname.of(banker) + " &7- " + banker.getBalanceFormatted(shopGroup));
 		paginate(bankers, formatter, "/baltop " + shopGroup.name().toLowerCase(), page);
 
 		processing.remove(uuid());

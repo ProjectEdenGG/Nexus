@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.wither;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -7,7 +8,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

@@ -39,17 +39,23 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
+import static me.pugabyte.nexus.utils.PlayerUtils.getAllInventoryContents;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class ResourceWorld implements Listener {
+
+	static {
+		World survival = Bukkit.getWorld("survival");
+		World resource = Bukkit.getWorld("resource");
+		if (survival != null && resource != null)
+			resource.setMonsterSpawnLimit((int) (survival.getMonsterSpawnLimit() * 1.5));
+	}
 
 	@EventHandler
 	public void onEnterResourceWorld(PlayerTeleportEvent event) {
@@ -98,13 +104,7 @@ public class ResourceWorld implements Listener {
 
 			rejectedMaterials.clear();
 
-			Set<ItemStack> items = new HashSet<>();
-			items.addAll(Arrays.asList(player.getInventory().getContents()));
-			items.addAll(Arrays.asList(player.getInventory().getArmorContents()));
-			items.addAll(Arrays.asList(player.getInventory().getExtraContents()));
-			items.addAll(Arrays.asList(player.getInventory().getItemInOffHand()));
-
-			for (ItemStack item : items)
+			for (ItemStack item : getAllInventoryContents(player))
 				for (ItemStack content : getShulkerContents(item))
 					if (materials.contains(content.getType())) {
 						rejectedMaterials.add(content.getType());
@@ -122,9 +122,15 @@ public class ResourceWorld implements Listener {
 						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
 				}
 
-			if (!event.isCancelled())
-				PlayerUtils.send(player, " &4Warning: &cYou are entering the resource world! This world is regenerated on the " +
-						"&c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
+			if (!event.isCancelled()) {
+				PlayerUtils.send(player, " &4Warning |");
+				PlayerUtils.send(player, " &4Warning | &cYou are entering the resource world!");
+				PlayerUtils.send(player, " &4Warning | &cThis world is regenerated on the &c&lfirst of every month&c,");
+				PlayerUtils.send(player, " &4Warning | &cso don't leave your stuff here or you will lose it!");
+				PlayerUtils.send(player, " &4Warning |");
+				PlayerUtils.send(player, " &4Warning | &cThe darkness is dangerous in this world");
+				PlayerUtils.send(player, " &4Warning |");
+			}
 		}
 	}
 
@@ -145,9 +151,8 @@ public class ResourceWorld implements Listener {
 
 	@EventHandler
 	public void onOpenEnderChest(InventoryOpenEvent event) {
-		if (!(event.getPlayer() instanceof Player)) return;
+		if (!(event.getPlayer() instanceof Player player)) return;
 		if (event.getInventory().getType() != InventoryType.ENDER_CHEST) return;
-		Player player = (Player) event.getPlayer();
 
 		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
 			event.setCancelled(true);
@@ -159,13 +164,10 @@ public class ResourceWorld implements Listener {
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
 			switch (event.getMessage().split(" ")[0].replace("playervaults:", "")) {
-				case "/pv":
-				case "/vc":
-				case "/chest":
-				case "/vault":
-				case "/playervaults":
+				case "/pv", "/vc", "/chest", "/vault", "/playervaults" -> {
 					event.setCancelled(true);
 					PlayerUtils.send(event.getPlayer(), "&cYou cannot use vaults while in the resource world");
+				}
 			}
 		}
 	}
@@ -184,7 +186,6 @@ public class ResourceWorld implements Listener {
 	where world in ('resource', 'resource_nether', 'resource_the_end')
 		and lwc_blocks.name not like "%DOOR%"
 		and lwc_blocks.name not like "%GATE%"
-
 	 */
 
 	// TODO Automation

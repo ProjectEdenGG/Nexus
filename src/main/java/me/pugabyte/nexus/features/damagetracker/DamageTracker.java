@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.damagetracker;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.damagetracker.models.DamageEvent;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.entity.LivingEntity;
 
 import java.time.LocalDateTime;

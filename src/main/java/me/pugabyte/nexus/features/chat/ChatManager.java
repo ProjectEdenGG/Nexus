@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.chat;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.Setter;
 import me.pugabyte.nexus.features.chat.events.PrivateChatEvent;
@@ -14,13 +15,10 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -65,21 +63,20 @@ public class ChatManager {
 
 		message = message.trim();
 
-		if (!PlayerUtils.isAdminGroup(chatter.getPlayer()))
+		if (!PlayerUtils.isAdminGroup(chatter.getOnlinePlayer()))
 			message = stripColor(message);
 
 		if (message.length() == 0)
 			return;
 
 		if (channel == null) {
-			chatter.send(Chat.PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
+			chatter.sendMessage(Chat.PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
 			return;
 		}
 
 		try {
 			Set<Chatter> recipients = channel.getRecipients(chatter);
-			if (channel instanceof PublicChannel) {
-				PublicChannel publicChannel = (PublicChannel) channel;
+			if (channel instanceof PublicChannel publicChannel) {
 				if (!chatter.canJoin(publicChannel))
 					throw new InvalidInputException("You do not have permission to speak in that channel");
 
@@ -101,13 +98,13 @@ public class ChatManager {
 					process(event);
 			}
 		} catch (InvalidInputException ex) {
-			PlayerUtils.send(chatter.getPlayer(), Chat.PREFIX + "&c" + ex.getMessage());
+			PlayerUtils.send(chatter.getOnlinePlayer(), Chat.PREFIX + "&c" + ex.getMessage());
 		}
 	}
 
 	public static void process(PublicChatEvent event) {
 		if (!event.wasSeen())
-			Tasks.wait(1, () -> event.getChatter().send(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
+			Tasks.wait(1, () -> event.getChatter().sendMessage(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
 
 		String chatterFormat = event.getChannel().getChatterFormat(event.getChatter());
 		JsonBuilder json = new JsonBuilder(chatterFormat);
@@ -127,36 +124,30 @@ public class ChatManager {
 			staff.hover(hover).group();
 		}
 
-		json.hover("").next(event.getMessage());
-		staff.hover("").next(event.getMessage());
+		json.next(event.getMessage());
+		staff.next(event.getMessage());
 
 		if (event.isFiltered())
 			staff.next(" &c&l*")
-					.addHover("&cChat message was filtered")
-					.addHover("&cClick to see original message")
+					.hover("&cChat message was filtered")
+					.hover("&cClick to see original message")
 					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
 
-		Component aPlayer = AdventureUtils.fromJson(json);
-		Component aStaff = AdventureUtils.fromJson(staff);
-
 		event.getRecipients().forEach(recipient -> {
-			if (Rank.of(recipient.getPlayer()).isStaff())
-				recipient.send(nerd, aStaff, MessageType.CHAT);
+			if (Rank.of(recipient.getOnlinePlayer()).isStaff())
+				recipient.sendMessage(event, staff, MessageType.CHAT);
 			else
-				recipient.send(nerd, aPlayer, MessageType.CHAT);
+				recipient.sendMessage(event, json, MessageType.CHAT);
 		});
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}
 
 	public static void process(PrivateChatEvent event) {
-		Set<String> othersNames = event.getChannel().getOthersNames(event.getChatter());
-
-		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + String.join(", ", othersNames) + " &b&l> ")
+		JsonBuilder to = new JsonBuilder("&3&l[&bPM&3&l] &eTo &3" + event.getRecipientNames() + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
 		JsonBuilder from = new JsonBuilder("&3&l[&bPM&3&l] &eFrom &3" + Nickname.of(event.getChatter()) + " &b&l> ")
 				.next(event.getChannel().getMessageColor() + event.getMessage());
-		Component aFrom = AdventureUtils.fromJson(from);
 
 		int seen = 0;
 		for (Chatter recipient : event.getRecipients()) {
@@ -164,23 +155,24 @@ public class ChatManager {
 
 			if (!recipient.equals(event.getChatter())) {
 				boolean canSee = canSee(event.getChatter().getOfflinePlayer(), recipient.getOfflinePlayer());
-				String notOnline = new PlayerNotOnlineException(recipient.getOfflinePlayer()).getMessage();
+				JsonBuilder notOnline = new JsonBuilder(Chat.PREFIX).next(new PlayerNotOnlineException(recipient.getOfflinePlayer()).getJson());
+
 				if (!recipient.getOfflinePlayer().isOnline())
-					event.getChatter().send(Chat.PREFIX + notOnline);
+					event.getChatter().sendMessage(notOnline);
 				else {
-					recipient.send(event.getChatter(), aFrom, MessageType.CHAT);
+					recipient.sendMessage(event, from, MessageType.CHAT);
 					if (canSee)
 						++seen;
 					else
-						event.getChatter().send(Chat.PREFIX + notOnline);
+						event.getChatter().sendMessage(notOnline);
 				}
 			}
 		}
 
 		if (seen > 0)
-			event.getChatter().send(to);
+			event.getChatter().sendMessage(event, to, MessageType.CHAT);
 
-		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + String.join(", ", othersNames) + ": " + event.getMessage());
+		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + event.getRecipientNames() + ": " + event.getMessage());
 	}
 
 }

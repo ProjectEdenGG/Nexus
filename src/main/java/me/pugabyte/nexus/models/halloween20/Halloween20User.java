@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,6 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.models.ComboLockNumbe
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.SoundButton;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Location;
 
@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Entity("halloween20_user")
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class Halloween20User extends PlayerOwnedObject {
+public class Halloween20User implements PlayerOwnedObject {
 
 	@Id
 	@NonNull

@@ -22,8 +22,8 @@ public class HelpCommand extends CustomCommand {
 		send(json("&3[+] &eRules").command("/rules"));
 		send(json("&3[+] &eRanks").command("/ranks"));
 		send(json("&3[+] &eDiscord").command("/discord"));
-		send(json("&3[+] &eWiki").url("https://wiki.bnn.gg/").hover("&eThis will open our wiki in your browser."));
-		send(json("&3[+] &eCommands").url("https://wiki.bnn.gg/wiki/Commands").hover("&eThis will open a page from our wiki in your browser."));
+		send(json("&3[+] &eWiki").url("https://wiki.projecteden.gg/").hover("&eThis will open our wiki in your browser."));
+		send(json("&3[+] &eCommands").url("https://wiki.projecteden.gg/wiki/Commands").hover("&eThis will open a page from our wiki in your browser."));
 		send(json("&3[+] &eProtection").command("/protection"));
 		send(json("&3[+] &eHome related commands").command("/homehelp"));
 		send(json("&3[+] &eEconomy").command("/economy"));

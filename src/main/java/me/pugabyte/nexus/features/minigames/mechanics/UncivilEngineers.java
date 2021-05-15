@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -18,6 +17,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -48,7 +48,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Race to the finish";
 	}
 
@@ -126,7 +126,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onEnterWinRegion(RegionEnteredEvent event) {
+	public void onEnterWinRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
@@ -136,7 +136,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onEnterCheckpointRegion(RegionEnteredEvent event) {
+	public void onEnterCheckpointRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
@@ -176,7 +176,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onEnterVoid(RegionEnteredEvent event) {
+	public void onEnterVoid(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
@@ -198,7 +198,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onEnterMobRegion(RegionEnteredEvent event) {
+	public void onEnterMobRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
@@ -283,7 +283,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 		@Override
 		public Map<String, Object> serialize() {
-			return new LinkedHashMap<String, Object>() {{
+			return new LinkedHashMap<>() {{
 				put("type", type.name());
 				put("location", location);
 			}};

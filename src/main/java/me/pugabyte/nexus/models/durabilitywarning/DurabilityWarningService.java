@@ -1,26 +1,28 @@
 package me.pugabyte.nexus.models.durabilitywarning;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(DurabilityWarning.class)
-public class DurabilityWarningService extends MongoService {
-	private final static Map<UUID, DurabilityWarning> cache = new HashMap<>();
+public class DurabilityWarningService extends MongoService<DurabilityWarning> {
+	private final static Map<UUID, DurabilityWarning> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, DurabilityWarning> getCache() {
 		return cache;
 	}
 
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
+	}
+
 	@Override
-	public <T> void saveSync(T object) {
-		if (((DurabilityWarning) object).isEnabled())
-			super.delete(object);
-		else
-			super.saveSync(object);
+	protected boolean deleteIf(DurabilityWarning durabilityWarning) {
+		return durabilityWarning.isEnabled();
 	}
 
 }

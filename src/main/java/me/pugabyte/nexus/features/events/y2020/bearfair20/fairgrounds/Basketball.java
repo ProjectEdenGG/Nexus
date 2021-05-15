@@ -1,20 +1,20 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.Fairgrounds;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -105,8 +105,7 @@ public class Basketball implements Listener {
 	private static void removeBasketballEntity(Player player) {
 		Collection<Entity> entities = getWGUtils().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
-			if (entity instanceof Item) {
-				Item item = (Item) entity;
+			if (entity instanceof Item item) {
 				if (!isBasketball(item.getItemStack()))
 					continue;
 				if (ownsBasketball(player, item.getItemStack()))
@@ -119,8 +118,7 @@ public class Basketball implements Listener {
 	private static boolean regionContainsBasketball(Player player) {
 		Collection<Entity> entities = getWGUtils().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
-			if (entity instanceof Item) {
-				Item item = (Item) entity;
+			if (entity instanceof Item item) {
 				if (!isBasketball(item.getItemStack()))
 					continue;
 				if (ownsBasketball(player, item.getItemStack())) {
@@ -254,8 +252,7 @@ public class Basketball implements Listener {
 
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.getWorld() != world) return;
 		if (!isBasketball(event.getItem().getItemStack())) return;
 
@@ -274,7 +271,7 @@ public class Basketball implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		Player player = event.getPlayer();
 		if (new CooldownService().check(player, "basketball-doublejump-tip", Time.SECOND.x(30)))
@@ -284,7 +281,7 @@ public class Basketball implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionLeave(RegionLeftEvent event) {
+	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		removeBasketball(event.getPlayer());
 		removeBasketballEntity(event.getPlayer());

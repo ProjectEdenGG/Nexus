@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.features.minigames.models;
 
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.nexus.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -39,7 +39,7 @@ public class Lobby implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("waitTime", getWaitTime());
 			put("location", getLocation());
 		}};

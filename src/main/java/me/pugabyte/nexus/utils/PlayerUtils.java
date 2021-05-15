@@ -3,24 +3,32 @@ package me.pugabyte.nexus.utils;
 import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.OptionalPlayer;
+import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.delivery.DeliveryCommand;
-import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
-import me.pugabyte.nexus.utils.Utils.MinMaxResult;
 import net.dv8tion.jda.annotations.ReplaceWith;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.identity.Identified;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,17 +37,22 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,31 +60,39 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
+@UtilityClass
 public class PlayerUtils {
 
-	public enum Dev {
+	public enum Dev implements OptionalPlayerLike {
 		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
-		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94");
+		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
+		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd");
 
 		@Getter
 		private final UUID uuid;
+
+		public @NotNull UUID getUniqueId() {return uuid;}
 
 		Dev(String uuid) {
 			this.uuid = UUID.fromString(uuid);
 		}
 
-		public Player getPlayer() {
+		public @Nullable Player getPlayer() {
+			return getOfflinePlayer().getPlayer();
+		}
+
+		public @NotNull Player getOnlinePlayer() throws PlayerNotOnlineException {
 			OfflinePlayer offlinePlayer = getOfflinePlayer();
 			if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
 				throw new PlayerNotOnlineException(offlinePlayer);
 			return offlinePlayer.getPlayer();
 		}
 
-		public OfflinePlayer getOfflinePlayer() {
+		public @NotNull OfflinePlayer getOfflinePlayer() {
 			return PlayerUtils.getPlayer(uuid);
 		}
 
@@ -80,69 +101,66 @@ public class PlayerUtils {
 		}
 
 		public void send(String message) {
-			OfflinePlayer player = getOfflinePlayer();
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), message);
+			PlayerUtils.send(getOfflinePlayer(), message);
 		}
 
-		public void send(JsonBuilder message) {
-			OfflinePlayer player = getOfflinePlayer();
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), message);
-		}
-
-		public void send(Component component) {
-			OfflinePlayer player = getOfflinePlayer();
-			if (player.isOnline() && player.getPlayer() != null)
-				PlayerUtils.send(player.getPlayer(), component);
-		}
-
-		public boolean is(OfflinePlayer player) {
+		public boolean is(HasUniqueId player) {
 			return uuid.equals(player.getUniqueId());
-		}
-
-		public boolean is(Nerd nerd) {
-			return uuid.equals(nerd.getUuid());
 		}
 	}
 
-	public static boolean isVanished(Player player) {
-		for (MetadataValue meta : player.getMetadata("vanished"))
+	public static boolean isVanished(OptionalPlayer player) {
+		if (player.getPlayer() == null) return false;
+		for (MetadataValue meta : player.getPlayer().getMetadata("vanished"))
 			return (meta.asBoolean());
 		return false;
 	}
 
-	public static boolean isStaffGroup(Player player) {
-		return player.hasPermission("group.staff");
+	public static boolean isStaffGroup(HasOfflinePlayer player) {
+		return Rank.of(player).isStaff();
 	}
 
-	public static boolean isBuilderGroup(Player player) {
-		return player.hasPermission("group.builder");
+	public static boolean isBuilderGroup(HasOfflinePlayer player) {
+		Rank rank = Rank.of(player);
+		return rank.gte(Rank.BUILDER) && rank.lt(Rank.MINIGAME_MODERATOR);
 	}
 
-	public static boolean isModeratorGroup(Player player) {
-		return player.hasPermission("group.moderator");
+	public static boolean isModeratorGroup(HasOfflinePlayer player) {
+		return Rank.of(player).gte(Rank.MODERATOR);
 	}
 
-	public static boolean isSeniorStaffGroup(Player player) {
-		return player.hasPermission("group.seniorstaff");
+	public static boolean isSeniorStaffGroup(HasOfflinePlayer player) {
+		return Rank.of(player).isSeniorStaff();
 	}
 
-	public static boolean isAdminGroup(Player player) {
-		return player.hasPermission("group.admin");
+	public static boolean isAdminGroup(HasOfflinePlayer player) {
+		return Rank.of(player).gte(Rank.ADMIN);
 	}
 
-	public static boolean isSelf(OfflinePlayer player1, OfflinePlayer player2) {
+	public static boolean isSelf(HasUniqueId player1, HasUniqueId player2) {
 		return player1.getUniqueId().equals(player2.getUniqueId());
 	}
 
-	public static boolean canSee(OfflinePlayer viewer, OfflinePlayer target) {
-		if (!viewer.isOnline() || !target.isOnline()) return false;
-		return (canSee(viewer.getPlayer(), target.getPlayer()));
+	/**
+	 * Tests if a player can see a vanished player. Returns false if either player is null.
+	 * @param viewer player who is viewing
+	 * @param target target player to check
+	 * @return true if the target can be seen by the viewer
+	 */
+	@Contract("null, _ -> false; _, null -> false")
+	public static boolean canSee(@Nullable Player viewer, @Nullable Player target) {
+		if (viewer == null || target == null) return false;
+		return !isVanished(target) || viewer.hasPermission("pv.see");
 	}
 
-	public static boolean canSee(Player viewer, Player target) {
-		return !isVanished(target) || viewer.hasPermission("pv.see");
+	/**
+	 * Tests if a player can see a vanished player. Returns false if either player is null.
+	 * @param viewer player who is viewing
+	 * @param target target player to check
+	 * @return true if the target can be seen by the viewer
+	 */
+	public static boolean canSee(@NotNull OptionalPlayer viewer, @NotNull OptionalPlayer target) {
+		return canSee(viewer.getPlayer(), target.getPlayer());
 	}
 
 	public static List<String> getOnlineUuids() {
@@ -155,7 +173,30 @@ public class PlayerUtils {
 		return Bukkit.getOfflinePlayer(uuid);
 	}
 
-	public static OfflinePlayer getPlayer(String partialName) {
+	public static OfflinePlayer getPlayer(HasUniqueId uuid) {
+		return getPlayer(uuid.getUniqueId());
+	}
+
+	public static OfflinePlayer getPlayer(Identity identity) {
+		return getPlayer(identity.uuid());
+	}
+
+	/**
+	 * Searches for a player whose username or nickname fully or partially matches the given partial name.
+	 * <p>
+	 * Examples:
+	 * <ul>
+	 *     <li>"Griffin" -> Pugabyte</li>
+	 *     <li>"Puga" -> Pugabyte</li>
+	 *     <li>"86d7e0e2-c95e-4f22-8f99-a6e83b398307" -> Pugabyte</li>
+	 *     <li>"Pugabytteee" -> throws PlayerNotFoundException</li>
+	 * </ul>
+	 * @param partialName UUID or partial text of a username/nickname
+	 * @return an offline player
+	 * @throws InvalidInputException input was null or empty
+	 * @throws PlayerNotFoundException a player matching that (nick)name could not be found
+	 */
+	public static OfflinePlayer getPlayer(String partialName) throws InvalidInputException, PlayerNotFoundException {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
@@ -187,19 +228,20 @@ public class PlayerUtils {
 				return player;
 
 		NerdService nerdService = new NerdService();
+		NicknameService nicknameService = new NicknameService();
+
+		Nickname fromNickname = nicknameService.getFromNickname(partialName);
+		if (fromNickname != null)
+			return fromNickname.getOfflinePlayer();
 
 		Nerd fromAlias = nerdService.getFromAlias(partialName);
 		if (fromAlias != null)
 			return fromAlias.getOfflinePlayer();
 
-		Nickname fromNickname = new NicknameService().getFromNickname(partialName);
-		if (fromNickname != null)
-			return fromNickname.getOfflinePlayer();
-
 		List<Nerd> matches = nerdService.find(partialName);
 		if (matches.size() > 0) {
 			Nerd nerd = matches.get(0);
-			if (nerd != null && nerd.getUuid() != null)
+			if (nerd != null)
 				return nerd.getOfflinePlayer();
 		}
 
@@ -213,16 +255,17 @@ public class PlayerUtils {
 		});
 	}
 
-	public static MinMaxResult<Player> getNearestPlayer(Player original) {
+	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
+		Player _original = original.getPlayer();
 		return getMin((Collection<Player>) Bukkit.getOnlinePlayers(), player -> {
-			if (!player.getWorld().equals(original.getWorld()) || isSelf(original, player)) return null;
-			return player.getLocation().distance(original.getLocation());
+			if (!player.getWorld().equals(_original.getWorld()) || isSelf(_original, player)) return null;
+			return player.getLocation().distance(_original.getLocation());
 		});
 	}
 
 	@SneakyThrows
-	public static int getPing(Player player) {
-		Object entityPlayer = player.getClass().getMethod("getHandle").invoke(player);
+	public static int getPing(HasPlayer player) {
+		Object entityPlayer = player.getPlayer().getClass().getMethod("getHandle").invoke(player);
 		return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
 	}
 
@@ -244,22 +287,34 @@ public class PlayerUtils {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
 	}
 
-	public static void send(Object sender, Object message) {
-		if (sender instanceof CommandSender) {
+	/**
+	 * Sends a message to a player
+	 * @param recipient a {@link CommandSender}, {@link HasUniqueId}, {@link Identified}, or {@link UUID}
+	 * @param message a {@link String} or {@link ComponentLike}
+	 */
+	public static void send(@Nullable Object recipient, @Nullable Object message) {
+		if (recipient == null || message == null)
+			return;
+		if (recipient instanceof CommandSender) {
 			if (message instanceof String)
-				((CommandSender) sender).sendMessage(colorize((String) message));
-			else if (message instanceof JsonBuilder)
-				((CommandSender) sender).sendMessage(((JsonBuilder) message).build());
-			else if (message instanceof Component)
-				((CommandSender) sender).sendMessage(((Component) message));
-		} else if (sender instanceof OfflinePlayer) {
-			OfflinePlayer player = (OfflinePlayer) sender;
-			if (player.getPlayer() != null)
-				send(player.getPlayer(), message);
-		} else if (sender instanceof UUID) {
-			send(getPlayer((UUID) sender), message);
-		} else if (sender instanceof PlayerOwnedObject)
-			send(((PlayerOwnedObject) sender).getOfflinePlayer(), message);
+				((CommandSender) recipient).sendMessage(colorize((String) message));
+			else if (message instanceof ComponentLike)
+				((CommandSender) recipient).sendMessage(((ComponentLike) message));
+		} else if (recipient instanceof OfflinePlayer) {
+			Player player = ((OfflinePlayer) recipient).getPlayer();
+			if (player != null)
+				send(player, message);
+		} else if (recipient instanceof HasOfflinePlayer) {
+			send(((HasOfflinePlayer) recipient).getOfflinePlayer(), message);
+		} else if (recipient instanceof UUID) {
+			send(getPlayer((UUID) recipient), message);
+		} else if (recipient instanceof HasUniqueId) {
+			send(getPlayer((HasUniqueId) recipient), message);
+		} else if (recipient instanceof Identity) {
+			send(getPlayer((Identity) recipient), message);
+		} else if (recipient instanceof Identified) {
+			send(getPlayer(((Identified) recipient).identity()), message);
+		}
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
@@ -290,15 +345,33 @@ public class PlayerUtils {
 		return openSlots >= usedSlots;
 	}
 
-	public static boolean playerHas(Player player, ItemStack itemStack) {
-		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(itemStack))
-			return true;
-		if (Arrays.asList(inventory.getStorageContents()).contains(itemStack))
-			return true;
-		if (Arrays.asList(inventory.getArmorContents()).contains(itemStack))
-			return true;
-		return Arrays.asList(inventory.getExtraContents()).contains(itemStack);
+	public static boolean hasRoomFor(OptionalPlayer player, ItemStack... items) {
+		if (player.getPlayer() == null) return false;
+		return hasRoomFor(player.getPlayer(), items);
+	}
+
+	/**
+	 * Tests if a player has an item in their inventory
+	 */
+	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
+		if (player.getPlayer() == null) return false;
+		return getAllInventoryContents(player.getPlayer()).contains(itemStack);
+	}
+
+	@NotNull
+	public static Set<@Nullable ItemStack> getAllInventoryContents(HasPlayer player) {
+		Player _player = player.getPlayer();
+		Set<ItemStack> items = new HashSet<>();
+		items.addAll(Arrays.asList(_player.getInventory().getContents()));
+		items.addAll(Arrays.asList(_player.getInventory().getArmorContents()));
+		items.addAll(Arrays.asList(_player.getInventory().getExtraContents()));
+		items.add(_player.getInventory().getItemInOffHand());
+		return items;
+	}
+
+	@NotNull
+	public static Set<@NotNull ItemStack> getNonNullInventoryContents(HasPlayer player) {
+		return getAllInventoryContents(player).stream().filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 
 	@Deprecated
@@ -307,7 +380,8 @@ public class PlayerUtils {
 		throw new UnsupportedOperationException();
 	}
 
-	public static long setPlayerTime(Player player, String time) {
+	public static long setPlayerTime(HasPlayer hasPlayer, String time) {
+		Player player = hasPlayer.getPlayer();
 		long ticks;
 		try {
 			ticks = DescParseTickFormat.parse(time);
@@ -324,51 +398,35 @@ public class PlayerUtils {
 		return ticks;
 	}
 
-	public static HidePlayer hidePlayer(Player player) {
+	public static HidePlayer hidePlayer(HasPlayer player) {
 		return new HidePlayer(player);
 	}
 
-	public static HidePlayer hidePlayer(Minigamer minigamer) {
-		return new HidePlayer(minigamer.getPlayer());
-	}
-
-	public static ShowPlayer showPlayer(Player player) {
+	public static ShowPlayer showPlayer(HasPlayer player) {
 		return new ShowPlayer(player);
 	}
 
-	public static ShowPlayer showPlayer(Minigamer minigamer) {
-		return new ShowPlayer(minigamer.getPlayer());
-	}
-
 	public static class HidePlayer {
-		private Player player;
+		private final Player player;
 
-		public HidePlayer(Player player) {
-			this.player = player;
+		public HidePlayer(HasPlayer player) {
+			this.player = player.getPlayer();
 		}
 
-		public void from(Minigamer minigamer) {
-			from(minigamer.getPlayer());
-		}
-
-		public void from(Player player) {
-			player.hidePlayer(Nexus.getInstance(), this.player);
+		public void from(HasPlayer player) {
+			player.getPlayer().hidePlayer(Nexus.getInstance(), this.player);
 		}
 	}
 
 	public static class ShowPlayer {
-		private Player player;
+		private final Player player;
 
-		public ShowPlayer(Player player) {
-			this.player = player;
+		public ShowPlayer(HasPlayer player) {
+			this.player = player.getPlayer();
 		}
 
-		public void to(Minigamer minigamer) {
-			to(minigamer.getPlayer());
-		}
-
-		public void to(Player player) {
-			player.showPlayer(Nexus.getInstance(), this.player);
+		public void to(HasPlayer player) {
+			player.getPlayer().showPlayer(Nexus.getInstance(), this.player);
 		}
 	}
 
@@ -393,44 +451,45 @@ public class PlayerUtils {
 		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
 	}
 
-	public static void giveItem(Player player, Material material) {
+	public static void giveItem(HasPlayer player, Material material) {
 		giveItem(player, material, 1);
 	}
 
-	public static void giveItem(Player player, Material material, String nbt) {
+	public static void giveItem(HasPlayer player, Material material, String nbt) {
 		giveItem(player, material, 1, nbt);
 	}
 
-	public static void giveItem(Player player, Material material, int amount) {
+	public static void giveItem(HasPlayer player, Material material, int amount) {
 		giveItem(player, material, amount, null);
 	}
 
-	public static void giveItem(Player player, Material material, int amount, String nbt) {
+	public static void giveItem(HasPlayer player, Material material, int amount, String nbt) {
+		Player _player = player.getPlayer();
 		if (material == Material.AIR)
 			throw new InvalidInputException("Cannot spawn air");
 
 		if (amount > 64) {
 			for (int i = 0; i < (amount / 64); i++)
-				giveItem(player, new ItemStack(material, 64), nbt);
-			giveItem(player, new ItemStack(material, amount % 64), nbt);
+				giveItem(_player, new ItemStack(material, 64), nbt);
+			giveItem(_player, new ItemStack(material, amount % 64), nbt);
 		} else {
-			giveItem(player, new ItemStack(material, amount), nbt);
+			giveItem(_player, new ItemStack(material, amount), nbt);
 		}
 	}
 
-	public static void giveItem(Player player, ItemStack item) {
+	public static void giveItem(HasPlayer player, ItemStack item) {
 		giveItems(player, Collections.singletonList(item));
 	}
 
-	public static void giveItem(Player player, ItemStack item, String nbt) {
+	public static void giveItem(HasPlayer player, ItemStack item, String nbt) {
 		giveItems(player, Collections.singletonList(item), nbt);
 	}
 
-	public static void giveItems(Player player, Collection<ItemStack> items) {
+	public static void giveItems(HasPlayer player, Collection<ItemStack> items) {
 		giveItems(player, items, null);
 	}
 
-	public static void giveItems(Player player, Collection<ItemStack> items, String nbt) {
+	public static void giveItems(HasPlayer player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 		if (!Strings.isNullOrEmpty(nbt)) {
@@ -446,51 +505,71 @@ public class PlayerUtils {
 		dropExcessItems(player, giveItemsGetExcess(player, finalItems));
 	}
 
-	public static List<ItemStack> giveItemsGetExcess(Player player, ItemStack items) {
+	public static List<ItemStack> giveItemsGetExcess(HasPlayer player, ItemStack items) {
 		return giveItemsGetExcess(player, Collections.singletonList(items));
 	}
 
-	public static List<ItemStack> giveItemsGetExcess(Player player, List<ItemStack> items) {
+	public static List<ItemStack> giveItemsGetExcess(HasPlayer player, List<ItemStack> items) {
 		List<ItemStack> excess = new ArrayList<>();
 		for (ItemStack item : items)
 			if (!isNullOrAir(item))
-				excess.addAll(player.getInventory().addItem(item).values());
+				excess.addAll(player.getPlayer().getInventory().addItem(item).values());
 
 		return excess;
 	}
 
-	public static void giveItemAndDeliverExcess(OfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
+	public static void giveItemAndDeliverExcess(HasOfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
 		giveItemsAndDeliverExcess(player, Collections.singleton(items), null, worldGroup);
 	}
 
-	public static void giveItemAndDeliverExcess(OfflinePlayer player, ItemStack items, String message, WorldGroup worldGroup) {
+	public static void giveItemAndDeliverExcess(HasOfflinePlayer player, ItemStack items, String message, WorldGroup worldGroup) {
 		giveItemsAndDeliverExcess(player, Collections.singleton(items), message, worldGroup);
 	}
 
-	public static void giveItemsAndDeliverExcess(OfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
+	public static void giveItemsAndDeliverExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
+		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 		List<ItemStack> excess;
-		if (player.isOnline() && player.getPlayer() != null && WorldGroup.get(player.getPlayer()) == worldGroup)
-			excess = giveItemsGetExcess(player.getPlayer(), finalItems);
+		if (offlinePlayer.getPlayer() != null && WorldGroup.get(offlinePlayer.getPlayer()) == worldGroup)
+			excess = giveItemsGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = new ArrayList<>(items);
 		if (Utils.isNullOrEmpty(excess)) return;
 		DeliveryService service = new DeliveryService();
-		DeliveryUser user = service.get(player);
+		DeliveryUser user = service.get(offlinePlayer);
 		DeliveryUser.Delivery delivery = DeliveryUser.Delivery.serverDelivery(excess);
 		if (!Strings.isNullOrEmpty(message))
 			delivery.setMessage(message);
 		user.add(worldGroup, delivery);
 		service.save(user);
-		user.send(user.json(DeliveryCommand.PREFIX + "Your inventory was full. Excess items were given to you as a &c/delivery").command("/delivery").hover("&eClick to view deliveries"));
+		user.sendMessage(user.json(DeliveryCommand.PREFIX + "Your inventory was full. Excess items were given to you as a &c/delivery").command("/delivery").hover("&eClick to view deliveries"));
 	}
 
-	public static void dropExcessItems(Player player, List<ItemStack> excess) {
+	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {
+		Player _player = player.getPlayer();
 		if (!excess.isEmpty())
 			for (ItemStack itemStack : excess)
 				if (!isNullOrAir(itemStack) && itemStack.getAmount() > 0)
-					player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+					_player.getWorld().dropItemNaturally(_player.getLocation(), itemStack);
+	}
+
+	/**
+	 * Gets {@link Player}s from a list of {@link HasPlayer}
+	 * @param hasPlayers list of player containers
+	 * @return list of players
+	 */
+	public static @NonNull List<Player> getPlayers(List<? extends @NonNull HasPlayer> hasPlayers) {
+		return hasPlayers.stream().map(HasPlayer::getPlayer).collect(Collectors.toList());
+	}
+
+	/**
+	 * Gets {@link Player}s from a list of {@link OptionalPlayer} if they are non null
+	 * @param hasPlayers list of optional players
+	 * @return list of non-null players
+	 */
+	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
+		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 }

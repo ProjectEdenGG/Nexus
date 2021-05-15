@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.recipes.models.RecipeType;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CustomRecipes extends Feature implements Listener {
 
@@ -38,7 +40,12 @@ public class CustomRecipes extends Feature implements Listener {
 		registerQuartz();
 		registerStoneBricks();
 		misc();
-		new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).forEach(clazz -> {
+
+		Set<Class<? extends FunctionalRecipe>> functionals = new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class);
+
+		// Need to wait for ResourcePack feature to register
+		// TODO Create dependency system for features
+		Tasks.wait(1, () -> functionals.forEach(clazz -> {
 			try {
 				FunctionalRecipe recipe = clazz.newInstance();
 				recipe.setType(RecipeType.FUNCTIONAL);
@@ -48,7 +55,7 @@ public class CustomRecipes extends Feature implements Listener {
 				Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
 				e.printStackTrace();
 			}
-		});
+		}));
 	}
 
 	public NexusRecipe getCraftByRecipe(Recipe result) {

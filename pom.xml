@@ -26,26 +26,44 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArguments>
-                        <Xmaxerrs>1000000</Xmaxerrs>
-                    </compilerArguments>
+                    <release>16</release>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgument>-parameters</compilerArgument>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.20</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <relocations>
+                                <relocation>
+                                    <pattern>okhttp3</pattern>
+                                    <shadedPattern>me.pugabyte.shaded.okhttp3</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>kotlin</pattern>
+                                    <shadedPattern>me.pugabyte.shaded.kotlin</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -87,12 +105,12 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>bn-repo</id>
-            <url>http://maven.bnn.gg/repo/</url>
+            <id>projecteden-repo</id>
+            <url>https://sonatype.projecteden.gg/repository/maven-public/</url>
         </repository>
         <repository>
             <id>multiverse-repo</id>
-            <url>http://repo.onarandombox.com/content/groups/public/</url>
+            <url>https://repo.onarandombox.com/content/groups/public/</url>
         </repository>
         <repository>
             <id>moss-repo</id>
@@ -100,19 +118,15 @@
         </repository>
         <repository>
             <id>sk89q-repo</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
             <id>fawe-repo</id>
-            <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
+            <url>https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
         </repository>
         <repository>
             <id>aikar-repo</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
-        </repository>
-        <repository>
-            <id>nuvotifier-repo</id>
-            <url>https://dl.bintray.com/nuvotifier/maven/</url>
         </repository>
         <repository>
             <id>inventive-repo</id>
@@ -135,10 +149,6 @@
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
         <repository>
-            <id>jcenter-repo</id>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-        <repository>
             <id>jda-repo</id>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
@@ -146,20 +156,17 @@
             <id>md_5-repo</id>
             <url>https://repo.md-5.net/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>skullcreator-repo</id>
+            <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
+        </repository>
     </repositories>
     <dependencies>
-        <!-- Paper API -->
+        <!-- Parchment API + server (NMS) -->
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
+            <groupId>me.lexikiq</groupId>
+            <artifactId>parchment</artifactId>
             <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- NMS -->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.16.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- PaperLib API wrapper -->
@@ -169,11 +176,17 @@
             <version>1.0.2</version>
             <scope>provided</scope>
         </dependency>
+        <!-- EdenAPI -->
+        <dependency>
+            <groupId>me.pugabyte</groupId>
+            <artifactId>eden-api</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
+        </dependency>
         <!-- Lombok Project -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.10</version>
+            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
         <!-- Reflections -->
@@ -192,10 +205,10 @@
         <dependency>
 <!--            <groupId>com.dieselpoint</groupId>-->
 <!--            <artifactId>norm</artifactId>-->
-<!--            <version>0.9.6</version>-->
-            <groupId>com.github.pugabyte</groupId>
+<!--            <version>0.9.7</version>-->
+            <groupId>com.github.Pugabyte</groupId>
             <artifactId>norm</artifactId>
-            <version>e04065acd8</version>
+            <version>0843afb4e5</version>
         </dependency>
         <!-- MySQL -->
         <dependency>
@@ -207,7 +220,7 @@
         <dependency>
             <groupId>dev.morphia.morphia</groupId>
             <artifactId>core</artifactId>
-            <version>1.5.8</version>
+            <version>1.6.1</version>
         </dependency>
         <!-- cron4j -->
         <dependency>
@@ -219,7 +232,7 @@
         <dependency>
             <groupId>me.lucko</groupId>
             <artifactId>helper</artifactId>
-            <version>5.6.2</version>
+            <version>5.6.5</version>
             <scope>provided</scope>
         </dependency>
         <!-- JDA -->
@@ -236,9 +249,9 @@
         </dependency>
         <!-- JDA-Utilities -->
         <dependency>
-            <groupId>com.jagrosh</groupId>
+            <groupId>com.github.JDA-Applications.JDA-Utilities</groupId>
             <artifactId>jda-utilities-command</artifactId>
-            <version>3.0.2</version>
+            <version>804d58a5ed</version>
             <scope>compile</scope>
         </dependency>
         <!-- Emoji Parser -->
@@ -285,7 +298,7 @@
         <dependency>
             <groupId>com.github.IntellectualSites</groupId>
             <artifactId>FastAsyncWorldEdit</artifactId>
-            <version>1.15-255</version>
+            <version>1.16-688</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.16-591.jar</systemPath>
         </dependency>
@@ -333,13 +346,6 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
             <version>7.2.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- WorldGuardRegionAPI -->
-        <dependency>
-            <groupId>com.mewin</groupId>
-            <artifactId>WorldGuardRegionAPI</artifactId>
-            <version>1.5.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- EssentialsX
@@ -403,7 +409,12 @@
             <groupId>com.vexsoftware</groupId>
             <artifactId>nuvotifier-universal</artifactId>
             <version>2.3.4</version>
+            <!---->
+            <systemPath>${project.basedir}/libs/nuvotifier-universal-2.3.4.jar</systemPath>
+            <scope>system</scope>
+            <!-- TODO: Fix when https://github.com/NuVotifier/NuVotifier/issues/234 is resolved
             <scope>provided</scope>
+            -->
         </dependency>
         <!-- ProtocolLib -->
         <dependency>
@@ -499,11 +510,32 @@
             <version>6.2.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- LibsDisguises -->
         <dependency>
             <groupId>LibsDisguises</groupId>
             <artifactId>LibsDisguises</artifactId>
             <version>10.0.24</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Checker -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>2.5.4</version>
+        </dependency>
+        <!-- SkullCreator -->
+        <dependency>
+            <groupId>dev.dbassett</groupId>
+            <artifactId>skullcreator</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>projecteden-repo</id>
+            <url>https://sonatype.projecteden.gg/repository/maven-releases</url>
+        </repository>
+    </distributionManagement>
 </project>

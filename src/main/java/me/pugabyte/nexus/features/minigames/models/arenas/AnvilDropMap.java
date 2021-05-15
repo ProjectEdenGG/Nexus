@@ -28,7 +28,7 @@ public class AnvilDropMap implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("name", getName());
 			put("spectateLocation", getSpectateLocation());
 			put("spawnpoints", getSpawnpoints());

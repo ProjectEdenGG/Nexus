@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.models;
 
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.OptionalPlayerLike;
+import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.pugabyte.nexus.framework.interfaces.Nicknamed;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
@@ -9,18 +11,17 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -30,55 +31,83 @@ import static me.pugabyte.nexus.utils.AdventureUtils.identityOf;
 /**
  * A mongo database object owned by a player
  */
-public abstract class PlayerOwnedObject implements Identified, Nicknamed {
+public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, OptionalPlayerLike {
 
-	public abstract UUID getUuid();
+	/**
+	 * Gets the unique ID of this object. Alias for {@link #getUuid()}, for compatibility with {@link HasUniqueId}.
+	 * @return this object's unique ID
+	 */
+	@Override
+	default @NotNull UUID getUniqueId() {return getUuid();}
 
-	public OfflinePlayer getOfflinePlayer() {
+	default @NotNull OfflinePlayer getOfflinePlayer() {
 		return Bukkit.getOfflinePlayer(getUuid());
 	}
 
-	public Player getPlayer() {
-		if (!getOfflinePlayer().isOnline())
-			throw new PlayerNotOnlineException(getOfflinePlayer());
+	/**
+	 * Gets the online player for this object and returns null if they're not online
+	 * @return online player or null
+	 */
+	default @Nullable Player getPlayer() {
 		return getOfflinePlayer().getPlayer();
 	}
 
-	public Nerd getNerd() {
-		return Nerd.of(getUuid());
+	/**
+	 * Gets the online player for this object and throws if they're not online
+	 * @return online player
+	 * @throws PlayerNotOnlineException player is not online
+	 */
+	default @NotNull Player getOnlinePlayer() throws PlayerNotOnlineException {
+		Player player = getOfflinePlayer().getPlayer();
+		if (player == null)
+			throw new PlayerNotOnlineException(getOfflinePlayer());
+		return player;
 	}
 
-	public boolean isOnline() {
-		return getOfflinePlayer().isOnline() && getOfflinePlayer().getPlayer() != null;
+	default boolean isOnline() {
+		return getOfflinePlayer().isOnline();
 	}
 
-	public @NotNull String getName() {
-		// silly failsafe for deleted users ig
+	default boolean isAfk() {
+		return AFK.get(getOnlinePlayer()).isAfk();
+	}
+
+	default boolean isTimeAfk() {
+		return AFK.get(getOnlinePlayer()).isTimeAfk();
+	}
+
+	default @NotNull Nerd getNerd() {
+		return Nerd.of(this);
+	}
+
+	@Override
+	default @NotNull String getName() {
 		String name = getOfflinePlayer().getName();
 		if (name == null)
-			name = getUuid().toString();
+			name = Nerd.of(getUuid()).getName();
 		return name;
 	}
 
-	public @NotNull String getNickname() {
-		return Nickname.of(getOfflinePlayer());
+	@Override
+	default @NotNull String getNickname() {
+		return Nickname.of(this);
 	}
 
-	protected Nickname getNicknameData() {
-		return new NicknameService().get(getUuid());
+	default Nickname getNicknameData() {
+		return new NicknameService().get(this.getUuid());
 	}
 
-	public boolean hasNickname() {
+	default boolean hasNickname() {
 		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
 	}
 
-	public void send(String message) {
-		send(new JsonBuilder(message));
+	default void sendMessage(String message) {
+		sendMessage(json(message));
 	}
 
-	public void sendOrMail(String message) {
+	default void sendOrMail(String message) {
 		if (isOnline())
-			send(new JsonBuilder(message));
+			sendMessage(json(message));
 		else {
 			DeliveryService service = new DeliveryService();
 			DeliveryUser deliveryUser = service.get(getUuid());
@@ -87,103 +116,33 @@ public abstract class PlayerOwnedObject implements Identified, Nicknamed {
 		}
 	}
 
-	public void send(JsonBuilder message) {
-		if (isOnline())
-			getPlayer().sendMessage(message.build());
+	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {
+		sendMessage(identityOf(sender), component, type);
 	}
 
-	public void send(Component component) {
-		if (isOnline())
-			getPlayer().sendMessage(component);
+	default void sendMessage(UUID sender, ComponentLike component) {
+		sendMessage(identityOf(sender), component);
 	}
 
-	public void send(Component component, MessageType type) {
-		if (type == null) {
-			send(component);
-			return;
-		}
-		if (isOnline())
-			getPlayer().sendMessage(component, type);
+	default void sendMessage(int delay, String message) {
+		Tasks.wait(delay, () -> sendMessage(message));
 	}
 
-	public void send(Identity identity, Component component, MessageType type) {
-		// fail safes, as sendMessage requires NonNull args
-		if (component == null)
-			return;
-
-		if (identity == null && type == null) {
-			send(component);
-			return;
-		}
-		if (type == null) {
-			send(identity, component);
-			return;
-		}
-		if (identity == null) {
-			send(component, type);
-			return;
-		}
-
-		if (isOnline())
-			getPlayer().sendMessage(identity, component, type);
+	default void sendMessage(int delay, ComponentLike message) {
+		Tasks.wait(delay, () -> sendMessage(message));
 	}
 
-	public void send(Identified sender, Component component, MessageType type) {
-		send(sender.identity(), component, type);
-	}
-
-	public void send(UUID sender, Component component, MessageType type) {
-		send(identityOf(sender), component, type);
-	}
-
-	public void send(Identity identity, Component component) {
-		if (identity == null) {
-			send(component);
-			return;
-		}
-		if (isOnline())
-			getPlayer().sendMessage(identity, component);
-	}
-
-	public void send(Identified sender, Component component) {
-		send(sender.identity(), component);
-	}
-
-	public void send(UUID sender, Component component) {
-		send(identityOf(sender), component);
-	}
-
-	public void send(int delay, String message) {
-		Tasks.wait(delay, () -> send(message));
-	}
-
-	public void send(int delay, JsonBuilder message) {
-		Tasks.wait(delay, () -> send(message));
-	}
-
-	public JsonBuilder json() {
+	default JsonBuilder json() {
 		return json("");
 	}
 
-	public JsonBuilder json(String message) {
+	default JsonBuilder json(String message) {
 		return new JsonBuilder(message);
 	}
 
-	public String toPrettyString() {
-		try {
-			return StringUtils.toPrettyString(this);
-		} catch (Exception ignored) {
-			return this.toString();
-		}
-	}
-
 	@Override
-	public @NonNull Identity identity() {
+	default @NonNull Identity identity() {
 		return Identity.identity(getUuid());
 	}
 
-	public boolean equals(Object obj) {
-		if (!this.getClass().equals(obj.getClass())) return false;
-		return getUuid().equals(((PlayerOwnedObject) obj).getUuid());
-	}
 }

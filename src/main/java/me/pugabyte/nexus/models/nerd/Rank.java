@@ -3,16 +3,15 @@ package me.pugabyte.nexus.models.nerd;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -34,8 +34,8 @@ public enum Rank implements ColoredAndNamed {
 	ELITE(ChatColor.of("#f5a138"), GlowAPI.Color.GOLD, false, false, false, false, true, false, Color.decode("#f5a138")),
 	VETERAN(ChatColor.of("#ffff44"), GlowAPI.Color.YELLOW, true, false, false, false, true, true, Color.decode("#ffff44")),
 	NOBLE(ChatColor.of("#abd923"), GlowAPI.Color.YELLOW, false, false, false, false, true, false, Color.decode("#abd923")),
-	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.GREEN, true, true, false, false, true, false, Color.decode("#02883e")),
-	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.DARK_GREEN, true, true, false, false, true, false, Color.decode("#02c93e")),
+	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.DARK_GREEN, true, true, false, false, true, false, Color.decode("#02883e")),
+	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.GREEN, true, true, false, false, true, false, Color.decode("#02c93e")),
 	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA, true, true, false, false, false, false, Color.decode("#4cc9f0")),
 	MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA, true, true, true, false, true, false, Color.decode("#4cc9f0")),
 	OPERATOR(ChatColor.of("#07a8a8"), GlowAPI.Color.DARK_AQUA, true, true, true, true, true, false, Color.decode("#07a8a8")),
@@ -98,8 +98,8 @@ public enum Rank implements ColoredAndNamed {
 
 	public List<Nerd> getNerds() {
 		// Temporary? fix to get players in this group. Using Hours Top limit 100 because this method is only used for staff
-		List<OfflinePlayer> inGroup = new HoursService().getActivePlayers().stream()
-				.filter(player -> Nexus.getPerms().playerHas(null, player, "rank." + name().toLowerCase()))
+		List<UUID> inGroup = new HoursService().getActivePlayers().stream()
+				.filter(player -> Nexus.getPerms().playerHas(null, PlayerUtils.getPlayer(player), "rank." + name().toLowerCase()))
 				.collect(Collectors.toList());
 		Set<Nerd> nerds = new HashSet<>();
 		inGroup.forEach(player -> nerds.add(Nerd.of(player)));
@@ -109,8 +109,8 @@ public enum Rank implements ColoredAndNamed {
 	public List<Nerd> getOnlineNerds() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank() == this)
-				.sorted(Comparator.comparing(Player::getName))
 				.map(Nerd::of)
+				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
 	}
 
@@ -121,33 +121,29 @@ public enum Rank implements ColoredAndNamed {
 	public static List<Nerd> getOnlineStaff() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff() && Nerd.of(player).getRank().isActive())
-				.sorted(Comparator.comparing(Player::getName))
 				.map(Nerd::of)
+				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
 	}
 
 	public static List<Nerd> getOnlineMods() {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
-				.sorted(Comparator.comparing(Player::getName))
 				.map(Nerd::of)
+				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
 	}
 
-	public static Rank of(PlayerOwnedObject player) {
-		return of(Bukkit.getOfflinePlayer(player.getUuid()));
+	public static Rank of(UUID player) {
+		return of(Bukkit.getOfflinePlayer(player));
 	}
 
-	public static Rank of(Player player) {
-		return of(Bukkit.getOfflinePlayer(player.getUniqueId()));
-	}
-
-	public static Rank of(OfflinePlayer player) {
+	public static Rank of(HasOfflinePlayer player) {
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 
 		for (Rank rank : ranks)
-			if (Nexus.getPerms().playerInGroup(null, player, rank.name()))
+			if (Nexus.getPerms().playerInGroup(null, player.getOfflinePlayer(), rank.name()))
 				return rank;
 
 		return GUEST;
@@ -183,6 +179,10 @@ public enum Rank implements ColoredAndNamed {
 
 	public boolean gte(Rank rank) {
 		return ordinal() >= rank.ordinal();
+	}
+
+	public boolean gt(Rank rank) {
+		return ordinal() > rank.ordinal();
 	}
 
 	public boolean lt(Rank rank) {

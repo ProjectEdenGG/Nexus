@@ -44,7 +44,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	@Override
 	public List<ItemStack> getIngredients() {
-		return new ArrayList<ItemStack>() {{
+		return new ArrayList<>() {{
 			add(new ItemStack(Material.WATER_BUCKET));
 			add(new ItemStack(Material.WATER_BUCKET));
 		}};
@@ -97,8 +97,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	@EventHandler
 	public void onCauldron(CauldronLevelChangeEvent event) {
 		if (event.getReason() != CauldronLevelChangeEvent.ChangeReason.BUCKET_EMPTY) return;
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		ItemStack item = player.getInventory().getItemInMainHand().clone();
 
 		if (isNullOrAir(item))

@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.commands.poof;
 
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -16,10 +18,10 @@ import me.pugabyte.nexus.models.trust.Trust.Type;
 import me.pugabyte.nexus.models.trust.TrustService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -55,13 +57,17 @@ public class PoofCommand extends CustomCommand {
 			error("You cannot poof to yourself");
 
 		Location targetLocation = Nerd.of(target).getLocation();
-		WorldGroup targetWorldGroup = WorldGroup.get(targetLocation);
+		World targetWorld = targetLocation.getWorld();
+		WorldGroup targetWorldGroup = WorldGroup.get(targetWorld);
 
-		if (!isStaff() && targetWorldGroup.equals(WorldGroup.MINIGAMES))
-			error("Cannot teleport to " + nickname(target) + ", they are playing minigames");
+		if (!isStaff()) {
+			String cannotTeleport = "Cannot teleport to " + nickname(target);
+			if (targetWorldGroup.equals(WorldGroup.MINIGAMES))
+				error(cannotTeleport + ", they are playing minigames");
 
-		if (!isStaff() && targetWorldGroup.equals(WorldGroup.STAFF))
-			error("Cannot teleport to " + nickname(target) + ", they are in a staff world");
+			if (targetWorldGroup.equals(WorldGroup.STAFF) || (targetWorld.equals(BearFair21.getWorld()) && !BearFair21.isAllowWarp()))
+				error(cannotTeleport + ", they are in a staff world");
+		}
 
 		Trust trust = new TrustService().get(target);
 		if (trust.trusts(Type.TELEPORTS, player())) {
@@ -75,18 +81,20 @@ public class PoofCommand extends CustomCommand {
 		Poof request = new Poof(player(), targetPlayer, Poof.PoofType.POOF);
 		service.save(request);
 		send(json("&ePoof &3request sent to " + Nickname.of(targetPlayer) + ". ").next("&eClick to cancel").command("poof cancel"));
-		send(targetPlayer, "  &e" + nickname() + " &3is asking to poof &eto you&3.");
-		send(targetPlayer, json("&3  Click one  ||  &a&lAccept")
+		send(targetPlayer, " &e" + nickname() + " &3is asking to poof &eto you&3.");
+		send(targetPlayer, json("&3 Click one &3 || &3 ")
+				.group()
+				.next("&a&lAccept")
 				.command("/poof accept")
 				.hover("&eClick &3to accept")
 				.group()
-				.next("  &3||  &3")
+				.next("&3 &3 || &3 ")
 				.group()
 				.next("&c&lDeny")
 				.command("/poof deny")
-				.hover("&eClick &3to deny.")
+				.hover("&eClick &3to deny")
 				.group()
-				.next("&3  ||"));
+				.next("&3 &3 ||"));
 	}
 
 	@Path("accept")

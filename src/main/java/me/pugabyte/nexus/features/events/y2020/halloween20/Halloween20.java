@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.halloween20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.events.y2020.halloween20.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.halloween20.models.SoundButton;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.Gate;
 import me.pugabyte.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
@@ -17,7 +18,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -104,7 +104,7 @@ public class Halloween20 implements Listener {
 	}
 
 	@EventHandler
-	public void onEnterGateRegion(RegionEnteredEvent event) {
+	public void onEnterGateRegion(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(region + "_gate_open")) return;
 		Halloween20User user = new Halloween20Service().get(event.getPlayer());
 		if (user.getCombinationStage() != QuestStage.Combination.NOT_STARTED) return;
@@ -131,20 +131,20 @@ public class Halloween20 implements Listener {
 		Halloween20User user = service.get(event.getPlayer());
 		if (user.getFoundButtons().contains(button)) {
 			if (new CooldownService().check(event.getPlayer(), "halloween20-button-alreadyfound", Time.SECOND.x(10)))
-				user.send(PREFIX + "You've already found this button!");
+				user.sendMessage(PREFIX + "You've already found this button!");
 			return;
 		}
 
 		user.getFoundButtons().add(button);
 		service.save(user);
 
-		user.send(PREFIX + "You have found a spooky button! &e(" + user.getFoundButtons().size() + "/" + SoundButton.values().length + ")");
+		user.sendMessage(PREFIX + "You have found a spooky button! &e(" + user.getFoundButtons().size() + "/" + SoundButton.values().length + ")");
 
 		if (user.getFoundButtons().size() != SoundButton.values().length)
 			return;
 
 		PermissionChange.set().player(event.getPlayer()).permission("powder.powder.spookyscaryskeletons").run();
-		user.send(PREFIX + "You have unlocked the Spooky Scary Skeletons song! &c/songs");
+		user.sendMessage(PREFIX + "You have unlocked the Spooky Scary Skeletons song! &c/songs");
 	}
 
 }

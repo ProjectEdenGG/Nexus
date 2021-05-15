@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.perkowner;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,6 @@ import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -38,7 +38,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class PerkOwner extends PlayerOwnedObject {
+public class PerkOwner implements PlayerOwnedObject {
 	private static final int MAX_DAILY_TOKENS = 20;
 
 	@Id
@@ -106,8 +106,8 @@ public class PerkOwner extends PlayerOwnedObject {
 			tokens += amount;
 			dailyTokens += amount;
 			try {
-				if (getPlayer() != null)
-					SoundUtils.Jingle.PING.play(getPlayer()); // TODO: unique jingle
+				if (getOnlinePlayer() != null)
+					SoundUtils.Jingle.PING.play(getOnlinePlayer()); // TODO: unique jingle
 				PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for scoring in &e" + arenaName);
 				if (dailyTokens == MAX_DAILY_TOKENS)
 					PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");

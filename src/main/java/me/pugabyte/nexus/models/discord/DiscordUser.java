@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.discord;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.commands.PronounsCommand;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -38,7 +38,7 @@ import static me.pugabyte.nexus.features.discord.Discord.getGuild;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class DiscordUser extends PlayerOwnedObject {
+public class DiscordUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -58,12 +58,8 @@ public class DiscordUser extends PlayerOwnedObject {
 		return name;
 	}
 
-	public OfflinePlayer getOfflinePlayer() {
-		return PlayerUtils.getPlayer(uuid);
-	}
-
 	public String getIngameName() {
-		return super.getName();
+		return getName();
 	}
 
 	public @NotNull String getName() {
@@ -78,7 +74,7 @@ public class DiscordUser extends PlayerOwnedObject {
 		return getName() + "#" + getDiscrim();
 	}
 
-	private User getUser() {
+	public User getUser() {
 		return Bot.RELAY.jda().retrieveUserById(userId).complete();
 	}
 

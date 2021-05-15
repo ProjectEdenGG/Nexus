@@ -41,12 +41,12 @@ public class ChatListener implements Listener {
 		Censor.process(event);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPublicChat(PublicChatEvent event) {
 		Koda.process(event);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDiscordChat(DiscordChatEvent event) {
 		Koda.process(event);
 	}

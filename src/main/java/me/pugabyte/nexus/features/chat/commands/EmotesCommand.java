@@ -51,12 +51,12 @@ public class EmotesCommand extends CustomCommand {
 						json
 								.next("&a ✔ ")
 								.hover("&cClick to disable emote")
-								.command("/emotes disable " + emote.name().toLowerCase() + " " + color.name().toLowerCase());
+								.command("/emotes disable " + emote.name().toLowerCase() + " " + color.getName().toLowerCase());
 					else
 						json
 								.next("&c ✖ ")
 								.hover("&aClick to enable emote")
-								.command("/emotes enable " + emote.name().toLowerCase() + " " + color.name().toLowerCase());
+								.command("/emotes enable " + emote.name().toLowerCase() + " " + color.getName().toLowerCase());
 					json.next(" &8| &3" + emote.getKey() + " &7-  " + color + emote.getEmote());
 				}
 			}

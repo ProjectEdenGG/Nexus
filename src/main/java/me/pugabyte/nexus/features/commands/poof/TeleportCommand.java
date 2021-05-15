@@ -66,7 +66,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.bnn.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){8}.*")) {
+		if (arg1.matches("(http(s)?:\\/\\/)?(blue|staff)?map.projecteden.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){8}.*")) {
 			String[] split = arg1.split("#");
 			String[] coords = split[1].split(":");
 			AtomicReference<String> worldName = new AtomicReference<>(coords[0]);

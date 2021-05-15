@@ -2,7 +2,11 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import eden.utils.TimeUtils.Time;
+import me.pugabyte.nexus.features.chat.Censor;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
+import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -13,6 +17,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -20,7 +26,6 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -34,6 +39,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 // TODO:
 //  - Scoreboards
@@ -52,7 +60,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -248,7 +256,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
-		Player player = event.getChatter().getPlayer();
+		Player player = event.getChatter().getOnlinePlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 		event.setCancelled(true);
@@ -268,8 +276,26 @@ public class PixelDrop extends TeamlessMechanic {
 
 		event.setCancelled(true);
 
+		ChatService chatService = new ChatService();
+		Set<Chatter> recipients = match.getMinigamers().stream()
+				.map(_minigamer -> chatService.get(_minigamer.getPlayer()))
+				.collect(toSet());
+
+		PublicChatEvent publicChatEvent = new PublicChatEvent(
+				chatService.get(minigamer.getPlayer()),
+				StaticChannel.GLOBAL.getChannel(),
+				event.getMessage(),
+				event.getMessage(),
+				true,
+				recipients);
+
+		Censor.process(publicChatEvent);
+
+		if (publicChatEvent.isCancelled())
+			return;
+
 		Tasks.sync(() -> {
-			String message = event.getMessage();
+			String message = publicChatEvent.getMessage();
 			if (matchData.getGuessed().contains(minigamer) && !matchData.isRoundOver()) {
 				matchData.getGuessed().forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
 				return;

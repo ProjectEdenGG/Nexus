@@ -84,32 +84,29 @@ public class RestoreInventoryCommand extends CustomCommand {
 		Tasks.wait(3, () -> {
 			try {
 				switch (type.toLowerCase()) {
-					case "inventory":
+					case "inventory" -> {
 						if (!isInventoryEmpty(owner.getInventory())) {
 							sendInventoryRestoreNotEmptyMessage(owner, "inventory");
 							break;
 						}
-
 						owner.getInventory().setContents(getInventory(gamemode));
 						owner.getInventory().setArmorContents(getArmour(gamemode));
 						owner.getInventory().setItemInOffHand(getOffHand(gamemode));
 						sendInventoryRestoreSuccessMessage(owner, "inventory");
-						break;
-					case "enderchest":
+					}
+					case "enderchest" -> {
 						if (!isInventoryEmpty(owner.getEnderChest())) {
 							sendInventoryRestoreNotEmptyMessage(owner, "ender chest");
 							break;
 						}
-
 						owner.getEnderChest().setContents(getEnderChest(gamemode));
 						sendInventoryRestoreSuccessMessage(owner, "ender chest");
-						break;
-					case "exp":
+					}
+					case "exp" -> {
 						owner.setLevel(getExp(gamemode));
 						sendExperienceRestoreSuccessMessage(owner);
-						break;
-					default:
-						error("You can only restore inventory contents, ender chest contents, and experience");
+					}
+					default -> error("You can only restore inventory contents, ender chest contents, and experience");
 				}
 			} catch (InvalidInputException ex) {
 				send(PREFIX + ex.getMessage());
@@ -117,7 +114,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 		});
 
 		Discord.log(PREFIX + name() + " restored " + owner.getName() + "'s " + gameMode.name().toLowerCase()
-				+ " " + type + " from <https://paste.bnn.gg/" + code + ".json>");
+				+ " " + type + " from <https://paste.projecteden.gg/" + code + ".json>");
 	}
 
 	private void sendRestoreButtons(String gamemode) {

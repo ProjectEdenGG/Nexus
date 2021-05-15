@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class PVP extends PlayerOwnedObject {
+public class PVP implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

@@ -1,15 +1,14 @@
 package me.pugabyte.nexus.features.particles.effects;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import eden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.features.particles.VectorUtils;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.particle.ParticleOwner;
 import me.pugabyte.nexus.models.particle.ParticleService;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -84,7 +83,7 @@ public class PolygonEffect {
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				((ParticleOwner) new ParticleService().get(player)).cancelTasks(taskId);
+				new ParticleService().get(player).cancelTasks(taskId);
 				return;
 			}
 
@@ -129,23 +128,17 @@ public class PolygonEffect {
 					double change = .1;
 					double sub = -.1;
 					switch (points) {
-						case 3:
+						case 3 -> {
 							change = .05;
 							sub -= .65;
-							break;
-						case 4:
+						}
+						case 4 -> {
 							change = .05;
 							sub -= .35;
-							break;
-						case 6:
-							sub += .1;
-							break;
-						case 7:
-							sub += .2;
-							break;
-						case 8:
-							sub += .3;
-							break;
+						}
+						case 6 -> sub += .1;
+						case 7 -> sub += .2;
+						case 8 -> sub += .3;
 					}
 					for (double d = 0; d < distance + sub; d += change) {
 						double finalX = x - link.getX() * d;

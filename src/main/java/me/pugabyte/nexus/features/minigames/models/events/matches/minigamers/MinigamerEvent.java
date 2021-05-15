@@ -8,7 +8,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEvent;
 public class MinigamerEvent extends MatchEvent {
 	@Getter
 	@NonNull
-	Minigamer minigamer;
+	protected final Minigamer minigamer;
 
 	public MinigamerEvent(Minigamer minigamer) {
 		super(minigamer.getMatch());

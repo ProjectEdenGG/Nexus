@@ -50,7 +50,7 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 
 	@Override
 	public void open(Player viewer, int page) {
-		getMenu().open(user.getPlayer());
+		getMenu().open(user.getOnlinePlayer());
 	}
 
 	private SmartInventory getMenu() {
@@ -126,9 +126,8 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 		// TODO: on opening a delivery: if has message, set it as a written book given to the player, unless it's from the server
 		contents.set(1, 4, ClickableItem.empty(typeMessage.build()));
 		contents.set(1, 7, ClickableItem.from(confirm.build(), e -> {
-			if (sendTo != null && (!Utils.isNullOrEmpty(items) || !Strings.isNullOrEmpty(message))) {
+			if (sendTo != null && (!Utils.isNullOrEmpty(items) || !Strings.isNullOrEmpty(message)))
 				sendDelivery(player);
-			}
 		}));
 	}
 

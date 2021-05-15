@@ -3,7 +3,11 @@ package me.pugabyte.nexus.features.events;
 import fr.minuskube.inv.SmartInventory;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.*;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
@@ -86,8 +90,8 @@ public class EventsCommand extends CustomCommand {
 		fromUser.takeTokens(tokens);
 		toUser.giveTokens(tokens);
 
-		fromUser.send(PREFIX + "&e" + tokens + " event tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
-		toUser.send(PREFIX + "&e" + tokens + " event tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
+		fromUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
+		toUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
 
 		service.save(fromUser);
 		service.save(toUser);

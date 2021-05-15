@@ -23,21 +23,26 @@ public class Translator implements Listener {
 	@Getter
 	private static HashMap<UUID, ArrayList<UUID>> map = new HashMap<>();
 
-	private static String apiKey = Nexus.getInstance().getConfig().getString("tokens.yandex");
-	public static TranslatorHandler handler = new TranslatorHandler(apiKey);
+	@Getter
+	private static final String apiKey = Nexus.getInstance().getConfig().getString("tokens.yandex");
+	public static TranslatorHandler handler = new TranslatorHandler();
 
 	public static final String PREFIX = StringUtils.getPrefix("Translator");
 
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
-		Player sender = event.getChatter().getPlayer();
+		Player sender = event.getChatter().getOnlinePlayer();
 
 		Tasks.async(() -> {
 			try {
 				if (!map.containsKey(sender.getUniqueId())) return;
 
-				Language language = handler.detect(event.getMessage());
-				if (language == Language.EN) return;
+				Language language = event.getChatter().getLanguage();
+				if (language == null) {
+					language = handler.detect(event.getMessage());
+					if (language == null || language == Language.EN) return;
+					event.getChatter().setLanguage(language);
+				}
 
 				String translated = handler.translate(event.getMessage(), language, Language.EN);
 				for (UUID uuid : map.get(sender.getUniqueId())) {
@@ -46,9 +51,10 @@ public class Translator implements Listener {
 					if (uuid == sender.getUniqueId()) continue;
 					if (!event.wasSentTo(translating)) continue;
 
+					Language finalLanguage = language;
 					Tasks.wait(1, () -> new JsonBuilder()
-							.next(PREFIX + sender.getName() + " &e(&3" + language.name() + "&e) &3&l> &7" + translated)
-							.hover(language.getName())
+							.next(PREFIX + sender.getName() + " &e(&3" + finalLanguage.name() + "&e) &3&l> &7" + translated)
+							.hover(finalLanguage.getName())
 							.send(translating));
 				}
 			} catch (Exception ex) {

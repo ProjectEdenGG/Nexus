@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.HoliSpleggMatchData
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,7 +45,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Shoot blocks with eggs to break them and extinguish the armor stand.";
 	}
 

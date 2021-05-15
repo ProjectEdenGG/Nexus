@@ -4,13 +4,13 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class InvisibleArmor extends PlayerOwnedObject {
+public class InvisibleArmor implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -42,80 +42,52 @@ public class InvisibleArmor extends PlayerOwnedObject {
 	private boolean showSelfBoots;
 
 	public boolean show(ItemSlot slot) {
-		switch (slot) {
-			case HEAD:
-				return !helmet;
-			case CHEST:
-				return !chestplate;
-			case LEGS:
-				return !leggings;
-			case FEET:
-				return !boots;
-		}
-		return false;
+		return switch (slot) {
+			case HEAD -> !helmet;
+			case CHEST -> !chestplate;
+			case LEGS -> !leggings;
+			case FEET -> !boots;
+			default -> false;
+		};
 	}
 
 	public boolean showSelf(ItemSlot slot) {
-		switch (slot) {
-			case HEAD:
-				return showSelfHelmet;
-			case CHEST:
-				return showSelfChestplate;
-			case LEGS:
-				return showSelfLeggings;
-			case FEET:
-				return showSelfBoots;
-		}
-		return false;
+		return switch (slot) {
+			case HEAD -> showSelfHelmet;
+			case CHEST -> showSelfChestplate;
+			case LEGS -> showSelfLeggings;
+			case FEET -> showSelfBoots;
+			default -> false;
+		};
 	}
 
 	public void toggle(ItemSlot slot) {
 		switch (slot) {
-			case HEAD:
-				helmet = !helmet;
-				break;
-			case CHEST:
-				chestplate = !chestplate;
-				break;
-			case LEGS:
-				leggings = !leggings;
-				break;
-			case FEET:
-				boots = !boots;
-				break;
+			case HEAD -> helmet = !helmet;
+			case CHEST -> chestplate = !chestplate;
+			case LEGS -> leggings = !leggings;
+			case FEET -> boots = !boots;
 		}
 	}
 
 	public void toggleShowSelf(ItemSlot slot) {
 		switch (slot) {
-			case HEAD:
-				showSelfHelmet = !showSelfHelmet;
-				break;
-			case CHEST:
-				showSelfChestplate = !showSelfChestplate;
-				break;
-			case LEGS:
-				showSelfLeggings = !showSelfLeggings;
-				break;
-			case FEET:
-				showSelfBoots = !showSelfBoots;
-				break;
+			case HEAD -> showSelfHelmet = !showSelfHelmet;
+			case CHEST -> showSelfChestplate = !showSelfChestplate;
+			case LEGS -> showSelfLeggings = !showSelfLeggings;
+			case FEET -> showSelfBoots = !showSelfBoots;
 		}
 	}
 
 	public ItemStack getItem(ItemSlot slot) {
 		PlayerInventory inventory = PlayerUtils.getPlayer(uuid).getPlayer().getInventory();
-		switch (slot) {
-			case HEAD:
-				return inventory.getHelmet();
-			case CHEST:
-				return inventory.getChestplate();
-			case LEGS:
-				return inventory.getLeggings();
-			case FEET:
-				return inventory.getBoots();
-		}
-		return null;
+		return switch (slot) {
+			case HEAD -> inventory.getHelmet();
+			case CHEST -> inventory.getChestplate();
+			case LEGS -> inventory.getLeggings();
+			case FEET -> inventory.getBoots();
+			default -> null;
+		};
 	}
 
 }

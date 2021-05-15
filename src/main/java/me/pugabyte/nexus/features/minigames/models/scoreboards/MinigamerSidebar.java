@@ -2,21 +2,21 @@ package me.pugabyte.nexus.features.minigames.models.scoreboards;
 
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
-import me.pugabyte.nexus.utils.BNScoreboard;
+import me.pugabyte.nexus.utils.EdenScoreboard;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MinigamerSidebar implements MinigameScoreboard {
 	private Match match;
-	private Map<Minigamer, BNScoreboard> scoreboards = new HashMap<>();
+	private Map<Minigamer, EdenScoreboard> scoreboards = new HashMap<>();
 
 	public MinigamerSidebar(Match match) {
 		this.match = match;
 	}
 
-	private BNScoreboard createScoreboard(Minigamer minigamer) {
-		return new BNScoreboard(
+	private EdenScoreboard createScoreboard(Minigamer minigamer) {
+		return new EdenScoreboard(
 				minigamer.getNickname() + "-" + minigamer.getMatch().getArena().getName(),
 				match.getMechanic().getScoreboardTitle(match),
 				minigamer.getPlayer()

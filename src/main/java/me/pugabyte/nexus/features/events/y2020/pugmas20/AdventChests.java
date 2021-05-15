@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.quests.Quests;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20User;
 import me.pugabyte.nexus.models.pugmas20.Pugmas20UserService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -42,11 +42,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.PREFIX;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.*;
 
 public class AdventChests implements Listener {
 	public static Map<Integer, Location> adventLootMap = new HashMap<>();
@@ -181,10 +177,10 @@ public class AdventChests implements Listener {
 
 		if (!openChest) {
 			reason = reason.replaceAll("<day>", String.valueOf(today));
-			user.send(reason);
+			user.sendMessage(reason);
 
 			if (waypoint)
-				user.send(PREFIX + "Chest &e#" + chestDay + " &3saved as a waypoint");
+				user.sendMessage(PREFIX + "Chest &e#" + chestDay + " &3saved as a waypoint");
 			return;
 		}
 
@@ -267,7 +263,7 @@ public class AdventChests implements Listener {
 	}
 
 	@EventHandler
-	public void onDistrictEnter(RegionEnteredEvent event) {
+	public void onDistrictEnter(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!Pugmas20.isAtPugmas(player)) return;
 
@@ -280,7 +276,7 @@ public class AdventChests implements Listener {
 	}
 
 	@EventHandler
-	public void onDistrictExit(RegionLeavingEvent event) {
+	public void onDistrictExit(PlayerLeavingRegionEvent event) {
 		Player player = event.getPlayer();
 		if (!Pugmas20.isAtPugmas(player)) return;
 

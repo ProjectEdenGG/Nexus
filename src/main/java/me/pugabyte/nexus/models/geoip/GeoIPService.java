@@ -1,98 +1,84 @@
 package me.pugabyte.nexus.models.geoip;
 
-import com.google.gson.Gson;
+import eden.mongodb.annotations.PlayerClass;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.HttpUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(GeoIP.class)
-public class GeoIPService extends MongoService {
-	private final static Map<UUID, GeoIP> cache = new HashMap<>();
+public class GeoIPService extends MongoService<GeoIP> {
+	private final static Map<UUID, GeoIP> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {
 		return cache;
 	}
 
-	private final String KEY = Nexus.getInstance().getConfig().getString("tokens.ipstack");
-	// Raven gives a huge boost to Canada with his VPN
-	private final static List<String> ignore = new ArrayList<>(); // Arrays.asList("fce1fe67-9514-4117-bcf6-d0c49ca0ba41");
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
+	}
+
+	private static final String URL = "https://api.ipstack.com/%s?access_key=%s";
+	private static final String KEY = Nexus.getInstance().getConfig().getString("tokens.ipstack");
+	private static final List<String> ignore = List.of();
 
 	static {
 		Nexus.getInstance().addConfigDefault("tokens.ipstack", "abcdef");
 	}
 
-	@Override
-	@NotNull
-	public GeoIP get(UUID uuid) {
-		cache.computeIfAbsent(uuid, $ -> {
-			GeoIP geoIp = database.createQuery(GeoIP.class).field(_id).equal(uuid).first();
+	@SneakyThrows
+	public GeoIP request(UUID uuid, String ip) {
+		GeoIP geoip = get(uuid);
 
-			if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-				if (geoIp != null)
-					if (!Bukkit.getPlayer(uuid).getAddress().getHostString().equals(geoIp.getIp())) {
-						geoIp = request(Bukkit.getPlayer(uuid));
-						save(geoIp);
-					}
-
-				if (geoIp == null) {
-					geoIp = request(Bukkit.getPlayer(uuid));
-					save(geoIp);
-				}
+		if (geoip.isOnline()) {
+			if (!ip.equals(geoip.getIp())) {
+				geoip = call(uuid, ip);
+				save(geoip);
 			}
-
-			return geoIp;
-		});
-
-		if (cache.get(uuid) == null)
-			throw new InvalidInputException("Could not find " + Bukkit.getOfflinePlayer(uuid).getName() + "'s location");
-
-		return cache.get(uuid);
-	}
-
-	@SneakyThrows
-	public GeoIP request(Player player) {
-		return request(player, player.getAddress().getHostString());
-	}
-
-	@SneakyThrows
-	public GeoIP request(OfflinePlayer player, String ip) {
-		if (ignore.contains(player.getUniqueId().toString()))
-			return null;
-		Nexus.log("Requesting GeoIP info for " + player.getName() + " (" + ip + ")");
-
-		Request request = new Request.Builder()
-				.url("https://api.ipstack.com/" + ip + "?access_key=" + KEY)
-				.build();
-
-		try (Response response = new OkHttpClient().newCall(request).execute()) {
-			GeoIP geoIp = new Gson().fromJson(response.body().string(), GeoIP.class);
-			geoIp.setUuid(player.getUniqueId());
-			return geoIp;
 		}
+
+		if (geoip.getTimestamp() == null) {
+			geoip = call(uuid, ip);
+			save(geoip);
+		}
+
+		cache(geoip);
+		return geoip;
+	}
+
+	@SneakyThrows
+	private GeoIP call(UUID uuid, String ip) {
+		GeoIP original = get(uuid);
+
+		if (ignore.contains(uuid.toString()))
+			return original;
+
+		Nexus.log("Requesting GeoIP info for " + Nickname.of(uuid) + " (" + ip + ")");
+
+		GeoIP geoip = HttpUtils.mapJson(GeoIP.class, URL, ip, KEY);
+		geoip.setUuid(uuid);
+		geoip.setTimestamp(LocalDateTime.now());
+		geoip.setSecurity(original.getSecurity());
+		geoip.setMitigated(original.isMitigated());
+		return geoip;
 	}
 
 	public List<GeoIP> getAll() {
 		return database.createQuery(GeoIP.class).find().toList();
 	}
 
-	public void save(GeoIP geoIp) {
-		if (geoIp != null && geoIp.getIp() != null)
-			super.save(geoIp);
+	@Override
+	public void save(GeoIP geoip) {
+		if (geoip != null && geoip.getIp() != null)
+			super.save(geoip);
 	}
 
 }

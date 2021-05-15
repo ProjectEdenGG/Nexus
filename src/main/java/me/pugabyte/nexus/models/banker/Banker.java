@@ -6,6 +6,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import dev.morphia.annotations.PreLoad;
+import eden.mongodb.serializers.BigDecimalConverter;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,19 +17,17 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.BigDecimalConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
+import me.pugabyte.nexus.utils.PlayerUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -41,17 +41,28 @@ import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, BigDecimalConverter.class})
-public class Banker extends PlayerOwnedObject {
+public class Banker implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	private Map<ShopGroup, BigDecimal> balances = new HashMap<>();
-	private List<Transaction> transactions = new ArrayList<>();
 
 	@Deprecated
 	@Getter(AccessLevel.PRIVATE)
 	@Setter(AccessLevel.PRIVATE)
 	private BigDecimal balance = BigDecimal.ZERO;
+
+	public static Banker of(String name) {
+		return of(PlayerUtils.getPlayer(name));
+	}
+
+	public static Banker of(HasUniqueId player) {
+		return of(player.getUniqueId());
+	}
+
+	public static Banker of(UUID uuid) {
+		return new BankerService().get(uuid);
+	}
 
 	@PreLoad
 	void fixPreLoad(DBObject dbObject) {
@@ -129,7 +140,10 @@ public class Banker extends PlayerOwnedObject {
 		BigDecimal newBalance = rounded(balance);
 
 		if (new BalanceChangeEvent(getOfflinePlayer(), getBalance(shopGroup), newBalance, shopGroup).callEvent()) {
-			transactions.add(transaction);
+			TransactionsService transactionsService = new TransactionsService();
+			Transactions transactions = transactionsService.get(this);
+			transactions.getTransactions().add(transaction);
+			transactionsService.queueSave(5, transactions);
 			balances.put(shopGroup, newBalance);
 		}
 	}

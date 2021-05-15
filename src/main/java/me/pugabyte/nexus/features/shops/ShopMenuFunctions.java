@@ -66,8 +66,7 @@ public class ShopMenuFunctions {
 				for (Enchantment enchantment : item.getEnchantments().keySet())
 					if (contains(enchantment.getKey().getKey(), input)) return true;
 
-				if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
-					EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+				if (item.getItemMeta() instanceof EnchantmentStorageMeta meta) {
 					for (Enchantment enchantment : meta.getStoredEnchants().keySet())
 						if (contains(enchantment.getKey().getKey(), input)) return true;
 				}

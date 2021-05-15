@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
@@ -8,7 +9,6 @@ import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -22,6 +22,10 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MiniGolfUtils {
+	public static boolean isInMiniGolf(Location location) {
+		return BearFair21.getWGUtils().getRegionsLikeAt(MiniGolf.getGameRegion() + ".*", location).size() > 0;
+	}
+
 	public static String getStrokeString(MiniGolf21User user) {
 		String strokes = "Stroke " + user.getCurrentStrokes();
 		if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
@@ -55,7 +59,8 @@ public class MiniGolfUtils {
 		ProtectedRegion region = regions.stream().findFirst().orElse(null);
 		if (region != null) {
 			for (MiniGolfHole minigolfHole : MiniGolfHole.values()) {
-				if (region.getId().contains(minigolfHole.getRegionId()))
+				String[] regionSplit = region.getId().replace(MiniGolf.getRegionHole(), "").split("_");
+				if (regionSplit[0].equalsIgnoreCase(String.valueOf(minigolfHole.getHole())))
 					return minigolfHole;
 			}
 		}
@@ -68,8 +73,8 @@ public class MiniGolfUtils {
 	}
 
 	public static void giveBall(MiniGolf21User user) {
-		if (user.getPlayer().isOnline())
-			PlayerUtils.giveItem(user.getPlayer(), MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+		if (user.getOnlinePlayer().isOnline())
+			PlayerUtils.giveItem(user.getOnlinePlayer(), MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
 	}
 
 	public static void respawnBall(Snowball ball) {
@@ -110,7 +115,7 @@ public class MiniGolfUtils {
 		if (!user.isOnline())
 			return;
 
-		ActionBarUtils.sendActionBar(user.getPlayer(), message, Time.SECOND.x(3));
+		ActionBarUtils.sendActionBar(user.getOnlinePlayer(), message, Time.SECOND.x(3));
 	}
 
 	public static void error(MiniGolf21User user, String message) {
@@ -118,7 +123,7 @@ public class MiniGolfUtils {
 	}
 
 	public static void send(MiniGolf21User user, String message) {
-		user.getPlayer().sendMessage(MiniGolf.getPREFIX() + StringUtils.colorize(message));
+		user.getOnlinePlayer().sendMessage(MiniGolf.getPREFIX() + StringUtils.colorize(message));
 	}
 
 	static String getScore(MiniGolf21User user) {
@@ -146,7 +151,7 @@ public class MiniGolfUtils {
 				return "Triple Bogey";
 			default:
 				if (diff < 4)
-					return "-" + diff;
+					return "" + diff;
 				else
 					return "+" + diff;
 

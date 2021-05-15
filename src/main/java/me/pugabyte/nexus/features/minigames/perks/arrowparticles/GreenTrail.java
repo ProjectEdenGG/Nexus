@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjecti
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class GreenTrail extends ParticleProjectilePerk {
 	@Override
@@ -17,7 +18,7 @@ public class GreenTrail extends ParticleProjectilePerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "A brief green trail for your arrows";
 	}
 

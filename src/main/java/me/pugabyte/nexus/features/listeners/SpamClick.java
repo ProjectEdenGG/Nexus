@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAttackEntityCooldownResetEvent;
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.models.tip.Tip;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.models.tip.TipService;

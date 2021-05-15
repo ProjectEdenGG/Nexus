@@ -27,7 +27,7 @@ public class ThimbleMap implements ConfigurationSerializable {
 
 	@Override
 	public Map<String, Object> serialize() {
-		return new LinkedHashMap<String, Object>() {{
+		return new LinkedHashMap<>() {{
 			put("name", getName());
 			put("nextTurnLocation", getNextTurnLocation());
 			put("spectateLocation", getSpectateLocation());

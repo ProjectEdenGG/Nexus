@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -8,6 +7,7 @@ import me.pugabyte.nexus.features.minigames.models.arenas.KangarooJumpingArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.features.minigames.utils.PowerUpUtils;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Location;
@@ -33,7 +33,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Jump higher and higher and be the first to the finish!";
 	}
 
@@ -55,7 +55,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onEnterWinningArea(RegionEnteredEvent event) {
+	public void onEnterWinningArea(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion().getId(), "win")) return;
@@ -84,7 +84,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,
-			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getColor()).glow().build(),
+			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getBukkitColor()).glow().build(),
 			minigamer -> {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
 					if (_minigamer != minigamer) {
@@ -94,7 +94,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			});
 
 	PowerUpUtils.PowerUp NEGATIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", false,
-			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getColor()).build(),
+			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getBukkitColor()).build(),
 			minigamer -> minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1)));
 
 	PowerUpUtils.PowerUp SNOWBALL = new PowerUpUtils.PowerUp("Snowball", true, Material.SNOWBALL,
@@ -120,8 +120,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 
 	@EventHandler
 	public void onSnowballHit(ProjectileHitEvent event) {
-		if (!(event.getHitEntity() instanceof Player)) return;
-		Player player = (Player) event.getHitEntity();
+		if (!(event.getHitEntity() instanceof Player player)) return;
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 		player.setVelocity(event.getEntity().getVelocity().multiply(0.5).add(new Vector(0, .5, 0)));

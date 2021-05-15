@@ -2,9 +2,9 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
@@ -56,7 +56,11 @@ public class PayDiscordCommand extends Command {
 					throw new InvalidInputException("Amount must be greater than $0.01");
 
 				try {
-					new BankerService().transfer(player, target, BigDecimal.valueOf(amount), shopGroup, TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), shopGroup, reason));
+					ShopGroup finalShopGroup = shopGroup;
+					String finalReason = reason;
+					Tasks.sync(() ->
+							new BankerService().transfer(player, target, BigDecimal.valueOf(amount), finalShopGroup,
+									TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), finalShopGroup, finalReason)));
 				} catch (NegativeBalanceException ex) {
 					throw new NotEnoughMoneyException();
 				}
@@ -67,7 +71,7 @@ public class PayDiscordCommand extends Command {
 				event.reply("Successfully sent " + formatted + " to " + target.getName());
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}
 		});

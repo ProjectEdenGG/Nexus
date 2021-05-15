@@ -19,7 +19,7 @@ public enum ComboLockNumber {
 	PUZZLE_TWO(2, new Location(Bukkit.getWorld("safepvp"), 327.00, 56.00, -1956.00, .00F, .00F), 2) {
 		@Override
 		public void onFind(Player player) {
-			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
 				Halloween20Menus.openPicturePuzzle(player, this);
 		}
 	},
@@ -28,7 +28,7 @@ public enum ComboLockNumber {
 	PUZZLE_EIGHT(8, new Location(Bukkit.getWorld("safepvp"), 394.00, 103.00, -1952.00, .00F, .00F), 6) {
 		@Override
 		public void onFind(Player player) {
-			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
 				Halloween20Menus.openPicturePuzzle(player, this);
 		}
 	},
@@ -36,7 +36,7 @@ public enum ComboLockNumber {
 	PUZZLE_EIGHT_2(8, new Location(Bukkit.getWorld("safepvp"), 368.00, 152.00, -1933.00, .00F, .00F), 6) {
 		@Override
 		public void onFind(Player player) {
-			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
 				Halloween20Menus.openFlashCardPuzzle(player, this);
 		}
 	},
@@ -47,7 +47,7 @@ public enum ComboLockNumber {
 	PUZZLE_ZERO(0, new Location(Bukkit.getWorld("safepvp"), 326.00, 216.00, -1949.00, .00F, .00F), 0) {
 		@Override
 		public void onFind(Player player) {
-			if (((Halloween20User) new Halloween20Service().get(player)).getCombinationStage() == QuestStage.Combination.STARTED)
+			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
 				Halloween20Menus.openFlashCardPuzzle(player, this);
 		}
 	};
@@ -73,10 +73,8 @@ public enum ComboLockNumber {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		switch (user.getCombinationStage()) {
-			case NOT_STARTED:
-				PlayerUtils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
-				break;
-			case STARTED:
+			case NOT_STARTED -> PlayerUtils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
+			case STARTED -> {
 				if (user.getFoundComboLockNumbers().contains(this)) {
 					PlayerUtils.send(player, PREFIX + "You already know of this number. Maybe there’s some more.");
 					break;
@@ -87,7 +85,7 @@ public enum ComboLockNumber {
 				player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1f, 1f);
 				if (user.getFoundComboLockNumbers().size() == 11)
 					PlayerUtils.send(player, Halloween20.PREFIX + "You have found all the numbers for the combination lock. Return to see if you can crack the code!");
-				break;
+			}
 		}
 	}
 

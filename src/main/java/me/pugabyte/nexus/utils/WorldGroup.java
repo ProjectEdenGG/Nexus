@@ -1,12 +1,15 @@
 package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Getter
 public enum WorldGroup {
@@ -25,14 +28,14 @@ public enum WorldGroup {
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 
-	private List<String> worlds;
+	private final List<String> worldNames;
 
 	WorldGroup() {
 		this(new String[0]);
 	}
 
-	WorldGroup(String... worlds) {
-		this.worlds = Arrays.asList(worlds);
+	WorldGroup(String... worldNames) {
+		this.worldNames = Arrays.asList(worldNames);
 	}
 
 	@Override
@@ -45,7 +48,11 @@ public enum WorldGroup {
 	}
 
 	public boolean contains(String world) {
-		return worlds.contains(world);
+		return worldNames.contains(world);
+	}
+
+	public List<World> getWorlds() {
+		return worldNames.stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	public static WorldGroup get(Entity entity) {
@@ -62,7 +69,7 @@ public enum WorldGroup {
 
 	public static WorldGroup get(String world) {
 		for (WorldGroup group : values())
-			if (group.getWorlds() != null)
+			if (group.getWorldNames() != null)
 				if (group.contains(world))
 					return group;
 

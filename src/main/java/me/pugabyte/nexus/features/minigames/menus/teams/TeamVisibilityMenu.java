@@ -25,18 +25,12 @@ public class TeamVisibilityMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	private Material getIcon(NameTagVisibility nameTagVisibility) {
-		switch (nameTagVisibility) {
-			case ALWAYS:
-				return Material.BLACK_CONCRETE;
-			case NEVER:
-				return Material.GLASS;
-			case HIDE_FOR_OWN_TEAM:
-				return Material.REDSTONE_LAMP;
-			case HIDE_FOR_OTHER_TEAMS:
-				return Material.GLOWSTONE;
-			default: // failsafe to shut up IDE
-				return Material.BEDROCK;
-		}
+		return switch (nameTagVisibility) {
+			case ALWAYS -> Material.BLACK_CONCRETE;
+			case NEVER -> Material.GLASS;
+			case HIDE_FOR_OWN_TEAM -> Material.REDSTONE_LAMP;
+			case HIDE_FOR_OTHER_TEAMS -> Material.GLOWSTONE;
+		};
 	}
 
 	@Override

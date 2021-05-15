@@ -2,12 +2,17 @@ package me.pugabyte.nexus.framework.exceptions.postconfigured;
 
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class PostConfiguredException extends NexusException {
 
 	public PostConfiguredException(JsonBuilder json) {
-		super(new JsonBuilder(ChatColor.RED.toString()).next(json));
+		super(new JsonBuilder(NamedTextColor.RED).next(json));
+	}
+
+	public PostConfiguredException(ComponentLike component) {
+		this(new JsonBuilder(component));
 	}
 
 	public PostConfiguredException(String message) {

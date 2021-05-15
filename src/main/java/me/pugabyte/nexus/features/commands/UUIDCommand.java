@@ -12,7 +12,7 @@ public class UUIDCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player>")
+	@Path("[player]")
 	void uuid(@Arg("self") Nerd nerd) {
 		send(json("&e" + nerd.getUuid())
 				.hover("&3Shift+Click to insert into your chat")

@@ -2,11 +2,11 @@ package me.pugabyte.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import eden.exceptions.EdenException;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.HandledBy;
-import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.Nickname.NicknameHistoryEntry;
@@ -37,19 +37,16 @@ public class NicknameDiscordCommand extends Command {
 
 				if (args.length >= 1)
 					switch (args[0].toLowerCase()) {
-						case "deny":
+						case "deny" -> {
 							Nexus.log("Denying");
 							if (event.getMessage().getReferencedMessage() == null)
 								throw new InvalidInputException("You must reply to the original message");
 
 							String referencedId = event.getMessage().getReferencedMessage().getId();
-
 							NicknameService service = new NicknameService();
 							Nickname data = service.getFromQueueId(referencedId);
-
 							if (data == null)
 								throw new InvalidInputException("No nickname queue found, did you reply to the original message?");
-
 							for (NicknameHistoryEntry entry : data.getNicknameHistory()) {
 								if (!referencedId.equals(entry.getNicknameQueueId()))
 									continue;
@@ -58,10 +55,11 @@ public class NicknameDiscordCommand extends Command {
 								event.getMessage().reply("Successfully updated reason").queue();
 								service.save(data);
 							}
+						}
 					}
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
-				if (!(ex instanceof NexusException))
+				if (!(ex instanceof EdenException))
 					ex.printStackTrace();
 			}
 		});

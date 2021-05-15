@@ -13,7 +13,7 @@ public class Maze extends CheckpointMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 

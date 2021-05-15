@@ -128,7 +128,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 
 	private final static List<Material> allowedFloraMaterials = Arrays.asList(Material.WARPED_NYLIUM, Material.SOUL_SOIL);
 
-	private final static LinkedHashMap<Material, Double> floraChanceMap = new LinkedHashMap<Material, Double>() {{
+	private final static LinkedHashMap<Material, Double> floraChanceMap = new LinkedHashMap<>() {{
 		put(Material.AIR, 36.08);
 		put(Material.WARPED_ROOTS, 33.16);
 		put(Material.NETHER_SPROUTS, 24.37);

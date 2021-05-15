@@ -26,7 +26,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import static java.util.stream.Collectors.toList;
-import static me.pugabyte.nexus.utils.StringUtils.getShorterLocationString;
+import static me.pugabyte.nexus.utils.StringUtils.getCoordinateString;
 import static me.pugabyte.nexus.utils.StringUtils.getTeleportCommand;
 
 @NoArgsConstructor
@@ -51,7 +50,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 
 	@Path("top [page]")
 	void top(@Arg("1") int page) {
-		List<Easter21User> all = new Easter21UserService().<Easter21User>getAll().stream()
+		List<Easter21User> all = new Easter21UserService().getAll().stream()
 				.sorted(Comparator.<Easter21User>comparingInt(user -> user.getFound().size()).reversed())
 				.collect(toList());
 
@@ -64,18 +63,18 @@ public class EasterCommand extends CustomCommand implements Listener {
 	@Path("topLocations [page]")
 	@Permission("group.admin")
 	void topLocations(@Arg("1") int page) {
-		Map<Location, Integer> counts = new HashMap<Location, Integer>() {{
-			for (Easter21User user : new Easter21UserService().<Easter21User>getAll())
+		Map<Location, Integer> counts = new HashMap<>() {{
+			for (Easter21User user : new Easter21UserService().getAll())
 				for (Location location : user.getFound())
 					put(location, getOrDefault(location, 0) + 1);
 		}};
 
 		send(PREFIX + "Most found eggs");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-				json("&3" + index + " &e" + getShorterLocationString(location) + " &7- " + counts.get(location))
+				json("&3" + index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
 						.command(getTeleportCommand(location))
 						.hover("&eClick to teleport");
-		paginate(new ArrayList<>(Utils.sortByValueReverse(counts).keySet()), formatter, "/easter topLocations", page);
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
 	}
 
 	@Path("start")

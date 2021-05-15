@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.wither;
 
+import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.SmartInventory;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
@@ -14,7 +15,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -66,7 +66,7 @@ public class WitherCommand extends CustomCommand {
 
 	public boolean checkHasItems() {
 		List<ItemStack> missingItems = new ArrayList<>();
-		List<ItemStack> neededItems = new ArrayList<ItemStack>() {{
+		List<ItemStack> neededItems = new ArrayList<>() {{
 			add(new ItemStack(Material.WITHER_SKELETON_SKULL, 3));
 			add(new ItemStack(Material.SOUL_SAND, 4));
 			add(new ItemStack(Material.BOW));
@@ -166,7 +166,7 @@ public class WitherCommand extends CustomCommand {
 		int partySize = WitherChallenge.currentFight.getParty().size();
 		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + WitherChallenge.currentFight.getHostPlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
-				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode", MuteMenuItem.EVENTS);
+				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode", MuteMenuItem.BOSS_FIGHT);
 		Chat.broadcastDiscord("**[Wither]** " + WitherChallenge.currentFight.getHostPlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " are" : " is") +
 				" challenging the wither to a fight in " + StringUtils.camelCase(WitherChallenge.currentFight.getDifficulty().name()) + " mode");

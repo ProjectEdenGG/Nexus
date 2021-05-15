@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.utils.JsonBuilder;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,8 +32,8 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 		}
 	}
 
-	public T addPage(JsonBuilder builder) {
-		meta.spigot().addPage(builder.build());
+	public T addPage(ComponentLike component) {
+		meta.addPages(component.asComponent());
 		return self();
 	}
 

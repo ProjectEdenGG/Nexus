@@ -23,11 +23,11 @@ public enum MiniGolfHole {
 	ELEVEN(11, 3),
 	TWELVE(12, 2),
 	THIRTEEN(13, 3),
-	FOURTEEN(14, 9),
-	FIFTEEN(15, 9),
-	SIXTEEN(16, 9),
-	SEVENTEEN(17, 9),
-	EIGHTEEN(18, 9);
+	FOURTEEN(14, 3),
+	FIFTEEN(15, 5),
+	SIXTEEN(16, 4),
+	SEVENTEEN(17, 3),
+	EIGHTEEN(18, 2);
 
 	@Getter
 	private final int hole;

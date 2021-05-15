@@ -20,7 +20,11 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ProjectileListener implements Listener {
+	private final List<Material> killMaterial = Arrays.asList(Material.BARRIER, Material.CRIMSON_HYPHAE, Material.PURPLE_STAINED_GLASS, Material.WATER, Material.LAVA);
 
 	public ProjectileListener() {
 		Nexus.registerListener(this);
@@ -29,7 +33,10 @@ public class ProjectileListener implements Listener {
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event) {
 		Entity entity = event.getEntity();
-		if (!BearFair21.isAtBearFair(entity.getLocation()))
+		if (!BearFair21.isAtBearFair(entity))
+			return;
+
+		if (!MiniGolfUtils.isInMiniGolf(entity.getLocation()))
 			return;
 
 		// Check if golf ball
@@ -57,12 +64,12 @@ public class ProjectileListener implements Listener {
 				}
 			}
 
-			if (user == null || !user.isPlaying())
+			if (user == null || !user.isPlaying() || !user.isOnline())
 				return;
 
 			ball.setItem(MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
 			if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getPlayer());
+				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
 
 			// Stroke
 			ball.setCustomName(MiniGolfUtils.getStrokeString(user));
@@ -73,7 +80,7 @@ public class ProjectileListener implements Listener {
 			if (event.getHitBlockFace() == null) {
 				event.setCancelled(true);
 				Material _mat = loc.getBlock().getType();
-				if (_mat == Material.WATER || _mat == Material.LAVA)
+				if (killMaterial.contains(_mat))
 					MiniGolfUtils.respawnBall(ball);
 				return;
 			}
@@ -104,13 +111,13 @@ public class ProjectileListener implements Listener {
 
 					case UP:
 					case DOWN:
-						if (mat == Material.SOUL_SOIL) {
+						if (mat == Material.SOUL_SOIL || mat == Material.SMOKER) {
 							vel.setY(0);
 						} else if (mat == Material.SLIME_BLOCK) {
 							vel.setY(0.30);
 						} else {
 							Material _mat = loc.getBlock().getType();
-							if (mat == Material.CRIMSON_HYPHAE || mat == Material.PURPLE_STAINED_GLASS || _mat == Material.WATER || _mat == Material.LAVA) {
+							if (killMaterial.contains(mat) || killMaterial.contains(_mat)) {
 								// Ball hit out of bounds
 								MiniGolfUtils.respawnBall(ball);
 								return;

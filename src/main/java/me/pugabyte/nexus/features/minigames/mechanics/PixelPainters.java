@@ -5,6 +5,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.PixelPaintersArena;
@@ -20,7 +21,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
+import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,9 +46,9 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 //  - Only paste the designs on active islands
 
 public class PixelPainters extends TeamlessMechanic {
-	private final int MAX_ROUNDS = 5;
-	private final int TIME_BETWEEN_ROUNDS = 8 * 20;
-	private final int ROUND_COUNTDOWN = 45 * 20;
+	private static final int MAX_ROUNDS = 5;
+	private static final int TIME_BETWEEN_ROUNDS = 8 * 20;
+	private static final int ROUND_COUNTDOWN = 45 * 20;
 
 	@Override
 	public @NotNull String getName() {
@@ -55,7 +56,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -100,7 +101,7 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		matchData.setLobbyDesign(0);
 		countDesigns(match);
-		int taskId = match.getTasks().repeat(0, Time.SECOND.x(2), () -> {
+		int taskId = match.getTasks().repeatAsync(0, Time.SECOND.x(2), () -> {
 			if (match.isEnded() || match.isStarted())
 				return;
 
@@ -160,8 +161,10 @@ public class PixelPainters extends TeamlessMechanic {
 
 	@Override
 	public void onEnd(MatchEndEvent event) {
-		pasteLogo(event.getMatch());
-		clearFloors(event.getMatch());
+		event.getMatch().getTasks().async(() -> {
+			pasteLogo(event.getMatch());
+			clearFloors(event.getMatch());
+		});
 		super.onEnd(event);
 	}
 
@@ -207,7 +210,7 @@ public class PixelPainters extends TeamlessMechanic {
 			// In Lobby
 		} else {
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), 0);
 		}
 
 		return lines;
@@ -232,7 +235,7 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.getChecked().clear();
 
 		minigamers.forEach(minigamer -> minigamer.getPlayer().getInventory().clear());
-		setupNextDesign(match);
+		match.getTasks().async(() -> setupNextDesign(match));
 
 		if (matchData.getCurrentRound() == MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
@@ -248,8 +251,10 @@ public class PixelPainters extends TeamlessMechanic {
 		} else {
 			// Start countdown to new round
 			match.getTasks().wait(TIME_BETWEEN_ROUNDS / 2, () -> {
-				pasteLogo(match);
-				clearFloors(match);
+				match.getTasks().async(() -> {
+					pasteLogo(match);
+					clearFloors(match);
+				});
 				match.getTasks().countdown(Countdown.builder()
 						.duration(TIME_BETWEEN_ROUNDS)
 						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
@@ -288,8 +293,10 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
 
 		matchData.setRoundStart(System.currentTimeMillis());
-		pasteNewDesign(match);
-		giveBlocks(match);
+		match.getTasks().async(() -> {
+			pasteNewDesign(match);
+			giveBlocks(match);
+		});
 
 		// Enable checking
 		matchData.canCheck(true);
@@ -302,7 +309,7 @@ public class PixelPainters extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		if (!event.getHand().equals(EquipmentSlot.HAND))
+		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND))
 			return;
 
 		Match match = minigamer.getMatch();
@@ -345,6 +352,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	public void pressButton(Minigamer minigamer, PlayerInteractEvent event) {
+		Validate.notNull(event.getClickedBlock(), "Clicked block should be insured non-null by calling function");
 		Match match = minigamer.getMatch();
 		PixelPaintersArena arena = match.getArena();
 		PixelPaintersMatchData matchData = match.getMatchData();

@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.commands.BattleshipCommand;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
@@ -31,8 +33,6 @@ import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
@@ -89,7 +89,7 @@ public class Battleship extends TeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
 	public static final String SCHEMATIC_FOLDER = "minigames/battleship";
-	public static final List<String> COORDINATES = new ArrayList<String>() {{
+	public static final List<String> COORDINATES = new ArrayList<>() {{
 		for (int number = 0; number < 10; number++)
 			for (String letter : LETTERS.split(""))
 				add(letter + number);
@@ -107,8 +107,8 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public String getDescription() {
-		return null;
+	public @NotNull String getDescription() {
+		return "";
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class Battleship extends TeamMechanic {
 			lines.add("&cTime: &e" + Timespan.of(matchData.getStart(), to).format());
 
 			if (matchData.isEnding()) {
-				lines.add("&cWinner: " + matchData.getWinnerTeam().getColoredName());
+				lines.add("&cWinner: " + matchData.getWinnerTeam().getVanillaColoredName());
 			} else {
 				long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
 				String timeLeft = Timespan.of(arena.getTurnTime() - turnDuration).format();
@@ -184,7 +184,7 @@ public class Battleship extends TeamMechanic {
 			lines.add(line);
 		}
 
-		return new HashMap<String, Integer>() {{
+		return new HashMap<>() {{
 			for (int i = lines.size(); i > 0; i--)
 				put(lines.get(lines.size() - i), i);
 		}};
@@ -373,7 +373,7 @@ public class Battleship extends TeamMechanic {
 				}
 			} else if (ActionGroup.LEFT_CLICK.applies(event)) {
 				event.setCancelled(true);
-				minigamer.send(PREFIX + "Removed " + shipType.getColoredName());
+				minigamer.sendMessage(PREFIX + "Removed " + shipType.getColoredName());
 				deleteKit(block.getLocation());
 				matchData.getGrid(team).vacate(shipType);
 				giveKitItem(minigamer, shipType);
@@ -440,7 +440,7 @@ public class Battleship extends TeamMechanic {
 		}
 
 		private boolean run() {
-			Consumer<String> send = message -> { if (minigamer != null) minigamer.send(PREFIX + message); };
+			Consumer<String> send = message -> { if (minigamer != null) minigamer.sendMessage(PREFIX + message); };
 
 			if (attempts >= 4) {
 				if (location.getBlock().getType() == shipType.getItem().getType())

@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
@@ -16,6 +17,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.nexus.utils.StringUtils.applyFormattingToAll;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Aliases("nameentity")
@@ -34,30 +36,54 @@ public class EntityNameCommand extends CustomCommand {
 
 	@Path("(null|none|reset)")
 	void reset() {
-		name(null);
+		name(null, false, false, false, false, false);
 	}
 
 	@Path("<name...>")
-	void name(@Arg(max = 17) String name) { // Why 17 and not 16? idk.
-		if (targetEntity instanceof ItemFrame) {
-			ItemFrame itemFrame = (ItemFrame) targetEntity;
+	void name(
+			@Arg(max = 17) String input, // Why 17 and not 16? idk.
+			@Switch boolean bold,
+			@Switch boolean strikethrough,
+			@Switch boolean underline,
+			@Switch boolean italic,
+			@Switch boolean magic
+	) {
+		input = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
+
+		if (targetEntity instanceof ItemFrame itemFrame) {
 			ItemStack item = itemFrame.getItem();
-			ItemBuilder.setName(item, name);
+			ItemBuilder.setName(item, input);
 			itemFrame.setItem(item);
 		} else {
-			targetEntity.setCustomName(colorize(name));
-			targetEntity.setCustomNameVisible(name != null);
+			targetEntity.setCustomName(colorize(input));
+			targetEntity.setCustomNameVisible(input != null);
 		}
 	}
 
 	@Path("gradient <color1> <color2> <name...>")
-	void gradient(ChatColor color1, ChatColor color2, String input) {
-		name(Gradient.of(color1, color2).apply(input));
+	void gradient(
+			ChatColor color1,
+			ChatColor color2,
+			@Arg(max = 17) String input,
+			@Switch boolean bold,
+			@Switch boolean strikethrough,
+			@Switch boolean underline,
+			@Switch boolean italic,
+			@Switch boolean magic
+	) {
+		name(Gradient.of(color1, color2).apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
 	@Path("rainbow <name...>")
-	void rainbow(String input) {
-		name(Rainbow.apply(input));
+	void rainbow(
+			@Arg(max = 17) String input,
+			@Switch boolean bold,
+			@Switch boolean strikethrough,
+			@Switch boolean underline,
+			@Switch boolean italic,
+			@Switch boolean magic
+	) {
+		name(Rainbow.apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
 	@Path("visible [enable]")

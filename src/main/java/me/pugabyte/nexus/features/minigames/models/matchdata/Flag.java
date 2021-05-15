@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.matchdata;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -12,7 +13,6 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;

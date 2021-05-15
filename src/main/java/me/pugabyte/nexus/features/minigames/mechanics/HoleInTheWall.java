@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.mewin.worldguardregionapi.events.RegionLeavingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -14,10 +14,10 @@ import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData.Track;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -48,7 +48,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -186,7 +186,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeavingEvent event) {
+	public void onRegionExit(PlayerLeavingRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 

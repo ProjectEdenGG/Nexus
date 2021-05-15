@@ -117,7 +117,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		String collect = Bukkit.getOnlinePlayers().stream()
 				.map(player -> (ScoreboardUser) new ScoreboardService().get(player))
 				.filter(ScoreboardUser::isActive)
-				.map(user -> user.getPlayer().getName())
+				.map(user -> user.getOnlinePlayer().getName())
 				.collect(Collectors.joining("&3, &e"));
 		send(PREFIX + "Active scoreboards: ");
 		send("&e" + collect);

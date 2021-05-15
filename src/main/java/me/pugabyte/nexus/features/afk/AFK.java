@@ -1,17 +1,17 @@
 package me.pugabyte.nexus.features.afk;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.afk.AFKService;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -52,15 +52,16 @@ public class AFK extends Feature {
 		return x && z;
 	}
 
+	public static AFKPlayer get(PlayerOwnedObject player) {
+		return get(player.getUuid());
+	}
+
 	public static AFKPlayer get(Player player) {
 		return get(player.getUniqueId());
 	}
 
 	public static AFKPlayer get(UUID uuid) {
-		if (!players.containsKey(uuid))
-			players.put(uuid, new AFKPlayer(uuid));
-
-		return players.get(uuid);
+		return players.computeIfAbsent(uuid, $ -> new AFKPlayer(uuid));
 	}
 
 	public static void remove(Player player) {
@@ -68,32 +69,11 @@ public class AFK extends Feature {
 	}
 
 	public static int getActivePlayers() {
-		if (Bukkit.getOnlinePlayers().size() == 0)
-			return 0;
-		else {
-			int result = 0;
-			for (Player player : Bukkit.getOnlinePlayers())
-				if (!get(player).isAfk())
-					++result;
-
-			return result;
-		}
+		return (int) Bukkit.getOnlinePlayers().stream().filter(player -> !get(player).isAfk()).count();
 	}
 
 	public static int getActiveStaff() {
-		if (Bukkit.getOnlinePlayers().size() == 0)
-			return 0;
-		else {
-			int result = 0;
-			Collection<? extends Player> playerList = Bukkit.getOnlinePlayers();
-			for (Player player : playerList) {
-				Nerd nerd = Nerd.of(player);
-				if (nerd.getRank().isStaff())
-					if (!get(player).isAfk())
-						++result;
-			}
-			return result;
-		}
+		return (int) Rank.getOnlineStaff().stream().filter(nerd -> !get(nerd).isAfk()).count();
 	}
 
 }

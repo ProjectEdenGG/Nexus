@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjecti
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicTrail extends ParticleProjectilePerk {
     @Override
@@ -22,7 +23,7 @@ public class BasicTrail extends ParticleProjectilePerk {
     }
 
     @Override
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return "Give your arrows some sparkles with this simple trail";
     }
 

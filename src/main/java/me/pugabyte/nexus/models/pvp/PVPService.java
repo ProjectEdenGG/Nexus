@@ -1,19 +1,23 @@
 package me.pugabyte.nexus.models.pvp;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @PlayerClass(PVP.class)
-public class PVPService extends MongoService {
-
-	public static final Map<UUID, PVP> cache = new HashMap<>();
+public class PVPService extends MongoService<PVP> {
+	private final static Map<UUID, PVP> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	@Override
 	public Map<UUID, PVP> getCache() {
 		return cache;
+	}
+
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
 	}
 }

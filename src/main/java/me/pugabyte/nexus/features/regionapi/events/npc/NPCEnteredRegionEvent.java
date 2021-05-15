@@ -1,0 +1,31 @@
+package me.pugabyte.nexus.features.regionapi.events.npc;
+
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.AccessLevel;
+import lombok.Getter;
+import me.pugabyte.nexus.features.regionapi.MovementType;
+import me.pugabyte.nexus.features.regionapi.events.common.EnteredRegionEvent;
+import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.event.Event;
+
+/**
+ * Event that is triggered after a npc entered a WorldGuard region
+ */
+@Getter(AccessLevel.PUBLIC)
+public class NPCEnteredRegionEvent extends EnteredRegionEvent {
+	protected final NPC npc;
+
+	/**
+	 * creates a new NPCEnteredRegionEvent
+	 *
+	 * @param region       the region the npc entered
+	 * @param npc          the npc who triggered this event
+	 * @param movementType the type of movement how the npc entered the region
+	 * @param parentEvent  the event that triggered this event
+	 */
+	public NPCEnteredRegionEvent(ProtectedRegion region, NPC npc, MovementType movementType, Event parentEvent) {
+		super(region, npc.getEntity(), movementType, parentEvent);
+		this.npc = npc;
+	}
+
+}

@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.easter20;
 
+import eden.annotations.Disabled;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.framework.annotations.Disabled;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -48,7 +48,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 		sign.update();
 	}
 
-	@Path("check <player>")
+	@Path("check [player]")
 	void check(@Arg("self") OfflinePlayer player) {
 		send(PREFIX + "&e" + player.getName() + " &3has found &e" + service.get(player, "easter2020").getValue() + "&3 easter eggs");
 	}

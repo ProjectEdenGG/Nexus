@@ -2,11 +2,16 @@ package me.pugabyte.nexus.features.recipes.functionals;
 
 import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTItem;
-import fr.minuskube.inv.content.InventoryContents;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SerializationUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,7 +29,12 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
@@ -34,7 +44,7 @@ import java.util.List;
 public class Backpacks extends FunctionalRecipe {
 
 	@Getter
-	public ItemStack defaultBackpack = new ItemBuilder(Material.SHULKER_BOX).name("&rBackpack").customModelData(1).build();
+	public static ItemStack defaultBackpack = new ItemBuilder(Material.SHULKER_BOX).name("&rBackpack").customModelData(1).build();
 
 	@Override
 	public String getPermission() {
@@ -60,7 +70,7 @@ public class Backpacks extends FunctionalRecipe {
 
 	@Override
 	public List<ItemStack> getIngredients() {
-		return new ArrayList<ItemStack>() {{
+		return new ArrayList<>() {{
 			add(new ItemStack(Material.LEATHER));
 			add(new ItemStack(Material.TRIPWIRE_HOOK));
 			add(new ItemStack(Material.SHULKER_SHELL));
@@ -78,7 +88,7 @@ public class Backpacks extends FunctionalRecipe {
 		return null;
 	}
 
-	public String getRandomBackPackId() {
+	public static String getRandomBackPackId() {
 		return RandomStringUtils.randomAlphabetic(10);
 	}
 
@@ -138,10 +148,17 @@ public class Backpacks extends FunctionalRecipe {
 		if (event.getRecipe() == null) return;
 		if (event.getInventory().getResult() == null) return;
 		if (!event.getInventory().getResult().equals(getDefaultBackpack())) return;
-		NBTItem nbtItem = new NBTItem(event.getInventory().getResult().clone());
+		event.getInventory().setResult(getBackpack(event.getInventory().getResult().clone(), (Player) event.getView().getPlayer()));
+	}
+
+	public static ItemStack getBackpack(ItemStack backpack, Player player) {
+		if (backpack == null)
+			backpack = defaultBackpack.clone();
+
+		NBTItem nbtItem = new NBTItem(backpack);
 		nbtItem.setString("BackpackId", getRandomBackPackId());
-		nbtItem.setString("BackpackOwner", event.getView().getPlayer().getUniqueId().toString());
-		event.getInventory().setResult(nbtItem.getItem());
+		nbtItem.setString("BackpackOwner", player.getUniqueId().toString());
+		return nbtItem.getItem();
 	}
 
 	@EventHandler
@@ -215,7 +232,7 @@ public class Backpacks extends FunctionalRecipe {
 			inv.setContents(originalItems);
 			this.inv = inv;
 			player.openInventory(inv);
-			Nexus.registerListener(this);
+			Nexus.registerTempListener(this);
 		}
 
 		public void saveContents(ItemStack[] contents) {
@@ -277,7 +294,7 @@ public class Backpacks extends FunctionalRecipe {
 		@EventHandler
 		public void onInventoryClose(InventoryCloseEvent event) {
 			if (player != event.getPlayer()) return;
-			Nexus.unregisterListener(this);
+			Nexus.unregisterTempListener(this);
 			ItemStack[] contents = event.getView().getTopInventory().getContents();
 			saveContents(contents);
 		}

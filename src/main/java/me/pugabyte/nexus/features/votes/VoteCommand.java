@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.votes;
 
+import eden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -19,7 +20,6 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
@@ -62,7 +62,7 @@ public class VoteCommand extends CustomCommand {
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
 		send(json(PLUS + "Visit the &eVote Points Store").command("/vps"));
-		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://bnn.gg/vote"));
+		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://projecteden.gg/vote"));
 	}
 
 	@Path("time [player]")

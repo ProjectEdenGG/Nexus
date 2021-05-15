@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.wither.fights;
 
 import com.destroystokyo.paper.Title;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
@@ -8,7 +9,6 @@ import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -58,8 +58,7 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void stopWitherHearts(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!alivePlayers.contains(player.getUniqueId())) return;
 		if (event.getCause() != EntityDamageEvent.DamageCause.WITHER) return;
 		event.setCancelled(true);
@@ -69,8 +68,7 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void slowRegen(EntityRegainHealthEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!alivePlayers.contains(player.getUniqueId())) return;
 		if (event.getRegainReason() != EntityRegainHealthEvent.RegainReason.SATIATED) return;
 		int regenAmount = playerRegenAmounts.getOrDefault(player.getUniqueId(), 0);
@@ -99,7 +97,7 @@ public class CorruptedFight extends WitherFight {
 
 	@Override
 	public List<ItemStack> getAlternateDrops() {
-		return new ArrayList<ItemStack>() {{
+		return new ArrayList<>() {{
 			ItemStack key = CrateType.BOSS.getKey();
 			key.setAmount(2);
 			add(key);
@@ -160,8 +158,7 @@ public class CorruptedFight extends WitherFight {
 	public void doublePlayerDamage(EntityDamageByEntityEvent event) {
 		if ((event.getEntity() instanceof Player)) return;
 		if (!new WorldGuardUtils("events").isInRegion(event.getEntity().getLocation(), "witherarena")) return;
-		if (event.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) event.getDamager();
+		if (event.getDamager() instanceof Projectile projectile) {
 			if (projectile.getShooter() instanceof Wither)
 				event.setDamage(event.getFinalDamage() * 2);
 		}

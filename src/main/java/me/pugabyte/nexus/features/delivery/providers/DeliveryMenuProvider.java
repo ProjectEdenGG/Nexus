@@ -29,7 +29,7 @@ public class DeliveryMenuProvider extends MenuUtils implements InventoryProvider
 				.provider(this)
 				.size(3, 9)
 				.title(colorize("&3Deliveries"))
-				.build().open(user.getPlayer());
+				.build().open(user.getOnlinePlayer());
 	}
 
 	@Override

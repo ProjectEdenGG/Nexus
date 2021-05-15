@@ -17,7 +17,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 
 import java.util.Map;
 
-@Permission("group.staff")
 public class MiniGolfCommand extends CustomCommand {
 	private MiniGolf21User user;
 	private final MiniGolf21UserService service = new MiniGolf21UserService();
@@ -87,9 +86,11 @@ public class MiniGolfCommand extends CustomCommand {
 			String strokes = " ?";
 			if (score.containsKey(hole)) {
 				int strokeCount = score.get(hole);
-				strokes = " " + strokeCount;
+				String space = " ";
 				if (strokeCount > 9)
-					strokes = String.valueOf(strokeCount);
+					space = "";
+
+				strokes = space + strokeCount;
 			}
 
 			json.next(" " + holeNumber + " |   " + hole.getPar() + "   |   " + strokes).newline();
@@ -111,6 +112,8 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("kit")
 	void getKit() {
+		if (!user.isPlaying())
+			error("You must be playing to do this");
 		MiniGolf.takeKit(user);
 		MiniGolf.giveKit(user);
 	}
@@ -127,9 +130,20 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("clearDatabase")
 	@Confirm
+	@Permission("group.admin")
 	void resetData() {
 		service.clearCache();
 		service.deleteAll();
 		service.clearCache();
+	}
+
+	@Path("clearUser <user>")
+	@Confirm
+	@Permission("group.admin")
+	void resetData(MiniGolf21User _user) {
+		if (!isSelf(_user.getOnlinePlayer()))
+			user = _user;
+
+		service.delete(user);
 	}
 }

@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.radar;
 
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -8,12 +7,14 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.worldedit.ExpandAllCommand;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -31,7 +32,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -275,8 +275,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onCraftItem(CraftItemEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		Player player = (Player) event.getView().getPlayer();
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
 		if (player.hasPermission("honeypot.bypass")) return;
 
 		for (ItemStack ingredient : event.getInventory().getMatrix())
@@ -288,9 +287,8 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onEntityKill(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player)) return;
+		if (!(event.getDamager() instanceof Player player)) return;
 		if (!(event.getEntity() instanceof Animals)) return;
-		Player player = (Player) event.getDamager();
 		if (player.hasPermission("honeypot.bypass")) return;
 		incrementPlayer(player, event.getEntity().getLocation(), 1);
 	}
@@ -341,7 +339,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionExit(RegionLeftEvent event) {
+	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().contains("hp_")) return;
 		HoneyPotGriefer griefer = grieferService.get(event.getPlayer());
 		if (griefer.getTriggered() <= 0) return;

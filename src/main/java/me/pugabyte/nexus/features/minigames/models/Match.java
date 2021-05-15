@@ -2,6 +2,10 @@ package me.pugabyte.nexus.features.minigames.models;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.google.common.base.Strings;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.FormatType;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,34 +28,37 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTick
 import me.pugabyte.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.BossBarBuilder;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -76,8 +83,11 @@ public class Match {
 	private ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
+	private Set<Location> usedSpawnpoints = new HashSet<>();
+	@Nullable
+	private BossBar modifierBar;
 
-	public Minigamer getMinigamer(Player player) {
+	public @Nullable Minigamer getMinigamer(@NotNull Player player) {
 		for (Minigamer minigamer : minigamers)
 			if (minigamer.getPlayer().equals(player))
 				return minigamer;
@@ -180,6 +190,7 @@ public class Match {
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
 
+		if (modifierBar != null) minigamer.getPlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
 		if (scoreboardTeams != null) scoreboardTeams.handleQuit(minigamer);
 
@@ -201,6 +212,7 @@ public class Match {
 			balance();
 			initializeScores();
 			teleportIn();
+			startModifierBar();
 			startTimer(); // -> arena.getMechanic().startTimer();
 			arena.getMechanic().onStart(event);
 			if (scoreboard != null) scoreboard.update();
@@ -226,6 +238,7 @@ public class Match {
 		clearHolograms();
 		clearEntities();
 		clearStates();
+		stopModifierBar();
 		toGamelobby();
 		try {
 			arena.getMechanic().onEnd(event);
@@ -287,6 +300,18 @@ public class Match {
 			matchData = new MatchData(this);
 	}
 
+	private void startModifierBar() {
+		MinigameModifier modifier = Minigames.getModifier();
+		if (modifier instanceof NoModifier) return;
+		modifierBar = new BossBarBuilder().title(modifier.asComponent()).color(BossBar.Color.BLUE).build();
+		getMinigamers().forEach(minigamer -> minigamer.getPlayer().showBossBar(modifierBar));
+	}
+
+	private void stopModifierBar() {
+		if (modifierBar == null) return;
+		getAllPlayers().forEach(player -> player.hideBossBar(modifierBar));
+	}
+
 	private void startTimer() {
 		timer = new MatchTimer(this, arena.getSeconds());
 	}
@@ -323,15 +348,12 @@ public class Match {
 	}
 
 	private void teleportIn() {
-		arena.getTeams().forEach(team -> {
-			if (team.getSpawnpoints().isEmpty())
-				Mechanic.error("Team "+team.getName()+" has no spawnpoints!", this);
-			team.spawn(this);
-		});
+		Set<Location> usedSpawnpoints = new HashSet<>();
+		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 
 	public void teleportIn(Minigamer minigamer) {
-		minigamer.getTeam().spawn(Collections.singletonList(minigamer));
+		minigamer.getTeam().spawn(minigamer);
 	}
 
 	private void clearStates() {
@@ -375,7 +397,7 @@ public class Match {
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		if (event.callEvent())
-			minigamers.forEach(minigamer -> minigamer.send(colorize(event.getMessage())));
+			minigamers.forEach(minigamer -> minigamer.sendMessage(colorize(event.getMessage())));
 	}
 
 	public void broadcast(Team team, String message) {
@@ -545,6 +567,24 @@ public class Match {
 
 		public int repeat(long startDelay, long interval, Runnable runnable) {
 			int taskId = Tasks.repeat(startDelay, interval, runnable);
+			taskIds.add(taskId);
+			return taskId;
+		}
+
+		public int repeatAsync(Time startDelay, long interval, Runnable runnable) {
+			return repeatAsync(startDelay.get(), interval, runnable);
+		}
+
+		public int repeatAsync(long startDelay, Time interval, Runnable runnable) {
+			return repeatAsync(startDelay, interval.get(), runnable);
+		}
+
+		public int repeatAsync(Time startDelay, Time interval, Runnable runnable) {
+			return repeatAsync(startDelay.get(), interval.get(), runnable);
+		}
+
+		public int repeatAsync(long startDelay, long interval, Runnable runnable) {
+			int taskId = Tasks.repeatAsync(startDelay, interval, runnable);
 			taskIds.add(taskId);
 			return taskId;
 		}

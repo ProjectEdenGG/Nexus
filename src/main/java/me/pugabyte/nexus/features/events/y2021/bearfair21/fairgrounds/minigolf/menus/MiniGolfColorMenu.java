@@ -73,16 +73,16 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 		if (color.equals(MiniGolfColor.RAINBOW) && !user.isRainbow())
 			return;
 
-		if (user.getSnowball() == null)
+		if (user.isPlaying() && user.getSnowball() == null)
 			MiniGolf.takeKit(user);
 
 		user.setMiniGolfColor(color);
 		service.save(user);
 
-		if (user.getSnowball() == null)
+		if (user.isPlaying() && user.getSnowball() == null)
 			MiniGolf.giveKit(user);
 
-		String message = MiniGolf.getPREFIX() + "Set color to: ";
+		String message = "Set color to: ";
 		String colorName = StringUtils.camelCase(color);
 
 		if (color.equals(MiniGolfColor.RAINBOW))
@@ -90,6 +90,6 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 		else
 			MiniGolfUtils.send(user, message + color.getColorType().getChatColor() + colorName);
 
-		user.getPlayer().closeInventory();
+		user.getOnlinePlayer().closeInventory();
 	}
 }

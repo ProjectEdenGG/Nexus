@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.models;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Script;
@@ -18,7 +19,6 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,7 +45,7 @@ public enum QuestNPC {
 			service.save(user);
 
 			return Arrays.asList(
-					Script.wait("Welcome to Pugmas, Bear Nation's month and a half long holiday event!"),
+					Script.wait("Welcome to Pugmas, Project Eden's month and a half long holiday event!"),
 
 					Script.wait(80, "There is tons to explore and many quests to complete for rewards!"),
 

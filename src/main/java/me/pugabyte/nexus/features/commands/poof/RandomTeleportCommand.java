@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands.poof;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -12,8 +13,8 @@ import me.pugabyte.nexus.models.lwc.LWCProtection;
 import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -36,6 +37,8 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Async
 	@Cooldown(value = @Part(value = Time.SECOND, x = 30), bypass = "group.admin")
 	void rtp() {
+		if (world().getEnvironment() != Environment.NORMAL)
+			error("You must be in a survival overworld to run this command");
 		if (!Arrays.asList("world", "survival", "resource").contains(world().getName()))
 			error("You must be in the survival world to run this command");
 
@@ -47,10 +50,10 @@ public class RandomTeleportCommand extends CustomCommand {
 
 		int radius = 0;
 		switch (world().getName()) {
-			case "world": radius = 17500; break;
-			case "survival": radius = 7500; break;
-			case "resource": radius = 2500; break;
-			default: error("Could not find world border of current world");
+			case "world" -> radius = 17500;
+			case "survival" -> radius = 7500;
+			case "resource" -> radius = 2500;
+			default -> error("Could not find world border of current world");
 		}
 
 		int range = 250;

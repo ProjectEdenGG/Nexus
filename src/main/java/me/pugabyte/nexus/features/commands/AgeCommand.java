@@ -22,17 +22,17 @@ public class AgeCommand extends CustomCommand {
 
 	@Path("[player]")
 	void player(Nerd nerd) {
-		if (arg(1).equalsIgnoreCase("bn") || arg(1).equalsIgnoreCase("bearnation") || arg(1).equalsIgnoreCase("server")) {
-			bn();
+		if (arg(1).equalsIgnoreCase("eden") || arg(1).equalsIgnoreCase("projecteden") || arg(1).equalsIgnoreCase("server")) {
+			server();
 			return;
 		}
+
 		try {
 			int year = nerd.getBirthday().until(LocalDate.now()).getYears();
 			send(PREFIX + Nickname.of(nerd) + " is &e" + year + "&3 years old.");
 		} catch (Exception ex) {
 			send(PREFIX + "That player does not have a set birthday");
 		}
-
 	}
 
 	@Data
@@ -62,10 +62,10 @@ public class AgeCommand extends CustomCommand {
 	}
 
 	@Path()
-	void bn() {
+	void server() {
 		ServerAge serverAge = new ServerAge();
 
-		send("&3Bear Nation was born on &eJune 29th, 2015&3, at &e12:52 PM ET");
+		send("&3Project Eden was born on &eJune 29th, 2015&3, at &e12:52 PM ET");
 		send("&3That makes it...");
 		line();
 		send("&e" + ServerAge.format(serverAge.getDogYears()) + " &3dog years old");

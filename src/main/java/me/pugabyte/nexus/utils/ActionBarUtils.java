@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import me.lexikiq.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -20,26 +21,26 @@ public class ActionBarUtils {
 
 	// Main
 
-	private static void sendActionBarForReal(final Player player, final String message) {
-		player.sendActionBar(colorize(message));
+	private static void sendActionBarForReal(final HasPlayer player, final String message) {
+		player.getPlayer().sendActionBar(colorize(message));
 	}
 
 	// One player
 
-	public static void sendActionBar(final Player player, final String message) {
+	public static void sendActionBar(final HasPlayer player, final String message) {
 		sendActionBar(player, colorize(message), -1);
 	}
 
-	public static void sendActionBar(final Player player, ActionBar actionBar) {
+	public static void sendActionBar(final HasPlayer player, ActionBar actionBar) {
 		sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
 	}
 
-	public static void sendActionBar(final Player player, final String message, int duration) {
+	public static void sendActionBar(final HasPlayer player, final String message, int duration) {
 		sendActionBar(player, message, duration, true);
 	}
 
-	public static void sendActionBar(final Player player, final String message, int duration, boolean fade) {
-		Set<Integer> taskIds = playerTaskIds.getOrDefault(player.getUniqueId(), new HashSet<>());
+	public static void sendActionBar(final HasPlayer player, final String message, int duration, boolean fade) {
+		Set<Integer> taskIds = playerTaskIds.getOrDefault(player.getPlayer().getUniqueId(), new HashSet<>());
 		Tasks.cancel(taskIds);
 		taskIds.clear();
 
@@ -51,25 +52,25 @@ public class ActionBarUtils {
 		while (duration > 40)
 			taskIds.add(Tasks.wait(duration -= 40, () -> sendActionBarForReal(player, message)));
 
-		playerTaskIds.put(player.getUniqueId(), taskIds);
+		playerTaskIds.put(player.getPlayer().getUniqueId(), taskIds);
 	}
 
 	// List of players
 
-	public static void sendActionBar(final List<Player> players, ActionBar actionBar) {
-		for (Player player : players)
+	public static void sendActionBar(final List<? extends HasPlayer> players, ActionBar actionBar) {
+		for (HasPlayer player : players)
 			sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
 	}
 
-	public static void sendActionBar(final List<Player> players, String message) {
+	public static void sendActionBar(final List<? extends HasPlayer> players, String message) {
 		sendActionBar(players, message, -1);
 	}
 
-	public static void sendActionBar(final List<Player> players, String message, int duration) {
+	public static void sendActionBar(final List<? extends HasPlayer> players, String message, int duration) {
 		sendActionBar(players, message, duration, true);
 	}
 
-	public static void sendActionBar(final List<Player> players, String message, int duration, boolean fade) {
+	public static void sendActionBar(final List<? extends HasPlayer> players, String message, int duration, boolean fade) {
 		for (Player player : Bukkit.getOnlinePlayers())
 			sendActionBar(player, message, duration, fade);
 	}

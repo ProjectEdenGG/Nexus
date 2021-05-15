@@ -29,7 +29,7 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	public abstract Set<Chatter> getRecipients();
 
 	public boolean wasSentTo(Player player) {
-		return wasSentTo((Chatter) new ChatService().get(player));
+		return wasSentTo(new ChatService().get(player));
 	}
 
 	public boolean wasSentTo(Chatter chatter) {
@@ -37,7 +37,7 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	}
 
 	public void respond(String response) {
-		getRecipients().forEach(chatter -> chatter.send(response));
+		getRecipients().forEach(chatter -> chatter.sendMessage(response));
 	}
 
 	public boolean wasChanged() {

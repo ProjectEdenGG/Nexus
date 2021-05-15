@@ -1,13 +1,14 @@
 package me.pugabyte.nexus.features.minigames.lobby;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
-import com.mewin.worldguardregionapi.events.RegionLeftEvent;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -15,7 +16,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -208,8 +208,7 @@ public class Basketball extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.getWorld() != world) return;
 		if (!isBasketball(event.getItem().getItemStack())) return;
 
@@ -228,13 +227,13 @@ public class Basketball extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
 		giveBasketball(event.getPlayer());
 	}
 
 	@EventHandler
-	public void onRegionLeave(RegionLeftEvent event) {
+	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
 		removeBasketball(event.getPlayer());
 	}

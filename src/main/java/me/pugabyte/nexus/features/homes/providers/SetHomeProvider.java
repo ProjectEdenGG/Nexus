@@ -38,7 +38,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 				.size(5, 9)
 				.title(StringUtils.colorize("&3Set a new home"))
 				.build()
-				.open(homeOwner.getPlayer(), page);
+				.open(homeOwner.getOnlinePlayer(), page);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 			), e -> HomesMenu.create(homeOwner, response ->
 				homeOwner.getHome(response[0]).ifPresent(HomesMenu::edit))));
 
-		Map<String, ItemStack> options = new LinkedHashMap<String, ItemStack>() {{
+		Map<String, ItemStack> options = new LinkedHashMap<>() {{
 			put("home", new ItemBuilder(Material.CYAN_BED)
 					.loreize(false)
 					.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
@@ -81,7 +81,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 					try {
 						HomesMenu.edit(addHome(name, item));
 					} catch (Exception ex) {
-						MenuUtils.handleException(homeOwner.getPlayer(), HomesFeature.PREFIX, ex);
+						MenuUtils.handleException(homeOwner.getOnlinePlayer(), HomesFeature.PREFIX, ex);
 					}
 				})));
 	}
@@ -93,7 +93,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 		Home home = Home.builder()
 				.uuid(homeOwner.getUuid())
 				.name(homeName)
-				.location(homeOwner.getPlayer().getLocation())
+				.location(homeOwner.getOnlinePlayer().getLocation())
 				.item(itemStack)
 				.build();
 

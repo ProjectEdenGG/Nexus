@@ -2,9 +2,10 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
-import com.destroystokyo.paper.Title;
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -22,12 +23,10 @@ import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
-import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -35,19 +34,17 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -58,14 +55,17 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,32 +97,6 @@ public class Misc implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onRespawnAnchorInteract(PlayerInteractEvent event) {
-		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block))
-			return;
-
-		if (!block.getType().equals(Material.RESPAWN_ANCHOR))
-			return;
-
-		if (event.isCancelled())
-			return;
-
-		World.Environment environment = block.getWorld().getEnvironment();
-		if (environment.equals(World.Environment.NETHER))
-			return;
-
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-			return;
-
-		RespawnAnchor respawnAnchor = (RespawnAnchor) block.getBlockData();
-		ItemStack heldItem = event.getItem();
-		if ((respawnAnchor.getCharges() > 0 && (heldItem == null || heldItem.getType() != Material.GLOWSTONE))
-				|| respawnAnchor.getCharges() == respawnAnchor.getMaximumCharges())
-			event.setCancelled(true);
-	}
-
 	@EventHandler
 	public void onHorseLikeDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof AbstractHorse)
@@ -142,8 +116,7 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 
 		if (event.getCause() == DamageCause.VOID)
 			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.get(player))
@@ -155,7 +128,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlayerDamageByPlayer(PlayerDamageByPlayerEvent event) {
-		if (event.getVictim().getUniqueId().equals(event.getAttacker().getUniqueId()))
+		if (event.getPlayer().getUniqueId().equals(event.getAttacker().getUniqueId()))
 			event.getOriginalEvent().setCancelled(true);
 	}
 
@@ -187,19 +160,19 @@ public class Misc implements Listener {
 					"Use &c/trust lock <player> &eto allow someone else to use it.");
 	}
 
+	private static final String CHAT_DISABLED_WARNING = "&4&lWARNING: &4You have chat disabled! If this is by mistake, please turn it on in your settings.";
+	private static final int WARNING_LENGTH_TICKS = Time.MINUTE.x(1);
+
 	@EventHandler
 	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			Player player = event.getPlayer();
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
-				int titleTime = Time.SECOND.x(10);
-				player.sendTitle(new Title("&4&lWARNING", "&4You have chat disabled!", 10, titleTime, 10));
-				ActionBarUtils.sendActionBar(player, "&4Turn it on in your settings", titleTime);
-				Tasks.wait(titleTime, () -> ActionBarUtils.sendActionBar(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings", Time.MINUTE.get()));
 				PlayerUtils.send(player, "");
-				PlayerUtils.send(player, "&4&lWARNING: &4You have chat disabled! Turn it on in your settings");
+				PlayerUtils.send(player, CHAT_DISABLED_WARNING);
 				PlayerUtils.send(player, "");
+				ActionBarUtils.sendActionBar(player, CHAT_DISABLED_WARNING, WARNING_LENGTH_TICKS);
 			}
 		});
 	}
@@ -311,7 +284,7 @@ public class Misc implements Listener {
 		if (WorldGroup.get(event.getFrom()) == WorldGroup.CREATIVE) {
 			if (Nerd.of(player).isVanished())
 				if (player.hasPermission("essentials.fly")) {
-					player.setFallDistance(0f);
+					player.setFallDistance(0);
 					player.setAllowFlight(true);
 					player.setFlying(true);
 				}
@@ -341,10 +314,7 @@ public class Misc implements Listener {
 		PlayerUtils.runCommand(player, "ch join c");
 	}
 
-	public static class PlayerDamageByPlayerEvent extends Event {
-		@NonNull
-		@Getter
-		final Player victim;
+	public static class PlayerDamageByPlayerEvent extends PlayerEvent {
 		@NonNull
 		@Getter
 		final Player attacker;
@@ -353,8 +323,8 @@ public class Misc implements Listener {
 		final EntityDamageByEntityEvent originalEvent;
 
 		@SneakyThrows
-		public PlayerDamageByPlayerEvent(Player victim, Player attacker, EntityDamageByEntityEvent event) {
-			this.victim = victim;
+		public PlayerDamageByPlayerEvent(@NotNull Player victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
+			super(victim);
 			this.attacker = attacker;
 			this.originalEvent = event;
 		}
@@ -365,6 +335,7 @@ public class Misc implements Listener {
 			return handlers;
 		}
 
+		@NotNull
 		@Override
 		public HandlerList getHandlers() {
 			return handlers;
@@ -378,8 +349,7 @@ public class Misc implements Listener {
 		Player attacker = null;
 		if (event.getDamager() instanceof Player) {
 			attacker = (Player) event.getDamager();
-		} else if (event.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) event.getDamager();
+		} else if (event.getDamager() instanceof Projectile projectile) {
 			if (projectile.getShooter() instanceof Player)
 				attacker = (Player) projectile.getShooter();
 		}
@@ -397,7 +367,7 @@ public class Misc implements Listener {
 			return;
 
 		Entity entity = event.getRightClicked();
-		if (!(entity instanceof ItemFrame))
+		if (!(entity instanceof ItemFrame itemFrame))
 			return;
 
 		ItemStack tool = getTool(event.getPlayer());
@@ -411,12 +381,20 @@ public class Misc implements Listener {
 		if (!Paths.get("plugins/ImageOnMap/images/map" + mapId + ".png").toFile().exists())
 			return;
 
-		ItemFrame itemFrame = (ItemFrame) entity;
-
 		if (!isNullOrAir(itemFrame.getItem()))
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
+	}
+
+	private static final LocalDate XP_BOOST_END = LocalDate.of(2021, 5, 17);
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onXP(PlayerPickupExperienceEvent event) {
+		if (XP_BOOST_END.atStartOfDay().isBefore(LocalDateTime.now()))
+			return;
+
+		ExperienceOrb orb = event.getExperienceOrb();
+		orb.setExperience(orb.getExperience() * 2);
 	}
 
 }

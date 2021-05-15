@@ -231,8 +231,8 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	@Getter
-	private static final Map<String, Tag<Material>> tags = new HashMap<String, Tag<Material>>() {{
-		List<Field> fields = new ArrayList<Field>() {{
+	private static final Map<String, Tag<Material>> tags = new HashMap<>() {{
+		List<Field> fields = new ArrayList<>() {{
 			addAll(Arrays.asList(MaterialTag.class.getFields()));
 			addAll(Arrays.asList(Tag.class.getFields()));
 		}};
@@ -246,7 +246,8 @@ public class MaterialTag implements Tag<Material> {
 					try {
 						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
 						put(field.getName(), materialTag);
-					} catch (NoSuchMethodException ignore) {}
+					} catch (NoSuchMethodException ignore) {
+					}
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

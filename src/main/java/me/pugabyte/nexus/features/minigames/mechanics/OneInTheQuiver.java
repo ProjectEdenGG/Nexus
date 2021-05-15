@@ -20,7 +20,7 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Shoot players";
 	}
 

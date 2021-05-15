@@ -2,13 +2,14 @@ package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.models.BearFairTalker;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Merchants;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.npcs.Talkers;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -19,7 +20,6 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -241,8 +241,7 @@ public class BFQuests implements Listener {
 
 	@EventHandler
 	public void onCraftItem(CraftItemEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		Player player = (Player) event.getView().getPlayer();
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
 		if (!isAtBearFair(player)) return;
 
 		ItemStack result = event.getInventory().getResult();
@@ -267,8 +266,7 @@ public class BFQuests implements Listener {
 
 	@EventHandler
 	public void onPrepareCraftItem(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		Player player = (Player) event.getView().getPlayer();
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
 		if (!isAtBearFair(player)) return;
 
 		ItemStack[] ingredients = event.getInventory().getMatrix();
@@ -308,7 +306,7 @@ public class BFQuests implements Listener {
 				return;
 
 			int id = event.getNPC().getId();
-			Talkers.startScript(player, id);
+			BearFairTalker.startScript(player, id);
 			Merchants.openMerchant(player, id);
 		}
 	}
@@ -316,9 +314,8 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onCloseInventory(InventoryCloseEvent event) {
 		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
-		if (!(event.getPlayer() instanceof Player)) return;
+		if (!(event.getPlayer() instanceof Player player)) return;
 
-		Player player = (Player) event.getPlayer();
 		if (!isAtBearFair(player)) return;
 
 		BearFair20UserService service = new BearFair20UserService();

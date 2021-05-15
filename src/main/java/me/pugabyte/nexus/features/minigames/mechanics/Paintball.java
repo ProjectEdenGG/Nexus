@@ -27,7 +27,7 @@ public final class Paintball extends TeamMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Shoot players";
 	}
 
@@ -80,26 +80,20 @@ public final class Paintball extends TeamMechanic {
 
 	public void changeBlockColor(Minigamer minigamer, Block block) {
 		ColorType colorType = ColorType.of(minigamer.getTeam().getChatColor());
+		if (colorType == null) return;
 		Material type = block.getType();
+		Material replacement = null;
 		if (MaterialTag.COLORABLE.isTagged(type))
-			block.setType(colorType.switchColor(type));
+			replacement = colorType.switchColor(type);
 		else
 			switch (type) {
-				case SAND:
-				case RED_SAND:
-					block.setType(ColorType.switchColor(Material.WHITE_CONCRETE_POWDER, colorType.getSimilarDyeColor()));
-					break;
-				case QUARTZ_BLOCK:
-				case SNOW_BLOCK:
-				case SANDSTONE:
-					block.setType(ColorType.switchColor(Material.WHITE_CONCRETE, colorType.getSimilarDyeColor()));
-					break;
-				case TERRACOTTA:
-				case PACKED_ICE:
-				case ICE:
-					block.setType(ColorType.switchColor(Material.WHITE_TERRACOTTA, colorType.getSimilarDyeColor()));
-					break;
+				case SAND, RED_SAND -> replacement = ColorType.switchColor(Material.WHITE_CONCRETE_POWDER, colorType.getSimilarDyeColor());
+				case QUARTZ_BLOCK, SNOW_BLOCK, SANDSTONE -> replacement = ColorType.switchColor(Material.WHITE_CONCRETE, colorType.getSimilarDyeColor());
+				case TERRACOTTA, PACKED_ICE, ICE -> replacement = ColorType.switchColor(Material.WHITE_TERRACOTTA, colorType.getSimilarDyeColor());
 			}
+
+		if (replacement != null)
+			block.setType(replacement);
 	}
 
 	// TODO:

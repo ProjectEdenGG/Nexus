@@ -4,6 +4,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class TrafficConeHat extends LoadoutPerk {
 	@Override
@@ -12,7 +13,7 @@ public class TrafficConeHat extends LoadoutPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Warn others of ongoing construction with this flashy hat";
 	}
 

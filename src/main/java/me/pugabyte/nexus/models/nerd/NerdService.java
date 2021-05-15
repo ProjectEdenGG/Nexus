@@ -1,10 +1,9 @@
 package me.pugabyte.nexus.models.nerd;
 
 import dev.morphia.query.Query;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.Utils;
 
@@ -12,29 +11,42 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.stream.Collectors.toList;
 
 @PlayerClass(Nerd.class)
-public class NerdService extends MongoService {
-	private final static Map<UUID, Nerd> cache = new HashMap<>();
+public class NerdService extends MongoService<Nerd> {
+	private final static Map<UUID, Nerd> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Nerd> getCache() {
 		return cache;
 	}
 
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
+	}
+
 	public List<Nerd> find(String partialName) {
 		Query<Nerd> query = database.createQuery(Nerd.class);
 		query.and(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)));
-		if (query.count() > 50)
-			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + query.count() + ")");
+		long count = query.count();
+		if (count > 50)
+			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + count + ")");
 
-		Map<Nerd, Integer> hoursMap = new HashMap<Nerd, Integer>() {{
+		Map<UUID, Integer> hoursMap = new HashMap<>() {{
 			HoursService service = new HoursService();
 			for (Nerd nerd : query.find().toList())
-				put(nerd, service.<Hours>get(nerd.getUuid()).getTotal());
+				put(nerd.getUuid(), service.get(nerd).getTotal());
 		}};
 
-		return new ArrayList<>(Utils.sortByValueReverse(hoursMap).keySet());
+		Set<UUID> sorted = Utils.sortByValueReverse(hoursMap).keySet();
+		return new ArrayList<>(sorted).stream()
+				.map(Nerd::of)
+				.collect(toList());
 	}
 
 	public List<Nerd> getNerdsWithBirthdays() {
@@ -44,7 +56,9 @@ public class NerdService extends MongoService {
 	}
 
 	public Nerd getFromAlias(String alias) {
-		return database.createQuery(Nerd.class).filter("aliases", sanitize(alias)).find().tryNext();
+		Query<Nerd> query = database.createQuery(Nerd.class);
+		query.and(query.criteria("aliases").hasThisOne(alias));
+		return query.find().tryNext();
 	}
 
 }

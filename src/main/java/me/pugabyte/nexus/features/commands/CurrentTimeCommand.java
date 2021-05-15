@@ -18,7 +18,7 @@ import java.util.TimeZone;
 
 @Aliases("timefor")
 public class CurrentTimeCommand extends CustomCommand {
-	GeoIPService geoIpService = new GeoIPService();
+	GeoIPService geoipService = new GeoIPService();
 	SettingService settingService = new SettingService();
 
 	public CurrentTimeCommand(CommandEvent event) {
@@ -52,12 +52,12 @@ public class CurrentTimeCommand extends CustomCommand {
 	@Path("update")
 	void update() {
 		send(PREFIX + "Updating your timezone information...");
-		GeoIP geoIp = geoIpService.request(player());
-		if (geoIp == null || geoIp.getIp() == null)
+		GeoIP geoip = geoipService.request(uuid(), player().getAddress().getHostString());
+		if (geoip == null || geoip.getIp() == null)
 			error("There was an error while updating your timezone. Please try again later.");
 
-		geoIpService.save(geoIp);
-		send(PREFIX + "Updated your timezone to &3" + geoIp.getTimezone());
+		geoipService.save(geoip);
+		send(PREFIX + "Updated your timezone to &3" + geoip.getTimezone());
 	}
 
 	@Path("<player>")

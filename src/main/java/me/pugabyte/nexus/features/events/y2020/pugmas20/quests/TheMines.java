@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 
+import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
@@ -22,7 +23,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -193,7 +193,7 @@ public class TheMines implements Listener {
 
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
-		user.send(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
+		user.sendMessage(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
 	}
 
 	public static String taskId = "pugmas-ore-regen";
@@ -273,7 +273,7 @@ public class TheMines implements Listener {
 	}
 
 	public void scheduleRegen(Block block) {
-		new TaskService().save(new Task(taskId, new HashMap<String, Object>() {{
+		new TaskService().save(new Task(taskId, new HashMap<>() {{
 			put("location", JSON.serializeLocation(block.getLocation()));
 			put("material", block.getType());
 		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
@@ -297,10 +297,9 @@ public class TheMines implements Listener {
 		if (!isAtPugmas(event.getBlock().getLocation()))
 			return;
 
-		if (!(event.getBlock().getState() instanceof BlastFurnace))
+		if (!(event.getBlock().getState() instanceof BlastFurnace state))
 			return;
 
-		BlastFurnace state = (BlastFurnace) event.getBlock().getState();
 		if (state.getCookSpeedMultiplier() != 5) {
 			state.setCookSpeedMultiplier(5);
 			state.update();

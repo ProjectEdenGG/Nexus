@@ -3,6 +3,7 @@ package me.pugabyte.nexus.models.home;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,6 @@ import lombok.ToString;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.Trust.Type;
@@ -35,7 +35,7 @@ import static me.pugabyte.nexus.features.homes.HomesFeature.maxHomes;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class HomeOwner extends PlayerOwnedObject {
+public class HomeOwner implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

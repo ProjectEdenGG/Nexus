@@ -1,25 +1,30 @@
 package me.pugabyte.nexus.models.worldban;
 
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
+import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static eden.utils.Utils.isNullOrEmpty;
 
 @PlayerClass(WorldBan.class)
-public class WorldBanService extends MongoService {
-	private final static Map<UUID, WorldBan> cache = new HashMap<>();
+public class WorldBanService extends MongoService<WorldBan> {
+	private final static Map<UUID, WorldBan> cache = new ConcurrentHashMap<>();
+	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, WorldBan> getCache() {
 		return cache;
 	}
 
-	public void save(WorldBan worldBan) {
-		if (worldBan.getBans() == null || worldBan.getBans().size() == 0)
-			super.delete(worldBan);
-		else
-			super.save(worldBan);
+	protected Map<UUID, Integer> getSaveQueue() {
+		return saveQueue;
+	}
+
+	@Override
+	protected boolean deleteIf(WorldBan worldBan) {
+		return isNullOrEmpty(worldBan.getBans());
 	}
 
 }

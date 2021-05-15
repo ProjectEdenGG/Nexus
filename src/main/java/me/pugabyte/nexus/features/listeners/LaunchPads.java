@@ -1,13 +1,16 @@
 package me.pugabyte.nexus.features.listeners;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -30,9 +33,9 @@ import java.util.UUID;
 import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 
 public class LaunchPads implements Listener {
-	private static Map<Player, Integer> taskIDs = new HashMap<>();
-	private static Map<Player, FallingBlock> launchPadPlayers = new HashMap<>();
-	private static List<UUID> launchPadBlockUUIDs = new ArrayList<>();
+	private static final Map<Player, Integer> taskIDs = new HashMap<>();
+	private static final Map<Player, FallingBlock> launchPadPlayers = new HashMap<>();
+	private static final List<UUID> launchPadBlockUUIDs = new ArrayList<>();
 
 	@EventHandler
 	public void onPressurePlatePress(PlayerInteractEvent event) {
@@ -40,19 +43,20 @@ public class LaunchPads implements Listener {
 		if (block == null) return;
 		if (!event.getAction().equals(Action.PHYSICAL)) return;
 		if (!block.getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) return;
-		if (event.getPlayer().isSneaking()) return;
+
+		Player player = event.getPlayer();
+		if (player.isSneaking()) return;
 
 		Block below = block.getRelative(0, -1, 0).getLocation().getBlock();
-		if (!(below.getType().equals(Material.REDSTONE_ORE) || below.getType().equals(Material.REDSTONE_ORE)))
-			return;
+		if (!(below.getType().equals(Material.REDSTONE_ORE))) return;
 
 		event.setCancelled(true);
 		event.setUseInteractedBlock(Event.Result.DENY);
 
 		Block belowBelow = below.getRelative(0, -1, 0).getLocation().getBlock();
-		if (ItemUtils.isNullOrAir(belowBelow.getType())) return;
+		Material belowBelowType = belowBelow.getType();
 
-		if (MaterialTag.SIGNS.isTagged(belowBelow.getType())) {
+		if (!ItemUtils.isNullOrAir(belowBelowType) && MaterialTag.SIGNS.isTagged(belowBelowType)) {
 			Sign sign = (Sign) belowBelow.getState();
 			String[] lines = sign.getLines();
 
@@ -64,12 +68,12 @@ public class LaunchPads implements Listener {
 
 			if (!lines[3].equalsIgnoreCase("")) {
 				double direction = Double.parseDouble(lines[3]);
-				launchPlayer(event.getPlayer(), power, angle, direction);
+				launchPlayer(player, power, angle, direction);
 			}
 
-			launchPlayer(event.getPlayer(), power, angle);
-		} else if (Minigames.isMinigameWorld(event.getPlayer().getWorld()))
-			launchPlayer(event.getPlayer());
+			launchPlayer(player, power, angle);
+		} else if (Minigames.isMinigameWorld(player.getWorld()))
+			launchPlayer(player);
 	}
 
 	public void launchPlayer(Player player) {
@@ -111,8 +115,8 @@ public class LaunchPads implements Listener {
 			if (fBlock != null) {
 				fBlock.setDropItem(false);
 
-				if ((fBlock.getWorld() != null && !player.getLocation().getWorld().equals(fBlock.getWorld()))
-						|| fBlock.getLocation().clone().add(fBlock.getLocation().getDirection().clone().multiply(0.5)).getBlock().isLiquid())
+				fBlock.getWorld();
+				if (!player.getLocation().getWorld().equals(fBlock.getWorld()) || fBlock.getLocation().clone().add(fBlock.getLocation().getDirection().clone().multiply(0.5)).getBlock().isLiquid())
 					endFlight = true;
 
 				if (!fBlock.isDead() && !endFlight)
@@ -120,12 +124,38 @@ public class LaunchPads implements Listener {
 			}
 
 			if (fBlock == null || fBlock.isOnGround() || fBlock.isDead() || fBlock.getLocation().getY() < -10.0
-					|| fBlock.getVelocity().length() == 0.0 || endFlight || launchPadPlayers.get(player) == null || player.isOnGround()) {
+					|| fBlock.getVelocity().length() == 0.0 || endFlight || player.isOnGround()) {
+
+
+				if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
+					if (!player.isOnGround()) {
+						player.sendMessage("");
+						player.sendMessage("Ending launch because:");
+						if (fBlock == null)
+							player.sendMessage("  block is null");
+						else if (fBlock.isOnGround())
+							player.sendMessage("  block is on ground");
+						else if (fBlock.isDead())
+							player.sendMessage("  block is dead");
+						else if (fBlock.getLocation().getY() < -10.0)
+							player.sendMessage("  block is in void");
+						else if (fBlock.getVelocity().length() == 0.0)
+							player.sendMessage("  block velocity is 0");
+						else if (endFlight)
+							player.sendMessage("  either player world and block world are different OR block is in liquid");
+					}
+				}
 
 				if (player.isOnGround()) {
-					Tasks.wait(5, () -> {
-						if (player.isOnGround())
+					Tasks.wait(Time.SECOND, () -> {
+						if (player.isOnGround()) {
+							if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
+								player.sendMessage("");
+								player.sendMessage("Ending launch because:");
+								player.sendMessage("  player is on ground");
+							}
 							cancelLaunch(player);
+						}
 					});
 				} else {
 					if (fBlock != null) {
@@ -159,9 +189,9 @@ public class LaunchPads implements Listener {
 
 	@EventHandler
 	public void onDamage(final EntityDamageEvent event) {
-		if (event.getEntity() == null) return;
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		Entity entity = event.getEntity();
+		if (!(entity instanceof Player player)) return;
+
 		if (launchPadPlayers.get(player) != null)
 			event.setCancelled(true);
 	}

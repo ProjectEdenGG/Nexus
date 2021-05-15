@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -54,6 +55,10 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 		Nexus.getPerms().playerRemove(player, permission);
 		PermissionChange.unset().player(player).permission(permission).world(player.getLocation()).run();
 		PermissionChange.unset().player(player).permission(permission).run();
+	}
+
+	public static boolean canWorldGuardEdit(Entity player) {
+		return player.hasPermission(permission);
 	}
 
 	@EventHandler

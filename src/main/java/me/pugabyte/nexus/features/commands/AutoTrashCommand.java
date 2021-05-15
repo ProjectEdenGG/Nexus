@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -96,25 +97,25 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!player.hasPermission(PERMISSION)) return;
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player))) return;
-		ItemMeta meta = event.getItem().getItemStack().getItemMeta();
-		if (meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants()) return;
+		ItemStack item = event.getItem().getItemStack();
+		ItemMeta meta = item.getItemMeta();
+		if (meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants() || CustomModel.exists(item)) return;
 
 		AutoTrashService service = new AutoTrashService();
 		AutoTrash autoTrash = service.get(player);
 
 		if (!autoTrash.isEnabled()) return;
 
-		if (autoTrash.getMaterials().contains(event.getItem().getItemStack().getType())) {
+		if (autoTrash.getMaterials().contains(item.getType())) {
 			event.setCancelled(true);
 			if (autoTrash.getBehavior() == Behavior.TRASH) {
 				DumpsterService dumpsterService = new DumpsterService();
 				Dumpster dumpster = dumpsterService.get();
 
-				dumpster.add(event.getItem().getItemStack());
+				dumpster.add(item);
 				dumpsterService.save(dumpster);
 
 				event.getItem().remove();

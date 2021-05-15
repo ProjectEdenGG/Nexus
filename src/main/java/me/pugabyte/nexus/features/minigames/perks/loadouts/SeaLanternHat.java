@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.perks.loadouts;
 
 import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 public class SeaLanternHat extends LoadoutPerk {
 	@Override
@@ -10,7 +11,7 @@ public class SeaLanternHat extends LoadoutPerk {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "Illuminate like the lights of something under the sea";
 	}
 

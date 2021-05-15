@@ -1,21 +1,21 @@
 package me.pugabyte.nexus.features.discord;
 
+import eden.utils.Env;
+import eden.utils.TimeUtils.Time;
 import joptsimple.internal.Strings;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
-import me.pugabyte.nexus.features.socialmedia.SocialMedia.BNSocialMediaSite;
+import me.pugabyte.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.queup.QueUp;
 import me.pugabyte.nexus.models.queup.QueUpService;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -27,6 +27,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -112,9 +113,10 @@ public class Discord extends Feature {
 		return discordize(PlainComponentSerializer.plain().serialize(message));
 	}
 
+	@Nullable
 	public static Guild getGuild() {
 		if (Bot.KODA.jda() == null) return null;
-		return Bot.KODA.jda().getGuildById(DiscordId.Guild.BEAR_NATION.getId());
+		return Bot.KODA.jda().getGuildById(DiscordId.Guild.PROJECT_EDEN.getId());
 	}
 
 	@Deprecated
@@ -224,7 +226,7 @@ public class Discord extends Feature {
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get();
 		if (!Strings.isNullOrEmpty(queup.getLastSong()))
-			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + BNSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
 
 		return topic;
 	}

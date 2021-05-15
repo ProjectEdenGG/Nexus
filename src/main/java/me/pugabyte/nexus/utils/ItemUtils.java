@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
@@ -73,22 +74,21 @@ public class ItemUtils {
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
 			return contents;
 		
-		if (!(itemStack.getItemMeta() instanceof BlockStateMeta))
+		if (!(itemStack.getItemMeta() instanceof BlockStateMeta meta))
 			return contents;
 
-		BlockStateMeta meta = (BlockStateMeta) itemStack.getItemMeta();
-		if (!(meta.getBlockState() instanceof ShulkerBox))
+		if (!(meta.getBlockState() instanceof ShulkerBox shulkerBox))
 			return contents;
 
-		ShulkerBox shulkerBox = (ShulkerBox) meta.getBlockState();
 		contents.addAll(Arrays.asList(shulkerBox.getInventory().getContents()));
 
 		return contents;
 	}
 
-	public static ItemStack getTool(Player player) {
-		ItemStack mainHand = player.getInventory().getItemInMainHand();
-		ItemStack offHand = player.getInventory().getItemInOffHand();
+	public static ItemStack getTool(HasPlayer player) {
+		Player _player = player.getPlayer();
+		ItemStack mainHand = _player.getInventory().getItemInMainHand();
+		ItemStack offHand = _player.getInventory().getItemInOffHand();
 		if (!isNullOrAir(mainHand))
 			return mainHand;
 		else if (!isNullOrAir(offHand))
@@ -96,16 +96,17 @@ public class ItemUtils {
 		return null;
 	}
 
-	public static ItemStack getToolRequired(Player player) {
+	public static ItemStack getToolRequired(HasPlayer player) {
 		ItemStack item = getTool(player);
 		if (isNullOrAir(item))
 			throw new InvalidInputException("You are not holding anything");
 		return item;
 	}
 
-	public static EquipmentSlot getHandWithTool(Player player) {
-		ItemStack mainHand = player.getInventory().getItemInMainHand();
-		ItemStack offHand = player.getInventory().getItemInOffHand();
+	public static EquipmentSlot getHandWithTool(HasPlayer player) {
+		Player _player = player.getPlayer();
+		ItemStack mainHand = _player.getInventory().getItemInMainHand();
+		ItemStack offHand = _player.getInventory().getItemInOffHand();
 		if (!isNullOrAir(mainHand))
 			return EquipmentSlot.HAND;
 		else if (!isNullOrAir(offHand))
@@ -113,7 +114,7 @@ public class ItemUtils {
 		return null;
 	}
 
-	public static EquipmentSlot getHandWithToolRequired(Player player) {
+	public static EquipmentSlot getHandWithToolRequired(HasPlayer player) {
 		EquipmentSlot hand = getHandWithTool(player);
 		if (hand == null)
 			throw new InvalidInputException("You are not holding anything");
@@ -155,8 +156,7 @@ public class ItemUtils {
 
 	public static ItemStack setDurability(ItemStack item, int percentage) {
 		ItemMeta meta = item.getItemMeta();
-		if (meta instanceof Damageable) {
-			Damageable damageable = (Damageable) meta;
+		if (meta instanceof Damageable damageable) {
 			double maxDurability = item.getType().getMaxDurability();
 			double damage = (percentage / 100.0) * maxDurability;
 			damageable.setDamage((int) damage);
@@ -209,5 +209,142 @@ public class ItemUtils {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get the raw defense points of an armor piece. This (obviously, it's a {@link Material}) does not include enchantments or custom NBT.
+	 * @param item armor item
+	 * @return defense value in half-bars
+	 */
+	public static int getDefensePoints(Material item) {
+		// there might be a bukkit method for this somewhere but i haven't found it and i don't wanna do NMS
+		switch (item) {
+			// i think this looks better as an old switch and will make better diffs
+			case LEATHER_HELMET:
+			case LEATHER_BOOTS:
+			case CHAINMAIL_BOOTS:
+			case GOLDEN_BOOTS:
+				return 1;
+			case LEATHER_LEGGINGS:
+			case CHAINMAIL_HELMET:
+			case IRON_HELMET:
+			case IRON_BOOTS:
+			case GOLDEN_HELMET:
+			case TURTLE_HELMET:
+				return 2;
+			case LEATHER_CHESTPLATE:
+			case DIAMOND_HELMET:
+			case DIAMOND_BOOTS:
+			case GOLDEN_LEGGINGS:
+			case NETHERITE_HELMET:
+			case NETHERITE_BOOTS:
+				return 3;
+			case CHAINMAIL_LEGGINGS:
+				return 4;
+			case CHAINMAIL_CHESTPLATE:
+			case IRON_LEGGINGS:
+			case GOLDEN_CHESTPLATE:
+				return 5;
+			case IRON_CHESTPLATE:
+			case DIAMOND_LEGGINGS:
+			case NETHERITE_LEGGINGS:
+				return 6;
+			case DIAMOND_CHESTPLATE:
+			case NETHERITE_CHESTPLATE:
+				return 8;
+			default:
+				return 0;
+		}
+	}
+
+	/**
+	 * Get the raw armor toughness points of an armor piece. This (obviously, it's a {@link Material}) does not include enchantments or custom NBT.
+	 * @param item armor item
+	 * @return armor toughness value
+	 */
+	public static int getArmorToughness(Material item) {
+		// there might be a bukkit method for this somewhere but i haven't found it and i don't wanna do NMS
+		switch (item) {
+			// i think this looks better as an old switch and will make better diffs
+			case DIAMOND_HELMET:
+			case DIAMOND_CHESTPLATE:
+			case DIAMOND_LEGGINGS:
+			case DIAMOND_BOOTS:
+				return 2;
+			case NETHERITE_HELMET:
+			case NETHERITE_CHESTPLATE:
+			case NETHERITE_LEGGINGS:
+			case NETHERITE_BOOTS:
+				return 3;
+			default:
+				return 0;
+		}
+	}
+
+	/**
+	 * Get the raw knockback resistance of an armor piece. This (obviously, it's a {@link Material}) does not include enchantments or custom NBT.
+	 * @param item armor item
+	 * @return knockback resistance value
+	 */
+	public static int getKnockbackResistance(Material item) {
+		// there might be a bukkit method for this somewhere but i haven't found it and i don't wanna do NMS
+		switch (item) {
+			// i think this looks better as an old switch and will make better diffs
+			case NETHERITE_HELMET:
+			case NETHERITE_CHESTPLATE:
+			case NETHERITE_LEGGINGS:
+			case NETHERITE_BOOTS:
+				return 1;
+			default:
+				return 0;
+		}
+	}
+
+	/**
+	 * Gets the equipment slot for an armor item
+	 * @param item armor item
+	 * @return equipment slot, or null if non-armor-item
+	 */
+	@Nullable
+	public static EquipmentSlot getArmorEquipmentSlot(Material item) {
+		switch (item) {
+			case CHAINMAIL_HELMET:
+			case DIAMOND_HELMET:
+			case GOLDEN_HELMET:
+			case IRON_HELMET:
+			case LEATHER_HELMET:
+			case NETHERITE_HELMET:
+			case TURTLE_HELMET:
+			case ZOMBIE_HEAD:
+			case SKELETON_SKULL:
+			case WITHER_SKELETON_SKULL:
+			case CREEPER_HEAD:
+			case PLAYER_HEAD:
+			case CARVED_PUMPKIN:
+				return EquipmentSlot.HEAD;
+			case DIAMOND_CHESTPLATE:
+			case CHAINMAIL_CHESTPLATE:
+			case GOLDEN_CHESTPLATE:
+			case IRON_CHESTPLATE:
+			case LEATHER_CHESTPLATE:
+			case NETHERITE_CHESTPLATE:
+				return EquipmentSlot.CHEST;
+			case CHAINMAIL_LEGGINGS:
+			case DIAMOND_LEGGINGS:
+			case GOLDEN_LEGGINGS:
+			case IRON_LEGGINGS:
+			case LEATHER_LEGGINGS:
+			case NETHERITE_LEGGINGS:
+				return EquipmentSlot.LEGS;
+			case CHAINMAIL_BOOTS:
+			case DIAMOND_BOOTS:
+			case GOLDEN_BOOTS:
+			case IRON_BOOTS:
+			case LEATHER_BOOTS:
+			case NETHERITE_BOOTS:
+				return EquipmentSlot.FEET;
+			default:
+				return null;
+		}
 	}
 }

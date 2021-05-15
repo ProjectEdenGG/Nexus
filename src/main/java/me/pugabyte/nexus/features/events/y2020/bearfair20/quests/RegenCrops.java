@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.quests;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -29,11 +29,7 @@ import java.util.Set;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.bottomBlockError;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.cantBreakError;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.decorOnlyError;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.notFullyGrownError;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.*;
 
 public class RegenCrops implements Listener {
 
@@ -56,12 +52,11 @@ public class RegenCrops implements Listener {
 			Block block = loc.getBlock();
 			BlockData blockData = block.getBlockData();
 
-			if (!(blockData instanceof Ageable)) {
+			if (!(blockData instanceof Ageable ageable)) {
 				cropRegenList.remove(loc);
 				continue;
 			}
 
-			Ageable ageable = (Ageable) blockData;
 			int age = ageable.getAge();
 			if (age == ageable.getMaximumAge()) {
 				cropRegenList.remove(loc);
@@ -207,25 +202,23 @@ public class RegenCrops implements Listener {
 
 		BlockData blockData = block.getState().getBlockData();
 		Material material = block.getType();
-		if (!(blockData instanceof Ageable) || noAge.contains(material)) {
+		if (!(blockData instanceof Ageable ageable) || noAge.contains(material)) {
 			switch (material) {
-				case MELON:
-				case PUMPKIN:
+				case MELON, PUMPKIN -> {
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
 						send(decorOnlyError, player);
 						event.setCancelled(true);
 						return;
 					}
 					Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), material));
-					break;
-				case SUGAR_CANE:
+				}
+				case SUGAR_CANE -> {
 					if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
 						send(bottomBlockError, player);
 						event.setCancelled(true);
 						return;
 					}
 					multiRegenMap.put(block.getLocation(), material);
-
 					Block above = block.getRelative(0, 1, 0);
 					if (above.getType().equals(material)) {
 						int yvalue = above.getLocation().getBlockY();
@@ -241,17 +234,17 @@ public class RegenCrops implements Listener {
 							above = above.getRelative(0, 1, 0);
 						}
 					}
-					break;
-				default:
+				}
+				default -> {
 					if (player.hasPermission("worldguard.region.bypass.*")) return;
 					send(cantBreakError, player);
 					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					event.setCancelled(true);
+				}
 			}
 			return;
 		}
 
-		Ageable ageable = (Ageable) blockData;
 		if (ageable.getAge() != ageable.getMaximumAge()) {
 			if (new CooldownService().check(player, "BF_notFullyGrown", Time.MINUTE)) {
 				send(notFullyGrownError, player);

@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.framework.commands.models;
 
 import com.google.common.base.Strings;
+import eden.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.commands.models.events.TabEvent;
+import me.pugabyte.nexus.framework.commands.models.events.CommandRunEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -23,9 +25,7 @@ import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeCommandBlockEx
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeConsoleException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import me.pugabyte.nexus.framework.persistence.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -39,6 +39,8 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -62,21 +64,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
+import java.lang.reflect.Parameter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -107,11 +108,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	public void _shutdown() {}
 
 	protected boolean isCommandEvent() {
-		return !(event instanceof TabEvent);
+		return event instanceof CommandRunEvent;
 	}
 
 	protected boolean isPlayerCommandEvent() {
-		return !(event instanceof TabEvent) && isPlayer();
+		return event instanceof CommandRunEvent && isPlayer();
 	}
 
 	protected String camelCase(Enum<?> _enum) {
@@ -234,9 +235,9 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (object instanceof String)
 			send(sender(), (String) object);
 		else if (object instanceof JsonBuilder)
-			send(sender(), (JsonBuilder) object);
+			send(sender(), object);
 		else if (object instanceof Component)
-			send(sender(), (Component) object);
+			send(sender(), object);
 		else
 			throw new InvalidInputException("Cannot send object: " + object.getClass().getSimpleName());
 	}
@@ -249,11 +250,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		send(sender(), json(message));
 	}
 
-	protected void send(JsonBuilder builder) {
-		send(sender(), builder);
-	}
-
-	protected void send(Component component) {
+	protected void send(ComponentLike component) {
 		send(sender(), component);
 	}
 
@@ -300,9 +297,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		throw new InvalidInputException(error);
 	}
 
+	@Contract("_ -> fail")
+	public void error(ComponentLike error) {
+		throw new InvalidInputException(error);
+	}
+
 	@Deprecated
 	public void error(Player player, String error) {
-		player.sendMessage(StringUtils.colorize("&c" + error));
+		player.sendMessage(new JsonBuilder(NamedTextColor.RED).next(error));
 	}
 
 	public void rethrow(Throwable ex) {
@@ -321,7 +323,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	public void showUsage() {
-		throw new InvalidInputException(event.getUsageMessage());
+		error(((CommandRunEvent) event).getUsageMessage());
 	}
 
 	protected CommandSender sender() {
@@ -421,21 +423,19 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSelf(PlayerOwnedObject object) {
-		return isSelf(object.getOfflinePlayer());
+		return isPlayer() && isSelf(PlayerUtils.getPlayer(object.getUuid()));
 	}
 
 	protected boolean isSelf(OfflinePlayer player) {
-		return isSelf(player(), player);
+		return isPlayer() && isSelf(player(), player);
 	}
 
 	protected boolean isSelf(Player player) {
-		return isSelf(player(), player);
+		return isPlayer() && isSelf(player(), player);
 	}
 
 	protected boolean isSelf(OfflinePlayer self, OfflinePlayer player) {
-		if (!isPlayer())
-			return false;
-		return self.getUniqueId().equals(player.getUniqueId());
+		return isPlayer() && self.getUniqueId().equals(player.getUniqueId());
 	}
 
 	protected boolean isStaff() {
@@ -499,8 +499,9 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void checkPermission(String permission) {
-		if (!sender().hasPermission(permission))
-			throw new NoPermissionException();
+		if (isPlayer())
+			if (!sender().hasPermission(permission))
+				throw new NoPermissionException();
 	}
 
 	protected String argsString() {
@@ -674,33 +675,19 @@ public abstract class CustomCommand extends ICustomCommand {
 			throw new InvalidInputException("Nothing to fallback to");
 	}
 
-	// TODO Don't hardcode model path
-	private static final Set<Class<? extends MongoService>> services = new Reflections("me.pugabyte.nexus.models").getSubTypesOf(MongoService.class);
-	private static final Map<Class<? extends PlayerOwnedObject>, Class<? extends MongoService>> serviceMap = new HashMap<>();
-
-	static {
-		for (Class<? extends MongoService> service : services) {
-			PlayerClass annotation = service.getAnnotation(PlayerClass.class);
-			if (annotation == null) {
-				Nexus.warn(service.getSimpleName() + " does not have @PlayerClass annotation");
-				continue;
-			}
-
-			serviceMap.put(annotation.value(), service);
-		}
-	}
-
 	@SneakyThrows
-	protected <T extends PlayerOwnedObject> T convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
-		if (serviceMap.containsKey(type))
-			return serviceMap.get(type).newInstance().get(convertToOfflinePlayer(value));
+	protected PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
+		Class<? extends MongoService> service = (Class<? extends MongoService>) MongoService.ofObject(type);
+		if (service != null)
+			return service.newInstance().get(convertToOfflinePlayer(value));
 		return null;
 	}
 
 	@ConverterFor(OfflinePlayer.class)
 	public OfflinePlayer convertToOfflinePlayer(String value) {
+		if (value == null) return null;
 		if ("self".equalsIgnoreCase(value)) value = uuid().toString();
-		return PlayerUtils.getPlayer(value);
+		return PlayerUtils.getPlayer(value.replaceFirst("[pP]:", ""));
 	}
 
 	@ConverterFor(Player.class)
@@ -731,8 +718,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	public List<String> tabCompletePlayer(String filter) {
 		return Bukkit.getOnlinePlayers().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
-				.map(player -> Nickname.of(player))
-				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+				.map(Nickname::of)
+				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
 				.collect(toList());
 	}
 
@@ -744,7 +731,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		return new NerdService().find(filter).stream()
 				.map(Nerd::getName)
-				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
 				.collect(toList());
 	}
 
@@ -790,7 +777,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			return ChatColor.of(value.replaceFirst("&", ""));
 
 		try {
-			return ColorType.valueOf(value.toUpperCase()).getChatColor();
+			return ChatColor.of(value.toUpperCase());
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException("Color &e" + value + "&c not found");
 		}
@@ -798,9 +785,25 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor(ChatColor.class)
 	List<String> tabCompleteChatColor(String filter) {
-		return Arrays.stream(ColorType.values())
-				.map(colorType -> colorType.name().toLowerCase())
+		return Arrays.stream(ChatColor.values())
+				.map(ChatColor::getName)
 				.filter(name -> name.startsWith(filter.toLowerCase()))
+				.collect(toList());
+	}
+
+	@ConverterFor(ColorType.class)
+	ColorType convertToColorType(String value) {
+		ColorType color = ColorType.of(value.replace('_', ' ').toLowerCase());
+		if (color == null)
+			throw new InvalidInputException("Color &e" + value + "&c not found");
+		return color;
+	}
+
+	@TabCompleterFor(ColorType.class)
+	List<String> tabCompleteColorType(String filter) {
+		return Arrays.stream(ColorType.values())
+				.map(ColorType::getName)
+				.filter(name -> name.replace(' ', '_').startsWith(filter.toLowerCase()))
 				.collect(toList());
 	}
 
@@ -848,7 +851,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor(LivingEntity.class)
 	protected List<String> tabCompleteLivingEntity(String value) {
-		return new ArrayList<String>() {{
+		return new ArrayList<>() {{
 			for (EntityType entityType : EntityType.values()) {
 				Class<? extends Entity> entityClass = entityType.getEntityClass();
 				if (entityClass != null && LivingEntity.class.isAssignableFrom(entityClass))
@@ -858,11 +861,11 @@ public abstract class CustomCommand extends ICustomCommand {
 		}};
 	}
 
-	protected <T> void paginate(List<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page) {
+	protected <T> void paginate(Collection<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page) {
 		paginate(values, formatter, command, page, 10);
 	}
 
-	protected <T> void paginate(List<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page, int amount) {
+	protected <T> void paginate(Collection<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page, int amount) {
 		if (page < 1)
 			error("Page number must be 1 or greater");
 
@@ -874,7 +877,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		line();
 		AtomicInteger index = new AtomicInteger(start);
-		values.subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index))));
+		new LinkedList<>(values).subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index))));
 		line();
 
 		boolean first = page == 1;
@@ -979,7 +982,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	public String formatWho(Player self, PlayerOwnedObject target, WhoType whoType) {
-		return formatWho(target.getOfflinePlayer(), whoType);
+		return formatWho(PlayerUtils.getPlayer(target.getUuid()), whoType);
 	}
 
 	public String formatWho(Player self, OfflinePlayer target, WhoType whoType) {
@@ -991,6 +994,16 @@ public abstract class CustomCommand extends ICustomCommand {
 		POSSESSIVE_LOWER,
 		ACTIONARY_UPPER,
 		ACTIONARY_LOWER
+	}
+
+	public static Pattern getSwitchPattern(Parameter parameter) {
+		Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
+		String regex = "(?i)^(--" + parameter.getName();
+		char shorthand = annotation.shorthand();
+		if (shorthand != '-')
+			regex += "|-" + shorthand;
+
+		return Pattern.compile(regex + ")(=[^\\s]+)?$");
 	}
 
 }

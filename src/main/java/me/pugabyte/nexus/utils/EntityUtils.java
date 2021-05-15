@@ -1,13 +1,16 @@
 package me.pugabyte.nexus.utils;
 
+import me.lexikiq.HasPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -17,20 +20,25 @@ import java.util.stream.Collectors;
 
 public class EntityUtils {
 
+	@NotNull
 	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, double radius) {
-		if (location.getWorld() == null) return null;
+		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
 	}
 
 	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, double radius) {
-		if (location.getWorld() == null) return null;
+		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
 				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
 
+	public static boolean isHostile(Entity entity) {
+		return entity instanceof Monster || getExtraHostileMobs().contains(entity.getType());
+	}
+
 	public static List<EntityType> getExtraHostileMobs() {
-		return Arrays.asList(EntityType.PHANTOM, EntityType.GHAST, EntityType.MAGMA_CUBE, EntityType.SLIME, EntityType.SHULKER);
+		return Arrays.asList(EntityType.PHANTOM, EntityType.GHAST, EntityType.MAGMA_CUBE, EntityType.SLIME, EntityType.SHULKER, EntityType.ENDER_DRAGON);
 	}
 
 	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
@@ -55,10 +63,10 @@ public class EntityUtils {
 		return result;
 	}
 
-	public static void makeArmorStandLookAtPlayer(ArmorStand stand, Player player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
+	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
 		Location origin = stand.getEyeLocation(); //our original location (Point A)
 		double initYaw = origin.getYaw();
-		Vector tgt = player.getEyeLocation().toVector(); //our target location (Point B)
+		Vector tgt = player.getPlayer().getEyeLocation().toVector(); //our target location (Point B)
 		origin.setDirection(tgt.subtract(origin.toVector())); //set the origin's direction to be the direction vector between point A and B.
 		double yaw = origin.getYaw() - initYaw;
 		double pitch = origin.getPitch();
@@ -86,13 +94,9 @@ public class EntityUtils {
 	}
 
 	public static boolean isUnnaturalSpawn(LivingEntity entity) {
-		switch (entity.getEntitySpawnReason()) {
-			case SPAWNER_EGG:
-			case SPAWNER:
-			case CUSTOM:
-				return true;
-			default:
-				return false;
-		}
+		return switch (entity.getEntitySpawnReason()) {
+			case SPAWNER_EGG, SPAWNER, CUSTOM -> true;
+			default -> false;
+		};
 	}
 }

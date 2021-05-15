@@ -2,13 +2,14 @@ package me.pugabyte.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
+import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -53,7 +54,7 @@ public class ItemBuilder implements Cloneable {
 	public ItemBuilder(ItemStack itemStack) {
 		this.itemStack = itemStack.clone();
 		this.itemMeta = itemStack.getItemMeta();
-		if (itemMeta.getLore() != null)
+		if (itemMeta != null && itemMeta.getLore() != null)
 			this.lore.addAll(itemMeta.getLore());
 	}
 
@@ -84,7 +85,8 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	public ItemBuilder name(String displayName) {
-		itemMeta.setDisplayName(colorize("&f" + displayName));
+		if (displayName != null)
+			itemMeta.setDisplayName(colorize("&f" + displayName));
 		return this;
 	}
 
@@ -93,7 +95,8 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	public ItemBuilder lore(List<String> lore) {
-		this.lore.addAll(lore);
+		if (lore != null)
+			this.lore.addAll(lore);
 		return this;
 	}
 
@@ -127,6 +130,10 @@ public class ItemBuilder implements Cloneable {
 		enchant(Enchantment.ARROW_INFINITE);
 		itemFlags(ItemFlag.HIDE_ENCHANTS);
 		return this;
+	}
+
+	public ItemBuilder glow(boolean glow) {
+		return glow ? glow() : this;
 	}
 
 	public ItemBuilder unbreakable() {
@@ -193,14 +200,21 @@ public class ItemBuilder implements Cloneable {
 
 	// Skulls
 
-	public ItemBuilder skullOwner(OfflinePlayer offlinePlayer) {
-		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
+	public ItemBuilder skullOwner(HasOfflinePlayer offlinePlayer) {
+		SkullMeta skullMeta = SkinCache.of(offlinePlayer.getOfflinePlayer()).getHeadMeta();
+		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());
 		return this;
 	}
 
 	@Deprecated
 	public ItemBuilder skullOwner(String name) {
 		((SkullMeta) itemMeta).setOwner(name);
+		return this;
+	}
+
+	@Deprecated
+	public ItemBuilder skullOwnerActual(HasOfflinePlayer offlinePlayer) {
+		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer.getOfflinePlayer());
 		return this;
 	}
 

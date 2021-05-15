@@ -1,11 +1,12 @@
 package me.pugabyte.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.mewin.worldguardregionapi.events.RegionEnteredEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.models.Laser;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User;
 import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
@@ -14,7 +15,6 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -45,14 +45,7 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.give
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.NORTH_EAST;
-import static org.bukkit.block.BlockFace.NORTH_WEST;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.SOUTH_EAST;
-import static org.bukkit.block.BlockFace.SOUTH_WEST;
-import static org.bukkit.block.BlockFace.WEST;
+import static org.bukkit.block.BlockFace.*;
 
 public class Reflection implements Listener {
 
@@ -114,8 +107,7 @@ public class Reflection implements Listener {
 
 			Block banner = block.getRelative(0, 2, 0);
 			BlockData blockData = banner.getBlockData();
-			if (!(blockData instanceof Rotatable)) continue;
-			Rotatable rotatable = (Rotatable) blockData;
+			if (!(blockData instanceof Rotatable rotatable)) continue;
 
 			if (block.getType().equals(Material.CYAN_CONCRETE_POWDER)) {
 				BlockFace newFace = RandomUtils.randomElement(directions);
@@ -153,8 +145,7 @@ public class Reflection implements Listener {
 				laserStart = skullLoc;
 
 				BlockData blockDataDir = skullLoc.getBlock().getBlockData();
-				if (!(blockDataDir instanceof Rotatable)) return;
-				Rotatable skullDir = (Rotatable) blockDataDir;
+				if (!(blockDataDir instanceof Rotatable skullDir)) return;
 				BlockFace skullFace = skullDir.getRotation().getOppositeFace();
 
 				if (powderType.equals(Material.BLACK_CONCRETE_POWDER)) {
@@ -359,7 +350,7 @@ public class Reflection implements Listener {
 	}
 
 	@EventHandler
-	public void onRegionEnter(RegionEnteredEvent event) {
+	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
 			send(prefix + objMsg, event.getPlayer());

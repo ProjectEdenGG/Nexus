@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.ChatManager;
+import me.pugabyte.nexus.features.chat.translator.Language;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 
@@ -21,20 +20,20 @@ import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.features.chat.Chat.PREFIX;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Chatter extends PlayerOwnedObject {
+public class Chatter implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Channel activeChannel;
 	private Set<PublicChannel> joinedChannels = new HashSet<>();
 	private Set<PublicChannel> leftChannels = new HashSet<>();
 	private PrivateChannel lastPrivateMessage;
+	private Language language;
 
 	public void playSound() {
 		if (isOnline())
@@ -43,7 +42,7 @@ public class Chatter extends PlayerOwnedObject {
 
 	public void say(String message) {
 		if (message.startsWith("/"))
-			PlayerUtils.runCommand(getPlayer(), trimFirst(message));
+			PlayerUtils.runCommand(getOnlinePlayer(), trimFirst(message));
 		else
 			say(getActiveChannel(), message);
 	}
@@ -54,11 +53,11 @@ public class Chatter extends PlayerOwnedObject {
 
 	public void setActiveChannel(Channel channel) {
 		if (channel == null)
-			Nerd.of(getOfflinePlayer()).send(PREFIX + "You are no longer speaking in a channel");
+			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + "You are no longer speaking in a channel");
 		else {
 			if (channel instanceof PublicChannel)
 				join((PublicChannel) channel);
-			Nerd.of(getOfflinePlayer()).send(PREFIX + channel.getAssignMessage(this));
+			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + channel.getAssignMessage(this));
 		}
 		this.activeChannel = channel;
 	}
@@ -112,22 +111,12 @@ public class Chatter extends PlayerOwnedObject {
 		fixChannelSets();
 		joinedChannels.remove(channel);
 		leftChannels.add(channel);
-		send(PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
+		sendMessage(PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
 		if (channel.equals(activeChannel))
 			if (!joinedChannels.isEmpty())
 				setActiveChannel(joinedChannels.iterator().next());
 			else
 				setActiveChannel(null);
-	}
-
-	public void send(String message) {
-		if (isOnline())
-			getOfflinePlayer().getPlayer().sendMessage(colorize(message));
-	}
-
-	public void send(JsonBuilder message) {
-		if (isOnline())
-			getOfflinePlayer().getPlayer().spigot().sendMessage(message.build());
 	}
 
 	public void updateChannels() {

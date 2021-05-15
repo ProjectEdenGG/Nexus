@@ -3,18 +3,17 @@ package me.pugabyte.nexus;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import eden.utils.Env;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests;
-import me.pugabyte.nexus.features.listeners.LiteBans;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.menus.SignMenuFactory;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.features.Features;
-import me.pugabyte.nexus.framework.persistence.MongoDBPersistence;
 import me.pugabyte.nexus.framework.persistence.MySQLPersistence;
 import me.pugabyte.nexus.models.geoip.GeoIP;
 import me.pugabyte.nexus.models.geoip.GeoIPService;
@@ -23,7 +22,6 @@ import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.EnumUtils;
-import me.pugabyte.nexus.utils.Env;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
@@ -62,7 +60,6 @@ import java.util.Locale;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.joining;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.TimeUtils.shortTimeFormat;
 import static org.reflections.ReflectionUtils.getMethods;
@@ -82,6 +79,8 @@ public class Nexus extends JavaPlugin {
 			instance = this;
 		else
 			Bukkit.getServer().getLogger().info("Nexus could not be initialized: Instance is not null, but is: " + instance.getClass().getName());
+
+		new API();
 	}
 
 	public static Nexus getInstance() {
@@ -115,15 +114,15 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void log(String message) {
-		getInstance().getLogger().info(stripColor(message));
+		getInstance().getLogger().info(ChatColor.stripColor(message));
 	}
 
 	public static void warn(String message) {
-		getInstance().getLogger().warning(stripColor(message));
+		getInstance().getLogger().warning(ChatColor.stripColor(message));
 	}
 
 	public static void severe(String message) {
-		getInstance().getLogger().severe(stripColor(message));
+		getInstance().getLogger().severe(ChatColor.stripColor(message));
 	}
 
 	@Getter
@@ -180,33 +179,37 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void fileLogActual(String file, String message) {
-		try {
-			Path path = Paths.get("plugins/Nexus/logs/" + file + ".log");
-			if (!path.toFile().exists())
-				path.toFile().createNewFile();
-			try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-				writer.append(System.lineSeparator()).append("[").append(shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	public static void csvLog(String file, String message) {
-		Tasks.async(() -> {
+		synchronized (Nexus.getInstance()) {
 			try {
-				Path path = Paths.get("plugins/Nexus/logs/" + file + ".csv");
+				Path path = Paths.get("plugins/Nexus/logs/" + file + ".log");
 				if (!path.toFile().exists())
 					path.toFile().createNewFile();
 				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-					writer.append(System.lineSeparator()).append(message);
+					writer.append(System.lineSeparator()).append("[").append(shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
+			}
+		}
+	}
+
+	public static void csvLog(String file, String message) {
+		Tasks.async(() -> {
+			synchronized (Nexus.getInstance()) {
+				try {
+					Path path = Paths.get("plugins/Nexus/logs/" + file + ".csv");
+					if (!path.toFile().exists())
+						path.toFile().createNewFile();
+					try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
+						writer.append(System.lineSeparator()).append(message);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 	}
@@ -233,7 +236,8 @@ public class Nexus extends JavaPlugin {
 		Locale.setDefault(Locale.US);
 
 		new Timer("Enable", () -> {
-			Nexus.log("Loaded worlds: " + Bukkit.getWorlds().stream().map(World::getName).collect(joining(", ")));
+			String loadedWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(joining(", "));
+//			Nexus.log("Loaded worlds: " + loadedWorlds);
 
 			new Timer(" Config", this::setupConfig);
 			new Timer(" Databases", this::databases);
@@ -247,6 +251,7 @@ public class Nexus extends JavaPlugin {
 				commands = new Commands(this, "me.pugabyte.nexus.features");
 				commands.registerAll();
 			});
+			new Timer(" BearFair Quests", Quests::startup);
 		});
 	}
 
@@ -256,22 +261,21 @@ public class Nexus extends JavaPlugin {
 		try { broadcastReload();										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { PlayerUtils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
-		try { LiteBans.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { BFQuests.shutdown();										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
+		try { Quests.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
-		try { features.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
+		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
-		try { MongoDBPersistence.shutdown();							} catch (Throwable ex) { ex.printStackTrace(); }
+		try { API.shutdown();											} catch (Throwable ex) { ex.printStackTrace(); }
 	}
 	// @formatter:on;
 
 	public void broadcastReload() {
 		Rank.getOnlineStaff().stream()
-				.filter(nerd -> nerd.getOfflinePlayer().isOnline() && nerd.getPlayer() != null)
-				.map(Nerd::getPlayer)
+				.filter(nerd -> nerd.getOfflinePlayer().isOnline() && nerd.getOnlinePlayer() != null)
+				.map(Nerd::getOnlinePlayer)
 				.forEach(player -> {
 					GeoIP geoIp = new GeoIPService().get(player);
 					String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";

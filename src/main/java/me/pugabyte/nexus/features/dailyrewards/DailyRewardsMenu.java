@@ -131,7 +131,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			addBackItem(contents, e -> new DailyRewardsMenu(dailyReward).open(dailyReward.getPlayer().getPlayer(), page));
+			addBackItem(contents, e -> new DailyRewardsMenu(dailyReward).open(dailyReward.getOfflinePlayer().getPlayer(), page));
 
 			List<Reward> rewards = DailyRewardsFeature.getRewards(day);
 
@@ -151,7 +151,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		private void applyReward(int day, int option) {
-			Player player = (Player) dailyReward.getPlayer();
+			Player player = (Player) dailyReward.getOfflinePlayer();
 
 			Reward reward = DailyRewardsFeature.getReward(day, option);
 			List<ItemStack> items = reward.getItems();
@@ -164,19 +164,20 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 			if (items != null) {
 				for (ItemStack item : items) {
-					if (Reward.RequiredSubmenu.COLOR.contains(item.getType())) {
-						MenuUtils.colorSelectMenu(player, item.getType(), itemClickData -> {
-							PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), item.getAmount()));
+					ItemStack clone = item.clone();
+					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {
+						MenuUtils.colorSelectMenu(player, clone.getType(), itemClickData -> {
+							PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), clone.getAmount()));
 							saveAndReturn(day);
 							player.closeInventory();
 						});
-					} else if (Reward.RequiredSubmenu.NAME.contains(item.getType())) {
+					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
 						Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name").prefix(PREFIX).response(lines -> {
-							PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(item.getAmount()).build());
+							PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(clone.getAmount()).build());
 							saveAndReturn(day);
 						}).open(player);
 					} else {
-						PlayerUtils.giveItem(player, item);
+						PlayerUtils.giveItem(player, clone);
 						saveAndReturn(day);
 					}
 				}
@@ -184,7 +185,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			} else {
 
 				if (money != null) {
-					new BankerService().deposit(player, money, ShopGroup.get(player), TransactionCause.DAILY_REWARD);
+					new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.DAILY_REWARD);
 					PlayerUtils.send(player, PREFIX + "&e" + money + " &3has been added to your balance");
 				}
 
@@ -208,7 +209,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		public void saveAndReturn(int day) {
 			dailyReward.claim(day);
 			new DailyRewardService().save(dailyReward);
-			new DailyRewardsMenu(dailyReward).open(dailyReward.getPlayer().getPlayer(), page);
+			new DailyRewardsMenu(dailyReward).open(dailyReward.getOfflinePlayer().getPlayer(), page);
 		}
 	}
 

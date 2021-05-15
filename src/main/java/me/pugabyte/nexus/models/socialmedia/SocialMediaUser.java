@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
-import me.pugabyte.nexus.framework.persistence.serializer.mongodb.UUIDConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class})
-public class SocialMediaUser extends PlayerOwnedObject {
+public class SocialMediaUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

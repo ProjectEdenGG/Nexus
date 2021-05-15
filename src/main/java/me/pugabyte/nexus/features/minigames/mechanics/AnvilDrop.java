@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.annotations.AntiCamp;
 import me.pugabyte.nexus.features.minigames.models.arenas.AnvilDropArena;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,7 +43,7 @@ public class AnvilDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public String getDescription() {
+	public @NotNull String getDescription() {
 		return "TODO";
 	}
 
@@ -67,8 +67,7 @@ public class AnvilDrop extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		if (event.getOriginalEvent() instanceof EntityDamageEvent) {
-			EntityDamageEvent entityDamageEvent = (EntityDamageEvent) event.getOriginalEvent();
+		if (event.getOriginalEvent() instanceof EntityDamageEvent entityDamageEvent) {
 			if (entityDamageEvent.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
 				String minigamer = event.getMinigamer().getColoredName();
 				String deathMessage = RandomUtils.randomElement(deathMessages);

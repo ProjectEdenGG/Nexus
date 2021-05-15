@@ -2,6 +2,10 @@ package me.pugabyte.nexus.features;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.TimeUtils.Timespan.FormatType;
+import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,7 +54,6 @@ import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -59,14 +62,11 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
-import me.pugabyte.nexus.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.FormatType;
-import me.pugabyte.nexus.utils.TimeUtils.Timespan.TimespanBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -107,7 +107,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -145,7 +144,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("cancelReload")
-	@Cooldown(@Part(value = Time.SECOND, x = 15))
 	void cancelReload() {
 		reloader = null;
 		send(PREFIX + "Reload unqueued");
@@ -157,7 +155,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 			ReloadCondition.tryReload();
 		} catch (Exception ex) {
 			reloader = uuid();
-			error(json(ex.getMessage()).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
+			error(new JsonBuilder(ex.getMessage(), NamedTextColor.RED).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -323,10 +321,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 		Set<String> keys = new HashSet<>();
 
 		for (Command value : mapUtils.getKnownCommandMap().values()) {
-			if (!(value instanceof PluginCommand))
+			if (!(value instanceof PluginCommand command))
 				continue;
 
-			PluginCommand command = (PluginCommand) value;
 			Plugin plugin = command.getPlugin();
 
 			String commandName = command.getName();
@@ -342,7 +339,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		send(PREFIX + "Commands by plugin");
-		paginate(new ArrayList<>(Utils.sortByValueReverse(commands).keySet()), (plugin, index) ->
+		paginate(Utils.sortByValueReverse(commands).keySet(), (plugin, index) ->
 				json("&3" + index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)), "/nexus stats commands", page);
 	}
 
@@ -360,7 +357,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Event Handlers");
 		BiFunction<Class<? extends Event>, String, JsonBuilder> formatter = (clazz, index) ->
 				json("&3" + index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
-		paginate(new ArrayList<>(sorted.keySet()), formatter, "/nexus stats eventHandlers", page);
+		paginate(sorted.keySet(), formatter, "/nexus stats eventHandlers", page);
 	}
 
 	@Confirm
@@ -389,7 +386,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("taskTest <message...>")
 	void taskTest(String message) {
-		new TaskService().save(new Task("command-test", new HashMap<String, Object>() {{
+		new TaskService().save(new Task("command-test", new HashMap<>() {{
 			put("uuid", uuid().toString());
 			put("message", message);
 		}}, LocalDateTime.now().plusMinutes(1)));
@@ -657,11 +654,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Pasted schematic allowedRegionsTest");
 	}
 
-	@Path("copyTileEntityClientTest")
-	void copyTileEntityClient() {
-		PacketUtils.copyTileEntityClient(player(), location().getBlock(), location().add(1, 0, 0));
-	}
-
 	@Path("removeTest")
 	void removeTest() {
 		PlayerInventory inventory = inventory();
@@ -700,6 +692,19 @@ public class NexusCommand extends CustomCommand implements Listener {
 	})
 	void cooldown() {
 		send("Hello!");
+	}
+
+	@Async
+	@Path("cooldown janitor")
+	void cooldownJanitor() {
+		send(PREFIX + "Janitored " + new CooldownService().janitor() + " records");
+	}
+
+	@Path("cooldown forceCME <iterations>")
+	void cooldownForceCME(int iterations) {
+		CooldownService service = new CooldownService();
+		for (int i = 0; i < iterations; i++)
+			service.check(uuid(), UUID.randomUUID().toString(), Time.SECOND);
 	}
 
 	@Path("argPermTest [one] [two] [three] [four] [five]")
@@ -773,7 +778,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 		player().sendBlockChange(location().add(0, -1, 0), Bukkit.createBlockData(material));
 	}
 
-	private static String motd = null;
+	private static String motd = "&f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &a&l⚘ &f &#ffff44&lProject Eden &f &a&l⚘\n" +
+			"&f &f &3Survival &7| &3Creative &7| &3Minigames &7| &3Close Community";
 
 	@Path("motd <text...>")
 	void motd(String text) {
@@ -790,7 +796,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onServerListPing(ServerListPingEvent event) {
 		if (motd != null)
-			event.setMotd(motd);
+			event.setMotd(colorize(motd));
 	}
 
 	@Path("radiusTest")
@@ -810,10 +816,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("trimItemNames")
 	void trimItemNames() {
 		Block block = getTargetBlock();
-		if (!(block.getState() instanceof Container))
+		if (!(block.getState() instanceof Container state))
 			return;
-
-		Container state = (Container) block.getState();
 
 		for (ItemStack content : state.getInventory().getContents()) {
 			if (isNullOrAir(content))
@@ -874,24 +878,24 @@ public class NexusCommand extends CustomCommand implements Listener {
 			AdvancementProgress progress = player.getAdvancementProgress(advancement);
 			json.next((progress.isDone() ? "&e" : "&c") + advancement.getKey().getKey());
 
-			json.addHover("&eAwarded Criteria:");
+			json.hover("&eAwarded Criteria:");
 			for (String criteria : progress.getAwardedCriteria()) {
 				String text = "&7- &e" + criteria;
 				Date dateAwarded = progress.getDateAwarded(criteria);
 				if (dateAwarded != null)
 					text += " &7- " + shortDateFormat(dateAwarded.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-				json.addHover(text);
+				json.hover(text);
 			}
 
-			json.addHover(" ");
-			json.addHover("&cRemaining Criteria:");
+			json.hover(" ");
+			json.hover("&cRemaining Criteria:");
 			for (String criteria : progress.getRemainingCriteria())
-				json.addHover("&7- &c" + criteria);
+				json.hover("&7- &c" + criteria);
 
 			return json;
 		};
 
-		paginate(new ArrayList<>(PlayerUtils.getAdvancements().values()), formatter, "/nexus advancements " + player.getName(), page);
+		paginate(PlayerUtils.getAdvancements().values(), formatter, "/nexus advancements " + player.getName(), page);
 	}
 
 	@Path("updateWarpFlags")
@@ -994,6 +998,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	List<String> tabCompleteStaffMember(String filter) {
 		return new HoursService().getActivePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff())
+				.map(PlayerUtils::getPlayer)
 				.map(OfflinePlayer::getName)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
