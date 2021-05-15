@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
+import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.FormatType;
@@ -778,8 +779,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 		player().sendBlockChange(location().add(0, -1, 0), Bukkit.createBlockData(material));
 	}
 
-	private static String motd = "&f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &a&l⚘ &f &#ffff44&lProject Eden &f &a&l⚘\n" +
+	private static final String originalMotd = "&f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f " +
+			"&a&l⚘ &f &#ffff44&lProject Eden" + (Nexus.getEnv() == Env.PROD ? "" : " &6[" + Nexus.getEnv().name() + "]") + " &f &a&l⚘\n" +
 			"&f &f &3Survival &7| &3Creative &7| &3Minigames &7| &3Close Community";
+	private static String motd = originalMotd;
 
 	@Path("motd <text...>")
 	void motd(String text) {
@@ -789,7 +792,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("motd reset")
 	void motdReset() {
-		motd = null;
+		motd = originalMotd;
 		send(PREFIX + "Motd Reset");
 	}
 
