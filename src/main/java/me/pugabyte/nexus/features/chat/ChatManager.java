@@ -69,7 +69,7 @@ public class ChatManager {
 			return;
 
 		if (channel == null) {
-			chatter.send(Chat.PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
+			chatter.sendMessage(Chat.PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
 			return;
 		}
 
@@ -104,7 +104,7 @@ public class ChatManager {
 
 	public static void process(PublicChatEvent event) {
 		if (!event.wasSeen())
-			Tasks.wait(1, () -> event.getChatter().send(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
+			Tasks.wait(1, () -> event.getChatter().sendMessage(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
 
 		String chatterFormat = event.getChannel().getChatterFormat(event.getChatter());
 		JsonBuilder json = new JsonBuilder(chatterFormat);
@@ -136,9 +136,9 @@ public class ChatManager {
 
 		event.getRecipients().forEach(recipient -> {
 			if (Rank.of(recipient.getOnlinePlayer()).isStaff())
-				recipient.send(event, staff, MessageType.CHAT);
+				recipient.sendMessage(event, staff, MessageType.CHAT);
 			else
-				recipient.send(event, json, MessageType.CHAT);
+				recipient.sendMessage(event, json, MessageType.CHAT);
 		});
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
@@ -159,19 +159,19 @@ public class ChatManager {
 				JsonBuilder notOnline = new JsonBuilder(Chat.PREFIX).next(new PlayerNotOnlineException(recipient.getOfflinePlayer()).getJson());
 
 				if (!recipient.getOfflinePlayer().isOnline())
-					event.getChatter().send(notOnline);
+					event.getChatter().sendMessage(notOnline);
 				else {
-					recipient.send(event, from, MessageType.CHAT);
+					recipient.sendMessage(event, from, MessageType.CHAT);
 					if (canSee)
 						++seen;
 					else
-						event.getChatter().send(notOnline);
+						event.getChatter().sendMessage(notOnline);
 				}
 			}
 		}
 
 		if (seen > 0)
-			event.getChatter().send(event, to, MessageType.CHAT);
+			event.getChatter().sendMessage(event, to, MessageType.CHAT);
 
 		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + event.getRecipientNames() + ": " + event.getMessage());
 	}

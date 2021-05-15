@@ -37,7 +37,7 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	}
 
 	public void respond(String response) {
-		getRecipients().forEach(chatter -> chatter.send(response));
+		getRecipients().forEach(chatter -> chatter.sendMessage(response));
 	}
 
 	public boolean wasChanged() {

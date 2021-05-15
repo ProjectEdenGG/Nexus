@@ -175,7 +175,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			Chatter chatter = new ChatService().get(event.getEntity());
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 				if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
-					recipient.send(event.getEntity(), output, MessageType.CHAT);
+					recipient.sendMessage(event.getEntity(), output, MessageType.CHAT);
 		}
 	}
 

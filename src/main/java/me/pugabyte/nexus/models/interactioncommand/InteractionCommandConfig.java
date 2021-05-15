@@ -109,7 +109,7 @@ public class InteractionCommandConfig implements PlayerOwnedObject {
 					else if (isNormal(command))
 						runCommand(event.getPlayer(), getTrimmedCommand(command));
 					else
-						Nerd.of(event.getPlayer()).send(command);
+						Nerd.of(event.getPlayer()).sendMessage(command);
 				});
 			}
 		}

@@ -199,14 +199,34 @@ public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 				.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
 	}
 
-	public void send(String noPrefix) {
+	/**
+	 * Sends a message to this minigamer in their chat with no prefix ("[Minigames]")
+	 * <p>
+	 * This method will automatically {@link me.pugabyte.nexus.utils.StringUtils#colorize(String)} the input.
+	 * @param noPrefix a message
+	 */
+	public void sendMessage(String noPrefix) {
 		tell(noPrefix, false);
 	}
 
+	/**
+	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
+	 * <p>
+	 * This method will automatically {@link me.pugabyte.nexus.utils.StringUtils#colorize(String)} the input.
+	 * @param withPrefix a message
+	 */
 	public void tell(String withPrefix) {
 		tell(withPrefix, true);
 	}
 
+	/**
+	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
+	 * prefixed with "[Minigames]".
+	 * <p>
+	 * This method will automatically {@link me.pugabyte.nexus.utils.StringUtils#colorize(String)} the input.
+	 * @param message a message
+	 * @param prefix whether or not to display the minigames prefix
+	 */
 	public void tell(String message, boolean prefix) {
 		player.sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
 	}
@@ -262,7 +282,7 @@ public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 		if (match.getMechanic() instanceof TeamMechanic && team != null) {
 			((TeamMechanic) match.getMechanic()).joinTeamChannel(this);
 			if (team.getObjective() != null && !team.getObjective().isEmpty()) {
-				send("&6Team Objective: &e" + team.getObjective());
+				sendMessage("&6Team Objective: &e" + team.getObjective());
 				TitleUtils.sendTitle(player, "&6Team Objective", "&e" + team.getObjective(), 10, Time.SECOND.x(4), 20);
 			}
 		}

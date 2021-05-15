@@ -42,11 +42,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.PREFIX;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
-import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.location;
+import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.*;
 
 public class AdventChests implements Listener {
 	public static Map<Integer, Location> adventLootMap = new HashMap<>();
@@ -181,10 +177,10 @@ public class AdventChests implements Listener {
 
 		if (!openChest) {
 			reason = reason.replaceAll("<day>", String.valueOf(today));
-			user.send(reason);
+			user.sendMessage(reason);
 
 			if (waypoint)
-				user.send(PREFIX + "Chest &e#" + chestDay + " &3saved as a waypoint");
+				user.sendMessage(PREFIX + "Chest &e#" + chestDay + " &3saved as a waypoint");
 			return;
 		}
 

@@ -55,20 +55,20 @@ public class LostPumpkins implements Listener {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(event.getPlayer());
 		if (user.getLostPumpkinsStage() == QuestStage.LostPumpkins.NOT_STARTED) {
-			user.send(PREFIX + "This looks like it should be in the pumpkin carving contest. Maybe I should talk to &eJeffery &3at the pumpkin carving contest.");
+			user.sendMessage(PREFIX + "This looks like it should be in the pumpkin carving contest. Maybe I should talk to &eJeffery &3at the pumpkin carving contest.");
 			return;
 		}
 		if (user.getFoundPumpkins().contains(event.getClickedBlock().getLocation())) {
-			user.send(PREFIX + "&cYou have already found that pumpkin");
+			user.sendMessage(PREFIX + "&cYou have already found that pumpkin");
 			return;
 		}
 		user.getFoundPumpkins().add(event.getClickedBlock().getLocation());
 		Tasks.wait(1, () -> event.getPlayer().sendBlockChange(event.getClickedBlock().getLocation(), Material.AIR.createBlockData()));
 //		PacketUtils.copyTileEntityClient(event.getPlayer(), pumpkin.getOriginal().getBlock(), pumpkin.getEnd());
-		user.send(PREFIX + "You have found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
+		user.sendMessage(PREFIX + "You have found a pumpkin! It has been returned to Jeffery. &e(" + user.getFoundPumpkins().size() + "/8)");
 		service.save(user);
 		if (user.getFoundPumpkins().size() == 8) {
-			user.send(PREFIX + "You have found the last pumpkin! Talk to &eJeffery &3at the pumpkin carving contest.");
+			user.sendMessage(PREFIX + "You have found the last pumpkin! Talk to &eJeffery &3at the pumpkin carving contest.");
 			user.setLostPumpkinsStage(QuestStage.LostPumpkins.FOUND_ALL);
 			service.save(user);
 		}

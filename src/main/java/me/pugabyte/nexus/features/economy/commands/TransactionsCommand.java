@@ -190,7 +190,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			Transaction transaction = banker.getTransactions().get(banker.getTransactions().size() - 1);
 
 			if (transaction.getTimestamp().isAfter(nerd.getLastQuit()))
-				nerd.send(json(EconomyCommand.PREFIX + "Transactions were made while you were offline, " +
+				nerd.sendMessage(json(EconomyCommand.PREFIX + "Transactions were made while you were offline, " +
 						"&eclick here &3or use &c/txn history &3to view them").command("/txn history"));
 		});
 	}

@@ -53,11 +53,11 @@ public class Chatter implements PlayerOwnedObject {
 
 	public void setActiveChannel(Channel channel) {
 		if (channel == null)
-			Nerd.of(getOfflinePlayer()).send(PREFIX + "You are no longer speaking in a channel");
+			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + "You are no longer speaking in a channel");
 		else {
 			if (channel instanceof PublicChannel)
 				join((PublicChannel) channel);
-			Nerd.of(getOfflinePlayer()).send(PREFIX + channel.getAssignMessage(this));
+			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + channel.getAssignMessage(this));
 		}
 		this.activeChannel = channel;
 	}
@@ -111,7 +111,7 @@ public class Chatter implements PlayerOwnedObject {
 		fixChannelSets();
 		joinedChannels.remove(channel);
 		leftChannels.add(channel);
-		send(PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
+		sendMessage(PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
 		if (channel.equals(activeChannel))
 			if (!joinedChannels.isEmpty())
 				setActiveChannel(joinedChannels.iterator().next());

@@ -14,7 +14,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
@@ -102,13 +101,13 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
 	}
 
-	default void send(String message) {
-		send(json(message));
+	default void sendMessage(String message) {
+		sendMessage(json(message));
 	}
 
 	default void sendOrMail(String message) {
 		if (isOnline())
-			send(json(message));
+			sendMessage(json(message));
 		else {
 			DeliveryService service = new DeliveryService();
 			DeliveryUser deliveryUser = service.get(getUuid());
@@ -117,73 +116,20 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 		}
 	}
 
-	default void send(ComponentLike component) {
-		if (isOnline())
-			getOnlinePlayer().sendMessage(component);
+	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {
+		sendMessage(identityOf(sender), component, type);
 	}
 
-	default void send(ComponentLike component, MessageType type) {
-		if (type == null) {
-			send(component);
-			return;
-		}
-		if (isOnline())
-			getOnlinePlayer().sendMessage(component, type);
+	default void sendMessage(UUID sender, ComponentLike component) {
+		sendMessage(identityOf(sender), component);
 	}
 
-	default void send(Identity identity, ComponentLike component, MessageType type) {
-		// fail safes, as sendMessage requires NonNull args
-		if (component == null)
-			return;
-
-		if (identity == null && type == null) {
-			send(component);
-			return;
-		}
-		if (type == null) {
-			send(identity, component);
-			return;
-		}
-		if (identity == null) {
-			send(component, type);
-			return;
-		}
-
-		if (isOnline())
-			getOnlinePlayer().sendMessage(identity, component, type);
+	default void sendMessage(int delay, String message) {
+		Tasks.wait(delay, () -> sendMessage(message));
 	}
 
-	default void send(Identified sender, ComponentLike component, MessageType type) {
-		send(sender.identity(), component, type);
-	}
-
-	default void send(UUID sender, ComponentLike component, MessageType type) {
-		send(identityOf(sender), component, type);
-	}
-
-	default void send(Identity identity, ComponentLike component) {
-		if (identity == null) {
-			send(component);
-			return;
-		}
-		if (isOnline())
-			getOnlinePlayer().sendMessage(identity, component);
-	}
-
-	default void send(Identified sender, ComponentLike component) {
-		send(sender.identity(), component);
-	}
-
-	default void send(UUID sender, ComponentLike component) {
-		send(identityOf(sender), component);
-	}
-
-	default void send(int delay, String message) {
-		Tasks.wait(delay, () -> send(message));
-	}
-
-	default void send(int delay, ComponentLike message) {
-		Tasks.wait(delay, () -> send(message));
+	default void sendMessage(int delay, ComponentLike message) {
+		Tasks.wait(delay, () -> sendMessage(message));
 	}
 
 	default JsonBuilder json() {

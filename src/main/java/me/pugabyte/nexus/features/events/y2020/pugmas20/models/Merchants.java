@@ -28,7 +28,7 @@ public class Merchants {
 
 		List<TradeBuilder> trades = merchantNPC.getTrades(user);
 		if (trades.isEmpty()) {
-			user.send(Pugmas20.PREFIX + "No trades available");
+			user.sendMessage(Pugmas20.PREFIX + "No trades available");
 			return;
 		}
 

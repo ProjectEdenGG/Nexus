@@ -190,7 +190,7 @@ public class PublicChannel implements Channel {
 		Bukkit.getOnlinePlayers().stream()
 				.map(player -> (Chatter) new ChatService().get(player))
 				.filter(chatter -> chatter.hasJoined(this) && !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), muteMenuItem))
-				.forEach(chatter -> chatter.send(sender, component, type));
+				.forEach(chatter -> chatter.sendMessage(sender, component, type));
 	}
 
 	public void broadcastIngame(UUID sender, ComponentLike component, MessageType type) {
@@ -240,7 +240,7 @@ public class PublicChannel implements Channel {
 
 	public void broadcastIngame(Chatter chatter, ComponentLike builder) {
 		Bukkit.getConsoleSender().sendMessage(builder);
-		getRecipients(chatter).forEach(_chatter -> _chatter.send(chatter, builder, MessageType.CHAT));
+		getRecipients(chatter).forEach(_chatter -> _chatter.sendMessage(chatter, builder, MessageType.CHAT));
 	}
 
 	public String getPermission() {

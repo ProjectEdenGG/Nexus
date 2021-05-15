@@ -90,8 +90,8 @@ public class EventsCommand extends CustomCommand {
 		fromUser.takeTokens(tokens);
 		toUser.giveTokens(tokens);
 
-		fromUser.send(PREFIX + "&e" + tokens + " event tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
-		toUser.send(PREFIX + "&e" + tokens + " event tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
+		fromUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
+		toUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
 
 		service.save(fromUser);
 		service.save(toUser);

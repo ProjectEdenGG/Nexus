@@ -115,12 +115,12 @@ public enum PunishmentType implements ColoredAndNamed {
 	MUTE("muted", ChatColor.GOLD, true, true, false, false) {
 		@Override
 		public void action(Punishment punishment) {
-			punishment.send("&cYou have been muted by &e" + Nickname.of(punishment.getPunisher()) + punishment.getTimeAndReason());
+			punishment.sendMessage("&cYou have been muted by &e" + Nickname.of(punishment.getPunisher()) + punishment.getTimeAndReason());
 		}
 
 		@Override
 		public void onExpire(Punishment punishment) {
-			punishment.send("&cYour mute has &eexpired");
+			punishment.sendMessage("&cYour mute has &eexpired");
 		}
 	},
 	WARN("warned", ChatColor.RED, false, false, false, false) {
@@ -133,13 +133,13 @@ public enum PunishmentType implements ColoredAndNamed {
 		@Override
 		public void action(Punishment punishment) {
 			new FreezeService().get(punishment).freeze();
-			punishment.send("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
+			punishment.sendMessage("&cYou have been frozen! This likely means you are breaking a rule; please pay attention to staff in chat");
 		}
 
 		@Override
 		public void onExpire(Punishment punishment) {
 			new FreezeService().get(punishment).unfreeze();
-			punishment.send("&cYou have been unfrozen");
+			punishment.sendMessage("&cYou have been unfrozen");
 		}
 	},
 	WATCHLIST("watchlisted", ChatColor.LIGHT_PURPLE, false, true, true, true) {

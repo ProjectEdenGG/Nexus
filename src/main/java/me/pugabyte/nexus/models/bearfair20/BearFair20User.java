@@ -13,6 +13,7 @@ import me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 @Data
@@ -90,7 +90,7 @@ public class BearFair20User implements PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
+			ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
 		givePoints(points);
 	}
 
@@ -113,12 +113,12 @@ public class BearFair20User implements PlayerOwnedObject {
 			return;
 
 		if ((timesCompleted + 1) == DAILY_SOURCE_MAX)
-			send(BearFair20.PREFIX + "Max daily points reached for &e" + StringUtils.camelCase(source.name()));
+			sendMessage(BearFair20.PREFIX + "Max daily points reached for &e" + StringUtils.camelCase(source.name()));
 
 		getPointsReceivedToday().get(source).put(LocalDate.now(), timesCompleted + 1);
 
 		givePoints(DAILY_SOURCE_POINTS);
-		sendActionBar(getOnlinePlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
+		ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
 	}
 
 	public enum BF20PointSource {

@@ -204,7 +204,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 				sign.setLine(2, colorize("&c&lto finish"));
 				sign.update();
 			} else
-				jammer.send(PREFIX + "&cYou have already started a game");
+				jammer.sendMessage(PREFIX + "&cYou have already started a game");
 		} else if (sign.getLine(2).toLowerCase().contains("finish")) {
 			if (jammer.isPlaying()) {
 				if (validate(jammer)) {
@@ -212,7 +212,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 					clear(event.getClickedBlock().getLocation());
 				}
 			} else
-				jammer.send(PREFIX + "&cYou have not started a game");
+				jammer.sendMessage(PREFIX + "&cYou have not started a game");
 		}
 	}
 
@@ -237,14 +237,14 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		JigsawJammer jammer = new JigsawJamService().get((Player) event.getPlayer());
 		if (!jammer.isPlaying()) {
 			event.setCancelled(true);
-			jammer.send(PREFIX + "You must start the timer by clicking on the sign before collecting the pieces");
+			jammer.sendMessage(PREFIX + "You must start the timer by clicking on the sign before collecting the pieces");
 		}
 	}
 
 	private void start(JigsawJammer jammer) {
 		jammer.setPlaying(true);
 		new JigsawJamService().save(jammer);
-		jammer.send(PREFIX + "You have begun the Jigsaw Jam! Put the puzzle together as fast as you can!");
+		jammer.sendMessage(PREFIX + "You have begun the Jigsaw Jam! Put the puzzle together as fast as you can!");
 	}
 
 	private void end(JigsawJammer jammer) {

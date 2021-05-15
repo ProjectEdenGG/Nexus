@@ -79,7 +79,7 @@ public class LightTheTree implements Listener {
 		event.setCancelled(true);
 
 		if (!Quests.hasRoomFor(player, lighter_broken)) {
-			user.send(Quests.fullInvError_obtain);
+			user.sendMessage(Quests.fullInvError_obtain);
 			Quests.sound_villagerNo(player);
 			return;
 		}
@@ -89,7 +89,7 @@ public class LightTheTree implements Listener {
 
 		PlayerUtils.giveItem(player, lighter_broken);
 		Quests.sound_obtainItem(player);
-		user.send(PREFIX + "You have found the &3&l" + stripColor(lighter_broken.getItemMeta().getDisplayName()));
+		user.sendMessage(PREFIX + "You have found the &3&l" + stripColor(lighter_broken.getItemMeta().getDisplayName()));
 
 		user.setLightTreeStage(QuestStage.STEP_TWO);
 		service.save(user);
@@ -118,14 +118,14 @@ public class LightTheTree implements Listener {
 					PlayerUtils.setPlayerTime(player, "14000ticks");
 					user.setLightingTorches(true);
 					String format = TimespanBuilder.of(timerTicks / 20).format(FormatType.LONG);
-					user.send(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
+					user.sendMessage(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
 				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.of(i).format()))
 				.onComplete(() -> {
 					user.resetLightTheTree();
 					service.save(user);
-					user.send(PREFIX + "You ran out of time!");
-					user.send(new JsonBuilder(PREFIX + "Click to teleport back to the start").command("/pugmas quests light_the_tree teleportToStart"));
+					user.sendMessage(PREFIX + "You ran out of time!");
+					user.sendMessage(new JsonBuilder(PREFIX + "Click to teleport back to the start").command("/pugmas quests light_the_tree teleportToStart"));
 				})
 				.start();
 
@@ -164,10 +164,10 @@ public class LightTheTree implements Listener {
 
 		// TODO PUGMAS Better wording
 		if (torch > user.getTorchesLit() + 1) {
-			user.send(PREFIX + "You missed a torch!");
+			user.sendMessage(PREFIX + "You missed a torch!");
 			return;
 		} else if (torch == user.getTorchesLit() + 1) {
-			user.send(PREFIX + "Torch &e#" + torch + " &3of " + torches + " lit");
+			user.sendMessage(PREFIX + "Torch &e#" + torch + " &3of " + torches + " lit");
 			SoundUtils.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 0.1F);
 			user.setTorchesLit(torch);
 			service.save(user);
@@ -203,7 +203,7 @@ public class LightTheTree implements Listener {
 				service.save(user);
 
 				// TODO PUGMAS Better wording
-				user.send(PREFIX + "You lit the tree!");
+				user.sendMessage(PREFIX + "You lit the tree!");
 
 				Tasks.wait(Time.SECOND, () -> {
 					EventUserService eventUserService = new EventUserService();
@@ -325,7 +325,7 @@ public class LightTheTree implements Listener {
 			return;
 
 		if (!Quests.hasRoomFor(player, TheMines.getMinersPickaxe(), TheMines.getMinersSieve())) {
-			user.send(Quests.fullInvError_obtain);
+			user.sendMessage(Quests.fullInvError_obtain);
 			Quests.sound_villagerNo(player);
 			return;
 		}
@@ -347,11 +347,11 @@ public class LightTheTree implements Listener {
 			String obtained = Pugmas20.PREFIX + " You have obtained a ";
 
 			if (gavePickaxe && gaveSieve)
-				user.send(obtained + pickName + " and a " + sieveName);
+				user.sendMessage(obtained + pickName + " and a " + sieveName);
 			else if (gavePickaxe)
-				user.send(obtained + pickName);
+				user.sendMessage(obtained + pickName);
 			else
-				user.send(obtained + sieveName);
+				user.sendMessage(obtained + sieveName);
 
 			Quests.sound_obtainItem(player);
 		}

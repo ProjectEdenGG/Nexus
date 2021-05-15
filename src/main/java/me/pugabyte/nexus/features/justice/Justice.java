@@ -154,7 +154,7 @@ public class Justice extends Feature implements Listener {
 
 			broadcastMute(mute, message);
 
-			punishments.send("&cYou cannot use this command while muted (" + mute.getTimeLeft() + ")");
+			punishments.sendMessage("&cYou cannot use this command while muted (" + mute.getTimeLeft() + ")");
 		});
 	}
 
@@ -186,7 +186,7 @@ public class Justice extends Feature implements Listener {
 
 			broadcastMute(mute, message);
 
-			punishments.send("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " &c(" + mute.getTimeLeft() + ")");
+			punishments.sendMessage("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " &c(" + mute.getTimeLeft() + ")");
 		});
 	}
 
@@ -199,7 +199,7 @@ public class Justice extends Feature implements Listener {
 			return;
 
 		event.setCancelled(true);
-		nerd.send("&cYou must move before you can speak in chat");
+		nerd.sendMessage("&cYou must move before you can speak in chat");
 		String message = "&e" + nerd.getNickname() + " &ctried to speak before moving: &7" + getMessageDetails(event);
 		Chat.broadcastIngame(Justice.PREFIX + message, StaticChannel.STAFF);
 		Chat.broadcastDiscord(Justice.DISCORD_PREFIX + message, StaticChannel.STAFF);

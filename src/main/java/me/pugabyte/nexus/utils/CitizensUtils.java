@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.utils;
 
-import me.lexikiq.OptionalPlayerLike;
+import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -40,8 +40,8 @@ public class CitizensUtils {
 	 * @param npc NPC to update
 	 * @param player a server member
 	 */
-	public static void updateNameAndSkin(NPC npc, OptionalPlayerLike player) {
-		updateName(npc, Nickname.of(player));
+	public static void updateNameAndSkin(NPC npc, HasOfflinePlayer player) {
+		updateName(npc, Nickname.of(player.getOfflinePlayer()));
 		updateSkin(npc, player.getOfflinePlayer().getName());
 	}
 

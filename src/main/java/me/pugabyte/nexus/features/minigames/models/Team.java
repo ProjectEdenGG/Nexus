@@ -218,7 +218,7 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 	}
 
 	public void broadcastNoPrefix(Match match, String text) {
-		getAliveMinigamers(match).forEach(minigamer -> minigamer.send(text));
+		getAliveMinigamers(match).forEach(minigamer -> minigamer.sendMessage(text));
 	}
 
 	public void title(Match match, Title title) {

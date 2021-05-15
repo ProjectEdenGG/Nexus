@@ -135,7 +135,7 @@ public class Censor {
 		if (bad >= 1) {
 			Nexus.fileLog("swears", event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
-				event.getChatter().send("&cPlease watch your language!");
+				event.getChatter().sendMessage("&cPlease watch your language!");
 				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), StaticChannel.STAFF);
 				event.setCancelled(true);
 			}

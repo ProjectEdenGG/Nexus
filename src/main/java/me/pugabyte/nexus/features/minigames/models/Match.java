@@ -397,7 +397,7 @@ public class Match {
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		if (event.callEvent())
-			minigamers.forEach(minigamer -> minigamer.send(colorize(event.getMessage())));
+			minigamers.forEach(minigamer -> minigamer.sendMessage(colorize(event.getMessage())));
 	}
 
 	public void broadcast(Team team, String message) {

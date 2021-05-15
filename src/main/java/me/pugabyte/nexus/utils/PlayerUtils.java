@@ -104,10 +104,6 @@ public class PlayerUtils {
 			PlayerUtils.send(getOfflinePlayer(), message);
 		}
 
-		public void send(ComponentLike message) {
-			PlayerUtils.send(getOfflinePlayer(), message);
-		}
-
 		public boolean is(HasUniqueId player) {
 			return uuid.equals(player.getUniqueId());
 		}
@@ -547,7 +543,7 @@ public class PlayerUtils {
 			delivery.setMessage(message);
 		user.add(worldGroup, delivery);
 		service.save(user);
-		user.send(user.json(DeliveryCommand.PREFIX + "Your inventory was full. Excess items were given to you as a &c/delivery").command("/delivery").hover("&eClick to view deliveries"));
+		user.sendMessage(user.json(DeliveryCommand.PREFIX + "Your inventory was full. Excess items were given to you as a &c/delivery").command("/delivery").hover("&eClick to view deliveries"));
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {

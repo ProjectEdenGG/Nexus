@@ -11,7 +11,6 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
-import me.lexikiq.PlayerLike;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
@@ -25,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -41,8 +41,12 @@ public class RadioUtils {
 		ActionBarUtils.sendActionBar(player, message);
 	}
 
+	public static boolean isListening(UUID player, Radio radio) {
+		return radio.getSongPlayer().getPlayerUUIDs().contains(player);
+	}
+
 	public static boolean isListening(HasUniqueId player, Radio radio) {
-		return radio.getSongPlayer().getPlayerUUIDs().contains(player.getUniqueId());
+		return isListening(player.getUniqueId(), radio);
 	}
 
 	public static Radio getListenedRadio(HasPlayer player) {
@@ -111,10 +115,10 @@ public class RadioUtils {
 		radio.setPlaying(true);
 	}
 
-	public static void addPlayer(PlayerLike player, Radio radio) {
-		if (!RadioUtils.isListening(player, radio)) {
+	public static void addPlayer(HasPlayer player, Radio radio) {
+		if (!RadioUtils.isListening(player.getPlayer(), radio)) {
 			RadioUserService userService = new RadioUserService();
-			RadioUser user = userService.get(player);
+			RadioUser user = userService.get(player.getPlayer());
 
 			if (radio.getType().equals(RadioType.SERVER)) {
 				user.setServerRadioId(radio.getId());
@@ -122,7 +126,7 @@ public class RadioUtils {
 			}
 
 			SongPlayer songPlayer = radio.getSongPlayer();
-			songPlayer.addPlayer(player.getUniqueId());
+			songPlayer.addPlayer(player.getPlayer().getUniqueId());
 			if (songPlayer instanceof RadioSongPlayer)
 				actionBar(player, songPlayer.getSong());
 			else if (songPlayer instanceof PositionSongPlayer) {
@@ -132,13 +136,13 @@ public class RadioUtils {
 		}
 	}
 
-	public static void removePlayer(PlayerLike player, Radio radio) {
+	public static void removePlayer(HasPlayer player, Radio radio) {
 		if (radio == null)
 			return;
 
-		if (RadioUtils.isListening(player, radio)) {
+		if (RadioUtils.isListening(player.getPlayer(), radio)) {
 			RadioUserService userService = new RadioUserService();
-			RadioUser user = userService.get(player);
+			RadioUser user = userService.get(player.getPlayer());
 
 			if (radio.getType().equals(RadioType.SERVER)) {
 				user.setServerRadioId(null);

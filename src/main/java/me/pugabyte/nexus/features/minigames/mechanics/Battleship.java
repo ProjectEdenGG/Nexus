@@ -373,7 +373,7 @@ public class Battleship extends TeamMechanic {
 				}
 			} else if (ActionGroup.LEFT_CLICK.applies(event)) {
 				event.setCancelled(true);
-				minigamer.send(PREFIX + "Removed " + shipType.getColoredName());
+				minigamer.sendMessage(PREFIX + "Removed " + shipType.getColoredName());
 				deleteKit(block.getLocation());
 				matchData.getGrid(team).vacate(shipType);
 				giveKitItem(minigamer, shipType);
@@ -440,7 +440,7 @@ public class Battleship extends TeamMechanic {
 		}
 
 		private boolean run() {
-			Consumer<String> send = message -> { if (minigamer != null) minigamer.send(PREFIX + message); };
+			Consumer<String> send = message -> { if (minigamer != null) minigamer.sendMessage(PREFIX + message); };
 
 			if (attempts >= 4) {
 				if (location.getBlock().getType() == shipType.getItem().getType())

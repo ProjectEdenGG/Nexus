@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.JunkWeight;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import org.bukkit.Location;
 
 import java.time.LocalDate;
@@ -21,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.ActionBarUtils.sendActionBar;
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
 @Data
@@ -66,12 +66,12 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
+			ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
 		givePoints(points);
 	}
 
 	public void givePoints(int points) {
-		send("TODO BF21: +" + points);
+		sendMessage("TODO BF21: +" + points);
 	}
 
 	public void addRecycledItems(int count) {

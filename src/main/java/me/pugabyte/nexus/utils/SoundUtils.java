@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasPlayer;
-import me.lexikiq.PlayerLike;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import org.bukkit.Bukkit;
@@ -76,8 +75,8 @@ public class SoundUtils {
 	public enum Jingle {
 		PING {
 			@Override
-			public void play(PlayerLike player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.ALERTS))
+			public void play(HasPlayer player) {
+				if (MuteMenuUser.hasMuted(player.getPlayer(), MuteMenuItem.ALERTS))
 					return;
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.ALERTS, defaultVolume);
@@ -88,8 +87,8 @@ public class SoundUtils {
 
 		RANKUP {
 			@Override
-			public void play(PlayerLike player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.RANK_UP))
+			public void play(HasPlayer player) {
+				if (MuteMenuUser.hasMuted(player.getPlayer(), MuteMenuItem.RANK_UP))
 					return;
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.RANK_UP, defaultVolume);
@@ -124,8 +123,8 @@ public class SoundUtils {
 
 		FIRST_JOIN {
 			@Override
-			public void play(PlayerLike player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.FIRST_JOIN_SOUND))
+			public void play(HasPlayer player) {
+				if (MuteMenuUser.hasMuted(player.getPlayer(), MuteMenuItem.FIRST_JOIN_SOUND))
 					return;
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.FIRST_JOIN_SOUND, defaultVolume);
@@ -152,8 +151,8 @@ public class SoundUtils {
 
 		JOIN {
 			@Override
-			public void play(PlayerLike player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JOIN_QUIT))
+			public void play(HasPlayer player) {
+				if (MuteMenuUser.hasMuted(player.getPlayer(), MuteMenuItem.JOIN_QUIT))
 					return;
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.JOIN_QUIT_SOUNDS, defaultVolume);
@@ -168,8 +167,8 @@ public class SoundUtils {
 
 		QUIT {
 			@Override
-			public void play(PlayerLike player) {
-				if (MuteMenuUser.hasMuted(player, MuteMenuItem.JOIN_QUIT))
+			public void play(HasPlayer player) {
+				if (MuteMenuUser.hasMuted(player.getPlayer(), MuteMenuItem.JOIN_QUIT))
 					return;
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.JOIN_QUIT_SOUNDS, defaultVolume);
@@ -184,7 +183,7 @@ public class SoundUtils {
 
 		BATTLESHIP_MISS {
 			@Override
-			public void play(PlayerLike player) {
+			public void play(HasPlayer player) {
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> playSound(player, Sound.UI_TOAST_IN, defaultVolume, 1));
 				Tasks.wait(wait += 9, () -> playSound(player, Sound.ENTITY_GENERIC_SPLASH, defaultVolume, 1));
@@ -193,7 +192,7 @@ public class SoundUtils {
 
 		BATTLESHIP_HIT {
 			@Override
-			public void play(PlayerLike player) {
+			public void play(HasPlayer player) {
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> playSound(player, Sound.UI_TOAST_IN, defaultVolume, 1));
 				Tasks.wait(wait += 9, () -> playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1));
@@ -203,7 +202,7 @@ public class SoundUtils {
 
 		BATTLESHIP_SINK {
 			@Override
-			public void play(PlayerLike player){
+			public void play(HasPlayer player){
 				int wait = 0;
 				Tasks.wait(wait, () -> {
 					playSound(player, Sound.ENTITY_GENERIC_EXPLODE, defaultVolume, 1);
@@ -225,7 +224,7 @@ public class SoundUtils {
 
 		PUGMAS_TREE_FELLER {
 			@Override
-			public void play(PlayerLike player) {
+			public void play(HasPlayer player) {
 				Tasks.wait(0, () -> {
 					playSound(player, Sound.ENTITY_ARMOR_STAND_BREAK, defaultVolume, randomPitch());
 				});
@@ -254,7 +253,7 @@ public class SoundUtils {
 		},
 		CRATE_OPEN {
 			@Override
-			public void play(PlayerLike player) {
+			public void play(HasPlayer player) {
 				int wait = 3;
 				Tasks.wait(wait += 0, () -> {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(3));
@@ -310,7 +309,7 @@ public class SoundUtils {
 			}
 		};
 
-		public abstract void play(PlayerLike player);
+		public abstract void play(HasPlayer player);
 
 		public void play(Collection<? extends HasPlayer> players) {
 			players.stream().map(HasPlayer::getPlayer).forEach(this::play);
@@ -329,9 +328,9 @@ public class SoundUtils {
 		}
 	}
 
-	private static float getMuteMenuVolume(PlayerLike player, MuteMenuItem item, float defaultVolume) {
+	private static float getMuteMenuVolume(HasPlayer player, MuteMenuItem item, float defaultVolume) {
 		float volume = defaultVolume;
-		Integer customVolume = MuteMenuUser.getVolume(player, item);
+		Integer customVolume = MuteMenuUser.getVolume(player.getPlayer(), item);
 		if (customVolume != null)
 			volume = customVolume / 50.0F;
 		return volume;

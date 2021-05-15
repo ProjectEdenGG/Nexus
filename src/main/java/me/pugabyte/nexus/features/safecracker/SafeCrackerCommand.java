@@ -192,12 +192,12 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		SafeCrackerPlayer safeCrackerPlayer = playerService.get(event.getPlayer());
 
 		if (!safeCrackerPlayer.getGames().containsKey(game.getName())) {
-			safeCrackerPlayer.send("&7&kasdl &7The safe is warded by some kind of spell. Talk to the supervisor for more information. &7&kasdl");
+			safeCrackerPlayer.sendMessage("&7&kasdl &7The safe is warded by some kind of spell. Talk to the supervisor for more information. &7&kasdl");
 			return;
 		}
 
 		if (safeCrackerPlayer.getGames().get(game.getName()).isFinished()) {
-			safeCrackerPlayer.send(SafeCracker.PREFIX + "&cYou have already correctly solved the riddle and finished the game");
+			safeCrackerPlayer.sendMessage(SafeCracker.PREFIX + "&cYou have already correctly solved the riddle and finished the game");
 			return;
 		}
 
@@ -206,13 +206,13 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 				int score = (int) Math.abs(Duration.between(LocalDateTime.now(), safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted()).getSeconds() - 1);
 				safeCrackerPlayer.getGames().get(game.getName()).setScore(score);
 				playerService.save(safeCrackerPlayer);
-				Tasks.wait(Time.SECOND.x(10), () -> safeCrackerPlayer.send(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + safeCrackerPlayer.getGames().get(game.getName()).getScore()));
+				Tasks.wait(Time.SECOND.x(10), () -> safeCrackerPlayer.sendMessage(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + safeCrackerPlayer.getGames().get(game.getName()).getScore()));
 				Discord.staffLog("```[SafeCracker] " + player.getName() + " - " + Timespan.of(safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted(), LocalDateTime.now()).format() + "```");
 				player.closeInventory();
 				complete(player);
 			} else {
 				player.closeInventory();
-				safeCrackerPlayer.send(SafeCracker.PREFIX + "&c" + RandomUtils.randomElement(SafeCracker.wrongResponses));
+				safeCrackerPlayer.sendMessage(SafeCracker.PREFIX + "&c" + RandomUtils.randomElement(SafeCracker.wrongResponses));
 			}
 			return AnvilGUI.Response.text(response);
 		}, HumanEntity::closeInventory);

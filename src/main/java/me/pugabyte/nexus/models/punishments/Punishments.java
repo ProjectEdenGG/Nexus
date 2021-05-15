@@ -175,7 +175,7 @@ public class Punishments implements PlayerOwnedObject {
 			old.setReplacedBy(punishment.getId());
 			old.setActive(false);
 			String typeName = old.getType().name().toLowerCase().replace("_", "-");
-			Nerd.of(punishment.getPunisher()).send(PREFIX + "Replacing previous " + typeName + " for &e"
+			Nerd.of(punishment.getPunisher()).sendMessage(PREFIX + "Replacing previous " + typeName + " for &e"
 					+ Nickname.of(punishment.getUuid()) + (isNullOrEmpty(old.getReason()) ? "" : "&3: &7" + old.getReason()) + " &3(" + old.getTimeSince() + ")");
 		}
 	}
@@ -199,17 +199,17 @@ public class Punishments implements PlayerOwnedObject {
 		if (warnings.isEmpty())
 			return warnings;
 
-		send("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
+		sendMessage("&cYou received " + (warnings.size() == 1 ? "a warning" : "multiple warnings") + " from staff:");
 		for (Punishment warning : warnings) {
 			boolean recent = warning.getTimestamp().isAfter(LocalDateTime.now().minusMinutes(1));
 			String reason = " &7- &e" + warning.getReason();
 
 			if (recent) {
-				send(reason);
+				sendMessage(reason);
 				continue;
 			}
 
-			send(reason + " &c(" + warning.getTimeSince() + ")");
+			sendMessage(reason + " &c(" + warning.getTimeSince() + ")");
 
 			String message = "&e" + getName() + " &chas received their warning for &7" + warning.getReason();
 
@@ -220,8 +220,8 @@ public class Punishments implements PlayerOwnedObject {
 			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
 			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
 		}
-		send("");
-		send("&cPlease make sure to read the /rules to avoid future punishments");
+		sendMessage("");
+		sendMessage("&cPlease make sure to read the /rules to avoid future punishments");
 		return warnings;
 	}
 

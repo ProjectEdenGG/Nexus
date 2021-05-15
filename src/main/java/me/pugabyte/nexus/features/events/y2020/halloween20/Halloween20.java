@@ -131,20 +131,20 @@ public class Halloween20 implements Listener {
 		Halloween20User user = service.get(event.getPlayer());
 		if (user.getFoundButtons().contains(button)) {
 			if (new CooldownService().check(event.getPlayer(), "halloween20-button-alreadyfound", Time.SECOND.x(10)))
-				user.send(PREFIX + "You've already found this button!");
+				user.sendMessage(PREFIX + "You've already found this button!");
 			return;
 		}
 
 		user.getFoundButtons().add(button);
 		service.save(user);
 
-		user.send(PREFIX + "You have found a spooky button! &e(" + user.getFoundButtons().size() + "/" + SoundButton.values().length + ")");
+		user.sendMessage(PREFIX + "You have found a spooky button! &e(" + user.getFoundButtons().size() + "/" + SoundButton.values().length + ")");
 
 		if (user.getFoundButtons().size() != SoundButton.values().length)
 			return;
 
 		PermissionChange.set().player(event.getPlayer()).permission("powder.powder.spookyscaryskeletons").run();
-		user.send(PREFIX + "You have unlocked the Spooky Scary Skeletons song! &c/songs");
+		user.sendMessage(PREFIX + "You have unlocked the Spooky Scary Skeletons song! &c/songs");
 	}
 
 }

@@ -115,9 +115,9 @@ public class Pugmas20User implements PlayerOwnedObject {
 		this.inventory.addAll(PlayerUtils.giveItemsGetExcess(getOnlinePlayer(), inventory));
 
 		if (this.inventory.isEmpty())
-			send(Pugmas20.PREFIX + "Inventory applied");
+			sendMessage(Pugmas20.PREFIX + "Inventory applied");
 		else
-			send(new JsonBuilder(Pugmas20.PREFIX + "Could not give all event items, clear up some inventory space and click here or re-enter the world")
+			sendMessage(new JsonBuilder(Pugmas20.PREFIX + "Could not give all event items, clear up some inventory space and click here or re-enter the world")
 					.hover("Click to collect the rest of your event items")
 					.command("/pugmas20 inventory apply"));
 	}

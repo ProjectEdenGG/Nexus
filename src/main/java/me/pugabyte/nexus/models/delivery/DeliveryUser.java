@@ -99,7 +99,7 @@ public class DeliveryUser implements PlayerOwnedObject {
 			message = "unclaimed deliveries in &e" + asOxfordList(groups, "&3, &e");
 		}
 
-		send(json(DeliveryCommand.PREFIX + "&3You have " + message + "&3, use &c/delivery &3to claim it!")
+		sendMessage(json(DeliveryCommand.PREFIX + "&3You have " + message + "&3, use &c/delivery &3to claim it!")
 				.command("/delivery")
 				.hover("&eClick to view deliveries"));
 	}

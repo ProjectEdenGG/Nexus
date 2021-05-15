@@ -193,7 +193,7 @@ public class TheMines implements Listener {
 
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
-		user.send(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
+		user.sendMessage(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
 	}
 
 	public static String taskId = "pugmas-ore-regen";
