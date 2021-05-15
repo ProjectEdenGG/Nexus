@@ -149,9 +149,11 @@ public class LaunchPads implements Listener {
 				if (player.isOnGround()) {
 					Tasks.wait(Time.SECOND, () -> {
 						if (player.isOnGround()) {
-							player.sendMessage("");
-							player.sendMessage("Ending launch because:");
-							player.sendMessage("  player is on ground");
+							if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
+								player.sendMessage("");
+								player.sendMessage("Ending launch because:");
+								player.sendMessage("  player is on ground");
+							}
 							cancelLaunch(player);
 						}
 					});
