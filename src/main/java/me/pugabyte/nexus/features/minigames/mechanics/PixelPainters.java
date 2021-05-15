@@ -21,6 +21,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
+import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,9 +46,9 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 //  - Only paste the designs on active islands
 
 public class PixelPainters extends TeamlessMechanic {
-	private final int MAX_ROUNDS = 5;
-	private final int TIME_BETWEEN_ROUNDS = 8 * 20;
-	private final int ROUND_COUNTDOWN = 45 * 20;
+	private static final int MAX_ROUNDS = 5;
+	private static final int TIME_BETWEEN_ROUNDS = 8 * 20;
+	private static final int ROUND_COUNTDOWN = 45 * 20;
 
 	@Override
 	public @NotNull String getName() {
@@ -308,7 +309,7 @@ public class PixelPainters extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		if (!event.getHand().equals(EquipmentSlot.HAND))
+		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND))
 			return;
 
 		Match match = minigamer.getMatch();
@@ -351,6 +352,7 @@ public class PixelPainters extends TeamlessMechanic {
 	}
 
 	public void pressButton(Minigamer minigamer, PlayerInteractEvent event) {
+		Validate.notNull(event.getClickedBlock(), "Clicked block should be insured non-null by calling function");
 		Match match = minigamer.getMatch();
 		PixelPaintersArena arena = match.getArena();
 		PixelPaintersMatchData matchData = match.getMatchData();
