@@ -42,14 +42,14 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	}
 
 	/**
-	 * Whether or not auto torches apple to the specified block. Considers the block's light level,
+	 * Whether or not auto torches apply to the specified block. Considers the block's light level,
 	 * if it's replaceable (i.e. air or grass), and if the block below supports placing torches.
-	 * @param block any block
-	 * @return whether or not to place an auto torch
+	 * @param block block where you want to place the torch
+	 * @return whether or not you can place an auto torch
 	 */
 	public boolean applies(HasHumanEntity player, Block block) {
 		return applies(block.getLightFromBlocks()) &&
-				/* todo: remove this check next parchment update */ block.isReplaceable() &&
+				!block.isLiquid() &&
 				CraftItemStack.asCraftCopy(new ItemStack(Material.TORCH)).canPlaceOn(player, block.getRelative(BlockFace.DOWN), BlockFace.UP);
 	}
 }
