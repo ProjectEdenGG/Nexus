@@ -17,7 +17,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 
 import java.util.Map;
 
-@Permission("group.staff")
 public class MiniGolfCommand extends CustomCommand {
 	private MiniGolf21User user;
 	private final MiniGolf21UserService service = new MiniGolf21UserService();
@@ -131,6 +130,7 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("clearDatabase")
 	@Confirm
+	@Permission("group.admin")
 	void resetData() {
 		service.clearCache();
 		service.deleteAll();
@@ -139,6 +139,7 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("clearUser <user>")
 	@Confirm
+	@Permission("group.admin")
 	void resetData(MiniGolf21User _user) {
 		if (!isSelf(_user.getOnlinePlayer()))
 			user = _user;
