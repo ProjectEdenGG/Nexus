@@ -22,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
@@ -134,12 +135,10 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return service.get(((Player) event.getEntity()).getKiller());
 
 		PVP attacker = null;
-		Projectile projectile;
 		if (event instanceof EntityDamageByEntityEvent entityEvent) {
-			if (entityEvent.getDamager() instanceof Player) {
-				attacker = service.get(entityEvent.getDamager());
-			} else if (entityEvent.getDamager() instanceof Projectile) {
-				projectile = (Projectile) entityEvent.getDamager();
+			if (entityEvent.getDamager() instanceof Player player) {
+				attacker = service.get(player);
+			} else if (entityEvent.getDamager() instanceof Projectile projectile) {
 				if (projectile.getShooter() instanceof Player)
 					attacker = service.get((Player) projectile.getShooter());
 			} else if (entityEvent.getDamager() instanceof EnderCrystal crystal) {
@@ -150,15 +149,23 @@ public class PVPCommand extends CustomCommand implements Listener {
 				Entity damager = ((EntityDamageByEntityEvent) crystalDamage).getDamager();
 				if (damager instanceof Player)
 					attacker = service.get(damager);
-					// check if last damager was a projectile shot by a player
-				else if (damager instanceof Projectile) {
-					projectile = (Projectile) damager;
-					if (projectile.getShooter() != null && projectile.getShooter() instanceof Player)
-						attacker = service.get((Player) projectile.getShooter());
+				// check if last damager was a projectile shot by a player
+				else if (damager instanceof Projectile projectile) {
+					if (projectile.getShooter() != null && projectile.getShooter() instanceof Player shooter)
+						attacker = service.get(shooter);
 				}
 			} else if (entityEvent.getDamager() instanceof TNTPrimed tnt) {
-				if (tnt.getSource() instanceof Player)
-					attacker = service.get(tnt.getSource());
+				if (tnt.getSource() instanceof Player player)
+					attacker = service.get(player);
+			} else if (entityEvent.getDamager() instanceof Firework firework) {
+				if (firework.getBoostedEntity() != null || firework.getSpawningEntity() == null) {
+					event.setCancelled(true);
+					return null;
+				} else {
+					Entity entity = Bukkit.getEntity(firework.getSpawningEntity());
+					if (entity instanceof Player)
+						attacker = service.get(entity);
+				}
 			}
 		} else if (event instanceof EntityDamageByBlockEvent) {
 			Location location = ((EntityDamageByBlockEvent) event).getLocation();
