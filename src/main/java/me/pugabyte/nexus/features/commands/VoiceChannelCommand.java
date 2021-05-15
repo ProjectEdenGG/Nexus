@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -34,6 +35,6 @@ public class VoiceChannelCommand extends CustomCommand {
 		if (member == null)
 			error("Could not find you in a voice channel");
 
-		guild.moveVoiceMember(member, vc).complete();
+		Tasks.async(() -> guild.moveVoiceMember(member, vc).complete());
 	}
 }
