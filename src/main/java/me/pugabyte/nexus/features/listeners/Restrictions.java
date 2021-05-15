@@ -19,7 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -75,26 +74,6 @@ public class Restrictions implements Listener {
 		if (event.getCause() == Cause.WITHER_ROSE)
 			if (event.getEntity() instanceof Player)
 				event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void onPlaceBed(BlockPlaceEvent event) {
-		Player player = event.getPlayer();
-
-		if (!MaterialTag.BEDS.isTagged(event.getBlock().getType()))
-			return;
-
-		if (player.getWorld().getEnvironment() != Environment.NETHER)
-			return;
-
-		if (Rank.of(player) != Rank.GUEST)
-			return;
-
-		if (event.getBlock().getLocation().getY() <= 20)
-			return;
-
-		event.setCancelled(true);
-		Koda.dm(player, PREFIX + "Sorry, but you can't place beds above y=20");
 	}
 
 	@EventHandler
