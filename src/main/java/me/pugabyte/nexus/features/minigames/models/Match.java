@@ -571,6 +571,24 @@ public class Match {
 			return taskId;
 		}
 
+		public int repeatAsync(Time startDelay, long interval, Runnable runnable) {
+			return repeatAsync(startDelay.get(), interval, runnable);
+		}
+
+		public int repeatAsync(long startDelay, Time interval, Runnable runnable) {
+			return repeatAsync(startDelay, interval.get(), runnable);
+		}
+
+		public int repeatAsync(Time startDelay, Time interval, Runnable runnable) {
+			return repeatAsync(startDelay.get(), interval.get(), runnable);
+		}
+
+		public int repeatAsync(long startDelay, long interval, Runnable runnable) {
+			int taskId = Tasks.repeatAsync(startDelay, interval, runnable);
+			taskIds.add(taskId);
+			return taskId;
+		}
+
 		public int async(Runnable runnable) {
 			int taskId = Tasks.async(runnable);
 			taskIds.add(taskId);

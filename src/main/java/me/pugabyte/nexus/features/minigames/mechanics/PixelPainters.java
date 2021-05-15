@@ -100,7 +100,7 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		matchData.setLobbyDesign(0);
 		countDesigns(match);
-		int taskId = match.getTasks().repeat(0, Time.SECOND.x(2), () -> {
+		int taskId = match.getTasks().repeatAsync(0, Time.SECOND.x(2), () -> {
 			if (match.isEnded() || match.isStarted())
 				return;
 
@@ -160,8 +160,10 @@ public class PixelPainters extends TeamlessMechanic {
 
 	@Override
 	public void onEnd(MatchEndEvent event) {
-		pasteLogo(event.getMatch());
-		clearFloors(event.getMatch());
+		event.getMatch().getTasks().async(() -> {
+			pasteLogo(event.getMatch());
+			clearFloors(event.getMatch());
+		});
 		super.onEnd(event);
 	}
 
@@ -232,7 +234,7 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.getChecked().clear();
 
 		minigamers.forEach(minigamer -> minigamer.getPlayer().getInventory().clear());
-		setupNextDesign(match);
+		match.getTasks().async(() -> setupNextDesign(match));
 
 		if (matchData.getCurrentRound() == MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
@@ -248,8 +250,10 @@ public class PixelPainters extends TeamlessMechanic {
 		} else {
 			// Start countdown to new round
 			match.getTasks().wait(TIME_BETWEEN_ROUNDS / 2, () -> {
-				pasteLogo(match);
-				clearFloors(match);
+				match.getTasks().async(() -> {
+					pasteLogo(match);
+					clearFloors(match);
+				});
 				match.getTasks().countdown(Countdown.builder()
 						.duration(TIME_BETWEEN_ROUNDS)
 						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
@@ -288,8 +292,10 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
 
 		matchData.setRoundStart(System.currentTimeMillis());
-		pasteNewDesign(match);
-		giveBlocks(match);
+		match.getTasks().async(() -> {
+			pasteNewDesign(match);
+			giveBlocks(match);
+		});
 
 		// Enable checking
 		matchData.canCheck(true);
