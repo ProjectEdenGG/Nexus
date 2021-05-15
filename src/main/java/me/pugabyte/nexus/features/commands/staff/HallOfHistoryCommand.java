@@ -83,6 +83,8 @@ public class HallOfHistoryCommand extends CustomCommand {
 		Nerd nerd = Nerd.of(target);
 		if (!isNullOrEmpty(nerd.getAbout()))
 			send("  &eAbout me: &3" + nerd.getAbout());
+		if (!nerd.getPronouns().isEmpty())
+			send(json("  &ePronouns: &3" + String.join(", ", nerd.getPronouns())));
 		if (nerd.isMeetMeVideo()) {
 			line();
 			String url = "https://projecteden.gg/meet/" + nerd.getName().toLowerCase();
