@@ -87,9 +87,8 @@ public class Archery implements Listener {
 		if (hitBlock == null) return;
 		if (!hitBlock.getType().equals(Material.TARGET)) return;
 		if (!BearFair21.isInRegion(hitBlock, targetRegion)) return;
-		if (!(projectile.getShooter() instanceof Player)) return;
+		if (!(projectile.getShooter() instanceof Player player)) return;
 
-		Player player = (Player) projectile.getShooter();
 		projectile.remove();
 		--activeTargets;
 		removeTarget(hitBlock);

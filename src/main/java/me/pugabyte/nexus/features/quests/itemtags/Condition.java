@@ -32,8 +32,7 @@ public enum Condition {
 			return null;
 
 		ItemMeta meta = itemStack.getItemMeta();
-		if (meta instanceof Damageable) {
-			Damageable damageable = (Damageable) meta;
+		if (meta instanceof Damageable damageable) {
 			double damage = damageable.getDamage();
 			double maxDurability = itemStack.getType().getMaxDurability();
 
@@ -57,8 +56,7 @@ public enum Condition {
 			return null;
 
 		ItemMeta meta = itemStack.getItemMeta();
-		if (meta instanceof Damageable) {
-			Damageable damageable = (Damageable) meta;
+		if (meta instanceof Damageable damageable) {
 			double damage = damageable.getDamage();
 			debugger.sendMessage("Damage: " + damage);
 			double maxDurability = itemStack.getType().getMaxDurability();

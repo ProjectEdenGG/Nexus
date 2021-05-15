@@ -297,10 +297,9 @@ public class TheMines implements Listener {
 		if (!isAtPugmas(event.getBlock().getLocation()))
 			return;
 
-		if (!(event.getBlock().getState() instanceof BlastFurnace))
+		if (!(event.getBlock().getState() instanceof BlastFurnace state))
 			return;
 
-		BlastFurnace state = (BlastFurnace) event.getBlock().getState();
 		if (state.getCookSpeedMultiplier() != 5) {
 			state.setCookSpeedMultiplier(5);
 			state.update();

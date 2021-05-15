@@ -120,8 +120,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 
 	@EventHandler
 	public void onSnowballHit(ProjectileHitEvent event) {
-		if (!(event.getHitEntity() instanceof Player)) return;
-		Player player = (Player) event.getHitEntity();
+		if (!(event.getHitEntity() instanceof Player player)) return;
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 		player.setVelocity(event.getEntity().getVelocity().multiply(0.5).add(new Vector(0, .5, 0)));

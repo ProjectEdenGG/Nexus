@@ -67,8 +67,7 @@ public class AnvilDrop extends TeamlessMechanic {
 
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
-		if (event.getOriginalEvent() instanceof EntityDamageEvent) {
-			EntityDamageEvent entityDamageEvent = (EntityDamageEvent) event.getOriginalEvent();
+		if (event.getOriginalEvent() instanceof EntityDamageEvent entityDamageEvent) {
 			if (entityDamageEvent.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK)) {
 				String minigamer = event.getMinigamer().getColoredName();
 				String deathMessage = RandomUtils.randomElement(deathMessages);

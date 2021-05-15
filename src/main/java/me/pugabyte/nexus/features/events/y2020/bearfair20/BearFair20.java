@@ -151,10 +151,9 @@ public class BearFair20 implements Listener {
 
 	@EventHandler
 	public void onExitMinecart(VehicleExitEvent event) {
-		if (!(event.getExited() instanceof Player)) return;
+		if (!(event.getExited() instanceof Player player)) return;
 		if (!(event.getVehicle() instanceof Minecart)) return;
 
-		Player player = (Player) event.getExited();
 		if (!isAtBearFair(player)) return;
 
 		Tasks.wait(1, () -> {

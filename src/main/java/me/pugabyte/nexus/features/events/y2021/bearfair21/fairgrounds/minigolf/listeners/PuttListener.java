@@ -100,8 +100,7 @@ public class PuttListener implements Listener {
 			for (Entity entity : entities) {
 
 				// Are we allowed to hit this ball?
-				if (entity instanceof Snowball) {
-					Snowball ball = (Snowball) entity;
+				if (entity instanceof Snowball ball) {
 
 					// Check this again, cuz NPE for some reason
 					if (user.getSnowball() == null) {

@@ -41,9 +41,7 @@ public class CombatListener implements Listener {
 
 	@EventHandler
 	public void onPlayerShootThemselves(ProjectileHitEvent event) {
-		if (event.getHitEntity() instanceof Player && event.getEntity().getShooter() instanceof Player) {
-			Player victim = (Player) event.getHitEntity();
-			Player damager = (Player) event.getEntity().getShooter();
+		if (event.getHitEntity() instanceof Player victim && event.getEntity().getShooter() instanceof Player damager) {
 			if (victim.getUniqueId().toString().equals(damager.getUniqueId().toString()))
 				Achievement.WRONG_WAY.check((Player) event.getHitEntity());
 		}
@@ -51,8 +49,7 @@ public class CombatListener implements Listener {
 
 	@EventHandler
 	public void onPlayerDeath(EntityResurrectEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = (Player) event.getEntity();
+		if (event.getEntity() instanceof Player player) {
 			if (WorldGroup.get(player) != WorldGroup.SURVIVAL) return;
 			Achievement.AVOIDING_DEATH.check(player);
 		}

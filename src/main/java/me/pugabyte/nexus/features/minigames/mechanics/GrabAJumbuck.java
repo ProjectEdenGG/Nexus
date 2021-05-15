@@ -191,8 +191,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 			}
 		}
 
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 		removeAllPassengers(player, minigamer.getMatch());

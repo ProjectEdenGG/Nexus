@@ -102,10 +102,9 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(final EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player)) return;
+		if (!(event.getDamager() instanceof Player player)) return;
 		if (!DamageCause.ENTITY_ATTACK.equals(event.getCause())) return;
 
-		Player player = (Player) event.getDamager();
 		if (!PlayerUtils.isStaffGroup(player)) return;
 
 		ItemStack item = ItemUtils.getTool(player);

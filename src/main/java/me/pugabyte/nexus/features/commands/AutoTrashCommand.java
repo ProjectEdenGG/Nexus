@@ -97,8 +97,7 @@ public class AutoTrashCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!player.hasPermission(PERMISSION)) return;
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player))) return;
 		ItemStack item = event.getItem().getItemStack();

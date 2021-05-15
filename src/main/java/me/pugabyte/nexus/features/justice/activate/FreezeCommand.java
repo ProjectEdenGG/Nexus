@@ -159,24 +159,21 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 	@EventHandler
 	public void onExitVehicle(VehicleExitEvent event) {
-		if (!(event.getExited() instanceof Player)) return;
-		Player player = (Player) event.getExited();
+		if (!(event.getExited() instanceof Player player)) return;
 		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onExitVehicle(VehicleEnterEvent event) {
-		if (!(event.getEntered() instanceof Player)) return;
-		Player player = (Player) event.getEntered();
+		if (!(event.getEntered() instanceof Player player)) return;
 		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onDismount(EntityDismountEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 		ArmorStand armorStand = (ArmorStand) event.getDismounted();

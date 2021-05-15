@@ -93,19 +93,17 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			}
 
 			output = output.append(deathMessage);
-		} else if (!(deathMessageRaw instanceof TranslatableComponent)) {
+		} else if (!(deathMessageRaw instanceof TranslatableComponent deathMessage)) {
 			Nexus.warn("Death message ("+deathMessageRaw.examinableName()+") is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
 			output = output.append(deathMessageRaw);
 		} else {
-			TranslatableComponent deathMessage = (TranslatableComponent) deathMessageRaw;
 			List<Component> args = new ArrayList<>();
 			deathMessage.args().forEach(component -> {
 				// get the name of the player (or entity)
 				String playerName;
 				if (component.children().size() > 0 && component.children().get(0) instanceof TextComponent)
 					playerName = ((TextComponent) component.children().get(0)).content();
-				else if (component instanceof TextComponent && !((TextComponent) component).content().isEmpty()) {
-					TextComponent textComponent = (TextComponent) component;
+				else if (component instanceof TextComponent textComponent && !((TextComponent) component).content().isEmpty()) {
 					playerName = textComponent.content();
 					component = textComponent.content("");
 				} else {

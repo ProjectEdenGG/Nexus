@@ -252,9 +252,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 		if (!BearFair20.enableQuests) return;
 		Entity clicked = event.getRightClicked();
-		if (!(clicked instanceof ItemFrame)) return;
+		if (!(clicked instanceof ItemFrame itemFrame)) return;
 
-		ItemFrame itemFrame = (ItemFrame) clicked;
 		ItemStack item = itemFrame.getItem();
 
 		ItemStack piece = null;

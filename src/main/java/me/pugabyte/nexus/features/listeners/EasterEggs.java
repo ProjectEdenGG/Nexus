@@ -28,10 +28,9 @@ public class EasterEggs implements Listener {
 	public void onPigDamage(EntityDamageByEntityEvent event) {
 		if (event.getEntity().getType() != EntityType.PIG)
 			return;
-		if (!(event.getDamager() instanceof Player))
+		if (!(event.getDamager() instanceof Player player))
 			return;
 
-		Player player = (Player) event.getDamager();
 		if (!player.getName().equals("Porkeroni"))
 			return;
 

@@ -183,9 +183,8 @@ public class RadioUtils {
 	public static boolean isInRangeOfRadiusRadio(HasPlayer player, Radio radio) {
 		SongPlayer songPlayer = radio.getSongPlayer();
 		if (songPlayer == null) return false;
-		if (!(songPlayer instanceof PositionSongPlayer)) return false;
+		if (!(songPlayer instanceof PositionSongPlayer positionSongPlayer)) return false;
 
-		PositionSongPlayer positionSongPlayer = (PositionSongPlayer) songPlayer;
 		if (positionSongPlayer.getTargetLocation() == null) return false;
 		if (positionSongPlayer.getTargetLocation().getWorld() == null) return false;
 		return positionSongPlayer.getTargetLocation().getWorld().equals(player.getPlayer().getWorld()) && positionSongPlayer.isInRange(player.getPlayer());

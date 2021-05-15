@@ -35,12 +35,11 @@ public class RegenCrops {
 			Block block = loc.getBlock();
 			BlockData blockData = block.getBlockData();
 
-			if (!(blockData instanceof Ageable)) {
+			if (!(blockData instanceof Ageable ageable)) {
 				cropRegenList.remove(loc);
 				continue;
 			}
 
-			Ageable ageable = (Ageable) blockData;
 			int age = ageable.getAge();
 			if (age == ageable.getMaximumAge()) {
 				cropRegenList.remove(loc);

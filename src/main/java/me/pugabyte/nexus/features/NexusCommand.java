@@ -321,10 +321,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 		Set<String> keys = new HashSet<>();
 
 		for (Command value : mapUtils.getKnownCommandMap().values()) {
-			if (!(value instanceof PluginCommand))
+			if (!(value instanceof PluginCommand command))
 				continue;
 
-			PluginCommand command = (PluginCommand) value;
 			Plugin plugin = command.getPlugin();
 
 			String commandName = command.getName();
@@ -817,10 +816,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("trimItemNames")
 	void trimItemNames() {
 		Block block = getTargetBlock();
-		if (!(block.getState() instanceof Container))
+		if (!(block.getState() instanceof Container state))
 			return;
-
-		Container state = (Container) block.getState();
 
 		for (ItemStack content : state.getInventory().getContents()) {
 			if (isNullOrAir(content))

@@ -101,8 +101,7 @@ public enum ScoreboardLine {
 				return line + "&eNone";
 			if (activeChannel instanceof PrivateChannel)
 				return line + "&b" + String.join(",", ((PrivateChannel) activeChannel).getOthersNames(chatter));
-			if (activeChannel instanceof PublicChannel) {
-				PublicChannel channel = (PublicChannel) activeChannel;
+			if (activeChannel instanceof PublicChannel channel) {
 				return line + channel.getColor() + channel.getName();
 			}
 			return line + "Unknown";

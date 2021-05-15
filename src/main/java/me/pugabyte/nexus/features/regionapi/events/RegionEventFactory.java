@@ -41,8 +41,7 @@ public class RegionEventFactory {
 				return new NPCLeavingRegionEvent(region, npc, movementType, parentEvent);
 			else if (eventClass == LeftRegionEvent.class)
 				return new NPCLeftRegionEvent(region, npc, movementType, parentEvent);
-		} else if (entity instanceof Player) {
-			Player player = (Player) entity;
+		} else if (entity instanceof Player player) {
 			if (eventClass == EnteredRegionEvent.class)
 				return new PlayerEnteredRegionEvent(region, player, movementType, parentEvent);
 			else if (eventClass == EnteringRegionEvent.class)

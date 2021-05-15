@@ -318,8 +318,7 @@ public class OceanWorldCommand extends CustomCommand implements Listener {
 				if (MaterialTag.ALL_AIR.isTagged(type) || Material.ICE == type || Material.WATER == type)
 					block.setType(Material.WATER, false);
 
-				if (block.getBlockData() instanceof Waterlogged) {
-					Waterlogged waterlogged = (Waterlogged) block.getBlockData();
+				if (block.getBlockData() instanceof Waterlogged waterlogged) {
 					waterlogged.setWaterlogged(true);
 					block.setBlockData(waterlogged);
 				}

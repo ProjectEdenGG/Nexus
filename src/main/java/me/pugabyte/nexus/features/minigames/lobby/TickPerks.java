@@ -88,10 +88,9 @@ public class TickPerks implements Listener {
 					if (perk instanceof LoadoutPerk)
 						loadoutUsers.add(perkOwner);
 
-					if (perk instanceof TickablePerk) {
+					if (perk instanceof TickablePerk tickablePerk) {
 						if (minigamer.isPlaying() && (minigamer.isRespawning() || !minigamer.usesPerk(perk)) || PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR) return;
 
-						TickablePerk tickablePerk = (TickablePerk) perk;
 						if (minigamer.isPlaying())
 							tickablePerk.tick(minigamer);
 						else

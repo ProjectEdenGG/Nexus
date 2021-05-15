@@ -275,8 +275,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onCraftItem(CraftItemEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		Player player = (Player) event.getView().getPlayer();
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
 		if (player.hasPermission("honeypot.bypass")) return;
 
 		for (ItemStack ingredient : event.getInventory().getMatrix())
@@ -288,9 +287,8 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onEntityKill(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player)) return;
+		if (!(event.getDamager() instanceof Player player)) return;
 		if (!(event.getEntity() instanceof Animals)) return;
-		Player player = (Player) event.getDamager();
 		if (player.hasPermission("honeypot.bypass")) return;
 		incrementPlayer(player, event.getEntity().getLocation(), 1);
 	}

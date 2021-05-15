@@ -105,8 +105,7 @@ public class Basketball implements Listener {
 	private static void removeBasketballEntity(Player player) {
 		Collection<Entity> entities = getWGUtils().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
-			if (entity instanceof Item) {
-				Item item = (Item) entity;
+			if (entity instanceof Item item) {
 				if (!isBasketball(item.getItemStack()))
 					continue;
 				if (ownsBasketball(player, item.getItemStack()))
@@ -119,8 +118,7 @@ public class Basketball implements Listener {
 	private static boolean regionContainsBasketball(Player player) {
 		Collection<Entity> entities = getWGUtils().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
-			if (entity instanceof Item) {
-				Item item = (Item) entity;
+			if (entity instanceof Item item) {
 				if (!isBasketball(item.getItemStack()))
 					continue;
 				if (ownsBasketball(player, item.getItemStack())) {
@@ -254,8 +252,7 @@ public class Basketball implements Listener {
 
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.getWorld() != world) return;
 		if (!isBasketball(event.getItem().getItemStack())) return;
 

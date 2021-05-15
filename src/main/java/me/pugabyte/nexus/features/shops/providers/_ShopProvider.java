@@ -81,10 +81,9 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 	}
 
 	protected boolean handleRightClick(Product product, ItemClickData clickData) {
-		if (!(clickData.getEvent() instanceof InventoryClickEvent))
+		if (!(clickData.getEvent() instanceof InventoryClickEvent event))
 			return false;
 
-		InventoryClickEvent event = (InventoryClickEvent) clickData.getEvent();
 		if (event.getClick() != ClickType.RIGHT)
 			return false;
 

@@ -303,16 +303,13 @@ public class Shop implements PlayerOwnedObject {
 			if (item.getType() == Material.ENCHANTED_BOOK || maxDurability > 0)
 				builder.lore("&7Repair Cost: " + ((Repairable) item.getItemMeta()).getRepairCost());
 
-			if (item.getItemMeta() instanceof Damageable) {
-				Damageable meta = (Damageable) item.getItemMeta();
+			if (item.getItemMeta() instanceof Damageable meta) {
 				if (meta.hasDamage())
 					builder.lore("&7Durability: " + (maxDurability - meta.getDamage()) + " / " + maxDurability);
 			}
 
-			if (item.getItemMeta() instanceof BlockStateMeta) {
-				BlockStateMeta meta = (BlockStateMeta) item.getItemMeta();
-				if (meta.getBlockState() instanceof Beehive) {
-					Beehive beehive = (Beehive) meta.getBlockState();
+			if (item.getItemMeta() instanceof BlockStateMeta meta) {
+				if (meta.getBlockState() instanceof Beehive beehive) {
 					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
 				}
 			}

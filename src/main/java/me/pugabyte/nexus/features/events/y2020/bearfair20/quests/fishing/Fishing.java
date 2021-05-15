@@ -168,8 +168,7 @@ public class Fishing implements Listener {
 		if (!event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)) return;
 
 		Entity caught = event.getCaught();
-		if (!(caught instanceof Item)) return;
-		Item item = (Item) caught;
+		if (!(caught instanceof Item item)) return;
 		ItemStack itemStack = item.getItemStack();
 
 		ItemStack lootItemStack = getLoot(player);

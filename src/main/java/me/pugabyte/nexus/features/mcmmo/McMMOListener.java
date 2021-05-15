@@ -132,8 +132,7 @@ public class McMMOListener implements Listener {
 
 	boolean growCrop(Block block) {
 		BlockData blockData = block.getBlockData();
-		if (!(blockData instanceof Ageable)) return false;
-		Ageable ageable = (Ageable) blockData;
+		if (!(blockData instanceof Ageable ageable)) return false;
 
 		int maxAge = ageable.getMaximumAge();
 		int age = ageable.getAge();
@@ -322,8 +321,7 @@ public class McMMOListener implements Listener {
 	}
 
 	private TreeType getTreeType(Location location) {
-		if ((location.getBlock().getState().getData() instanceof Sapling)) {
-			Sapling sapling = (Sapling) location.getBlock().getState().getData();
+		if ((location.getBlock().getState().getData() instanceof Sapling sapling)) {
 			return getTreeType(sapling.getSpecies());
 		} else if (location.getBlock().getType().equals(Material.BROWN_MUSHROOM)) {
 			return TreeType.BROWN_MUSHROOM;

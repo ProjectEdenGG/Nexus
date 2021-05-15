@@ -99,10 +99,9 @@ public class ShootingRange implements Listener {
         Block block = event.getHitBlock();
         if (block == null) return;
         if(!targets.containsKey(block.getLocation())) return;
-        if (!(projectile.getShooter() instanceof Player)) return;
-        Player player = (Player) projectile.getShooter();
+        if (!(projectile.getShooter() instanceof Player player)) return;
 
-        projectile.remove();
+		projectile.remove();
         clearTargets();
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0F, 1.0F);
         lastUpdateTicks = -1;

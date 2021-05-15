@@ -188,8 +188,7 @@ public class Murder extends TeamMechanic {
 	public void onDamage(MinigamerDamageEvent event) {
 		super.onDamage(event);
 
-		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent originalEvent = (EntityDamageByEntityEvent) event.getOriginalEvent();
+		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent originalEvent) {
 			if (
 					isMurderer(event.getAttacker()) &&
 					originalEvent.getCause() == DamageCause.ENTITY_ATTACK &&
@@ -375,8 +374,7 @@ public class Murder extends TeamMechanic {
 
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 

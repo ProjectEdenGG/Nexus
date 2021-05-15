@@ -55,10 +55,9 @@ public class Listeners implements Listener {
 			ReflectionGame.setLaserStart(skullLoc);
 
 			BlockData blockDataDir = skullLoc.getBlock().getBlockData();
-			if (!(blockDataDir instanceof Rotatable))
+			if (!(blockDataDir instanceof Rotatable skullDir))
 				return;
 
-			Rotatable skullDir = (Rotatable) blockDataDir;
 			BlockFace skullFace = skullDir.getRotation().getOppositeFace();
 
 			ReflectionGame.startLaser(event.getPlayer(), skullFace);

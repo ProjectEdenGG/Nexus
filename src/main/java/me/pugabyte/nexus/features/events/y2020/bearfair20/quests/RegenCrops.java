@@ -29,11 +29,7 @@ import java.util.Set;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.bottomBlockError;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.cantBreakError;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.decorOnlyError;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.notFullyGrownError;
+import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.*;
 
 public class RegenCrops implements Listener {
 
@@ -56,12 +52,11 @@ public class RegenCrops implements Listener {
 			Block block = loc.getBlock();
 			BlockData blockData = block.getBlockData();
 
-			if (!(blockData instanceof Ageable)) {
+			if (!(blockData instanceof Ageable ageable)) {
 				cropRegenList.remove(loc);
 				continue;
 			}
 
-			Ageable ageable = (Ageable) blockData;
 			int age = ageable.getAge();
 			if (age == ageable.getMaximumAge()) {
 				cropRegenList.remove(loc);
@@ -207,7 +202,7 @@ public class RegenCrops implements Listener {
 
 		BlockData blockData = block.getState().getBlockData();
 		Material material = block.getType();
-		if (!(blockData instanceof Ageable) || noAge.contains(material)) {
+		if (!(blockData instanceof Ageable ageable) || noAge.contains(material)) {
 			switch (material) {
 				case MELON, PUMPKIN -> {
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
@@ -250,7 +245,6 @@ public class RegenCrops implements Listener {
 			return;
 		}
 
-		Ageable ageable = (Ageable) blockData;
 		if (ageable.getAge() != ageable.getMaximumAge()) {
 			if (new CooldownService().check(player, "BF_notFullyGrown", Time.MINUTE)) {
 				send(notFullyGrownError, player);

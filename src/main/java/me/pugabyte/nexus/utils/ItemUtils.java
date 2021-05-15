@@ -74,14 +74,12 @@ public class ItemUtils {
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
 			return contents;
 		
-		if (!(itemStack.getItemMeta() instanceof BlockStateMeta))
+		if (!(itemStack.getItemMeta() instanceof BlockStateMeta meta))
 			return contents;
 
-		BlockStateMeta meta = (BlockStateMeta) itemStack.getItemMeta();
-		if (!(meta.getBlockState() instanceof ShulkerBox))
+		if (!(meta.getBlockState() instanceof ShulkerBox shulkerBox))
 			return contents;
 
-		ShulkerBox shulkerBox = (ShulkerBox) meta.getBlockState();
 		contents.addAll(Arrays.asList(shulkerBox.getInventory().getContents()));
 
 		return contents;
@@ -158,8 +156,7 @@ public class ItemUtils {
 
 	public static ItemStack setDurability(ItemStack item, int percentage) {
 		ItemMeta meta = item.getItemMeta();
-		if (meta instanceof Damageable) {
-			Damageable damageable = (Damageable) meta;
+		if (meta instanceof Damageable damageable) {
 			double maxDurability = item.getType().getMaxDurability();
 			double damage = (percentage / 100.0) * maxDurability;
 			damageable.setDamage((int) damage);

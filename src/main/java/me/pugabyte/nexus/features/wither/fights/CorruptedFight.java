@@ -58,8 +58,7 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void stopWitherHearts(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!alivePlayers.contains(player.getUniqueId())) return;
 		if (event.getCause() != EntityDamageEvent.DamageCause.WITHER) return;
 		event.setCancelled(true);
@@ -69,8 +68,7 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void slowRegen(EntityRegainHealthEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 		if (!alivePlayers.contains(player.getUniqueId())) return;
 		if (event.getRegainReason() != EntityRegainHealthEvent.RegainReason.SATIATED) return;
 		int regenAmount = playerRegenAmounts.getOrDefault(player.getUniqueId(), 0);
@@ -160,8 +158,7 @@ public class CorruptedFight extends WitherFight {
 	public void doublePlayerDamage(EntityDamageByEntityEvent event) {
 		if ((event.getEntity() instanceof Player)) return;
 		if (!new WorldGuardUtils("events").isInRegion(event.getEntity().getLocation(), "witherarena")) return;
-		if (event.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) event.getDamager();
+		if (event.getDamager() instanceof Projectile projectile) {
 			if (projectile.getShooter() instanceof Wither)
 				event.setDamage(event.getFinalDamage() * 2);
 		}

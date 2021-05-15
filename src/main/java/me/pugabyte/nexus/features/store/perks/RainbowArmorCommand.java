@@ -58,12 +58,11 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	// Remove color
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player))
+		if (!(event.getWhoClicked() instanceof Player player))
 			return;
 		if (event.getSlotType() != InventoryType.SlotType.ARMOR)
 			return;
 
-		Player player = (Player) event.getWhoClicked();
 		ItemStack item = event.getCurrentItem();
 		if (player.getGameMode() != GameMode.SURVIVAL)
 			return;

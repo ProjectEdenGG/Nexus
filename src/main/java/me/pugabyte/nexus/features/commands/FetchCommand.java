@@ -91,8 +91,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onArrowHit(ProjectileHitEvent event) {
 		if (!enabled) return;
-		if (!(event.getEntity() instanceof Arrow)) return;
-		Arrow arrow = (Arrow) event.getEntity();
+		if (!(event.getEntity() instanceof Arrow arrow)) return;
 		if (!arrows.contains(arrow)) return;
 		arrow.getLocation().getWorld().dropItem(arrow.getLocation(), new ItemStack(Material.BONE));
 		arrows.remove(arrow);

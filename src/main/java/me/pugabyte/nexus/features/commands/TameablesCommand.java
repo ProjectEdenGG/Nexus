@@ -210,9 +210,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player)) return;
+		if (!(event.getDamager() instanceof Player player)) return;
 
-		Player player = (Player) event.getDamager();
 		UUID uuid = player.getUniqueId();
 		Entity entity = event.getEntity();
 		String entityName = camelCase(entity.getType());
@@ -264,8 +263,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	private void updateOwner(Entity entity, Player player, OfflinePlayer newOwner) {
 		if (entity instanceof Tameable) {
 			((Tameable) entity).setOwner(newOwner);
-		} else if (entity instanceof Fox) {
-			Fox fox = (Fox) entity;
+		} else if (entity instanceof Fox fox) {
 			if (fox.getFirstTrustedPlayer() != null && fox.getFirstTrustedPlayer().getUniqueId().equals(player.getUniqueId()))
 				fox.setFirstTrustedPlayer(newOwner);
 			else if (fox.getSecondTrustedPlayer() != null && fox.getSecondTrustedPlayer().getUniqueId().equals(player.getUniqueId())) {
@@ -283,8 +281,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		if (entity instanceof Tameable) {
 			AnimalTamer tamer = ((Tameable) entity).getOwner();
 			return tamer != null && tamer.equals(player);
-		} else if (entity instanceof Fox) {
-			Fox fox = (Fox) entity;
+		} else if (entity instanceof Fox fox) {
 			return fox.getFirstTrustedPlayer() == player || fox.getSecondTrustedPlayer() == player;
 		}
 		return false;
@@ -296,8 +293,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			AnimalTamer tamer = ((Tameable) entity).getOwner();
 			if (tamer != null)
 				owners.add(tamer);
-		} else if (entity instanceof Fox) {
-			Fox fox = (Fox) entity;
+		} else if (entity instanceof Fox fox) {
 			if (fox.getFirstTrustedPlayer() != null)
 				owners.add(fox.getFirstTrustedPlayer());
 			if (fox.getSecondTrustedPlayer() != null)

@@ -155,10 +155,9 @@ public class ShopCommand extends CustomCommand implements Listener {
 			return;
 
 		BlockState state = block.getState();
-		if (!(state instanceof Container))
+		if (!(state instanceof Container container))
 			return;
 
-		Container container = (Container) state;
 		Product product = interactStockMap.get(event.getPlayer().getUniqueId());
 
 		event.setCancelled(true);

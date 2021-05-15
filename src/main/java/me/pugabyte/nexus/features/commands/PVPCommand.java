@@ -135,16 +135,14 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 		PVP attacker = null;
 		Projectile projectile;
-		if (event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent entityEvent = (EntityDamageByEntityEvent) event;
+		if (event instanceof EntityDamageByEntityEvent entityEvent) {
 			if (entityEvent.getDamager() instanceof Player) {
 				attacker = service.get(entityEvent.getDamager());
 			} else if (entityEvent.getDamager() instanceof Projectile) {
 				projectile = (Projectile) entityEvent.getDamager();
 				if (projectile.getShooter() instanceof Player)
 					attacker = service.get((Player) projectile.getShooter());
-			} else if (entityEvent.getDamager() instanceof EnderCrystal) {
-				EnderCrystal crystal = (EnderCrystal) entityEvent.getDamager();
+			} else if (entityEvent.getDamager() instanceof EnderCrystal crystal) {
 				// find last user to damage the end crystal
 				EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
 				if (crystalDamage == null) return null;
@@ -158,8 +156,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 					if (projectile.getShooter() != null && projectile.getShooter() instanceof Player)
 						attacker = service.get((Player) projectile.getShooter());
 				}
-			} else if (entityEvent.getDamager() instanceof TNTPrimed) {
-				TNTPrimed tnt = (TNTPrimed) entityEvent.getDamager();
+			} else if (entityEvent.getDamager() instanceof TNTPrimed tnt) {
 				if (tnt.getSource() instanceof Player)
 					attacker = service.get(tnt.getSource());
 			}

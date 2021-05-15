@@ -150,8 +150,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 		if (event.getEntity().getType() == EntityType.EXPERIENCE_ORB)
 			return;
 
-		if (event.getTarget() instanceof Player) {
-			Player player = (Player) event.getTarget();
+		if (event.getTarget() instanceof Player player) {
 			if (AFK.get(player).isTimeAfk()) {
 				AFKSettings afkSettings = new AFKSettingsService().get(player);
 				if (!afkSettings.isMobTargeting())

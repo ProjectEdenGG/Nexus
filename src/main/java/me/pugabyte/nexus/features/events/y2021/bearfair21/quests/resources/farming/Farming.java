@@ -70,7 +70,7 @@ public class Farming implements Listener {
 
 		BlockData blockData = block.getState().getBlockData();
 		Material material = block.getType();
-		if (!(blockData instanceof Ageable) || cropMultiBlock.contains(material)) {
+		if (!(blockData instanceof Ageable ageable) || cropMultiBlock.contains(material)) {
 
 			// Flower
 			if (cropFlower.contains(material)) {
@@ -128,7 +128,6 @@ public class Farming implements Listener {
 			return;
 		}
 
-		Ageable ageable = (Ageable) blockData;
 		if (ageable.getAge() != ageable.getMaximumAge()) {
 			if (new CooldownService().check(player, "BF21_notFullyGrown", Time.MINUTE)) {
 				send(Errors.notFullyGrown, player);

@@ -85,8 +85,7 @@ public class StatusBar implements PlayerOwnedObject {
 	public static BarColor getColor(UUID uuid) {
 		Chatter chatter = new ChatService().get(uuid);
 		Channel activeChannel = chatter.getActiveChannel();
-		if (activeChannel instanceof PublicChannel) {
-			PublicChannel channel = (PublicChannel) activeChannel;
+		if (activeChannel instanceof PublicChannel channel) {
 			if (StaticChannel.GLOBAL.getChannel().equals(channel))
 				return BarColor.GREEN;
 			else if (StaticChannel.LOCAL.getChannel().equals(channel))

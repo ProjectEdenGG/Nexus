@@ -72,8 +72,7 @@ public class MobHeads extends Feature implements Listener {
 	}
 
 	private static boolean isBaby(LivingEntity entity) {
-		if (entity instanceof Ageable) {
-			Ageable ageable = (Ageable) entity;
+		if (entity instanceof Ageable ageable) {
 			return !ageable.isAdult();
 		}
 		return false;
@@ -81,10 +80,9 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPickupPlayerSkull(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player))
+		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		Player player = (Player) event.getEntity();
 		// TODO: Remove when done
 		if (!Dev.WAKKA.is(player))
 			return;

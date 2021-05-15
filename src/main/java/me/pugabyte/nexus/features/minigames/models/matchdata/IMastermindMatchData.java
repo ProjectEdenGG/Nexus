@@ -177,8 +177,7 @@ public abstract class IMastermindMatchData extends MatchData {
 			validateOrigin.getRelative(direction, relative++).setType(validateIncorrect);
 
 		Block resultsSignBlock = WEUtils.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
-		if (MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign) {
-			Sign resultsSign = (Sign) resultsSignBlock.getState();
+		if (MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign) {
 			resultsSign.setLine(1, colorize("&aCorrect: &f" + correct));
 			resultsSign.setLine(2, colorize("&eWrong spot: &f" + exists));
 			resultsSign.setLine(3, colorize("&cIncorrect: &f" + incorrect));
@@ -232,10 +231,9 @@ public abstract class IMastermindMatchData extends MatchData {
 	public void resetResultsSign() {
 		for (ProtectedRegion resultsSignRegion : arena.getRegionsLike("results_sign")) {
 			Block resultsSignBlock = WEUtils.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
-			if (!(MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign))
+			if (!(MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign))
 				Nexus.warn("Mastermind results sign region not configured correctly");
 			else {
-				Sign resultsSign = (Sign) resultsSignBlock.getState();
 				resultsSign.setLine(1, colorize("&aCorrect: &f0"));
 				resultsSign.setLine(2, colorize("&eWrong spot: &f0"));
 				resultsSign.setLine(3, colorize("&cIncorrect: &f0"));

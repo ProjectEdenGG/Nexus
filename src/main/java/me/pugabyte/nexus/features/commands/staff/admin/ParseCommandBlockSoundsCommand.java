@@ -98,8 +98,7 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 				look(relative, direction.getOppositeFace());
 			}
 
-			if (relative.getState() instanceof CommandBlock) {
-				CommandBlock commandBlock = (CommandBlock) relative.getState();
+			if (relative.getState() instanceof CommandBlock commandBlock) {
 				sounds.put(wait, new ArrayList<>(sounds.getOrDefault(wait, new ArrayList<>())) {{
 					add(commandBlock.getCommand());
 				}});
@@ -108,8 +107,7 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 				look(relative, direction.getOppositeFace());
 			}
 
-			if (relative.getBlockData() instanceof Repeater) {
-				Repeater repeater = (Repeater) relative.getBlockData();
+			if (relative.getBlockData() instanceof Repeater repeater) {
 				BlockFace newDirection = repeater.getFacing().getOppositeFace();
 				if (direction != newDirection)
 					continue;

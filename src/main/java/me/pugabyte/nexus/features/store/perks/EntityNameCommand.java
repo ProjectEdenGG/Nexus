@@ -50,8 +50,7 @@ public class EntityNameCommand extends CustomCommand {
 	) {
 		input = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
 
-		if (targetEntity instanceof ItemFrame) {
-			ItemFrame itemFrame = (ItemFrame) targetEntity;
+		if (targetEntity instanceof ItemFrame itemFrame) {
 			ItemStack item = itemFrame.getItem();
 			ItemBuilder.setName(item, input);
 			itemFrame.setItem(item);

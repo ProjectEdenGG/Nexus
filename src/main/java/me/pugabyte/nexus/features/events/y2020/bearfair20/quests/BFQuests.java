@@ -241,8 +241,7 @@ public class BFQuests implements Listener {
 
 	@EventHandler
 	public void onCraftItem(CraftItemEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		Player player = (Player) event.getView().getPlayer();
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
 		if (!isAtBearFair(player)) return;
 
 		ItemStack result = event.getInventory().getResult();
@@ -267,8 +266,7 @@ public class BFQuests implements Listener {
 
 	@EventHandler
 	public void onPrepareCraftItem(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		Player player = (Player) event.getView().getPlayer();
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
 		if (!isAtBearFair(player)) return;
 
 		ItemStack[] ingredients = event.getInventory().getMatrix();
@@ -316,9 +314,8 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onCloseInventory(InventoryCloseEvent event) {
 		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
-		if (!(event.getPlayer() instanceof Player)) return;
+		if (!(event.getPlayer() instanceof Player player)) return;
 
-		Player player = (Player) event.getPlayer();
 		if (!isAtBearFair(player)) return;
 
 		BearFair20UserService service = new BearFair20UserService();

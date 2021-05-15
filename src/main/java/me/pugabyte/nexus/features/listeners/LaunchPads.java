@@ -188,9 +188,8 @@ public class LaunchPads implements Listener {
 	@EventHandler
 	public void onDamage(final EntityDamageEvent event) {
 		Entity entity = event.getEntity();
-		if (!(entity instanceof Player)) return;
+		if (!(entity instanceof Player player)) return;
 
-		Player player = (Player) entity;
 		if (launchPadPlayers.get(player) != null)
 			event.setCancelled(true);
 	}

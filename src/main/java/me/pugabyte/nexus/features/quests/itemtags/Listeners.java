@@ -147,9 +147,8 @@ public class Listeners implements Listener {
 		if (isNotTesting(event.getPlayer())) return;
 
 		Entity caught = event.getCaught();
-		if (!(caught instanceof Item)) return;
+		if (!(caught instanceof Item item)) return;
 
-		Item item = (Item) caught;
 		ItemStack itemStack = item.getItemStack();
 		updateItem(itemStack);
 	}

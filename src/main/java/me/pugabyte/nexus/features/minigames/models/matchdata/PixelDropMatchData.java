@@ -189,10 +189,9 @@ public class PixelDropMatchData extends MatchData {
 
 	public String getWord(Location location) {
 		BlockState blockState = location.getBlock().getState();
-		if (!(blockState instanceof Sign))
+		if (!(blockState instanceof Sign sign))
 			throw new NexusException("PixelDrop could not parse sign at: " + StringUtils.getLocationString(location));
 
-		Sign sign = (Sign) blockState;
 		String[] lines = sign.getLines();
 		StringBuilder word = new StringBuilder();
 		for (String line : lines) {

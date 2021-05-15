@@ -116,8 +116,7 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onDamage(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
-		if (!(event.getEntity() instanceof Player)) return;
-		Player player = (Player) event.getEntity();
+		if (!(event.getEntity() instanceof Player player)) return;
 
 		if (event.getCause() == DamageCause.VOID)
 			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.get(player))
@@ -350,8 +349,7 @@ public class Misc implements Listener {
 		Player attacker = null;
 		if (event.getDamager() instanceof Player) {
 			attacker = (Player) event.getDamager();
-		} else if (event.getDamager() instanceof Projectile) {
-			Projectile projectile = (Projectile) event.getDamager();
+		} else if (event.getDamager() instanceof Projectile projectile) {
 			if (projectile.getShooter() instanceof Player)
 				attacker = (Player) projectile.getShooter();
 		}
@@ -369,7 +367,7 @@ public class Misc implements Listener {
 			return;
 
 		Entity entity = event.getRightClicked();
-		if (!(entity instanceof ItemFrame))
+		if (!(entity instanceof ItemFrame itemFrame))
 			return;
 
 		ItemStack tool = getTool(event.getPlayer());
@@ -382,8 +380,6 @@ public class Misc implements Listener {
 		int mapId = ((MapMeta) tool.getItemMeta()).getMapId();
 		if (!Paths.get("plugins/ImageOnMap/images/map" + mapId + ".png").toFile().exists())
 			return;
-
-		ItemFrame itemFrame = (ItemFrame) entity;
 
 		if (!isNullOrAir(itemFrame.getItem()))
 			return;

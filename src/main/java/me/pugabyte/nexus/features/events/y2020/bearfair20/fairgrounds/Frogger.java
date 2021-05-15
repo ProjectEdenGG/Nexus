@@ -349,9 +349,8 @@ public class Frogger implements Listener {
 
 	@EventHandler
 	public void onDamage(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
 
-		Player player = (Player) event.getEntity();
 		if (!isInRegion(player, damageRg)) return;
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
 

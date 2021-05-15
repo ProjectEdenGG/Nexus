@@ -281,10 +281,9 @@ public class Archery extends TeamlessMechanic {
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE))
 			return;
 
-		if (!(projectile.getShooter() instanceof Player))
+		if (!(projectile.getShooter() instanceof Player player))
 			return;
 
-		Player player = (Player) projectile.getShooter();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this))
 			return;

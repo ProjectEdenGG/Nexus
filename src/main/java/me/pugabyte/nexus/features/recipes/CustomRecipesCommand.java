@@ -121,11 +121,9 @@ public class CustomRecipesCommand extends CustomCommand {
 			List<List<ItemStack>> ingredients = new ArrayList<>();
 			for (Recipe recipe : recipes) {
 				List<ItemStack> _ingredients = new ArrayList<>();
-				if (recipe instanceof ShapedRecipe) {
-					ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
+				if (recipe instanceof ShapedRecipe shapedRecipe) {
 					_ingredients = new ArrayList<>(shapedRecipe.getIngredientMap().values());
-				} else if (recipe instanceof ShapelessRecipe) {
-					ShapelessRecipe shapelessRecipe = (ShapelessRecipe) recipe;
+				} else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
 					_ingredients = shapelessRecipe.getIngredientList();
 				}
 				ingredients.add(_ingredients);

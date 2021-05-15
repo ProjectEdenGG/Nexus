@@ -35,8 +35,7 @@ public class AdventureUtils {
 	public static Component stripColor(ComponentLike componentLike) {
 		Component component = componentLike.asComponent();
 		component = component.style(Style.empty());
-		if (component instanceof TranslatableComponent) {
-			TranslatableComponent tComponent = (TranslatableComponent) component;
+		if (component instanceof TranslatableComponent tComponent) {
 			component = tComponent.args(stripColor(tComponent.args()));
 		}
 		return component.children(stripColor(component.children()));

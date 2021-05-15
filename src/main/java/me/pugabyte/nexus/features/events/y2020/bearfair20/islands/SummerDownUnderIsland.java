@@ -525,8 +525,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 			water = true;
 		else {
 			Block clicked = event.getClickedBlock();
-			if (!BlockUtils.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged) {
-				Waterlogged waterlogged = (Waterlogged) clicked.getBlockData();
+			if (!BlockUtils.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged waterlogged) {
 				if (waterlogged.isWaterlogged())
 					water = true;
 			}

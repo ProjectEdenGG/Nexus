@@ -91,9 +91,8 @@ public class Archery implements Listener {
 		if (hitBlock == null) return;
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE)) return;
 		if (!isInRegion(hitBlock, targetsRg)) return;
-		if (!(projectile.getShooter() instanceof Player)) return;
+		if (!(projectile.getShooter() instanceof Player player)) return;
 
-		Player player = (Player) projectile.getShooter();
 		projectile.remove();
 		--currentTargets;
 		removeTarget(hitBlock);

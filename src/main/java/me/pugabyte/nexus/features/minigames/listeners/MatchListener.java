@@ -250,8 +250,7 @@ public class MatchListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onDamage(EntityDamageEvent event) {
-		if (event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
+		if (event instanceof EntityDamageByEntityEvent entityDamageByEntityEvent) {
 			if (!(entityDamageByEntityEvent.getDamager() instanceof FallingBlock)) {
 				onDamage(entityDamageByEntityEvent);
 				return;
@@ -311,13 +310,12 @@ public class MatchListener implements Listener {
 	public void onItemPickup(EntityPickupItemEvent event) {
 		if (!Minigames.isMinigameWorld(event.getEntity().getWorld())) return;
 		// TODO: Entity pickups?
-		if (!(event.getEntity() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
 
 		Arena arena = ArenaManager.getFromLocation(event.getItem().getLocation());
 		if (arena == null) return;
 		Match match = MatchManager.find(arena);
 		if (match == null) return;
-		Player player = (Player) event.getEntity();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isIn(match))
 			event.setCancelled(true);

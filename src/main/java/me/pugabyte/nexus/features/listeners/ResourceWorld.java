@@ -151,9 +151,8 @@ public class ResourceWorld implements Listener {
 
 	@EventHandler
 	public void onOpenEnderChest(InventoryOpenEvent event) {
-		if (!(event.getPlayer() instanceof Player)) return;
+		if (!(event.getPlayer() instanceof Player player)) return;
 		if (event.getInventory().getType() != InventoryType.ENDER_CHEST) return;
-		Player player = (Player) event.getPlayer();
 
 		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
 			event.setCancelled(true);
