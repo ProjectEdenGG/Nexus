@@ -8,12 +8,7 @@ TODO:
     - HALLOWEEN
     - MGN
     - MAIN
-    - OVERALL
-        - Client side armorstands and item frames
 * Activities
-    - Fishing
-        - Custom textures
-    - Farming
     - Woodcutting
     - Mining
 * Events
@@ -31,8 +26,10 @@ TODO:
         - Website
 
 Done:
-
+* Client side armorstands and item frames
 * Events:
     - Pixel Drop
+* Activities:
+    - Fishing = Farming
 * Fairground Minigames
 * Rides (Might need to add signs)

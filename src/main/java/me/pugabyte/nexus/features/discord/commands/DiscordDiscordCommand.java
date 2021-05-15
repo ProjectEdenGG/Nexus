@@ -89,7 +89,9 @@ public class DiscordDiscordCommand extends Command {
 						if (!event.getMember().hasPermission(Permission.MANAGE_ROLES))
 							throw new NoPermissionException();
 						DiscordUser discordUser = service.get(PlayerUtils.getPlayer(args[1]));
-						String id = event.getMessage().getMentionedMembers().get(0).getUser().getId();
+						String id = args[2];
+						if (Discord.getGuild().getMemberById(id) == null)
+							throw new InvalidInputException("Could not find a user from that ID");
 						discordUser.setUserId(id);
 						service.save(discordUser);
 						event.reactSuccess();

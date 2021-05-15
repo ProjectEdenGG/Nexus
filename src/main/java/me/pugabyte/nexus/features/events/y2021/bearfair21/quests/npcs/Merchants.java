@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 
 import eden.utils.Utils;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming.FarmingLoot;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -35,13 +35,14 @@ public class Merchants {
 		if (Utils.isNullOrEmpty(trades))
 			return;
 
-		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getName()))
+		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().getName()))
 				.trades(trades)
 				.open(player);
 	}
 
+	@AllArgsConstructor
 	public enum BFMerchant {
-		ARTIST("Sage", 2657) {
+		ARTIST(BearFair21NPC.ARTIST) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -53,7 +54,7 @@ public class Merchants {
 				}};
 			}
 		},
-		BAKER("Rye", 2659) {
+		BAKER(BearFair21NPC.BAKER) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -63,48 +64,60 @@ public class Merchants {
 				}};
 			}
 		},
-		BARTENDER("Cosmo", 2655) {
+		BARTENDER(BearFair21NPC.BARTENDER) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false))
-							.ingredient(goldNugget.clone().amount(3)));
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS))
-							.ingredient(goldNugget.clone().amount(3)));
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.SLOWNESS))
-							.ingredient(goldNugget.clone().amount(3)));
+							.ingredient(goldNugget.clone().amount(1)));
 				}};
 			}
 		},
-		BLACKSMITH("Alvor", 2656) {
+		BLACKSMITH(BearFair21NPC.BLACKSMITH) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(16))
-							.ingredient(new ItemBuilder(Material.ANVIL)));
+							.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.COAL_BLOCK).amount(2).build())
-							.ingredient(new ItemBuilder(Material.IRON_BLOCK).amount(1).build()));
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemStack(Material.LEATHER)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.STONE_AXE).amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.NETHERITE_PICKAXE).amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.NETHERITE_AXE).amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
 				}};
 			}
 		},
-		BOTANIST("Fern", 2661) {
+		BOTANIST(BearFair21NPC.BOTANIST) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return FarmingLoot.getTrades();
 			}
 		},
-		BREWER("Charlie", 2662) {
+		BREWER(BearFair21NPC.BREWER) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return null;
 			}
 		},
-		COLLECTOR("Pluto", 2750) {
+		COLLECTOR(BearFair21NPC.COLLECTOR) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
@@ -114,88 +127,68 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(new ItemStack(Material.ELYTRA))
 							.ingredient(goldNugget.clone().amount(1)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE))
-							.ingredient(new ItemBuilder(Material.GOLDEN_CARROT)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.TIGER_TROUT.getItem(player)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.GLACIERFISH.getItem(player)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.CRIMSONFISH.getItem(player)));
-					add(new TradeBuilder()
-							.result(goldBlock.clone().amount(1))
-							.ingredient(FishingLoot.BLOBFISH.getItem(player)));
+					this.addAll(Collector.getRandomTrades());
 				}};
 			}
 		},
-		FISHERMAN("Gage", 2653) {
+		FISHERMAN(BearFair21NPC.FISHERMAN1) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.FISHING_ROD))
-							.ingredient(goldIngot.clone().amount(2)));
+							.result(new ItemStack(Material.STRING))
+							.ingredient(goldNugget.clone().amount(1)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(Material.STRING));
 				}};
 			}
 		},
-		INVENTOR("Joshua", 2660) {
+		INVENTOR(BearFair21NPC.INVENTOR) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return null;
 			}
 		},
-		PASTRY_CHEF("Maple", 2654) {
+		PASTRY_CHEF(BearFair21NPC.PASTRY_CHEF) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.EGG))
-							.ingredient(goldNugget.clone().amount(5)));
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(2))
+							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.EGG)));
 				}};
 			}
 		},
-		SORCERER("Lucian", 2658) {
+		SORCERER(BearFair21NPC.SORCERER) {
 			@Override
 			public List<TradeBuilder> getTrades(Player player) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3)));
+							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3))
+							.ingredient(goldNugget.clone().amount(1)));
 				}};
 			}
 		};
 
 		@Getter
-		private final String name;
-		@Getter
-		private final int npcId;
-
-
-		BFMerchant(String name, int npcId) {
-			this.name = name;
-			this.npcId = npcId;
-		}
+		private final BearFair21NPC bearFair21NPC;
 
 		public static BFMerchant getFromId(int id) {
 			for (BFMerchant merchant : values()) {
-				if (merchant.getNpcId() == id)
+				if (merchant.getBearFair21NPC().getId() == id)
 					return merchant;
 			}
 

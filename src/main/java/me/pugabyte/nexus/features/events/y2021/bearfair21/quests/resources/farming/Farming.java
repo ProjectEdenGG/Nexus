@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
@@ -19,172 +19,29 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
-public class RegenCrops implements Listener {
-
+public class Farming implements Listener {
 	private final Set<Material> breakList = new HashSet<>();
 
-	private final Set<Material> crops = new HashSet<>(Arrays.asList(Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS, Material.COCOA));
+	private final Set<Material> crops = new HashSet<>(Arrays.asList(Material.WHEAT, Material.POTATOES,
+			Material.CARROTS, Material.BEETROOTS, Material.COCOA));
 	private final Set<Material> cropSingleBlock = new HashSet<>(Arrays.asList(Material.PUMPKIN, Material.MELON));
 	private final Set<Material> cropMultiBlock = new HashSet<>(Arrays.asList(Material.SUGAR_CANE, Material.CACTUS));
 	private final Set<Material> cropFlower = new HashSet<>(MaterialTag.SMALL_FLOWERS.getValues());
-	//
-	private static final Map<Location, Material> multiRegenMap = new HashMap<>();
-	private static final Map<Location, Material> blockRegenMap = new HashMap<>();
-	private static final List<Location> cropRegenList = new ArrayList<>();
 
-	public RegenCrops() {
+	public Farming() {
 		Nexus.registerListener(this);
 		breakList.addAll(crops);
 		breakList.addAll(cropSingleBlock);
 		breakList.addAll(cropMultiBlock);
 		breakList.addAll(cropFlower);
-		regenTasks();
-	}
-
-	public static void shutdown() {
-		List<Location> locationsList = new ArrayList<>(cropRegenList);
-		for (Location loc : locationsList) {
-			Block block = loc.getBlock();
-			BlockData blockData = block.getBlockData();
-
-			if (!(blockData instanceof Ageable)) {
-				cropRegenList.remove(loc);
-				continue;
-			}
-
-			Ageable ageable = (Ageable) blockData;
-			int age = ageable.getAge();
-			if (age == ageable.getMaximumAge()) {
-				cropRegenList.remove(loc);
-				continue;
-			}
-
-			ageable.setAge(ageable.getMaximumAge());
-			block.setBlockData(ageable);
-			cropRegenList.remove(loc);
-		}
-		//
-		Set<Location> locationsSet = new HashSet<>(blockRegenMap.keySet());
-		for (Location loc : locationsSet) {
-			Block block = loc.getBlock();
-			Material material = blockRegenMap.get(loc);
-			if (block.getType().equals(material)) {
-				blockRegenMap.remove(loc);
-				continue;
-			}
-
-			block.setType(material);
-			blockRegenMap.remove(loc);
-		}
-		//
-		locationsSet = new HashSet<>(multiRegenMap.keySet());
-		for (Location loc : locationsSet) {
-			Block block = loc.getBlock();
-			Material material = multiRegenMap.get(loc);
-			if (material == null) {
-				multiRegenMap.remove(loc);
-				continue;
-			}
-
-			if (block.getType().equals(material)) {
-				multiRegenMap.remove(loc);
-				continue;
-			}
-
-			Block down = block.getRelative(0, -1, 0);
-			if (down.getType().equals(material)) {
-				block.setType(material);
-				multiRegenMap.remove(loc);
-			}
-
-		}
-	}
-
-	private void regenTasks() {
-		// CROPS
-		Tasks.repeat(0, Time.SECOND.x(5), () -> {
-			List<Location> locations = new ArrayList<>(cropRegenList);
-			for (Location loc : locations) {
-				Block block = loc.getBlock();
-				BlockData blockData = block.getBlockData();
-
-				if (!(blockData instanceof Ageable)) {
-					cropRegenList.remove(loc);
-					continue;
-				}
-
-				if (RandomUtils.chanceOf(20)) {
-					Ageable ageable = (Ageable) blockData;
-					int age = ageable.getAge();
-					if (age == ageable.getMaximumAge()) {
-						cropRegenList.remove(loc);
-						continue;
-					}
-					++age;
-					ageable.setAge(age);
-					block.setBlockData(ageable);
-
-					if (age == ageable.getMaximumAge()) {
-						cropRegenList.remove(loc);
-					}
-				}
-			}
-		});
-
-		// BLOCKS
-		Tasks.repeat(0, Time.SECOND.x(10), () -> {
-			Set<Location> locations = new HashSet<>(blockRegenMap.keySet());
-			for (Location loc : locations) {
-				Block block = loc.getBlock();
-				Material material = blockRegenMap.get(loc);
-				if (block.getType().equals(material)) {
-					blockRegenMap.remove(loc);
-					continue;
-				}
-
-				if (RandomUtils.chanceOf(20)) {
-					block.setType(material);
-					blockRegenMap.remove(loc);
-				}
-			}
-		});
-
-		// MULTIBLOCK
-		Tasks.repeat(0, Time.SECOND.x(10), () -> {
-			Set<Location> locations = new HashSet<>(multiRegenMap.keySet());
-			for (Location loc : locations) {
-				Block block = loc.getBlock();
-				Material material = multiRegenMap.get(loc);
-				if (material == null) {
-					multiRegenMap.remove(loc);
-					continue;
-				}
-
-				if (block.getType().equals(material)) {
-					multiRegenMap.remove(loc);
-					continue;
-				}
-
-				if (RandomUtils.chanceOf(20)) {
-					Block down = block.getRelative(0, -1, 0);
-					if (down.getType().equals(material)) {
-						block.setType(material);
-						multiRegenMap.remove(loc);
-					}
-				}
-			}
-		});
+		new RegenCrops();
 	}
 
 	@EventHandler
@@ -217,7 +74,7 @@ public class RegenCrops implements Listener {
 
 			// Flower
 			if (cropFlower.contains(material)) {
-				Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), RandomUtils.randomElement(cropFlower)));
+				Tasks.wait(20, () -> RegenCrops.getBlockRegenMap().put(block.getLocation(), RandomUtils.randomElement(cropFlower)));
 
 				// Single Block
 			} else if (cropSingleBlock.contains(material)) {
@@ -229,7 +86,7 @@ public class RegenCrops implements Listener {
 					event.setCancelled(true);
 					return;
 				}
-				Tasks.wait(20, () -> blockRegenMap.put(block.getLocation(), material));
+				Tasks.wait(20, () -> RegenCrops.getBlockRegenMap().put(block.getLocation(), material));
 
 				// Multi Block
 			} else if (cropMultiBlock.contains(material)) {
@@ -242,7 +99,7 @@ public class RegenCrops implements Listener {
 					return;
 				}
 
-				multiRegenMap.put(block.getLocation(), material);
+				RegenCrops.getMultiRegenMap().put(block.getLocation(), material);
 				Block above = block.getRelative(0, 1, 0);
 				if (above.getType().equals(material)) {
 					int yValue = above.getLocation().getBlockY();
@@ -253,7 +110,7 @@ public class RegenCrops implements Listener {
 						Location aboveLoc = above.getLocation();
 						above.setType(Material.AIR, false);
 						above.getWorld().dropItemNaturally(aboveLoc, new ItemBuilder(material).build());
-						multiRegenMap.put(aboveLoc, material);
+						RegenCrops.getMultiRegenMap().put(aboveLoc, material);
 						above = above.getRelative(0, 1, 0);
 					}
 				}
@@ -287,8 +144,7 @@ public class RegenCrops implements Listener {
 			block.setType(material);
 			block.setBlockData(ageable);
 			Location loc = block.getLocation();
-			cropRegenList.add(loc);
+			RegenCrops.getCropRegenList().add(loc);
 		});
 	}
-
 }

@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
-import lombok.Getter;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import org.bukkit.event.Listener;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class MainIsland implements Listener, BearFair21Island {
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
-		WakkaFlocka("WakkaFlocka", 3798) {
+		WakkaFlocka(BearFair21NPC.WAKKAFLOCKA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -25,7 +25,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				return script;
 			}
 		},
-		Captain("Captain", 3839) {
+		Captain(BearFair21NPC.CAPTAIN) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -34,7 +34,7 @@ public class MainIsland implements Listener, BearFair21Island {
 			}
 		},
 		// Side Quests
-		BeeKeeper("Harold", 3844) {
+		BeeKeeper(BearFair21NPC.BEEKEEPER) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -42,7 +42,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				return script;
 			}
 		},
-		Fisherman1("Nate", 3841) {
+		Fisherman2(BearFair21NPC.FISHERMAN2) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -53,7 +53,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				return script;
 			}
 		},
-		Lumberjack("Flint", 3845) {
+		Lumberjack(BearFair21NPC.LUMBERJACK) {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 				script.add("TODO");
@@ -61,7 +61,7 @@ public class MainIsland implements Listener, BearFair21Island {
 			}
 		},
 		// Main Quest
-		Mayor("John", 3838) {
+		Mayor(BearFair21NPC.MAYOR) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -72,9 +72,7 @@ public class MainIsland implements Listener, BearFair21Island {
 		},
 		;
 
-		@Getter
-		private final int npcId;
-		private final String name;
+		private final BearFair21NPC npc;
 		private final List<String> script;
 
 		@Override
@@ -84,12 +82,16 @@ public class MainIsland implements Listener, BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.name;
+			return this.npc.getName();
 		}
 
-		MainNPCs(String name, int npcId) {
-			this.name = name;
-			this.npcId = npcId;
+		@Override
+		public int getNpcId() {
+			return this.npc.getId();
+		}
+
+		MainNPCs(BearFair21NPC npc) {
+			this.npc = npc;
 			this.script = new ArrayList<>();
 		}
 	}

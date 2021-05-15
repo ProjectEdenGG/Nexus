@@ -1,14 +1,14 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
-import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
+import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,13 +18,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory.FISH;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory.JUNK;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory.TREASURE;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootCategory.UNIQUE;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootTime.BOTH;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootTime.DAY;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot.FishingLootTime.NIGHT;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.FISH;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.JUNK;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.TREASURE;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.UNIQUE;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.BOTH;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.DAY;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.NIGHT;
 
 
 @Getter
@@ -33,15 +33,15 @@ public enum FishingLoot {
 
 	// Fish
 	CARP(FISH, 1, Material.COD, 40.0, "Carp", 1),
-	SALMON(FISH, 1, Material.COD, Material.SALMON, 30.0, "Salmon", 2),
-	TROPICAL_FISH(FISH, 1, Material.COD, Material.TROPICAL_FISH, 20.0, "Tropical Fish", 3),
-	PUFFERFISH(FISH, 1, Material.COD, Material.PUFFERFISH, 10.0, "Pufferfish", 4),
-	BULLHEAD(FISH, 1, Material.COD, Material.COOKED_SALMON, 10.0, "Bullhead", 5),
+	SALMON(FISH, 1, Material.COD, 30.0, "Salmon", 2),
+	TROPICAL_FISH(FISH, 1, Material.COD, 20.0, "Tropical Fish", 3),
+	PUFFERFISH(FISH, 1, Material.COD, 10.0, "Pufferfish", 4),
+	BULLHEAD(FISH, 1, Material.COD, 10.0, "Bullhead", 5),
 	STURGEON(FISH, 1, Material.COD, 10.0, "Sturgeon", 6),
 	WOODSKIP(FISH, 1, Material.COD, 10.0, "Woodskip", 7),
-	VOID_SALMON(FISH, 1, Material.COD, Material.SALMON, 10.0, "Void Salmon", 8),
-	RED_SNAPPER(FISH, 1, Material.COD, Material.SALMON, 10.0, "Red Snapper", 9),
-	RED_MULLET(FISH, 1, Material.COD, Material.SALMON, 10.0, "Red Mullet", 10),
+	VOID_SALMON(FISH, 1, Material.COD, 10.0, "Void Salmon", 8),
+	RED_SNAPPER(FISH, 1, Material.COD, 10.0, "Red Snapper", 9),
+	RED_MULLET(FISH, 1, Material.COD, 10.0, "Red Mullet", 10),
 	// Junk
 	OLD_BOOTS(JUNK, 1, Material.LEATHER_BOOTS, 10.0, "Old Boots", 1),
 	RUSTY_SPOON(JUNK, 1, Material.IRON_SHOVEL, 10.0, "Rusty Spoon", 1),
@@ -60,20 +60,19 @@ public enum FishingLoot {
 	NAUTILUS_SHELL(TREASURE, 1, Material.NAUTILUS_SHELL, 6.0),
 	TREASURE_CHEST(TREASURE, 1, Material.CHEST, 5.0, "Treasure Chest", 1),
 	// Unique
-	MIDNIGHT_CARP(UNIQUE, 1, Material.COD, Material.TROPICAL_FISH, 50.0, "Midnight Carp", 11, "main", NIGHT),
-	SUNFISH(UNIQUE, 1, Material.COD, Material.TROPICAL_FISH, 50.0, "Sunfish", 12, "main", DAY),
-	STONEFISH(UNIQUE, 1, Material.COD, Material.COD, 100.0, "Stonefish", 13, "main", 120),
-	TIGER_TROUT(UNIQUE, 1, Material.COD, Material.COOKED_SALMON, 50.0, "Tiger Trout", 14, "minigamenight"),
+	MIDNIGHT_CARP(UNIQUE, 1, Material.COD, 50.0, "Midnight Carp", 11, "main", NIGHT),
+	SUNFISH(UNIQUE, 1, Material.COD, 50.0, "Sunfish", 12, "main", DAY),
+	STONEFISH(UNIQUE, 1, Material.COD, 100.0, "Stonefish", 13, "main", 120),
+	TIGER_TROUT(UNIQUE, 1, Material.COD, 50.0, "Tiger Trout", 14, "minigamenight"),
 	SEA_CUCUMBER(UNIQUE, 1, Material.SEA_PICKLE, 50.0, "Sea Cucumber", 0, "minigamenight"),
 	GLACIERFISH(UNIQUE, 1, Material.COD, 100.0, "Glacierfish", 15, "pugmas"),
-	CRIMSONFISH(UNIQUE, 1, Material.COD, Material.SALMON, 100.0, "Crimsonfish", 16, "halloween"),
-	BLOBFISH(UNIQUE, 1, Material.COD, Material.PUFFERFISH, 100.0, "Blobfish", 17, "summerdownunder"),
+	CRIMSONFISH(UNIQUE, 1, Material.COD, 100.0, "Crimsonfish", 16, "halloween"),
+	BLOBFISH(UNIQUE, 1, Material.COD, 100.0, "Blobfish", 17, "summerdownunder"),
 	;
 
 	FishingLootCategory category;
 	int gold;
-	Material resourcepack;
-	Material backup;
+	Material material;
 	double weight;
 	String customName;
 	int customModelData;
@@ -81,11 +80,10 @@ public enum FishingLoot {
 	FishingLootTime time;
 	Integer maxY;
 
-	FishingLoot(FishingLootCategory category, int gold, Material resourcepack, double weight) {
+	FishingLoot(FishingLootCategory category, int gold, Material material, double weight) {
 		this.category = category;
 		this.gold = gold;
-		this.resourcepack = resourcepack;
-		this.backup = null;
+		this.material = material;
 		this.weight = weight;
 		this.customName = null;
 		this.customModelData = 0;
@@ -93,11 +91,10 @@ public enum FishingLoot {
 		this.time = BOTH;
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material resourcepack, double weight, String customName, int customModelData) {
+	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData) {
 		this.category = category;
 		this.gold = gold;
-		this.resourcepack = resourcepack;
-		this.backup = null;
+		this.material = material;
 		this.weight = weight;
 		this.customName = customName;
 		this.customModelData = customModelData;
@@ -105,11 +102,10 @@ public enum FishingLoot {
 		this.time = BOTH;
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material resourcepack, double weight, String customName, int customModelData, String region) {
+	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region) {
 		this.category = category;
 		this.gold = gold;
-		this.resourcepack = resourcepack;
-		this.backup = null;
+		this.material = material;
 		this.weight = weight;
 		this.customName = customName;
 		this.customModelData = customModelData;
@@ -117,35 +113,10 @@ public enum FishingLoot {
 		this.time = BOTH;
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material resourcepack, Material backup, double weight, String customName, int customModelData) {
+	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region, FishingLootTime time) {
 		this.category = category;
 		this.gold = gold;
-		this.resourcepack = resourcepack;
-		this.backup = backup;
-		this.weight = weight;
-		this.customName = customName;
-		this.customModelData = customModelData;
-		this.region = null;
-		this.time = BOTH;
-	}
-
-	FishingLoot(FishingLootCategory category, int gold, Material resourcepack, Material backup, double weight, String customName, int customModelData, String region) {
-		this.category = category;
-		this.gold = gold;
-		this.resourcepack = resourcepack;
-		this.backup = backup;
-		this.weight = weight;
-		this.customName = customName;
-		this.customModelData = customModelData;
-		this.region = region;
-		this.time = BOTH;
-	}
-
-	FishingLoot(FishingLootCategory category, int gold, Material resourcepack, Material backup, double weight, String customName, int customModelData, String region, FishingLootTime time) {
-		this.category = category;
-		this.gold = gold;
-		this.resourcepack = resourcepack;
-		this.backup = backup;
+		this.material = material;
 		this.weight = weight;
 		this.customName = customName;
 		this.customModelData = customModelData;
@@ -154,11 +125,10 @@ public enum FishingLoot {
 		this.maxY = null;
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material resourcepack, Material backup, double weight, String customName, int customModelData, String region, Integer maxY) {
+	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region, Integer maxY) {
 		this.category = category;
 		this.gold = gold;
-		this.resourcepack = resourcepack;
-		this.backup = backup;
+		this.material = material;
 		this.weight = weight;
 		this.customName = customName;
 		this.customModelData = customModelData;
@@ -176,9 +146,9 @@ public enum FishingLoot {
 		return result;
 	}
 
-	public static boolean isTrash(Player player, ItemStack itemStack) {
+	public static boolean isTrash(ItemStack itemStack) {
 		for (FishingLoot loot : of(JUNK)) {
-			if (ItemUtils.isFuzzyMatch(loot.getItem(player), itemStack))
+			if (ItemUtils.isFuzzyMatch(loot.getItem(), itemStack))
 				return true;
 		}
 
@@ -228,15 +198,8 @@ public enum FishingLoot {
 		return location.getBlockY() <= this.getMaxY();
 	}
 
-	public Material getMaterial(Player player) {
-		if (!ResourcePack.isEnabledFor(player) && backup != null)
-			return backup;
-
-		return resourcepack;
-	}
-
-	public ItemStack getItem(Player player) {
-		Material material = this.getMaterial(player);
+	public ItemStack getItem() {
+		Material material = this.getMaterial();
 		ItemBuilder result = new ItemBuilder(material);
 
 		if (this.getCustomName() != null)
@@ -246,8 +209,12 @@ public enum FishingLoot {
 		if (material.equals(Material.ENCHANTED_BOOK)) {
 			if (this.equals(UNBREAKING))
 				result.enchant(Enchant.UNBREAKING, 1);
-			if (this.equals(EFFICIENCY))
-				result.enchant(Enchant.EFFICIENCY, 2);
+			if (this.equals(EFFICIENCY)) {
+				if (RandomUtils.chanceOf(20))
+					result.enchant(Enchant.EFFICIENCY, 3);
+				else
+					result.enchant(Enchant.EFFICIENCY, 2);
+			}
 			if (this.equals(FORTUNE))
 				result.enchant(Enchant.FORTUNE, 1);
 			if (this.equals(LURE))
@@ -271,7 +238,7 @@ public enum FishingLoot {
 			for (FishingLoot loot : values()) {
 				add(new TradeBuilder()
 						.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
-						.ingredient(loot.getItem(player))
+						.ingredient(loot.getItem())
 				);
 			}
 		}};

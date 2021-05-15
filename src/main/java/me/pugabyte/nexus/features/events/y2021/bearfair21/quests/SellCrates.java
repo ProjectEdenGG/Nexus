@@ -2,9 +2,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests;
 
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.farming.FarmingLoot;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.fishing.FishingLoot;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants.BFMerchant;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -47,7 +47,7 @@ public class SellCrates implements Listener {
 	private String getCrateType(String[] lines) {
 		String line1 = lines[0];
 		String line2 = lines[1];
-		if (stripColor(line1).equals("[Sell Crate]") && stripColor(line2).contains("Items"))
+		if (stripColor(line1).equals("[Sell Crate]"))
 			return line2;
 		return null;
 	}
