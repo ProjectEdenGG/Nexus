@@ -173,8 +173,10 @@ public enum PunishmentType implements ColoredAndNamed {
 
 	void kick(OfflinePlayer player, Punishment punishment) {
 		Runnable task = () -> {
-			if (player.isOnline() && player.getPlayer() != null)
+			if (player.isOnline() && player.getPlayer() != null) {
+				player.getPlayer().leaveVehicle();
 				player.getPlayer().kick(punishment.getDisconnectMessage());
+			}
 		};
 
 		if (!Bukkit.isPrimaryThread())
