@@ -20,9 +20,9 @@ import java.util.List;
 
 public class Collector {
 	@Getter
-	public static List<TradeBuilder> randomTrades = new ArrayList<>();
+	public static List<TradeBuilder> randomTrades = getRandomTrades();
 	@Getter
-	public static Location location = BearFair21NPC.COLLECTOR.getNPC().getEntity().getLocation();
+	public static Location location = null;
 	//
 	private static List<TradeBuilder> possibleTrades = new ArrayList<>();
 	private static List<Location> locations = new ArrayList<>();
@@ -32,6 +32,9 @@ public class Collector {
 	public static void startup() {
 		loadLocations();
 		loadTrades();
+		NPC collector = BearFair21NPC.COLLECTOR.getNPC();
+		if (collector != null)
+			location = collector.getEntity().getLocation();
 	}
 
 	private static void loadLocations() {

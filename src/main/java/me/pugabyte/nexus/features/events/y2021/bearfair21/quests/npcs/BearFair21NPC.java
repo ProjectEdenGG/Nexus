@@ -3,7 +3,8 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.utils.CitizensUtils;
-import net.citizensnpcs.npc.CitizensNPC;
+import net.citizensnpcs.api.npc.NPC;
+import org.jetbrains.annotations.Nullable;
 
 @AllArgsConstructor
 public enum BearFair21NPC {
@@ -34,8 +35,8 @@ public enum BearFair21NPC {
 	@Getter
 	private final int id;
 
-	public CitizensNPC getNPC() {
-		return (CitizensNPC) CitizensUtils.getNPC(this.id);
+	public @Nullable NPC getNPC() {
+		return CitizensUtils.getNPC(this.id);
 	}
 
 }
