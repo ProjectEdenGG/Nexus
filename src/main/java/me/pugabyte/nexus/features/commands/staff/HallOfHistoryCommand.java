@@ -64,7 +64,13 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Path("view <player>")
 	void view(OfflinePlayer target) {
 		line(4);
-		send("&e&l" + target.getName());
+		Nerd nerd = Nerd.of(target);
+		send("&e&l" + nerd.getNickname());
+		line();
+		if (!nerd.getNickname().equals(nerd.getName()))
+			send("  &eIGN: &3" + nerd.getName());
+		if (!nerd.getPronouns().isEmpty())
+			send("  &ePronouns: &3" + String.join(", ", nerd.getPronouns()));
 		line();
 		HallOfHistory hallOfHistory = service.get(target.getUniqueId());
 		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
@@ -80,11 +86,8 @@ public class HallOfHistoryCommand extends CustomCommand {
 		}
 
 		line();
-		Nerd nerd = Nerd.of(target);
 		if (!isNullOrEmpty(nerd.getAbout()))
 			send("  &eAbout me: &3" + nerd.getAbout());
-		if (!nerd.getPronouns().isEmpty())
-			send(json("  &ePronouns: &3" + String.join(", ", nerd.getPronouns())));
 		if (nerd.isMeetMeVideo()) {
 			line();
 			String url = "https://projecteden.gg/meet/" + nerd.getName().toLowerCase();
