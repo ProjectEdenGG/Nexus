@@ -60,7 +60,7 @@ public class BackCommand extends CustomCommand implements Listener {
 			++i;
 			int x = (int) location.getX(), y = (int) location.getY(), z = (int) location.getZ(),
 					yaw = (int) location.getYaw(), pitch = (int) location.getPitch();
-			json.newline()
+			json.group().newline()
 					.next("&3" + new DecimalFormat("#00").format(i) + " &e" + location.getWorld().getName() +
 							" &7/ &e" + x + " &7/ &e" + y + " &7/ &e" + z)
 					.command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + location.getWorld().getName())
