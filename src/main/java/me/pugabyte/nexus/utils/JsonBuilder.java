@@ -9,6 +9,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -273,6 +274,26 @@ public class JsonBuilder implements ComponentLike {
 	public JsonBuilder(@NotNull String rawText, @NotNull Style style) {
 		content(rawText);
 		style(style);
+	}
+
+	/**
+	 * Creates a new builder with a prefix at the start and the color set to DARK_AQUA.
+	 * @param prefix prefix text
+	 * @param contents component to append after the prefix, or null for nothing
+	 */
+	public JsonBuilder(@NotNull String prefix, @Nullable ComponentLike contents) {
+		color(NamedTextColor.DARK_AQUA).next("&8&l[").next(prefix, NamedTextColor.YELLOW).next("&8&l]").next(" ").next(contents);
+	}
+
+	/**
+	 * Creates a new builder with a prefix.
+	 * @param prefix prefix text
+	 * @return a new builder
+	 */
+	// this is gonna pollute json builder instances and idk what to do about it
+	@Contract("_ -> new")
+	public static JsonBuilder fromPrefix(@NotNull String prefix) {
+		return new JsonBuilder(prefix, (ComponentLike) null);
 	}
 
 	/**

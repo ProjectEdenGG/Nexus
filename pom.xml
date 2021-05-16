@@ -160,6 +160,11 @@
             <id>skullcreator-repo</id>
             <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
         </repository>
+        <!-- HeadDatabase-API -->
+        <repository>
+            <id>headdatabase-api</id>
+            <url>https://mvn.intellectualsites.com/content/repositories/thirdparty/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Parchment API + server (NMS) -->
@@ -529,6 +534,13 @@
             <artifactId>skullcreator</artifactId>
             <version>3.0.1</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- HeadDatabase-API -->
+        <dependency>
+            <groupId>me.arcaniax</groupId>
+            <artifactId>HeadDatabase-API</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -8,6 +8,7 @@ import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
@@ -73,6 +74,8 @@ public class Nexus extends JavaPlugin {
 	private static Nexus instance;
 	@Getter
 	private final static UUID UUID0 = new UUID(0, 0);
+	@Getter
+	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
 
 	public Nexus() {
 		if (instance == null)
