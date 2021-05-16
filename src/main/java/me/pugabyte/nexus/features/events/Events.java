@@ -18,10 +18,10 @@ public class Events extends Feature {
 			new ArmorStandStalker();
 			new ScavHuntLegacy();
 			new AeveonProject();
+			new Pride21();
 		}
 
 		new BearFair21();
-		new Pride21();
 	}
 
 	@Override
