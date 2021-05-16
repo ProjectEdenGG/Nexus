@@ -9,11 +9,17 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 
@@ -70,23 +76,37 @@ public class NPCUtilsCommand extends CustomCommand {
 		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npcutils setNickname withColor " + nerd.getName());
 	}
 
-	@Path("void")
-	void inVoid() {
+	@Path("void [page]")
+	void inVoid(@Arg("1") int page) {
+		List<NPC> voidNpcs = new ArrayList<>();
 		CitizensAPI.getNPCRegistry().forEach(npc -> {
 			if (npc.getEntity() != null && npc.getEntity().getLocation().getY() < 0)
-				send(json()
-						.next(StringUtils.X)
-						.command("/mcmd npc sel " + npc.getId() + " ;; npc remove")
-						.hover("&cClick to delete")
-						.group()
-						.next(" ")
-						.group()
-						.next("&a↑")
-						.command("/mcmd npc sel " + npc.getId() + " ;; npc tphere")
-						.hover("&aClick to summon")
-						.group()
-						.next("&e " + npc.getId()));
+				voidNpcs.add(npc);
 		});
+
+		if (voidNpcs.isEmpty())
+			error("No void NPCs found");
+
+		send(PREFIX + "Void NPCs");
+
+		BiFunction<NPC, String, JsonBuilder> formatter = (npc, index) -> {
+			int id = npc.getId();
+			return json("&3" + index + " ")
+					.group()
+					.next(StringUtils.X)
+					.command("/mcmd npc sel " + id + " ;; npc remove")
+					.hover("&cClick to delete")
+					.group()
+					.next(" ")
+					.group()
+					.next("&a↑")
+					.command("/mcmd npc sel " + id + " ;; npc tphere")
+					.hover("&aClick to summon")
+					.group()
+					.next("&e " + id + " &7- &3" + npc.getName() + " &7in " + npc.getEntity().getWorld().getName());
+		};
+
+		paginate(voidNpcs, formatter, "/npcutils void", page);
 	}
 
 }
