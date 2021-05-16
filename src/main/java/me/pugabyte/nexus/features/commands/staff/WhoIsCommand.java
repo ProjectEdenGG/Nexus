@@ -85,13 +85,13 @@ public class WhoIsCommand extends CustomCommand {
 		json.newline().next("&3First Join: &e" + firstJoin);
 
 		if (lastJoinQuitDate != null)
-			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate);
+			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate).group();
 
 		if (hours.getTotal() > 0)
 			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
 
 		if (history)
-			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history");
+			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history").group();
 
 		if (alts != null)
 			json.newline().next("&3Alts: &e").next(alts);
@@ -101,13 +101,13 @@ public class WhoIsCommand extends CustomCommand {
 
 		try {
 			GeoIP geoIp = geoIpService.get(nerd);
-			json.newline().next("&3GeoIP: &e" + geoIp.getFriendlyLocationString()).hover("&e" + geoIp.getIp()).suggest(geoIp.getIp());
+			json.newline().next("&3GeoIP: &e" + geoIp.getFriendlyLocationString()).hover("&e" + geoIp.getIp()).suggest(geoIp.getIp()).group();
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3GeoIP: &c" + ex.getMessage());
 		}
 
 		try {
-			json.newline().next("&3Location: &e" + getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + offlinePlayer.getName());
+			json.newline().next("&3Location: &e" + getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + offlinePlayer.getName()).group();
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3Location: &c" + ex.getMessage());
 		}
