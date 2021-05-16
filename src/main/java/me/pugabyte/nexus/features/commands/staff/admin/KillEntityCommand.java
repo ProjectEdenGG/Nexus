@@ -57,7 +57,8 @@ public class KillEntityCommand extends CustomCommand {
 								entities.add(entity);
 
 			entities.forEach(Entity::remove);
-			send(PREFIX + "Killed " + entities.size() + " entities");
+			int size = entities.size();
+			send(PREFIX + "Killed " + size + " " + plural("entity", "entities", size));
 		};
 
 		if (toKill.contains(EntityType.ARMOR_STAND) || toKill.contains(EntityType.ITEM_FRAME))

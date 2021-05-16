@@ -124,8 +124,12 @@ public abstract class CustomCommand extends ICustomCommand {
 		return StringUtils.camelCase(string);
 	}
 
-	protected String plural(String string, Number number) {
-		return StringUtils.plural(string, number);
+	protected String plural(String label, Number number) {
+		return StringUtils.plural(label, number);
+	}
+
+	protected String plural(String labelSingle, String labelPlural, Number number) {
+		return StringUtils.plural(labelSingle, labelPlural, number);
 	}
 
 	protected ItemStack getTool() {

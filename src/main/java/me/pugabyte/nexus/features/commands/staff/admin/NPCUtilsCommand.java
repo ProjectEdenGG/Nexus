@@ -9,6 +9,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.StringUtils;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.trait.Owner;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -66,6 +68,25 @@ public class NPCUtilsCommand extends CustomCommand {
 	@Path("setNicknameAndSkin <player>")
 	void getByOwner(@Arg("self") Nerd nerd) {
 		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npcutils setNickname withColor " + nerd.getName());
+	}
+
+	@Path("void")
+	void inVoid() {
+		CitizensAPI.getNPCRegistry().forEach(npc -> {
+			if (npc.getEntity() != null && npc.getEntity().getLocation().getY() < 0)
+				send(json()
+						.next(StringUtils.X)
+						.command("/mcmd npc sel " + npc.getId() + " ;; npc remove")
+						.hover("&cClick to delete")
+						.group()
+						.next(" ")
+						.group()
+						.next("&a↑")
+						.command("/mcmd npc sel " + npc.getId() + " ;; npc tphere")
+						.hover("&aClick to summon")
+						.group()
+						.next("&e " + npc.getId()));
+		});
 	}
 
 }

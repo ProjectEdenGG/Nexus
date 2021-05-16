@@ -2,6 +2,9 @@ package me.pugabyte.nexus.features;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.regions.Region;
+import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTEntity;
+import de.tr7zw.nbtapi.NBTFile;
 import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
@@ -11,6 +14,7 @@ import fr.minuskube.inv.SmartInvsPlugin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.crates.models.CrateType;
@@ -55,6 +59,7 @@ import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -65,7 +70,6 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
-import net.citizensnpcs.api.CitizensAPI;
 import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -77,6 +81,7 @@ import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
@@ -741,14 +746,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(TimespanBuilder.of(seconds).formatType(formatType).format());
 	}
 
-	@Path("voidNpc")
-	void voidNpc() {
-		CitizensAPI.getNPCRegistry().forEach(npc -> {
-			if (npc.getEntity() != null && npc.getEntity().getLocation().getY() < 0)
-				send(npc.getId());
-		});
-	}
-
 	@Path("jingles <jingle>")
 	void jingles(Jingle jingle) {
 		jingle.play(player());
@@ -839,6 +836,34 @@ public class NexusCommand extends CustomCommand implements Listener {
 			itemMeta.setDisplayName(trimmed);
 			content.setItemMeta(itemMeta);
 		}
+	}
+
+	@SneakyThrows
+	@Path("getOfflineVehicle <player>")
+	void getOfflineVehicle(Nerd nerd) {
+		NBTFile dataFile = nerd.getDataFile();
+		NBTCompound rootVehicle = dataFile.getCompound("RootVehicle");
+		if (rootVehicle == null)
+			error("RootVehicle compound is null");
+
+		NBTCompound entityCompound = rootVehicle.getCompound("Entity");
+		if (entityCompound == null)
+			error("Entity compound is null");
+
+		Block air = getTargetBlock().getRelative(BlockFace.UP);
+		if (!MaterialTag.ALL_AIR.isTagged(air.getType()))
+			error("You must be looking at the ground");
+
+		String id = entityCompound.getString("id");
+		EntityType type = EntityType.valueOf(id.replace("minecraft:", "").toUpperCase());
+
+		Entity horse = world().spawnEntity(air.getLocation(), type);
+		NBTEntity nbt = new NBTEntity(horse);
+		nbt.mergeCompound(entityCompound);
+
+		dataFile.setObject("RootVehicle", null);
+		dataFile.save();
+		send(PREFIX + "Respawned " + camelCase(type) + " and deleted original");
 	}
 
 	@Path("nonLivingEntities")
