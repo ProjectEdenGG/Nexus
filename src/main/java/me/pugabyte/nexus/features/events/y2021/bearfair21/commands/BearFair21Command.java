@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Fairgrounds;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -82,6 +83,12 @@ public class BearFair21Command extends CustomCommand {
 			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " disable");
 	}
 
+	@Path("toCollector")
+	@Permission("group.admin")
+	public void toCollector() {
+		player().teleport(Collector.getLocation());
+	}
+
 	// Command Blocks
 
 	@Path("moveCollector")
@@ -138,13 +145,20 @@ public class BearFair21Command extends CustomCommand {
 
 		BearFair21User user = userService.get(player.getUniqueId());
 		Set<Location> locations = user.getClientsideLocations();
+		List<Content> newContent = new ArrayList<>();
+
 		for (Content content : contentList) {
-			if (content.getCategory().equals(category))
+			if (content.getCategory().equals(category)) {
+				newContent.add(content);
 				locations.add(content.getLocation());
+			}
 		}
+
 		user.setClientsideLocations(locations);
 		userService.save(user);
 		send(player.getName() + " can now see " + user.getClientsideLocations().size() + " locations");
+
+		ClientsideContentManager.sendSpawnItemFrames(player, newContent);
 	}
 
 	@Permission("group.admin")

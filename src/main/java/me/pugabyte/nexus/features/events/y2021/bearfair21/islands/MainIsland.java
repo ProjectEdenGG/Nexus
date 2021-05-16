@@ -47,8 +47,11 @@ public class MainIsland implements Listener, BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 				script.add("TODO");
+				script.add("wait 20");
 				script.add("You can get useful materials from recycling");
+				script.add("wait 20");
 				script.add("The more trash you recycle, the less trash you will catch");
+				script.add("wait 20");
 				script.add("You've recycled: " + user.getRecycledItems() + " trash");
 				return script;
 			}

@@ -80,16 +80,15 @@ public class ClientsideContentManager implements Listener {
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
-		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(player))
-			return;
-
-		sendSpawnItemFrames(player);
+		check(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onLogin(PlayerLoginEvent event) {
-		Player player = event.getPlayer();
+		check(event.getPlayer());
+	}
+
+	private void check(Player player) {
 		Tasks.wait(1, () -> {
 			if (!BearFair21.isAtBearFair(player))
 				return;
@@ -98,8 +97,12 @@ public class ClientsideContentManager implements Listener {
 		});
 	}
 
-	private static void sendSpawnItemFrames(Player player) {
-		for (Content content : contentService.getList()) {
+	public static void sendSpawnItemFrames(Player player) {
+		sendSpawnItemFrames(player, contentService.getList());
+	}
+
+	public static void sendSpawnItemFrames(Player player, List<Content> contentList) {
+		for (Content content : contentList) {
 			if (!content.isItemFrame()) continue;
 			if (!canSee(player, content)) return;
 

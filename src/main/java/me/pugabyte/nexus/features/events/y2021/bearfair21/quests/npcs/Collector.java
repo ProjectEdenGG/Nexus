@@ -21,6 +21,8 @@ import java.util.List;
 public class Collector {
 	@Getter
 	public static List<TradeBuilder> randomTrades = new ArrayList<>();
+	@Getter
+	public static Location location = BearFair21NPC.COLLECTOR.getNPC().getEntity().getLocation();
 	//
 	private static List<TradeBuilder> possibleTrades = new ArrayList<>();
 	private static List<Location> locations = new ArrayList<>();
@@ -33,14 +35,17 @@ public class Collector {
 	}
 
 	private static void loadLocations() {
-		Location observatory = new Location(world, -1097, 157, -1550);
-		Location town = new Location(world, -1095, 139, -1666);
-		Location forest = new Location(world, -1031, 140, -1556);
-		Location flag = new Location(world, -984, 144, -1615);
-		Location campsite = new Location(world, -1020, 153, -1760);
-		Location ruins = new Location(world, -919, 137, -1711);
-		Location carnival = new Location(world, -888, 136, -1659);
-		locations = Arrays.asList(observatory, town, forest, flag, campsite, ruins, carnival);
+		Location observatory = new Location(world, -106, 157, 11);
+		Location town1 = new Location(world, -105, 139, -104);
+		Location town2 = new Location(world, -125, 149, -26);
+		Location forest = new Location(world, -39, 140, 7);
+		Location flag = new Location(world, 1, 143, -60);
+		Location campsite = new Location(world, -17, 153, -200);
+		Location balloon = new Location(world, 50, 153, -201);
+		Location carnival1 = new Location(world, 110, 138, -58);
+		Location carnival2 = new Location(world, 157, 137, -26);
+
+		locations = Arrays.asList(observatory, town1, town2, forest, flag, campsite, balloon, carnival1, carnival2);
 	}
 
 	private static void loadTrades() {
@@ -138,6 +143,7 @@ public class Collector {
 		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, finalNewLoc, 500, 0.5, 1, 0.5, 0);
 		world.spawnParticle(Particle.FLASH, finalNewLoc, 10, 0, 0, 0);
 		npc.spawn(finalNewLoc);
+		location = finalNewLoc;
 	}
 
 	private static void newTrades() {
