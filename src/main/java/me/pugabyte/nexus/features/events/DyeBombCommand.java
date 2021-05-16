@@ -12,7 +12,6 @@ import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -31,12 +30,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
 @Permission("group.moderator")
@@ -60,18 +60,23 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void throwDyeBomb(PlayerInteractEvent event) {
-		if (event.getHand() != EquipmentSlot.HAND) return;
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
-		if (!event.getMaterial().equals(Material.MAGMA_CREAM)) return;
+		if (!event.getMaterial().equals(Material.MAGMA_CREAM))
+			return;
 
 		ItemStack item = event.getItem();
-		if (item == null || item.getItemMeta() == null) return;
-		ItemMeta meta = item.getItemMeta();
+		if (isNullOrAir(item))
+			return;
 
-		String itemName = StringUtils.stripColor(meta.getDisplayName());
-		if (!"Dye Bomb".equalsIgnoreCase(itemName)) return;
-		if (!((meta.getLore() != null && meta.getLore().contains(StringUtils.colorize("&bEvent Item"))) || meta.isUnbreakable())) return;
+		// WhiteWolfKnight
+		if (event.getPlayer().getUniqueId().toString().equals("f325c439-02c2-4043-995e-668113c7eb9f"))
+			return;
+
+		if (!dyeBomb.isSimilar(item))
+			return;
 
 		Player player = event.getPlayer();
 		CooldownService cooldownService = new CooldownService();
