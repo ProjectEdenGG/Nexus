@@ -112,7 +112,7 @@ public class HasReadRules implements PlayerOwnedObject {
 		),
 		SURVIVAL(
 				new ArrayList<>() {{
-					add(new JsonBuilder("&e1. &3No griefing or raiding. &eHover for more info.").hover("&3If you don't have permission from \n&3the owner, don't touch it. This \n&3includes farms. &3If it isn't marked \n&3as public, don't farm and replant"));
+					add(new JsonBuilder("&e1. &3No griefing, stealing, or raiding. &eHover for more info.").hover("&3If you don't have permission from \n&3the owner, don't touch it. This \n&3includes farms. &3If it isn't marked \n&3as public, don't farm and replant"));
 					add(new JsonBuilder("&e2. &3No killing other players using game mechanics or death traps. (drowning, spleef, suffocation, etc)"));
 					add(new JsonBuilder("&e3. &3Do not create lag using Minecraft mechanics. &eHover for more info.").hover("&3This includes things such as:\n&3[+] &eAFKing for many hours at a grinder.\n&3[+] &eRedstone clocks\n&3[+] &eExcessive redstone machinery\n&3[+] &ePerm-loading chunks\n&3[+] &eMassively oversized farms\n&3[+] &eEtc"));
 					add(new JsonBuilder("&e4. &3No AFK farms that level up mcMMO or anti-AFK mechanisms"));
