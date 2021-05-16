@@ -6,9 +6,17 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -92,4 +100,20 @@ public class CitizensUtils {
 		Nexus.getCitizens().getNPCSelector().select(player, npc);
 	}
 	*/
+
+	@NotNull
+	public static List<NPC> list(OfflinePlayer player, World world, Boolean spawned) {
+		return new ArrayList<>() {{
+			for (NPC npc : Nexus.getCitizens().getNPCRegistry()) {
+				if (player != null && !player.getUniqueId().equals(npc.getTrait(Owner.class).getOwnerId()))
+					continue;
+				if (world != null && !world.equals(npc.getStoredLocation().getWorld()))
+					continue;
+				if (spawned != null && npc.getTrait(Spawned.class).shouldSpawn() != spawned)
+					continue;
+
+				add(npc);
+			}
+		}};
+	}
 }

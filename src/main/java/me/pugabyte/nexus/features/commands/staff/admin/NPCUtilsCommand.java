@@ -1,21 +1,23 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Owner;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +32,32 @@ public class NPCUtilsCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NotNull
+	private JsonBuilder getClickToTeleport(NPC npc) {
+		return json("&3" + npc.getId() + " &e" + npc.getName() + " &7- " + npc.getStoredLocation().getWorld().getName())
+				.command("/mcmd npc sel " + npc.getId() + " ;; npc tp")
+				.hover("Click to teleport");
+	}
+
 	@Async
-	@Path("getByOwner [player] [world]")
-	void getByOwner(@Arg("self") OfflinePlayer player, World world) {
-		Nexus.getCitizens().getNPCRegistry().iterator().forEachRemaining(npc -> {
-			if (player.getUniqueId().equals(npc.getTrait(Owner.class).getOwnerId()) && (world == null || world.equals(npc.getStoredLocation().getWorld())))
-				send(json("&3" + npc.getId() + " &e" + npc.getName() + " &7- " + npc.getStoredLocation().getWorld().getName())
-						.command("/mcmd npc sel " + npc.getId() + " ;; npc tp")
-						.hover("Click to teleport"));
-		});
+	@Path("list [page] [--player] [--world] [--spawned]")
+	void getByOwner(@Arg("1") int page, @Switch OfflinePlayer player, @Switch World world, @Switch Boolean spawned) {
+		List<NPC> npcs = CitizensUtils.list(player, world, spawned);
+		paginate(npcs, (npc, index) -> getClickToTeleport(npc), "/npcutils list" +
+				" --player=" + (player == null ? "null" : player.getName()) +
+				" --world=" + (world == null ? "null" : world.getName()) +
+				" --spawned=" + spawned,
+				page);
+	}
+
+	@Async
+	@Path("removeDespawned [player] [world]")
+	void removeDespawned(@Switch OfflinePlayer player, @Switch World world) {
+		List<NPC> npcs = CitizensUtils.list(player, world, false);
+		for (NPC npc : npcs)
+			Tasks.sync(npc::destroy);
+
+		send(PREFIX + "Removed " + npcs.size() + plural(" NPC", npcs.size()));
 	}
 
 	@Path("create <player>")

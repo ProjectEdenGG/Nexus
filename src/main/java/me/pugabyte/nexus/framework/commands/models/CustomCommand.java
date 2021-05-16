@@ -690,6 +690,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(OfflinePlayer.class)
 	public OfflinePlayer convertToOfflinePlayer(String value) {
 		if (value == null) return null;
+		if ("null".equalsIgnoreCase(value)) return null;
 		if ("self".equalsIgnoreCase(value)) value = uuid().toString();
 		return PlayerUtils.getPlayer(value.replaceFirst("[pP]:", ""));
 	}
@@ -743,6 +744,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	World convertToWorld(String value) {
 		if ("current".equalsIgnoreCase(value))
 			return world();
+		if ("null".equalsIgnoreCase(value))
+			return null;
 		World world = Bukkit.getWorld(value);
 		if (world == null)
 			throw new InvalidInputException("World from " + value + " not found");
