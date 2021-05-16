@@ -27,4 +27,17 @@ public class Pride21User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Set<Decorations> decorationsCollected = new HashSet<>();
+	private int rewardsClaimed = 0;
+	public int decorationsFound() {
+		return decorationsCollected.size();
+	}
+	public int decorationsLeft() {
+		return Decorations.values().length - decorationsFound();
+	}
+	public boolean isComplete() {
+		return decorationsLeft() == 0;
+	}
+	public boolean canClaimReward() {
+		return rewardsClaimed < 2;
+	}
 }

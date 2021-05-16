@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -56,14 +57,30 @@ public class Nickname extends eden.models.nickname.Nickname implements PlayerOwn
 		put(Role.ADMINS, 3);
 	}};
 
-	public static String of(String name) {
+	/**
+	 * Returns the nickname (or name if unset) of a player.
+	 * @param name partial username
+	 * @return nickname or username
+	 * @throws PlayerNotFoundException a player matching the input could not be found
+	 */
+	public static String of(String name) throws PlayerNotFoundException {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
+	/**
+	 * Returns the nickname (or name if unset) of a player.
+	 * @param player player
+	 * @return nickname or username
+	 */
 	public static String of(HasUniqueId player) {
 		return of(player.getUniqueId());
 	}
 
+	/**
+	 * Returns the nickname (or name if unset) of a player.
+	 * @param uuid player UUID
+	 * @return nickname or username
+	 */
 	public static String of(UUID uuid) {
 		return new NicknameService().get(uuid).getNickname();
 	}

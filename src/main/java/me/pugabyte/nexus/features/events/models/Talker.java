@@ -10,13 +10,26 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Talker {
-	public static void sendScript(Player player, TalkingNPC talker) {
-		sendScript(player, talker, talker.getScript(player));
+	/**
+	 * Sends a script to a player from a talking NPC. Uses the NPC's default script(s).
+	 * @param player player to send to
+	 * @param talker NPC to send from
+	 * @return ticks until the script ends
+	 */
+	public static int sendScript(Player player, TalkingNPC talker) {
+		return sendScript(player, talker, talker.getScript(player));
 	}
 
-	public static void sendScript(Player player, TalkingNPC talker, List<String> script) {
+	/**
+	 * Sends a script to a player from a talking NPC.
+	 * @param player player to send to
+	 * @param talker NPC to send from
+	 * @param script script to send
+	 * @return ticks until the script ends
+	 */
+	public static int sendScript(Player player, TalkingNPC talker, List<String> script) {
 		if (script == null || script.isEmpty())
-			return;
+			return 0;
 		final String playerName = Nickname.of(player);
 
 		AtomicInteger wait = new AtomicInteger(0);
@@ -38,6 +51,7 @@ public class Talker {
 				});
 			}
 		});
+		return wait.get();
 	}
 
 	public interface TalkingNPC {

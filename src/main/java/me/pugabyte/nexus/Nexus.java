@@ -277,8 +277,7 @@ public class Nexus extends JavaPlugin {
 
 	public void broadcastReload() {
 		Rank.getOnlineStaff().stream()
-				.filter(nerd -> nerd.getOfflinePlayer().isOnline() && nerd.getOnlinePlayer() != null)
-				.map(Nerd::getOnlinePlayer)
+				.map(Nerd::getPlayer)
 				.forEach(player -> {
 					GeoIP geoIp = new GeoIPService().get(player);
 					String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
