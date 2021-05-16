@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -41,10 +42,15 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class DyeBombCommand extends CustomCommand implements Listener {
-	public static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
+	@Getter
+	private static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
 
 	public DyeBombCommand(CommandEvent event) {
 		super(event);
+	}
+
+	public static boolean isDyeBomb(ItemStack itemStack) {
+		return dyeBomb.isSimilar(itemStack);
 	}
 
 	@Path("give <amount> [player]")
@@ -115,8 +121,8 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Location hitLoc = event.getEntity().getLocation().subtract(vel);
 
 		FireworkLauncher fw = FireworkLauncher.random(hitLoc).detonateAfter(0).power(0).type(FireworkEffect.Type.BURST);
-		fw.colors(removeUglies(fw.colors()));
-		fw.fadeColors(removeUglies(fw.fadeColors()));
+		fw.colors(removeUgly(fw.colors()));
+		fw.fadeColors(removeUgly(fw.fadeColors()));
 
 		if (RandomUtils.chanceOf(50))
 			fw.colors(Collections.singletonList(randomColor())).fadeColors(Collections.singletonList(randomColor()));
@@ -124,24 +130,27 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	}
 
 	private Color randomColor() {
-		ColorType[] colorTypes = ColorType.values();
-		List<Color> colors = new ArrayList<>();
-		for (ColorType colortype : colorTypes) {
-			colors.add(colortype.getBukkitColor());
-		}
-		return RandomUtils.randomElement(removeUglies(colors));
+		List<Color> colors = new ArrayList<>() {{
+			for (ColorType colortype : ColorType.values())
+				add(colortype.getBukkitColor());
+		}};
+
+		return RandomUtils.randomElement(removeUgly(colors));
 	}
 
-	private List<Color> removeUglies(List<Color> oldColors) {
+	private static final List<ColorType> ugly = List.of(ColorType.BLACK, ColorType.GRAY, ColorType.LIGHT_GRAY, ColorType.BROWN);
+
+	private List<Color> removeUgly(List<Color> oldColors) {
 		List<Color> newColors = new ArrayList<>();
-		for (Color fwColor : oldColors) {
-			ColorType type = ColorType.of(fwColor);
-			if (!type.equals(ColorType.BLACK)
-					&& !type.equals(ColorType.GRAY)
-					&& !type.equals(ColorType.LIGHT_GRAY)
-					&& !type.equals(ColorType.BROWN))
-				newColors.add(fwColor);
+		for (Color color : oldColors) {
+			ColorType type = ColorType.of(color);
+			if (type != null && !ugly.contains(type))
+				newColors.add(color);
 		}
+
+		if (newColors.isEmpty())
+			newColors.add(randomColor());
+
 		return newColors;
 	}
 }

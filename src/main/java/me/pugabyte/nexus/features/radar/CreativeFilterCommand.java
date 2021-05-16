@@ -4,6 +4,7 @@ import eden.utils.StringUtils;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -42,13 +43,17 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	private boolean shouldFilterItems(HumanEntity whoClicked) {
-		return WorldGroup.get(whoClicked.getWorld()) == WorldGroup.CREATIVE && Rank.of((Player) whoClicked) == Rank.GUEST;
+	private boolean shouldFilterItems(HumanEntity player) {
+		return WorldGroup.get(player.getWorld()) == WorldGroup.CREATIVE && Rank.of((Player) player) == Rank.GUEST;
 	}
 
 	private void filter(Supplier<HumanEntity> player, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
-		if (!shouldFilterItems(player.get()))
-			return;
+		boolean isWhiteWolfKnight = player.get().getUniqueId().toString().equals("f325c439-02c2-4043-995e-668113c7eb9f");
+		boolean isDyeBomb = DyeBombCommand.isDyeBomb(getter.get());
+
+		if (!(isWhiteWolfKnight && isDyeBomb))
+			if (!shouldFilterItems(player.get()))
+				return;
 
 		ItemStack item = getter.get();
 		if (item != null)

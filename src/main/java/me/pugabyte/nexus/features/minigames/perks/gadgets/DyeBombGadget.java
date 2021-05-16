@@ -29,7 +29,7 @@ public class DyeBombGadget extends GadgetPerk {
 
 	@Override
 	public ItemStack getItem() {
-		ItemStack item = DyeBombCommand.dyeBomb.clone();
+		ItemStack item = DyeBombCommand.getDyeBomb().clone();
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(colorize("&3Dye Bomb"));
 		item.setItemMeta(meta);

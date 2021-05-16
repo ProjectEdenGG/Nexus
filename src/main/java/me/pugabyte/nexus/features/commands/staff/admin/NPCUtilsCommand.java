@@ -40,20 +40,29 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("list [page] [--player] [--world] [--spawned]")
-	void getByOwner(@Arg("1") int page, @Switch OfflinePlayer player, @Switch World world, @Switch Boolean spawned) {
-		List<NPC> npcs = CitizensUtils.list(player, world, spawned);
-		paginate(npcs, (npc, index) -> getClickToTeleport(npc), "/npcutils list" +
-				" --player=" + (player == null ? "null" : player.getName()) +
+	@Path("list [page] [--owner] [--world] [--spawned]")
+	void getByOwner(@Arg("1") int page, @Switch OfflinePlayer owner, @Switch World world, @Switch Boolean spawned) {
+		List<NPC> npcs = CitizensUtils.list(owner, world, spawned);
+
+		if (npcs.isEmpty())
+			error("No matches found");
+
+		String command = "/npcutils list" +
+				" --player=" + (owner == null ? "null" : owner.getName()) +
 				" --world=" + (world == null ? "null" : world.getName()) +
-				" --spawned=" + spawned,
-				page);
+				" --spawned=" + spawned;
+
+		paginate(npcs, (npc, index) -> getClickToTeleport(npc), command, page);
 	}
 
 	@Async
-	@Path("removeDespawned [player] [world]")
-	void removeDespawned(@Switch OfflinePlayer player, @Switch World world) {
-		List<NPC> npcs = CitizensUtils.list(player, world, false);
+	@Path("removeDespawned [owner] [world]")
+	void removeDespawned(@Switch OfflinePlayer owner, @Switch World world) {
+		List<NPC> npcs = CitizensUtils.list(owner, world, false);
+
+		if (npcs.isEmpty())
+			error("No matches found");
+
 		for (NPC npc : npcs)
 			Tasks.sync(npc::destroy);
 
