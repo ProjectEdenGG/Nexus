@@ -31,13 +31,6 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("clearCache")
-	@Permission("group.admin")
-	void clearCache() {
-		service.clearCache();
-		send("Cache cleared");
-	}
-
 	@Path("list")
 	void listAllBans() {
 		List<WorldBan> bans = service.getAll();

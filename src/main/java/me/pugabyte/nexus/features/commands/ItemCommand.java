@@ -25,7 +25,7 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("rp <material> <id>")
-	@Permission("group.staff")
+	@Permission(value = "group.staff", absolute = true)
 	void rp(Material material, int id) {
 		PlayerUtils.giveItem(player(), new ItemBuilder(material).customModelData(id).build());
 	}

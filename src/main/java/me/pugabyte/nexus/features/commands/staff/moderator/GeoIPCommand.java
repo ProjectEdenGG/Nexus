@@ -69,14 +69,14 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("write")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void write() {
 		writeFiles();
 		send(PREFIX + "Done");
 	}
 
 	@Path("debug [player]")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void debug(@Arg("self") OfflinePlayer player) {
 		send(json(PREFIX + "Click to copy Mongo query").copy("db.geoip.find({\"_id\":\"" + player.getUniqueId().toString() + "\"}).pretty();"));
 	}

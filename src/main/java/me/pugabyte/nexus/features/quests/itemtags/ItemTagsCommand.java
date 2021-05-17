@@ -94,7 +94,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("reload")
-	@Permission("group.staff")
+	@Permission(value = "group.staff", absolute = true)
 	void reload() {
 		ItemTags.reloadConfig();
 	}

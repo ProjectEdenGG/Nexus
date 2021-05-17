@@ -49,7 +49,7 @@ public class BFFishingCommand extends CustomCommand {
 	}
 
 	@Path("giveAll")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	public void giveAll() {
 		giveAllLoot(player());
 	}

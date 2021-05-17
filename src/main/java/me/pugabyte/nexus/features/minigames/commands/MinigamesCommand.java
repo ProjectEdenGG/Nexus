@@ -508,7 +508,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens set <amount> [user]")
-	@Permission("group.seniorstaff")
+	@Permission(value = "group.seniorstaff", absolute = true)
 	void setTokens(int amount, @Arg("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(nerd);
@@ -519,7 +519,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens add <amount> [user]")
-	@Permission("group.seniorstaff")
+	@Permission(value = "group.seniorstaff", absolute = true)
 	void addTokens(int amount, @Arg("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(nerd);
@@ -530,13 +530,13 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens remove <amount> [user]")
-	@Permission("group.seniorstaff")
+	@Permission(value = "group.seniorstaff", absolute = true)
 	void removeTokens(int amount, @Arg("self") Nerd nerd) {
 		addTokens(-1 * amount, nerd);
 	}
 
 	@Path("mastermind showAnswer")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void mastermindShowAnswer() {
 		if (!minigamer.isPlaying(Mastermind.class))
 			error("You must be playing Mastermind to use this command");
@@ -566,14 +566,14 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("modifier <type>")
-	@Permission("group.staff")
+	@Permission(value = "group.staff", absolute = true)
 	void modifier(MinigameModifier type) {
 		Minigames.setModifier(type);
 		send(PREFIX + "Minigame modifier set to &e" + type.getName());
 	}
 
 	@Path("modifier random")
-	@Permission("group.staff")
+	@Permission(value = "group.staff", absolute = true)
 	void modifierRandom() {
 		modifier(RandomUtils.randomElement(Arrays.stream(MinigameModifiers.values()).map(MinigameModifiers::getModifier).collect(Collectors.toList())));
 	}

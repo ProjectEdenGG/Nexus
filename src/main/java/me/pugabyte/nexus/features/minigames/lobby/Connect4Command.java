@@ -24,35 +24,35 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Aliases("c4")
 @Permission("group.staff")
-public class Connect4 extends CustomCommand {
+public class Connect4Command extends CustomCommand {
 	public final static String PREFIX = colorize("&f[&cConnect&94&f] ");
 	static Connect4Game game = new Connect4Game();
 
-	Connect4(CommandEvent event) {
+	Connect4Command(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("reload")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void reload() {
 		Nexus.getInstance().reloadConfig();
 		send(PREFIX + "Config reloaded");
 	}
 
 	@Path("(clear|reset)")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void reset() {
 		game.reset();
 	}
 
 	@Path("place <team> <column>")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void place(String team, int column) {
 		place(Connect4Team.valueOf(team.toUpperCase()), validate(column));
 	}
 
 	@Path("debug")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void debug() {
 		send();
 		int[][] board = game.getBoard();

@@ -82,14 +82,13 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("check <player>")
-	@Permission("group.seniorstaff")
 	void check(@Arg("self") OfflinePlayer player) {
 		griefer = grieferService.get(player);
 		send(PREFIX + "&e" + player.getName() + "&3 has griefed &e" + griefer.getTriggered() + " times");
 	}
 
 	@Path("set <player> <int>")
-	@Permission("group.seniorstaff")
+	@Permission(value = "group.seniorstaff", absolute = true)
 	void set(OfflinePlayer player, int value) {
 		griefer = grieferService.get(player);
 		griefer.setTriggered(value);
@@ -98,7 +97,6 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("fix <honeyPot>")
-	@Permission("group.seniorstaff")
 	void repair(String honeyPot) {
 		ProtectedRegion region = WGUtils.getProtectedRegion("hp_" + honeyPot);
 		if (region == null)

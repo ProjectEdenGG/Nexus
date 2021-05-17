@@ -81,7 +81,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list")
-	@Permission("group.seniorstaff")
+	@Permission(value = "group.seniorstaff", absolute = true)
 	void list() {
 		if (service.getCache().values().size() == 0)
 			error("No active rainbow beacons");

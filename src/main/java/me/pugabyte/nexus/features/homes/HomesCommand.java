@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
-@Permission("homes.use")
 public class HomesCommand extends CustomCommand {
 	HomeService service = new HomeService();
 	HomeOwner homeOwner;

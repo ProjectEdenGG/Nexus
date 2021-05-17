@@ -83,7 +83,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	}
 
 	@Path("found")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void whoFound() {
 		send(PREFIX + "Found: " + new WeeklyWakkaService().get()
 				.getFoundPlayers().stream()
@@ -92,7 +92,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	}
 
 	@Path("tp")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	void tp() {
 		send(PREFIX + "Teleporting to location #" + new WeeklyWakkaService().get().getCurrentLocation());
 		player().teleportAsync(getNPC().getStoredLocation(), TeleportCause.COMMAND);
@@ -122,7 +122,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	}
 
 	@Path("move")
-	@Permission("group.admin")
+	@Permission(value = "group.admin", absolute = true)
 	public void move() {
 		List<Warp> warps = new WarpService().getWarpsByType(WarpType.WEEKLY_WAKKA);
 		WeeklyWakkaService service = new WeeklyWakkaService();
