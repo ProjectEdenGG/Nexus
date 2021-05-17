@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 
 @Aliases("fgb")
 @NoArgsConstructor
+@Description("Request block updates from the server to fix nearby \"ghost\" blocks")
 public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 
 	public FixGhostBlocksCommand(CommandEvent event) {

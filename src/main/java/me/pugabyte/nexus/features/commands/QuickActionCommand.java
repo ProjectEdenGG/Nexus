@@ -1,10 +1,12 @@
 package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
+@Description("Chat menu with common actions to perform on a player (ie teleport, message, pay)")
 public class QuickActionCommand extends CustomCommand {
 
 	public QuickActionCommand(CommandEvent event) {

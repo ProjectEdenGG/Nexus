@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Location;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Description("Measure the distance from one point to another")
 public class MeasureCommand extends CustomCommand {
 
 	public MeasureCommand(CommandEvent event) {

@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -38,6 +39,7 @@ import java.util.Map;
 import static me.pugabyte.nexus.features.discord.Discord.discordize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
+@Description("Display an item's enchants in chat")
 public class ShowEnchantsCommand extends CustomCommand {
 
 	@Data
@@ -161,30 +163,6 @@ public class ShowEnchantsCommand extends CustomCommand {
 				}
 			}
 		}
-	}
-
-	private String getLoreIngame(ItemData data) {
-		StringBuilder string = new StringBuilder();
-		int i = 0;
-		for (String lore : data.getLoreList()) {
-			string.append("\"").append(lore).append("\"");
-			if (i < data.getLoreList().size() - 1)
-				string.append(",");
-			i++;
-		}
-		return string.toString();
-	}
-
-	private String getCustomEnchantsIngame(ItemData data) {
-		StringBuilder string = new StringBuilder();
-		int i = 0;
-		for (String customEnchant : data.getCustomEnchantsList()) {
-			string.append("'{\"text\":\"").append(customEnchant).append("\"}'");
-			if (i < data.getCustomEnchantsList().size() - 1)
-				string.append(",");
-			i++;
-		}
-		return string.toString();
 	}
 
 	private String getCustomEnchantsDiscord(ItemData data) {

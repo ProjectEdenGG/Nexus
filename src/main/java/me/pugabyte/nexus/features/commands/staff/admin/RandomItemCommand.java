@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands;
+package me.pugabyte.nexus.features.commands.staff.admin;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;

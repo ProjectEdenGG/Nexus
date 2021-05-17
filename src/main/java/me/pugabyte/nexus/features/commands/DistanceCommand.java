@@ -2,12 +2,14 @@ package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
+@Description("View the distance between you and another player")
 public class DistanceCommand extends CustomCommand {
 
 	public DistanceCommand(CommandEvent event) {

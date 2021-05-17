@@ -49,13 +49,11 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		swsPlayer = playerData.get(player());
 	}
 
-	@Description("Toggle SWS")
 	@Path("toggle")
 	void toggle() {
 		toggle(!swsPlayer.isEnabled());
 	}
 
-	@Description("Turn SWS on or off")
 	@Path("<true|false>")
 	void toggle(boolean enable) {
 		swsPlayer.setEnabled(enable);
@@ -84,7 +82,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Right click a stair block to copy its angle.");
 	}
 
-	@Description("Toggle upsidedown stairs in set placement mode")
+	@Description("Toggle upside-down stairs in set placement mode")
 	@Path("setupsidedown [true/false]")
 	void setUpsidedown(Boolean value) {
 		if (value == null)
@@ -112,7 +110,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		send(PREFIX + String.format("Angle changed to %s.", swsPlayer.getDirection()));
 	}
 
-	@Description("Toggle whether stairs can be placed upsidedown or not")
+	@Description("Toggle whether stairs can be placed upside-down or not")
 	@Path("upsideDown [true|false]")
 	void upsideDown(Boolean allow) {
 		if (allow == null)

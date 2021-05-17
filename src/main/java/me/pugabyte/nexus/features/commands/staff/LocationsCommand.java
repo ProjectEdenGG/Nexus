@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.commands;
+package me.pugabyte.nexus.features.commands.staff;
 
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;

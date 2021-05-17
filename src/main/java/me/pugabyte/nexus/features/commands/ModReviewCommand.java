@@ -40,6 +40,7 @@ import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 
 @NoArgsConstructor
 @Aliases({"modcheck", "checkmod"})
+@Description("A list of client-side modifications that have been reviewed by the staff team")
 public class ModReviewCommand extends CustomCommand implements Listener {
 	private final ModReviewService service = new ModReviewService();
 	private final ModReview modReview = service.get();

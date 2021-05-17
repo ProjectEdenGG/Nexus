@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 @Aliases("swl")
 @NoArgsConstructor
+@Description("Restrict logs to their vertical orientation")
 public class SidewaysLogsCommand extends CustomCommand implements Listener {
 	private static Set<Player> enabledPlayers = new HashSet<>();
 

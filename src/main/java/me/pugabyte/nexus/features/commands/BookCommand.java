@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 
+@Description("Unsign a book or edit book metadata")
 public class BookCommand extends CustomCommand {
 	private EquipmentSlot hand;
 	private ItemStack book;

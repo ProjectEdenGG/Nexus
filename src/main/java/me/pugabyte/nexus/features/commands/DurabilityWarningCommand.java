@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.durabilitywarning.DurabilityWarning;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.meta.Damageable;
  */
 @Aliases("dw")
 @NoArgsConstructor
+@Description("Toggle whether you want to notified of a tool or armor piece that is low on durability")
 public class DurabilityWarningCommand extends CustomCommand implements Listener {
 	private final DurabilityWarningService service = new DurabilityWarningService();
 	private DurabilityWarning durabilityWarning;

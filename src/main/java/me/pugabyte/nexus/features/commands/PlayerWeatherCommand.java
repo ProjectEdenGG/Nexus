@@ -4,6 +4,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 
 @Aliases({"rain", "snow", "pweather"})
 @Redirect(from = { "/rainoff", "/snowoff" }, to = "/rain off")
+@Description("Change the weather for yourself. Does not change on the server, therefore does not affect things like mob spawning/burning.")
 public class PlayerWeatherCommand extends CustomCommand {
 
 	public PlayerWeatherCommand(@NonNull CommandEvent event) {

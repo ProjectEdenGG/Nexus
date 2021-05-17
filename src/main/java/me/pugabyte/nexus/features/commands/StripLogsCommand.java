@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.striplogs.StripLogs;
@@ -56,6 +57,7 @@ public class StripLogsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("behavior <behavior>")
+	@Description("Change how you strip logs (default, require shift, or prevent)")
 	void behavior(Behavior behavior) {
 		stripLogs.setBehavior(behavior);
 		service.save(stripLogs);
@@ -85,7 +87,7 @@ public class StripLogsCommand extends CustomCommand implements Listener {
 				if (!event.getPlayer().isSneaking())
 					event.setCancelled(true);
 				break;
-			case CANCEL:
+			case PREVENT:
 				event.setCancelled(true);
 				break;
 		}

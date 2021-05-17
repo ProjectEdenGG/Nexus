@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Aliases("birthday")
+@Description("View player's birthdays")
 public class BirthdaysCommand extends CustomCommand {
 	NerdService service = new NerdService();
 

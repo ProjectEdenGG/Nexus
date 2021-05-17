@@ -3,9 +3,11 @@ package me.pugabyte.nexus.features.commands;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.models.RecipeObject;
 import me.pugabyte.nexus.features.events.y2020.bearfair20.quests.Recipes;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 
+@Description("Learn every recipe")
 public class AllRecipesCommand extends CustomCommand {
 
 	public AllRecipesCommand(CommandEvent event) {

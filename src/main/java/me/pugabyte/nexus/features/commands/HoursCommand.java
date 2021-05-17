@@ -39,6 +39,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
+@Description("View a player's play time on the server, excluding AFK time")
 public class HoursCommand extends CustomCommand {
 	private final HoursService service = new HoursService();
 

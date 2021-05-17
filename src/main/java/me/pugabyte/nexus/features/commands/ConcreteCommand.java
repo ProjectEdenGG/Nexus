@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.tip.Tip;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
+@Description("Turn your concrete powder into hardened concrete with ease")
 public class ConcreteCommand extends CustomCommand implements Listener {
 	private static final String TITLE = StringUtils.colorize("&6Concrete Exchange");
 

@@ -4,6 +4,7 @@ import de.bluecolored.bluemap.api.BlueMapAPI;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Aliases({"maplink", "livemap"})
+@Description("Generate a link to our web map, allowing you to see the entire world from your browser")
 public class MapCommand extends CustomCommand {
 
 	public MapCommand(CommandEvent event) {

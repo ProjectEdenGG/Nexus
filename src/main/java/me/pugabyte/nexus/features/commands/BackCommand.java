@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -26,6 +27,7 @@ import java.text.DecimalFormat;
 
 @Aliases("return")
 @NoArgsConstructor
+@Description("Return to your previous location after teleporting")
 public class BackCommand extends CustomCommand implements Listener {
 	private final BackService service = new BackService();
 	private Back back;

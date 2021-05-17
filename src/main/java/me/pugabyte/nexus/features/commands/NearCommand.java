@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Aliases("nearby")
+@Description("View nearby players and their distance from you. Players in this list can see your local chat.")
 public class NearCommand extends CustomCommand {
 
 	public NearCommand(@NonNull CommandEvent event) {

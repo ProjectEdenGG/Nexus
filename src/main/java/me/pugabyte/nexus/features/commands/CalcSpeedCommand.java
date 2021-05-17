@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.Tasks;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 
 import java.text.DecimalFormat;
 
+@Description("Calculate your movement speed")
 public class CalcSpeedCommand extends CustomCommand {
 	Location[] locations = new Location[4];
 

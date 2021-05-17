@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuService;
@@ -30,6 +31,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
+@Description("Hide or mute certain parts of the server, such as chat, automatic broadcasts, and sounds")
 public class MuteMenuCommand extends CustomCommand {
 
 	public MuteMenuCommand(CommandEvent event) {

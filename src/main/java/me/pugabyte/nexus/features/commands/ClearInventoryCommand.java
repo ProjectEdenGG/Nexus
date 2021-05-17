@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -20,6 +21,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
 @Aliases("ci")
+@Description("Discard of all items your inventory")
 public class ClearInventoryCommand extends CustomCommand implements Listener {
 	private ClearInventoryPlayer ciPlayer;
 	private static Map<Player, ClearInventoryPlayer> players = new HashMap<>();

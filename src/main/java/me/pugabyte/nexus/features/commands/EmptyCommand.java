@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -8,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+@Description("Empty buckets in your inventory")
 public class EmptyCommand extends CustomCommand {
 
 	public EmptyCommand(CommandEvent event) {

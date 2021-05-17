@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.utils.Utils.sortByValueReverse;
 
 @NoArgsConstructor
+@Description("Tell us how you found the server")
 public class ReferralCommand extends CustomCommand implements Listener {
 	private final ReferralService service = new ReferralService();
 	private Referral referral;

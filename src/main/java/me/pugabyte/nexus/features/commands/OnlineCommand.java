@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Timespan;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Aliases({"list", "ls", "who", "players", "eonline", "elist", "ewho", "eplayers"})
+@Description("List online players and view basic information about them")
 public class OnlineCommand extends CustomCommand {
 
 	public OnlineCommand(CommandEvent event) {

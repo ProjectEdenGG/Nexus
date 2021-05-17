@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.compass.Compass;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @NoArgsConstructor
+@Description("Display a compass at the top of your screen")
 public class CompassCommand extends CustomCommand implements Listener {
 	private final CompassService service = new CompassService();
 	private Compass compass;

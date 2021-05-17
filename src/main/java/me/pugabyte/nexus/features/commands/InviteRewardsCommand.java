@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -21,6 +22,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Aliases("invited")
 @Permission("invite.rewards")
+@Description("Recieve a reward for inviting a player to the server")
 public class InviteRewardsCommand extends CustomCommand {
 
 	InviteRewardsCommand(CommandEvent event) {

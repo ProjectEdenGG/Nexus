@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.DescParseTickFormat;
@@ -10,6 +11,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
 @Aliases("ptime")
+@Description("Change the time of day for yourself. Does not change on the server, therefore does not affect things like mob spawning/burning.")
 public class PlayerTimeCommand extends CustomCommand {
 
 	public PlayerTimeCommand(CommandEvent event) {

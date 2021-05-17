@@ -7,6 +7,7 @@ import me.lexikiq.HasPlayer;
 import me.lexikiq.event.player.PlayerUseRespawnAnchorEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.godmode.Godmode;
@@ -45,6 +46,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 @Aliases({"spvp", "duel", "fight"})
+@Description("Toggle PVP in the survival world")
 public class PVPCommand extends CustomCommand implements Listener {
 	public final PVPService service = new PVPService();
 	private final Map<UUID, Location> bedLocations = new HashMap<>();
@@ -67,23 +69,23 @@ public class PVPCommand extends CustomCommand implements Listener {
 			pvp = service.get(player());
 	}
 
-	@Path("on")
-	void on() {
-		pvp.setEnabled(true);
+	@Path("[enable]")
+	void enable(Boolean enable) {
+		if (enable == null)
+			enable = !pvp.isEnabled();
+		pvp.setEnabled(enable);
 		service.save(pvp);
-		send(PREFIX + "&aEnabled");
+
+		send(PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
-	@Path("off")
-	void off() {
-		pvp.setEnabled(false);
-		service.save(pvp);
-		send(PREFIX + "&cDisabled");
-	}
+	@Path("keepInventory [enable]")
+	@Description("Toggle keeping your inventory and experience when dying in PVP")
+	void keepInventory(Boolean enable) {
+		if (enable == null)
+			enable = !pvp.isKeepInventory();
 
-	@Path("keepInventory")
-	void keepInventory() {
-		pvp.setKeepInventory(!pvp.isKeepInventory());
+		pvp.setKeepInventory(enable);
 		service.save(pvp);
 		send(PREFIX + "Keep inventory on PVP death " + (pvp.isKeepInventory() ? "&aenabled" : "&cdisabled"));
 	}

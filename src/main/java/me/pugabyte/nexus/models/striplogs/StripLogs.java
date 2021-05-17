@@ -28,7 +28,7 @@ public class StripLogs implements PlayerOwnedObject {
 	private Behavior behavior = Behavior.DEFAULT;
 
 	public enum Behavior {
-		CANCEL,
+		PREVENT,
 		REQUIRE_SHIFT,
 		DEFAULT
 	}

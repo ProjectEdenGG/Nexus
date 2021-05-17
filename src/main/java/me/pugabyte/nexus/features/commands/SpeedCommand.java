@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -9,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
 @Permission("essentials.speed")
+@Description("Change your fly/walk speed")
 @Redirect(from = "/flyspeed", to = "/speed fly")
 @Redirect(from = "/walkspeed", to = "/speed walk")
 public class SpeedCommand extends CustomCommand {

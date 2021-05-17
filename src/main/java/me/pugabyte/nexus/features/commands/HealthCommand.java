@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Redirect(from = "/entityhealth", to = "/health target")
+@Description("View the health of a player or entity")
 public class HealthCommand extends CustomCommand {
 	private static final DecimalFormat nf = new DecimalFormat("#.00");
 
@@ -24,18 +26,17 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("<player> [number]")
-	void health(@Arg("self") Player player, Double health) {
+	void health(@Arg("self") Player player, @Arg(permission = "group.staff") Double health) {
 		if (health == null)
 			send(PREFIX + player.getName() + "'s health is " + nf.format(player.getHealth()));
 		else {
-			checkPermission("health.set");
 			player.setHealth(health);
 			send(PREFIX + stripColor(player.getName()) + "'s health set to " + nf.format(player.getHealth()));
 		}
 	}
 
 	@Path("target [number]")
-	void target(Double health) {
+	void target(@Arg(permission = "group.staff") Double health) {
 		LivingEntity target = getTargetLivingEntityRequired();
 
 		Tasks.GlowTask.builder()
@@ -48,7 +49,6 @@ public class HealthCommand extends CustomCommand {
 		if (health == null)
 			send(PREFIX + stripColor(target.getName()) + "'s health is " + nf.format(target.getHealth()));
 		else {
-			checkPermission("health.set");
 			target.setHealth(health);
 			send(PREFIX + stripColor(target.getName()) + "'s health set to " + nf.format(target.getHealth()));
 		}

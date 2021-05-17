@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.geoip.GeoIP;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 @Aliases("timefor")
+@Description("Check what time it is for another player")
 public class CurrentTimeCommand extends CustomCommand {
 	GeoIPService geoipService = new GeoIPService();
 	SettingService settingService = new SettingService();
