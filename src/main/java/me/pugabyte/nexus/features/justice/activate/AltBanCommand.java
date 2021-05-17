@@ -13,7 +13,6 @@ import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Permission("group.moderator")
@@ -33,12 +32,9 @@ public class AltBanCommand extends _PunishmentCommand {
 		return PunishmentType.ALT_BAN;
 	}
 
-	@Permission("group.admin")
-	@Path("bots [--dryrun]")
-	void bots(@Switch boolean dryrun) {
-		// Put names here
-		List<String> names = Arrays.asList();
-
+	@Permission(value = "group.admin", absolute = true)
+	@Path("bots <names> [--dryrun]")
+	void bots(@Arg(type = String.class) List<String> names, @Switch boolean dryrun) {
 		int banned = 0;
 		int ignored = 0;
 		for (String name : names) {
