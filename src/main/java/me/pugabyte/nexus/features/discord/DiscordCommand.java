@@ -130,7 +130,7 @@ public class DiscordCommand extends CustomCommand {
 					send(PREFIX + "Your minecraft account is linked to a Discord account, but I could not find that account. " +
 							"Are you in our Discord server? &e" + EdenSocialMediaSite.DISCORD.getUrl());
 				else
-					send(PREFIX + "Your minecraft account is linked to " + user.getName());
+					send(PREFIX + "Your minecraft account is linked to " + user.getDiscordName());
 				send(PREFIX + "You can unlink your account with &c/discord unlink");
 				return;
 			} else {
@@ -168,7 +168,7 @@ public class DiscordCommand extends CustomCommand {
 
 		try {
 			User userById = Bot.KODA.jda().retrieveUserById(user.getUserId()).complete();
-			String name = user.getName();
+			String name = user.getDiscordName();
 			String discrim = user.getDiscrim();
 
 			if (isSelf(player))

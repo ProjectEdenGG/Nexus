@@ -62,7 +62,7 @@ public class DiscordUser implements PlayerOwnedObject {
 		return getName();
 	}
 
-	public @NotNull String getName() {
+	public @NotNull String getDiscordName() {
 		return Discord.getName(userId);
 	}
 
@@ -71,7 +71,7 @@ public class DiscordUser implements PlayerOwnedObject {
 	}
 
 	public String getNameAndDiscrim() {
-		return getName() + "#" + getDiscrim();
+		return getDiscordName() + "#" + getDiscrim();
 	}
 
 	public User getUser() {

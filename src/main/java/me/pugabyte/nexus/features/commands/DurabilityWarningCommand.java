@@ -61,6 +61,9 @@ public class DurabilityWarningCommand extends CustomCommand implements Listener 
 		int oldDurability = maxDurability - damage;
 		int newDurability = oldDurability - event.getDamage();
 
+		if (newDurability <= 0)
+			return;
+
 		double oldPercentage = (double) oldDurability / (double) maxDurability;
 		double newPercentage = (double) newDurability / (double) maxDurability;
 
