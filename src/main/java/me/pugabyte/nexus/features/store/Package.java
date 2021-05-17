@@ -139,12 +139,12 @@ public enum Package {
 	CREATIVE_PLOTS,
 
 	@Id("2495900")
-	@Permission("rainbowarmour.use")
-	RAINBOW_ARMOUR,
+	@Permission("rainbowarmor.use")
+	RAINBOW_ARMOR,
 
 	@Id("2886239")
-	@Permission("invis.armour")
-	INVISIBLE_ARMOUR,
+	@Permission("invisiblearmor.use")
+	INVISIBLE_ARMOR,
 
 	@Id("2856645")
 	@Permission("rainbow.beacon")
