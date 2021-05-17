@@ -82,6 +82,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.StringUtils.an;
 import static me.pugabyte.nexus.utils.StringUtils.trimFirst;
 import static me.pugabyte.nexus.utils.TimeUtils.parseDate;
 import static me.pugabyte.nexus.utils.TimeUtils.parseDateTime;
@@ -175,6 +176,13 @@ public abstract class CustomCommand extends ICustomCommand {
 		Entity targetEntity = getTargetEntity();
 		if (targetEntity == null)
 			error("You must be looking at an entity");
+		return targetEntity;
+	}
+
+	protected Entity getTargetEntityRequired(EntityType entityType) {
+		Entity targetEntity = getTargetEntity();
+		if (targetEntity == null || targetEntity.getType() != entityType)
+			error("You must be looking at " + an(entityType.name()) + " " + camelCase(entityType));
 		return targetEntity;
 	}
 

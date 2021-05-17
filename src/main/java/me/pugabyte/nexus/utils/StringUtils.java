@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -201,6 +202,11 @@ public class StringUtils extends eden.utils.StringUtils {
 		NONE,
 		COUNT,
 		PERCENT
+	}
+
+	@NotNull
+	public static String an(@NotNull String text) {
+		return "a" + (text.matches("(?i)^[AEIOU].*") ? "n" : "");
 	}
 
 	public static String progressBar(int progress, int goal) {
