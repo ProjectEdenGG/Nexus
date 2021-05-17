@@ -23,16 +23,10 @@ public class Shops extends Feature {
 	}
 
 	public static class Market {
+		ShopService service = new ShopService();
+		Shop market = service.getMarket();
 
 		public Market() {
-			setup();
-		}
-
-		private void setup() {
-			ShopService service = new ShopService();
-
-			Shop market = service.getMarket();
-
 			market.getProducts().clear();
 			addItems();
 
@@ -233,7 +227,7 @@ public class Shops extends Feature {
 		}
 
 		private void add(Product product) {
-			new ShopService().getMarket().getProducts().add(product);
+			market.getProducts().add(product);
 		}
 
 	}
