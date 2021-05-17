@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.autosort.features;
 
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -81,7 +82,12 @@ public class AutoRefill implements Listener {
 	}
 
 	private void tryRefillStackInHand(Player player, EquipmentSlot slot) {
-		if (slot == null) return;
+		if (slot == null)
+			return;
+
+		AutoSortUser autoSortUser = AutoSortUser.of(player);
+		if (!autoSortUser.isFeatureEnabled(AutoSortFeature.REFILL))
+			return;
 
 		ItemStack stack;
 		int slotIndex;
@@ -95,8 +101,6 @@ public class AutoRefill implements Listener {
 		} else {
 			return;
 		}
-
-		AutoSortUser autoSortUser = AutoSortUser.of(player);
 
 		if (new MaterialTag(MaterialTag.ALL_AIR, MaterialTag.POTIONS).isTagged(stack.getType()))
 			return;

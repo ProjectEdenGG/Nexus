@@ -25,21 +25,27 @@ public class AutoSortChests implements Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onInventoryOpen(InventoryOpenEvent event) {
 		Inventory bottomInventory = event.getView().getBottomInventory();
-		if (bottomInventory.getType() != InventoryType.PLAYER) return;
+		if (bottomInventory.getType() != InventoryType.PLAYER)
+			return;
 
 		HumanEntity holder = ((PlayerInventory) bottomInventory).getHolder();
-		if (!(holder instanceof Player player)) return;
+		if (!(holder instanceof Player player))
+			return;
 
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (!player.isSneaking() && !isVanished(player) && user.isFeatureEnabled(AutoSortFeature.SORT_CHESTS)) {
-			Inventory topInventory = event.getView().getTopInventory();
-			if (!AutoSort.isSortableChestInventory(topInventory, event.getView().getTitle()))
-				return;
+		if (!user.isFeatureEnabled(AutoSortFeature.SORT_CHESTS))
+			return;
 
-			Tasks.wait(1, new InventorySorter(topInventory, 0));
-			user.tip(TipType.AUTOSORT_SORT_CHESTS);
-		}
+		if (player.isSneaking() || isVanished(player))
+			return;
+
+		Inventory topInventory = event.getView().getTopInventory();
+		if (!AutoSort.isSortableChestInventory(topInventory, event.getView().getTitle()))
+			return;
+
+		Tasks.wait(1, new InventorySorter(topInventory, 0));
+		user.tip(TipType.AUTOSORT_SORT_CHESTS);
 	}
 
 }

@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.autosort.commands;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.features.autosort.tasks.FindChestsThread;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -28,6 +29,9 @@ public class SortCommand extends CustomCommand {
 
 	@Path
 	void run() {
+		if (!user.isFeatureEnabled(AutoSortFeature.DEPOSIT_ALL))
+			error("You have disabled this feature");
+
 		Location location = player().getLocation();
 		Chunk centerChunk = location.getChunk();
 		World world = location.getWorld();
