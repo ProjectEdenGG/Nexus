@@ -3,9 +3,9 @@ package me.pugabyte.nexus.features.commands;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.utils.Tasks;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -19,6 +19,7 @@ public class VoiceChannelCommand extends CustomCommand {
 	}
 
 	@Path("[channel]")
+	@Async
 	void run(String channel) {
 		Guild guild = Discord.getGuild();
 		if (guild == null)
@@ -35,6 +36,6 @@ public class VoiceChannelCommand extends CustomCommand {
 		if (member == null)
 			error("Could not find you in a voice channel");
 
-		Tasks.async(() -> guild.moveVoiceMember(member, vc).complete());
+		guild.moveVoiceMember(member, vc).complete();
 	}
 }

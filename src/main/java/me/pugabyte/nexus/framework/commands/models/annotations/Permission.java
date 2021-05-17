@@ -5,11 +5,31 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Sets the permission node required to run a command
+ * <p>
+ * View the bottom of the source code to this annotation for a common permission node cheatsheet
+ */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permission {
+	/**
+	 * The permission node required to run this command
+	 * <p>
+	 * View the bottom of the source code to this annotation for a common permission node cheatsheet
+	 * @return a permission node
+	 */
 	String value();
 
+	/**
+	 * For sub-commands, this specifies whether or not the permission node should derive from the parent command's
+	 * permission node.
+	 * <p>
+	 * Example: if a parent has the permission node <i><code>essentials.signs</code></i> and a child has the permission
+	 * node <i><code>color</code></i>, the effective permission node of the child if this is <code>false</code> will be
+	 * <i><code>essentials.signs.color</code></i>. If this is <code>true</code>, it would be <i><code>color</code></i>.
+	 * @return if this permission node is absolute
+	 */
 	boolean absolute() default false;
 }
 
