@@ -8,6 +8,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 
+import static me.pugabyte.nexus.features.listeners.Restrictions.isPerkAllowedAt;
+
 @Aliases({"ase", "armourstandeditor"})
 public class ArmorStandEditorCommand extends CustomCommand {
 
@@ -18,6 +20,10 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	@Path("arms [enable]")
 	void arms(Boolean enabled) {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+
+		if (!isPerkAllowedAt(armorStand.getLocation()))
+			error("You cannot edit armor stands here");
+
 		if (enabled == null)
 			enabled = !armorStand.hasArms();
 
