@@ -22,6 +22,7 @@ public @interface Switch {
 
 	double min() default Short.MIN_VALUE;
 	double max() default Short.MAX_VALUE;
+	String minMaxBypass() default "";
 	String regex() default "";
 
 }

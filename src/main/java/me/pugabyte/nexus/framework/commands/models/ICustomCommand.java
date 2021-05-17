@@ -31,6 +31,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.annotation.Annotation;
@@ -466,7 +467,7 @@ public abstract class ICustomCommand {
 	}
 
 	List<Method> getPathMethods(CommandEvent event) {
-		List<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+		List<Method> methods = getPathMethods();
 
 		Map<String, Method> overriden = new HashMap<>();
 		methods.forEach(method -> {
@@ -495,6 +496,12 @@ public abstract class ICustomCommand {
 			throw new NoPermissionException();
 
 		return filtered;
+	}
+
+	@NotNull
+	public List<Method> getPathMethods() {
+		List<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+		return methods;
 	}
 
 	private Method getMethod(CommandRunEvent event) {

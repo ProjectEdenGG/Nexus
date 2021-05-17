@@ -2,12 +2,12 @@ package me.pugabyte.nexus.framework.commands;
 
 import lombok.Getter;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.Plugin;
@@ -26,7 +26,7 @@ public class CommandMapUtils {
 	private final Field COMMAND_MAP_FIELD;
 	private final Field KNOWN_COMMANDS_FIELD;
 	@Getter
-	private final CommandMap commandMap;
+	private final SimpleCommandMap commandMap;
 	@Getter
 	private final Map<String, Command> knownCommandMap;
 
@@ -42,7 +42,7 @@ public class CommandMapUtils {
 			KNOWN_COMMANDS_FIELD = SimpleCommandMap.class.getDeclaredField("knownCommands");
 			KNOWN_COMMANDS_FIELD.setAccessible(true);
 
-			commandMap = (CommandMap) COMMAND_MAP_FIELD.get(Bukkit.getServer().getPluginManager());
+			commandMap = (SimpleCommandMap) COMMAND_MAP_FIELD.get(Bukkit.getServer().getPluginManager());
 			knownCommandMap = (Map<String, Command>) KNOWN_COMMANDS_FIELD.get(commandMap);
 		} catch (NoSuchMethodException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -60,6 +60,9 @@ public class CommandMapUtils {
 		pluginCommand.setAliases(customCommand.getAliases());
 		pluginCommand.setExecutor(handler);
 		pluginCommand.setTabCompleter(handler);
+		Description description = customCommand.getClass().getAnnotation(Description.class);
+		if (description != null)
+			pluginCommand.setDescription(description.value());
 		Permission permission = customCommand.getClass().getAnnotation(Permission.class);
 		if (permission != null)
 			pluginCommand.setPermission(permission.value());

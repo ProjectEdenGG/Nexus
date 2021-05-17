@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown;
 import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
+import me.pugabyte.nexus.framework.commands.models.annotations.DescriptionExtra;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
@@ -67,6 +68,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	@Path("settings mobTargeting [enable]")
 	@Description("Disable mobs targeting you while you are AFK")
+	@DescriptionExtra("Must be AFK for longer than 4 minutes")
 	void mobTargeting(Boolean enable) {
 		AFKSettings afkSettings = service.get(player());
 		if (enable == null)
@@ -79,6 +81,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	@Path("settings mobSpawning [enable]")
 	@Description("Disable mobs spawning near you while you are AFK. Helps with server lag and spawn rates for active players")
+	@DescriptionExtra("Must be AFK for longer than 4 minutes")
 	void mobSpawning(Boolean enable) {
 		AFKSettings afkSettings = service.get(player());
 		if (enable == null)
