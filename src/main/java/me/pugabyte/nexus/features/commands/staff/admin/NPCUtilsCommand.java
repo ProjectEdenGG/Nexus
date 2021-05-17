@@ -56,7 +56,7 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("removeDespawned [owner] [world]")
+	@Path("removeDespawned [--owner] [--world]")
 	void removeDespawned(@Switch OfflinePlayer owner, @Switch World world) {
 		List<NPC> npcs = CitizensUtils.list(owner, world, false);
 
