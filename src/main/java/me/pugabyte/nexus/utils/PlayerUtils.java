@@ -291,7 +291,10 @@ public class PlayerUtils {
 	 * @param recipient a {@link CommandSender}, {@link HasUniqueId}, {@link Identified}, or {@link UUID}
 	 * @param message a {@link String} or {@link ComponentLike}
 	 */
-	public static void send(@Nullable Object recipient, @Nullable Object message) {
+	public static void send(@Nullable Object recipient, @Nullable Object message, Object... objects) {
+		if (message instanceof String string)
+			message = String.format(string, objects);
+
 		if (recipient == null || message == null)
 			return;
 		if (recipient instanceof CommandSender) {

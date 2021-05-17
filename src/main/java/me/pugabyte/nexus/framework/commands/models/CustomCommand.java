@@ -225,8 +225,8 @@ public abstract class CustomCommand extends ICustomCommand {
 		PlayerUtils.giveItems(player(), items, null);
 	}
 
-	protected void send(CommandSender sender, String message) {
-		send(sender, json(message));
+	protected void send(CommandSender sender, String message, Object... objects) {
+		send(sender, json(String.format(message, objects)));
 	}
 
 	protected void send(CommandSender sender, BaseComponent... baseComponents) {

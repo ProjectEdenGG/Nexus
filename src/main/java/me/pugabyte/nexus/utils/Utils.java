@@ -5,6 +5,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import eden.annotations.Disabled;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import org.bukkit.Material;
@@ -16,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.objenesis.ObjenesisStd;
+import org.reflections.Reflections;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -37,6 +39,17 @@ public class Utils extends eden.utils.Utils {
 
 	public static Material getSpawnEgg(EntityType type) {
 		return Material.valueOf(type.toString() + "_SPAWN_EGG");
+	}
+
+	public static void registerListeners(String packageName) {
+		new Reflections(packageName).getSubTypesOf(Listener.class).forEach(listener -> {
+			try {
+				if (listener.getAnnotation(Disabled.class) == null)
+					Nexus.registerListener(new ObjenesisStd().newInstance(listener));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	public static void tryRegisterListener(Class<?> clazz) {

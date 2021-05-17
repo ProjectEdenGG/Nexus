@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -209,6 +210,24 @@ public class ItemUtils {
 		}
 
 		return true;
+	}
+
+	public static class ItemStackComparator implements Comparator<ItemStack> {
+		@Override
+		public int compare(ItemStack a, ItemStack b) {
+			int result = Integer.compare(b.getMaxStackSize(), a.getMaxStackSize());
+			if (result != 0) return result;
+
+			result = b.getType().compareTo(a.getType());
+			if (result != 0) return result;
+
+			result = Byte.compare(b.getData().getData(), a.getData().getData());
+			if (result != 0) return result;
+
+			result = Integer.compare(b.getAmount(), a.getAmount());
+			return result;
+		}
+
 	}
 
 	/**

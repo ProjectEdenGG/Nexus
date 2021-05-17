@@ -1,0 +1,144 @@
+package me.pugabyte.nexus.features.autosort.features;
+
+import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.autosort.AutoSortFeature;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
+import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.autosort.AutoSortUser;
+import me.pugabyte.nexus.models.autosort.AutoSortUserService;
+import me.pugabyte.nexus.models.autotrash.AutoTrash.Behavior;
+import me.pugabyte.nexus.models.autotrash.AutoTrashService;
+import me.pugabyte.nexus.models.dumpster.Dumpster;
+import me.pugabyte.nexus.models.dumpster.DumpsterService;
+import me.pugabyte.nexus.utils.ItemUtils.ItemStackComparator;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+
+public class AutoTrash extends CustomCommand implements Listener {
+	private final AutoSortUserService service = new AutoSortUserService();
+	private AutoSortUser user;
+
+	public AutoTrash(@NonNull CommandEvent event) {
+		super(event);
+		if (isPlayerCommandEvent())
+			user = service.get(player());
+	}
+
+	@Path("materials")
+	void materials() {
+		new AutoTrashMaterialEditor(user);
+	}
+
+	@Path("behavior [behavior]")
+	void behavior(Behavior behavior) {
+		if (behavior == null) {
+			send("Current behavior is " + camelCase(user.getAutoTrashBehavior()));
+			return;
+		}
+
+		user.setAutoTrashBehavior(behavior);
+		service.save(user);
+		send(PREFIX + "Auto Trash behavior set to " + camelCase(behavior));
+	}
+
+	@Path("convert")
+	void convert() {
+		for (me.pugabyte.nexus.models.autotrash.AutoTrash autoTrash : new AutoTrashService().getAll()) {
+			AutoSortUser user = new AutoSortUserService().get(autoTrash);
+			user.setAutoTrashBehavior(autoTrash.getBehavior());
+			user.setAutoTrashMaterials(autoTrash.getMaterials());
+			if (!autoTrash.isEnabled())
+				user.getDisabledFeatures().add(AutoSortFeature.AUTO_TRASH);
+		}
+	}
+
+	@EventHandler
+	public void onPickup(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		AutoSortUser user = AutoSortUser.of(player);
+		if (!user.isFeatureEnabled(AutoSortFeature.AUTO_TRASH))
+			return;
+
+		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))
+			return;
+
+		ItemStack item = event.getItem().getItemStack();
+		ItemMeta meta = item.getItemMeta();
+		if (meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants() || CustomModel.exists(item))
+			return;
+
+		if (user.getAutoTrashMaterials().contains(item.getType())) {
+			event.setCancelled(true);
+			if (user.getAutoTrashBehavior() == Behavior.TRASH) {
+				DumpsterService dumpsterService = new DumpsterService();
+				Dumpster dumpster = dumpsterService.get();
+
+				dumpster.add(item);
+				dumpsterService.save(dumpster);
+
+				event.getItem().remove();
+			}
+		}
+	}
+
+	public static class AutoTrashMaterialEditor implements Listener {
+		private static final String TITLE = StringUtils.colorize("&eAuto Trash");
+		private final AutoSortUser user;
+
+		public AutoTrashMaterialEditor(AutoSortUser user) {
+			this.user = user;
+
+			Inventory inv = Bukkit.createInventory(null, 6 * 9, TITLE);
+			inv.setContents(user.getAutoTrashMaterials().stream()
+					.map(ItemStack::new)
+					.sorted(new ItemStackComparator())
+					.toArray(ItemStack[]::new));
+
+			Nexus.registerTempListener(this);
+			user.getOnlinePlayer().openInventory(inv);
+		}
+
+		@EventHandler
+		public void onChestClose(InventoryCloseEvent event) {
+			if (event.getInventory().getHolder() != null) return;
+			if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
+			if (!event.getPlayer().equals(user.getOnlinePlayer())) return;
+
+			Set<Material> materials = Arrays.stream(event.getInventory().getContents())
+					.filter(item -> !isNullOrAir(item))
+					.map(ItemStack::getType)
+					.collect(Collectors.toSet());
+			user.setAutoTrashMaterials(materials);
+
+			new AutoSortUserService().save(user);
+
+			user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
+
+			Nexus.unregisterTempListener(this);
+			event.getPlayer().closeInventory();
+		}
+	}
+
+}
