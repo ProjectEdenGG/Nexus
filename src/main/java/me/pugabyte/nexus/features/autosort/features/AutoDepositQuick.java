@@ -27,7 +27,6 @@ import static me.pugabyte.nexus.utils.PlayerUtils.send;
 @NoArgsConstructor
 public class AutoDepositQuick implements Listener {
 
-
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onBlockDamage(BlockDamageEvent event) {
 		Player player = event.getPlayer();
@@ -66,4 +65,5 @@ public class AutoDepositQuick implements Listener {
 		else
 			send(player, PREFIX + "Deposited {0} items", String.valueOf(deposits.getTotalItems()));
 	}
+
 }

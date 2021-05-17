@@ -1,7 +1,8 @@
-package me.pugabyte.nexus.features.autosort;
+package me.pugabyte.nexus.features.autosort.commands;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
