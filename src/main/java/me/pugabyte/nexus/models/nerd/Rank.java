@@ -2,27 +2,27 @@ package me.pugabyte.nexus.models.nerd;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
-import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.EnumUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.node.matcher.NodeMatcher;
+import net.luckperms.api.node.types.InheritanceNode;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -96,14 +96,15 @@ public enum Rank implements ColoredAndNamed {
 		return StringUtils.camelCase(name());
 	}
 
+	@SneakyThrows
 	public List<Nerd> getNerds() {
-		// Temporary? fix to get players in this group. Using Hours Top limit 100 because this method is only used for staff
-		List<UUID> inGroup = new HoursService().getActivePlayers().stream()
-				.filter(player -> Nexus.getPerms().playerHas(null, PlayerUtils.getPlayer(player), "rank." + name().toLowerCase()))
-				.collect(Collectors.toList());
-		Set<Nerd> nerds = new HashSet<>();
-		inGroup.forEach(player -> nerds.add(Nerd.of(player)));
-		return new ArrayList<>(nerds);
+		Group group = Nexus.getLuckPerms().getGroupManager().getGroup(name());
+
+		if (group == null)
+			throw new InvalidInputException("&cGroup " + name() +  " does not exist!");
+
+		var matcher = NodeMatcher.key(InheritanceNode.builder(group).build());
+		return Nerd.of(Nexus.getLuckPerms().getUserManager().searchAll(matcher).get().keySet());
 	}
 
 	public List<Nerd> getOnlineNerds() {
@@ -169,7 +170,7 @@ public enum Rank implements ColoredAndNamed {
 		return null;
 	}
 
-	public enum Group {
+	public enum RankGroup {
 		ADMINS,
 		SENIOR_STAFF,
 		STAFF,

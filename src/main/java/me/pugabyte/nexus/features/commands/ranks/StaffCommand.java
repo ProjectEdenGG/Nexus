@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands.ranks;
 
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@Aliases({"stafflist"})
+@Aliases("stafflist")
 public class StaffCommand extends CustomCommand {
 
 	public StaffCommand(CommandEvent event) {
@@ -24,6 +25,7 @@ public class StaffCommand extends CustomCommand {
 	}
 
 	@Path
+	@Async
 	void staff() {
 		line();
 		List<Rank> ranks = Rank.getStaff();

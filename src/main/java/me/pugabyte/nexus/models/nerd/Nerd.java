@@ -38,7 +38,10 @@ import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.StringUtils.CHECK;
@@ -72,6 +75,10 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 
 	public static Nerd of(UUID uuid) {
 		return new NerdService().get(uuid);
+	}
+
+	public static List<Nerd> of(Collection<UUID> uuids) {
+		return uuids.stream().map(Nerd::of).collect(Collectors.toList());
 	}
 
 	public void fromPlayer(OfflinePlayer player) {
