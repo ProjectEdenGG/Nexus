@@ -14,7 +14,6 @@ import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayer;
 import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -531,7 +530,8 @@ public class PlayerUtils {
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 		List<ItemStack> excess;
-		if (offlinePlayer.getPlayer() != null && WorldGroup.get(offlinePlayer.getPlayer()) == worldGroup)
+		boolean alwaysDeliver = offlinePlayer.getPlayer() == null || WorldGroup.get(offlinePlayer.getPlayer()) != worldGroup;
+		if (!alwaysDeliver)
 			excess = giveItemsGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = new ArrayList<>(items);
@@ -543,7 +543,8 @@ public class PlayerUtils {
 			delivery.setMessage(message);
 		user.add(worldGroup, delivery);
 		service.save(user);
-		user.sendMessage(user.json(DeliveryCommand.PREFIX + "Your inventory was full. Excess items were given to you as a &c/delivery").command("/delivery").hover("&eClick to view deliveries"));
+		String send = alwaysDeliver ? "Items have been given to you as a &c/delivery" : "Your inventory was full. Excess items were given to you as a &c/delivery";
+		user.sendMessage(JsonBuilder.fromPrefix("Delivery").next(send).command("/delivery").hover("&eClick to view deliveries"));
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {
