@@ -30,8 +30,4 @@ public class PerkMenu extends MenuUtils implements InventoryProvider {
 		contents.set(SlotPos.of(1, 3), yourPerks);
 		contents.set(SlotPos.of(1, 5), buyPerks);
 	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
-	}
 }

@@ -103,15 +103,10 @@ public class Quests implements Listener {
 		if (!cooldownService.check(player, "Pride21_NPCInteract", TimeUtils.Time.SECOND.x(5)))
 			return;
 
-		int wait = Talker.sendScript(player, PARADE_MANAGER);
+		Talker.sendScript(player, PARADE_MANAGER);
 		Pride21User user = service.get(player);
-		if (user.isComplete()) {
+		if (user.isComplete())
 			player.resetPlayerTime();
-			if (user.canClaimReward()) {
-				// TODO: claiming menu
-				// Tasks.wait(wait, () -> {});
-			}
-		}
 	}
 
 	@EventHandler

@@ -52,6 +52,8 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Nerd.StaffMember;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.pride21.Pride21User;
+import me.pugabyte.nexus.models.pride21.Pride21UserService;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.task.Task;
@@ -974,6 +976,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("testNewHasRoomFor")
 	void hasRoomFor() {
 		send("" + PlayerUtils.hasRoomFor(player(), new ItemStack(Material.DIRT, 64), new ItemStack(Material.SNOWBALL, 8)));
+	}
+
+	@Path("resetPrideRewardsClaimed")
+	void resetPrideRewardsClaimed() {
+		Pride21UserService pride21UserService = new Pride21UserService();
+		Pride21User pride21User = pride21UserService.get(uuid());
+		pride21User.setRewardsClaimed(0);
+		pride21UserService.save(pride21User);
 	}
 
 	@ConverterFor(Nerd.class)
