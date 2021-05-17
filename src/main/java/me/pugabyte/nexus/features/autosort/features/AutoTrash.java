@@ -37,17 +37,18 @@ public class AutoTrash implements Listener {
 		if (meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants() || CustomModel.exists(item))
 			return;
 
-		if (user.getAutoTrashMaterials().contains(item.getType())) {
-			event.setCancelled(true);
-			if (user.getAutoTrashBehavior() == Behavior.TRASH) {
-				DumpsterService dumpsterService = new DumpsterService();
-				Dumpster dumpster = dumpsterService.get();
+		if (!user.getAutoTrashMaterials().contains(item.getType()))
+			return;
 
-				dumpster.add(item);
-				dumpsterService.save(dumpster);
+		event.setCancelled(true);
+		if (user.getAutoTrashBehavior() == Behavior.TRASH) {
+			DumpsterService dumpsterService = new DumpsterService();
+			Dumpster dumpster = dumpsterService.get();
 
-				event.getItem().remove();
-			}
+			dumpster.add(item);
+			dumpsterService.save(dumpster);
+
+			event.getItem().remove();
 		}
 	}
 

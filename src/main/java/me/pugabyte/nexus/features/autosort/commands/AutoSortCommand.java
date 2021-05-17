@@ -5,13 +5,14 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.autosort.AutoSortUserService;
 import org.bukkit.event.Listener;
 
-
 @NoArgsConstructor
+@Permission("autosort.use")
 public class AutoSortCommand extends CustomCommand implements Listener {
 	private final AutoSortUserService service = new AutoSortUserService();
 	private AutoSortUser user;

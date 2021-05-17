@@ -5,6 +5,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.autosort.AutoSortUserService;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
+@Permission("autosort.use")
 public class AutoTrashCommand extends CustomCommand {
 	private final AutoSortUserService service = new AutoSortUserService();
 	private AutoSortUser user;
