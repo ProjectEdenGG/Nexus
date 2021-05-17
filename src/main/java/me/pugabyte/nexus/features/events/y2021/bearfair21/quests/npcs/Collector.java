@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 
+import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
@@ -152,9 +153,11 @@ public class Collector {
 	private static void newTrades() {
 		List<TradeBuilder> choices = new ArrayList<>(possibleTrades);
 		// Remove current trades from choices
-		for (TradeBuilder trade : randomTrades)
-			choices.remove(trade);
-		randomTrades.clear();
+		if (!Utils.isNullOrEmpty(randomTrades)) {
+			for (TradeBuilder trade : randomTrades)
+				choices.remove(trade);
+			randomTrades.clear();
+		}
 		// Pick new trades
 		for (int i = 0; i < 4; i++) {
 			TradeBuilder random = RandomUtils.randomElement(choices);
