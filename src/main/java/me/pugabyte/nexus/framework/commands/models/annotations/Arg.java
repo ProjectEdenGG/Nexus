@@ -52,7 +52,7 @@ public @interface Arg {
 	Class<?> tabCompleter() default void.class;
 
 	/**
-	 * For {@link java.util.List} arguments, specifies what objects the list contains.
+	 * For arguments affected by erasure, i.e. {@link java.util.List}, specifies what objects the list contains.
 	 * <p>
 	 * For example, if an argument is of type <code>List&lt;Player&gt;</code>, you should include an argument with this
 	 * value set to <code>Player.class</code>

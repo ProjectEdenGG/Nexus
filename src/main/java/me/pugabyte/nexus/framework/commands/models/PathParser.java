@@ -160,8 +160,9 @@ class PathParser {
 				return switches;
 
 			for (Parameter parameter : method.getParameters()) {
-				Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
-				if (annotation == null)
+				Arg argAnnotation = parameter.getDeclaredAnnotation(Arg.class);
+				Switch switchAnnotation = parameter.getDeclaredAnnotation(Switch.class);
+				if (switchAnnotation == null)
 					continue;
 
 				Pattern pattern = getSwitchPattern(parameter);
@@ -175,8 +176,8 @@ class PathParser {
 
 				if (!found) {
 					switches.add("--" + parameter.getName());
-					if (annotation.shorthand() != '-')
-						switches.add("-" + annotation.shorthand());
+					if (switchAnnotation.shorthand() != '-')
+						switches.add("-" + switchAnnotation.shorthand());
 				}
 
 				if (lastArg.contains("=")) {
@@ -184,16 +185,19 @@ class PathParser {
 					arg.setPathArg("[switch]");
 					arg.isCompletionIndex(true);
 
-					if (!isNullOrEmpty(annotation.permission()))
-						if (!event.getSender().hasPermission(annotation.permission()))
-							break;
-
 					arg.setTabCompleter(parameter.getType());
 					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
-					if (annotation.type() != void.class)
-						arg.setTabCompleter(annotation.type());
-					if (annotation.tabCompleter() != void.class)
-						arg.setTabCompleter(annotation.tabCompleter());
+
+					if (argAnnotation != null) {
+						if (!isNullOrEmpty(argAnnotation.permission()))
+							if (!event.getSender().hasPermission(argAnnotation.permission()))
+								break;
+
+						if (argAnnotation.type() != void.class)
+							arg.setTabCompleter(argAnnotation.type());
+						if (argAnnotation.tabCompleter() != void.class)
+							arg.setTabCompleter(argAnnotation.tabCompleter());
+					}
 
 					if (PlayerOwnedObject.class.isAssignableFrom(arg.getType()) && arg.getTabCompleter() == null)
 						arg.setTabCompleter(OfflinePlayer.class);

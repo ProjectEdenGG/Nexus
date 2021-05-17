@@ -191,7 +191,8 @@ public abstract class ICustomCommand {
 
 		int i = 0;
 		for (Parameter parameter : switches) {
-			Switch annotation = parameter.getDeclaredAnnotation(Switch.class);
+			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
+			String defaultValue = annotation == null || isNullOrEmpty(annotation.value()) ? null : annotation.value();
 
 			Pattern pattern = getSwitchPattern(parameter);
 
@@ -202,7 +203,7 @@ public abstract class ICustomCommand {
 				if (matcher.find()) {
 					found = true;
 					String group = matcher.group();
-					String value = isNullOrEmpty(annotation.value()) ? null : annotation.value();
+					String value = defaultValue;
 					if (group.contains("="))
 						value = group.split("=", 2)[1];
 					if (value == null && isBoolean(parameter))
@@ -217,8 +218,8 @@ public abstract class ICustomCommand {
 			if (objects[i] == null && parameter.getType().isPrimitive())
 				objects[i] = getDefaultPrimitiveValue(parameter.getType());
 
-			if (!found && !isNullOrEmpty(annotation.value()))
-				objects[i] = convert(annotation.value(), null, parameter.getType(), parameter, parameter.getName(), event, false);
+			if (!found && !isNullOrEmpty(defaultValue))
+				objects[i] = convert(defaultValue, null, parameter.getType(), parameter, parameter.getName(), event, false);
 
 			i++;
 		}

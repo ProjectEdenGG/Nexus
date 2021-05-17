@@ -213,12 +213,6 @@ public class CommandsConfig implements PlayerOwnedObject {
 
 					Switch switchArg = parameter.getAnnotation(Switch.class);
 					if (switchArg != null) {
-						this.defaultValue = switchArg.value();
-						this.permission = switchArg.permission();
-						this.min = switchArg.min();
-						this.max = switchArg.max();
-						this.minMaxBypass = switchArg.minMaxBypass();
-						this.regex = switchArg.regex();
 						this.switchArg = true;
 						this.shorthand = switchArg.shorthand();
 					}
