@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.autosort.tasks;
+package me.pugabyte.nexus.features.store.perks.autosort.tasks;
 
 import lombok.AllArgsConstructor;
 import me.pugabyte.nexus.utils.ItemUtils.ItemStackComparator;

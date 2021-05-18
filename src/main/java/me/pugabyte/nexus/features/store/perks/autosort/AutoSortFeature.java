@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.autosort;
+package me.pugabyte.nexus.features.store.perks.autosort;
 
 public enum AutoSortFeature {
 	REFILL,

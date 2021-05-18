@@ -1,8 +1,8 @@
-package me.pugabyte.nexus.features.autosort.features;
+package me.pugabyte.nexus.features.store.perks.autosort.features;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.autosort.AutoSortFeature;
-import me.pugabyte.nexus.features.autosort.tasks.InventorySorter;
+import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
+import me.pugabyte.nexus.features.store.perks.autosort.tasks.InventorySorter;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.utils.Tasks;

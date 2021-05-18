@@ -1,7 +1,7 @@
-package me.pugabyte.nexus.features.autosort;
+package me.pugabyte.nexus.features.store.perks.autosort;
 
 import eden.utils.Utils;
-import me.pugabyte.nexus.features.autosort.tasks.FindChestsThread.DepositRecord;
+import me.pugabyte.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -35,7 +35,7 @@ import static me.pugabyte.nexus.utils.Utils.registerListeners;
 
 public class AutoSort extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("AutoSort");
-	public static final String PERMISSION = "autosort.use";
+	public static final String PERMISSION = "store.autosort";
 	private static final List<String> DISABLED_WORLDS = List.of(WorldGroup.CREATIVE, WorldGroup.MINIGAMES, WorldGroup.STAFF).stream()
 			.map(WorldGroup::getWorldNames)
 			.reduce(Utils::combine)

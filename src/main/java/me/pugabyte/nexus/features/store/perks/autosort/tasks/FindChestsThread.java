@@ -1,9 +1,9 @@
-package me.pugabyte.nexus.features.autosort.tasks;
+package me.pugabyte.nexus.features.store.perks.autosort.tasks;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.autosort.AutoSort;
+import me.pugabyte.nexus.features.store.perks.autosort.AutoSort;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.utils.MaterialTag;

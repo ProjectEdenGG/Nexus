@@ -1,12 +1,12 @@
-package me.pugabyte.nexus.features.autosort.commands;
+package me.pugabyte.nexus.features.store.perks.autosort.commands;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.autosort.features.AutoCraft;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.store.perks.autosort.features.AutoCraft;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Permission("autosort.use")
+@Permission("store.autosort")
 public class AutoCraftCommand extends CustomCommand {
 
 	public AutoCraftCommand(@NonNull CommandEvent event) {

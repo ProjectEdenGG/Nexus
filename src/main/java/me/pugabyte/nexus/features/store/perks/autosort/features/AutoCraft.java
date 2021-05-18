@@ -1,10 +1,10 @@
-package me.pugabyte.nexus.features.autosort.features;
+package me.pugabyte.nexus.features.store.perks.autosort.features;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.features.recipes.RecipeUtils;
+import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -98,15 +98,17 @@ public class AutoCraft implements Listener {
 		if (result == null)
 			return;
 
+		if (user.getAutoCraftExclude().contains(result))
+			return;
+
 		Inventory inventory = player.getInventory();
 		List<ItemStack> ingredients = getIngredients(result);
 
 		Tasks.wait(0, () -> {
 			loop: while (true) {
 				for (ItemStack ingredient : ingredients)
-					if (!inventory.containsAtLeast(ingredient, ingredient.getAmount())) {
+					if (!inventory.containsAtLeast(ingredient, ingredient.getAmount()))
 						break loop;
-					}
 
 				for (ItemStack ingredient : ingredients)
 					inventory.removeItem(ingredient);

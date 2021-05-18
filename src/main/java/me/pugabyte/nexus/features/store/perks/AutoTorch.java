@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.autotorch;
+package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.commands.AutoTorchCommand;

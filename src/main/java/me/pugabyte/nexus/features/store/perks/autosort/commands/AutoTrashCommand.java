@@ -1,8 +1,8 @@
-package me.pugabyte.nexus.features.autosort.commands;
+package me.pugabyte.nexus.features.store.perks.autosort.commands;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.autosort.AutoSortFeature;
+import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
-@Permission("autosort.use")
+@Permission("store.autosort")
 public class AutoTrashCommand extends CustomCommand {
 	private final AutoSortUserService service = new AutoSortUserService();
 	private AutoSortUser user;
