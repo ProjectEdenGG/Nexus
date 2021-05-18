@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.store.perks.autosort.tasks.FindChestsThread;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 @Aliases("depositall")
+@Permission("store.autosort")
 public class SortCommand extends CustomCommand {
 
 	public SortCommand(@NonNull CommandEvent event) {
