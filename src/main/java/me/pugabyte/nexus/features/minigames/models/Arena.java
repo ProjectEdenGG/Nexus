@@ -92,7 +92,9 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	public Arena(@NonNull String name) {
-		this(new HashMap<String, Object>() {{ put("name", name); }});
+		this(new HashMap<>() {{
+			put("name", name);
+		}});
 	}
 
 	public Arena(Map<String, Object> map) {

@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.autosort.AutoSort;
-import me.pugabyte.nexus.features.autosort.AutoSort.FakePlayerInteractEvent;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -59,20 +59,20 @@ public class FindChestsThread extends Thread {
 
 	@Override
 	public void run() {
-		Queue<Location> chestLocations = new ConcurrentLinkedQueue<Location>();
-		Queue<Vector> leftToVisit = new ConcurrentLinkedQueue<Vector>();
+		Queue<Location> chestLocations = new ConcurrentLinkedQueue<>();
+		Queue<Vector> leftToVisit = new ConcurrentLinkedQueue<>();
 		Vector start = new Vector(startX, startY, startZ);
 		leftToVisit.add(start);
-		this.markSeen(start);
+		markSeen(start);
+
 		while (!leftToVisit.isEmpty()) {
 			Vector current = leftToVisit.remove();
+			Location currentLocation = toLocation(current);
 
 			Material type = getType(current);
-			if (isChest(type)) {
-				Material overType = getType(new Vector(current.getBlockX(), current.getBlockY() + 1, current.getBlockZ()));
-				if (!AutoSort.preventsChestOpen(type, overType))
-					chestLocations.add(makeLocation(current));
-			}
+			if (isChest(type))
+				if (!AutoSort.canOpen(currentLocation.getBlock()))
+					chestLocations.add(currentLocation);
 
 			if (isPassable(type)) {
 				Vector[] adjacents = new Vector[]{
@@ -84,12 +84,11 @@ public class FindChestsThread extends Thread {
 						new Vector(current.getBlockX(), current.getBlockY(), current.getBlockZ() - 1),
 				};
 
-				for (Vector adjacent : adjacents) {
+				for (Vector adjacent : adjacents)
 					if (!alreadySeen(adjacent)) {
 						leftToVisit.add(adjacent);
 						markSeen(adjacent);
 					}
-				}
 			}
 		}
 
@@ -97,7 +96,7 @@ public class FindChestsThread extends Thread {
 		Tasks.wait(1, chain);
 	}
 
-	private Location makeLocation(Vector location) {
+	private Location toLocation(Vector location) {
 		return new Location(world,
 				smallestChunk.getX() * 16 + location.getBlockX(),
 				location.getBlockY(),
@@ -135,13 +134,11 @@ public class FindChestsThread extends Thread {
 		return location.getBlockZ() < 0;
 	}
 
+	private static final MaterialTag chests = new MaterialTag(MaterialTag.SHULKER_BOXES)
+			.append(Material.CHEST, Material.TRAPPED_CHEST, Material.BARREL);
+
 	private boolean isChest(Material material) {
-		if (material == null)
-			return false;
-		return switch (material) {
-			case CHEST, TRAPPED_CHEST, BARREL -> true;
-			default -> MaterialTag.SHULKER_BOXES.isTagged(material);
-		};
+		return chests.isTagged(material);
 	}
 
 	private boolean isPassable(Material material) {
@@ -167,7 +164,7 @@ public class FindChestsThread extends Thread {
 
 			Location chestLocation = this.remainingChestLocations.poll();
 			if (chestLocation == null) {
-				send(autoSortUser, AutoSort.PREFIX + "Deposited &e%s items &3into nearby chests", String.valueOf(runningDepositRecord.totalItems));
+				send(autoSortUser, AutoSort.PREFIX + "Deposited &e%o &3items into nearby chests", runningDepositRecord.totalItems);
 				autoSortUser.tip(TipType.AUTOSORT_DEPOSIT_QUICK);
 			} else {
 				Player player = autoSortUser.getOnlinePlayer();

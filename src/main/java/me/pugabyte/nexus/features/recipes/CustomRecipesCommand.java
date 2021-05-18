@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
@@ -20,12 +21,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.StringUtils.pretty;
 
 public class CustomRecipesCommand extends CustomCommand {
 
@@ -55,6 +55,18 @@ public class CustomRecipesCommand extends CustomCommand {
 	 * the normal ways of adding uncrafting recipes rather than a
 	 * menu to uncraft items.
 	 */
+	@Path("ingredients")
+	@Permission("group.admin")
+	void ingredients() {
+		ItemStack item = getToolRequired();
+		send(PREFIX + "Ingredients for " + pretty(item));
+
+		for (List<ItemStack> ingredients : RecipeUtils.uncraft(item)) {
+			line();
+			send("(" + ingredients.size() + ") " + ingredients.stream().map(StringUtils::pretty).collect(Collectors.joining(", ")));
+		}
+	}
+
 	@Path("uncraft")
 	@Permission("group.admin")
 	void uncraft() {
@@ -80,7 +92,7 @@ public class CustomRecipesCommand extends CustomCommand {
 					return;
 				}
 				Tasks.wait(2, () -> {
-					List<List<ItemStack>> recipes = uncraft(clickEvent.getWhoClicked().getItemOnCursor());
+					List<List<ItemStack>> recipes = RecipeUtils.uncraft(clickEvent.getWhoClicked().getItemOnCursor());
 					clickEvent.getWhoClicked().setItemOnCursor(null);
 					getIndex(recipes, 0, contents);
 				});
@@ -114,21 +126,6 @@ public class CustomRecipesCommand extends CustomCommand {
 					getIndex(items, index + 1, contents);
 				}));
 			}
-		}
-
-		public List<List<ItemStack>> uncraft(ItemStack item) {
-			List<Recipe> recipes = Bukkit.getRecipesFor(item);
-			List<List<ItemStack>> ingredients = new ArrayList<>();
-			for (Recipe recipe : recipes) {
-				List<ItemStack> _ingredients = new ArrayList<>();
-				if (recipe instanceof ShapedRecipe shapedRecipe) {
-					_ingredients = new ArrayList<>(shapedRecipe.getIngredientMap().values());
-				} else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
-					_ingredients = shapelessRecipe.getIngredientList();
-				}
-				ingredients.add(_ingredients);
-			}
-			return ingredients;
 		}
 
 	}

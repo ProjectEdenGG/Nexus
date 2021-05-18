@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.recipes;
 
+import me.pugabyte.nexus.utils.ItemUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
@@ -7,11 +9,28 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class RecipeUtils {
+
+	public static List<List<ItemStack>> uncraft(ItemStack item) {
+		List<Recipe> recipes = Bukkit.getRecipesFor(item);
+		List<List<ItemStack>> ingredients = new ArrayList<>();
+		for (Recipe recipe : recipes) {
+			List<ItemStack> _ingredients = new ArrayList<>();
+			if (recipe instanceof ShapedRecipe shapedRecipe)
+				ItemUtils.combine(_ingredients, new ArrayList<>(shapedRecipe.getIngredientMap().values()));
+			else if (recipe instanceof ShapelessRecipe shapelessRecipe)
+				ItemUtils.combine(_ingredients, shapelessRecipe.getIngredientList());
+
+			if (!_ingredients.isEmpty())
+				ingredients.add(_ingredients);
+		}
+		return ingredients;
+	}
 
 	public static boolean areEqual(Recipe recipe1, Recipe recipe2) {
 		if (recipe1 == recipe2)

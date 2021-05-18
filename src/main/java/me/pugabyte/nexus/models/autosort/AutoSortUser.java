@@ -15,13 +15,14 @@ import me.pugabyte.nexus.features.autosort.AutoSort;
 import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.autotrash.AutoTrash;
 import me.pugabyte.nexus.models.tip.Tip;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashSet;
@@ -43,8 +44,9 @@ public class AutoSortUser implements PlayerOwnedObject {
 
 	private Set<Material> autoDepositExclude = new HashSet<>() {{ addAll(MaterialTag.ITEMS_ARROWS.getValues()); }};
 	private Set<Material> autoRefillExclude = new HashSet<>();
+	private Set<Material> autoCraftExclude = new HashSet<>();
 
-	private AutoTrash.Behavior autoTrashBehavior = AutoTrash.Behavior.TRASH;
+	private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;
 	private Set<Material> autoTrashMaterials = new HashSet<>();
 
 	private transient boolean sortingInventory;
@@ -68,11 +70,18 @@ public class AutoSortUser implements PlayerOwnedObject {
 		tipService.save(tip);
 	}
 
-	public boolean isFeatureEnabled(AutoSortFeature feature) {
+	public boolean hasFeatureEnabled(AutoSortFeature feature) {
 		if (!isOnline())
 			return false;
 
-		if (!getOnlinePlayer().hasPermission(AutoSort.getPermission()))
+		Player player = getOnlinePlayer();
+		if (!player.hasPermission(AutoSort.PERMISSION))
+			return false;
+
+		if (AutoSort.isWorldDisabled(player.getWorld()))
+			return false;
+
+		if (player.getGameMode() != GameMode.SURVIVAL)
 			return false;
 
 		return !disabledFeatures.contains(feature);

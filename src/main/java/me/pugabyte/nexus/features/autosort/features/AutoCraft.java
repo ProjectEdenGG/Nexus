@@ -1,9 +1,14 @@
 package me.pugabyte.nexus.features.autosort.features;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.autosort.AutoSortFeature;
+import me.pugabyte.nexus.features.recipes.RecipeUtils;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,63 +18,102 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static eden.utils.StringUtils.camelCase;
+import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
 public class AutoCraft implements Listener {
-	public static Map<Material, ItemStack> autoCraftMaterials = new HashMap<>() {{
-		put(Material.DIAMOND, new ItemStack(Material.DIAMOND_BLOCK, 9));
-		put(Material.EMERALD, new ItemStack(Material.EMERALD_BLOCK, 9));
-		put(Material.GOLD_INGOT, new ItemStack(Material.GOLD_BLOCK, 9));
-		put(Material.IRON_INGOT, new ItemStack(Material.IRON_BLOCK, 9));
-		put(Material.REDSTONE, new ItemStack(Material.REDSTONE_BLOCK, 9));
-		put(Material.LAPIS_LAZULI, new ItemStack(Material.LAPIS_BLOCK, 9));
-		put(Material.COAL, new ItemStack(Material.COAL_BLOCK, 9));
-		put(Material.GOLD_NUGGET, new ItemStack(Material.GOLD_INGOT, 9));
-		put(Material.IRON_NUGGET, new ItemStack(Material.IRON_INGOT, 9));
-		put(Material.QUARTZ, new ItemStack(Material.QUARTZ_BLOCK, 4));
+
+	@Getter
+	private static final Map<Material, List<Material>> autoCraftable = new LinkedHashMap<>() {{
+			put(Material.DIAMOND_BLOCK, List.of(Material.DIAMOND));
+			put(Material.EMERALD_BLOCK, List.of(Material.EMERALD));
+			put(Material.GOLD_BLOCK, List.of(Material.GOLD_INGOT));
+			put(Material.IRON_BLOCK, List.of(Material.IRON_INGOT));
+			put(Material.REDSTONE_BLOCK, List.of(Material.REDSTONE));
+			put(Material.LAPIS_BLOCK, List.of(Material.LAPIS_LAZULI));
+			put(Material.COAL_BLOCK, List.of(Material.COAL));
+			put(Material.GOLD_INGOT, List.of(Material.GOLD_NUGGET));
+			put(Material.IRON_INGOT, List.of(Material.IRON_NUGGET));
+			put(Material.QUARTZ_BLOCK, List.of(Material.QUARTZ));
 	}};
 
-	public static boolean isAutoCraftMaterial(Material material) {
-		return autoCraftMaterials.containsKey(material);
+	@Getter
+	private static final Map<Material, List<ItemStack>> ingredients = new HashMap<>() {{
+		for (Material material : autoCraftable.keySet()) {
+			List<Material> expectedMaterials = new ArrayList<>(autoCraftable.get(material));
+			Collections.sort(expectedMaterials);
+
+			for (List<ItemStack> ingredients : RecipeUtils.uncraft(new ItemStack(material))) {
+				List<Material> recipeMaterials = ingredients.stream().map(ItemStack::getType).sorted().toList();
+
+				if (!recipeMaterials.equals(expectedMaterials))
+					continue;
+
+				put(material, ingredients);
+				break;
+			}
+
+			if (get(material) == null) {
+				String ingredients = expectedMaterials.stream()
+						.map(StringUtils::camelCase)
+						.collect(joining(", "));
+
+				Nexus.severe("Could not find crafting recipe for " + camelCase(material) + " made of " + ingredients);
+				autoCraftable.remove(material);
+			}
+		}
+	}};
+
+	public static List<ItemStack> getIngredients(Material material) {
+		return ingredients.get(material);
 	}
 
-	public static ItemStack getAutoCraftResult(Material material) {
-		return autoCraftMaterials.get(material).clone();
+	private static Material getAutoCraftResult(Material material) {
+		for (Material result : autoCraftable.keySet())
+			if (autoCraftable.get(result).contains(material))
+				return result;
+		return null;
 	}
 
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPickupItem(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (!user.isFeatureEnabled(AutoSortFeature.AUTO_CRAFT))
+		if (!user.hasFeatureEnabled(AutoSortFeature.AUTO_CRAFT))
 			return;
 
 		Material material = event.getItem().getItemStack().getType();
-		if (!AutoCraft.isAutoCraftMaterial(material))
+		Material result = getAutoCraftResult(material);
+		if (result == null)
 			return;
 
 		Inventory inventory = player.getInventory();
-		ItemStack[] contents = inventory.getContents();
-		double count = 0;
-		for (ItemStack _stack : contents)
-			if (_stack != null && _stack.isSimilar(new ItemStack(material)))
-				count += _stack.getAmount();
+		List<ItemStack> ingredients = getIngredients(result);
 
-		if (!(count > 0))
-			return;
+		Tasks.wait(0, () -> {
+			loop: while (true) {
+				for (ItemStack ingredient : ingredients)
+					if (!inventory.containsAtLeast(ingredient, ingredient.getAmount())) {
+						break loop;
+					}
 
-		ItemStack result = getAutoCraftResult(material);
-		int replace = (int) (count / result.getAmount());
-		if (replace == 0) return;
-		ItemStack toRemove = new ItemStack(material, replace * result.getAmount());
-		inventory.removeItem(toRemove);
+				for (ItemStack ingredient : ingredients)
+					inventory.removeItem(ingredient);
 
-		PlayerUtils.giveItem(player, new ItemStack(result.getType(), replace));
+				PlayerUtils.giveItem(player, new ItemStack(result));
+			}
+		});
 	}
 
 }

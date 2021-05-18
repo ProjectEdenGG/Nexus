@@ -34,7 +34,7 @@ public class AutoSortChests implements Listener {
 
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (!user.isFeatureEnabled(AutoSortFeature.SORT_CHESTS))
+		if (!user.hasFeatureEnabled(AutoSortFeature.SORT_CHESTS))
 			return;
 
 		if (player.isSneaking() || isVanished(player))

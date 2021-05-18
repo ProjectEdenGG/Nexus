@@ -28,7 +28,7 @@ public class AutoDeposit implements Listener {
 
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (user.isFeatureEnabled(AutoSortFeature.DEPOSIT_ALL))
+		if (user.hasFeatureEnabled(AutoSortFeature.DEPOSIT_ALL))
 			if (player.getGameMode() != GameMode.CREATIVE)
 				if (event.getView().getTopInventory().getType() == InventoryType.CHEST)
 					user.tip(TipType.AUTOSORT_DEPOSIT_ALL);

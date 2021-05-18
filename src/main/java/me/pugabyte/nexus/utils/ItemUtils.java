@@ -43,23 +43,32 @@ public class ItemUtils {
 		return true;
 	}
 
-	public static void combine(List<ItemStack> itemStacks, ItemStack newItemStack) {
-		Optional<ItemStack> matching = itemStacks.stream()
-				.filter(existing -> existing.isSimilar(newItemStack) && existing.getAmount() < existing.getType().getMaxStackSize())
-				.findFirst();
+	public static void combine(List<ItemStack> itemStacks, ItemStack... newItemStacks) {
+		combine(itemStacks, Arrays.asList(newItemStacks));
+	}
 
-		if (matching.isPresent()) {
-			ItemStack match = matching.get();
-			itemStacks.remove(match);
-			int amountICanAdd = Math.min(newItemStack.getAmount(), match.getType().getMaxStackSize() - match.getAmount());
-			match.setAmount(match.getAmount() + amountICanAdd);
-			itemStacks.add(new ItemStack(match));
+	public static void combine(List<ItemStack> itemStacks, List<ItemStack> newItemStacks) {
+		for (ItemStack newItemStack : newItemStacks) {
+			if (isNullOrAir(newItemStack))
+				continue;
 
-			newItemStack.setAmount(newItemStack.getAmount() - amountICanAdd);
+			Optional<ItemStack> matching = itemStacks.stream()
+					.filter(existing -> existing.isSimilar(newItemStack) && existing.getAmount() < existing.getType().getMaxStackSize())
+					.findFirst();
+
+			if (matching.isPresent()) {
+				ItemStack match = matching.get();
+				itemStacks.remove(match);
+				int amountICanAdd = Math.min(newItemStack.getAmount(), match.getType().getMaxStackSize() - match.getAmount());
+				match.setAmount(match.getAmount() + amountICanAdd);
+				itemStacks.add(new ItemStack(match));
+
+				newItemStack.setAmount(newItemStack.getAmount() - amountICanAdd);
+			}
+
+			if (newItemStack.getAmount() > 0)
+				itemStacks.add(new ItemStack(newItemStack));
 		}
-
-		if (newItemStack.getAmount() > 0)
-			itemStacks.add(new ItemStack(newItemStack));
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
@@ -120,6 +129,11 @@ public class ItemUtils {
 		if (hand == null)
 			throw new InvalidInputException("You are not holding anything");
 		return hand;
+	}
+
+	@Contract("null -> false")
+	public static boolean isNotNullOrAir(ItemStack itemStack) {
+		return !isNullOrAir(itemStack);
 	}
 
 	@Contract("null -> true")

@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -21,7 +21,7 @@ import org.bukkit.inventory.PlayerInventory;
 public class AutoSortInventory implements Listener {
 
 	public static void sort(AutoSortUser user, Inventory inventory) {
-		if (!user.isFeatureEnabled(AutoSortFeature.SORT_INVENTORY))
+		if (!user.hasFeatureEnabled(AutoSortFeature.SORT_INVENTORY))
 			return;
 
 		Player player = user.getOnlinePlayer();
@@ -35,22 +35,24 @@ public class AutoSortInventory implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onPickupItem(PlayerPickupItemEvent event) {
-		Player player = event.getPlayer();
+	public void onPickupItem(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (user.isFeatureEnabled(AutoSortFeature.SORT_INVENTORY)) {
-			if (user.isSortingInventory()) return;
-			user.setSortingInventory(true);
+		if (!user.hasFeatureEnabled(AutoSortFeature.SORT_INVENTORY))
+			return;
 
-			final int firstEmpty = user.getInventory().firstEmpty();
-			if (firstEmpty >= 9)
-				Tasks.wait(10, () -> {
-					if (firstEmpty != user.getInventory().firstEmpty())
-						sort(user, user.getInventory());
-					user.setSortingInventory(false);
-				});
-		}
+		if (user.isSortingInventory()) return;
+		user.setSortingInventory(true);
+
+		final int firstEmpty = user.getInventory().firstEmpty();
+		if (firstEmpty >= 9)
+			Tasks.wait(10, () -> {
+				if (firstEmpty != user.getInventory().firstEmpty())
+					sort(user, user.getInventory());
+				user.setSortingInventory(false);
+			});
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

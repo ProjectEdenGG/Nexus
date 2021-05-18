@@ -54,11 +54,11 @@ public enum Package {
 	CUSTOM_PREFIX_ONE_MONTH,
 
 	@Id("2019251")
-	@PermissionGroup("store.autosort")
+	@Permission("autosort.use")
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
-	@PermissionGroup("store.autosort")
+	@Permission("autosort.use")
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
 

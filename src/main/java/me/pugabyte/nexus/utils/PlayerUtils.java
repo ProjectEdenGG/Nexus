@@ -33,8 +33,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.Contract;
@@ -376,6 +380,10 @@ public class PlayerUtils {
 		return getAllInventoryContents(player).stream().filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 
+	public static ItemStack[] getHotbarContents(HasPlayer player) {
+		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 8);
+	}
+
 	@Deprecated
 	@ReplaceWith("Chat.broadcast(message, StaticChannel.STAFF)")
 	public static void sendStaff(String message) {
@@ -574,6 +582,12 @@ public class PlayerUtils {
 	 */
 	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
+	}
+
+	public static class FakePlayerInteractEvent extends PlayerInteractEvent {
+		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
+			super(player, action, itemInHand, clickedBlock, blockFace);
+		}
 	}
 
 }

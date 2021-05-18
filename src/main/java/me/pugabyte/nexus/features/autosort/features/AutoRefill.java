@@ -86,7 +86,7 @@ public class AutoRefill implements Listener {
 			return;
 
 		AutoSortUser autoSortUser = AutoSortUser.of(player);
-		if (!autoSortUser.isFeatureEnabled(AutoSortFeature.REFILL))
+		if (!autoSortUser.hasFeatureEnabled(AutoSortFeature.REFILL))
 			return;
 
 		ItemStack stack;

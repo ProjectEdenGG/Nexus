@@ -4,7 +4,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.autosort.AutoSortFeature;
 import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
-import me.pugabyte.nexus.models.autotrash.AutoTrash.Behavior;
+import me.pugabyte.nexus.models.autosort.AutoSortUser.AutoTrashBehavior;
 import me.pugabyte.nexus.models.dumpster.Dumpster;
 import me.pugabyte.nexus.models.dumpster.DumpsterService;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -26,7 +26,7 @@ public class AutoTrash implements Listener {
 			return;
 
 		AutoSortUser user = AutoSortUser.of(player);
-		if (!user.isFeatureEnabled(AutoSortFeature.AUTO_TRASH))
+		if (!user.hasFeatureEnabled(AutoSortFeature.AUTO_TRASH))
 			return;
 
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))
@@ -41,7 +41,7 @@ public class AutoTrash implements Listener {
 			return;
 
 		event.setCancelled(true);
-		if (user.getAutoTrashBehavior() == Behavior.TRASH) {
+		if (user.getAutoTrashBehavior() == AutoTrashBehavior.TRASH) {
 			DumpsterService dumpsterService = new DumpsterService();
 			Dumpster dumpster = dumpsterService.get();
 

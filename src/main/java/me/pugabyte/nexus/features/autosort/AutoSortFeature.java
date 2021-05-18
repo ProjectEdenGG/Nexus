@@ -7,5 +7,6 @@ public enum AutoSortFeature {
 	QUICK_DEPOSIT,
 	DEPOSIT_ALL,
 	AUTO_CRAFT,
-	AUTO_TRASH
+	AUTO_TRASH,
+	AUTO_TOOL
 }
