@@ -268,42 +268,42 @@ public enum Package {
 
 	@Id("2495938")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.farm")
+	@PermissionGroup("store.disguises.farm")
 	DISGUISES_FARM,
 
 	@Id("2495940")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.cuties")
+	@PermissionGroup("store.disguises.cuties")
 	DISGUISES_CUTIES,
 
 	@Id("2495948")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.natives")
+	@PermissionGroup("store.disguises.natives")
 	DISGUISES_NATIVES,
 
 	@Id("3919103")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.aquatic")
+	@PermissionGroup("store.disguises.aquatic")
 	DISGUISES_AQUATIC,
 
 	@Id("2495945")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.nether")
+	@PermissionGroup("store.disguises.nether")
 	DISGUISES_NETHER,
 
 	@Id("2495944")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.monsters")
+	@PermissionGroup("store.disguises.monsters")
 	DISGUISES_MONSTERS,
 
 	@Id("2495942")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.mounts")
+	@PermissionGroup("store.disguises.mounts")
 	DISGUISES_MOUNTS,
 
 	@Id("2495941")
 	@Category("Disguises")
-	@PermissionGroup("store.pets.other")
+	@PermissionGroup("store.disguises.other")
 	DISGUISES_OTHER;
 
 	@SneakyThrows
