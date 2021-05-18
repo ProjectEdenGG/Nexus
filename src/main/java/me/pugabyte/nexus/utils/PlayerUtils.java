@@ -513,18 +513,18 @@ public class PlayerUtils {
 			}
 		}
 
-		dropExcessItems(player, giveItemsGetExcess(player, finalItems));
+		dropExcessItems(player, giveItemsAndGetExcess(player, finalItems));
 	}
 
-	public static List<ItemStack> giveItemsGetExcess(HasPlayer player, ItemStack items) {
-		return giveItemsGetExcess(player, Collections.singletonList(items));
+	public static List<ItemStack> giveItemsAndGetExcess(HasPlayer player, ItemStack items) {
+		return giveItemsAndGetExcess(player, Collections.singletonList(items));
 	}
 
-	public static List<ItemStack> giveItemsGetExcess(HasPlayer player, List<ItemStack> items) {
+	public static List<ItemStack> giveItemsAndGetExcess(HasPlayer player, List<ItemStack> items) {
 		List<ItemStack> excess = new ArrayList<>();
 		for (ItemStack item : items)
 			if (!isNullOrAir(item))
-				excess.addAll(player.getPlayer().getInventory().addItem(item).values());
+				excess.addAll(player.getPlayer().getInventory().addItem(item.clone()).values());
 
 		return excess;
 	}
@@ -539,22 +539,26 @@ public class PlayerUtils {
 
 	public static void giveItemsAndDeliverExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
-		List<ItemStack> finalItems = new ArrayList<>(items);
+		List<ItemStack> finalItems = ItemUtils.clone(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
+
 		List<ItemStack> excess;
 		boolean alwaysDeliver = offlinePlayer.getPlayer() == null || WorldGroup.get(offlinePlayer.getPlayer()) != worldGroup;
 		if (!alwaysDeliver)
-			excess = giveItemsGetExcess(offlinePlayer.getPlayer(), finalItems);
+			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = new ArrayList<>(items);
 		if (Utils.isNullOrEmpty(excess)) return;
+
 		DeliveryService service = new DeliveryService();
 		DeliveryUser user = service.get(offlinePlayer);
 		DeliveryUser.Delivery delivery = DeliveryUser.Delivery.serverDelivery(excess);
 		if (!Strings.isNullOrEmpty(message))
 			delivery.setMessage(message);
+
 		user.add(worldGroup, delivery);
 		service.save(user);
+
 		String send = alwaysDeliver ? "Items have been given to you as a &c/delivery" : "Your inventory was full. Excess items were given to you as a &c/delivery";
 		user.sendMessage(JsonBuilder.fromPrefix("Delivery").next(send).command("/delivery").hover("&eClick to view deliveries"));
 	}

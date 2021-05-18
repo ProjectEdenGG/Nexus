@@ -20,7 +20,8 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 @Permission("store.autosort")
 public class AutoCraftCommand extends CustomCommand {
@@ -62,7 +63,9 @@ public class AutoCraftCommand extends CustomCommand {
 				else
 					item.lore("&cDisabled");
 
-				item.lore("", AutoCraft.getIngredients(material).stream().map(StringUtils::pretty).collect(Collectors.joining(", ")));
+				item.lore("", "&f" + AutoCraft.getIngredients(material).stream()
+						.map(StringUtils::pretty)
+						.collect(joining(", ")));
 
 				items.add(ClickableItem.from(item.build(), e -> {
 					if (user.getAutoCraftExclude().contains(material))

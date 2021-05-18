@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -69,6 +70,13 @@ public class ItemUtils {
 			if (newItemStack.getAmount() > 0)
 				itemStacks.add(new ItemStack(newItemStack));
 		}
+	}
+
+	public static List<ItemStack> clone(Collection<ItemStack> list) {
+		return new ArrayList<>() {{
+			for (ItemStack item : list)
+				add(item.clone());
+		}};
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
