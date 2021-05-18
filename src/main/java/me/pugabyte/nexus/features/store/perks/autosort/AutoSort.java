@@ -4,7 +4,6 @@ import eden.utils.Utils;
 import me.pugabyte.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
-import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -48,24 +47,6 @@ public class AutoSort extends Feature {
 
 	public static boolean isWorldDisabled(World world) {
 		return DISABLED_WORLDS.contains(world.getName());
-	}
-
-	/**
-	 * Tests if an item can be replaced by another.
-	 * <p>
-	 * Currently, this checks if the two items are of the same type, and if b has specific matching enchants.
-	 * These enchants are Silk Touch, Fortune, and Looting.
-	 * @param a current item
-	 * @param b potential replacement item
-	 * @return if <code>b</code> is a suitable replacement for <code>a</code>
-	 */
-	public static boolean itemsAreSimilar(ItemStack a, ItemStack b) {
-		if (a.getType() == b.getType())
-			return !((a.containsEnchantment(Enchant.SILK_TOUCH) && !b.containsEnchantment(Enchant.SILK_TOUCH))
-					|| (a.containsEnchantment(Enchant.FORTUNE) && !b.containsEnchantment(Enchant.FORTUNE))
-					|| (a.containsEnchantment(Enchant.LOOTING) && !b.containsEnchantment(Enchant.LOOTING)));
-
-		return false;
 	}
 
 	/**

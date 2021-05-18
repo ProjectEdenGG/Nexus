@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
+import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
@@ -23,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 
-import static me.pugabyte.nexus.features.store.perks.autosort.AutoSort.itemsAreSimilar;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
@@ -142,6 +142,24 @@ public class AutoRefill implements Listener {
 
 			AutoSortUser.of(player).tip(TipType.AUTOSORT_REFILL);
 		});
+	}
+
+	/**
+	 * Tests if an item can be replaced by another.
+	 * <p>
+	 * Currently, this checks if the two items are of the same type, and if b has specific matching enchants.
+	 * These enchants are Silk Touch, Fortune, and Looting.
+	 * @param a current item
+	 * @param b potential replacement item
+	 * @return if <code>b</code> is a suitable replacement for <code>a</code>
+	 */
+	public static boolean itemsAreSimilar(ItemStack a, ItemStack b) {
+		if (a.getType() == b.getType())
+			return !((a.containsEnchantment(Enchant.SILK_TOUCH) && !b.containsEnchantment(Enchant.SILK_TOUCH))
+					|| (a.containsEnchantment(Enchant.FORTUNE) && !b.containsEnchantment(Enchant.FORTUNE))
+					|| (a.containsEnchantment(Enchant.LOOTING) && !b.containsEnchantment(Enchant.LOOTING)));
+
+		return false;
 	}
 
 }
