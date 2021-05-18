@@ -20,7 +20,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.features.store.perks.autosort.AutoSort.PREFIX;
 import static me.pugabyte.nexus.utils.PlayerUtils.send;
 
@@ -43,16 +42,17 @@ public class AutoDepositQuick implements Listener {
 
 		Inventory inventory = holder.getInventory();
 		String name = (state instanceof Nameable nameable) ? nameable.getCustomName() : null;
-		AutoSort.isSortableChestInventory(inventory, name);
+		if (!AutoSort.isSortableChestInventory(inventory, name))
+			return;
 
 		PlayerInteractEvent fakeEvent = new FakePlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getInventory().getItemInMainHand(), clickedBlock, BlockFace.EAST);
 		if (!fakeEvent.callEvent()) return;
 
 		event.setCancelled(true);
 
-		String materialName = camelCase(clickedBlock.getType()).toLowerCase();
+		String materialName = clickedBlock.getType().name().replace('_', ' ').toLowerCase();
 
-		if (AutoSort.canOpen(clickedBlock)) {
+		if (!AutoSort.canOpen(clickedBlock)) {
 			send(player, PREFIX + "&cThat " + materialName + " isn't accessible");
 			return;
 		}
