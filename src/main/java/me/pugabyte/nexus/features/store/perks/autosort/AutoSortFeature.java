@@ -32,7 +32,7 @@ public enum AutoSortFeature {
 	}
 
 	public void checkPermission(HasPlayer player) throws NoPermissionException {
-		if (player.getPlayer().hasPermission(getPermission()))
+		if (!player.getPlayer().hasPermission(getPermission()))
 			throw new NoPermissionException("Purchase at https://store.projecteden.gg");
 	}
 }
