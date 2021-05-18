@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSort;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
+import me.pugabyte.nexus.features.store.perks.autosort.features.AutoTool;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -29,9 +30,11 @@ public class AutoSortCommand extends CustomCommand implements Listener {
 
 	@Path("[feature] [enable]")
 	void toggle(AutoSortFeature feature, Boolean enable) {
-		if (feature != AutoSortFeature.AUTOTOOL)
+		if (feature != AutoSortFeature.AUTOTOOL) {
 			if (!player().hasPermission(AutoSort.PERMISSION))
 				throw new NoPermissionException("Purchase at https://store.projecteden.gg");
+		} else if (!player().hasPermission(AutoTool.PERMISSION))
+			throw new NoPermissionException("Purchase at https://store.projecteden.gg");
 
 		if (enable == null)
 			enable = !user.hasFeatureEnabled(feature);

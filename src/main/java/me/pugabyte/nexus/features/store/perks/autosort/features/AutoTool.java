@@ -23,6 +23,7 @@ import static me.pugabyte.nexus.utils.PlayerUtils.getHotbarContents;
 
 @NoArgsConstructor
 public class AutoTool implements Listener {
+	public static final String PERMISSION = "autotool.use";
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
@@ -35,7 +36,7 @@ public class AutoTool implements Listener {
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
-		if (!(player.hasPermission(AutoSort.PERMISSION) || player.hasPermission("autotool.use")))
+		if (!(player.hasPermission(AutoSort.PERMISSION) || player.hasPermission(PERMISSION)))
 			return;
 		if (!AutoSortUser.of(player).hasFeatureEnabled(AutoSortFeature.AUTOTOOL))
 			return;
