@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 
@@ -149,12 +150,11 @@ public class AutoSort extends Feature {
 
 	private static String getSignature(ItemStack stack) {
 		String signature = stack.getType().name();
-		if (stack.getMaxStackSize() > 1)
-			signature += "." + String.valueOf(stack.getData().getData());
 
-		if (stack.getType().toString().toLowerCase().contains("potion")) {
-			PotionData potionData = ((PotionMeta) stack.getItemMeta()).getBasePotionData();
-			signature += "." + potionData.getType().toString();
+		ItemMeta itemMeta = stack.getItemMeta();
+		if (itemMeta instanceof PotionMeta potionMeta) {
+			PotionData potionData = potionMeta.getBasePotionData();
+			signature += "." + potionData.getType();
 			if (potionData.isExtended()) signature += ".extended";
 			if (potionData.isUpgraded()) signature += ".upgraded";
 		}
