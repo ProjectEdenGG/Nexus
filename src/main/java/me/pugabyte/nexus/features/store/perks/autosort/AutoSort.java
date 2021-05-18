@@ -16,8 +16,11 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 
 import java.util.HashSet;
@@ -148,6 +151,11 @@ public class AutoSort extends Feature {
 		return deposits;
 	}
 
+	/**
+	 * Returns a string that identifies the provided item
+	 * @param stack an item
+	 * @return string identifying its data
+	 */
 	private static String getSignature(ItemStack stack) {
 		String signature = stack.getType().name();
 
@@ -157,7 +165,12 @@ public class AutoSort extends Feature {
 			signature += "." + potionData.getType();
 			if (potionData.isExtended()) signature += ".extended";
 			if (potionData.isUpgraded()) signature += ".upgraded";
-		}
+		} else if (itemMeta instanceof FireworkMeta fireworkMeta)
+			signature += "." + fireworkMeta.getPower();
+		else if (itemMeta instanceof SkullMeta skullMeta && skullMeta.getOwningPlayer() != null)
+			signature += "." + skullMeta.getOwningPlayer().getName();
+		else if (itemMeta instanceof MapMeta mapMeta && mapMeta.hasMapView() && mapMeta.getMapView() != null)
+			signature += "." + mapMeta.getMapView().getId();
 
 		return signature;
 	}
