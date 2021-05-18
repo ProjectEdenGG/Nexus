@@ -64,7 +64,7 @@ public @interface Arg {
 	 * Specifies the minimum allowed value for number arguments
 	 * <p>
 	 * Defaults to {@link Short#MIN_VALUE}
-	 * @return a number greater than or equal to {@link Double#MIN_VALUE}
+	 * @return a double
 	 */
 	double min() default Short.MIN_VALUE;
 
@@ -72,7 +72,7 @@ public @interface Arg {
 	 * Specifies the maximum allowed value for number arguments
 	 * <p>
 	 * Defaults to {@link Short#MAX_VALUE}
-	 * @return a number greater than or equal to {@link Double#MAX_VALUE}
+	 * @return a double
 	 */
 	double max() default Short.MAX_VALUE;
 
@@ -86,7 +86,7 @@ public @interface Arg {
 	 * Specifies that this argument must match the provided regex or else will error
 	 * <p>
 	 * Set to an empty string (the default) to disable
-	 * @return
+	 * @return a regex filter or an empty string
 	 */
 	String regex() default "";
 
