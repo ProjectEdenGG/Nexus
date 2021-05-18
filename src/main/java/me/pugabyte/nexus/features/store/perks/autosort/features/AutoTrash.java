@@ -37,7 +37,7 @@ public class AutoTrash implements Listener {
 		if (meta.hasDisplayName() || meta.hasLore() || meta.hasEnchants() || CustomModel.exists(item))
 			return;
 
-		if (!user.getAutoTrashMaterials().contains(item.getType()))
+		if (!user.getAutoTrashInclude().contains(item.getType()))
 			return;
 
 		event.setCancelled(true);

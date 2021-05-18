@@ -61,7 +61,7 @@ public class AutoTrashCommand extends CustomCommand {
 		for (me.pugabyte.nexus.models.autotrash.AutoTrash autoTrash : new AutoTrashService().getAll()) {
 			AutoSortUser user = new AutoSortUserService().get(autoTrash);
 			user.setAutoTrashBehavior(AutoTrashBehavior.valueOf(autoTrash.getBehavior().name()));
-			user.setAutoTrashMaterials(autoTrash.getMaterials());
+			user.setAutoTrashInclude(autoTrash.getMaterials());
 			if (!autoTrash.isEnabled())
 				user.getDisabledFeatures().add(AutoSortFeature.AUTOTRASH);
 		}
@@ -75,7 +75,7 @@ public class AutoTrashCommand extends CustomCommand {
 			this.user = user;
 
 			Inventory inv = Bukkit.createInventory(null, 6 * 9, TITLE);
-			inv.setContents(user.getAutoTrashMaterials().stream()
+			inv.setContents(user.getAutoTrashInclude().stream()
 					.map(ItemStack::new)
 					.sorted(new ItemStackComparator())
 					.toArray(ItemStack[]::new));
@@ -94,7 +94,7 @@ public class AutoTrashCommand extends CustomCommand {
 					.filter(item -> !isNullOrAir(item))
 					.map(ItemStack::getType)
 					.collect(Collectors.toSet());
-			user.setAutoTrashMaterials(materials);
+			user.setAutoTrashInclude(materials);
 
 			new AutoSortUserService().save(user);
 
