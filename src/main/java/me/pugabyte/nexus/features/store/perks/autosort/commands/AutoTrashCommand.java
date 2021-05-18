@@ -2,17 +2,13 @@ package me.pugabyte.nexus.features.store.perks.autosort.commands;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
-import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
-import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.autosort.AutoSortUser.AutoTrashBehavior;
 import me.pugabyte.nexus.models.autosort.AutoSortUserService;
-import me.pugabyte.nexus.models.autotrash.AutoTrashService;
 import me.pugabyte.nexus.utils.ItemUtils.ItemStackComparator;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
@@ -56,20 +52,6 @@ public class AutoTrashCommand extends CustomCommand {
 		user.setAutoTrashBehavior(behavior);
 		service.save(user);
 		send(PREFIX + "Auto Trash behavior set to " + camelCase(behavior));
-	}
-
-	@Path("convert")
-	@Permission("group.admin")
-	@HideFromHelp
-	@TabCompleteIgnore
-	void convert() {
-		for (me.pugabyte.nexus.models.autotrash.AutoTrash autoTrash : new AutoTrashService().getAll()) {
-			AutoSortUser user = new AutoSortUserService().get(autoTrash);
-			user.setAutoTrashBehavior(AutoTrashBehavior.valueOf(autoTrash.getBehavior().name()));
-			user.setAutoTrashInclude(autoTrash.getMaterials());
-			if (!autoTrash.isEnabled())
-				user.getDisabledFeatures().add(AutoSortFeature.AUTOTRASH);
-		}
 	}
 
 	public static class AutoTrashMaterialEditor implements Listener {
