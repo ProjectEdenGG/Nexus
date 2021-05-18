@@ -122,12 +122,16 @@ public class ItemUtils {
 	}
 
 	public static EquipmentSlot getHandWithTool(HasPlayer player) {
+		return getHandWithTool(player, null);
+	}
+
+	public static EquipmentSlot getHandWithTool(HasPlayer player, Material material) {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand))
+		if (!isNullOrAir(mainHand) && mainHand.getType() == material)
 			return EquipmentSlot.HAND;
-		else if (!isNullOrAir(offHand))
+		else if (!isNullOrAir(offHand) && offHand.getType() == material)
 			return EquipmentSlot.OFF_HAND;
 		return null;
 	}

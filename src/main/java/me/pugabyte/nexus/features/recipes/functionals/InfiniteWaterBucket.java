@@ -4,6 +4,8 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -12,7 +14,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -61,19 +65,6 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	}
 
 	@EventHandler
-	public void onPlaceInfiniteWater(PlayerBucketEmptyEvent event) {
-		Player player = event.getPlayer();
-		ItemStack waterBucket = player.getInventory().getItem(event.getHand()).clone();
-
-		if (isNullOrAir(waterBucket))
-			return;
-		if (!isFuzzyMatch(infiniteWaterBucket, waterBucket))
-			return;
-
-		Tasks.wait(1, () -> player.getInventory().setItem(event.getHand(), waterBucket));
-	}
-
-	@EventHandler
 	public void onCraft(CraftItemEvent event) {
 		ItemStack result = event.getInventory().getResult();
 		if (isNullOrAir(result))
@@ -94,18 +85,59 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		}
 	}
 
+	private void restoreInfiniteWaterBucket(Player player, EquipmentSlot hand) {
+		PlayerInventory inventory = player.getInventory();
+		ItemStack tool = inventory.getItem(hand);
+
+		if (tool == null || tool.getType() != Material.BUCKET) {
+			ItemStack missingBucket = new ItemStack(Material.BUCKET);
+			if (inventory.containsAtLeast(missingBucket, 1)) {
+				inventory.removeItem(missingBucket);
+				PlayerUtils.giveItem(player, infiniteWaterBucket.clone());
+			}
+		} else
+			inventory.setItem(hand, infiniteWaterBucket.clone());
+	}
+
+	@EventHandler
+	public void onPlaceInfiniteWater(PlayerBucketEmptyEvent event) {
+		Player player = event.getPlayer();
+		PlayerInventory inventory = player.getInventory();
+		ItemStack tool = inventory.getItem(event.getHand());
+		if (isNullOrAir(tool))
+			return;
+
+		ItemStack waterBucket = tool.clone();
+
+		if (isNullOrAir(waterBucket))
+			return;
+		if (!isFuzzyMatch(infiniteWaterBucket, waterBucket))
+			return;
+
+		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, event.getHand()));
+	}
+
 	@EventHandler
 	public void onCauldron(CauldronLevelChangeEvent event) {
-		if (event.getReason() != CauldronLevelChangeEvent.ChangeReason.BUCKET_EMPTY) return;
-		if (!(event.getEntity() instanceof Player player)) return;
-		ItemStack item = player.getInventory().getItemInMainHand().clone();
-
-		if (isNullOrAir(item))
+		if (event.getReason() != CauldronLevelChangeEvent.ChangeReason.BUCKET_EMPTY)
 			return;
-		if (!isFuzzyMatch(infiniteWaterBucket, item))
+		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		Tasks.wait(1, () -> player.getInventory().setItemInMainHand(item));
+		EquipmentSlot hand = ItemUtils.getHandWithTool(player, Material.WATER_BUCKET);
+		if (hand == null)
+			return;
+
+		ItemStack tool = player.getInventory().getItem(hand);
+		if (isNullOrAir(tool))
+			return;
+
+		if (isNullOrAir(tool))
+			return;
+		if (!isFuzzyMatch(infiniteWaterBucket, tool))
+			return;
+
+		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, hand));
 	}
 
 }
