@@ -4,8 +4,10 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.autosort.AutoSortUser.AutoTrashBehavior;
@@ -57,6 +59,9 @@ public class AutoTrashCommand extends CustomCommand {
 	}
 
 	@Path("convert")
+	@Permission("group.admin")
+	@HideFromHelp
+	@TabCompleteIgnore
 	void convert() {
 		for (me.pugabyte.nexus.models.autotrash.AutoTrash autoTrash : new AutoTrashService().getAll()) {
 			AutoSortUser user = new AutoSortUserService().get(autoTrash);
