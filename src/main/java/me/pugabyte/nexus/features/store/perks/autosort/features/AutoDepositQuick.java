@@ -42,7 +42,7 @@ public class AutoDepositQuick implements Listener {
 
 		Inventory inventory = holder.getInventory();
 		String name = (state instanceof Nameable nameable) ? nameable.getCustomName() : null;
-		if (!AutoSort.isSortableChestInventory(inventory, name))
+		if (!AutoSort.isSortableChestInventory(player, inventory, name))
 			return;
 
 		PlayerInteractEvent fakeEvent = new FakePlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getInventory().getItemInMainHand(), clickedBlock, BlockFace.EAST);

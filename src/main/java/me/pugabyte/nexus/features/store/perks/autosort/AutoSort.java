@@ -4,6 +4,7 @@ import eden.utils.Utils;
 import me.pugabyte.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
+import me.pugabyte.nexus.models.autosort.AutoSortUser.AutoSortInventoryType;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -14,7 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -75,27 +75,22 @@ public class AutoSort extends Feature {
 		return blockingMaterial.isOccluding();
 	}
 
-	private static final List<InventoryType> sortableInventories = List.of(
-			InventoryType.CHEST,
-			InventoryType.ENDER_CHEST,
-			InventoryType.BARREL,
-			InventoryType.SHULKER_BOX
-	);
-
 	/**
-	 * Tests if an inventory can be sorted. Checks if it is a storage inventory and if its name doesn't contain a <code>*</code>.
+	 * Tests if an inventory can be sorted. Checks if it is a storage inventory and if its title doesn't contain a <code>*</code>.
 	 * @param inventory inventory
-	 * @param name name of the inventory
+	 * @param title title of the inventory
 	 * @return if the inventory is sortable
 	 */
-	public static boolean isSortableChestInventory(Inventory inventory, String name) {
+	public static boolean isSortableChestInventory(Player player, Inventory inventory, String title) {
 		if (inventory == null || inventory.getHolder() instanceof Player)
 			return false;
 
-		if (!sortableInventories.contains(inventory.getType()))
+		AutoSortUser user = AutoSortUser.of(player);
+
+		if (user.getDisabledInventoryTypes().contains(AutoSortInventoryType.of(inventory, title)))
 			return false;
 
-		if (name != null && name.contains("*"))
+		if (title != null && title.contains("*"))
 			return false;
 
 		return true;

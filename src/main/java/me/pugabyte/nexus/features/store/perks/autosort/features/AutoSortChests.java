@@ -41,7 +41,7 @@ public class AutoSortChests implements Listener {
 			return;
 
 		Inventory topInventory = event.getView().getTopInventory();
-		if (!AutoSort.isSortableChestInventory(topInventory, event.getView().getTitle()))
+		if (!AutoSort.isSortableChestInventory(player, topInventory, event.getView().getTitle()))
 			return;
 
 		Tasks.wait(1, new InventorySorter(topInventory, 0));

@@ -176,7 +176,8 @@ public class FindChestsThread extends Thread {
 					BlockState state = block.getState();
 					if (state instanceof InventoryHolder chest) {
 						Inventory chestInventory = chest.getInventory();
-						boolean isSortable = AutoSort.isSortableChestInventory(chestInventory, state instanceof Nameable ? ((Nameable) state).getCustomName() : null);
+						String title = state instanceof Nameable ? ((Nameable) state).getCustomName() : null;
+						boolean isSortable = AutoSort.isSortableChestInventory(player, chestInventory, title);
 						if (!respectExclusions || isSortable) {
 							DepositRecord deposits = AutoSort.depositMatching(autoSortUser, chestInventory, false);
 							runningDepositRecord.totalItems += deposits.totalItems;

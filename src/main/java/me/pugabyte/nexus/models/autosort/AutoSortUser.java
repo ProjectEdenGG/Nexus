@@ -7,9 +7,11 @@ import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSort;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
@@ -22,14 +24,22 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import static eden.utils.StringUtils.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Builder
@@ -43,6 +53,8 @@ public class AutoSortUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Set<AutoSortFeature> disabledFeatures = new HashSet<>();
+
+	private Set<AutoSortInventoryType> disabledInventoryTypes = new HashSet<>();
 
 	private Set<Material> autoDepositExclude = new HashSet<>() {{
 		addAll(MaterialTag.ITEMS_ARROWS.getValues());
@@ -99,7 +111,7 @@ public class AutoSortUser implements PlayerOwnedObject {
 			return false;
 
 		Player player = getOnlinePlayer();
-		if (!player.hasPermission(feature.getPermission()))
+		if (!feature.hasPermission(player))
 			return false;
 
 		if (AutoSort.isWorldDisabled(player.getWorld()))
@@ -118,6 +130,66 @@ public class AutoSortUser implements PlayerOwnedObject {
 	public enum AutoTrashBehavior {
 		NO_PICKUP,
 		TRASH
+	}
+
+	@Getter
+	@AllArgsConstructor
+	@RequiredArgsConstructor
+	public enum AutoSortInventoryType {
+		CHEST(Material.CHEST),
+		DOUBLE_CHEST(Material.CHEST),
+		TRAPPED_CHEST(Material.TRAPPED_CHEST),
+		TRAPPED_DOUBLE_CHEST(Material.TRAPPED_CHEST),
+		MINECART_CHEST(Material.CHEST_MINECART),
+		BARREL(Material.BARREL),
+		SHULKER_BOX(Material.SHULKER_BOX),
+		BACKPACK(Material.SHULKER_BOX, 1),
+		VAULT(Material.IRON_BARS),
+		ENDER_CHEST(Material.ENDER_CHEST),
+		;
+
+		@NonNull
+		private final Material material;
+		private int customModelData;
+
+		@SneakyThrows
+		public static AutoSortInventoryType of(@Nullable Inventory inventory, String title) {
+			if (inventory == null)
+				return null;
+
+			title = stripColor(title);
+			InventoryHolder holder = inventory.getHolder();
+			if (holder instanceof Chest chest)
+				if (chest.getType() == Material.TRAPPED_CHEST)
+					return TRAPPED_CHEST;
+				else
+					return CHEST;
+			if (holder instanceof DoubleChest doubleChest)
+				if (doubleChest.getLocation().getBlock().getType() == Material.TRAPPED_CHEST)
+					return TRAPPED_DOUBLE_CHEST;
+				else
+					return DOUBLE_CHEST;
+
+			if (holder instanceof StorageMinecart)
+				return MINECART_CHEST;
+
+			if (holder instanceof Barrel)
+				return BARREL;
+
+			if (holder instanceof ShulkerBox)
+				return SHULKER_BOX;
+
+			if (Class.forName("com.drtshock.playervaults.vaultmanagement.VaultHolder").isInstance(holder))
+				return VAULT;
+
+			if (holder == null)
+				if (title.equalsIgnoreCase("Backpack"))
+					return BACKPACK;
+				else if (title.contains("Ender Chest"))
+					return ENDER_CHEST;
+
+			return null;
+		}
 	}
 
 }
