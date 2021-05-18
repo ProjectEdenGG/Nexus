@@ -88,7 +88,7 @@ public class AutoSort extends Feature {
 	 * @return if the inventory is sortable
 	 */
 	public static boolean isSortableChestInventory(Inventory inventory, String name) {
-		if (inventory == null)
+		if (inventory == null || inventory.getHolder() == null)
 			return false;
 
 		if (!sortableInventories.contains(inventory.getType()))
