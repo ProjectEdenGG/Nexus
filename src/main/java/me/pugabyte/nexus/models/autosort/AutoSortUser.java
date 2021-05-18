@@ -44,12 +44,18 @@ public class AutoSortUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private Set<AutoSortFeature> disabledFeatures = new HashSet<>();
 
-	private Set<Material> autoDepositExclude = new HashSet<>() {{ addAll(MaterialTag.ITEMS_ARROWS.getValues()); }};
+	private Set<Material> autoDepositExclude = new HashSet<>() {{
+		addAll(MaterialTag.ITEMS_ARROWS.getValues());
+		addAll(MaterialTag.SHULKER_BOXES.getValues());
+		addAll(MaterialTag.TOOLS_NETHERITE.getValues());
+	}};
+
 	private Set<Material> autoRefillExclude = new HashSet<>();
+
 	private Set<Material> autoCraftExclude = new HashSet<>();
 
+	private Set<Material> autoTrashInclude = new HashSet<>();
 	private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;
-	private Set<Material> autoTrashMaterials = new HashSet<>();
 
 	private transient boolean sortingInventory;
 
