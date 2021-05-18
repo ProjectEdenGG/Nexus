@@ -2,13 +2,13 @@ package me.pugabyte.nexus.features.store.perks.autosort.commands;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.store.perks.autosort.AutoSort;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
-import me.pugabyte.nexus.features.store.perks.autosort.features.AutoTool;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.HideFromHelp;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.autosort.AutoSortUserService;
 import me.pugabyte.nexus.utils.LuckPermsUtils.GroupChange;
@@ -28,34 +28,32 @@ public class AutoSortCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
-	@Path("[feature] [enable]")
+	@Path("<feature> [enable]")
 	void toggle(AutoSortFeature feature, Boolean enable) {
-		if (feature != AutoSortFeature.AUTOTOOL) {
-			if (!player().hasPermission(AutoSort.PERMISSION))
-				throw new NoPermissionException("Purchase at https://store.projecteden.gg");
-		} else if (!player().hasPermission(AutoTool.PERMISSION))
-			throw new NoPermissionException("Purchase at https://store.projecteden.gg");
+		feature.checkPermission(player());
 
 		if (enable == null)
 			enable = !user.hasFeatureEnabled(feature);
 
 		if (enable)
 			if (!user.getDisabledFeatures().contains(feature))
-				error(camelCase(feature) + " is already enabled");
+				error(feature + " is already enabled");
 			else
 				user.getDisabledFeatures().remove(feature);
 		else
 			if (user.getDisabledFeatures().contains(feature))
-				error(camelCase(feature) + " is already disabled");
+				error(feature + " is already disabled");
 			else
 				user.getDisabledFeatures().add(feature);
 
 		service.save(user);
-		String nameFixed = camelCase(feature.name().replaceFirst("AUTO", "AUTO_")).replaceFirst("Auto ", "Auto");
-		send(PREFIX + nameFixed + " " + (enable ? "&aenabled" : "&cdisabled"));
+		send(PREFIX + feature + " " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("convert")
+	@Permission("group.admin")
+	@HideFromHelp
+	@TabCompleteIgnore
 	void convert() {
 		List<String> autoSortUsers = List.of(
 				"e664d005-6e49-4b00-a4ec-8a9ad693c543", "86d7e0e2-c95e-4f22-8f99-a6e83b398307", "77966ca3-ac85-44b2-bcb0-b7c5f9342e86",
@@ -95,6 +93,8 @@ public class AutoSortCommand extends CustomCommand implements Listener {
 
 			PermissionChange.set().uuid(uuid).permission("store.autosort").run();
 		}
+
+		send("Conversion complete");
 	}
 
 }
