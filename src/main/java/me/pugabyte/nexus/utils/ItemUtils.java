@@ -131,11 +131,43 @@ public class ItemUtils {
 		return hand;
 	}
 
+	/**
+	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
+	 * @param itemStack item
+	 * @return if item is not null or air
+	 */
+	// useful for streams
+	@Contract("null -> false; !null -> _")
+	public static boolean isNotNullOrAir(ItemStack itemStack) {
+		return !isNullOrAir(itemStack);
+	}
+
+	/**
+	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
+	 * @param material item
+	 * @return if item is not null or air
+	 */
+	// useful for streams
+	@Contract("null -> false; !null -> _")
+	public static boolean isNotNullOrAir(Material material) {
+		return !isNullOrAir(material);
+	}
+
+	/**
+	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
+	 * @param itemStack item
+	 * @return if item is null or air
+	 */
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(ItemStack itemStack) {
 		return itemStack == null || MaterialTag.ALL_AIR.isTagged(itemStack);
 	}
 
+	/**
+	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
+	 * @param material item
+	 * @return if item is null or air
+	 */
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(Material material) {
 		return material == null || MaterialTag.ALL_AIR.isTagged(material);
