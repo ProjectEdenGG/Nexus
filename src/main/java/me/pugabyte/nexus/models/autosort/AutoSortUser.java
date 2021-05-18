@@ -52,7 +52,9 @@ public class AutoSortUser implements PlayerOwnedObject {
 
 	private Set<Material> autoRefillExclude = new HashSet<>();
 
-	private Set<Material> autoCraftExclude = new HashSet<>();
+	private Set<Material> autoCraftExclude = new HashSet<>() {{
+		add(Material.GLOWSTONE);
+	}};
 
 	private Set<Material> autoTrashInclude = new HashSet<>();
 	private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;

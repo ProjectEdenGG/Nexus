@@ -44,6 +44,7 @@ public class AutoCraft implements Listener {
 			put(Material.GOLD_INGOT, Set.of(Material.GOLD_NUGGET));
 			put(Material.IRON_INGOT, Set.of(Material.IRON_NUGGET));
 			put(Material.QUARTZ_BLOCK, Set.of(Material.QUARTZ));
+			put(Material.GLOWSTONE, Set.of(Material.GLOWSTONE_DUST));
 	}};
 
 	@Getter
