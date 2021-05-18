@@ -7,6 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,14 +44,14 @@ public class VanishCommand extends CustomCommand {
 	@Path("(ni|nointeract)")
 	@Permission("pv.use")
 	void toggleInteract() {
-		if (player().hasPermission("pv.interact")) {
+		if (player().hasPermission(interact_permissions.get(0))) {
 			for (String perm : interact_permissions)
-				runCommandAsConsole("lp user " + name() + " permission unset " + perm);
+				PermissionChange.unset().uuid(uuid()).permission(perm).run();
 
 			send(PREFIX + "Interaction disabled");
 		} else {
 			for (String perm : interact_permissions)
-				runCommandAsConsole("lp user " + name() + " permission set " + perm);
+				PermissionChange.set().uuid(uuid()).permission(perm).run();
 
 			send(PREFIX + "Interaction enabled");
 		}
