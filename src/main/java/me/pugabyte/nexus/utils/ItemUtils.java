@@ -131,18 +131,14 @@ public class ItemUtils {
 		return hand;
 	}
 
-	@Contract("null -> false")
-	public static boolean isNotNullOrAir(ItemStack itemStack) {
-		return !isNullOrAir(itemStack);
-	}
-
-	@Contract("null -> true")
+	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || itemStack.getType().equals(Material.AIR);
+		return itemStack == null || MaterialTag.ALL_AIR.isTagged(itemStack);
 	}
 
+	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(Material material) {
-		return material == null || material.equals(Material.AIR);
+		return material == null || MaterialTag.ALL_AIR.isTagged(material);
 	}
 
 	public static boolean isInventoryEmpty(Inventory inventory) {

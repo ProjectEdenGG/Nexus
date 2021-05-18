@@ -4,6 +4,7 @@ import eden.utils.Utils;
 import me.pugabyte.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -18,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
@@ -118,9 +118,8 @@ public class AutoSort extends Feature {
 
 		for (int i = sourceStartIndex; i < sourceSize; i++) {
 			ItemStack sourceStack = source.getItem(i);
-			if (sourceStack == null) continue;
+			if (ItemUtils.isNullOrAir(sourceStack)) continue;
 
-			if (MaterialTag.ALL_AIR.isTagged(sourceStack.getType())) continue;
 			if (autoSortUser.getAutoDepositExclude().contains(sourceStack.getType())) continue;
 
 			String signature = getSignature(sourceStack);
@@ -168,9 +167,7 @@ public class AutoSort extends Feature {
 		} else if (itemMeta instanceof FireworkMeta fireworkMeta)
 			signature += "." + fireworkMeta.getPower();
 		else if (itemMeta instanceof SkullMeta skullMeta && skullMeta.getOwningPlayer() != null)
-			signature += "." + skullMeta.getOwningPlayer().getName();
-		else if (itemMeta instanceof MapMeta mapMeta && mapMeta.hasMapView() && mapMeta.getMapView() != null)
-			signature += "." + mapMeta.getMapView().getId();
+			signature += "." + (skullMeta.getOwningPlayer().getName() == null);
 
 		return signature;
 	}

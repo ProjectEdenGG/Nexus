@@ -6,6 +6,8 @@ import me.pugabyte.nexus.Nexus;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -434,8 +436,12 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	@Override
-	public boolean isTagged(Material material) {
+	public boolean isTagged(@NotNull Material material) {
 		return materials.contains(material);
+	}
+
+	public boolean isTagged(@NotNull ItemStack item) {
+		return isTagged(item.getType());
 	}
 
 	@Override
