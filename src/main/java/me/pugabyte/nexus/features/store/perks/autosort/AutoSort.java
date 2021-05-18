@@ -9,17 +9,11 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.Directional;
-import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -76,6 +70,13 @@ public class AutoSort extends Feature {
 		return blockingMaterial.isOccluding();
 	}
 
+	private static final List<InventoryType> sortableInventories = List.of(
+			InventoryType.CHEST,
+			InventoryType.ENDER_CHEST,
+			InventoryType.BARREL,
+			InventoryType.SHULKER_BOX
+	);
+
 	/**
 	 * Tests if an inventory can be sorted. Checks if it is a storage inventory and if its name doesn't contain a <code>*</code>.
 	 * @param inventory inventory
@@ -83,21 +84,16 @@ public class AutoSort extends Feature {
 	 * @return if the inventory is sortable
 	 */
 	public static boolean isSortableChestInventory(Inventory inventory, String name) {
-		if (inventory == null) return false;
+		if (inventory == null)
+			return false;
 
-		InventoryType inventoryType = inventory.getType();
-		if (inventoryType != InventoryType.CHEST
-				&& inventoryType != InventoryType.ENDER_CHEST
-				&& inventoryType != InventoryType.SHULKER_BOX) return false;
+		if (!sortableInventories.contains(inventory.getType()))
+			return false;
 
-		if (name != null && name.contains("*")) return false;
+		if (name != null && name.contains("*"))
+			return false;
 
-		InventoryHolder holder = inventory.getHolder();
-		return holder instanceof Chest
-				|| holder instanceof ShulkerBox
-				|| holder instanceof DoubleChest
-				|| holder instanceof StorageMinecart
-				|| holder instanceof Barrel;
+		return true;
 	}
 
 	public static DepositRecord depositMatching(AutoSortUser autoSortUser, Inventory destination, boolean depositHotbar) {
