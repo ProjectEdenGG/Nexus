@@ -23,7 +23,8 @@ public class Collector {
 	@Getter
 	public static List<TradeBuilder> randomTrades = getRandomTrades();
 	@Getter
-	public static Location location = null;
+	public static Location currentLoc = null;
+	private static NPC npc = null;
 	//
 	private static List<TradeBuilder> possibleTrades = new ArrayList<>();
 	private static List<Location> locations = new ArrayList<>();
@@ -33,9 +34,10 @@ public class Collector {
 	public static void startup() {
 		loadLocations();
 		loadTrades();
-		NPC collector = BearFair21NPC.COLLECTOR.getNPC();
-		if (collector != null)
-			location = collector.getEntity().getLocation();
+
+		npc = BearFair21NPC.COLLECTOR.getNPC();
+		if (npc != null)
+			currentLoc = npc.getEntity().getLocation();
 	}
 
 	private static void loadLocations() {
@@ -116,6 +118,8 @@ public class Collector {
 	}
 
 	public static void move() {
+		if (npc == null) return;
+
 		prevLocations.clear();
 
 		Location newLoc = RandomUtils.randomElement(locations);
@@ -130,10 +134,8 @@ public class Collector {
 		}
 
 		if (newLoc == null) return;
-		newLoc = LocationUtils.getCenteredLocation(newLoc);
-		Location finalNewLoc = newLoc;
+		currentLoc = LocationUtils.getCenteredLocation(newLoc);
 
-		NPC npc = BearFair21NPC.COLLECTOR.getNPC();
 		Location oldLoc = npc.getEntity().getLocation();
 
 		world.playSound(oldLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
@@ -143,11 +145,10 @@ public class Collector {
 
 		newTrades();
 
-		world.playSound(finalNewLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
-		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, finalNewLoc, 500, 0.5, 1, 0.5, 0);
-		world.spawnParticle(Particle.FLASH, finalNewLoc, 10, 0, 0, 0);
-		npc.spawn(finalNewLoc);
-		location = finalNewLoc;
+		world.playSound(currentLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, currentLoc, 500, 0.5, 1, 0.5, 0);
+		world.spawnParticle(Particle.FLASH, currentLoc, 10, 0, 0, 0);
+		npc.spawn(currentLoc);
 	}
 
 	private static void newTrades() {
@@ -164,5 +165,11 @@ public class Collector {
 			choices.remove(random);
 			randomTrades.add(random);
 		}
+	}
+
+	public static void spawn() {
+		if (npc == null) return;
+		if (npc.isSpawned()) return;
+		npc.spawn(currentLoc);
 	}
 }

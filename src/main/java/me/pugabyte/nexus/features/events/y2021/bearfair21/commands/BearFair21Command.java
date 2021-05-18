@@ -86,7 +86,7 @@ public class BearFair21Command extends CustomCommand {
 	@Path("toCollector")
 	@Permission("group.admin")
 	public void toCollector() {
-		player().teleport(Collector.getLocation());
+		player().teleport(Collector.getCurrentLoc());
 	}
 
 	// Command Blocks
@@ -122,7 +122,7 @@ public class BearFair21Command extends CustomCommand {
 		int count = 0;
 		if (category == null) {
 			user.getClientsideLocations().clear();
-			send("removed all locations");
+			send("removed all locations from " + user.getNickname());
 			return;
 		} else {
 			Set<Location> locations = user.getClientsideLocations();

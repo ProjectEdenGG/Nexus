@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
@@ -92,6 +93,9 @@ public class ClientsideContentManager implements Listener {
 		Tasks.wait(1, () -> {
 			if (!BearFair21.isAtBearFair(player))
 				return;
+
+			if (BearFair21.getPlayers().size() == 1)
+				Collector.spawn();
 
 			sendSpawnItemFrames(player);
 		});
