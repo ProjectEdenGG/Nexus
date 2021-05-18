@@ -32,7 +32,7 @@ public class AutoSortCommand extends CustomCommand implements Listener {
 
 	@Path("[feature] [enable]")
 	void toggle(AutoSortFeature feature, Boolean enable) {
-		if (feature != AutoSortFeature.AUTO_TOOL)
+		if (feature != AutoSortFeature.AUTOTOOL)
 			if (!player().hasPermission(AutoSort.PERMISSION))
 				throw new NoPermissionException("Purchase at https://store.projecteden.gg");
 
@@ -51,7 +51,8 @@ public class AutoSortCommand extends CustomCommand implements Listener {
 				user.getDisabledFeatures().add(feature);
 
 		service.save(user);
-		send(PREFIX + camelCase(feature) + " " + (enable ? "&aenabled" : "&cdisabled"));
+		String nameFixed = camelCase(feature.name().replaceFirst("AUTO", "AUTO_")).replaceFirst("Auto ", "Auto");
+		send(PREFIX + nameFixed + " " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("deposit")

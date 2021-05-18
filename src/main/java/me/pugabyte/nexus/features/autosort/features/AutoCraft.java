@@ -90,7 +90,7 @@ public class AutoCraft implements Listener {
 
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (!user.hasFeatureEnabled(AutoSortFeature.AUTO_CRAFT))
+		if (!user.hasFeatureEnabled(AutoSortFeature.AUTOCRAFT))
 			return;
 
 		Material material = event.getItem().getItemStack().getType();

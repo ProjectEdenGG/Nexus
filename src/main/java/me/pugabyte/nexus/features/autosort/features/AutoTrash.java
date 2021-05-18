@@ -26,7 +26,7 @@ public class AutoTrash implements Listener {
 			return;
 
 		AutoSortUser user = AutoSortUser.of(player);
-		if (!user.hasFeatureEnabled(AutoSortFeature.AUTO_TRASH))
+		if (!user.hasFeatureEnabled(AutoSortFeature.AUTOTRASH))
 			return;
 
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))

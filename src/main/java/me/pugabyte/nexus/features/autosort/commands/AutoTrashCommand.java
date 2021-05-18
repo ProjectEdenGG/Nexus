@@ -8,8 +8,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
+import me.pugabyte.nexus.models.autosort.AutoSortUser.AutoTrashBehavior;
 import me.pugabyte.nexus.models.autosort.AutoSortUserService;
-import me.pugabyte.nexus.models.autotrash.AutoTrash.Behavior;
 import me.pugabyte.nexus.models.autotrash.AutoTrashService;
 import me.pugabyte.nexus.utils.ItemUtils.ItemStackComparator;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -45,7 +45,7 @@ public class AutoTrashCommand extends CustomCommand {
 	}
 
 	@Path("behavior [behavior]")
-	void behavior(Behavior behavior) {
+	void behavior(AutoTrashBehavior behavior) {
 		if (behavior == null) {
 			send("Current behavior is " + camelCase(user.getAutoTrashBehavior()));
 			return;
@@ -60,10 +60,10 @@ public class AutoTrashCommand extends CustomCommand {
 	void convert() {
 		for (me.pugabyte.nexus.models.autotrash.AutoTrash autoTrash : new AutoTrashService().getAll()) {
 			AutoSortUser user = new AutoSortUserService().get(autoTrash);
-			user.setAutoTrashBehavior(autoTrash.getBehavior());
+			user.setAutoTrashBehavior(AutoTrashBehavior.valueOf(autoTrash.getBehavior().name()));
 			user.setAutoTrashMaterials(autoTrash.getMaterials());
 			if (!autoTrash.isEnabled())
-				user.getDisabledFeatures().add(AutoSortFeature.AUTO_TRASH);
+				user.getDisabledFeatures().add(AutoSortFeature.AUTOTRASH);
 		}
 	}
 

@@ -37,7 +37,7 @@ public class AutoTool implements Listener {
 			return;
 		if (!(player.hasPermission(AutoSort.PERMISSION) || player.hasPermission("autotool.use")))
 			return;
-		if (!AutoSortUser.of(player).hasFeatureEnabled(AutoSortFeature.AUTO_TOOL))
+		if (!AutoSortUser.of(player).hasFeatureEnabled(AutoSortFeature.AUTOTOOL))
 			return;
 
 		ItemStack[] contents = getHotbarContents(player);
