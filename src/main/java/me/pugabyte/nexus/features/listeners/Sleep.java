@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.store.perks.joinquit.VanishEvent;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -16,7 +17,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -92,12 +92,8 @@ public class Sleep implements Listener {
 			Tasks.wait(1, () -> calculate(world));
 	}
 
-	protected void handle(Player player) {
-		handle(player.getWorld());
-	}
-
-	protected void handle(PlayerEvent event) {
-		handle(event.getPlayer());
+	protected void handle(HasPlayer player) {
+		handle(player.getPlayer().getWorld());
 	}
 
 	@EventHandler
