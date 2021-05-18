@@ -87,7 +87,11 @@ public class AutoSort extends Feature {
 
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (user.getDisabledInventoryTypes().contains(AutoSortInventoryType.of(inventory, title)))
+		AutoSortInventoryType inventoryType = AutoSortInventoryType.of(inventory, title);
+		if (inventoryType == null)
+			return false;
+
+		if (user.getDisabledInventoryTypes().contains(inventoryType))
 			return false;
 
 		if (title != null && title.contains("*"))

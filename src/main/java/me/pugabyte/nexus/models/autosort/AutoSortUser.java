@@ -26,7 +26,10 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Dropper;
+import org.bukkit.block.Hopper;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -143,6 +146,9 @@ public class AutoSortUser implements PlayerOwnedObject {
 		MINECART_CHEST(Material.CHEST_MINECART),
 		BARREL(Material.BARREL),
 		SHULKER_BOX(Material.SHULKER_BOX),
+		HOPPER(Material.HOPPER),
+		DROPPER(Material.DROPPER),
+		DISPENSER(Material.DISPENSER),
 		BACKPACK(Material.SHULKER_BOX, 1),
 		VAULT(Material.IRON_BARS),
 		ENDER_CHEST(Material.ENDER_CHEST),
@@ -178,6 +184,13 @@ public class AutoSortUser implements PlayerOwnedObject {
 
 			if (holder instanceof ShulkerBox)
 				return SHULKER_BOX;
+
+			if (holder instanceof Hopper)
+				return HOPPER;
+			if (holder instanceof Dropper)
+				return DROPPER;
+			if (holder instanceof Dispenser)
+				return DISPENSER;
 
 			if (Class.forName("com.drtshock.playervaults.vaultmanagement.VaultHolder").isInstance(holder))
 				return VAULT;
