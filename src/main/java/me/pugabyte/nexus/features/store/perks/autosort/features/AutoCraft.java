@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static eden.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.joining;
@@ -32,17 +33,17 @@ import static java.util.stream.Collectors.joining;
 public class AutoCraft implements Listener {
 
 	@Getter
-	private static final Map<Material, List<Material>> autoCraftable = new LinkedHashMap<>() {{
-			put(Material.DIAMOND_BLOCK, List.of(Material.DIAMOND));
-			put(Material.EMERALD_BLOCK, List.of(Material.EMERALD));
-			put(Material.GOLD_BLOCK, List.of(Material.GOLD_INGOT));
-			put(Material.IRON_BLOCK, List.of(Material.IRON_INGOT));
-			put(Material.REDSTONE_BLOCK, List.of(Material.REDSTONE));
-			put(Material.LAPIS_BLOCK, List.of(Material.LAPIS_LAZULI));
-			put(Material.COAL_BLOCK, List.of(Material.COAL));
-			put(Material.GOLD_INGOT, List.of(Material.GOLD_NUGGET));
-			put(Material.IRON_INGOT, List.of(Material.IRON_NUGGET));
-			put(Material.QUARTZ_BLOCK, List.of(Material.QUARTZ));
+	private static final Map<Material, Set<Material>> autoCraftable = new LinkedHashMap<>() {{
+			put(Material.DIAMOND_BLOCK, Set.of(Material.DIAMOND));
+			put(Material.EMERALD_BLOCK, Set.of(Material.EMERALD));
+			put(Material.GOLD_BLOCK, Set.of(Material.GOLD_INGOT));
+			put(Material.IRON_BLOCK, Set.of(Material.IRON_INGOT));
+			put(Material.REDSTONE_BLOCK, Set.of(Material.REDSTONE));
+			put(Material.LAPIS_BLOCK, Set.of(Material.LAPIS_LAZULI));
+			put(Material.COAL_BLOCK, Set.of(Material.COAL));
+			put(Material.GOLD_INGOT, Set.of(Material.GOLD_NUGGET));
+			put(Material.IRON_INGOT, Set.of(Material.IRON_NUGGET));
+			put(Material.QUARTZ_BLOCK, Set.of(Material.QUARTZ));
 	}};
 
 	@Getter

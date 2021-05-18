@@ -21,7 +21,7 @@ import org.bukkit.inventory.PlayerInventory;
 public class AutoSortInventory implements Listener {
 
 	public static void sort(AutoSortUser user, Inventory inventory) {
-		if (!user.hasFeatureEnabled(AutoSortFeature.SORT_INVENTORY))
+		if (!user.hasFeatureEnabled(AutoSortFeature.INVENTORY))
 			return;
 
 		Player player = user.getOnlinePlayer();
@@ -40,7 +40,7 @@ public class AutoSortInventory implements Listener {
 			return;
 		AutoSortUser user = AutoSortUser.of(player);
 
-		if (!user.hasFeatureEnabled(AutoSortFeature.SORT_INVENTORY))
+		if (!user.hasFeatureEnabled(AutoSortFeature.INVENTORY))
 			return;
 
 		if (user.isSortingInventory()) return;

@@ -66,7 +66,15 @@ public class AutoSortUser implements PlayerOwnedObject {
 	public void tip(TipType tipType) {
 		TipService tipService = new TipService();
 		Tip tip = tipService.get(this);
-		tip.show(tipType);
+		if (tip.show(tipType))
+			sendMessage(AutoSort.PREFIX + switch (tipType) {
+				case AUTOSORT_SORT_INVENTORY -> "Your inventory has been automatically sorted. Use &c/autosort inventory &3to disable";
+				case AUTOSORT_SORT_CHESTS -> "Your chests have been automatically sorted. Use &c/autosort chests &3to disable";
+				case AUTOSORT_REFILL -> "Broken tools and depleted stacks will be automatically refilled from your inventory";
+				case AUTOSORT_DEPOSIT_ALL -> "Instantly deposit all matching items from your inventory into all nearby containers with &c/sort";
+				case AUTOSORT_DEPOSIT_QUICK -> "Quickly deposit all matching items from your inventory into a specific container by hitting it while crouching";
+				default -> null;
+			});
 		tipService.save(tip);
 	}
 
