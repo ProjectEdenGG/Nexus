@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -88,7 +89,7 @@ public class AutoSort extends Feature {
 	 * @return if the inventory is sortable
 	 */
 	public static boolean isSortableChestInventory(Inventory inventory, String name) {
-		if (inventory == null || inventory.getHolder() == null)
+		if (inventory == null || inventory.getHolder() instanceof Player)
 			return false;
 
 		if (!sortableInventories.contains(inventory.getType()))

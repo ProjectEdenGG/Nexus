@@ -14,9 +14,10 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Set;
+import java.util.List;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.PlayerUtils.getHotbarContents;
@@ -42,7 +43,7 @@ public class AutoTool implements Listener {
 			return;
 
 		ItemStack[] contents = getHotbarContents(player);
-		ItemStack bestTool = getBestTool(Set.of(contents), block);
+		ItemStack bestTool = getBestTool(Arrays.asList(contents), block);
 
 		if (isNullOrAir(bestTool))
 			return;
@@ -57,7 +58,7 @@ public class AutoTool implements Listener {
 	}
 
 	@Nullable
-	private ItemStack getBestTool(Set<ItemStack> items, Block block) {
+	private ItemStack getBestTool(List<ItemStack> items, Block block) {
 		return Collections.max(items, Comparator.comparingDouble(item -> {
 			if (isNullOrAir(item))
 				return 0;
