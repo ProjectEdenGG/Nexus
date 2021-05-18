@@ -13,6 +13,7 @@ import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -31,6 +32,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -81,7 +83,13 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		if (event.getPlayer().getUniqueId().toString().equals("f325c439-02c2-4043-995e-668113c7eb9f"))
 			return;
 
-		if (!dyeBomb.isSimilar(item))
+		ItemMeta meta = item.getItemMeta();
+		String originalName = StringUtils.stripColor(dyeBomb.getItemMeta().getDisplayName());
+		String itemName = StringUtils.stripColor(meta.getDisplayName());
+
+		if (!originalName.equals(itemName))
+			return;
+		if (!meta.isUnbreakable())
 			return;
 
 		Player player = event.getPlayer();
