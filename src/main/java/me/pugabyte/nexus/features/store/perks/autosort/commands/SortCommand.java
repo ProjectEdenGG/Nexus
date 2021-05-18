@@ -33,7 +33,7 @@ public class SortCommand extends CustomCommand {
 			}
 
 		// Create a thread to search those snapshots and create a chain of quick deposit attempts
-		int minY = Math.max(0, player().getEyeLocation().getBlockY() - 10);
+		int minY = Math.max(world.getMinHeight(), player().getEyeLocation().getBlockY() - 10);
 		int maxY = Math.min(world.getMaxHeight(), player().getEyeLocation().getBlockY() + 10);
 		int startY = player().getEyeLocation().getBlockY();
 		int startX = player().getEyeLocation().getBlockX();
