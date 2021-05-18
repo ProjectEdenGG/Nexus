@@ -70,9 +70,8 @@ public class FindChestsThread extends Thread {
 			Location currentLocation = toLocation(current);
 
 			Material type = getType(current);
-			if (isChest(type))
-				if (!AutoSort.canOpen(currentLocation.getBlock()))
-					chestLocations.add(currentLocation);
+			if (isChest(type) && AutoSort.canOpen(currentLocation.getBlock()))
+				chestLocations.add(currentLocation);
 
 			if (isPassable(type)) {
 				Vector[] adjacents = new Vector[]{
@@ -145,7 +144,7 @@ public class FindChestsThread extends Thread {
 		if (material == null)
 			return false;
 		return switch (material) {
-			case AIR, CHEST, TRAPPED_CHEST, HOPPER -> true;
+			case AIR, CHEST, TRAPPED_CHEST, HOPPER, CAVE_AIR, VOID_AIR -> true;
 			default -> MaterialTag.ALL_SIGNS.isTagged(material);
 		};
 	}
