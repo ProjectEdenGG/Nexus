@@ -91,7 +91,7 @@ public class AutoSortUser implements PlayerOwnedObject {
 			return false;
 
 		Player player = getOnlinePlayer();
-		if (!player.hasPermission(AutoSort.PERMISSION))
+		if (!player.hasPermission(feature.getPermission()))
 			return false;
 
 		if (AutoSort.isWorldDisabled(player.getWorld()))
