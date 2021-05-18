@@ -4,6 +4,7 @@ import eden.utils.Utils;
 import me.pugabyte.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
+import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -16,7 +17,6 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.Directional;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -50,27 +50,57 @@ public class AutoSort extends Feature {
 		return DISABLED_WORLDS.contains(world.getName());
 	}
 
+	/**
+	 * Tests if an item can be replaced by another.
+	 * <p>
+	 * Currently, this checks if the two items are of the same type, and if b has specific matching enchants.
+	 * These enchants are Silk Touch, Fortune, and Looting.
+	 * @param a current item
+	 * @param b potential replacement item
+	 * @return if <code>b</code> is a suitable replacement for <code>a</code>
+	 */
 	public static boolean itemsAreSimilar(ItemStack a, ItemStack b) {
 		if (a.getType() == b.getType())
-			return !a.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS) && !a.containsEnchantment(Enchantment.SILK_TOUCH) && !a.containsEnchantment(Enchantment.LOOT_BONUS_MOBS);
+			return !((a.containsEnchantment(Enchant.SILK_TOUCH) && !b.containsEnchantment(Enchant.SILK_TOUCH))
+					|| (a.containsEnchantment(Enchant.FORTUNE) && !b.containsEnchantment(Enchant.FORTUNE))
+					|| (a.containsEnchantment(Enchant.LOOTING) && !b.containsEnchantment(Enchant.LOOTING)));
 
 		return false;
 	}
 
+	/**
+	 * Tests if a container block can be opened.
+	 * <p>
+	 * Examples:
+	 * <li>
+	 *     <ul>Chest block with Stone above it: <code>false</code></ul>
+	 *     <ul>Barrel: <code>true</code></ul>
+	 *     <ul>Chest with a slab above it: <code>true</code></ul>
+	 * </li>
+	 * @param block container block
+	 * @return if a player can open the container
+	 */
 	public static boolean canOpen(Block block) {
 		if (block.getType() == Material.BARREL)
 			return true;
 
-		Material blockingMaterial = block.getRelative(BlockFace.UP).getType();
+		Material blockingMaterial;
 
 		if (MaterialTag.SHULKER_BOXES.isTagged(block.getType())) {
 			Directional directional = (Directional) block.getBlockData();
 			blockingMaterial = block.getRelative(directional.getFacing()).getType();
-		}
+		} else
+			blockingMaterial = block.getRelative(BlockFace.UP).getType();
 
 		return blockingMaterial.isOccluding();
 	}
 
+	/**
+	 * Tests if an inventory can be sorted. Checks if it is a storage inventory and if its name doesn't contain a <code>*</code>.
+	 * @param inventory inventory
+	 * @param name name of the inventory
+	 * @return if the inventory is sortable
+	 */
 	public static boolean isSortableChestInventory(Inventory inventory, String name) {
 		if (inventory == null) return false;
 

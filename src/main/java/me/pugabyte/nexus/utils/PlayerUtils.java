@@ -294,8 +294,9 @@ public class PlayerUtils {
 	 * Sends a message to a player
 	 * @param recipient a {@link CommandSender}, {@link HasUniqueId}, {@link Identified}, or {@link UUID}
 	 * @param message a {@link String} or {@link ComponentLike}
+	 * @param objects used to {@link String#format(String, Object...) String#format} the message if <code>message</code> is a {@link String}
 	 */
-	public static void send(@Nullable Object recipient, @Nullable Object message, Object... objects) {
+	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
 		if (message instanceof String string)
 			message = String.format(string, objects);
 
@@ -584,6 +585,9 @@ public class PlayerUtils {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
+	/**
+	 * Extension of {@link PlayerInteractEvent} used to test if a plugin like WorldGuard or LWC will block the event.
+	 */
 	public static class FakePlayerInteractEvent extends PlayerInteractEvent {
 		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
 			super(player, action, itemInHand, clickedBlock, blockFace);
