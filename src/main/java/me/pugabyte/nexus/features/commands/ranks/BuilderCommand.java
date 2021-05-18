@@ -24,7 +24,7 @@ public class BuilderCommand extends CustomCommand {
 		send(json()
 				.next("&3[+] &eHow to achieve&3: ")
 				.next("&eApply").url(builderApp)
-				.hover("&eClick to open the application on the website (must be " + Rank.TRUSTED.getChatColor() + "Trusted &3or above)")
+				.hover("&3Click to open the application on the", "&3website (&emust be " + Rank.TRUSTED.getChatColor() + "Trusted &eor above&3)")
 				.group());
 		send(json("&3[+] &eClick here &3for a list of builders").command("/builder list"));
 		line();

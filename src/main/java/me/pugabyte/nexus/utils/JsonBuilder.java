@@ -465,7 +465,7 @@ public class JsonBuilder implements ComponentLike {
 
 			Iterator<String> iterator = lines.iterator();
 			while (iterator.hasNext()) {
-				hover.append(Component.text(iterator.next()));
+				hover.append(AdventureUtils.fromLegacyText(iterator.next()));
 				if (iterator.hasNext())
 					hover.append(Component.newline());
 			}

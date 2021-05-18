@@ -98,7 +98,6 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 		Location location = new Location(world, x, y, z, 0, 90);
 		player().teleportAsync(location, TeleportCause.COMMAND);
-		return;
 	}
 
 	private void players() {
