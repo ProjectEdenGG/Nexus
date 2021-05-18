@@ -539,7 +539,7 @@ public class PlayerUtils {
 
 	public static void giveItemsAndDeliverExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
-		List<ItemStack> finalItems = ItemUtils.clone(items);
+		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 
 		List<ItemStack> excess;
@@ -547,7 +547,7 @@ public class PlayerUtils {
 		if (!alwaysDeliver)
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
-			excess = new ArrayList<>(items);
+			excess = ItemUtils.clone(items);
 		if (Utils.isNullOrEmpty(excess)) return;
 
 		DeliveryService service = new DeliveryService();
