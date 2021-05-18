@@ -90,7 +90,7 @@ public class AutoSortCommand extends CustomCommand implements Listener {
 					item.customModelData(customModelData);
 
 				if (!user.getDisabledInventoryTypes().contains(inventoryType))
-					item.lore("&aEnabled").glow();
+					item.lore("&aEnabled");
 				else
 					item.lore("&cDisabled");
 
