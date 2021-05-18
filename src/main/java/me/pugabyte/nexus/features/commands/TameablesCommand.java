@@ -313,10 +313,10 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			return;
 
 		for (AnimalTamer owner : owners)
-			if (Rank.of(Bukkit.getOfflinePlayer(owner.getUniqueId())).gte(Rank.NOBLE))
+			if (Rank.of(owner.getUniqueId()).gte(Rank.NOBLE))
 				return;
 
-		if (isPerkAllowedAt(event.getFrom()) && !isPerkAllowedAt(event.getTo()))
+		if (isPerkAllowedAt(event.getTo()))
 			return;
 
 		event.setCancelled(true);

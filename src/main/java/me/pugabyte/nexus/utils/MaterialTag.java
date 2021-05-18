@@ -6,6 +6,8 @@ import me.pugabyte.nexus.Nexus;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -75,6 +77,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ARMOR_CHAINMAIL = new MaterialTag("CHAINMAIL_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_LEATHER = new MaterialTag("LEATHER_", MatchMode.PREFIX, MaterialTag.ARMOR);
 
+	public static final MaterialTag TOOLS_NETHERITE = new MaterialTag("NETHERITE_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_DIAMOND = new MaterialTag("DIAMOND_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_IRON = new MaterialTag("IRON_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.TOOLS);
@@ -167,6 +170,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, PLANKS, WOOD_STAIRS, WOOD_SLABS, WOOD_BUTTONS,
 			WOOD_DOORS, WOOD_TRAPDOORS, WOOD_FENCES, WOOD_FENCE_GATES, WOOD_PRESSURE_PLATES, WOOD_SIGNS);
+
+	public static final MaterialTag ALL_SIGNS = new MaterialTag(SIGNS, WALL_SIGNS);
 
 	public static final MaterialTag ALL_NETHER = new MaterialTag(GLOWSTONE, OBSIDIAN, CRYING_OBSIDIAN, GRAVEL, MAGMA_BLOCK, MAGMA_CREAM,
 			WITHER_SKELETON_SKULL, BLAZE_ROD, BLAZE_POWDER, WEEPING_VINES, TWISTING_VINES, MUSIC_DISC_PIGSTEP)
@@ -432,8 +437,12 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	@Override
-	public boolean isTagged(Material material) {
+	public boolean isTagged(@NotNull Material material) {
 		return materials.contains(material);
+	}
+
+	public boolean isTagged(@NotNull ItemStack item) {
+		return isTagged(item.getType());
 	}
 
 	@Override

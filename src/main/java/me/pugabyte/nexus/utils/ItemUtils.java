@@ -18,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,23 +44,39 @@ public class ItemUtils {
 		return true;
 	}
 
-	public static void combine(List<ItemStack> itemStacks, ItemStack newItemStack) {
-		Optional<ItemStack> matching = itemStacks.stream()
-				.filter(existing -> existing.isSimilar(newItemStack) && existing.getAmount() < existing.getType().getMaxStackSize())
-				.findFirst();
+	public static void combine(List<ItemStack> itemStacks, ItemStack... newItemStacks) {
+		combine(itemStacks, Arrays.asList(newItemStacks));
+	}
 
-		if (matching.isPresent()) {
-			ItemStack match = matching.get();
-			itemStacks.remove(match);
-			int amountICanAdd = Math.min(newItemStack.getAmount(), match.getType().getMaxStackSize() - match.getAmount());
-			match.setAmount(match.getAmount() + amountICanAdd);
-			itemStacks.add(new ItemStack(match));
+	public static void combine(List<ItemStack> itemStacks, List<ItemStack> newItemStacks) {
+		for (ItemStack newItemStack : newItemStacks) {
+			if (isNullOrAir(newItemStack))
+				continue;
 
-			newItemStack.setAmount(newItemStack.getAmount() - amountICanAdd);
+			Optional<ItemStack> matching = itemStacks.stream()
+					.filter(existing -> existing.isSimilar(newItemStack) && existing.getAmount() < existing.getType().getMaxStackSize())
+					.findFirst();
+
+			if (matching.isPresent()) {
+				ItemStack match = matching.get();
+				itemStacks.remove(match);
+				int amountICanAdd = Math.min(newItemStack.getAmount(), match.getType().getMaxStackSize() - match.getAmount());
+				match.setAmount(match.getAmount() + amountICanAdd);
+				itemStacks.add(new ItemStack(match));
+
+				newItemStack.setAmount(newItemStack.getAmount() - amountICanAdd);
+			}
+
+			if (newItemStack.getAmount() > 0)
+				itemStacks.add(new ItemStack(newItemStack));
 		}
+	}
 
-		if (newItemStack.getAmount() > 0)
-			itemStacks.add(new ItemStack(newItemStack));
+	public static List<ItemStack> clone(Collection<ItemStack> list) {
+		return new ArrayList<>() {{
+			for (ItemStack item : list)
+				add(item.clone());
+		}};
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
@@ -121,13 +139,46 @@ public class ItemUtils {
 		return hand;
 	}
 
-	@Contract("null -> true")
-	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || itemStack.getType().equals(Material.AIR);
+	/**
+	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
+	 * @param itemStack item
+	 * @return if item is not null or air
+	 */
+	// useful for streams
+	@Contract("null -> false; !null -> _")
+	public static boolean isNotNullOrAir(ItemStack itemStack) {
+		return !isNullOrAir(itemStack);
 	}
 
+	/**
+	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
+	 * @param material item
+	 * @return if item is not null or air
+	 */
+	// useful for streams
+	@Contract("null -> false; !null -> _")
+	public static boolean isNotNullOrAir(Material material) {
+		return !isNullOrAir(material);
+	}
+
+	/**
+	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
+	 * @param itemStack item
+	 * @return if item is null or air
+	 */
+	@Contract("null -> true; !null -> _")
+	public static boolean isNullOrAir(ItemStack itemStack) {
+		return itemStack == null || MaterialTag.ALL_AIR.isTagged(itemStack);
+	}
+
+	/**
+	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
+	 * @param material item
+	 * @return if item is null or air
+	 */
+	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(Material material) {
-		return material == null || material.equals(Material.AIR);
+		return material == null || MaterialTag.ALL_AIR.isTagged(material);
 	}
 
 	public static boolean isInventoryEmpty(Inventory inventory) {
@@ -209,6 +260,24 @@ public class ItemUtils {
 		}
 
 		return true;
+	}
+
+	public static class ItemStackComparator implements Comparator<ItemStack> {
+		@Override
+		public int compare(ItemStack a, ItemStack b) {
+			int result = Integer.compare(b.getMaxStackSize(), a.getMaxStackSize());
+			if (result != 0) return result;
+
+			result = b.getRarity().compareTo(a.getRarity());
+			if (result != 0) return result;
+
+			result = b.getType().compareTo(a.getType());
+			if (result != 0) return result;
+
+			result = Integer.compare(b.getAmount(), a.getAmount());
+			return result;
+		}
+
 	}
 
 	/**

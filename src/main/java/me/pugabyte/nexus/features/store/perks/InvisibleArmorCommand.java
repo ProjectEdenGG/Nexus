@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
-@Permission("invis.armour")
+@Permission("invisiblearmor.use")
 @Aliases({"ia", "invisarmor", "invisarmour", "invisiblearmor"})
 @Environments({Env.DEV, Env.TEST})
 public class InvisibleArmorCommand extends CustomCommand {

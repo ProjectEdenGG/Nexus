@@ -66,10 +66,14 @@ public class Tip implements PlayerOwnedObject {
 		LWC_CHEST(1, Time.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		LWC_FURNACE(1, Time.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		RESOURCE_WORLD_STORAGE(15),
-		SPAM_ATTACK(50, Time.MINUTE.x(5));
+		SPAM_ATTACK(50, Time.MINUTE.x(5)),
+		AUTOSORT_SORT_INVENTORY(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_SORT_CHESTS(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_REFILL(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_DEPOSIT_ALL(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_DEPOSIT_QUICK(1, Time.WEEK, player -> player.hasPermission("store.autosort"));
 
 		@Getter
-		@NonNull
 		private final int retryChance;
 		@Getter
 		private int cooldown;
@@ -80,7 +84,7 @@ public class Tip implements PlayerOwnedObject {
 			this.retryChance = retryChance;
 		}
 
-		TipType(@NonNull int retryChance, int cooldown) {
+		TipType(int retryChance, int cooldown) {
 			this.retryChance = retryChance;
 			this.cooldown = cooldown;
 		}

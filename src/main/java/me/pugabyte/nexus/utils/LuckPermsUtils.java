@@ -85,4 +85,59 @@ public class LuckPermsUtils {
 		}
 	}
 
+	private enum GroupChangeType {
+		SET,
+		ADD,
+		REMOVE
+	}
+
+	@AllArgsConstructor
+	public static class GroupChange {
+
+		public static GroupChangeBuilder set() {
+			return new GroupChangeBuilder(GroupChangeType.SET);
+		}
+
+		public static GroupChangeBuilder add() {
+			return new GroupChangeBuilder(GroupChangeType.ADD);
+		}
+
+		public static GroupChangeBuilder remove() {
+			return new GroupChangeBuilder(GroupChangeType.REMOVE);
+		}
+
+		@RequiredArgsConstructor
+		public static final class GroupChangeBuilder {
+			@NonNull
+			private final GroupChangeType type;
+			private UUID uuid;
+			private String group;
+
+			public GroupChangeBuilder player(HasUniqueId player) {
+				this.uuid = player.getUniqueId();
+				return this;
+			}
+
+			public GroupChangeBuilder uuid(String uuid) {
+				return uuid(UUID.fromString(uuid));
+			}
+
+			public GroupChangeBuilder uuid(UUID uuid) {
+				this.uuid = uuid;
+				return this;
+			}
+
+			public GroupChangeBuilder group(String group) {
+				this.group = group;
+				return this;
+			}
+
+			public void run() {
+				String command = "lp user " + uuid.toString() + " group " + type + " " + group;
+
+				runCommandAsConsole(command);
+			}
+		}
+	}
+
 }

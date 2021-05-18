@@ -112,7 +112,7 @@ public class Pugmas20User implements PlayerOwnedObject {
 
 		ArrayList<ItemStack> inventory = new ArrayList<>(this.inventory);
 		this.inventory.clear();
-		this.inventory.addAll(PlayerUtils.giveItemsGetExcess(getOnlinePlayer(), inventory));
+		this.inventory.addAll(PlayerUtils.giveItemsAndGetExcess(getOnlinePlayer(), inventory));
 
 		if (this.inventory.isEmpty())
 			sendMessage(Pugmas20.PREFIX + "Inventory applied");

@@ -60,7 +60,9 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 	}
 
 	public Team(String name) {
-		this(new HashMap<String, Object>() {{ put("name", name); }});
+		this(new HashMap<>() {{
+			put("name", name);
+		}});
 	}
 
 	public Team(Map<String, Object> map) {

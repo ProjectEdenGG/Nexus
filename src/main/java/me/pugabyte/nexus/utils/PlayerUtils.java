@@ -33,8 +33,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.Contract;
@@ -290,8 +294,12 @@ public class PlayerUtils {
 	 * Sends a message to a player
 	 * @param recipient a {@link CommandSender}, {@link HasUniqueId}, {@link Identified}, or {@link UUID}
 	 * @param message a {@link String} or {@link ComponentLike}
+	 * @param objects used to {@link String#format(String, Object...) String#format} the message if <code>message</code> is a {@link String}
 	 */
-	public static void send(@Nullable Object recipient, @Nullable Object message) {
+	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
+		if (message instanceof String string)
+			message = String.format(string, objects);
+
 		if (recipient == null || message == null)
 			return;
 		if (recipient instanceof CommandSender) {
@@ -371,6 +379,10 @@ public class PlayerUtils {
 	@NotNull
 	public static Set<@NotNull ItemStack> getNonNullInventoryContents(HasPlayer player) {
 		return getAllInventoryContents(player).stream().filter(Objects::nonNull).collect(Collectors.toSet());
+	}
+
+	public static ItemStack[] getHotbarContents(HasPlayer player) {
+		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 8);
 	}
 
 	@Deprecated
@@ -501,18 +513,18 @@ public class PlayerUtils {
 			}
 		}
 
-		dropExcessItems(player, giveItemsGetExcess(player, finalItems));
+		dropExcessItems(player, giveItemsAndGetExcess(player, finalItems));
 	}
 
-	public static List<ItemStack> giveItemsGetExcess(HasPlayer player, ItemStack items) {
-		return giveItemsGetExcess(player, Collections.singletonList(items));
+	public static List<ItemStack> giveItemsAndGetExcess(HasPlayer player, ItemStack items) {
+		return giveItemsAndGetExcess(player, Collections.singletonList(items));
 	}
 
-	public static List<ItemStack> giveItemsGetExcess(HasPlayer player, List<ItemStack> items) {
+	public static List<ItemStack> giveItemsAndGetExcess(HasPlayer player, List<ItemStack> items) {
 		List<ItemStack> excess = new ArrayList<>();
 		for (ItemStack item : items)
 			if (!isNullOrAir(item))
-				excess.addAll(player.getPlayer().getInventory().addItem(item).values());
+				excess.addAll(player.getPlayer().getInventory().addItem(item.clone()).values());
 
 		return excess;
 	}
@@ -529,20 +541,24 @@ public class PlayerUtils {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
+
 		List<ItemStack> excess;
 		boolean alwaysDeliver = offlinePlayer.getPlayer() == null || WorldGroup.get(offlinePlayer.getPlayer()) != worldGroup;
 		if (!alwaysDeliver)
-			excess = giveItemsGetExcess(offlinePlayer.getPlayer(), finalItems);
+			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
-			excess = new ArrayList<>(items);
+			excess = ItemUtils.clone(items);
 		if (Utils.isNullOrEmpty(excess)) return;
+
 		DeliveryService service = new DeliveryService();
 		DeliveryUser user = service.get(offlinePlayer);
 		DeliveryUser.Delivery delivery = DeliveryUser.Delivery.serverDelivery(excess);
 		if (!Strings.isNullOrEmpty(message))
 			delivery.setMessage(message);
+
 		user.add(worldGroup, delivery);
 		service.save(user);
+
 		String send = alwaysDeliver ? "Items have been given to you as a &c/delivery" : "Your inventory was full. Excess items were given to you as a &c/delivery";
 		user.sendMessage(JsonBuilder.fromPrefix("Delivery").next(send).command("/delivery").hover("&eClick to view deliveries"));
 	}
@@ -571,6 +587,15 @@ public class PlayerUtils {
 	 */
 	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
+	}
+
+	/**
+	 * Extension of {@link PlayerInteractEvent} used to test if a plugin like WorldGuard or LWC will block the event.
+	 */
+	public static class FakePlayerInteractEvent extends PlayerInteractEvent {
+		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
+			super(player, action, itemInHand, clickedBlock, blockFace);
+		}
 	}
 
 }
