@@ -74,7 +74,6 @@ public class Tip implements PlayerOwnedObject {
 		AUTOSORT_DEPOSIT_QUICK(1, Time.WEEK, player -> player.hasPermission("store.autosort"));
 
 		@Getter
-		@NonNull
 		private final int retryChance;
 		@Getter
 		private int cooldown;
@@ -85,7 +84,7 @@ public class Tip implements PlayerOwnedObject {
 			this.retryChance = retryChance;
 		}
 
-		TipType(@NonNull int retryChance, int cooldown) {
+		TipType(int retryChance, int cooldown) {
 			this.retryChance = retryChance;
 			this.cooldown = cooldown;
 		}

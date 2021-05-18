@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 
 import static me.pugabyte.nexus.features.store.perks.autosort.AutoSort.itemsAreSimilar;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
 public class AutoRefill implements Listener {
@@ -30,9 +32,7 @@ public class AutoRefill implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onToolBreak(PlayerItemBreakEvent event) {
 		Player player = event.getPlayer();
-		PlayerInventory inventory = player.getInventory();
-		EquipmentSlot slot = getSlotWithItemStack(inventory, event.getBrokenItem());
-
+		EquipmentSlot slot = getSlotWithItemStack(player, event.getBrokenItem());
 		tryRefillStackInHand(player, slot);
 	}
 
@@ -46,16 +46,14 @@ public class AutoRefill implements Listener {
 	public void onFertilize(BlockFertilizeEvent event) {
 		Player player = event.getPlayer();
 		if (player == null) return;
-		PlayerInventory inventory = player.getInventory();
-		EquipmentSlot slot = getSlotWithItemStack(inventory, new ItemStack(Material.BONE_MEAL));
+		EquipmentSlot slot = getSlotWithItemStack(player, new ItemStack(Material.BONE_MEAL));
 		tryRefillStackInHand(player, slot);
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onConsumeItem(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();
-		PlayerInventory inventory = player.getInventory();
-		EquipmentSlot slot = getSlotWithItemStack(inventory, event.getItem());
+		EquipmentSlot slot = getSlotWithItemStack(player, event.getItem());
 		tryRefillStackInHand(player, slot);
 	}
 
@@ -72,7 +70,8 @@ public class AutoRefill implements Listener {
 		tryRefillStackInHand(player, event.getHand());
 	}
 
-	public static EquipmentSlot getSlotWithItemStack(PlayerInventory inventory, ItemStack brokenItem) {
+	public static EquipmentSlot getSlotWithItemStack(Player player, ItemStack brokenItem) {
+		PlayerInventory inventory = player.getInventory();
 		if (itemsAreSimilar(inventory.getItemInMainHand(), brokenItem))
 			return EquipmentSlot.HAND;
 		if (itemsAreSimilar(inventory.getItemInOffHand(), brokenItem))
@@ -89,25 +88,22 @@ public class AutoRefill implements Listener {
 		if (!autoSortUser.hasFeatureEnabled(AutoSortFeature.REFILL))
 			return;
 
-		ItemStack stack;
-		int slotIndex;
-		PlayerInventory inventory = player.getInventory();
-		if (slot == EquipmentSlot.HAND) {
-			stack = inventory.getItemInMainHand();
-			slotIndex = inventory.getHeldItemSlot();
-		} else if (slot == EquipmentSlot.OFF_HAND) {
-			stack = inventory.getItemInOffHand();
-			slotIndex = 40;
-		} else {
+		EquipmentSlot handWithTool = ItemUtils.getHandWithTool(player);
+		if (handWithTool == null)
 			return;
-		}
+
+		PlayerInventory inventory = player.getInventory();
+		int slotIndex = handWithTool == EquipmentSlot.OFF_HAND ? 40 : inventory.getHeldItemSlot();
+		ItemStack stack = player.getInventory().getItem(handWithTool);
+		if (isNullOrAir(stack))
+			return;
+
+		if (stack.getAmount() != 1)
+			return;
 
 		if (new MaterialTag(MaterialTag.ALL_AIR, MaterialTag.POTIONS).isTagged(stack.getType()))
 			return;
 		if (autoSortUser.getAutoRefillExclude().contains(stack.getType()))
-			return;
-
-		if (stack.getAmount() != 1)
 			return;
 
 		Tasks.wait(2, () -> {
@@ -115,14 +111,17 @@ public class AutoRefill implements Listener {
 				return;
 
 			ItemStack currentStack = inventory.getItem(slotIndex);
-			if (currentStack != null) return;
+			if (currentStack != null)
+				return;
 
 			ItemStack bestMatchStack = null;
 			int bestMatchSlot = -1;
 			int bestMatchStackSize = Integer.MAX_VALUE;
 			for (int i = 0; i < 36; i++) {
 				ItemStack itemInSlot = inventory.getItem(i);
-				if (itemInSlot == null) continue;
+				if (isNullOrAir(itemInSlot))
+					continue;
+
 				if (itemsAreSimilar(itemInSlot, stack)) {
 					int stackSize = itemInSlot.getAmount();
 					if (stackSize < bestMatchStackSize) {
@@ -135,7 +134,8 @@ public class AutoRefill implements Listener {
 				}
 			}
 
-			if (bestMatchStack == null) return;
+			if (bestMatchStack == null)
+				return;
 
 			inventory.setItem(slotIndex, bestMatchStack);
 			inventory.clear(bestMatchSlot);
