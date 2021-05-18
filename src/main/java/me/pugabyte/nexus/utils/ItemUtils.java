@@ -268,10 +268,10 @@ public class ItemUtils {
 			int result = Integer.compare(b.getMaxStackSize(), a.getMaxStackSize());
 			if (result != 0) return result;
 
-			result = b.getType().compareTo(a.getType());
+			result = b.getRarity().compareTo(a.getRarity());
 			if (result != 0) return result;
 
-			result = Byte.compare(b.getData().getData(), a.getData().getData());
+			result = b.getType().compareTo(a.getType());
 			if (result != 0) return result;
 
 			result = Integer.compare(b.getAmount(), a.getAmount());
