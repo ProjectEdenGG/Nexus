@@ -6,6 +6,10 @@ import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.store.perks.autosort.features.AutoTool;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NoPermissionException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static eden.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
@@ -18,12 +22,13 @@ public enum AutoSortFeature {
 	DEPOSIT_ALL,
 	AUTOCRAFT,
 	AUTOTRASH,
-	AUTOTOOL(AutoTool.PERMISSION)
+	AUTOTOOL(AutoTool.PERMISSION),
 	;
 
-	private final String permission;
-	AutoSortFeature() {
-		permission = AutoSort.PERMISSION;
+	private final List<String> permissions = new ArrayList<>(List.of(AutoSort.PERMISSION));
+
+	AutoSortFeature(String... extraPermissions) {
+		permissions.addAll(Arrays.asList(extraPermissions));
 	}
 
 	@Override
@@ -32,7 +37,10 @@ public enum AutoSortFeature {
 	}
 
 	public void checkPermission(HasPlayer player) throws NoPermissionException {
-		if (!player.getPlayer().hasPermission(getPermission()))
-			throw new NoPermissionException("Purchase at https://store.projecteden.gg");
+		for (String permission : permissions)
+			if (player.getPlayer().hasPermission(permission))
+				return;
+
+		throw new NoPermissionException("Purchase at https://store.projecteden.gg");
 	}
 }
