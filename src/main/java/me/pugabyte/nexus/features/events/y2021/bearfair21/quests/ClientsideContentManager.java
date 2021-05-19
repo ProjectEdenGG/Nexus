@@ -11,7 +11,6 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.minecraft.server.v1_16_R3.EntityItemFrame;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,9 +33,8 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	public static void startup() {
-		for (Player player : BearFair21.getPlayers()) {
+		for (Player player : BearFair21.getPlayers())
 			sendSpawnItemFrames(player);
-		}
 	}
 
 	public static void shutdown() {
@@ -70,13 +68,8 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private static boolean canSee(Player player, Content content) {
-		BearFair21User user = userService.get(player.getUniqueId());
-		Location contentLocation = content.getLocation();
-		for (Location location : user.getClientsideLocations()) {
-			if (contentLocation.equals(location))
-				return true;
-		}
-		return false;
+		BearFair21User user = userService.get(player);
+		return user.getClientsideLocations().contains(content.getLocation());
 	}
 
 	@EventHandler
@@ -108,7 +101,7 @@ public class ClientsideContentManager implements Listener {
 	public static void sendSpawnItemFrames(Player player, List<Content> contentList) {
 		for (Content content : contentList) {
 			if (!content.isItemFrame()) continue;
-			if (!canSee(player, content)) return;
+			if (!canSee(player, content)) continue;
 
 			EntityItemFrame itemFrame = PacketUtils.spawnItemFrame(player, content.getLocation(), content.getBlockFace(),
 					content.getItemStack(), content.getRotation(), false, true);

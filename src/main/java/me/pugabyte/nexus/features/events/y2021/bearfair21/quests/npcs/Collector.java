@@ -41,7 +41,7 @@ public class Collector {
 	}
 
 	private static void loadLocations() {
-		Location observatory = new Location(world, -106, 157, 11);
+		Location observatory = new Location(world, -108, 157, 12);
 		Location town1 = new Location(world, -105, 139, -104);
 		Location town2 = new Location(world, -125, 149, -26);
 		Location forest = new Location(world, -39, 140, 7);

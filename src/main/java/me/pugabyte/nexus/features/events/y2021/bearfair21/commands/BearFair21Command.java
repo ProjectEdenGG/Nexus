@@ -122,6 +122,8 @@ public class BearFair21Command extends CustomCommand {
 		int count = 0;
 		if (category == null) {
 			user.getClientsideLocations().clear();
+			userService.save(user);
+
 			send("removed all locations from " + user.getNickname());
 			return;
 		} else {
@@ -143,7 +145,7 @@ public class BearFair21Command extends CustomCommand {
 	@Path("clientside add <category> [player]")
 	void clientsideAddAll(ContentCategory category, @Arg("self") Player player) {
 
-		BearFair21User user = userService.get(player.getUniqueId());
+		BearFair21User user = userService.get(player);
 		Set<Location> locations = user.getClientsideLocations();
 		List<Content> newContent = new ArrayList<>();
 

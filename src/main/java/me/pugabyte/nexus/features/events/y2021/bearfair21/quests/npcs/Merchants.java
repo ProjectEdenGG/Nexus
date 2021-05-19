@@ -127,7 +127,8 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(new ItemStack(Material.ELYTRA))
 							.ingredient(goldNugget.clone().amount(1)));
-					this.addAll(Collector.getRandomTrades());
+					if (!Utils.isNullOrEmpty(Collector.getRandomTrades()))
+						this.addAll(Collector.getRandomTrades());
 				}};
 			}
 		},
