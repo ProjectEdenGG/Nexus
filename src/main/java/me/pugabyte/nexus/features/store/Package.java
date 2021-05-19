@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.commands.AutoTorchCommand;
 import me.pugabyte.nexus.features.store.annotations.Category;
+import me.pugabyte.nexus.features.store.annotations.Category.StoreCategory;
 import me.pugabyte.nexus.features.store.annotations.Commands.Command;
 import me.pugabyte.nexus.features.store.annotations.Consumers.Consumer;
 import me.pugabyte.nexus.features.store.annotations.ExpirationCommands.ExpirationCommand;
@@ -34,164 +35,191 @@ public enum Package {
 	CUSTOM_DONATION,
 
 	@Id("4425727")
+	@Category(StoreCategory.CHAT)
 	@Permission("nickname.use")
 	NICKNAME_LIFETIME,
 
 	@Id("4425728")
+	@Category(StoreCategory.CHAT)
 	@Permission("nickname.use")
 	@ExpirationDays(30)
 	@ExpirationCommand("nickname expire [player]")
 	NICKNAME_ONE_MONTH,
 
 	@Id("1922887")
+	@Category(StoreCategory.CHAT)
 	@Permission("set.my.prefix")
 	CUSTOM_PREFIX_LIFETIME,
 
 	@Id("2730030")
+	@Category(StoreCategory.CHAT)
 	@Permission("set.my.prefix")
 	@ExpirationDays(30)
 	@ExpirationCommand("prefix expire [player]")
 	CUSTOM_PREFIX_ONE_MONTH,
 
 	@Id("2019251")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("store.autosort")
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("store.autosort")
 	@ExpirationDays(30)
 	AUTO_SORT_ONE_MONTH,
 
 	@Id("4471430")
+	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoTorchCommand.PERMISSION)
 	@Consumer(PackageConsumers.AUTO_TORCH)
 	AUTO_TORCH,
 
 	@Id("2965488")
+	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
 	CUSTOM_JOIN_QUIT_MESSAGES_LIFETIME,
 
 	@Id("2965489")
+	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
 	@ExpirationDays(30)
 	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
 
 	@Id("3239567")
+	@Category(StoreCategory.CHAT)
 	@Permission("emoticons.use")
 	EMOTES,
 
 	@Id("3218615")
+	@Category(StoreCategory.VISUALS)
 	@Permission("wings.use")
 	@Permission("wings.style.*")
 	PARTICLE_WINGS,
 
 	@Id("2019259")
+	@Category(StoreCategory.INVENTORY)
 	@Command("/permhelper vaults add [player] 1")
 	VAULTS,
 
 	@Id("4365867")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("workbench")
 	WORKBENCH,
 
 	@Id("2019261")
+	@Category(StoreCategory.MISC)
 	@Command("/permhelper homes add [player] 5")
 	FIVE_SETHOMES,
 
 	@Id("2559650")
+	@Category(StoreCategory.VISUALS)
 	@PermissionGroup("store.npc")
 	@Command("/permhelper npcs add [player] 1")
 	NPC,
 
 	@Id("2019264")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("essentials.skull")
 	DONOR_SKULL,
 
 	@Id("2496109")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("essentials.hat")
 	HAT,
 
 	@Id("2019265")
+	@Category(StoreCategory.VISUALS)
 	@Permission("essentials.ptime")
 	PTIME,
 
 	@Id("2559439")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("itemname.use")
 	ITEM_NAME,
 
 	@Id("4158709")
+	@Category(StoreCategory.VISUALS)
 	@Permission("entityname.use")
 	ENTITY_NAME,
 
 	@Id("2495885")
+	@Category(StoreCategory.VISUALS)
 	@Permission("firework.launch")
 	FIREWORKS,
 
 	@Id("2678902")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("fireworkbow.single")
 	FIREWORK_BOW_SINGLE,
 
 	@Id("2678893")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("fireworkbow.infinite")
 	FIREWORK_BOW_INFINITE,
 
 	@Id("2495909")
+	@Category(StoreCategory.MISC)
 	@Command("/permhelper plots add [player] 1")
 	CREATIVE_PLOTS,
 
 	@Id("2495900")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("rainbowarmor.use")
 	RAINBOW_ARMOR,
 
 	@Id("2886239")
+	@Category(StoreCategory.INVENTORY)
 	@Permission("invisiblearmor.use")
 	INVISIBLE_ARMOR,
 
 	@Id("2856645")
+	@Category(StoreCategory.VISUALS)
 	@Permission("rainbow.beacon")
 	RAINBOW_BEACON,
 
 	@Id("2495867")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.farm")
 	PETS_FARM,
 
 	@Id("2495869")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.cuties")
 	PETS_CUTIES,
 
 	@Id("2495876")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.natives")
 	PETS_NATIVES,
 
 	@Id("3919092")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.aquatic")
 	PETS_AQUATIC,
 
 	@Id("2495873")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.nether")
 	PETS_NETHER,
 
 	@Id("2495872")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.monsters")
 	PETS_MONSTERS,
 
 	@Id("2495871")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.mounts")
 	PETS_MOUNTS,
 
 	@Id("2495870")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.other")
 	PETS_OTHER,
 
 	@Id("2496219")
-	@Category("Pets")
+	@Category(StoreCategory.PETS)
 	@Permission("miniaturepets.pet.BB8")
 	@Permission("miniaturepets.pet.Bee")
 	@Permission("miniaturepets.pet.Boxer")
@@ -267,42 +295,42 @@ public enum Package {
 	// setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setSelfDisguiseVisible.setBaby.setBurning
 
 	@Id("2495938")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.farm")
 	DISGUISES_FARM,
 
 	@Id("2495940")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.cuties")
 	DISGUISES_CUTIES,
 
 	@Id("2495948")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.natives")
 	DISGUISES_NATIVES,
 
 	@Id("3919103")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.aquatic")
 	DISGUISES_AQUATIC,
 
 	@Id("2495945")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.nether")
 	DISGUISES_NETHER,
 
 	@Id("2495944")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.monsters")
 	DISGUISES_MONSTERS,
 
 	@Id("2495942")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.mounts")
 	DISGUISES_MOUNTS,
 
 	@Id("2495941")
-	@Category("Disguises")
+	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.other")
 	DISGUISES_OTHER;
 
@@ -315,7 +343,7 @@ public enum Package {
 		return getField().getAnnotation(Id.class).value();
 	}
 
-	public String getCategory() {
+	public StoreCategory getCategory() {
 		Category annotation = getField().getAnnotation(Category.class);
 		return annotation == null ? null : annotation.value();
 	}

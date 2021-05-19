@@ -36,10 +36,9 @@ public class StoreCommand extends CustomCommand {
 	}
 
 	@Path
-	void donate() {
+	void store() {
 		line();
-		send("&3Enjoying the server? &3Share the love by &edonating&3! We are always extremely grateful for donations, " +
-				"and they come with some cool &erewards&3!");
+		send("&eEnjoying the server and want to support us?");
 		line();
 		send(json().next("&3Visit our store: &ehttps://store.projecteden.gg"));
 		line();
@@ -50,12 +49,11 @@ public class StoreCommand extends CustomCommand {
 	@Path("tac")
 	void tac() {
 		line();
-		send("&3Before you donate on the server, here are some things you must know before you do so.");
-		send(PLUS + "There are no refunds.");
-		send(PLUS + "If you are under the age of eighteen, be sure to have a parent or guardians permission.");
-		send(PLUS + "None of the money that is donated goes to a Staff member personally. The money is for improving " +
-				"the server only.");
-		send(PLUS + "Just because you donate does not mean you can not be banned.");
+		send("&3Before you donate on the server, here are some things you must know before you do so");
+		send(PLUS + "There are no refunds");
+		send(PLUS + "If you are under the age of eighteen, be sure to have a parent or guardians permission");
+		send(PLUS + "None of the money that is donated goes to a Staff member personally. The money is for improving the server only");
+		send(PLUS + "Just because you donate does not mean you can not be banned");
 	}
 
 	public static String generateCouponCode() {

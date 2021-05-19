@@ -10,6 +10,7 @@ import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.store.Package;
+import me.pugabyte.nexus.features.store.annotations.Category.StoreCategory;
 import me.pugabyte.nexus.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
@@ -35,12 +36,13 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static eden.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -121,9 +123,9 @@ public class Leaderboards implements Listener {
 					String name = "";
 					Package purchasedPackage = Package.getPackage(purchase.getPackageId());
 					if (purchasedPackage != null) {
-						String category = purchasedPackage.getCategory();
-						if (!isNullOrEmpty(category))
-							name += category + " - ";
+						StoreCategory category = purchasedPackage.getCategory();
+						if (List.of(StoreCategory.PETS, StoreCategory.DISGUISES).contains(category))
+							name += camelCase(category) + " - ";
 					}
 
 					name += purchase.getPackageName().split("\\[")[0].trim();
