@@ -129,9 +129,9 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && mainHand.getType() == material)
+		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return EquipmentSlot.HAND;
-		else if (!isNullOrAir(offHand) && offHand.getType() == material)
+		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return EquipmentSlot.OFF_HAND;
 		return null;
 	}
