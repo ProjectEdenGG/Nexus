@@ -48,6 +48,8 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag SHULKER_BOXES = new MaterialTag("_SHULKER_BOX", MatchMode.SUFFIX).append(SHULKER_BOX);
 	public static final MaterialTag BOOKS = new MaterialTag("BOOK", MatchMode.CONTAINS);
 	public static final MaterialTag ALL_QUARTZ = new MaterialTag("QUARTZ", MatchMode.CONTAINS).exclude(QUARTZ, NETHER_QUARTZ_ORE);
+	public static final MaterialTag ALL_GLASS = new MaterialTag("GLASS", MatchMode.CONTAINS);
+
 
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, ALL_BANNERS,
 			ALL_STAINED_GLASS, ALL_TERRACOTTAS, ALL_CONCRETES, SHULKER_BOXES);

@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSort;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
+import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -59,6 +60,9 @@ public class AutoTool implements Listener {
 
 	@Nullable
 	private ItemStack getBestTool(List<ItemStack> items, Block block) {
+		if (MaterialTag.ALL_GLASS.isTagged(block.getType()))
+			return null;
+
 		return Collections.max(items, Comparator.comparingDouble(item -> {
 			if (isNullOrAir(item))
 				return 0;
