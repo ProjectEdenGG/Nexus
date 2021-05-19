@@ -237,29 +237,24 @@ public class Backpacks extends FunctionalRecipe {
 
 		public void saveContents(ItemStack[] contents) {
 			BlockStateMeta blockStateMeta = null;
+			ItemStack[] inv = player.getInventory().getContents();
 			ItemStack itemStack = null;
-			try {
-				blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
-				itemStack = backpack;
-			} catch (Exception ignore) {
-				ItemStack[] inv = player.getInventory().getContents();
-				for (int i = 0; i < 36; i++) {
-					ItemStack item = inv[i];
-					if (!isBackpack(item)) continue;
-					if (new NBTItem(item.clone()).getString("BackpackId").equals(backpackId)) {
-						blockStateMeta = (BlockStateMeta) item.getItemMeta();
-						itemStack = item;
-						break;
-					}
+			for (int i = 0; i < 36; i++) {
+				ItemStack item = inv[i];
+				if (!isBackpack(item)) continue;
+				if (new NBTItem(item.clone()).getString("BackpackId").equals(backpackId)) {
+					blockStateMeta = (BlockStateMeta) item.getItemMeta();
+					itemStack = item;
+					break;
 				}
-				if (blockStateMeta == null) {
-					Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
-					Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
-					Nexus.warn("Old Contents: " + StringUtils.paste(SerializationUtils.JSON.toString(SerializationUtils.JSON.serialize(Arrays.asList(originalItems)))));
-					Nexus.warn("New Contents: " + StringUtils.paste(SerializationUtils.JSON.toString(SerializationUtils.JSON.serialize(Arrays.asList(contents)))));
-					PlayerUtils.send(player,"&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
-					return;
-				}
+			}
+			if (blockStateMeta == null) {
+				Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
+				Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
+				Nexus.warn("Old Contents: " + StringUtils.paste(SerializationUtils.JSON.toString(SerializationUtils.JSON.serialize(Arrays.asList(originalItems)))));
+				Nexus.warn("New Contents: " + StringUtils.paste(SerializationUtils.JSON.toString(SerializationUtils.JSON.serialize(Arrays.asList(contents)))));
+				PlayerUtils.send(player,"&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
+				return;
 			}
 
 			ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
