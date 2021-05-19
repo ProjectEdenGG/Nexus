@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.particles.WingsCommand;
 import me.pugabyte.nexus.features.store.annotations.Category;
 import me.pugabyte.nexus.features.store.annotations.Category.StoreCategory;
 import me.pugabyte.nexus.features.store.annotations.Commands.Command;
+import me.pugabyte.nexus.features.store.annotations.Display;
 import me.pugabyte.nexus.features.store.annotations.ExpirationCommands.ExpirationCommand;
 import me.pugabyte.nexus.features.store.annotations.ExpirationDays;
 import me.pugabyte.nexus.features.store.annotations.Id;
@@ -37,6 +38,7 @@ import me.pugabyte.nexus.models.contributor.Contributor;
 import me.pugabyte.nexus.models.contributor.ContributorService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LuckPermsUtils;
 import me.pugabyte.nexus.utils.LuckPermsUtils.GroupChange;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
@@ -44,6 +46,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,6 +60,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static eden.utils.StringUtils.camelCase;
 
 public enum Package {
 
@@ -66,6 +70,7 @@ public enum Package {
 	@Id("4425727")
 	@Category(StoreCategory.CHAT)
 	@Permission(NicknameCommand.PERMISSION)
+	@Display(Material.NAME_TAG)
 	NICKNAME_LIFETIME,
 
 	@Id("4425728")
@@ -73,11 +78,13 @@ public enum Package {
 	@Permission(NicknameCommand.PERMISSION)
 	@ExpirationDays(30)
 	@ExpirationCommand("nickname expire [player]")
+	@Display(Material.NAME_TAG)
 	NICKNAME_ONE_MONTH,
 
 	@Id("1922887")
 	@Category(StoreCategory.CHAT)
 	@Permission(PrefixCommand.PERMISSION)
+	@Display(Material.OAK_SIGN)
 	CUSTOM_PREFIX_LIFETIME,
 
 	@Id("2730030")
@@ -85,22 +92,26 @@ public enum Package {
 	@Permission(PrefixCommand.PERMISSION)
 	@ExpirationDays(30)
 	@ExpirationCommand("prefix expire [player]")
+	@Display(Material.OAK_SIGN)
 	CUSTOM_PREFIX_ONE_MONTH,
 
 	@Id("2019251")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoSortCommand.PERMISSION)
+	@Display(Material.HOPPER)
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoSortCommand.PERMISSION)
 	@ExpirationDays(30)
+	@Display(Material.HOPPER)
 	AUTO_SORT_ONE_MONTH,
 
 	@Id("4471430")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoTorchCommand.PERMISSION)
+	@Display(Material.TORCH)
 	AUTO_TORCH {
 		@Override
 		public void handleApply(HasUniqueId uuid) {
@@ -114,12 +125,14 @@ public enum Package {
 	@Id("2965488")
 	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
+	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
 	CUSTOM_JOIN_QUIT_MESSAGES_LIFETIME,
 
 	@Id("2965489")
 	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
 	@ExpirationDays(30)
+	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
 	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
 
 	@Id("3239567")
@@ -131,11 +144,13 @@ public enum Package {
 	@Category(StoreCategory.VISUALS)
 	@Permission(WingsCommand.PERMISSION)
 	@Permission("wings.style.*")
+	@Display(Material.ELYTRA)
 	PARTICLE_WINGS,
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
 	@Command("/permhelper vaults add [player] 1")
+	@Display(Material.ENDER_CHEST)
 	VAULTS {
 		@Override
 		public int count(OfflinePlayer player) {
@@ -151,11 +166,13 @@ public enum Package {
 	@Id("4365867")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(WorkbenchCommand.PERMISSION)
+	@Display(Material.CRAFTING_TABLE)
 	WORKBENCH,
 
 	@Id("2019261")
 	@Category(StoreCategory.MISC)
 	@Command("/permhelper homes add [player] 5")
+	@Display(Material.CYAN_BED)
 	EXTRA_SETHOMES {
 		@Override
 		public int count(OfflinePlayer player) {
@@ -172,6 +189,7 @@ public enum Package {
 	@Category(StoreCategory.VISUALS)
 	@PermissionGroup("store.npc")
 	@Command("/permhelper npcs add [player] 1")
+	@Display(Material.ARMOR_STAND)
 	NPC {
 		@Override
 		public int count(OfflinePlayer player) {
@@ -187,47 +205,56 @@ public enum Package {
 	@Id("2019264")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(DonorSkullCommand.PERMISSION)
+	@Display(Material.PLAYER_HEAD)
 	DONOR_SKULL,
 
 	@Id("2496109")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(HatCommand.PERMISSION)
+	@Display(Material.DIAMOND_HELMET)
 	HAT,
 
 	@Id("2019265")
 	@Category(StoreCategory.VISUALS)
 	@Permission(PlayerTimeCommand.PERMISSION)
+	@Display(Material.DAYLIGHT_DETECTOR)
 	PTIME,
 
 	@Id("2559439")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(ItemNameCommand.PERMISSION)
+	@Display(Material.ANVIL)
 	ITEM_NAME,
 
 	@Id("4158709")
 	@Category(StoreCategory.VISUALS)
 	@Permission(EntityNameCommand.PERMISSION)
+	@Display(Material.NAME_TAG)
 	ENTITY_NAME,
 
 	@Id("2495885")
 	@Category(StoreCategory.VISUALS)
 	@Permission(FireworkCommand.PERMISSION)
+	@Display(Material.FIREWORK_ROCKET)
 	FIREWORKS,
 
 	@Id("2678902")
 	@Category(StoreCategory.INVENTORY)
 	@Permission("fireworkbow.single")
+	@Display(Material.BOW)
 	FIREWORK_BOW_SINGLE,
 
 	@Id("2678893")
 	@Category(StoreCategory.INVENTORY)
 	@Permission("fireworkbow.infinite")
+	@Display(Material.BOW)
 	FIREWORK_BOW_INFINITE,
 
 	@Id("2495909")
 	@Category(StoreCategory.MISC)
 	@Command("/permhelper plots add [player] 1")
 	@World("creative")
+	@Display(Material.WOODEN_AXE)
 	CREATIVE_PLOTS {
 		@Override
 		public int count(OfflinePlayer player) {
@@ -243,60 +270,72 @@ public enum Package {
 	@Id("2495900")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(RainbowArmorCommand.PERMISSION)
+	@Display(Material.LEATHER_CHESTPLATE)
 	RAINBOW_ARMOR,
 
 	@Id("2886239")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(InvisibleArmorCommand.PERMISSION)
+	@Display(Material.CHAINMAIL_CHESTPLATE)
 	INVISIBLE_ARMOR,
 
 	@Id("2856645")
 	@Category(StoreCategory.VISUALS)
 	@Permission(RainbowBeaconCommand.PERMISSION)
+	@Display(Material.BEACON)
 	RAINBOW_BEACON,
 
 	@Id("2495867")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.farm")
+	@Display(Material.CHICKEN_SPAWN_EGG)
 	PETS_FARM,
 
 	@Id("2495869")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.cuties")
+	@Display(Material.WOLF_SPAWN_EGG)
 	PETS_CUTIES,
 
 	@Id("2495876")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.natives")
+	@Display(Material.VILLAGER_SPAWN_EGG)
 	PETS_NATIVES,
 
 	@Id("3919092")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.aquatic")
+	@Display(Material.DOLPHIN_SPAWN_EGG)
 	PETS_AQUATIC,
 
 	@Id("2495873")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.nether")
+	@Display(Material.ZOMBIFIED_PIGLIN_SPAWN_EGG)
 	PETS_NETHER,
 
 	@Id("2495872")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.monsters")
+	@Display(Material.ZOMBIE_SPAWN_EGG)
 	PETS_MONSTERS,
 
 	@Id("2495871")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.mounts")
+	@Display(Material.HORSE_SPAWN_EGG)
 	PETS_MOUNTS,
 
 	@Id("2495870")
 	@Category(StoreCategory.PETS)
 	@PermissionGroup("store.pets.other")
+	@Display(Material.SLIME_SPAWN_EGG)
 	PETS_OTHER,
 
 	@Id("2496219")
 	@Category(StoreCategory.PETS)
+	@Display(Material.ARMOR_STAND)
 	@Permission("miniaturepets.pet.BB8")
 	@Permission("miniaturepets.pet.Bee")
 	@Permission("miniaturepets.pet.Boxer")
@@ -374,41 +413,49 @@ public enum Package {
 	@Id("2495938")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.farm")
+	@Display(Material.CHICKEN_SPAWN_EGG)
 	DISGUISES_FARM,
 
 	@Id("2495940")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.cuties")
+	@Display(Material.WOLF_SPAWN_EGG)
 	DISGUISES_CUTIES,
 
 	@Id("2495948")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.natives")
+	@Display(Material.VILLAGER_SPAWN_EGG)
 	DISGUISES_NATIVES,
 
 	@Id("3919103")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.aquatic")
+	@Display(Material.DOLPHIN_SPAWN_EGG)
 	DISGUISES_AQUATIC,
 
 	@Id("2495945")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.nether")
+	@Display(Material.ZOMBIFIED_PIGLIN_SPAWN_EGG)
 	DISGUISES_NETHER,
 
 	@Id("2495944")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.monsters")
+	@Display(Material.ZOMBIE_SPAWN_EGG)
 	DISGUISES_MONSTERS,
 
 	@Id("2495942")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.mounts")
+	@Display(Material.HORSE_SPAWN_EGG)
 	DISGUISES_MOUNTS,
 
 	@Id("2495941")
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.other")
+	@Display(Material.SLIME_SPAWN_EGG)
 	DISGUISES_OTHER;
 
 	public void handleApply(HasUniqueId uuid) {}
@@ -445,6 +492,19 @@ public enum Package {
 	@NotNull
 	public String getId() {
 		return getField().getAnnotation(Id.class).value();
+	}
+
+	@NotNull
+	public ItemBuilder getDisplayItem() {
+		Display annotation = getField().getAnnotation(Display.class);
+		Material material = Material.PAPER;;
+		int customModelData = 0;;
+		if (annotation != null) {
+			material = annotation.value();
+			customModelData = annotation.customModelData();
+		}
+
+		return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name()));
 	}
 
 	@Nullable
