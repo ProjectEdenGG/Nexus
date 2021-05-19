@@ -1,8 +1,9 @@
 package me.pugabyte.nexus.features.store.perks.stattrack.models;
 
 import lombok.Getter;
-import me.pugabyte.nexus.features.store.perks.stattrack.models.Tool.ToolGroup;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Tool;
+import me.pugabyte.nexus.utils.Tool.ToolGroup;
 import org.bukkit.Material;
 
 import java.util.ArrayList;

@@ -3,12 +3,12 @@ package me.pugabyte.nexus.features.store.perks.stattrack;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.store.perks.stattrack.models.Stat;
 import me.pugabyte.nexus.features.store.perks.stattrack.models.StatItem;
-import me.pugabyte.nexus.features.store.perks.stattrack.models.Tool;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.Tool;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 

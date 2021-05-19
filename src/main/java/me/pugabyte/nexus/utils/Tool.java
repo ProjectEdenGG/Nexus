@@ -1,18 +1,14 @@
-package me.pugabyte.nexus.features.store.perks.stattrack.models;
+package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
 
+// Order of this enum is important, please do not change it arbitrarily
 public enum Tool {
-	BOW(Material.BOW),
-	CROSSBOW(Material.CROSSBOW),
-	SHIELD(Material.SHIELD),
-	SHEARS(Material.SHEARS),
-	FISHING_ROD(Material.FISHING_ROD),
-	TRIDENT(Material.TRIDENT),
 	SWORD(
 			Material.WOODEN_SWORD,
 			Material.STONE_SWORD,
@@ -53,6 +49,12 @@ public enum Tool {
 			Material.DIAMOND_HOE,
 			Material.NETHERITE_HOE
 	),
+	SHEARS(Material.SHEARS),
+	BOW(Material.BOW),
+	CROSSBOW(Material.CROSSBOW),
+	TRIDENT(Material.TRIDENT),
+	SHIELD(Material.SHIELD),
+	FISHING_ROD(Material.FISHING_ROD),
 	HELMET(
 			Material.TURTLE_HELMET,
 			Material.LEATHER_HELMET,
@@ -92,6 +94,18 @@ public enum Tool {
 
 	Tool(Material... tools) {
 		this.tools = Arrays.asList(tools);
+	}
+
+	public static Tool of(ItemStack item) {
+		return of(item.getType());
+	}
+
+	public static Tool of(Material material) {
+		for (Tool tool : values())
+			if (tool.getTools().contains(material))
+				return tool;
+
+		return null;
 	}
 
 	public enum ToolGroup {

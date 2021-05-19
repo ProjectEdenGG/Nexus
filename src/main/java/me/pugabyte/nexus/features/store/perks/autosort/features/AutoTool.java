@@ -4,7 +4,9 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSort;
 import me.pugabyte.nexus.features.store.perks.autosort.AutoSortFeature;
 import me.pugabyte.nexus.models.autosort.AutoSortUser;
+import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Tool;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,22 +63,33 @@ public class AutoTool implements Listener {
 
 	@Nullable
 	private ItemStack getBestTool(List<ItemStack> items, Block block) {
-		if (MaterialTag.ALL_GLASS.isTagged(block.getType()))
-			return null;
+		List<ItemStack> itemStacks = new ArrayList<>(items);
+		itemStacks.add(null);
 
-		return Collections.max(items, Comparator.comparingDouble(item -> {
+		return Collections.max(itemStacks, Comparator.comparingDouble(item -> {
 			if (isNullOrAir(item))
 				return 0;
+
 			if (!block.isValidTool(item))
-				return 0;
+				return -1;
+
+			if (MaterialTag.ALL_GLASS.isTagged(block.getType())) {
+				if (item.containsEnchantment(Enchant.SILK_TOUCH)) {
+					Tool tool = Tool.of(item);
+					return (Tool.values().length - tool.ordinal()) + tool.getTools().indexOf(item.getType());
+				}
+
+				return -1;
+			}
+
 			if (item.getType().name().contains("GOLDEN"))
-				return 0;
+				return -1;
 
 			float speed = block.getDestroySpeed(item);
 			if (speed > 1)
 				return speed;
 
-			return 0;
+			return -1;
 		}));
 	}
 

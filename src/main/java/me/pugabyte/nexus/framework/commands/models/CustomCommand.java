@@ -801,6 +801,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@TabCompleterFor(ChatColor.class)
 	List<String> tabCompleteChatColor(String filter) {
 		return Arrays.stream(ChatColor.values())
+				.filter(color -> color.getColor() != null)
 				.map(ChatColor::getName)
 				.filter(name -> name.startsWith(filter.toLowerCase()))
 				.collect(toList());
