@@ -94,9 +94,11 @@ public class AutoRefill implements Listener {
 
 		PlayerInventory inventory = player.getInventory();
 		int slotIndex = handWithTool == EquipmentSlot.OFF_HAND ? 40 : inventory.getHeldItemSlot();
-		ItemStack stack = player.getInventory().getItem(handWithTool);
-		if (isNullOrAir(stack))
+		ItemStack tool = player.getInventory().getItem(handWithTool);
+		if (isNullOrAir(tool))
 			return;
+
+		ItemStack stack = tool.clone();
 
 		if (stack.getAmount() != 1)
 			return;
