@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 
-import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
@@ -21,7 +20,7 @@ import java.util.List;
 
 public class Collector {
 	@Getter
-	public static List<TradeBuilder> randomTrades = getRandomTrades();
+	public static List<TradeBuilder> randomTrades = new ArrayList<>();
 	@Getter
 	public static Location currentLoc = null;
 	private static NPC npc = null;
@@ -34,6 +33,7 @@ public class Collector {
 	public static void startup() {
 		loadLocations();
 		loadTrades();
+		newTrades();
 
 		npc = BearFair21NPC.COLLECTOR.getNPC();
 		if (npc != null)
@@ -153,12 +153,16 @@ public class Collector {
 
 	private static void newTrades() {
 		List<TradeBuilder> choices = new ArrayList<>(possibleTrades);
+		if (randomTrades == null)
+			randomTrades = new ArrayList<>();
+
 		// Remove current trades from choices
-		if (!Utils.isNullOrEmpty(randomTrades)) {
+		if (!randomTrades.isEmpty()) {
 			for (TradeBuilder trade : randomTrades)
 				choices.remove(trade);
 			randomTrades.clear();
 		}
+
 		// Pick new trades
 		for (int i = 0; i < 4; i++) {
 			TradeBuilder random = RandomUtils.randomElement(choices);
