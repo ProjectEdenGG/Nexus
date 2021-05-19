@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.store.perks;
 
 import me.pugabyte.nexus.features.chat.Emotes;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -13,6 +14,7 @@ import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
 
+import java.util.List;
 import java.util.regex.Matcher;
 
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
@@ -70,10 +72,10 @@ public class PrefixCommand extends CustomCommand {
 		send(PREFIX + "Your prefix has been set to &8&l[&f" + input + "&8&l]");
 	}
 
-	@Path("gradient <color1> <color2> <prefix...>")
+	@Path("gradient <colors> <prefix...>")
 	@Permission("set.my.prefix")
-	void gradient(ChatColor color1, ChatColor color2, String input) {
-		prefix(Gradient.of(color1, color2).apply(input));
+	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+		prefix(Gradient.of(colors).apply(input));
 	}
 
 	@Path("rainbow <prefix...>")

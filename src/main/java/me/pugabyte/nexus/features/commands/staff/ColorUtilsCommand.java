@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands.staff;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -54,9 +55,9 @@ ColorUtilsCommand extends CustomCommand {
 		send(StringUtils.getLastColor(message) + "Last color");
 	}
 
-	@Path("gradient <color1> <color2> <input>")
-	void gradient(ChatColor color1, ChatColor color2, String input) {
-		send(Gradient.of(color1, color2).apply(input));
+	@Path("gradient <colors> <input>")
+	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+		send(Gradient.of(colors).apply(input));
 	}
 
 	@Path("rainbow <input>")

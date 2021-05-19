@@ -17,6 +17,8 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 import static me.pugabyte.nexus.utils.StringUtils.applyFormattingToAll;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -60,10 +62,9 @@ public class EntityNameCommand extends CustomCommand {
 		}
 	}
 
-	@Path("gradient <color1> <color2> <name...>")
+	@Path("gradient <colors> <name...>")
 	void gradient(
-			ChatColor color1,
-			ChatColor color2,
+			@Arg(type = ChatColor.class) List<ChatColor> colors,
 			@Arg(max = 17) String input,
 			@Switch boolean bold,
 			@Switch boolean strikethrough,
@@ -71,7 +72,7 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean italic,
 			@Switch boolean magic
 	) {
-		name(Gradient.of(color1, color2).apply(input), bold, strikethrough, underline, italic, magic);
+		name(Gradient.of(colors).apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
 	@Path("rainbow <name...>")

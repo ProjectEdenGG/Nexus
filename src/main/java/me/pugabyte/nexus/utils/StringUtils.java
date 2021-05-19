@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -321,23 +322,53 @@ public class StringUtils extends eden.utils.StringUtils {
 	@RequiredArgsConstructor
 	public static class Gradient {
 		@NonNull
-		private final ChatColor color1, color2;
+		private final List<ChatColor> colors;
 
-		public static Gradient of(ChatColor color1, ChatColor color2) {
-			return new Gradient(color1, color2);
+		public static Gradient of(List<ChatColor> colors) {
+			return new Gradient(colors);
 		}
 
 		public String apply(String text) {
-			int l = text.length();
-			StringBuilder builder = new StringBuilder();
-			for (int i = 0; i < l; i++) {
-				builder.append(ChatColor.of(new Color(
-						(color1.getColor().getRed() + (i * (1F / l) * (color2.getColor().getRed() - color1.getColor().getRed()))) / 255,
-						(color1.getColor().getGreen() + (i * (1F / l) * (color2.getColor().getGreen() - color1.getColor().getGreen()))) / 255,
-						(color1.getColor().getBlue() + (i * (1F / l) * (color2.getColor().getBlue() - color1.getColor().getBlue()))) / 255
-				)));
-				builder.append(text.charAt(i));
+			int count = colors.size();
+			if (count == 0)
+				return text;
+			if (count == 1)
+				return colors.get(0) + text;
+
+			int groups = count - 1;
+			int groupLength = text.length() / groups;
+			List<String> parts = new ArrayList<>();
+			for (int i = 0; i < groups; i++) {
+				int start = i * groupLength;
+				int end = start + groupLength;
+				if (i == groups - 1)
+					end = text.length();
+				parts.add(text.substring(start, end));
 			}
+
+			Iterator<ChatColor> iterator = colors.iterator();
+			ChatColor color1;
+			ChatColor color2 = iterator.next();
+
+			StringBuilder builder = new StringBuilder();
+
+			for (int i = 0; i < groups; i++) {
+				color1 = color2;
+				color2 = iterator.next();
+
+				String part = parts.get(i);
+
+				int l = part.length();
+				for (int j = 0; j < l; j++) {
+					builder.append(ChatColor.of(new Color(
+							(color1.getColor().getRed() + (j * (1F / l) * (color2.getColor().getRed() - color1.getColor().getRed()))) / 255,
+							(color1.getColor().getGreen() + (j * (1F / l) * (color2.getColor().getGreen() - color1.getColor().getGreen()))) / 255,
+							(color1.getColor().getBlue() + (j * (1F / l) * (color2.getColor().getBlue() - color1.getColor().getBlue()))) / 255
+					)));
+					builder.append(part.charAt(j));
+				}
+			}
+
 			return builder.toString();
 		}
 	}

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.store.perks;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
@@ -12,6 +13,8 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
+
+import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.applyFormattingToAll;
 
@@ -41,10 +44,9 @@ public class ItemNameCommand extends CustomCommand {
 		ItemBuilder.setName(getToolRequired(), applyFormattingToAll(input, bold, strikethrough, underline, italic, magic));
 	}
 
-	@Path("gradient <color1> <color2> <name...>")
+	@Path("gradient <colors> <name...>")
 	void gradient(
-			ChatColor color1,
-			ChatColor color2,
+			@Arg(type = ChatColor.class) List<ChatColor> colors,
 			String input,
 			@Switch boolean bold,
 			@Switch boolean strikethrough,
@@ -53,7 +55,7 @@ public class ItemNameCommand extends CustomCommand {
 			@Switch boolean magic
 	) {
 		verify(input);
-		name(Gradient.of(color1, color2).apply(input), bold, strikethrough, underline, italic, magic);
+		name(Gradient.of(colors).apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
 	@Path("rainbow <name...>")
