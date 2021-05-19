@@ -31,10 +31,20 @@ public class AutoTorch extends Feature {
 				GameModeWrapper gameMode = GameModeWrapper.of(player);
 				// basic checks to ensure player can use the command and is in survival + the survival world.
 				// also checks world guard to avoid spam in player's chat of "hey! you can't do that here"
-				if (!gameMode.canBuild() || !WorldGroup.SURVIVAL.contains(player.getWorld()) || !player.hasPermission(AutoTorchCommand.PERMISSION) || !WorldGuardFlagUtils.canPlace(player)) return;
+				if (!gameMode.canBuild())
+					return;
+				if (!WorldGroup.SURVIVAL.contains(player.getWorld()))
+					return;
+				if (!player.hasPermission(AutoTorchCommand.PERMISSION))
+					return;
+				if (!WorldGuardFlagUtils.canPlace(player))
+					return;
 
 				// ensures the player has a torch
-				ItemStack item = PlayerUtils.getNonNullInventoryContents(player).stream().filter(itemStack -> itemStack.getType() == Material.TORCH && itemStack.getAmount() > 0).findAny().orElse(null);
+				ItemStack item = PlayerUtils.getNonNullInventoryContents(player).stream()
+						.filter(itemStack -> itemStack.getType() == Material.TORCH && itemStack.getAmount() > 0)
+						.findAny()
+						.orElse(null);
 				if (item == null) return;
 
 				AutoTorchUser autoTorchUser = service.get(player);

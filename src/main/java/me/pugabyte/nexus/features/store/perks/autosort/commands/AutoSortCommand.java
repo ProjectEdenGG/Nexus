@@ -25,6 +25,7 @@ import java.util.List;
 
 @NoArgsConstructor
 public class AutoSortCommand extends CustomCommand implements Listener {
+	public static final String PERMISSION = "store.autosort";
 	private final AutoSortUserService service = new AutoSortUserService();
 	private AutoSortUser user;
 

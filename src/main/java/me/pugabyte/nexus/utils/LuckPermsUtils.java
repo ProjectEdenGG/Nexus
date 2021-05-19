@@ -3,15 +3,74 @@ package me.pugabyte.nexus.utils;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
+import me.pugabyte.nexus.Nexus;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.model.group.GroupManager;
+import net.luckperms.api.model.user.User;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 
 public class LuckPermsUtils {
+
+	private static LuckPerms lp() {
+		return Nexus.getLuckPerms();
+	}
+
+	@NotNull
+	private static GroupManager getGroupManager() {
+		return lp().getGroupManager();
+	}
+
+	@NotNull
+	@SneakyThrows
+	public static User getUser(OfflinePlayer player) {
+		User user = lp().getUserManager().getUser(player.getUniqueId());
+		if (user == null) user = lp().getUserManager().loadUser(player.getUniqueId()).get();
+		return user;
+	}
+
+	@Nullable
+	public static Group getGroup(String group) {
+		return getGroupManager().getGroup(group);
+	}
+
+	@NotNull
+	public static Collection<Group> getGroups(OfflinePlayer player) {
+		User user = getUser(player);
+		return user.getInheritedGroups(user.getQueryOptions());
+	}
+
+	public static boolean hasGroup(OfflinePlayer player, String group) {
+		return hasGroup(player, getGroup(group));
+	}
+
+	public static boolean hasGroup(OfflinePlayer player, Group group) {
+		return getGroups(player).contains(group);
+	}
+
+	public static boolean hasPermission(OfflinePlayer player, String permission) {
+		return hasPermission(player, permission, (World) null);
+	}
+
+	public static boolean hasPermission(OfflinePlayer player, String permission, String world) {
+		return hasPermission(player, permission, Bukkit.getWorld(world));
+	}
+
+	public static boolean hasPermission(OfflinePlayer player, String permission, World world) {
+		return Nexus.getPerms().playerHas(world == null ? null : world.getName(), player, permission);
+	}
 
 	public enum PermissionChangeType {
 		SET,
@@ -59,6 +118,11 @@ public class LuckPermsUtils {
 
 			public PermissionChangeBuilder value(boolean value) {
 				this.value = value;
+				return this;
+			}
+
+			public PermissionChangeBuilder world(String world) {
+				this.world = Bukkit.getWorld(world);
 				return this;
 			}
 

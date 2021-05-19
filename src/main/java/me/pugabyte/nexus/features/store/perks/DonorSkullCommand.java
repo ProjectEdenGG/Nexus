@@ -12,9 +12,12 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 
+import static me.pugabyte.nexus.features.store.perks.DonorSkullCommand.PERMISSION;
+
 @Cooldown(value = @Part(Time.DAY), bypass = "group.admin")
-@Permission("essentials.skull")
+@Permission(PERMISSION)
 public class DonorSkullCommand extends CustomCommand {
+	public static final String PERMISSION = "essentials.skull";
 
 	public DonorSkullCommand(@NonNull CommandEvent event) {
 		super(event);

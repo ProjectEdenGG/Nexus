@@ -10,10 +10,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 
+import static me.pugabyte.nexus.features.store.perks.fireworks.FireworkCommand.PERMISSION;
+
 @Aliases("fw")
-@Permission("firework.launch")
+@Permission(PERMISSION)
 @Cooldown(value = @Part(Time.SECOND), bypass = "group.staff")
 public class FireworkCommand extends CustomCommand {
+	public static final String PERMISSION = "firework.launch";
 
 	public FireworkCommand(CommandEvent event) {
 		super(event);

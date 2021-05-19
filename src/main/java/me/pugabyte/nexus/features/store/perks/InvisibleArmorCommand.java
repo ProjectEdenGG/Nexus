@@ -49,11 +49,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.pugabyte.nexus.features.store.perks.InvisibleArmorCommand.PERMISSION;
+
 @NoArgsConstructor
-@Permission("invisiblearmor.use")
+@Permission(PERMISSION)
 @Aliases({"ia", "invisarmor", "invisarmour", "invisiblearmor"})
 @Environments({Env.DEV, Env.TEST})
 public class InvisibleArmorCommand extends CustomCommand {
+	public static final String PERMISSION = "invisiblearmor.use";
 	private static final List<ItemSlot> armourSlots = Arrays.asList(ItemSlot.HEAD, ItemSlot.CHEST, ItemSlot.LEGS, ItemSlot.FEET);
 	private final InvisibleArmorService service = new InvisibleArmorService();
 	private InvisibleArmor invisibleArmor;

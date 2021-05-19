@@ -16,11 +16,13 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.util.List;
 
+import static me.pugabyte.nexus.features.store.perks.ItemNameCommand.PERMISSION;
 import static me.pugabyte.nexus.utils.StringUtils.applyFormattingToAll;
 
 @Aliases("nameitem")
-@Permission("itemname.use")
+@Permission(PERMISSION)
 public class ItemNameCommand extends CustomCommand {
+	public static final String PERMISSION = "itemname.use";
 
 	public ItemNameCommand(@NonNull CommandEvent event) {
 		super(event);

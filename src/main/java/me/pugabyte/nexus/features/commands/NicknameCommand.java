@@ -24,9 +24,12 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static me.pugabyte.nexus.features.commands.NicknameCommand.PERMISSION;
+
 @Aliases("nick")
-@Permission("nickname.use")
+@Permission(PERMISSION)
 public class NicknameCommand extends CustomCommand {
+	public static final String PERMISSION = "nickname.use";
 	private final NicknameService service = new NicknameService();
 	private Nickname data;
 

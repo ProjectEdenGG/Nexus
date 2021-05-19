@@ -22,6 +22,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.StringUtils.stripFormat;
 
 public class PrefixCommand extends CustomCommand {
+	public static final String PERMISSION = "set.my.prefix";
 	private final NerdService service = new NerdService();
 	private Nerd nerd;
 

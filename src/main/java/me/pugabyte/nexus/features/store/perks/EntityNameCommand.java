@@ -19,12 +19,14 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+import static me.pugabyte.nexus.features.store.perks.EntityNameCommand.PERMISSION;
 import static me.pugabyte.nexus.utils.StringUtils.applyFormattingToAll;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Aliases("nameentity")
-@Permission("entityname.use")
+@Permission(PERMISSION)
 public class EntityNameCommand extends CustomCommand {
+	public static final String PERMISSION = "entityname.use";
 	private Entity targetEntity;
 
 	public EntityNameCommand(@NonNull CommandEvent event) {

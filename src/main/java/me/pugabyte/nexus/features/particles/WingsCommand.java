@@ -22,9 +22,12 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.Map;
 
+import static me.pugabyte.nexus.features.particles.WingsCommand.PERMISSION;
+
 @NoArgsConstructor
-@Permission("wings.use")
+@Permission(PERMISSION)
 public class WingsCommand extends CustomCommand implements Listener {
+	public static final String PERMISSION = "wings.use";
 
 	ParticleService service = new ParticleService();
 

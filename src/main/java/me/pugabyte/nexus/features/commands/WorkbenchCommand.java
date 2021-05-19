@@ -6,9 +6,12 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 
+import static me.pugabyte.nexus.features.commands.WorkbenchCommand.PERMISSION;
+
 @Aliases("craft")
-@Permission("workbench")
+@Permission(PERMISSION)
 public class WorkbenchCommand extends CustomCommand {
+	public static final String PERMISSION = "workbench";
 
 	public WorkbenchCommand(CommandEvent event) {
 		super(event);

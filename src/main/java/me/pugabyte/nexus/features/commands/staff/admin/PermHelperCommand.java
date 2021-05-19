@@ -1,5 +1,9 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -14,6 +18,7 @@ import java.util.List;
 
 @Permission("permissions.manage")
 public class PermHelperCommand extends CustomCommand {
+	private static final int MAX = 100;
 
 	PermHelperCommand(CommandEvent event) {
 		super(event);
@@ -25,41 +30,56 @@ public class PermHelperCommand extends CustomCommand {
 		send(PREFIX + "Correct usage: /permhelper <npcs|homes|plots|vaults> <add|remove> <player> <amount>");
 	}
 
-	@Path("(npcs|homes|plots|vaults) (add|remove) <player> <amount>")
-	void modify(OfflinePlayer player, int amount) {
-		if (arg(2).equals("remove")) amount = -amount;
-		modify(arg(1).toLowerCase(), player, amount);
-	}
+	@Getter
+	@AllArgsConstructor
+	@RequiredArgsConstructor
+	public enum NumericPermission {
+		HOMES("homes.limit."),
+		NPCS("citizens.npc.limit."),
+		VAULTS("plots.plot."),
+		PLOTS("playervaults.amount.", "creative"),
+		;
 
-	private void modify(String which, OfflinePlayer player, int adding) {
-		String permission = "";
-		String world = (which.equalsIgnoreCase("plots") ? "creative" : null);
+		@NonNull
+		private final String permission;
+		private String world;
 
-		switch (which) {
-			case "homes" -> permission = "homes.limit.";
-			case "npcs" -> permission = "citizens.npc.limit.";
-			case "plots" -> permission = "plots.plot.";
-			case "vaults" -> permission = "playervaults.amount.";
+		private int getLimitForUpdate(OfflinePlayer player) {
+			List<Integer> ints = new ArrayList<>();
+
+			for (int i = 1; i <= MAX; i++)
+				if (Nexus.getPerms().playerHas(world, player, permission + i)) {
+					Nexus.getPerms().playerRemove(null, player, permission + i);
+					ints.add(i);
+				}
+
+			return ints.isEmpty() ? 0 : Math.min(MAX, Collections.max(ints));
 		}
 
-		int oldLimit = getLimit(player, permission, world);
-		int newLimit = oldLimit + adding;
+		public int getLimit(OfflinePlayer player) {
+			List<Integer> ints = new ArrayList<>();
 
-		PermissionChange.unset().permission(permission + oldLimit).player(player).run();
+			for (int i = 1; i <= MAX + 1; i++)
+				if (Nexus.getPerms().playerHas(world, player, permission + i))
+					ints.add(i);
+
+			return ints.isEmpty() ? 0 : Math.min(MAX, Collections.max(ints));
+		}
+	}
+
+	@Path("<type> (add|remove) <player> <amount>")
+	void modify(NumericPermission type, OfflinePlayer player, int amount) {
+		if (arg(2).equals("remove"))
+			amount = -amount;
+
+		String permission = type.getPermission();
+
+		int oldLimit = type.getLimitForUpdate(player);
+		int newLimit = Math.min(MAX, oldLimit + amount);
+
 		PermissionChange.set().permission(permission + newLimit).player(player).run();
-		send(PREFIX + "New " + which + " limit for " + player.getName() + ": " + newLimit);
+		send(PREFIX + "New " + type.name().toLowerCase() + " limit for " + player.getName() + ": " + newLimit);
 	}
 
-	private static int getLimit(OfflinePlayer player, String permission, String world) {
-		List<Integer> ints = new ArrayList<>();
-
-		for (int i = 1; i <= 100; i++)
-			if (Nexus.getPerms().playerHas(world, player, permission + i)) {
-				Nexus.getPerms().playerRemove(null, player, permission + i);
-				ints.add(i);
-			}
-
-		return ints.isEmpty() ? 0 : Collections.max(ints);
-	}
 }
 

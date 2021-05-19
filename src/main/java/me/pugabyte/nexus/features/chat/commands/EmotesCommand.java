@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.chat.commands;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Emotes;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
@@ -15,7 +16,9 @@ import net.md_5.bungee.api.ChatColor;
 import java.util.Arrays;
 import java.util.function.BiFunction;
 
+@Aliases("emoticons")
 public class EmotesCommand extends CustomCommand {
+	public static final String PERMISSION = "emoticons.use";
 	private final EmoteService service = new EmoteService();
 	private final EmoteUser user;
 

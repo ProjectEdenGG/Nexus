@@ -22,12 +22,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
 import static me.pugabyte.nexus.models.rainbowarmor.RainbowArmor.isLeatherArmor;
 
 @NoArgsConstructor
-@Permission("rainbowarmor.use")
+@Permission(PERMISSION)
 @Aliases({"rainbowarmour", "rba"})
 public class RainbowArmorCommand extends CustomCommand implements Listener {
+	public static final String PERMISSION = "rainbowarmor.use";
 	private final RainbowArmorService service = new RainbowArmorService();
 	private RainbowArmor rbaPlayer;
 

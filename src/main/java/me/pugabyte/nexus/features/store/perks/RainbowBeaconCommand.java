@@ -23,11 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static me.pugabyte.nexus.features.store.perks.RainbowBeaconCommand.PERMISSION;
+
 @NoArgsConstructor
-@Permission("rainbow.beacon")
+@Permission(PERMISSION)
 public class RainbowBeaconCommand extends CustomCommand implements Listener {
+	public static final String PERMISSION = "rainbow.beacon";
 	private final RainbowBeaconService service = new RainbowBeaconService();
 	private RainbowBeacon rainbowBeacon;
+
 
 	public RainbowBeaconCommand(CommandEvent event) {
 		super(event);

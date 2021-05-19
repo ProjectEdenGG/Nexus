@@ -23,12 +23,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import static me.pugabyte.nexus.features.commands.HatCommand.PERMISSION;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
-@Permission("essentials.hat")
+@Permission(PERMISSION)
 @Description("Wear any item on your head")
 public class HatCommand extends CustomCommand implements Listener {
+	public static final String PERMISSION = "essentials.hat";
 
 	public HatCommand(@NonNull CommandEvent event) {
 		super(event);

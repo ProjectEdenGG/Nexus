@@ -118,9 +118,11 @@ public class AutoSort extends Feature {
 
 		for (int i = sourceStartIndex; i < sourceSize; i++) {
 			ItemStack sourceStack = source.getItem(i);
-			if (ItemUtils.isNullOrAir(sourceStack)) continue;
+			if (ItemUtils.isNullOrAir(sourceStack))
+				continue;
 
-			if (autoSortUser.getAutoDepositExclude().contains(sourceStack.getType())) continue;
+			if (autoSortUser.getAutoDepositExclude().contains(sourceStack.getType()))
+				continue;
 
 			String signature = getSignature(sourceStack);
 			int sourceStackSize = sourceStack.getAmount();
