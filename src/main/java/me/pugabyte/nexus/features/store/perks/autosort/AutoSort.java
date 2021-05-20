@@ -61,7 +61,7 @@ public class AutoSort extends Feature {
 	 * @return if a player can open the container
 	 */
 	public static boolean canOpen(Block block) {
-		if (block.getType() == Material.BARREL)
+		if (List.of(Material.BARREL, Material.HOPPER, Material.DROPPER, Material.DISPENSER).contains(block.getType()))
 			return true;
 
 		Material blockingMaterial;
