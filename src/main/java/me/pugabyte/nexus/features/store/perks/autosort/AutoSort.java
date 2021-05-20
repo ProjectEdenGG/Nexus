@@ -72,7 +72,7 @@ public class AutoSort extends Feature {
 		} else
 			blockingMaterial = block.getRelative(BlockFace.UP).getType();
 
-		return blockingMaterial.isOccluding();
+		return !blockingMaterial.isOccluding();
 	}
 
 	/**
