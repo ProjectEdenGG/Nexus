@@ -1,8 +1,15 @@
 package me.pugabyte.nexus.features.store;
 
 import com.google.common.collect.ImmutableList;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.store.annotations.Category.StoreCategory;
 import me.pugabyte.nexus.features.store.perks.NPCListener;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -12,19 +19,28 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.data.Coupon.Discount;
 import net.buycraft.plugin.data.Coupon.Effective;
 import net.buycraft.plugin.data.Coupon.Expire;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Aliases({"donate", "buy"})
 public class StoreCommand extends CustomCommand {
+	public static final String URL = "https://store.projecteden.gg";
 	private static final String PLUS = "&3[+] &e";
 
 	public StoreCommand(CommandEvent event) {
@@ -40,9 +56,86 @@ public class StoreCommand extends CustomCommand {
 		line();
 		send("&eEnjoying the server and want to support us?");
 		line();
-		send(json().next("&3Visit our store: &ehttps://store.projecteden.gg"));
+		send(json().next("&3Visit our store: &e" + URL));
 		line();
 		send(json(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you donate for anything.").command("/donate tac"));
+	}
+
+	@Path("packages [player]")
+	void packages(@Arg("self") OfflinePlayer player) {
+		new StoreProvider(player).open(player());
+	}
+
+	@AllArgsConstructor
+	private static class StoreProvider extends MenuUtils implements InventoryProvider {
+		private final StoreProvider previousMenu;
+		private final StoreCategory category;
+		private final OfflinePlayer player;
+
+		public StoreProvider(OfflinePlayer player) {
+			this.previousMenu = null;
+			this.category = null;
+			this.player = player;
+		}
+
+		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+					.provider(this)
+					.title("Store" + (category == null ? "" : " - " + StringUtils.camelCase(category)))
+					.size(6, 9)
+					.build()
+					.open(viewer, page);
+		}
+
+		@Override
+		public void init(Player viewer, InventoryContents contents) {
+			if (previousMenu == null)
+				addCloseItem(contents);
+			else
+				addBackItem(contents, e -> previousMenu.open(viewer));
+
+			ItemBuilder info = new ItemBuilder(Material.BOOK).name("&eVisit Store").lore("&f" + URL);
+			contents.set(0, 8, ClickableItem.from(info.build(), e -> {
+				viewer.closeInventory();
+				PlayerUtils.send(player, new JsonBuilder(StringUtils.getPrefix("Store") + "Click me to open the &estore").url(URL));
+			}));
+
+			List<ClickableItem> items = new ArrayList<>();
+
+			if (category == null)
+				for (StoreCategory category : StoreCategory.values()) {
+					ItemBuilder item = category.getDisplayItem();
+
+					int owned = 0;
+					int count = category.getPackages().size();
+					for (Package storePackage : category.getPackages())
+						if (storePackage.has(player))
+							++owned;
+
+					item.lore("", "&fOwned: " + (owned == 0 ? "&c0" : owned == count ? "&a" + owned : "&e" + owned));
+
+					if (owned == count)
+						item.glow();
+
+					items.add(ClickableItem.from(item.build(), e -> new StoreProvider(this, category, player).open(viewer)));
+				}
+			else
+				for (Package storePackage : category.getPackages()) {
+					ItemBuilder item = storePackage.getDisplayItem();
+					boolean has = storePackage.has(player);
+					int count = storePackage.count(player);
+
+					item.lore("", "&fOwned: " + (has ? "&aYes" + (count == 1 ? "" : " &f(" + count + ")") : "&cNo"));
+					if (has)
+						item.glow();
+
+					items.add(ClickableItem.empty(item.build()));
+				}
+
+			addPagination(viewer, contents, items);
+		}
+
 	}
 
 	@TabCompleteIgnore

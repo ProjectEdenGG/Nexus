@@ -12,4 +12,5 @@ import java.lang.annotation.Target;
 public @interface Display {
 	Material value();
 	int customModelData() default 0;
+
 }

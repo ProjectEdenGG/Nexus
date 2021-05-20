@@ -65,6 +65,7 @@ import static eden.utils.StringUtils.camelCase;
 public enum Package {
 
 	@Id("2589641")
+	@Category(StoreCategory.MISC)
 	CUSTOM_DONATION,
 
 	@Id("4425727")
@@ -138,6 +139,7 @@ public enum Package {
 	@Id("3239567")
 	@Category(StoreCategory.CHAT)
 	@Permission(EmotesCommand.PERMISSION)
+	@Display(Material.TOTEM_OF_UNDYING)
 	EMOTES,
 
 	@Id("3218615")
@@ -496,9 +498,10 @@ public enum Package {
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		Display annotation = getField().getAnnotation(Display.class);
 		Material material = Material.PAPER;;
-		int customModelData = 0;;
+		int customModelData = 0;
+
+		Display annotation = getField().getAnnotation(Display.class);
 		if (annotation != null) {
 			material = annotation.value();
 			customModelData = annotation.customModelData();
