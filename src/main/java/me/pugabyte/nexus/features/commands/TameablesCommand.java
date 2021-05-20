@@ -261,8 +261,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	private void updateOwner(Entity entity, Player player, OfflinePlayer newOwner) {
-		if (entity instanceof Tameable) {
-			((Tameable) entity).setOwner(newOwner);
+		if (entity instanceof Tameable tameable) {
+			tameable.setOwner(newOwner);
 		} else if (entity instanceof Fox fox) {
 			if (fox.getFirstTrustedPlayer() != null && fox.getFirstTrustedPlayer().getUniqueId().equals(player.getUniqueId()))
 				fox.setFirstTrustedPlayer(newOwner);
@@ -278,8 +278,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean isOwner(Player player, Entity entity) {
-		if (entity instanceof Tameable) {
-			AnimalTamer tamer = ((Tameable) entity).getOwner();
+		if (entity instanceof Tameable tameable) {
+			AnimalTamer tamer = tameable.getOwner();
 			return tamer != null && tamer.equals(player);
 		} else if (entity instanceof Fox fox) {
 			return fox.getFirstTrustedPlayer() == player || fox.getSecondTrustedPlayer() == player;
@@ -289,8 +289,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	private List<AnimalTamer> getOwners(Entity entity) {
 		List<AnimalTamer> owners = new ArrayList<>();
-		if (entity instanceof Tameable) {
-			AnimalTamer tamer = ((Tameable) entity).getOwner();
+		if (entity instanceof Tameable tameable) {
+			AnimalTamer tamer = tameable.getOwner();
 			if (tamer != null)
 				owners.add(tamer);
 		} else if (entity instanceof Fox fox) {

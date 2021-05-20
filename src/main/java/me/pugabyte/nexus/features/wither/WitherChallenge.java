@@ -47,11 +47,6 @@ public class WitherChallenge extends Feature implements Listener {
 	public static List<UUID> queue = new ArrayList<>();
 	public static boolean maintenance = true;
 
-	@Override
-	public void onStart() {
-		Tasks.wait(5, WitherChallenge::reset);
-	}
-
 	public static void reset() {
 		reset(true);
 	}

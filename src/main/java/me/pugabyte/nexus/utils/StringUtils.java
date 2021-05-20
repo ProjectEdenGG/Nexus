@@ -316,7 +316,8 @@ public class StringUtils extends eden.utils.StringUtils {
 	}
 
 	public static String getTeleportCommand(Location location) {
-		return "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() + " " + location.getYaw() + " " + location.getPitch() + " " + location.getWorld().getName();
+		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) + " " +
+				df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
 	}
 
 	@RequiredArgsConstructor
