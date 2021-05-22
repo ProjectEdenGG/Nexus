@@ -35,6 +35,8 @@ public class AutoTool implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
 
+		if (player.getTargetEntity(5) != null)
+			return; // could try to find the "best" weapon but that's kinda subjective, given different mcMMO perks, enchants, attack speeds, etc.
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK)
 			return;
 		if (block == null)
