@@ -27,6 +27,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDateTime;
 
+import static me.pugabyte.nexus.utils.PlayerUtils.canSee;
+
 @Aliases({"tpa", "tpask"})
 @NoArgsConstructor
 @Redirect(from = "/tpcancel", to = "/poof cancel")
@@ -56,6 +58,9 @@ public class PoofCommand extends CustomCommand {
 		if (isSelf(target))
 			error("You cannot poof to yourself");
 
+		if (!canSee(player(), target))
+			throw new PlayerNotOnlineException(target);
+
 		Location targetLocation = Nerd.of(target).getLocation();
 		World targetWorld = targetLocation.getWorld();
 		WorldGroup targetWorldGroup = WorldGroup.get(targetWorld);
@@ -71,6 +76,7 @@ public class PoofCommand extends CustomCommand {
 
 		Trust trust = new TrustService().get(target);
 		if (trust.trusts(Type.TELEPORTS, player())) {
+
 			player().teleportAsync(targetLocation, TeleportCause.COMMAND);
 			send(PREFIX + "Poofing to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
 			return;
