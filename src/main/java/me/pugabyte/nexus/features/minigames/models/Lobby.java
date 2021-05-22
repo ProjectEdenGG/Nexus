@@ -4,13 +4,13 @@ import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.nexus.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,10 +23,10 @@ import java.util.Map;
 @AllArgsConstructor
 @SerializableAs("Lobby")
 public class Lobby implements ConfigurationSerializable {
-	@NonNull
 	private int waitTime = 30;
 	private Location location;
 	private boolean timerStarted;
+	private final @NotNull Object timerLock = new Object();
 
 	public Lobby() {
 		this(new HashMap<>());
@@ -38,7 +38,7 @@ public class Lobby implements ConfigurationSerializable {
 	}
 
 	@Override
-	public Map<String, Object> serialize() {
+	public @NotNull Map<String, Object> serialize() {
 		return new LinkedHashMap<>() {{
 			put("waitTime", getWaitTime());
 			put("location", getLocation());
@@ -48,8 +48,10 @@ public class Lobby implements ConfigurationSerializable {
 	public void join(Minigamer minigamer) {
 		minigamer.teleport(location);
 		minigamer.clearState();
-		if (!timerStarted)
-			new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
+		synchronized (timerLock) {
+			if (!timerStarted)
+				new Lobby.LobbyTimer(this, minigamer.getMatch(), waitTime);
+		}
 	}
 
 	private class LobbyTimer {
@@ -106,7 +108,7 @@ public class Lobby implements ConfigurationSerializable {
 
 		private void stop() {
 			timerStarted = false;
-			match.getTasks().cancel(taskId);
+			match.getTasks().cancel(MatchTaskType.LOBBY, taskId);
 		}
 
 	}

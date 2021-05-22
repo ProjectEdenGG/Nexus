@@ -515,14 +515,28 @@ public class Match {
 
 		public void cancel(int taskId) {
 			Tasks.cancel(taskId);
+			taskIds.remove((Integer) taskId);
+		}
+
+		/**
+		 * Cancels a task. If <code>taskId</code> is not <code>-1</code>, the corresponding task will be cancelled, and
+		 * the <code>taskType</code> will be removed from the internal map if its saved task id matches.
+		 * <p>
+		 * If <code>taskId</code> is -1, the saved task for <code>taskType</code> will be removed and cancelled
+		 * (if present).
+		 * @param taskType a match task type
+		 * @param taskId a task id or -1
+		 */
+		public void cancel(@NotNull MatchTaskType taskType, int taskId) {
+			if (taskId != -1) {
+				Tasks.cancel(taskId);
+				taskTypeMap.remove(taskType, taskId);
+			} else if (taskTypeMap.containsKey(taskType))
+				Tasks.cancel(taskTypeMap.remove(taskType));
 		}
 
 		public void cancel(MatchTaskType taskType) {
-			if (!taskTypeMap.containsKey(taskType))
-				return;
-
-			Tasks.cancel(taskTypeMap.get(taskType));
-			taskTypeMap.remove(taskType);
+			cancel(taskType, -1);
 		}
 
 		public void register(int taskId) {
@@ -530,7 +544,12 @@ public class Match {
 		}
 
 		public void register(MatchTaskType taskType, int taskId) {
+			cancel(taskType);
 			taskTypeMap.put(taskType, taskId);
+		}
+
+		public boolean registered(MatchTaskType taskType) {
+			return taskTypeMap.containsKey(taskType);
 		}
 
 		public int wait(Time delay, Runnable runnable) {
