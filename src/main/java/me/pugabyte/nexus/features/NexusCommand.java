@@ -316,6 +316,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Listeners: " + Nexus.getListenerCount());
 		send("Temp Listeners: " + Nexus.getTempListenerCount());
 		send("EventHandlers: " + Nexus.getEventHandlers().size());
+		send("Services: " + MongoService.getServices().size());
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());

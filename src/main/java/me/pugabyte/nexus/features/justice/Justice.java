@@ -260,7 +260,7 @@ public class Justice extends Feature implements Listener {
 	@SneakyThrows
 	@EventHandler(priority = EventPriority.LOW)
 	public void bots_onJoin(AsyncPlayerPreLoginEvent event) {
-		if (!isNewPlayer(Nerd.of(event.getUniqueId())))
+		if (Bukkit.getOfflinePlayer(event.getUniqueId()).hasPlayedBefore())
 			return;
 
 		String ip = event.getAddress().getHostAddress();
