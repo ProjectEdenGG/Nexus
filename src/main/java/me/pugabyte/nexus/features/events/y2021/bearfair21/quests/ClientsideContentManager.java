@@ -41,7 +41,7 @@ public class ClientsideContentManager implements Listener {
 		for (Player player : playerItemFrames.keySet()) {
 			List<EntityItemFrame> itemFrames = playerItemFrames.get(player);
 			for (EntityItemFrame itemFrame : itemFrames) {
-				PacketUtils.killItemFrame(player, itemFrame);
+				PacketUtils.entityDestroy(player, itemFrame);
 			}
 		}
 		playerItemFrames.clear();

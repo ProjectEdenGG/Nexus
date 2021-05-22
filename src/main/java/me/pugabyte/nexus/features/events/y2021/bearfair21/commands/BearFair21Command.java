@@ -20,6 +20,8 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.CitizensUtils;
+import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -31,6 +33,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -113,6 +116,28 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	//
+
+	@Path("changeName <name>")
+	@Permission("group.admin")
+	public void changeName(String name) {
+		Entity entity = getTargetEntity();
+		if (entity != null && CitizensUtils.isNPC(entity)) {
+			NPC npc = (NPC) entity;
+			PacketUtils.updateNPCName(player(), npc, name);
+		}
+	}
+
+	@Path("look")
+	@Permission("group.admin")
+	public void look() {
+		PacketUtils.entityLook(player(), getTargetEntityRequired(), location().getYaw(), location().getPitch());
+	}
+
+	@Path("invisible <boolean>")
+	@Permission("group.admin")
+	public void invisible(boolean invisible) {
+		PacketUtils.entityInvisible(player(), getTargetEntityRequired(), invisible);
+	}
 
 	@Confirm
 	@Permission("group.admin")

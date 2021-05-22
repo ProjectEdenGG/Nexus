@@ -8,24 +8,14 @@ import eden.interfaces.Named;
 import lombok.NonNull;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
-import net.minecraft.server.v1_16_R3.DataWatcher;
-import net.minecraft.server.v1_16_R3.DataWatcherRegistry;
-import net.minecraft.server.v1_16_R3.EntityArmorStand;
-import net.minecraft.server.v1_16_R3.EntityItemFrame;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.EnumDirection;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity;
+import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutEntityLook;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
@@ -45,6 +35,57 @@ public class PacketUtils {
 		return new BlockPosition(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ());
 	}
 
+	// Common
+
+	public static void entityDestroy(@NonNull HasPlayer player, @NonNull Entity entity) {
+		PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(entity.getId());
+		sendPacket(player, destroyPacket);
+	}
+
+	public static void entityInvisible(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, boolean invisible) {
+		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
+		entity.setInvisible(invisible);
+		PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
+		sendPacket(player, metadataPacket);
+	}
+
+	public static void entityLook(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, float yaw, float pitch) {
+		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
+		PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation(entity, (byte) (yaw * 256 / 360));
+		PacketPlayOutEntityLook lookPacket = new PacketPlayOutEntity.PacketPlayOutEntityLook(entity.getId(), (byte) (yaw * 256 / 360), (byte) (pitch * 256 / 360), true);
+		sendPacket(player, headRotationPacket, lookPacket);
+	}
+
+
+	// can't get move to work correctly
+//	public static void entityMove(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, double x, double y, double z) {
+//		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
+//		PacketPlayOutRelEntityMove movePacket = new PacketPlayOutRelEntityMove(entity.getId(), (short)(x * 4096), (short)(y * 4096), (short)(z * 4096), true);
+//		sendPacket(player, movePacket);
+//	}
+
+	// can't get move to work correctly
+//	public static void entityMoveLook(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, double x, double y, double z, float yaw, float pitch){
+//		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
+//		PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutRelEntityMoveLook(entity.getId(), (short)(x * 4096), (short)(y * 4096), (short)(z * 4096), (byte)(yaw * 256 / 360), (byte)(pitch * 256 / 360), true);
+//		sendPacket(player, moveLookPacket);
+//	}
+
+	// NPC
+
+
+	// TODO: if possible
+	public static void updateNPCName(@NonNull HasPlayer player, org.bukkit.entity.NPC entity, String name) {
+		EntityPlayer entityPlayer = ((CraftPlayer) entity).getHandle();
+		entityPlayer.setCustomName(new ChatComponentText(name));
+		PacketPlayOutEntityMetadata entityMetadataPacket = new PacketPlayOutEntityMetadata();
+
+//		DataWatcher dataWatcher = entityPlayer.getDataWatcher();
+//		dataWatcher.set(DataWatcherRegistry.d.a(), );
+
+//		entityMetadataPacket
+	}
+
 	/*
 	public void addNPCPacket(EntityPlayer npc, Player player) {
 		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
@@ -54,6 +95,7 @@ public class PacketUtils {
 	}
 	 */
 
+	// Item Frame
 	public static EntityItemFrame spawnItemFrame(@NonNull HasPlayer player, @NonNull Location location, BlockFace blockFace, ItemStack content, int rotation, boolean makeSound, boolean invisible) {
 		if (content == null) content = new ItemStack(Material.AIR);
 		if (blockFace == null) blockFace = BlockFace.NORTH;
@@ -72,7 +114,7 @@ public class PacketUtils {
 		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(
 				itemFrame.getId(), itemFrame.getDataWatcher(), true);
 
-		sendPackets(player, rawSpawnPacket, rawMetadataPacket);
+		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
 		return itemFrame;
 	}
 
@@ -91,16 +133,7 @@ public class PacketUtils {
 		sendPacket(player, rawMetadataPacket);
 	}
 
-	public static void killItemFrame(@NonNull HasPlayer player, @NonNull EntityItemFrame itemFrame) {
-		PacketPlayOutEntityDestroy rawDestroyEntityPacket = new PacketPlayOutEntityDestroy(itemFrame.getId());
-		sendPacket(player, rawDestroyEntityPacket);
-	}
-
-	// TODO: if possible
-	public static void updateNPCName(@NonNull HasPlayer player, org.bukkit.entity.NPC npc, String name) {
-		PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-	}
-
+	// Armor Stand
 	public static void spawnArmorStand(HasPlayer player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible) {
 		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
 
@@ -113,7 +146,7 @@ public class PacketUtils {
 		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true);
 		PacketPlayOutEntityEquipment rawEquipmentPacket = new PacketPlayOutEntityEquipment(armorStand.getId(), equipment);
 
-		sendPackets(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
+		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
 	}
 
 	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment) {
@@ -139,8 +172,9 @@ public class PacketUtils {
 		return equipmentList;
 	}
 
+	//
 
-	private static void sendPackets(HasPlayer player, Object... packets) {
+	private static void sendPacket(HasPlayer player, Object... packets) {
 		for (Object packet : packets) {
 			sendPacket(player, packet);
 		}
