@@ -290,7 +290,7 @@ public class Justice extends Feature implements Listener {
 		if (fraudScore >= 75) {
 			punishments.add(Punishment.ofType(PunishmentType.MUTE)
 					.punisher(Nexus.getUUID0())
-					.input("Compromised account")
+					.input("Suspected bot")
 					.now(true));
 
 			geoip.setMitigated(true);

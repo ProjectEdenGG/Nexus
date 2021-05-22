@@ -76,7 +76,6 @@ public class PoofCommand extends CustomCommand {
 
 		Trust trust = new TrustService().get(target);
 		if (trust.trusts(Type.TELEPORTS, player())) {
-
 			player().teleportAsync(targetLocation, TeleportCause.COMMAND);
 			send(PREFIX + "Poofing to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
 			return;
