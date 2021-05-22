@@ -85,12 +85,28 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	private static final int RADIUS = 128;
 	private static final int MAX_DROPPED_ENTITIES = 200;
 
+	// does not run the limiter if it has been run by another item within IGNORE_LIMITER_RADIUS this tick
+	private static final List<Location> ITEM_DROPS_THIS_TICK = new ArrayList<>();
+	private static final int IGNORE_LIMITER_RADIUS = 5; // square radius
+
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onItemSpawn(ItemSpawnEvent event) {
 		if (WorldGroup.get(event.getEntity().getWorld()) != WorldGroup.CREATIVE)
 			return;
 
-		Tasks.wait(2, () -> limitDrops(event.getLocation()));
+		Location location = event.getLocation();
+		for (Location otherLocation : ITEM_DROPS_THIS_TICK) {
+			if (!location.getWorld().equals(otherLocation.getWorld()))
+				continue;
+			if (Math.abs(location.getX() - otherLocation.getX()) <= IGNORE_LIMITER_RADIUS &&
+					Math.abs(location.getY() - otherLocation.getY()) <= IGNORE_LIMITER_RADIUS &&
+					Math.abs(location.getZ() - otherLocation.getZ()) <= IGNORE_LIMITER_RADIUS)
+				return;
+		}
+
+		ITEM_DROPS_THIS_TICK.add(location);
+		Tasks.wait(1, () -> ITEM_DROPS_THIS_TICK.remove(location));
+		Tasks.wait(2, () -> limitDrops(location));
 	}
 
 	private void limitDrops(Location location) {
