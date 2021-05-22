@@ -101,7 +101,8 @@ public class WhoIsCommand extends CustomCommand {
 
 		try {
 			GeoIP geoIp = geoIpService.get(nerd);
-			json.newline().next("&3GeoIP: &e" + geoIp.getFriendlyLocationString()).hover("&e" + geoIp.getIp()).suggest(geoIp.getIp()).group();
+			if (!isNullOrEmpty(geoIp.getIp()))
+				json.newline().next("&3GeoIP: &e" + geoIp.getFriendlyLocationString()).hover("&e" + geoIp.getIp()).suggest(geoIp.getIp()).group();
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3GeoIP: &c" + ex.getMessage());
 		}
