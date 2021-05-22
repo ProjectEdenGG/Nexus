@@ -10,15 +10,16 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -27,12 +28,11 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -82,45 +82,34 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		filter(event::getPlayer, event::getItem, item -> item.setItemMeta(Bukkit.getItemFactory().getItemMeta(item.getType())));
 	}
 
-	private static final int RADIUS = 150;
+	private static final int RADIUS = 128;
 	private static final int MAX_DROPPED_ENTITIES = 200;
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onItemSpawn(ItemSpawnEvent event) {
 		if (WorldGroup.get(event.getEntity().getWorld()) != WorldGroup.CREATIVE)
 			return;
 
-		limitDrops(event.getLocation());
-		Tasks.wait(1, () -> limitDrops(event.getLocation()));
-		Tasks.wait(5, () -> limitDrops(event.getLocation()));
+		Tasks.wait(2, () -> limitDrops(event.getLocation()));
 	}
 
 	private void limitDrops(Location location) {
-		Collection<Item> entities = location.getNearbyEntitiesByType(Item.class, RADIUS);
+		Collection<Item> entities = location.getNearbyEntitiesByType(Item.class, RADIUS, item -> !item.isDead());
 
-		if (entities.size() <= MAX_DROPPED_ENTITIES)
-			return;
+		Tasks.async(() -> {
+			if (entities.size() <= MAX_DROPPED_ENTITIES)
+				return;
 
-		Map<Item, Integer> ticksLived = new HashMap<>() {{
-			for (Item entity : entities)
-				put(entity, entity.getTicksLived());
-		}};
+			List<Item> sortedEntities = new ArrayList<>(entities);
+			sortedEntities.sort(Comparator.comparing(Entity::getTicksLived).reversed());
 
-		Map<Item, Integer> sorted = Utils.sortByValueReverse(ticksLived);
-		Iterator<Item> iterator = sorted.keySet().iterator();
-
-		while (iterator.hasNext() && entities.size() > MAX_DROPPED_ENTITIES) {
-			Item oldest = iterator.next();
-
-			if (oldest == null)
-				break;
-
-			oldest.remove();
-			entities.remove(oldest);
-		}
+			while (sortedEntities.size() > MAX_DROPPED_ENTITIES) {
+				sortedEntities.remove(0).remove();
+			}
+		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlaceBlock(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		if (WorldGroup.get(player.getWorld()) != WorldGroup.CREATIVE)
