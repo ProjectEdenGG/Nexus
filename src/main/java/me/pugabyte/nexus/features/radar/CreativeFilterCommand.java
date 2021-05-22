@@ -1,14 +1,15 @@
 package me.pugabyte.nexus.features.radar;
 
-import eden.utils.StringUtils;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -85,8 +87,16 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	private static final int RADIUS = 128;
 	private static final int MAX_DROPPED_ENTITIES = 200;
 
+	private static final int MAX_DROPS_PER_TICK = 27*5; // these are item stacks, not individual items. breaking a chest gives 27 items. 5 players all breaking a chest in creative at once is a generous max
+	private static final AtomicInteger DROPS_THIS_TICK = new AtomicInteger(); // count of all item stacks dropped in the creative worlds this tick
+	private static final AtomicInteger resetDropsTaskId = new AtomicInteger(-1); // we don't need a million tasks trying to reset DROPS_THIS_TICK!
+	private static void resetDrops() {
+		DROPS_THIS_TICK.set(0);
+		resetDropsTaskId.set(-1);
+	}
+
 	// does not run the limiter if it has been run by another item within IGNORE_LIMITER_RADIUS this tick
-	private static final List<Location> ITEM_DROPS_THIS_TICK = new ArrayList<>();
+	private static final List<Location> LIMIT_CHECKS_THIS_TICK = new ArrayList<>();
 	private static final int IGNORE_LIMITER_RADIUS = 5; // square radius
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -94,8 +104,20 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		if (WorldGroup.get(event.getEntity().getWorld()) != WorldGroup.CREATIVE)
 			return;
 
+		synchronized (resetDropsTaskId) {
+			if (resetDropsTaskId.get() == -1)
+				resetDropsTaskId.set(Tasks.wait(1, CreativeFilterCommand::resetDrops));
+		}
+
+		if (DROPS_THIS_TICK.incrementAndGet() > MAX_DROPS_PER_TICK) {
+			event.setCancelled(true);
+			if (DROPS_THIS_TICK.get() == MAX_DROPS_PER_TICK+1)
+				Nexus.warn("Cancelling creative world item spawns due to spawn at " + StringUtils.stripColor(StringUtils.getLocationString(event.getLocation())));
+			return;
+		}
+
 		Location location = event.getLocation();
-		for (Location otherLocation : ITEM_DROPS_THIS_TICK) {
+		for (Location otherLocation : LIMIT_CHECKS_THIS_TICK) {
 			if (!location.getWorld().equals(otherLocation.getWorld()))
 				continue;
 			if (Math.abs(location.getX() - otherLocation.getX()) <= IGNORE_LIMITER_RADIUS &&
@@ -104,8 +126,8 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 				return;
 		}
 
-		ITEM_DROPS_THIS_TICK.add(location);
-		Tasks.wait(1, () -> ITEM_DROPS_THIS_TICK.remove(location));
+		LIMIT_CHECKS_THIS_TICK.add(location);
+		Tasks.wait(1, () -> LIMIT_CHECKS_THIS_TICK.remove(location));
 		Tasks.wait(2, () -> limitDrops(location));
 	}
 
