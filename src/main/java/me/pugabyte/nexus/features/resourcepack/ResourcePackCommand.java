@@ -33,12 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.URL;
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.closeZip;
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.file;
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.fileName;
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.hash;
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.openZip;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.*;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -97,13 +92,20 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("getStatuses")
 	void getStatuses() {
 		send(PREFIX + "Statuses: ");
-		new HashMap<Status, List<String>>() {{
+		LocalResourcePackUserService service = new LocalResourcePackUserService();
+		new HashMap<String, List<String>>() {{
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				List<String> uuids = getOrDefault(player.getResourcePackStatus(), new ArrayList<>());
+				LocalResourcePackUser user = service.get(player);
+				String status;
+				if (user.isEnabled())
+					status = "Manual";
+				else
+					status = camelCase(player.getResourcePackStatus());
+				List<String> uuids = getOrDefault(status, new ArrayList<>());
 				uuids.add(player.getName());
-				put(player.getResourcePackStatus(), uuids);
+				put(status, uuids);
 			}
-		}}.forEach((status, names) -> send("&e" + camelCase(status) + "&3: " + String.join(", ", names)));
+		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
 	}
 
 	@Async
