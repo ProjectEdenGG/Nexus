@@ -6,14 +6,14 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class SplashParticle extends PlayerParticlePerk {
+public class SplashParticle implements PlayerParticlePerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Splash";
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.BLUE_GLAZED_TERRACOTTA);
 	}
 

@@ -2,15 +2,16 @@ package me.pugabyte.nexus.features.minigames.perks.loadouts.teamed.pirate;
 
 import me.pugabyte.nexus.utils.ColorType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public class BicornSideHat extends BasePirateHat {
+public class BicornSideHat implements IPirateHat {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Bicorn Side";
 	}
 
 	@Override
-	protected ItemStack getColorItem(ColorType color) {
+	public ItemStack getColorItem(ColorType color) {
 		return getPirateHat(3, color);
 	}
 }

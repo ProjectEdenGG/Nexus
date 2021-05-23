@@ -6,14 +6,14 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class CloudParticle extends PlayerParticlePerk {
+public class CloudParticle implements PlayerParticlePerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Clouds";
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.WHITE_CONCRETE_POWDER);
 	}
 

@@ -6,35 +6,36 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class GadgetPerk extends Perk {
-	public void tick(Player player, int slot) {
+public interface GadgetPerk extends Perk {
+	default void tick(Player player, int slot) {
 		player.getInventory().setItem(slot, getItem());
 	}
 
-	protected ItemStack basicItem(Material material) {
+	default ItemStack basicItem(Material material) {
 		return new ItemBuilder(material).name("&3" + getName()).build();
 	}
 
-	public abstract ItemStack getItem();
+	ItemStack getItem();
 
 	@Override
-	public ItemStack getMenuItem() {
+	default @NotNull ItemStack getMenuItem() {
 		return getItem();
 	}
 
 	@Override
-	public PerkCategory getPerkCategory() {
+	default @NotNull PerkCategory getPerkCategory() {
 		return PerkCategory.GADGET;
 	}
 
-	public void useGadget(Player player) {}
+	void useGadget(Player player);
 
-	public boolean cancelEvent() {
+	default boolean cancelEvent() {
 		return true;
 	}
 
-	public int getCooldown() {
+	default int getCooldown() {
 		return 0;
 	}
 }

@@ -6,6 +6,7 @@ import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
@@ -28,6 +29,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,9 +86,15 @@ public class ItemBuilder implements Cloneable {
 		return this;
 	}
 
-	public ItemBuilder name(String displayName) {
+	public ItemBuilder name(@Nullable String displayName) {
 		if (displayName != null)
 			itemMeta.setDisplayName(colorize("&f" + displayName));
+		return this;
+	}
+
+	public ItemBuilder name(@Nullable ComponentLike componentLike) {
+		if (componentLike != null)
+			itemMeta.displayName(componentLike.asComponent());
 		return this;
 	}
 

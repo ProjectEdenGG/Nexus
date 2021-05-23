@@ -4,10 +4,10 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import org.bukkit.entity.Player;
 
-public abstract class TickablePerk extends Perk {
-	public void tick(Minigamer minigamer) {
+public interface TickablePerk extends Perk {
+	default void tick(Minigamer minigamer) {
 		tick(minigamer.getPlayer());
 	}
 
-	public abstract void tick(Player player);
+	void tick(Player player);
 }

@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.minigames.models.perks.common;
 
+import me.pugabyte.nexus.features.minigames.models.perks.IHasPerkCategory;
+import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import org.bukkit.Particle;
 
-public interface IParticlePerk {
-	default int getCount() {
-		return 5;
-	}
+public interface IParticlePerk extends IHasPerkCategory, Perk {
+	int getCount();
 
 	Particle getParticle();
 

@@ -6,14 +6,14 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class SoulFlameParticle extends PlayerParticlePerk {
+public class SoulFlameParticle implements PlayerParticlePerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Soul Flames";
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.SOUL_TORCH);
 	}
 

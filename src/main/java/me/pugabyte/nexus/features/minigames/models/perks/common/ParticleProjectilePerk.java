@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.minigames.models.perks.common;
 import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
-import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
@@ -15,32 +14,32 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ParticleProjectilePerk extends Perk implements IParticlePerk {
-	public Particle.DustOptions getDustOptions(@NotNull Projectile projectile) {
+public interface ParticleProjectilePerk extends IParticlePerk {
+	default Particle.DustOptions getDustOptions(@NotNull Projectile projectile) {
 		return null;
 	}
 
 	@Override
-	public int getCount() {
+	default int getCount() {
 		return 2;
 	}
 
 	@Override
-	public double getOffsetH() {
+	default double getOffsetH() {
 		return .02;
 	}
 
 	@Override
-	public double getOffsetV() {
+	default double getOffsetV() {
 		return getOffsetH();
 	}
 
 	@Override
-	public PerkCategory getPerkCategory() {
+	default @NotNull PerkCategory getPerkCategory() {
 		return PerkCategory.ARROW_TRAIL;
 	}
 
-	public void tick(Projectile projectile, List<Player> players) {
+	default void tick(Projectile projectile, List<Player> players) {
 		players = players.stream().filter(player -> {
 			PerkOwner owner = new PerkOwnerService().get(player);
 			return owner.getHideParticle().showParticle(getPerkCategory());
@@ -48,7 +47,7 @@ public abstract class ParticleProjectilePerk extends Perk implements IParticlePe
 		new ParticleBuilder(getParticle()).receivers(players).count(getCount()).offset(getOffsetH(), getOffsetV(), getOffsetH()).location(projectile.getLocation()).extra(getSpeed()).data(getDustOptions(projectile)).spawn();
 	}
 
-	public void tick(Projectile projectile, Match match) {
+	default void tick(Projectile projectile, Match match) {
 		tick(projectile, match.getMinigamers().stream().map(Minigamer::getPlayer).collect(Collectors.toList()));
 	}
 }

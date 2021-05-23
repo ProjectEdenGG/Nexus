@@ -6,14 +6,14 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class GreenTrail extends ParticleProjectilePerk {
+public class GreenTrail implements ParticleProjectilePerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Green Trail";
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.LIME_DYE);
 	}
 

@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class SpringGadget extends GadgetPerk {
+public class SpringGadget implements GadgetPerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Spring";
 	}
 

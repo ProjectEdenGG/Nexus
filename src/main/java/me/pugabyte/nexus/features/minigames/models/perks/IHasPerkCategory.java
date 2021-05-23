@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.minigames.models.perks;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IHasPerkCategory {
-	PerkCategory getPerkCategory();
+	@NotNull PerkCategory getPerkCategory();
 
 	/**
 	 * Determines if this perk prevents another perk from being enabled.

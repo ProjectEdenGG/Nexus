@@ -12,34 +12,36 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class PlayerParticlePerk extends TickablePerk implements IParticlePerk {
+public interface PlayerParticlePerk extends TickablePerk, IParticlePerk {
+	default int getCount() {
+		return 5;
+	}
+
 	@Override
-	public PerkCategory getPerkCategory() {
+	default @NotNull PerkCategory getPerkCategory() {
 		return PerkCategory.PARTICLE;
 	}
 
-	public abstract Particle getParticle();
-
-	public Particle.DustOptions getDustOptions(@NotNull Player player) {
+	default Particle.DustOptions getDustOptions(@NotNull Player player) {
 		return null;
 	}
 
 	@Override
-	public double getOffsetH() {
+	default double getOffsetH() {
 		return .15;
 	}
 
 	@Override
-	public double getOffsetV() {
+	default double getOffsetV() {
 		return .7;
 	}
 
 	@Override
-	public void tick(Player player) {
+	default void tick(Player player) {
 		particle(player, player.getWorld().getPlayers());
 	}
 
-	public void particle(Player player, List<Player> recipients) {
+	default void particle(Player player, List<Player> recipients) {
 		if (player.isSneaking())
 			return;
 		Location location = player.getLocation().add(0, 0.5, 0);

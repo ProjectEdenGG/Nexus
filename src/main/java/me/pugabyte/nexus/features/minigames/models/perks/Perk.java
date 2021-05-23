@@ -1,22 +1,27 @@
 package me.pugabyte.nexus.features.minigames.models.perks;
 
-import lombok.EqualsAndHashCode;
+import eden.interfaces.Named;
 import me.pugabyte.nexus.framework.interfaces.HasDescription;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-@EqualsAndHashCode
-public abstract class Perk implements IHasPerkCategory, HasDescription {
-	@EqualsAndHashCode.Include
-	public abstract String getName();
-	public abstract ItemStack getMenuItem();
-	@EqualsAndHashCode.Include
-	public abstract PerkCategory getPerkCategory();
-	public abstract int getPrice();
+public interface Perk extends IHasPerkCategory, HasDescription, Named {
+	@NotNull ItemStack getMenuItem();
+	@NotNull PerkCategory getPerkCategory();
+	int getPrice();
+
+	default boolean equals(Perk other) {
+		if (this == other)
+			return true;
+		if (!getName().equals(other.getName()))
+			return false;
+		return getPerkCategory() == other.getPerkCategory();
+	}
 
 	/**
 	 * Determines if perk one prevents enabling of perk two
 	 */
-	public static boolean excludes(IHasPerkCategory one, IHasPerkCategory two) {
+	static boolean excludes(IHasPerkCategory one, IHasPerkCategory two) {
 		return one.excludes(two);
 	}
 }

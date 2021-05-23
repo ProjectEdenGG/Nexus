@@ -6,14 +6,14 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class HeartParticle extends PlayerParticlePerk {
+public class HeartParticle implements PlayerParticlePerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Heart";
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.RED_TULIP);
 	}
 

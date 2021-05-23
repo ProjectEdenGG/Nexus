@@ -8,14 +8,14 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class RainbowTrail extends ParticleProjectilePerk {
+public class RainbowTrail implements ParticleProjectilePerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Rainbow Trail";
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.RED_GLAZED_TERRACOTTA);
 	}
 

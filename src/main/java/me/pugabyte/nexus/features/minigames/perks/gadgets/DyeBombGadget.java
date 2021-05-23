@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.minigames.perks.gadgets;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.features.minigames.models.perks.common.GadgetPerk;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -11,9 +12,9 @@ import java.util.ArrayList;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-public class DyeBombGadget extends GadgetPerk {
+public class DyeBombGadget implements GadgetPerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Dye Bomb";
 	}
 
@@ -46,4 +47,7 @@ public class DyeBombGadget extends GadgetPerk {
 	public int getCooldown() {
 		return Time.SECOND.x(2);
 	}
+
+	@Override
+	public void useGadget(Player player) {}
 }

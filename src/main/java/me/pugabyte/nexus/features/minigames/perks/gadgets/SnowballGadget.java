@@ -2,12 +2,13 @@ package me.pugabyte.nexus.features.minigames.perks.gadgets;
 
 import me.pugabyte.nexus.features.minigames.models.perks.common.GadgetPerk;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class SnowballGadget extends GadgetPerk {
+public class SnowballGadget implements GadgetPerk {
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Snowballs";
 	}
 
@@ -30,4 +31,7 @@ public class SnowballGadget extends GadgetPerk {
 	public boolean cancelEvent() {
 		return false;
 	}
+
+	@Override
+	public void useGadget(Player player) {}
 }

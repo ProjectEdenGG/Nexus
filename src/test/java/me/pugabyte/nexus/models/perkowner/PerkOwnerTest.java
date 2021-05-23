@@ -38,10 +38,10 @@ public class PerkOwnerTest extends PerkOwner {
 	@Test
 	public void successfulPurchaseTest() {
 		setTokens(100);
-		assertTrue(purchase(PerkType.GRASS_BLOCK));
-		assertThat(getPurchasedPerks().keySet(), hasItem(PerkType.GRASS_BLOCK));
-		assertEquals(getPurchasedPerks().get(PerkType.GRASS_BLOCK), false);
-		assertEquals(99, getTokens()); // assuming grass block's price won't change
+		assertTrue(purchase(PerkType.UNICORN_HORN));
+		assertThat(getPurchasedPerks().keySet(), hasItem(PerkType.UNICORN_HORN));
+		assertEquals(getPurchasedPerks().get(PerkType.UNICORN_HORN), false);
+		assertEquals(100-PerkType.UNICORN_HORN.getPrice(), getTokens());
 		assertTrue(saveCalled);
 	}
 
@@ -49,16 +49,16 @@ public class PerkOwnerTest extends PerkOwner {
 	public void duplicatePurchaseTest() {
 		successfulPurchaseTest();
 		saveCalled = false;
-		assertFalse(purchase(PerkType.GRASS_BLOCK));
-		assertEquals(99, getTokens());
+		assertFalse(purchase(PerkType.UNICORN_HORN));
+		assertEquals(100-PerkType.UNICORN_HORN.getPrice(), getTokens());
 		assertFalse(saveCalled);
 	}
 
 	@Test
 	public void insufficientFundsPurchaseTest() {
-		assertFalse(purchase(PerkType.GRASS_BLOCK));
+		assertFalse(purchase(PerkType.UNICORN_HORN));
 		assertEquals(0, getTokens());
-		assertFalse(getPurchasedPerks().containsKey(PerkType.GRASS_BLOCK));
+		assertFalse(getPurchasedPerks().containsKey(PerkType.UNICORN_HORN));
 		assertFalse(saveCalled);
 	}
 
@@ -69,72 +69,72 @@ public class PerkOwnerTest extends PerkOwner {
 
 	@Test
 	public void unsuccessfulToggleTest() {
-		assertFalse(toggle(PerkType.GRASS_BLOCK));
+		assertFalse(toggle(PerkType.UNICORN_HORN));
 		assertFalse(saveCalled);
 	}
 
 	@Test
 	public void successfulToggleTest() {
-		getPurchasedPerks().put(PerkType.GRASS_BLOCK, false);
-		assertTrue(toggle(PerkType.GRASS_BLOCK));
-		assertTrue(getPurchasedPerks().get(PerkType.GRASS_BLOCK));
+		getPurchasedPerks().put(PerkType.UNICORN_HORN, false);
+		assertTrue(toggle(PerkType.UNICORN_HORN));
+		assertTrue(getPurchasedPerks().get(PerkType.UNICORN_HORN));
 		assertTrue(saveCalled);
 		saveCalled = false;
-		assertTrue(toggle(PerkType.GRASS_BLOCK));
-		assertFalse(getPurchasedPerks().get(PerkType.GRASS_BLOCK));
+		assertTrue(toggle(PerkType.UNICORN_HORN));
+		assertFalse(getPurchasedPerks().get(PerkType.UNICORN_HORN));
 		assertTrue(saveCalled);
 	}
 
 	@Test
 	public void successfulExclusiveToggleTest() {
-		getPurchasedPerks().put(PerkType.GRASS_BLOCK, false);
-		getPurchasedPerks().put(PerkType.SEA_LANTERN, true);
-		getPurchasedPerks().put(PerkType.NOTE_BLOCK, true);
+		getPurchasedPerks().put(PerkType.UNICORN_HORN, false);
+		getPurchasedPerks().put(PerkType.ICE, true);
+		getPurchasedPerks().put(PerkType.MUSHROOM, true);
 		getPurchasedPerks().put(PerkType.CLOUD, true);
 		getPurchasedPerks().put(PerkType.SPRING, true);
-		assertTrue(toggle(PerkType.GRASS_BLOCK));
+		assertTrue(toggle(PerkType.UNICORN_HORN));
 		assertTrue(saveCalled);
-		assertTrue(getPurchasedPerks().get(PerkType.GRASS_BLOCK));
-		assertFalse(getPurchasedPerks().get(PerkType.SEA_LANTERN));
-		assertFalse(getPurchasedPerks().get(PerkType.NOTE_BLOCK));
+		assertTrue(getPurchasedPerks().get(PerkType.UNICORN_HORN));
+		assertFalse(getPurchasedPerks().get(PerkType.ICE));
+		assertFalse(getPurchasedPerks().get(PerkType.MUSHROOM));
 		assertTrue(getPurchasedPerks().get(PerkType.CLOUD));
 		assertTrue(getPurchasedPerks().get(PerkType.SPRING));
 		saveCalled = false;
-		assertTrue(toggle(PerkType.GRASS_BLOCK));
+		assertTrue(toggle(PerkType.UNICORN_HORN));
 		assertTrue(saveCalled);
-		assertFalse(getPurchasedPerks().get(PerkType.GRASS_BLOCK));
+		assertFalse(getPurchasedPerks().get(PerkType.UNICORN_HORN));
 	}
 
 	@Test
 	public void enabledPerksTest() {
-		getPurchasedPerks().put(PerkType.GRASS_BLOCK, true);
-		getPurchasedPerks().put(PerkType.SEA_LANTERN, false);
-		assertTrue(getEnabledPerks().contains(PerkType.GRASS_BLOCK));
-		assertFalse(getEnabledPerks().contains(PerkType.SEA_LANTERN));
+		getPurchasedPerks().put(PerkType.UNICORN_HORN, true);
+		getPurchasedPerks().put(PerkType.ICE, false);
+		assertTrue(getEnabledPerks().contains(PerkType.UNICORN_HORN));
+		assertFalse(getEnabledPerks().contains(PerkType.ICE));
 	}
 
 	@Test
 	public void enabledPerksByClassTest() {
-		getPurchasedPerks().put(PerkType.GRASS_BLOCK, true);
-		getPurchasedPerks().put(PerkType.SEA_LANTERN, false);
+		getPurchasedPerks().put(PerkType.UNICORN_HORN, true);
+		getPurchasedPerks().put(PerkType.ICE, false);
 		getPurchasedPerks().put(PerkType.SPRING, true);
 		getPurchasedPerks().put(PerkType.CONCRETE_HAT, true);
 		Set<LoadoutPerk> enabledPerks = getEnabledPerksByClass(LoadoutPerk.class);
-		assertTrue(enabledPerks.contains(PerkType.GRASS_BLOCK.getPerk()));
-		assertFalse(enabledPerks.contains(PerkType.SEA_LANTERN.getPerk()));
+		assertTrue(enabledPerks.contains(PerkType.UNICORN_HORN.getPerk()));
+		assertFalse(enabledPerks.contains(PerkType.ICE.getPerk()));
 		assertFalse(enabledPerks.contains(PerkType.SPRING.getPerk()));
 		assertTrue(enabledPerks.contains(PerkType.CONCRETE_HAT.getPerk()));
 	}
 
 	@Test
 	public void enabledPerksByCategoryTest() {
-		getPurchasedPerks().put(PerkType.GRASS_BLOCK, true);
-		getPurchasedPerks().put(PerkType.SEA_LANTERN, false);
+		getPurchasedPerks().put(PerkType.UNICORN_HORN, true);
+		getPurchasedPerks().put(PerkType.ICE, false);
 		getPurchasedPerks().put(PerkType.SPRING, true);
 		getPurchasedPerks().put(PerkType.CONCRETE_HAT, true);
 		Set<? extends Perk> enabledPerks = getEnabledPerksByCategory(PerkCategory.HAT);
-		assertTrue(enabledPerks.contains(PerkType.GRASS_BLOCK.getPerk()));
-		assertFalse(enabledPerks.contains(PerkType.SEA_LANTERN.getPerk()));
+		assertTrue(enabledPerks.contains(PerkType.UNICORN_HORN.getPerk()));
+		assertFalse(enabledPerks.contains(PerkType.ICE.getPerk()));
 		assertFalse(enabledPerks.contains(PerkType.SPRING.getPerk()));
 		assertFalse(enabledPerks.contains(PerkType.CONCRETE_HAT.getPerk()));
 	}

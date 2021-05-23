@@ -6,19 +6,19 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class BasicTrail extends ParticleProjectilePerk {
+public class BasicTrail implements ParticleProjectilePerk {
     @Override
     public Particle getParticle() {
         return Particle.END_ROD;
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Basic Trail";
     }
 
     @Override
-    public ItemStack getMenuItem() {
+    public @NotNull ItemStack getMenuItem() {
         return new ItemStack(Material.WHITE_DYE);
     }
 

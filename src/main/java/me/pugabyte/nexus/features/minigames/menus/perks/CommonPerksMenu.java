@@ -5,7 +5,6 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
-import me.pugabyte.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
@@ -31,11 +30,7 @@ public abstract class CommonPerksMenu extends MenuUtils {
 	}
 
 	protected static ItemStack getItem(Perk perk, List<String> lore) {
-		try {
-			return new ItemBuilder(perk.getMenuItem()).name("&b" + perk.getName()).lore(lore).build();
-		} catch (LoadoutPerk.IncompleteLoadout e) {
-			throw new IllegalArgumentException(perk.getName() + " has no valid menu item");
-		}
+		return new ItemBuilder(perk.getMenuItem()).name("&b" + perk.getName()).lore(lore).build();
 	}
 
 	protected static void send(Player player, String message) {

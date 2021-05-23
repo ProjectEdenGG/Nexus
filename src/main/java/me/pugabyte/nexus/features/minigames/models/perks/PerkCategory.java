@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.perks;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -32,7 +33,7 @@ public enum PerkCategory implements IHasPerkCategory {
 	}
 
 	@Override
-	public PerkCategory getPerkCategory() {
+	public @NotNull PerkCategory getPerkCategory() {
 		return this;
 	}
 }
