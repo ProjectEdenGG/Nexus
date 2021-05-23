@@ -20,6 +20,7 @@ import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -187,6 +188,14 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			return StringUtils.compass(player, 8);
+		}
+	},
+
+	@Interval(2)
+	FACING {
+		@Override
+		public String render(Player player) {
+			return "&3Facing: &e" + camelCase(player.getFacing()) + " (" + LocationUtils.getShortFacingDirection(player) + ")";
 		}
 	},
 
