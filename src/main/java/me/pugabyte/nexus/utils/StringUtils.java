@@ -309,7 +309,7 @@ public class StringUtils extends eden.utils.StringUtils {
 	 * Sends a message to the player with the input message as a teleportation link.
 	 * @param message message to display
 	 * @param location location to set as a teleport destination on click
-	 * @param player any player handled by {@link PlayerUtils#send(Object, Object)}
+	 * @param player any player handled by {@link PlayerUtils#send(Object, Object, Object...)}
 	 */
 	public static void sendJsonLocation(String message, Location location, Object player) {
 		new JsonBuilder().next(message).command(getTeleportCommand(location)).send(player);

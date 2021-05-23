@@ -1,11 +1,13 @@
 package me.pugabyte.nexus.utils;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.mojang.datafixers.util.Pair;
-import eden.interfaces.Named;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import net.minecraft.server.v1_16_R3.*;
@@ -21,14 +23,17 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@UtilityClass
 public class PacketUtils {
 
 	public static BlockPosition toBlockPosition(Location destination) {
@@ -174,20 +179,27 @@ public class PacketUtils {
 
 	//
 
-	private static void sendPacket(HasPlayer player, Object... packets) {
+	public static void sendPacket(HasPlayer player, Collection<?> packets) {
+		packets.forEach(packet -> sendPacket(player, packet));
+	}
+
+	public static void sendPacket(HasPlayer player, Object... packets) {
 		for (Object packet : packets) {
-			sendPacket(player, packet);
+			if (packet instanceof PacketContainer container)
+				sendPacket(player, container);
+			else
+				sendPacket(player, PacketContainer.fromPacket(packet));
 		}
 	}
 
-	private static void sendPacket(HasPlayer player, Object packet) {
-		PacketContainer packetContainer = PacketContainer.fromPacket(packet);
-		String name = player instanceof Named ? ((Named) player).getName() : player.getPlayer().getName();
-		try {
-			ProtocolLibrary.getProtocolManager().sendServerPacket(player.getPlayer(), packetContainer);
-		} catch (InvocationTargetException e) {
-			Nexus.log("Error trying to send " + packetContainer + " packet to " + name);
-			e.printStackTrace();
+	public static void sendPacket(HasPlayer player, PacketContainer... packets) {
+		for (PacketContainer packet : packets) {
+			try {
+				ProtocolLibrary.getProtocolManager().sendServerPacket(player.getPlayer(), packet);
+			} catch (InvocationTargetException e) {
+				Nexus.log("Error trying to send " + packet + " packet to " + player.getPlayer().getName());
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -320,4 +332,89 @@ public class PacketUtils {
 		return null;
 	}
 
+	/**
+	 * Gets the slot int corresponding to an {@link EnumItemSlot}. Returns -1 for {@link EnumItemSlot#MAINHAND MAINHAND}.
+	 * @param slot an item slot
+	 * @return integer slot
+	 */
+	public int getSlotInt(EnumItemSlot slot) {
+		return switch (slot) {
+			case MAINHAND -> -1;
+			case OFFHAND -> 45;
+			case FEET -> 8;
+			case LEGS -> 7;
+			case CHEST -> 6;
+			case HEAD -> 5;
+		};
+	}
+
+	/**
+	 * Gets the slot int corresponding to an {@link EnumWrappers.ItemSlot}. Returns -1 for {@link EnumWrappers.ItemSlot#MAINHAND MAINHAND}.
+	 * @param slot an item slot
+	 * @return integer slot
+	 */
+	public int getSlotInt(EnumWrappers.ItemSlot slot) {
+		return switch (slot) {
+			case MAINHAND -> -1;
+			case OFFHAND -> 45;
+			case FEET -> 8;
+			case LEGS -> 7;
+			case CHEST -> 6;
+			case HEAD -> 5;
+		};
+	}
+
+	/**
+	 * Gets the {@link EnumItemSlot} corresponding to an {@link EnumWrappers.ItemSlot}.
+	 * @param slot an item slot
+	 * @return enum item slot
+	 */
+	public EnumItemSlot getEnumItemSlot(EnumWrappers.ItemSlot slot) {
+		return EnumItemSlot.valueOf(slot.name());
+	}
+
+	/**
+	 * Sends a fake packet for an armor piece or main/off-hand item for a player.
+	 * <p>
+	 * To avoid sending a packet to the item owner, remove them from <code>recipients</code>.
+	 * @param owner player to "give" the item
+	 * @param recipients packet recipients
+	 * @param item item to "give"
+	 * @param slot slot to "set"
+	 */
+	public void sendFakeItem(HasPlayer owner, List<? extends HasPlayer> recipients, ItemStack item, EnumItemSlot slot) {
+		Player player = owner.getPlayer();
+
+		// self packet avoids playing the armor equip sound effect
+		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
+		selfPacket.getIntegers().write(0, 0); // inventory ID (0 = player)
+		int slotInt = getSlotInt(slot);
+		if (slotInt == -1)
+			slotInt = owner.getPlayer().getInventory().getHeldItemSlot() + 36;
+		selfPacket.getIntegers().write(1, slotInt);
+		selfPacket.getItemModifier().write(0, item);
+
+		// other packet is sent to all other players to show the armor piece
+		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipmentList = new ArrayList<>();
+		equipmentList.add(new Pair<>(slot, CraftItemStack.asNMSCopy(item)));
+		PacketPlayOutEntityEquipment rawPacket = new PacketPlayOutEntityEquipment(player.getEntityId(), equipmentList);
+		PacketContainer otherPacket = PacketContainer.fromPacket(rawPacket);
+
+		// send packets
+		recipients.stream().filter(_player -> player.getWorld() == _player.getPlayer().getWorld()).forEach(_player -> {
+			PacketContainer packet = _player.getPlayer().getUniqueId().equals(player.getUniqueId()) ? selfPacket : otherPacket;
+			sendPacket(_player, packet);
+		});
+	}
+
+	/**
+	 * Sends fake packets for an armor piece or main/off-hand item for a player.
+	 * @param owner player to "give" the item
+	 * @param recipients packet recipients
+	 * @param item item to "give"
+	 * @param slot slot to "set"
+	 */
+	public void sendFakeItem(HasPlayer owner, List<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
+		sendFakeItem(owner, recipients, item, getEnumItemSlot(slot));
+	}
 }
