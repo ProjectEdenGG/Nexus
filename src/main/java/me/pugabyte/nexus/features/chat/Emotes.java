@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.chat;
 
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.chat.commands.EmotesCommand;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.models.emote.EmoteService;
 import me.pugabyte.nexus.models.emote.EmoteUser;
@@ -84,7 +85,7 @@ public enum Emotes {
 	public static void process(ChatEvent event) {
 		if (event.getChatter() == null) return;
 		OfflinePlayer player = event.getChatter().getOfflinePlayer();
-		if (!Nexus.getPerms().playerHas(null, player, "emoticons.use"))
+		if (!Nexus.getPerms().playerHas(null, player, EmotesCommand.PERMISSION))
 			return;
 		EmoteUser user = new EmoteService().get(player);
 		if (!user.isEnabled())

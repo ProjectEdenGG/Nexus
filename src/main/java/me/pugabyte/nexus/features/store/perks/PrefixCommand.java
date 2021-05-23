@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.store.perks;
 
 import me.pugabyte.nexus.features.chat.Emotes;
+import me.pugabyte.nexus.features.chat.commands.EmotesCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -60,7 +61,7 @@ public class PrefixCommand extends CustomCommand {
 	@Path("<prefix...>")
 	@Permission("set.my.prefix")
 	void prefix(String input) {
-		if (player().hasPermission("emoticons.use"))
+		if (player().hasPermission(EmotesCommand.PERMISSION))
 			input = Emotes.process(new EmoteService().get(player()), input);
 
 		if (stripColor(input).length() > 10)

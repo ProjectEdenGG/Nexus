@@ -14,7 +14,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.Arrays;
-import java.util.function.BiFunction;
 
 @Aliases("emoticons")
 public class EmotesCommand extends CustomCommand {
@@ -27,48 +26,48 @@ public class EmotesCommand extends CustomCommand {
 		user = service.get(player());
 	}
 
-	@Path("[page]")
-	void page(@Arg("1") int page) {
-		BiFunction<Emotes, String, JsonBuilder> formatter = (emote, index) -> {
-			JsonBuilder json = json();
-			if (emote.getColors().isEmpty()) {
-				if (user.isEnabled(emote))
+	JsonBuilder format(Emotes emote, String index) {
+		JsonBuilder json = json();
+		if (emote.getColors().isEmpty()) {
+			if (user.isEnabled(emote))
+				json
+						.next("&a ✔ ")
+						.hover("&cClick to disable emote")
+						.command("/emotes disable " + emote.name().toLowerCase());
+			else
+				json
+						.next("&c ✖ ")
+						.hover("&aClick to enable emote")
+						.command("/emotes enable " + emote.name().toLowerCase());
+			json.next(" &8| &3" + emote.getKey() + " &7-  " + emote.getEmote());
+		} else {
+			for (ChatColor color : emote.getColors()) {
+				if (!json.isInitialized())
+					json.initialize();
+				else
+					json.newline();
+
+				if (user.isEnabled(emote, color))
 					json
 							.next("&a ✔ ")
 							.hover("&cClick to disable emote")
-							.command("/emotes disable " + emote.name().toLowerCase());
+							.command("/emotes disable " + emote.name().toLowerCase() + " " + color.getName().toLowerCase());
 				else
 					json
 							.next("&c ✖ ")
 							.hover("&aClick to enable emote")
-							.command("/emotes enable " + emote.name().toLowerCase());
-				json.next(" &8| &3" + emote.getKey() + " &7-  " + emote.getEmote());
-			} else {
-				for (ChatColor color : emote.getColors()) {
-					if (!json.isInitialized())
-						json.initialize();
-					else
-						json.newline();
-
-					if (user.isEnabled(emote, color))
-						json
-								.next("&a ✔ ")
-								.hover("&cClick to disable emote")
-								.command("/emotes disable " + emote.name().toLowerCase() + " " + color.getName().toLowerCase());
-					else
-						json
-								.next("&c ✖ ")
-								.hover("&aClick to enable emote")
-								.command("/emotes enable " + emote.name().toLowerCase() + " " + color.getName().toLowerCase());
-					json.next(" &8| &3" + emote.getKey() + " &7-  " + color + emote.getEmote());
-				}
+							.command("/emotes enable " + emote.name().toLowerCase() + " " + color.getName().toLowerCase());
+				json.next(" &8| &3" + emote.getKey() + " &7-  " + color + emote.getEmote());
 			}
+		}
 
-			return json;
-		};
+		return json;
+	}
 
+	@Path("[page]")
+	void page(@Arg("1") int page) {
 		line(3);
-		paginate(Arrays.asList(Emotes.values()), formatter, "/emotes", page);
+		paginate(Arrays.asList(Emotes.values()), this::format, "/emotes", page);
 	}
 
 	@Path("toggle")

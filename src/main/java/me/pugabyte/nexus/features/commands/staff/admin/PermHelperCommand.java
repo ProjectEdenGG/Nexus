@@ -67,9 +67,9 @@ public class PermHelperCommand extends CustomCommand {
 		}
 	}
 
-	@Path("<type> (add|remove) <player> <amount>")
-	void modify(NumericPermission type, OfflinePlayer player, int amount) {
-		if (arg(2).equals("remove"))
+	@Path("<type> <add|remove> <player> <amount>")
+	void modify(NumericPermission type, boolean add, OfflinePlayer player, int amount) {
+		if (!add)
 			amount = -amount;
 
 		String permission = type.getPermission();
