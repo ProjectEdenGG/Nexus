@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands.staff;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.resourcepack.ResourcePackCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -126,6 +127,8 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw());
 
 			json.newline().next("&3Fly mode: &e" + player.getAllowFlight() + " &3(" + (player.isFlying() ? "flying" : "not flying") + ")");
+
+			json.newline().next("&3RP status: &e" + ResourcePackCommand.statusOf(player));
 		}
 
 		json.newline().next("&3OP: &e" + offlinePlayer.isOp());
