@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.resourcepack;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.admin.BashCommand;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -18,6 +19,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUser;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
 import me.pugabyte.nexus.utils.HttpUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -27,6 +29,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,7 @@ import static me.pugabyte.nexus.features.resourcepack.ResourcePack.*;
 @Aliases("rp")
 @NoArgsConstructor
 public class ResourcePackCommand extends CustomCommand implements Listener {
+	private static final LocalResourcePackUserService service = new LocalResourcePackUserService();
 
 	public ResourcePackCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -69,7 +73,6 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		if (enabled && Status.DECLINED != player().getResourcePackStatus())
 			error("You must decline the resource pack in order to run this command");
 
-		LocalResourcePackUserService service = new LocalResourcePackUserService();
 		LocalResourcePackUser user = service.get(player());
 		user.setEnabled(enabled);
 		service.save(user);
@@ -82,25 +85,27 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	public static @NotNull String statusOf(HasPlayer player) {
+		LocalResourcePackUser user = service.get(player.getPlayer());
+		if (user.isEnabled())
+			return "Manual";
+		else
+			return StringUtils.camelCase(player.getPlayer().getResourcePackStatus());
+	}
+
 	@Permission("group.staff")
 	@Path("getStatus [player]")
 	void getStatus(@Arg("self") Player player) {
-		send(PREFIX + "Resource pack status for " + player.getName() + ": &e" + (player.getResourcePackStatus() == null ? "null" : camelCase(player.getResourcePackStatus())));
+		send(PREFIX + "Resource pack status for " + player.getName() + ": &e" + statusOf(player));
 	}
 
 	@Permission("group.staff")
 	@Path("getStatuses")
 	void getStatuses() {
 		send(PREFIX + "Statuses: ");
-		LocalResourcePackUserService service = new LocalResourcePackUserService();
 		new HashMap<String, List<String>>() {{
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				LocalResourcePackUser user = service.get(player);
-				String status;
-				if (user.isEnabled())
-					status = "Manual";
-				else
-					status = camelCase(player.getResourcePackStatus());
+				String status = statusOf(player);
 				List<String> uuids = getOrDefault(status, new ArrayList<>());
 				uuids.add(player.getName());
 				put(status, uuids);
