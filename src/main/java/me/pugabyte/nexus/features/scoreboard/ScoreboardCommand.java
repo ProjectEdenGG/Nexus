@@ -86,7 +86,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 					.next(" ").group();
 			json.next("&3" + camelCase(line))
 					.hover(line.render(player()));
-			json.newline();
+			json.newline().group();
 
 			if (++index % 14 == 0) {
 				builder.addPage(json);
