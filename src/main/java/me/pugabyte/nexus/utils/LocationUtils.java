@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -158,6 +159,39 @@ public class LocationUtils {
 		changed.setYaw(180 - toDegree(Math.atan2(x, z)));
 		changed.setPitch(90 - toDegree(Math.acos(y)));
 		player.teleport(changed);
+	}
+
+	/**
+	 * Gets the facing direction in a format along the lines of "+X"
+	 * @param face bukkit facing direction
+	 * @return facing direction as text
+	 */
+	public static String getShortFacingDirection(BlockFace face) {
+		Map<String, Integer> faceMap = Map.of(
+				"X", face.getModX(),
+				"Y", face.getModY(),
+				"Z", face.getModZ()
+		);
+		Utils.MinMaxResult<Map.Entry<String, Integer>> max = Utils.getMax(faceMap.entrySet(), entry -> Math.abs(entry.getValue()));
+		String output;
+		if (max.getObject() != null) {
+			if (max.getObject().getValue() > 0)
+				output = "+";
+			else
+				output = "-";
+			output += max.getObject().getKey();
+		} else
+			output = "N/A";
+		return output;
+	}
+
+	/**
+	 * Gets a player's facing direction in a format along the lines of "+X"
+	 * @param player player to get
+	 * @return facing direction as text
+	 */
+	public static String getShortFacingDirection(HasPlayer player) {
+		return getShortFacingDirection(player.getPlayer().getFacing());
 	}
 
 	private static float toDegree(double angle) {
