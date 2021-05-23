@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.chat.commands;
 
 import lombok.NonNull;
+import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.features.chat.Emotes;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -11,15 +12,38 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.emote.EmoteService;
 import me.pugabyte.nexus.models.emote.EmoteUser;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.LuckPermsUtils;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.OfflinePlayer;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Aliases("emoticons")
 public class EmotesCommand extends CustomCommand {
 	public static final String PERMISSION = "emoticons.use";
 	private final EmoteService service = new EmoteService();
 	private final EmoteUser user;
+
+	/**
+	 * Returns if a user can use the specified emote
+	 * @param player player to check
+	 * @param emote emote to check
+	 * @return if a user can use the specified emote
+	 */
+	public static boolean hasEmotePermissions(HasOfflinePlayer player, Emotes emote) {
+		return hasEmotePermissions(player) || LuckPermsUtils.hasPermission(player, PERMISSION + "." + emote.name().toLowerCase());
+	}
+
+	/**
+	 * Returns if a user is able to use all emotes
+	 * @param player player to check
+	 * @return if a user is able to use all emotes
+	 */
+	public static boolean hasEmotePermissions(HasOfflinePlayer player) {
+		return LuckPermsUtils.hasPermission(player, PERMISSION);
+	}
 
 	public EmotesCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -67,7 +91,13 @@ public class EmotesCommand extends CustomCommand {
 	@Path("[page]")
 	void page(@Arg("1") int page) {
 		line(3);
-		paginate(Arrays.asList(Emotes.values()), this::format, "/emotes", page);
+		OfflinePlayer player = offlinePlayer();
+		List<Emotes> emotes;
+		if (hasEmotePermissions(player))
+			emotes = Arrays.asList(Emotes.values());
+		else
+			emotes = Arrays.stream(Emotes.values()).filter(emote -> LuckPermsUtils.hasPermission(player, PERMISSION + "." + emote.name().toLowerCase())).collect(Collectors.toList());
+		paginate(emotes, this::format, "/emotes", page);
 	}
 
 	@Path("toggle")

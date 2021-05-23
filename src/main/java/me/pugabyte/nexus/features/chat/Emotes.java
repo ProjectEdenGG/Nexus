@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.chat.commands.EmotesCommand;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.models.emote.EmoteService;
 import me.pugabyte.nexus.models.emote.EmoteUser;
+import me.pugabyte.nexus.utils.LuckPermsUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
@@ -71,11 +72,6 @@ public enum Emotes {
 	@Getter
 	private final List<ChatColor> colors = new ArrayList<>();
 
-	Emotes(String emote, String key) {
-		this.emote = emote;
-		this.key = key;
-	}
-
 	Emotes(String emote, String key, ChatColor... colors) {
 		this.emote = emote;
 		this.key = key;
@@ -85,8 +81,6 @@ public enum Emotes {
 	public static void process(ChatEvent event) {
 		if (event.getChatter() == null) return;
 		OfflinePlayer player = event.getChatter().getOfflinePlayer();
-		if (!Nexus.getPerms().playerHas(null, player, EmotesCommand.PERMISSION))
-			return;
 		EmoteUser user = new EmoteService().get(player);
 		if (!user.isEnabled())
 			return;
@@ -101,8 +95,11 @@ public enum Emotes {
 	public static String process(EmoteUser user, String message, ChatColor resetColor) {
 		Nexus.debug("Message: " + message);
 		String reset = resetColor == null ? "" : resetColor.toString();
+		boolean canUseAllEmotes = LuckPermsUtils.hasPermission(user, EmotesCommand.PERMISSION);
 		for (Emotes emote : values()) {
 			if (!user.isEnabled(emote))
+				continue;
+			if (!(canUseAllEmotes || LuckPermsUtils.hasPermission(user, EmotesCommand.PERMISSION+"."+emote.name().toLowerCase())))
 				continue;
 
 			while (indexOfIgnoreCase(message, emote.getKey()) > -1) {
