@@ -12,6 +12,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -35,6 +36,12 @@ public class EntityNameCommand extends CustomCommand {
 			targetEntity = getTargetEntityRequired();
 			if (!(targetEntity instanceof LivingEntity) && !(targetEntity instanceof ItemFrame))
 				error("You must be looking at a living entity or an item frame");
+			if ((targetEntity.isInvulnerable() ||
+					(targetEntity instanceof LivingEntity && !((LivingEntity) targetEntity).hasAI()) ||
+					(targetEntity instanceof ItemFrame && ((ItemFrame) targetEntity).isFixed()) ||
+					(targetEntity instanceof ArmorStand && ((ArmorStand) targetEntity).isMarker()))
+				&& !hasPermission("group.staff"))
+				error("You cannot name that entity");
 		}
 	}
 
