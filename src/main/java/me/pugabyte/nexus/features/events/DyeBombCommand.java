@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -44,15 +43,16 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class DyeBombCommand extends CustomCommand implements Listener {
-	@Getter
-	private static final ItemStack dyeBomb = new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
+	public static ItemStack getDyeBomb() {
+		return new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
+	}
 
 	public DyeBombCommand(CommandEvent event) {
 		super(event);
 	}
 
 	public static boolean isDyeBomb(ItemStack itemStack) {
-		return dyeBomb.isSimilar(itemStack);
+		return getDyeBomb().isSimilar(itemStack);
 	}
 
 	@Path("give <amount> [player]")
@@ -61,7 +61,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	}
 
 	public static void giveDyeBomb(Player player, int amount) {
-		ItemStack item = dyeBomb.clone();
+		ItemStack item = getDyeBomb();
 		item.setAmount(amount);
 		PlayerUtils.giveItem(player, item);
 	}
@@ -84,7 +84,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 			return;
 
 		ItemMeta meta = item.getItemMeta();
-		String originalName = StringUtils.stripColor(dyeBomb.getItemMeta().getDisplayName());
+		String originalName = StringUtils.stripColor(getDyeBomb().getItemMeta().getDisplayName());
 		String itemName = StringUtils.stripColor(meta.getDisplayName());
 
 		if (!originalName.equals(itemName))

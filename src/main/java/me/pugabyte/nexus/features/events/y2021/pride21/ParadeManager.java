@@ -51,7 +51,8 @@ public class ParadeManager implements Talker.TalkingNPC {
 			"wait 80",
 			"Well I'm happy to know that you're excited! I promise to make this a parade to remember with the decorations you recovered.",
 			"wait 80",
-			"As a thank you for helping me out, please stop by my stall at the parade, I'll give you two free flags or bunting of your choice. Past that, you'll be able to buy them with those event tokens."
+			"As a thank you for helping me out, please stop by my stall at the parade, I'll give you two free flags or bunting of your choice. Past that, you'll be able to buy them with those event tokens.",
+			"wait 110"
 	);
 
 	private static final Pride21UserService service = new Pride21UserService();

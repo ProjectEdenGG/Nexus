@@ -28,6 +28,7 @@ public class Pride21User implements PlayerOwnedObject {
 	private UUID uuid;
 	private Set<Decorations> decorationsCollected = new HashSet<>();
 	private int rewardsClaimed = 0;
+	private boolean bonusTokenRewardClaimed = false; // 50 event tokens + 16 dye bombs for completing the quest
 
 	/**
 	 * Gets the number of decoratiosn the player has found for the quest.

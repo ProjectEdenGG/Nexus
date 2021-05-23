@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.pride21;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.features.events.models.Talker;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
@@ -9,9 +10,12 @@ import me.pugabyte.nexus.models.pride21.Pride21User;
 import me.pugabyte.nexus.models.pride21.Pride21UserService;
 import me.pugabyte.nexus.utils.DescParseTickFormat;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
@@ -22,6 +26,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -103,10 +108,23 @@ public class Quests implements Listener {
 		if (!cooldownService.check(player, "Pride21_NPCInteract", TimeUtils.Time.SECOND.x(5)))
 			return;
 
-		Talker.sendScript(player, PARADE_MANAGER);
+		int waitTicks = Talker.sendScript(player, PARADE_MANAGER);
 		Pride21User user = service.get(player);
-		if (user.isComplete())
+		if (user.isComplete()) {
 			player.resetPlayerTime();
+			if (!user.isBonusTokenRewardClaimed()) {
+				Tasks.waitAsync(waitTicks, () -> {
+					user.setBonusTokenRewardClaimed(true);
+					EventUserService eventUserService = new EventUserService();
+					EventUser eventUser = eventUserService.get(user);
+					eventUser.giveTokens(50);
+					eventUserService.save(eventUser);
+					ItemStack dyeBomb = DyeBombCommand.getDyeBomb();
+					dyeBomb.setAmount(16);
+					PlayerUtils.giveItemAndDeliverExcess(player, dyeBomb, "Pride 2021 Reward", WorldGroup.SURVIVAL);
+				});
+			}
+		}
 	}
 
 	@EventHandler
