@@ -510,7 +510,8 @@ public class Match {
 		private final Map<MatchTaskType, Integer> taskTypeMap = new HashMap<>();
 
 		void end() {
-			taskIds.forEach(this::cancel);
+			List<Integer> tasks = new ArrayList<>(taskIds);
+			tasks.forEach(this::cancel);
 		}
 
 		public void cancel(int taskId) {
