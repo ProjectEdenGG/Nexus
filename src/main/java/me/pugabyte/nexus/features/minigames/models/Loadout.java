@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.minigames.Minigames;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSetting;
 import me.pugabyte.nexus.models.minigamersetting.MinigamerSettingService;
 import me.pugabyte.nexus.utils.SerializationUtils;
@@ -16,12 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Builder
 @Data
@@ -68,7 +63,7 @@ public class Loadout implements ConfigurationSerializable {
 		if (effects != null && effects.size() > 0)
 			player.addPotionEffects(effects);
 
-		Minigames.getModifier().afterLoadout(minigamer);
+		new MinigamerLoadoutEvent(minigamer, this).callEvent();
 	}
 
 

@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
@@ -64,18 +65,21 @@ public class Sabotage extends TeamMechanic {
 	@Override
 	public void onStart(MatchStartEvent event) {
 		Match match = event.getMatch();
-		SabotageMatchData matchData = match.getMatchData();
-		match.getMinigamers().forEach(minigamer -> {
-			SabotageColor color = matchData.getColor(minigamer);
-			PlayerInventory inventory = minigamer.getPlayer().getInventory();
-			inventory.setHelmet(color.getHead());
-			inventory.setChestplate(color.getChest());
-			inventory.setLeggings(color.getLegs());
-			inventory.setBoots(color.getBoots());
-		});
 		match.getTasks().repeatAsync(0, 1, () -> {
 			// TODO: packet stuff + body report checking + more goes here
 		});
+	}
+
+	@EventHandler
+	public void onLoadout(MinigamerLoadoutEvent event) {
+		if (!event.getMatch().isMechanic(this)) return;
+		Minigamer minigamer = event.getMinigamer();
+		SabotageColor color = event.getMatch().<SabotageMatchData>getMatchData().getColor(minigamer);
+		PlayerInventory inventory = minigamer.getPlayer().getInventory();
+		inventory.setHelmet(color.getHead());
+		inventory.setChestplate(color.getChest());
+		inventory.setLeggings(color.getLegs());
+		inventory.setBoots(color.getBoots());
 	}
 
 	@EventHandler

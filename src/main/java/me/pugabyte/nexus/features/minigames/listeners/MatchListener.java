@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
@@ -31,12 +32,8 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -377,5 +374,10 @@ public class MatchListener implements Listener {
 		if (!attacker.isPlaying(victim.getMatch())) return;
 		if (!victim.getTeam().equals(attacker.getTeam())) return;
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onLoadout(MinigamerLoadoutEvent event) {
+		Minigames.getModifier().afterLoadout(event.getMinigamer());
 	}
 }

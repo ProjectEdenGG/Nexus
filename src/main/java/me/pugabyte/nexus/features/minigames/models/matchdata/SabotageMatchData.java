@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
@@ -27,12 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -98,7 +94,6 @@ public class SabotageMatchData extends MatchData {
 		votingScreen = new VotingScreen(origin);
 		meetingTaskID = Tasks.repeat(0, 1, () -> match.getMinigamers().stream().filter(minigamer -> minigamer.getPlayer().getOpenInventory().getType() == InventoryType.CRAFTING).forEach(minigamer -> votingScreen.open(minigamer.getPlayer())));
 
-		// TODO: fix this removing armor
 		// TODO: fix this unhiding spectators
 		// TODO: teleport to a black box instead and let players type in chat (give an item to re-open voting menu) and respawn on meeting end
 		match.getMinigamers().forEach(Minigamer::respawn);
@@ -133,8 +128,9 @@ public class SabotageMatchData extends MatchData {
 
 		String ejectedName;
 		if (ejected != null) {
-			ejected.setAlive(false);
-			ejected.toSpectate();
+			new MinigamerDeathEvent(ejected).callEvent();
+			if (match.isEnded())
+				return;
 			ejectedName = ejected.getNickname();
 		} else
 			ejectedName = "Nobody";
@@ -142,11 +138,6 @@ public class SabotageMatchData extends MatchData {
 		String display = ejectedName + " was ejected.";
 		if (ejected == null)
 			display += " (" + (tie ? "Tied" : "Skipped") + ")";
-
-		if (match.getMechanic().shouldBeOver(match)) {
-			match.end();
-			return;
-		}
 
 		// TODO: true animation
 		match.showTitle(Title.title(Component.empty(), new JsonBuilder(display).build(), Title.Times.of(fade, Duration.ofSeconds(7), fade)));
