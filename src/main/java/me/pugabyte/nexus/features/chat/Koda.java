@@ -148,7 +148,7 @@ public class Koda {
 				if (!(" " + event.getMessage() + " ").matches("(?i).*(" + contains + ").*"))
 					continue responses;
 
-			if (trigger.getCooldown() == null || trigger.getCooldown() < 0)
+			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
 				if (!new CooldownService().check(Nexus.getUUID0(), "koda_" + trigger.getName(), Time.SECOND.x(trigger.getCooldown())))
 					continue;
 
