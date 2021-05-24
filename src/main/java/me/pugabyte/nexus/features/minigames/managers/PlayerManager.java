@@ -34,6 +34,13 @@ public class PlayerManager {
 		if (player == null) return null;
 		if (player instanceof Minigamer minigamer)
 			return minigamer;
-		return get(player.getUniqueId());
+		try {
+			return get(player.getUniqueId());
+		} catch (PlayerNotOnlineException exc) {
+			// fake player (NPC), this should probably return null but to avoid breaking changes we create a fake minigamer as well
+			if (player instanceof Player player1)
+				return new Minigamer(player1);
+			throw exc;
+		}
 	}
 }
