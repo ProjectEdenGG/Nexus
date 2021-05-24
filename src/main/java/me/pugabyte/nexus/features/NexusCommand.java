@@ -987,6 +987,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		pride21UserService.save(pride21User);
 	}
 
+	@Path("playJingle <jingle>")
+	void playJingle(Jingle jingle) {
+		jingle.play(player());
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return Nerd.of(convertToOfflinePlayer(value));

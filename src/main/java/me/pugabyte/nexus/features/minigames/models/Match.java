@@ -39,6 +39,8 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -64,7 +66,7 @@ import java.util.stream.Collectors;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
-public class Match {
+public class Match implements ForwardingAudience {
 	@NonNull
 	private Arena arena;
 	@ToString.Exclude
@@ -446,6 +448,11 @@ public class Match {
 		return arena.getCalculatedWinningScore(this);
 	}
 
+	@Override
+	public @org.checkerframework.checker.nullness.qual.NonNull Iterable<? extends Audience> audiences() {
+		return getMinigamers();
+	}
+
 	public static class MatchTimer {
 		private final Match match;
 		private static final List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
@@ -505,7 +512,7 @@ public class Match {
 	}
 
 	public static class MatchTasks {
-		private final List<Integer> taskIds = new ArrayList<>();
+		private final Set<Integer> taskIds = new HashSet<>();
 		@Getter
 		private final Map<MatchTaskType, Integer> taskTypeMap = new HashMap<>();
 
@@ -516,7 +523,7 @@ public class Match {
 
 		public void cancel(int taskId) {
 			Tasks.cancel(taskId);
-			taskIds.remove((Integer) taskId);
+			taskIds.remove(taskId);
 		}
 
 		/**

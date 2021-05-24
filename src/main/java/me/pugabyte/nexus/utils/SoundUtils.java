@@ -307,7 +307,15 @@ public class SoundUtils {
 					playSound(player, Sound.BLOCK_NOTE_BLOCK_HARP, .6F, getPitch(15));
 				});
 			}
-		};
+		},
+		SABOTAGE_VOTE {
+			@Override
+			public void play(HasPlayer player) {
+				Tasks.wait(0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, .8F, 1.7F));
+				Tasks.wait(3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, .8F, 2.0F));
+			}
+		}
+		;
 
 		public abstract void play(HasPlayer player);
 

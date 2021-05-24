@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -229,5 +230,12 @@ public class AdventureUtils {
 	 */
 	public static List<Component> asComponentList(List<? extends ComponentLike> components) {
 		return components.stream().map(ComponentLike::asComponent).collect(Collectors.toList());
+	}
+
+	/**
+	 * Maps a list of {@link ComponentLike} to {@link Component}
+	 */
+	public static List<Component> asComponentList(ComponentLike... components) {
+		return Arrays.stream(components).map(ComponentLike::asComponent).collect(Collectors.toList());
 	}
 }

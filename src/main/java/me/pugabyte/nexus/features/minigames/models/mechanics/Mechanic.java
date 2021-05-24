@@ -59,8 +59,6 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		Nexus.registerListener(this);
 	}
 
-	public abstract @NotNull String getName();
-
 	public @NotNull TextComponent asComponent() {
 		return Component.text(getName(), NamedTextColor.YELLOW);
 	}

@@ -35,7 +35,7 @@ public interface Colored {
 	 * Returns the Bukkit color corresponding to this object.
 	 */
 	default @NotNull org.bukkit.Color getBukkitColor() {
-		return org.bukkit.Color.fromRGB(getColor().getRGB());
+		return org.bukkit.Color.fromRGB(getColor().getRed(), getColor().getGreen(), getColor().getBlue());
 	}
 
 	/**

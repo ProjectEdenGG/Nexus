@@ -311,7 +311,8 @@ public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 		if (!event.callEvent()) return;
 
 		this.score += event.getAmount();
-		match.getScoreboard().update();
+		if (match.getScoreboard() != null)
+			match.getScoreboard().update();
 	}
 
 	public void died() {

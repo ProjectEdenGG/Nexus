@@ -31,6 +31,7 @@ public enum MechanicType {
 	PIXEL_DROP(new PixelDrop()),
 	PIXEL_PAINTERS(new PixelPainters()),
 	QUAKE(new Quake()),
+	SABOTAGE(new Sabotage()),
 	SIEGE(new Siege()),
 	SPLEEF(new Spleef()),
 	SPLEGG(new Splegg()),
@@ -40,7 +41,7 @@ public enum MechanicType {
 	UNCIVIL_ENGINEERS(new UncivilEngineers()),
 	XRUN(new XRun());
 
-	private Mechanic mechanic;
+	private final Mechanic mechanic;
 
 	MechanicType(Mechanic mechanic) {
 		this.mechanic = mechanic;

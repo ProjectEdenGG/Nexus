@@ -4,9 +4,12 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
@@ -29,6 +32,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -86,6 +90,20 @@ public class ItemBuilder implements Cloneable {
 		return this;
 	}
 
+	private static Component removeItalicIfUnset(Component component) {
+		if (component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET)
+			component = component.decoration(TextDecoration.ITALIC, false);
+		return component;
+	}
+
+	private static List<Component> removeItalicIfUnset(ComponentLike... components) {
+		return AdventureUtils.asComponentList(components).stream().map(ItemBuilder::removeItalicIfUnset).collect(Collectors.toList());
+	}
+
+	private static List<Component> removeItalicIfUnset(List<? extends ComponentLike> components) {
+		return AdventureUtils.asComponentList(components).stream().map(ItemBuilder::removeItalicIfUnset).collect(Collectors.toList());
+	}
+
 	public ItemBuilder name(@Nullable String displayName) {
 		if (displayName != null)
 			itemMeta.setDisplayName(colorize("&f" + displayName));
@@ -94,7 +112,7 @@ public class ItemBuilder implements Cloneable {
 
 	public ItemBuilder name(@Nullable ComponentLike componentLike) {
 		if (componentLike != null)
-			itemMeta.displayName(componentLike.asComponent());
+			itemMeta.displayName(removeItalicIfUnset(componentLike.asComponent()));
 		return this;
 	}
 
@@ -106,6 +124,22 @@ public class ItemBuilder implements Cloneable {
 		if (lore != null)
 			this.lore.addAll(lore);
 		return this;
+	}
+
+	// overridden by all string lore
+	public ItemBuilder componentLore(ComponentLike... components) {
+		itemMeta.lore(removeItalicIfUnset(components));
+		return this;
+	}
+
+	// overridden by all string lore
+	public ItemBuilder componentLore(List<? extends ComponentLike> components) {
+		itemMeta.lore(removeItalicIfUnset(components));
+		return this;
+	}
+
+	public @NotNull List<Component> componentLore() {
+		return itemMeta.hasLore() ? itemMeta.lore() : new ArrayList<>();
 	}
 
 	public ItemBuilder loreize(boolean doLoreize) {
@@ -154,11 +188,15 @@ public class ItemBuilder implements Cloneable {
 		return this;
 	}
 
-	/** Custom meta types */
+	// Custom meta types
 
 	public ItemBuilder armorColor(Color color) {
 		((LeatherArmorMeta) itemMeta).setColor(color);
 		return this;
+	}
+
+	public ItemBuilder armorColor(Colored color) {
+		return armorColor(color.getBukkitColor());
 	}
 
 	// Potions
@@ -285,6 +323,8 @@ public class ItemBuilder implements Cloneable {
 	}
 
 	public void buildLore() {
+		if (lore.isEmpty())
+			return; // don't override Component lore
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
 			if (doLoreize)
