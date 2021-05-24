@@ -151,7 +151,7 @@ public enum Package {
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
-	@Command("/permhelper vaults add [player] 1")
+	@Command("/permhelper add vaults [player] 1")
 	@Display(Material.ENDER_CHEST)
 	VAULTS {
 		@Override
@@ -173,7 +173,7 @@ public enum Package {
 
 	@Id("2019261")
 	@Category(StoreCategory.MISC)
-	@Command("/permhelper homes add [player] 5")
+	@Command("/permhelper add homes [player] 5")
 	@Display(Material.CYAN_BED)
 	EXTRA_SETHOMES {
 		@Override
@@ -190,7 +190,7 @@ public enum Package {
 	@Id("2559650")
 	@Category(StoreCategory.VISUALS)
 	@PermissionGroup("store.npc")
-	@Command("/permhelper npcs add [player] 1")
+	@Command("/permhelper add npcs [player] 1")
 	@Display(Material.ARMOR_STAND)
 	NPC {
 		@Override
@@ -254,7 +254,7 @@ public enum Package {
 
 	@Id("2495909")
 	@Category(StoreCategory.MISC)
-	@Command("/permhelper plots add [player] 1")
+	@Command("/permhelper add plots [player] 1")
 	@World("creative")
 	@Display(Material.WOODEN_AXE)
 	CREATIVE_PLOTS {

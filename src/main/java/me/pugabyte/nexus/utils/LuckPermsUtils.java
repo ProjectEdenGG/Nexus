@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.UUID;
 
+import static eden.utils.StringUtils.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 
 public class LuckPermsUtils {
@@ -125,7 +126,8 @@ public class LuckPermsUtils {
 			}
 
 			public PermissionChangeBuilder world(String world) {
-				this.world = Bukkit.getWorld(world);
+				if (!isNullOrEmpty(world))
+					this.world = Bukkit.getWorld(world);
 				return this;
 			}
 

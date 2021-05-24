@@ -25,7 +25,7 @@ public class VPSCommand extends CustomCommand {
 			error("You have already purchased the maximum amount of plots");
 
 		new Voter(player()).takePoints(150);
-		runCommandAsConsole("permhelper plots add " + name() + " 1");
+		runCommandAsConsole("permhelper add plots " + name() + " 1");
 		send(PREFIX + "Purchased &e1 creative plot &3for &e150 vote points");
 	}
 
