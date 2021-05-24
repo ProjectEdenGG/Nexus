@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.store;
 
 import com.google.common.base.Strings;
+import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
@@ -34,6 +35,9 @@ import me.pugabyte.nexus.features.store.perks.fireworks.FireworkCommand;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.autotorch.AutoTorchService;
 import me.pugabyte.nexus.models.autotorch.AutoTorchUser;
+import me.pugabyte.nexus.models.boost.Boostable;
+import me.pugabyte.nexus.models.boost.Booster;
+import me.pugabyte.nexus.models.boost.BoosterService;
 import me.pugabyte.nexus.models.contributor.Contributor;
 import me.pugabyte.nexus.models.contributor.ContributorService;
 import me.pugabyte.nexus.models.task.Task;
@@ -458,7 +462,226 @@ public enum Package {
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.other")
 	@Display(Material.SLIME_SPAWN_EGG)
-	DISGUISES_OTHER;
+	DISGUISES_OTHER,
+
+	@Id("TODO")
+	@Category(StoreCategory.BOOSTS)
+	EXPERIENCE {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("TODO")
+	@Category(StoreCategory.BOOSTS)
+	MCMMO_EXPERIENCE {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("TODO")
+	@Category(StoreCategory.BOOSTS)
+	MARKET_BUY_PRICES {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("TODO")
+	@Category(StoreCategory.BOOSTS)
+	VOTE_POINTS {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("TODO")
+	@Category(StoreCategory.BOOSTS)
+	MINIGAME_TOKENS {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("TODO")
+	@Category(StoreCategory.BOOSTS)
+	KILLER_MONEY {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("TODO")
+	@Category(StoreCategory.BOOSTS)
+	MYSTERY_CRATE_KEY {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	;
 
 	public void handleApply(HasUniqueId uuid) {}
 
