@@ -3,6 +3,8 @@ package me.pugabyte.nexus.features.shops;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.update.ShopDisabler;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.boost.BoostConfig;
+import me.pugabyte.nexus.models.boost.Boostable;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
@@ -223,7 +225,7 @@ public class Shops extends Feature {
 		}
 
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price));
+			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.of(Boostable.MARKET_BUY_PRICES)));
 		}
 
 		private void add(Product product) {

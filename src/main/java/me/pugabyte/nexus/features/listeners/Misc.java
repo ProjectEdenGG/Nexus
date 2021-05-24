@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
-import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import eden.utils.TimeUtils.Time;
@@ -37,12 +36,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -64,8 +61,6 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -385,16 +380,6 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
-	}
-
-	private static final LocalDate XP_BOOST_END = LocalDate.of(2021, 5, 17);
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onXP(PlayerPickupExperienceEvent event) {
-		if (XP_BOOST_END.atStartOfDay().isBefore(LocalDateTime.now()))
-			return;
-
-		ExperienceOrb orb = event.getExperienceOrb();
-		orb.setExperience(orb.getExperience() * 2);
 	}
 
 }

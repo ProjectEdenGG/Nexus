@@ -1,30 +1,22 @@
 package me.pugabyte.nexus.features.commands;
 
-import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
-import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
+import me.pugabyte.nexus.models.boost.BoostConfig;
+import me.pugabyte.nexus.models.boost.Boostable;
 import me.pugabyte.nexus.models.killermoney.KillerMoney;
 import me.pugabyte.nexus.models.killermoney.KillerMoneyService;
-import me.pugabyte.nexus.models.setting.Setting;
-import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
-import me.pugabyte.nexus.models.task.TaskService;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,85 +29,18 @@ import org.jetbrains.annotations.NotNull;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Aliases("km")
 @NoArgsConstructor
 public class KillerMoneyCommand extends CustomCommand implements Listener {
 	private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
-	SettingService settingService = new SettingService();
-	KillerMoneyService service = new KillerMoneyService();
-	KillerMoney km;
-	static double BOOST = 1;
-
-	@Getter
-	private static final String expireTaskId = "killermoney-boost-expire";
-
-	static {
-		Setting globalBoost = getSetting();
-		if (globalBoost.getValue() != null) {
-			try {
-				if (globalBoost.getDouble() > 1)
-					BOOST = globalBoost.getDouble();
-			} catch (Exception ex) {
-				Nexus.warn("The KillerMoney Boost in the database in invalid");
-			}
-		}
-
-		Tasks.repeatAsync(Time.SECOND, Time.MINUTE, () -> {
-			TaskService taskService = new TaskService();
-			taskService.process(expireTaskId).forEach(task -> {
-				Map<String, Object> data = task.getJson();
-				OfflinePlayer player = PlayerUtils.getPlayer((String) data.get("uuid"));
-				if (player.isOnline() && player.getPlayer() != null)
-					PlayerUtils.send(player.getPlayer(), StringUtils.getPrefix("KillerMoney") + "Your boost has expired");
-
-				KillerMoneyService kmService = new KillerMoneyService();
-				KillerMoney km = kmService.get(player);
-				km.setBoost(1);
-				kmService.save(km);
-				taskService.complete(task);
-			});
-		});
-	}
+	private final KillerMoneyService service = new KillerMoneyService();
+	private KillerMoney km;
 
 	public KillerMoneyCommand(@NotNull CommandEvent event) {
 		super(event);
 		if (isPlayer())
 			km = service.get(player());
-	}
-
-	private static Setting getSetting() {
-		return new SettingService().get("killerMoney", "globalBoost");
-	}
-
-	@Permission("group.staff")
-	@Path("boost <player> <amount>")
-	void boostPlayer(OfflinePlayer player, double amount) {
-		if (amount < 1)
-			error("The boost amount cannot be less than 1");
-
-		km = service.get(player);
-		km.setBoost(amount);
-		service.save(km);
-
-		send(PREFIX + "&e" + player.getName() + "'s &3boost is now &e" + amount);
-		if (player.isOnline() && !isSelf(player))
-			send(player.getPlayer(), PREFIX + "Your boost is now set to &e" + amount);
-	}
-
-	@Permission("group.staff")
-	@Path("boost global <amount>")
-	void boostGlobal(double amount) {
-		if (amount < 1)
-			error("The boost amount cannot be less than 1");
-
-		Setting setting = getSetting();
-		setting.setDouble(amount);
-		settingService.save(setting);
-		BOOST = amount;
-
-		send(PREFIX + "The global boost is now &e" + amount);
 	}
 
 	@Description("Toggle KillerMoney's chat notification")
@@ -162,11 +87,8 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		// TODO make this enum config driven
 		if (event.getEntityType() == EntityType.ENDERMAN && player.getWorld().getName().contains("the_end")) return;
 
-		double playerBoost = 1;
-		if (km.getBoost() > 1)
-			playerBoost = km.getBoost();
-
-		double money = mob.getRandomValue() * BOOST * playerBoost;
+		double boost = BoostConfig.of(Boostable.KILLER_MONEY);
+		double money = mob.getRandomMoney() * boost;
 		new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.KILLER_MONEY);
 		if (!km.isMuted())
 			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
@@ -220,7 +142,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			this.activeWorlds = Arrays.asList(activeWorlds);
 		}
 
-		double getRandomValue() {
+		double getRandomMoney() {
 			return RandomUtils.randomDouble(min, max);
 		}
 
