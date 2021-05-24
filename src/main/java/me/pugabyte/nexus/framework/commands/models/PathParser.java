@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -100,8 +99,6 @@ class PathParser {
 							try {
 								arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.context() - 1]);
 							} catch (Exception ex) {
-								Nexus.log("Ex: " + ex.getClass().getSimpleName());
-								Nexus.log("Cause: " + ex.getCause().getClass().getSimpleName());
 								if (!(ex instanceof InvocationTargetException && ex.getCause() instanceof EdenException))
 									ex.printStackTrace();
 							}

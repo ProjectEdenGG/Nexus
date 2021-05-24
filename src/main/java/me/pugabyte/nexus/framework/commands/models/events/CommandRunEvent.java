@@ -3,6 +3,7 @@ package me.pugabyte.nexus.framework.commands.models.events;
 import eden.exceptions.EdenException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
@@ -43,6 +44,8 @@ public class CommandRunEvent extends CommandEvent {
 	}
 
 	public void handleException(Throwable ex) {
+		if (Nexus.isDebug())
+			ex.printStackTrace();
 		String PREFIX = command.getPrefix();
 		if (isNullOrEmpty(PREFIX))
 			PREFIX = Commands.getPrefix(command);
