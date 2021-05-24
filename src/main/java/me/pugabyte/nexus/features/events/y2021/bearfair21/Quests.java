@@ -3,9 +3,10 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.SellCrates;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.Farming;
@@ -14,6 +15,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishi
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.mining.Mining;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.woodcutting.WoodCutting;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -105,7 +107,14 @@ public class Quests implements Listener {
 			return;
 
 		int id = event.getNPC().getId();
+		if (BearFair21NPC.from(id) == null)
+			return;
+
 		BearFair21Talker.startScript(userService.get(player), id);
 		Merchants.openMerchant(player, id);
+
+		BearFair21User user = userService.get(player);
+		user.getMetNPCs().add(id);
+		userService.save(user);
 	}
 }

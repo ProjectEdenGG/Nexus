@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import eden.interfaces.Named;
 import lombok.NonNull;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class PacketUtils {
 
@@ -75,16 +77,66 @@ public class PacketUtils {
 
 
 	// TODO: if possible
-	public static void updateNPCName(@NonNull HasPlayer player, org.bukkit.entity.NPC entity, String name) {
+	public static void entityName(@NonNull HasPlayer player, org.bukkit.entity.NPC entity, String name) {
 		EntityPlayer entityPlayer = ((CraftPlayer) entity).getHandle();
-		entityPlayer.setCustomName(new ChatComponentText(name));
+		GameProfile profile = new GameProfile(UUID.randomUUID(), name);
+//		entityPlayer.setCustomName(new ChatComponentText(name));
 		PacketPlayOutEntityMetadata entityMetadataPacket = new PacketPlayOutEntityMetadata();
 
 //		DataWatcher dataWatcher = entityPlayer.getDataWatcher();
-//		dataWatcher.set(DataWatcherRegistry.d.a(), );
+//		dataWatcher.set(DataWatcherRegistry. );
 
 //		entityMetadataPacket
 	}
+
+	public static List<EntityArmorStand> entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String... customNames) {
+		return entityNameFake(player, bukkitEntity, 0.3, customNames);
+	}
+
+	public static List<EntityArmorStand> entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String... customNames) {
+		int index = 0;
+		List<EntityArmorStand> armorStands = new ArrayList<>();
+		for (String customName : customNames)
+			armorStands.add(entityNameFake(player, bukkitEntity, customName, index++, distance));
+
+		if (armorStands.isEmpty())
+			armorStands = null;
+
+		return armorStands;
+	}
+
+	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName) {
+		return entityNameFake(player, bukkitEntity, customName, 0);
+	}
+
+	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName, int index) {
+		return entityNameFake(player, bukkitEntity, customName, index, 0.3);
+	}
+
+	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName, int index, double distance) {
+		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
+		Location loc = bukkitEntity.getLocation();
+		double y = (loc.getY() + 1.8) + (distance * index);
+
+		armorStand.setLocation(loc.getX(), y, loc.getZ(), 0, 0);
+		armorStand.setMarker(true);
+		armorStand.setInvisible(true);
+		armorStand.setBasePlate(false);
+		armorStand.setSmall(true);
+		if (customName != null) {
+			armorStand.setCustomName(new ChatComponentText(StringUtils.colorize(customName)));
+			armorStand.setCustomNameVisible(true);
+		}
+
+		PacketPlayOutSpawnEntity spawnArmorStand = new PacketPlayOutSpawnEntity(armorStand, getObjectId(armorStand));
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true);
+		PacketPlayOutEntityEquipment rawEquipmentPacket = new PacketPlayOutEntityEquipment(armorStand.getId(), getEquipmentList());
+
+		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
+		return armorStand;
+	}
+
 
 	/*
 	public void addNPCPacket(EntityPlayer npc, Player player) {
@@ -134,19 +186,37 @@ public class PacketUtils {
 	}
 
 	// Armor Stand
-	public static void spawnArmorStand(HasPlayer player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible) {
+
+	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, boolean invisible) {
+		return spawnArmorStand(player, location, null, invisible);
+	}
+
+	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, boolean invisible, String customName) {
+		return spawnArmorStand(player, location, null, invisible, customName);
+	}
+
+	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible) {
+		return spawnArmorStand(player, location, equipment, invisible, null);
+	}
+
+	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible, String customName) {
 		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
 
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
 		armorStand.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		armorStand.setInvisible(invisible);
+		if (customName != null) {
+			armorStand.setCustomName(new ChatComponentText(customName));
+			armorStand.setCustomNameVisible(true);
+		}
 
 		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(armorStand, getObjectId(armorStand));
 		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true);
 		PacketPlayOutEntityEquipment rawEquipmentPacket = new PacketPlayOutEntityEquipment(armorStand.getId(), equipment);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
+		return armorStand;
 	}
 
 	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment) {
@@ -192,7 +262,7 @@ public class PacketUtils {
 	}
 
 	// TODO 1.17: Update object and living ids
-	public static Integer getObjectId(net.minecraft.server.v1_16_R3.Entity entity) {
+	public static Integer getObjectId(Entity entity) {
 		if (entity == null)
 			return null;
 
