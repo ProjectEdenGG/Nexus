@@ -464,7 +464,7 @@ public enum Package {
 	@Display(Material.SLIME_SPAWN_EGG)
 	DISGUISES_OTHER,
 
-	@Id("TODO")
+	@Id("4496330")
 	@Category(StoreCategory.BOOSTS)
 	EXPERIENCE {
 		public Boostable getType() {
@@ -495,7 +495,7 @@ public enum Package {
 		}
 	},
 
-	@Id("TODO")
+	@Id("4496331")
 	@Category(StoreCategory.BOOSTS)
 	MCMMO_EXPERIENCE {
 		public Boostable getType() {
@@ -506,7 +506,7 @@ public enum Package {
 		public void handleApply(HasUniqueId uuid) {
 			BoosterService service = new BoosterService();
 			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
+			booster.add(getType(), 1.5, Time.DAY);
 			service.save(booster);
 		}
 
@@ -526,7 +526,7 @@ public enum Package {
 		}
 	},
 
-	@Id("TODO")
+	@Id("4496334")
 	@Category(StoreCategory.BOOSTS)
 	MARKET_SELL_PRICES {
 		public Boostable getType() {
@@ -537,7 +537,7 @@ public enum Package {
 		public void handleApply(HasUniqueId uuid) {
 			BoosterService service = new BoosterService();
 			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
+			booster.add(getType(), 1.5, Time.DAY);
 			service.save(booster);
 		}
 
@@ -557,7 +557,7 @@ public enum Package {
 		}
 	},
 
-	@Id("TODO")
+	@Id("4496339")
 	@Category(StoreCategory.BOOSTS)
 	VOTE_POINTS {
 		public Boostable getType() {
@@ -568,7 +568,7 @@ public enum Package {
 		public void handleApply(HasUniqueId uuid) {
 			BoosterService service = new BoosterService();
 			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
+			booster.add(getType(), 1.5, Time.DAY);
 			service.save(booster);
 		}
 
@@ -588,7 +588,7 @@ public enum Package {
 		}
 	},
 
-	@Id("TODO")
+	@Id("4496341")
 	@Category(StoreCategory.BOOSTS)
 	MINIGAME_TOKENS {
 		public Boostable getType() {
@@ -619,7 +619,7 @@ public enum Package {
 		}
 	},
 
-	@Id("TODO")
+	@Id("4496340")
 	@Category(StoreCategory.BOOSTS)
 	KILLER_MONEY {
 		public Boostable getType() {
@@ -650,7 +650,7 @@ public enum Package {
 		}
 	},
 
-	@Id("TODO")
+	@Id("4496336")
 	@Category(StoreCategory.BOOSTS)
 	MYSTERY_CRATE_KEY {
 		public Boostable getType() {
@@ -661,7 +661,7 @@ public enum Package {
 		public void handleApply(HasUniqueId uuid) {
 			BoosterService service = new BoosterService();
 			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
+			booster.add(getType(), 10, Time.DAY);
 			service.save(booster);
 		}
 
