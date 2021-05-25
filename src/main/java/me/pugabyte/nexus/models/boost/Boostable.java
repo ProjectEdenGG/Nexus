@@ -16,7 +16,7 @@ import static eden.utils.StringUtils.camelCase;
 public enum Boostable {
 	EXPERIENCE(Material.EXPERIENCE_BOTTLE),
 	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),
-	MARKET_BUY_PRICES(Material.OAK_SIGN),
+	MARKET_SELL_PRICES(Material.OAK_SIGN),
 	// TODO @Griffin
 	VOTE_POINTS(Material.DIAMOND),
 	// TODO @Lexi

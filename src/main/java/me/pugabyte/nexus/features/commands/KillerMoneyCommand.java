@@ -87,7 +87,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		// TODO make this enum config driven
 		if (event.getEntityType() == EntityType.ENDERMAN && player.getWorld().getName().contains("the_end")) return;
 
-		double boost = BoostConfig.of(Boostable.KILLER_MONEY);
+		double boost = BoostConfig.multiplierOf(Boostable.KILLER_MONEY);
 		double money = mob.getRandomMoney() * boost;
 		new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.KILLER_MONEY);
 		if (!km.isMuted())

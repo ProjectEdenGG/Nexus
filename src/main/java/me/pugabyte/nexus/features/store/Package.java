@@ -528,7 +528,7 @@ public enum Package {
 
 	@Id("TODO")
 	@Category(StoreCategory.BOOSTS)
-	MARKET_BUY_PRICES {
+	MARKET_SELL_PRICES {
 		public Boostable getType() {
 			return Boostable.valueOf(name());
 		}

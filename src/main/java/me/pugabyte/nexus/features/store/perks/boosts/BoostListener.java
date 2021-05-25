@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 public class BoostListener implements Listener {
 
 	private double get(Boostable experience) {
-		return BoostConfig.of(experience);
+		return BoostConfig.multiplierOf(experience);
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -21,7 +21,7 @@ public class BoostListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onXP(PlayerPickupExperienceEvent event) {
+	public void onExpGain(PlayerPickupExperienceEvent event) {
 		ExperienceOrb orb = event.getExperienceOrb();
 		orb.setExperience((int) (orb.getExperience() * get(Boostable.EXPERIENCE)));
 	}

@@ -225,7 +225,7 @@ public class Shops extends Feature {
 		}
 
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.of(Boostable.MARKET_BUY_PRICES)));
+			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES)));
 		}
 
 		private void add(Product product) {
