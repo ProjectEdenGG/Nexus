@@ -65,6 +65,12 @@ public class VoteCommand extends CustomCommand {
 		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://projecteden.gg/vote"));
 	}
 
+	@Permission("group.admin")
+	@Path("extra")
+	void extra() {
+		send("Extra config: " + Votes.getExtras());
+	}
+
 	@Path("time [player]")
 	void time(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		voter = new VoteService().get(player);

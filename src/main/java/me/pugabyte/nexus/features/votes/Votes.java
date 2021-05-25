@@ -162,7 +162,7 @@ public class Votes extends Feature implements Listener {
 	}};
 
 	@NotNull
-	private Map<Integer, Integer> getExtras() {
+	protected static Map<Integer, Integer> getExtras() {
 		double multiplier = BoostConfig.multiplierOf(Boostable.VOTE_POINTS);
 
 		return new HashMap<>() {{
