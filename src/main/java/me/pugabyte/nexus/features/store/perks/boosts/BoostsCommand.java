@@ -12,7 +12,10 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.boost.BoostConfig;
 import me.pugabyte.nexus.models.boost.BoostConfigService;
@@ -22,6 +25,7 @@ import me.pugabyte.nexus.models.boost.Booster.Boost;
 import me.pugabyte.nexus.models.boost.BoosterService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -98,6 +102,42 @@ public class BoostsCommand extends CustomCommand {
 		service.save(booster);
 
 		send(PREFIX + "Gave " + amount + " " + plural(camelCase(type) + " boost", amount) + " to " + booster.getNickname());
+	}
+
+	@Confirm
+	@Permission("group.staff")
+	@Path("cancel <type> [--refund]")
+	void cancel(Boostable type, @Switch boolean refund) {
+		if (!config.hasBoost(type))
+			error("There is no active " + camelCase(type) + " boost");
+
+		Boost boost = config.getBoost(type);
+		boost.cancel();
+
+		if (refund)
+			boost.getBooster().add(type, boost.getMultiplier(), boost.getDurationLeft());
+
+		service.save(boost.getBooster());
+
+		send(PREFIX + "Cancelled " + boost.getNickname() + "'s " + boost.getMultiplierFormatted() + " "
+				+ camelCase(type) + " boost" + (refund ? " and refunded the time left" : ""));
+	}
+
+	@Confirm
+	@Permission("group.seniorstaff")
+	@Path("start <type> <multiplier> <duration>")
+	void start(Boostable type, double multiplier, int duration) {
+		if (config.hasBoost(type))
+			cancel(type, true);
+
+		Booster booster = service.get(Dev.KODA.getUuid());
+		Boost boost = booster.add(type, multiplier, duration);
+		boost.activate();
+
+		service.save(booster);
+
+		send(PREFIX + "Started a server " + boost.getMultiplierFormatted() + " " + camelCase(type)
+				+ " boost for " + Timespan.of(boost.getDuration()).format(FormatType.LONG));
 	}
 
 	@AllArgsConstructor

@@ -43,7 +43,7 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 public class PerkOwner implements PlayerOwnedObject {
 	private static final int MAX_DAILY_TOKENS = 20;
 	public static int getMaxDailyTokens() {
-		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_TOKENS));
+		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_DAILY_TOKENS));
 	}
 
 	@Id

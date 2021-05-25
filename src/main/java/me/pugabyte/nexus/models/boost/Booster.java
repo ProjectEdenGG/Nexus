@@ -17,10 +17,12 @@ import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.Mute
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -52,6 +54,7 @@ public class Booster implements PlayerOwnedObject {
 		private int duration;
 		private LocalDateTime received;
 		private LocalDateTime activated;
+		private boolean cancelled;
 
 		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, Time duration) {
 			this(uuid, type, multiplier, duration.get() / 20);
@@ -74,6 +77,13 @@ public class Booster implements PlayerOwnedObject {
 			return new BoostConfigService().get();
 		}
 
+		@Override
+		public @NotNull String getNickname() {
+			if (Dev.KODA.is(this))
+				return "Server";
+			return PlayerOwnedObject.super.getNickname();
+		}
+
 		public String getRefId() {
 			return uuid + "#" + id;
 		}
@@ -92,6 +102,9 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		public void activate() {
+			if (!canActivate())
+				throw new InvalidInputException("This boost cannot be activated");
+
 			if (config().hasBoost(type))
 				throw new InvalidInputException("There is already an active " + camelCase(type) + " boost");
 
@@ -103,10 +116,17 @@ public class Booster implements PlayerOwnedObject {
 
 		public void expire() {
 			config().removeBoost(this);
-
 			broadcast(getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has &cexpired");
 
 			// TODO Auto start next in queue?
+			save();
+		}
+
+		public void cancel() {
+			config().removeBoost(this);
+			cancelled = true;
+			broadcast(getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has been &ccancelled");
+
 			save();
 		}
 
@@ -120,6 +140,8 @@ public class Booster implements PlayerOwnedObject {
 				return false;
 			if (isExpired())
 				return false;
+			if (isCancelled())
+				return false;
 
 			Boost activeBoost = config().getBoost(type);
 			if (!activeBoost.equals(this))
@@ -132,11 +154,14 @@ public class Booster implements PlayerOwnedObject {
 			if (activated == null)
 				return false;
 
+			if (isCancelled())
+				return true;
+
 			return getExpiration().isBefore(LocalDateTime.now());
 		}
 
 		public boolean canActivate() {
-			return !isActive() && !isExpired();
+			return !isActive() && !isCancelled() && !isExpired();
 		}
 
 		@NotNull
@@ -148,22 +173,41 @@ public class Booster implements PlayerOwnedObject {
 			return Timespan.of(getExpiration()).format() + " left";
 		}
 
+		public int getDurationLeft() {
+			if (isActive())
+				return (int) ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
+			else
+				return duration;
+		}
+
 		private void save() {
 			new BoosterService().save(getBooster());
 		}
 
 	}
 
-	public void add(Boost boost) {
+	@Override
+	public @NotNull String getNickname() {
+		if (Dev.KODA.is(this))
+			return "Server";
+		return PlayerOwnedObject.super.getNickname();
+	}
+
+	public Boost add(Boost boost) {
 		boosts.add(boost);
+		return boost;
 	}
 
-	public void add(Boostable type, double multiplier, Time duration) {
-		add(new Boost(uuid, type, multiplier, duration));
+	public Boost add(Boostable type, double multiplier, Time duration) {
+		Boost boost = new Boost(uuid, type, multiplier, duration);
+		add(boost);
+		return boost;
 	}
 
-	public void add(Boostable type, double multiplier, int duration) {
-		add(new Boost(uuid, type, multiplier, duration));
+	public Boost add(Boostable type, double multiplier, int duration) {
+		Boost boost = new Boost(uuid, type, multiplier, duration);
+		add(boost);
+		return boost;
 	}
 
 	public Boost get(int id) {
