@@ -138,11 +138,13 @@ public class BoostsCommand extends CustomCommand {
 
 			List<ClickableItem> items = new ArrayList<>();
 
-			if (type == null) {
-				for (Boostable boostable : Boostable.values())
-					if (booster.getNonExpiredBoosts(boostable).size() > 0)
-						items.add(ClickableItem.from(boostable.getDisplayItem().build(), e -> new BoostMenu(boostable, this).open(player)));
-			} else
+			if (type == null)
+				for (Boostable boostable : Boostable.values()) {
+					int boosts = booster.getNonExpiredBoosts(boostable).size();
+					if (boosts > 0)
+						items.add(ClickableItem.from(boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available").build(), e -> new BoostMenu(boostable, this).open(player)));
+				}
+			else
 				for (Boost boost : booster.get(type)) {
 					ItemBuilder item = boost.getDisplayItem();
 					if (boost.isActive()) {

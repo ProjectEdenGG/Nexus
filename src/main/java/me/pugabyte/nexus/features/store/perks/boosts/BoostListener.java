@@ -23,7 +23,7 @@ public class BoostListener implements Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onExpGain(PlayerPickupExperienceEvent event) {
 		ExperienceOrb orb = event.getExperienceOrb();
-		orb.setExperience((int) (orb.getExperience() * get(Boostable.EXPERIENCE)));
+		orb.setExperience((int) Math.round(orb.getExperience() * get(Boostable.EXPERIENCE)));
 	}
 
 }
