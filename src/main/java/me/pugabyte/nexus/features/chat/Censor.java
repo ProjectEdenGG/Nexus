@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
+import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
@@ -133,7 +134,13 @@ public class Censor {
 		}
 
 		if (bad >= 1) {
-			Nexus.fileLog("swears", event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
+			String channelNick = "";
+			if (event.getChannel() instanceof PublicChannel publicChannel)
+				channelNick = " [" + publicChannel.getNickname() + "] ";
+			else if (event.getChannel() instanceof PrivateChannel privateChannel)
+				channelNick = " [" + String.join(", ", privateChannel.getOthersNames(event.getChatter())) + "] ";
+
+			Nexus.fileLog("swears", channelNick + event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
 				event.getChatter().sendMessage("&cPlease watch your language!");
 				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), StaticChannel.STAFF);
