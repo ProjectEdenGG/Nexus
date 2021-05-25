@@ -14,6 +14,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -31,6 +32,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -257,8 +259,7 @@ public class Booster implements PlayerOwnedObject {
 			if (!Discord.isConnected())
 				return;
 
-			deleteHistory();
-			sendMessage();
+			deleteHistory(DiscordHandler::sendMessage);
 		}
 
 		static void editMessage() {
@@ -290,11 +291,15 @@ public class Booster implements PlayerOwnedObject {
 					.append(System.lineSeparator())
 					.append(System.lineSeparator());
 
-			for (Boostable type : config.getBoosts().keySet()) {
-				Boost boost = config.getBoost(type);
-				builder.append(String.format("**%s** %s - %s", boost.getMultiplierFormatted(), camelCase(type), boost.getNickname()))
-						.append(System.lineSeparator());
-			}
+			Set<Boostable> boosts = config.getBoosts().keySet();
+			if (boosts.isEmpty())
+				builder.append("None");
+			else
+				for (Boostable type : boosts) {
+					Boost boost = config.getBoost(type);
+					builder.append(String.format("**%s** %s - %s", boost.getMultiplierFormatted(), camelCase(type), boost.getNickname()))
+							.append(System.lineSeparator());
+				}
 
 			return builder.build();
 		}
@@ -303,10 +308,14 @@ public class Booster implements PlayerOwnedObject {
 			getChannel().sendMessage(getMessage()).queue();
 		}
 
-		private static void deleteHistory() {
+		private static void deleteHistory(Runnable then) {
 			getHistory().thenAcceptAsync(history -> {
-				for (Message message : history)
-					message.delete().queue();
+				Iterator<Message> iterator = history.iterator();
+				while (iterator.hasNext()) {
+					iterator.next().delete().queue();
+					if (!iterator.hasNext())
+						then.run();
+				}
 			});
 		}
 
@@ -316,7 +325,7 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		private static TextChannel getChannel() {
-			return DiscordId.TextChannel.BOOSTS.get();
+			return DiscordId.TextChannel.BOOSTS.get(Bot.RELAY);
 		}
 	}
 
