@@ -1,5 +1,8 @@
-package me.pugabyte.nexus.features.store.perks.boosts;
+package me.pugabyte.nexus.features.store.perks;
 
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.FormatType;
 import fr.minuskube.inv.ClickableItem;
@@ -7,6 +10,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -25,21 +29,29 @@ import me.pugabyte.nexus.models.boost.Booster.Boost;
 import me.pugabyte.nexus.models.boost.BoosterService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 @Aliases("boost")
-public class BoostsCommand extends CustomCommand {
+@NoArgsConstructor
+public class BoostsCommand extends CustomCommand implements Listener {
 	private final BoostConfigService configService = new BoostConfigService();
 	private final BoostConfig config = configService.get();
 	private final BoosterService service = new BoosterService();
@@ -68,6 +80,7 @@ public class BoostsCommand extends CustomCommand {
 		if (config.getBoosts().isEmpty())
 			error("There are no active server boosts");
 
+		line();
 		send(PREFIX + "Active server boosts");
 
 		Map<Boostable, LocalDateTime> timeLeft = new HashMap<>() {{
@@ -81,16 +94,12 @@ public class BoostsCommand extends CustomCommand {
 		};
 
 		paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", page);
-
-		if (page == 1)
-			if (booster.getNonExpiredBoosts().isEmpty())
-				send(PREFIX + "&cYou do not have any boosts! Purchase them at &ehttps://store.projecteden.gg");
 	}
 
 	@Path("menu")
 	void menu() {
 		if (booster.getNonExpiredBoosts().isEmpty())
-			error("You do not have any boosts! Purchase them at &ehttps://store.projecteden.gg");
+			error("You do not have any boosts! Purchase them at &ehttps://store.projecteden.gg/category/boosts");
 
 		new BoostMenu().open(player());
 	}
@@ -199,7 +208,10 @@ public class BoostsCommand extends CustomCommand {
 							item.lore("&3Duration: &e" + Timespan.of(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
 							items.add(ClickableItem.from(item.build(), e -> ConfirmationMenu.builder()
 									.title("Activate " + StringUtils.camelCase(boost.getType()) + " Boost")
-									.onConfirm(e2 -> boost.activate())
+									.onConfirm(e2 -> {
+										boost.activate();
+										open(player);
+									})
 									.onCancel(e2 -> open(player))
 									.open(player)));
 						}
@@ -210,6 +222,35 @@ public class BoostsCommand extends CustomCommand {
 			addPagination(player, contents, items);
 		}
 
+	}
+
+	private double get(Boostable experience) {
+		return BoostConfig.multiplierOf(experience);
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onMcMMOExpGain(McMMOPlayerXpGainEvent event) {
+		event.setRawXpGained((float) (event.getRawXpGained() * get(Boostable.MCMMO_EXPERIENCE)));
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onExpGain(PlayerPickupExperienceEvent event) {
+		ExperienceOrb orb = event.getExperienceOrb();
+		orb.setExperience((int) Math.round(orb.getExperience() * get(Boostable.EXPERIENCE)));
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onJoin(PlayerJoinEvent event) {
+		Tasks.wait(Time.SECOND.x(2), () -> {
+			if (!event.getPlayer().isOnline())
+				return;
+
+			Set<Boostable> boosts = BoostConfig.get().getBoosts().keySet();
+			if (boosts.isEmpty())
+				return;
+
+			PlayerUtils.runCommand(event.getPlayer(), "boosts");
+		});
 	}
 
 }

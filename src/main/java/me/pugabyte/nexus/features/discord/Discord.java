@@ -73,6 +73,10 @@ public class Discord extends Feature {
 		}
 	}
 
+	public static boolean isConnected() {
+		return getGuild() != null;
+	}
+
 	public static String getName(String id) {
 		String name = getName(Discord.getGuild().retrieveMemberById(id).complete());
 		if (name == null) name = id;
