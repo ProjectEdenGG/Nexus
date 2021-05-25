@@ -10,6 +10,8 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.boost.BoostConfig;
+import me.pugabyte.nexus.models.boost.Boostable;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
@@ -33,6 +35,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -158,8 +161,18 @@ public class Votes extends Feature implements Listener {
 		put(50, 5);
 	}};
 
+	@NotNull
+	private Map<Integer, Integer> getExtras() {
+		double multiplier = BoostConfig.multiplierOf(Boostable.VOTE_POINTS);
+
+		return new HashMap<>() {{
+			extras.forEach((chance, amount) ->
+					put(Double.valueOf(chance / multiplier).intValue(), amount));
+		}};
+	}
+
 	private int extraVotePoints() {
-		for (Map.Entry<Integer, Integer> pair : extras.entrySet())
+		for (Map.Entry<Integer, Integer> pair : getExtras().entrySet())
 			if (randomInt(pair.getKey()) == 1)
 				return pair.getValue();
 		return 0;
