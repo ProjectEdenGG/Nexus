@@ -34,13 +34,16 @@ public class EntityNameCommand extends CustomCommand {
 		super(event);
 		if (isCommandEvent()) {
 			targetEntity = getTargetEntityRequired();
+
 			if (!(targetEntity instanceof LivingEntity) && !(targetEntity instanceof ItemFrame))
 				error("You must be looking at a living entity or an item frame");
-			if ((targetEntity.isInvulnerable() ||
-					(targetEntity instanceof LivingEntity && !((LivingEntity) targetEntity).hasAI()) ||
-					(targetEntity instanceof ItemFrame && ((ItemFrame) targetEntity).isFixed()) ||
-					(targetEntity instanceof ArmorStand && ((ArmorStand) targetEntity).isMarker()))
-				&& !hasPermission("group.staff"))
+
+			boolean hasAI = targetEntity instanceof LivingEntity livingEntity && !livingEntity.hasAI();
+			boolean isFixed = targetEntity instanceof ItemFrame itemFrame && itemFrame.isFixed();
+			boolean isMarker = targetEntity instanceof ArmorStand armorStand && armorStand.isMarker();
+			boolean isInvulnerable = targetEntity.isInvulnerable();
+
+			if (!hasPermission("group.staff") && (isInvulnerable || hasAI || isFixed || isMarker))
 				error("You cannot name that entity");
 		}
 	}

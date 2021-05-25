@@ -15,10 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class SerializationUtils {
 
@@ -48,14 +51,16 @@ public class SerializationUtils {
 
 		public static List<String> serializeMaterialSet(Set<Material> materials) {
 			if (materials == null) return null;
-			return new ArrayList<>() {{
-				addAll(materials.stream().map(Material::name).collect(Collectors.toList()));
-			}};
+			return materials.stream().map(Material::name).sorted().collect(toList());
 		}
 
 		public static Set<Material> deserializeMaterialSet(List<String> materials) {
 			if (materials == null) return null;
-			return materials.stream().map(block -> Material.matchMaterial(block.toUpperCase())).collect(Collectors.toSet());
+			return new LinkedHashSet<>(materials.stream()
+					.map(material -> Material.matchMaterial(material.toUpperCase()))
+					.filter(Objects::nonNull)
+					.sorted()
+					.toList());
 		}
 
 	}
@@ -214,8 +219,8 @@ public class SerializationUtils {
 			return new HashMap<>() {{
 				map.forEach((key, value) -> {
 					put(key, value);
-					if (value instanceof Number)
-						put(key, ((Number) value).intValue());
+					if (value instanceof Number number)
+						put(key, number.intValue());
 				});
 			}};
 		}
