@@ -190,8 +190,10 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			if (type == null)
 				for (Boostable boostable : Boostable.values()) {
 					int boosts = booster.getNonExpiredBoosts(boostable).size();
-					if (boosts > 0)
-						items.add(ClickableItem.from(boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available").build(), e -> new BoostMenu(boostable, this).open(player)));
+					if (boosts > 0) {
+						ItemBuilder item = boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available");
+						items.add(ClickableItem.from(item.build(), e -> new BoostMenu(boostable, this).open(player)));
+					}
 				}
 			else
 				for (Boost boost : booster.get(type)) {
@@ -199,8 +201,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					if (boost.isActive()) {
 						item.lore("", "&6&lActive &7- &e" + boost.getTimeLeft());
 						contents.set(0, 4, ClickableItem.empty(item.build()));
-					}
-					else if (boost.canActivate()) {
+					} else if (boost.canActivate()) {
 						if (config.hasBoost(boost.getType())) {
 							item.lore("", "&cCannot activate, another boost is already active");
 							items.add(ClickableItem.empty(item.build()));
