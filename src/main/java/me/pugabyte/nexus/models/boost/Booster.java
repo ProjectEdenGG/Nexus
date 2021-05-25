@@ -83,7 +83,7 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		public ItemBuilder getDisplayItem() {
-			return type.getDisplayItem().name(camelCase(type) + " &7- &6" + getMultiplierFormatted());
+			return type.getDisplayItem().name("&e" + camelCase(type) + " &7- &6" + getMultiplierFormatted());
 		}
 
 		@NotNull
@@ -188,6 +188,14 @@ public class Booster implements PlayerOwnedObject {
 	}
 
 	public List<Boost> getNonExpiredBoosts() {
+		return getNonExpiredBoosts(boosts);
+	}
+
+	public List<Boost> getNonExpiredBoosts(Boostable type) {
+		return getNonExpiredBoosts(get(type));
+	}
+
+	private List<Boost> getNonExpiredBoosts(List<Boost> boosts) {
 		return boosts.stream().filter(boost -> !boost.isExpired()).toList();
 	}
 

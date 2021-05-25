@@ -140,7 +140,7 @@ public class BoostsCommand extends CustomCommand {
 
 			if (type == null) {
 				for (Boostable boostable : Boostable.values())
-					if (booster.count(boostable) > 0)
+					if (booster.getNonExpiredBoosts(boostable).size() > 0)
 						items.add(ClickableItem.from(boostable.getDisplayItem().build(), e -> new BoostMenu(boostable, this).open(player)));
 			} else
 				for (Boost boost : booster.get(type)) {
