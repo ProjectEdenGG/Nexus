@@ -166,8 +166,7 @@ public class Votes extends Feature implements Listener {
 		double multiplier = BoostConfig.multiplierOf(Boostable.VOTE_POINTS);
 
 		return new HashMap<>() {{
-			extras.forEach((chance, amount) ->
-					put(Double.valueOf(chance / multiplier).intValue(), amount));
+			extras.forEach((chance, amount) -> put((int) (chance / multiplier), amount));
 		}};
 	}
 

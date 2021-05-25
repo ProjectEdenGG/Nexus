@@ -590,7 +590,7 @@ public enum Package {
 
 	@Id("4496341")
 	@Category(StoreCategory.BOOSTS)
-	MINIGAME_TOKENS {
+	MINIGAME_DAILY_TOKENS {
 		public Boostable getType() {
 			return Boostable.valueOf(name());
 		}
