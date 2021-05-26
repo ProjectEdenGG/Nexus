@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.utils;
 
-import eden.utils.Env;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,11 +39,15 @@ public class EnumUtils {
 	}
 
 	public static <T> T random(Class<? extends T> clazz) {
-		return RandomUtils.randomElement(clazz.getEnumConstants());
+		return RandomUtils.randomElement((Object[]) clazz.getEnumConstants());
 	}
 
 	public static <T> List<String> valueNameList(Class<? extends T> clazz) {
-		return Arrays.stream(Env.values()).map(Env::name).collect(Collectors.toList());
+		return Arrays.stream(clazz.getEnumConstants()).map(value -> ((Enum<?>) value).name().toLowerCase()).collect(Collectors.toList());
+	}
+
+	public static <T> String valueNamesPretty(Class<? extends T> clazz) {
+		return String.join(", ", valueNameList(clazz));
 	}
 
 	public static <T> List<T> valuesExcept(Class<? extends T> clazz, Enum<?>... exclude) {
