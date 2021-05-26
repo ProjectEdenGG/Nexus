@@ -99,7 +99,7 @@ public class TrophyCommand extends CustomCommand {
 					if (Trophy.getEarnedTrophies(holder, event).isEmpty())
 						continue;
 
-					ItemBuilder item = Trophy.getDisplayItem(holder, event);
+					ItemBuilder item = Trophy.getDisplayItem(holder, event).name(StringUtils.camelCase(event));
 					items.add(ClickableItem.from(item.build(), e -> new TrophyMenu(event, this).open(player)));
 				}
 			} else {
