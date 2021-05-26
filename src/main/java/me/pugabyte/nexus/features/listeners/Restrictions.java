@@ -79,7 +79,7 @@ public class Restrictions implements Listener {
 		String input = event.getInventory().getRenameText();
 		ChatEvent chatEvent = new PublicChatEvent(new ChatService().get(player), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
 		Censor.censor(chatEvent);
-		if (!chatEvent.wasChanged()) return;
+		if (!(chatEvent.isBad() || chatEvent.isCancelled())) return;
 
 		event.setResult(null);
 		Tasks.sync(() -> event.setResult(null));

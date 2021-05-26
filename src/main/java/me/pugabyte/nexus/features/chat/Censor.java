@@ -134,6 +134,7 @@ public class Censor {
 		}
 
 		if (bad >= 1) {
+			event.setBad(true);
 			String channelNick = "";
 			if (event.getChannel() instanceof PublicChannel publicChannel)
 				channelNick = "[" + publicChannel.getNickname() + "] ";

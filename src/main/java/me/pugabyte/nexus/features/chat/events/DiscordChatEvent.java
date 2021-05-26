@@ -25,6 +25,7 @@ public class DiscordChatEvent extends ChatEvent {
 	private String message;
 	private String permission;
 	private boolean filtered;
+	private boolean bad;
 
 	public DiscordChatEvent(Member member, PublicChannel channel, String originalMessage, String message, String permission) {
 		this.member = member;

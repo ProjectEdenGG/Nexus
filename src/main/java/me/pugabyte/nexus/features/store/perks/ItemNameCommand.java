@@ -89,7 +89,7 @@ public class ItemNameCommand extends CustomCommand {
 
 		ChatEvent event = new PublicChatEvent(new ChatService().get(player()), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
 		Censor.censor(event);
-		if (event.wasChanged())
+		if (event.isBad() || event.isCancelled())
 			error("Inappropriate input");
 	}
 

@@ -44,6 +44,10 @@ public abstract class ChatEvent extends Event implements Cancellable {
 		return !stripColor(getMessage()).equalsIgnoreCase(stripColor(getOriginalMessage()));
 	}
 
+	public abstract boolean isBad();
+
+	public abstract void setBad(boolean wasBad);
+
 	public abstract boolean isFiltered();
 
 	public abstract void setFiltered(boolean wasFilitered);

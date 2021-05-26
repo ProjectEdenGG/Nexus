@@ -16,6 +16,7 @@ public class PublicChatEvent extends MinecraftChatEvent {
 	private final String originalMessage;
 	private String message;
 	private boolean filtered;
+	private boolean bad;
 
 	public PublicChatEvent(Chatter chatter, PublicChannel channel, String originalMessage, String message, Set<Chatter> recipients) {
 		this.chatter = chatter;
