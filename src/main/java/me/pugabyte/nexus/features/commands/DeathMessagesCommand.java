@@ -64,8 +64,9 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onDeath(PlayerDeathEvent event) {
 		String deathString = event.getDeathMessage();
+		Player player = event.getEntity();
 		DeathMessagesService service = new DeathMessagesService();
-		DeathMessages deathMessages = service.get(event.getEntity());
+		DeathMessages deathMessages = service.get(player);
 
 		Component deathMessageRaw = event.deathMessage();
 
@@ -76,14 +77,14 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			// i'm still mad that i have to do this
 			Component deathMessage = deathMessageRaw;
 			TextReplacementConfig replacementConfig1 = TextReplacementConfig.builder()
-					.matchLiteral(event.getEntity().getName())
+					.matchLiteral(player.getName())
 					.replacement(
 							Component.text(deathMessages.getNickname(), NamedTextColor.YELLOW)
 					).build();
 			deathMessage = deathMessage.replaceText(replacementConfig1);
 
-			if (event.getEntity().getKiller() != null) {
-				Player killer = event.getEntity().getKiller();
+			if (player.getKiller() != null) {
+				Player killer = player.getKiller();
 				TextReplacementConfig replacementConfig2 = TextReplacementConfig.builder()
 						.matchLiteral(killer.getName())
 						.replacement(
@@ -165,15 +166,26 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
-			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
+			Chat.broadcastIngame(player, output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
 
-			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-				Chat.broadcastDiscord("☠ " + deathString); // dumb fix :(
+			if (WorldGroup.get(player) == WorldGroup.SURVIVAL) {
+				// workaround for dumb Adventure bug (#657)
+				if (deathString == null)
+					deathString = "☠ " + Nickname.of(player) + " died";
+				else {
+					deathString = ("☠ " + HEART_PATTERN.matcher(deathString).replaceAll("a mob"))
+							.replace(" " + player.getName() + " ", " " + Nickname.of(player) + " ");
+
+					if (player.getKiller() != null)
+						deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
+				}
+				Chat.broadcastDiscord(deathString);
+			}
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
-			Chatter chatter = new ChatService().get(event.getEntity());
+			Chatter chatter = new ChatService().get(player);
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 				if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
-					recipient.sendMessage(event.getEntity(), output, MessageType.CHAT);
+					recipient.sendMessage(player, output, MessageType.CHAT);
 		}
 	}
 
