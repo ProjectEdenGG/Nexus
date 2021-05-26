@@ -68,6 +68,9 @@ public class Restrictions implements Listener {
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
 		Player player = event.getPlayer();
+		if (Rank.of(player).isStaff())
+			return;
+
 		String[] lines = event.getLines();
 		boolean censored = false;
 

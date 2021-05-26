@@ -287,6 +287,7 @@ public class PixelDrop extends TeamlessMechanic {
 				event.getMessage(),
 				event.getMessage(),
 				true,
+				false,
 				recipients);
 
 		Censor.process(publicChatEvent);
