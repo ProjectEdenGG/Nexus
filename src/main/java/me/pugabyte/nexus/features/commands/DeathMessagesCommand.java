@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.commands;
 
 import com.gmail.nossr50.mcMMO;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -22,6 +24,7 @@ import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
@@ -53,13 +56,28 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("behavior <behavior> [player]")
-	void toggle(Behavior behavior, @Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	static {
+		Tasks.repeatAsync(Time.SECOND.x(10), Time.MINUTE, () -> {
+			DeathMessagesService service = new DeathMessagesService();
+			for (DeathMessages deathMessages : service.getExpired()) {
+				deathMessages.setBehavior(Behavior.SHOWN);
+				deathMessages.setExpiration(null);
+				service.save(deathMessages);
+			}
+		});
+	}
+
+	@Path("behavior <behavior> [player] [duration...]")
+	void toggle(Behavior behavior, @Arg(value = "self", permission = "group.staff") OfflinePlayer player, @Arg(permission = "group.staff") Timespan duration) {
 		final DeathMessages deathMessages = service.get(player);
 
 		deathMessages.setBehavior(behavior);
+		if (!duration.isNull())
+			deathMessages.setExpiration(duration.fromNow());
+
 		service.save(deathMessages);
-		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
+		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message " +
+				"behavior to &e" + camelCase(behavior) + (duration.isNull() ? "" : " &3for &e" + duration.format()));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

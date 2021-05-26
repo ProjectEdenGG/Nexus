@@ -1043,4 +1043,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 				.collect(Collectors.toList());
 	}
 
+	@ConverterFor(Timespan.class)
+	Timespan convertToTimespan(String input) {
+		return Timespan.of(input);
+	}
+
 }

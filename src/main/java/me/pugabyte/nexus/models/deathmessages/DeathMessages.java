@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -27,6 +28,7 @@ public class DeathMessages implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Behavior behavior = Behavior.SHOWN;
+	private LocalDateTime expiration;
 
 	public enum Behavior {
 		HIDDEN,
