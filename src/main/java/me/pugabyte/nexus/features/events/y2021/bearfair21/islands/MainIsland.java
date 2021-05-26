@@ -17,19 +17,31 @@ import java.util.List;
 public class MainIsland implements Listener, BearFair21Island {
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
-		WakkaFlocka(BearFair21NPC.WAKKAFLOCKA) {
+		WakkaFlocka(BearFair21NPC.ORGANIZER) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				script.add("TODO");
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else {
+					script.add("TODO");
+				}
+
 				return script;
 			}
 		},
-		Captain(BearFair21NPC.CAPTAIN) {
+		Captain(BearFair21NPC.ADMIRAL) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				script.add("TODO");
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else {
+					script.add("TODO");
+				}
+
 				return script;
 			}
 		},
@@ -38,7 +50,13 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				script.add("TODO");
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else {
+					script.add("TODO");
+				}
+
 				return script;
 			}
 		},
@@ -46,20 +64,33 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				script.add("TODO");
-				script.add("wait 20");
-				script.add("You can get useful materials from recycling");
-				script.add("wait 20");
-				script.add("The more trash you recycle, the less trash you will catch");
-				script.add("wait 20");
-				script.add("You've recycled: " + user.getRecycledItems() + " trash");
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else {
+					script.add("TODO");
+					script.add("wait 20");
+					script.add("You can get useful materials from recycling");
+					script.add("wait 20");
+					script.add("The more trash you recycle, the less trash you will catch");
+					script.add("wait 20");
+					script.add("You've recycled: " + user.getRecycledItems() + " trash");
+				}
+
+
 				return script;
 			}
 		},
 		Lumberjack(BearFair21NPC.LUMBERJACK) {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				script.add("TODO");
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else {
+					script.add("TODO");
+				}
+
 				return script;
 			}
 		},
@@ -68,7 +99,13 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				script.add("TODO");
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else {
+					script.add("TODO");
+				}
+
 				return script;
 			}
 

@@ -79,6 +79,10 @@ public class BearFair21User implements PlayerOwnedObject {
 		// TODO BF21: Decrease user junkWeight depending on their recycled items
 	}
 
+	public boolean hasMet(int npcId) {
+		return getMetNPCs().contains(npcId);
+	}
+
 	public enum BF21PointSource {
 		ARCHERY,
 		MINIGOLF,

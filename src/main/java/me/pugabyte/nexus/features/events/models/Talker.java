@@ -6,7 +6,9 @@ import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Talker {
@@ -53,6 +55,56 @@ public class Talker {
 		});
 		return wait.get();
 	}
+
+	/**
+	 * Sends a script to a player from a talking NPC.
+	 *
+	 * @param player player to send to
+	 * @param talker NPC to send from
+	 * @param script script to send
+	 * @return CompletableFuture
+	 */
+	public static CompletableFuture<Void> runScript(Player player, TalkingNPC talker, List<String> script) {
+		CompletableFuture<Void> future = new CompletableFuture<>();
+		if (script == null || script.isEmpty()) {
+			future.complete(null);
+			return future;
+		}
+
+		final String playerName = Nickname.of(player);
+		int wait = 0;
+
+		Iterator<String> iterator = script.iterator();
+		while (iterator.hasNext()) {
+			String line = iterator.next();
+			if (line.toLowerCase().matches("^wait \\d+$")) {
+				wait += Integer.parseInt(line.toLowerCase().replace("wait ", ""));
+				if (!iterator.hasNext())
+					Tasks.wait(wait, () -> future.complete(null));
+			} else {
+				line = line.replaceAll("<player>", playerName);
+				final String npcName;
+
+				if (line.contains("<self> ")) {
+					npcName = "&b&lYOU&f";
+					line = line.replaceAll("<self> ", "");
+				} else
+					npcName = talker.getName();
+				String message = "&3" + npcName + " &7> &f" + line;
+
+				Tasks.wait(wait, () -> {
+					PlayerUtils.send(player, message);
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
+
+					if (!iterator.hasNext())
+						future.complete(null);
+				});
+			}
+		}
+
+		return future;
+	}
+
 
 	public interface TalkingNPC {
 		String getName();

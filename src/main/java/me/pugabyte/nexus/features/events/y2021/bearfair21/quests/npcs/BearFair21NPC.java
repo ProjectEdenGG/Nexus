@@ -32,8 +32,8 @@ public enum BearFair21NPC {
 	BEEKEEPER("Harold", 3844),
 	FISHERMAN2("Nate", 3841),
 	// Misc
-	CAPTAIN("Captain", 3839),
-	WAKKAFLOCKA("WakkaFlocka", 3798),
+	ADMIRAL("Phoenix", 3839),
+	ORGANIZER("Wakka", 3798),
 	;
 
 	@Getter
@@ -57,6 +57,7 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		return PacketUtils.entityNameFake(player, npc.getEntity(), StringUtils.camelCase(this), getName());
+		String name = getName().replaceAll("[0-9]+", "");
+		return PacketUtils.entityNameFake(player, npc.getEntity(), StringUtils.camelCase(this), name);
 	}
 }

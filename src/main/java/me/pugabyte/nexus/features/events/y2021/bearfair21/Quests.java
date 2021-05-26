@@ -110,8 +110,7 @@ public class Quests implements Listener {
 		if (BearFair21NPC.from(id) == null)
 			return;
 
-		BearFair21Talker.startScript(userService.get(player), id);
-		Merchants.openMerchant(player, id);
+		BearFair21Talker.runScript(userService.get(player), id).thenRun(() -> Merchants.openMerchant(player, id));
 
 		BearFair21User user = userService.get(player);
 		user.getMetNPCs().add(id);
