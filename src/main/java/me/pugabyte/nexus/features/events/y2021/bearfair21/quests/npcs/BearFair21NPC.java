@@ -34,6 +34,10 @@ public enum BearFair21NPC {
 	// Misc
 	ADMIRAL("Phoenix", 3839),
 	ORGANIZER("Wakka", 3798),
+	// MGN
+	// PUGMAS
+	// HALLOWEEN
+	// SDU
 	;
 
 	@Getter
@@ -57,7 +61,7 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		String name = getName().replaceAll("[0-9]+", "");
-		return PacketUtils.entityNameFake(player, npc.getEntity(), StringUtils.camelCase(this), name);
+		String job = name.replaceAll("[0-9]+", "");
+		return PacketUtils.entityNameFake(player, npc.getEntity(), StringUtils.camelCase(this), job);
 	}
 }

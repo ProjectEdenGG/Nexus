@@ -17,7 +17,7 @@ import java.util.List;
 public class MainIsland implements Listener, BearFair21Island {
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
-		WakkaFlocka(BearFair21NPC.ORGANIZER) {
+		WAKKAFLOCKA(BearFair21NPC.ORGANIZER) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -31,7 +31,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				return script;
 			}
 		},
-		Captain(BearFair21NPC.ADMIRAL) {
+		ADMIRAL(BearFair21NPC.ADMIRAL) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -46,7 +46,7 @@ public class MainIsland implements Listener, BearFair21Island {
 			}
 		},
 		// Side Quests
-		BeeKeeper(BearFair21NPC.BEEKEEPER) {
+		BEEKEEPER(BearFair21NPC.BEEKEEPER) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -60,7 +60,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				return script;
 			}
 		},
-		Fisherman2(BearFair21NPC.FISHERMAN2) {
+		FISHERMAN2(BearFair21NPC.FISHERMAN2) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -81,7 +81,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				return script;
 			}
 		},
-		Lumberjack(BearFair21NPC.LUMBERJACK) {
+		LUMBERJACK(BearFair21NPC.LUMBERJACK) {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
@@ -95,7 +95,7 @@ public class MainIsland implements Listener, BearFair21Island {
 			}
 		},
 		// Main Quest
-		Mayor(BearFair21NPC.MAYOR) {
+		MAYOR(BearFair21NPC.MAYOR) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -109,6 +109,139 @@ public class MainIsland implements Listener, BearFair21Island {
 				return script;
 			}
 
+		},
+		// Merchants
+		ARTIST(BearFair21NPC.ARTIST) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		BAKER(BearFair21NPC.BAKER) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		BARTENDER(BearFair21NPC.BARTENDER) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		BLACKSMITH(BearFair21NPC.BLACKSMITH) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		BOTANIST(BearFair21NPC.BOTANIST) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		BREWER(BearFair21NPC.BREWER) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		COLLECTOR(BearFair21NPC.COLLECTOR) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		FISHERMAN1(BearFair21NPC.FISHERMAN1) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		INVENTOR(BearFair21NPC.INVENTOR) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		PASTRY_CHEF(BearFair21NPC.PASTRY_CHEF) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
+		},
+		SORCERER(BearFair21NPC.SORCERER) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				}
+
+				return script;
+			}
 		},
 		;
 
