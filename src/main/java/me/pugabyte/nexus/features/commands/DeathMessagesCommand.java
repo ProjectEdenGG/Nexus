@@ -7,6 +7,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -179,7 +180,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 					if (player.getKiller() != null)
 						deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
 				}
-				Chat.broadcastDiscord(deathString);
+				Chat.broadcastDiscord(Discord.discordize(deathString));
 			}
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			Chatter chatter = new ChatService().get(player);
