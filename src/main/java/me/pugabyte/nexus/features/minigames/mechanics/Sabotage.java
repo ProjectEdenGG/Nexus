@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
@@ -37,14 +38,18 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -56,6 +61,10 @@ public class Sabotage extends TeamMechanic {
 	public static final int POST_MEETING_DELAY = 10;
 	public static final Supplier<ItemStack> VOTING_ITEM = () -> new ItemBuilder(Material.NETHER_STAR).name("&eVoting Screen").build();
 	public static final Supplier<ItemStack> USE_ITEM = () -> new ItemBuilder(Material.STONE_BUTTON).name("&eUse").build();
+	public static final Supplier<ItemStack> KILL_ITEM = () -> new ItemBuilder(Material.IRON_SWORD).name("&cKill").build();
+	public static final Supplier<ItemStack> EMPTY_REPORT_ITEM = () -> new ItemBuilder(Material.CRIMSON_BUTTON).name("&eReport").build();
+	public static final Supplier<ItemStack> REPORT_ITEM = () -> new ItemBuilder(Material.WARPED_BUTTON).name("&eReport").build();
+	public static final Supplier<ItemStack> SABOTAGE_MENU = () -> new ItemBuilder(Material.STONE_BUTTON).name("&cSabotage").build();
 
 	@Override
 	public @NotNull String getName() {
@@ -180,11 +189,19 @@ public class Sabotage extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this)) return;
 		Tasks.wait(1, () -> {
 			Minigamer minigamer = event.getMinigamer();
-			SabotageColor color = event.getMatch().<SabotageMatchData>getMatchData().getColor(minigamer);
+			SabotageMatchData matchData = event.getMatch().getMatchData();
+			SabotageColor color = matchData.getColor(minigamer);
 			setArmor(minigamer.getPlayer(), color);
 
-//			PlayerInventory inventory = minigamer.getPlayer().getInventory();
-//			SabotageTeam team = SabotageTeam.of(minigamer);
+			PlayerInventory inventory = minigamer.getPlayer().getInventory();
+			SabotageTeam team = SabotageTeam.of(minigamer);
+			inventory.setItem(1, USE_ITEM.get());
+			inventory.setItem(2, EMPTY_REPORT_ITEM.get());
+			if (team == SabotageTeam.IMPOSTOR) {
+				matchData.getKillCooldowns().put(minigamer.getUniqueId(), LocalDateTime.now());
+				inventory.setItem(3, KILL_ITEM.get());
+				inventory.setItem(4, SABOTAGE_MENU.get());
+			}
 		});
 	}
 
@@ -213,7 +230,11 @@ public class Sabotage extends TeamMechanic {
 				matchData.getVotingScreen().open(minigamer);
 			else
 				event.setCancelled(true);
-		} // else {}
+		} else {
+			if (USE_ITEM.get().isSimilar(event.getItem())) {
+
+			}
+		}
 	}
 
 	@EventHandler
@@ -256,5 +277,26 @@ public class Sabotage extends TeamMechanic {
 			builder.next(StringUtils.plural(" has won on ", " have won on ", winners.size()));
 		}
 		Minigames.broadcast(builder.next(match.getArena()));
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+	public void onHandAnimation(PlayerAnimationEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (minigamer.isPlaying(this) && event.getAnimationType() == PlayerAnimationType.ARM_SWING)
+			event.setCancelled(true);
+	}
+
+	@Override
+	public void onDamage(MinigamerDamageEvent event) {
+		SabotageMatchData matchData = event.getMatch().getMatchData();
+		LocalDateTime now = LocalDateTime.now();
+		if (event.getAttacker() != null && event.getAttacker().isAlive() && SabotageTeam.of(event.getAttacker()) == SabotageTeam.IMPOSTOR
+				&& now.isAfter(matchData.getKillCooldowns().get(event.getAttacker().getUniqueId()).plusSeconds(matchData.getArena().getKillCooldown()))) {
+			MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(event.getMinigamer(), event);
+			onDeath(deathEvent);
+			if (!deathEvent.isCancelled())
+				matchData.getKillCooldowns().put(event.getAttacker().getUniqueId(), now);
+		} else
+			event.setCancelled(true);
 	}
 }

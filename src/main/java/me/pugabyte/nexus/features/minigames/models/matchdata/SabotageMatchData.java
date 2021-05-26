@@ -80,6 +80,7 @@ public class SabotageMatchData extends MatchData {
 			.color(ChatColor.DARK_GRAY)
 			.permission("")
 			.build();
+	private final Map<UUID, LocalDateTime> killCooldowns = new HashMap<>();
 
 	public SabotageArena getArena() {
 		return (SabotageArena) super.getArena();
