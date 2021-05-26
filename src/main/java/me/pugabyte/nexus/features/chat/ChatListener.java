@@ -23,7 +23,7 @@ import static me.pugabyte.nexus.utils.StringUtils.right;
 @NoArgsConstructor
 public class ChatListener implements Listener {
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onChat(AsyncPlayerChatEvent event) {
 		Chatter chatter = new ChatService().get(event.getPlayer());
 		Tasks.sync(() -> {

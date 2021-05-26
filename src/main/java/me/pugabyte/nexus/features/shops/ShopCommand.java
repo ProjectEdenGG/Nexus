@@ -88,6 +88,11 @@ public class ShopCommand extends CustomCommand implements Listener {
 		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
 	}
 
+	@Path("items")
+	void items() {
+		new BrowseProductsProvider(null).open(player());
+	}
+
 	@Path("list")
 	void list() {
 		new BrowseShopsProvider(null).open(player());
