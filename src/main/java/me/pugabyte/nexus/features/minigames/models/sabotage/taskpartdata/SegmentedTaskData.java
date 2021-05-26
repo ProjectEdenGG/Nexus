@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata;
 
 import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.models.sabotage.TaskPart;
-import me.pugabyte.nexus.features.minigames.models.sabotage.TaskPartData;
 
 @Getter
 public abstract class SegmentedTaskData extends TaskPartData {

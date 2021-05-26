@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.minigames.mechanics.Sabotage;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.SegmentedTaskData;
+import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 @Getter
 @RequiredArgsConstructor
 public class Task {
-    private final SabotageTasks task;
+    private final Tasks task;
     private int completed = 0;
     /**
      * Instantiated when calling {@link #nextPart()}

@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
@@ -19,6 +18,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sab
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.sabotage.*;
+import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
+import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartDataFor;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.utils.*;
@@ -46,7 +47,6 @@ import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Supplier;
@@ -313,7 +313,7 @@ public class Sabotage extends TeamMechanic {
 	static {
 		try {
 			String path = Minigames.class.getPackage().getName();
-			Set<Class<? extends TaskPartData>> taskPartDataTypes = new Reflections(path + ".models.sabotage.taskpartdata")
+			Set<Class<? extends TaskPartData>> taskPartDataTypes = new Reflections(path + ".taskpartdata")
 					.getSubTypesOf(TaskPartData.class);
 
 			for (Class<?> taskPartDataType : taskPartDataTypes)

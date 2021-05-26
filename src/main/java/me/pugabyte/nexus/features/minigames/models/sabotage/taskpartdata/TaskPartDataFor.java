@@ -1,4 +1,6 @@
-package me.pugabyte.nexus.features.minigames.models.sabotage;
+package me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata;
+
+import me.pugabyte.nexus.features.minigames.models.sabotage.TaskPart;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
