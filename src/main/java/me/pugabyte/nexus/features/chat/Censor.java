@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
+import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.punishments.Punishment;
@@ -17,9 +18,11 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -83,6 +86,12 @@ public class Censor {
 		dotCommand(event);
 		dots(event);
 		Emotes.process(event);
+	}
+
+	public static boolean isCensored(Player player, String input) {
+		ChatEvent chatEvent = new PublicChatEvent(new ChatService().get(player), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
+		Censor.censor(chatEvent);
+		return chatEvent.isBad() || chatEvent.isCancelled();
 	}
 
 	public static void censor(ChatEvent event) {

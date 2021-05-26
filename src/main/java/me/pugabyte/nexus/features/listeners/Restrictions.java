@@ -2,13 +2,12 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import me.pugabyte.nexus.features.chat.Censor;
+import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.Koda;
-import me.pugabyte.nexus.features.chat.events.ChatEvent;
-import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -25,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -37,7 +37,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import static me.pugabyte.nexus.utils.BlockUtils.isNullOrAir;
@@ -67,24 +66,48 @@ public class Restrictions implements Listener {
 	}
 
 	@EventHandler
-	public void onAnvilRenameItem(PrepareAnvilEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player)) return;
+	public void onSignChange(SignChangeEvent event) {
+		Player player = event.getPlayer();
+		String[] lines = event.getLines();
+		boolean censored = false;
 
-		if (ItemUtils.isNullOrAir(event.getResult())) return;
+		for (int i = 0; i < lines.length; i++) {
+			String line = lines[i];
+			if (Censor.isCensored(player, line)) {
+				event.setLine(i, "");
+				censored = true;
+			}
+		}
+
+		if (!censored)
+			return;
+
+		PlayerUtils.send(player, "&cInappropriate sign content");
+		Chat.broadcast("Sign content by " + Nickname.of(player) + " was censored: " + String.join(", ", lines), StaticChannel.STAFF);
+	}
+
+	@EventHandler
+	public void onAnvilRenameItem(PrepareAnvilEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
+
+		if (ItemUtils.isNullOrAir(event.getResult()))
+			return;
 
 		ItemStack item1 = event.getInventory().getFirstItem();
 		ItemStack item2 = event.getInventory().getFirstItem();
-		if (ItemUtils.isNullOrAir(item1) && ItemUtils.isNullOrAir(item2)) return;
+		if (ItemUtils.isNullOrAir(item1) && ItemUtils.isNullOrAir(item2))
+			return;
 
 		String input = event.getInventory().getRenameText();
-		ChatEvent chatEvent = new PublicChatEvent(new ChatService().get(player), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
-		Censor.censor(chatEvent);
-		if (!(chatEvent.isBad() || chatEvent.isCancelled())) return;
+		if (!Censor.isCensored(player, input))
+			return;
 
 		event.setResult(null);
 		Tasks.sync(() -> event.setResult(null));
 
 		PlayerUtils.send(player, "&cInappropriate item name");
+		Chat.broadcast("Anvil name by " + Nickname.of(player) + " was censored: " + input, StaticChannel.STAFF);
 	}
 
 	@EventHandler
