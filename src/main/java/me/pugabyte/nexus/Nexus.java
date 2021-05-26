@@ -97,7 +97,7 @@ public class Nexus extends JavaPlugin {
 		try {
 			return Env.valueOf(env);
 		} catch (IllegalArgumentException ex) {
-			Nexus.severe("Could not parse environment variable " + env + ", options are: " + String.join(", ", EnumUtils.valueNameList(Env.class)));
+			Nexus.severe("Could not parse environment variable " + env + ", options are: " + EnumUtils.valueNamesPretty(Env.class));
 			Nexus.severe("Defaulting to " + Env.DEV.name() + " environment");
 			return Env.DEV;
 		}
