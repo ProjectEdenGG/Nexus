@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
@@ -17,18 +18,12 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
-import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
-import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
+import me.pugabyte.nexus.features.minigames.models.sabotage.*;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.framework.interfaces.Colored;
-import me.pugabyte.nexus.utils.AdventureUtils;
-import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.SoundUtils;
-import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.*;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -48,9 +43,12 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -148,7 +146,12 @@ public class Sabotage extends TeamMechanic {
 		match.showBossBar(matchData.getBossbar());
 		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, matchData.getGameChannel()));
 		match.getTasks().repeatAsync(0, 1, () -> {
-			// TODO: packet stuff + body report checking + more goes here
+			match.getMinigamers().forEach(minigamer -> {
+				List<Minigamer> otherPlayers = new ArrayList<>(match.getMinigamers());
+				Utils.removeEntityFrom(minigamer, otherPlayers);
+				PacketUtils.sendFakeItem(minigamer, otherPlayers, new ItemStack(Material.AIR), EnumItemSlot.MAINHAND);
+			});
+			// TODO: body report checking + more goes here
 		});
 	}
 
@@ -220,20 +223,23 @@ public class Sabotage extends TeamMechanic {
 	public void onInteract(PlayerInteractEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
-		if (!minigamer.isAlive()) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
+		ItemStack item = event.getItem();
 
 		if (matchData.isMeetingActive()) {
-			if (VOTING_ITEM.get().isSimilar(event.getItem()))
+			if (VOTING_ITEM.get().isSimilar(item))
 				matchData.getVotingScreen().open(minigamer);
 			else
 				event.setCancelled(true);
 		} else {
 			if (USE_ITEM.get().isSimilar(event.getItem())) {
 
-			}
+			} else if (SABOTAGE_MENU.get().isSimilar(item)) {
+
+			} else if (minigamer.isAlive() && REPORT_ITEM.get().isSimilar(item))
+				matchData.startMeeting(minigamer);
 		}
 	}
 
@@ -298,5 +304,49 @@ public class Sabotage extends TeamMechanic {
 				matchData.getKillCooldowns().put(event.getAttacker().getUniqueId(), now);
 		} else
 			event.setCancelled(true);
+	}
+
+	// reflection shit
+
+	private static final Map<TaskPart, Constructor<?>> taskPartDataMap = new HashMap<>();
+
+	static {
+		try {
+			String path = Minigames.class.getPackage().getName();
+			Set<Class<? extends TaskPartData>> taskPartDataTypes = new Reflections(path + ".models.sabotage.taskpartdata")
+					.getSubTypesOf(TaskPartData.class);
+
+			for (Class<?> taskPartDataType : taskPartDataTypes)
+				if (taskPartDataType.getAnnotation(TaskPartDataFor.class) != null) {
+					Constructor<?> constructor;
+					try {
+						constructor = taskPartDataType.getConstructor(TaskPart.class);
+						constructor.setAccessible(true);
+					} catch (NoSuchMethodException ex) {
+						Nexus.warn("TaskPartData " + taskPartDataType.getSimpleName() + " has no TaskPart constructor");
+						continue;
+					}
+					for (TaskPart taskPart : taskPartDataType.getAnnotation(TaskPartDataFor.class).value())
+						taskPartDataMap.put(taskPart, constructor);
+				}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static Constructor<?> getTaskPartDataFor(TaskPart part) {
+		try {
+			return taskPartDataMap.getOrDefault(part, TaskPartData.class.getConstructor(TaskPart.class));
+		} catch (Exception ex) {
+			throw new RuntimeException("Unable to get TaskPartData constructor");
+		}
+	}
+
+	public static <T extends TaskPartData> T createTaskPartDataFor(TaskPart part) {
+		try {
+			return (T) getTaskPartDataFor(part).newInstance(part);
+		} catch (Exception ex) {
+			throw new RuntimeException("Could not instantiate TaskPartData");
+		}
 	}
 }

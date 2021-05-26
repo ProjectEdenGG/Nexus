@@ -382,7 +382,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(HasPlayer owner, List<? extends HasPlayer> recipients, ItemStack item, EnumItemSlot slot) {
+	public void sendFakeItem(HasPlayer owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumItemSlot slot) {
 		Player player = owner.getPlayer();
 
 		// self packet avoids playing the armor equip sound effect
@@ -414,7 +414,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(HasPlayer owner, List<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
+	public void sendFakeItem(HasPlayer owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
 		sendFakeItem(owner, recipients, item, getEnumItemSlot(slot));
 	}
 }

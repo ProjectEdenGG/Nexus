@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import eden.annotations.Disabled;
 import lombok.Getter;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -16,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
+import org.jetbrains.annotations.Contract;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
@@ -25,7 +28,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
@@ -159,5 +164,11 @@ public class Utils extends eden.utils.Utils {
 
 	@Getter
 	private static Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
+
+	@Contract(mutates = "param2")
+	public static <T extends Collection<? extends HasUniqueId>> void removeEntityFrom(HasUniqueId entity, T from) {
+		from.removeIf(player -> player.getUniqueId().equals(entity.getUniqueId()));
+	}
+
 
 }
