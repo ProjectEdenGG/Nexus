@@ -136,9 +136,9 @@ public class Censor {
 		if (bad >= 1) {
 			String channelNick = "";
 			if (event.getChannel() instanceof PublicChannel publicChannel)
-				channelNick = " [" + publicChannel.getNickname() + "] ";
+				channelNick = "[" + publicChannel.getNickname() + "] ";
 			else if (event.getChannel() instanceof PrivateChannel privateChannel)
-				channelNick = " [" + String.join(", ", privateChannel.getOthersNames(event.getChatter())) + "] ";
+				channelNick = "[" + String.join(", ", privateChannel.getOthersNames(event.getChatter())) + "] ";
 
 			Nexus.fileLog("swears", channelNick + event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
