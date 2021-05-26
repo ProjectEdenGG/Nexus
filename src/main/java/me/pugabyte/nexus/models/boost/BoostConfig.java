@@ -10,13 +10,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.discord.Bot;
+import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.boost.Booster.Boost;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static eden.utils.StringUtils.camelCase;
 
 @Data
 @Builder
@@ -76,6 +89,82 @@ public class BoostConfig implements PlayerOwnedObject {
 
 	private void save() {
 		new BoostConfigService().save(this);
+	}
+
+	public static class DiscordHandler {
+
+		static void deleteHistoryAndSendMessage() {
+			if (!Discord.isConnected())
+				return;
+
+			deleteHistory(DiscordHandler::sendMessage);
+		}
+
+		public static void editMessage() {
+			if (!Discord.isConnected())
+				return;
+
+			getHistory().thenAcceptAsync(history -> {
+				if (history.size() == 0) {
+					sendMessage();
+					return;
+				}
+
+				Iterator<Message> iterator = history.iterator();
+				Message message = iterator.next();
+
+				while (iterator.hasNext())
+					iterator.next().delete().queue();
+
+				message.editMessage(getMessage()).queue();
+			});
+		}
+
+		@NotNull
+		private static Message getMessage() {
+			BoostConfig config = get();
+
+			MessageBuilder builder = new MessageBuilder()
+					.append("**Active Boosts**")
+					.append(System.lineSeparator())
+					.append(System.lineSeparator());
+
+			Set<Boostable> boosts = config.getBoosts().keySet();
+			if (boosts.isEmpty())
+				builder.append("None");
+			else
+				for (Boostable type : boosts) {
+					Boost boost = config.getBoost(type);
+					builder.append(String.format("**%s** %s - %s (%s)", boost.getMultiplierFormatted(), camelCase(type), boost.getNickname(), boost.getTimeLeft()))
+							.append(System.lineSeparator());
+				}
+
+			return builder.build();
+		}
+
+		private static void sendMessage() {
+			getChannel().sendMessage(getMessage()).queue();
+		}
+
+		private static void deleteHistory(Runnable then) {
+			getHistory().thenAcceptAsync(history -> {
+				Iterator<Message> iterator = history.iterator();
+				while (iterator.hasNext()) {
+					iterator.next().delete().queue();
+					if (!iterator.hasNext())
+						then.run();
+				}
+			});
+		}
+
+		@NotNull
+		private static CompletableFuture<List<Message>> getHistory() {
+			return getChannel().getIterableHistory().takeAsync(100);
+		}
+
+		private static TextChannel getChannel() {
+			return DiscordId.TextChannel.BOOSTS.get(Bot.RELAY);
+		}
 	}
 
 }

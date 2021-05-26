@@ -22,6 +22,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.boost.BoostConfig;
+import me.pugabyte.nexus.models.boost.BoostConfig.DiscordHandler;
 import me.pugabyte.nexus.models.boost.BoostConfigService;
 import me.pugabyte.nexus.models.boost.Boostable;
 import me.pugabyte.nexus.models.boost.Booster;
@@ -72,6 +73,13 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				if (boost.isExpired())
 					boost.expire();
 			}
+		});
+		Tasks.repeatAsync(Time.MINUTE, Time.MINUTE, () -> {
+			BoostConfig config = BoostConfig.get();
+			if (config.getBoosts().isEmpty())
+				return;
+
+			DiscordHandler.editMessage();
 		});
 	}
 
