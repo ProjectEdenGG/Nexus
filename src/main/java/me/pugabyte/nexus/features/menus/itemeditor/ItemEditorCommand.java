@@ -5,6 +5,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 
+@Permission("group.seniorstaff")
 public class ItemEditorCommand extends CustomCommand {
 
 	public ItemEditorCommand(CommandEvent event) {
@@ -12,7 +13,6 @@ public class ItemEditorCommand extends CustomCommand {
 	}
 
 	@Path
-	@Permission("item.editor")
 	void itemEditor() {
 		ItemEditorMenu.openItemEditor(player(), ItemEditMenu.MAIN);
 	}
