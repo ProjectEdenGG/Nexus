@@ -61,7 +61,7 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		String job = name.replaceAll("[0-9]+", "");
-		return PacketUtils.entityNameFake(player, npc.getEntity(), StringUtils.camelCase(this), job);
+		String npcJob = StringUtils.camelCase(this).replaceAll("[0-9]+", "");
+		return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, name);
 	}
 }
