@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import eden.utils.TimeUtils.Time;
 import joptsimple.internal.Strings;
@@ -26,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityTameEvent;
@@ -51,6 +53,13 @@ public class WorldGuardFlags implements Listener {
 
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), HANGING_BREAK) == State.DENY)
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBlockSpreadEvent(BlockSpreadEvent event) {
+		if (event.getNewState().getType() == Material.BAMBOO)
+			if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), Flags.CROP_GROWTH) == State.DENY)
+				event.setCancelled(true);
 	}
 
 	@EventHandler
