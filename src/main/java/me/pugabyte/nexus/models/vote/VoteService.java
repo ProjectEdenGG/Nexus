@@ -4,9 +4,13 @@ import com.dieselpoint.norm.Query;
 import lombok.Data;
 import me.pugabyte.nexus.models.MySQLService;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class VoteService extends MySQLService {
@@ -41,6 +45,16 @@ public class VoteService extends MySQLService {
 	public List<Vote> getRecentVotes() {
 		Query query = database.where("expired = 0").orderBy("timestamp desc");
 		return query.results(Vote.class);
+	}
+
+	public Map<LocalDate, Integer> getVotesByDay() {
+		Query query = database.sql("select date(timestamp) as date, count(*) as count from vote group by 1 having count >= 100 order by count desc");
+		List<LinkedHashMap> results = query.results(LinkedHashMap.class);
+		LinkedHashMap<LocalDate, Integer> map = new LinkedHashMap<>();
+		for (Map result : results)
+			map.put(((Date) result.get("date")).toLocalDate(), ((Long) result.get("count")).intValue());
+
+		return map;
 	}
 
 	public List<TopVoter> getTopVoters(Month month) {
