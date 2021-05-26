@@ -1,6 +1,10 @@
 package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.chat.Censor;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.events.ChatEvent;
+import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -8,6 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
@@ -18,6 +23,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.store.perks.EntityNameCommand.PERMISSION;
@@ -63,6 +69,7 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean magic
 	) {
 		input = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
+		verify(input);
 
 		if (targetEntity instanceof ItemFrame itemFrame) {
 			ItemStack item = itemFrame.getItem();
@@ -84,6 +91,7 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean italic,
 			@Switch boolean magic
 	) {
+		verify(input);
 		name(Gradient.of(colors).apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
@@ -96,6 +104,7 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean italic,
 			@Switch boolean magic
 	) {
+		verify(input);
 		name(Rainbow.apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
@@ -106,6 +115,16 @@ public class EntityNameCommand extends CustomCommand {
 
 		targetEntity.setCustomNameVisible(enable);
 		send(PREFIX + "Name tag visibility " + (enable ? "&aenabled" : "&cdisabled"));
+	}
+
+	private void verify(String input) {
+		if (input == null)
+			return;
+
+		ChatEvent event = new PublicChatEvent(new ChatService().get(player()), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
+		Censor.censor(event);
+		if (event.wasChanged())
+			error("Inappropriate input");
 	}
 
 }

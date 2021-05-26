@@ -1,6 +1,10 @@
 package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.chat.Censor;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.events.ChatEvent;
+import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -8,12 +12,14 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.store.perks.ItemNameCommand.PERMISSION;
@@ -80,6 +86,11 @@ public class ItemNameCommand extends CustomCommand {
 		int length = StringUtils.stripColor(input).length();
 		if (length > 50)
 			error("Max length is 50, input was " + length);
+
+		ChatEvent event = new PublicChatEvent(new ChatService().get(player()), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
+		Censor.censor(event);
+		if (event.wasChanged())
+			error("Inappropriate input");
 	}
 
 }
