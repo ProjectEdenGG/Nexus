@@ -17,12 +17,20 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
-import me.pugabyte.nexus.features.minigames.models.sabotage.*;
+import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
+import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
+import me.pugabyte.nexus.features.minigames.models.sabotage.TaskPart;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartDataFor;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.framework.interfaces.Colored;
-import me.pugabyte.nexus.utils.*;
+import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PacketUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Material;
@@ -48,7 +56,11 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -190,7 +202,7 @@ public class Sabotage extends TeamMechanic {
 	@EventHandler
 	public void onLoadout(MinigamerLoadoutEvent event) {
 		if (!event.getMatch().isMechanic(this)) return;
-		Tasks.wait(1, () -> {
+		event.getMatch().getTasks().wait(1, () -> {
 			Minigamer minigamer = event.getMinigamer();
 			SabotageMatchData matchData = event.getMatch().getMatchData();
 			SabotageColor color = matchData.getColor(minigamer);
