@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TeamSidebar implements MinigameScoreboard {
-	private Match match;
-	private Map<Team, EdenScoreboard> scoreboards = new HashMap<>();
+	private final Match match;
+	private final Map<Team, EdenScoreboard> scoreboards = new HashMap<>();
 
 	public TeamSidebar(Match match) {
 		this.match = match;

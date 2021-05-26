@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
@@ -22,6 +23,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
@@ -58,6 +60,29 @@ public class PacketUtils {
 		sendPacket(player, headRotationPacket, lookPacket);
 	}
 
+	// self packet avoids playing the armor equip sound effect
+	public static void setSlot(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
+		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
+		selfPacket.getIntegers().write(0, 0); // inventory ID (0 = player)
+		selfPacket.getIntegers().write(1, 9- slot.getSlotFlag()); // dumb hack to get the slot ID of the armor sets
+		selfPacket.getItemModifier().write(0, item);
+
+		// other packet is sent to all other players to show the armor piece
+		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipmentList = new ArrayList<>();
+		equipmentList.add(new Pair<>(slot, CraftItemStack.asNMSCopy(item)));
+		PacketPlayOutEntityEquipment rawPacket = new PacketPlayOutEntityEquipment(player.getEntityId(), equipmentList);
+		PacketContainer otherPacket = PacketContainer.fromPacket(rawPacket);
+
+		players.stream().filter(_player -> player.getWorld() == _player.getWorld()).forEach(_player -> {
+			PacketContainer packet = _player.equals(player) ? selfPacket : otherPacket;
+			try {
+				ProtocolLibrary.getProtocolManager().sendServerPacket(_player, packet);
+			} catch (InvocationTargetException ex) {
+				Nexus.log("Error trying to send MGM collectible armour packets from " + player.getName() + " to " + _player.getName());
+				ex.printStackTrace();
+			}
+		});
+	}
 
 	// can't get move to work correctly
 //	public static void entityMove(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, double x, double y, double z) {

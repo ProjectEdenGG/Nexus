@@ -2,10 +2,12 @@ package me.pugabyte.nexus.framework.exceptions;
 
 import eden.exceptions.EdenException;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.ComponentLike;
 
 @Data
+@NoArgsConstructor
 public class NexusException extends EdenException {
 	private JsonBuilder json;
 

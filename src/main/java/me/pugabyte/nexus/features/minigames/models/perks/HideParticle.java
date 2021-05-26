@@ -29,7 +29,7 @@ public enum HideParticle {
 		public boolean showParticle(PerkCategory particleType) {
 			return particleType != PerkCategory.ARROW_TRAIL;
 		}
-	}
+	},
 	;
 
 	public abstract boolean showParticle(PerkCategory particleType);

@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -507,7 +508,7 @@ public class Match {
 	public static class MatchTasks {
 		private final List<Integer> taskIds = new ArrayList<>();
 		@Getter
-		private final Map<MatchTaskType, Integer> taskTypeMap = new HashMap<>();
+		private final Map<MatchTaskType, Integer> taskTypeMap = new ConcurrentHashMap<>();
 
 		void end() {
 			List<Integer> tasks = new ArrayList<>(taskIds);

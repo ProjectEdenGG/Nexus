@@ -42,12 +42,21 @@ public abstract class PlayerParticlePerk extends TickablePerk implements IPartic
 	public void particle(Player player, List<Player> recipients) {
 		if (player.isSneaking())
 			return;
+
 		Location location = player.getLocation().add(0, 0.5, 0);
 
 		recipients = recipients.stream().filter(player1 -> {
 			PerkOwner owner = new PerkOwnerService().get(player1);
 			return owner.getHideParticle().showParticle(getPerkCategory());
 		}).collect(Collectors.toList());
-		new ParticleBuilder(getParticle()).receivers(recipients).count(getCount()).offset(getOffsetH(), getOffsetV(), getOffsetH()).location(location).extra(getSpeed()).data(getDustOptions(player)).spawn();
+
+		new ParticleBuilder(getParticle())
+				.receivers(recipients)
+				.count(getCount())
+				.offset(getOffsetH(), getOffsetV(), getOffsetH())
+				.location(location)
+				.extra(getSpeed())
+				.data(getDustOptions(player))
+				.spawn();
 	}
 }

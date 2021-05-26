@@ -45,10 +45,20 @@ public abstract class ParticleProjectilePerk extends Perk implements IParticlePe
 			PerkOwner owner = new PerkOwnerService().get(player);
 			return owner.getHideParticle().showParticle(getPerkCategory());
 		}).collect(Collectors.toList());
-		new ParticleBuilder(getParticle()).receivers(players).count(getCount()).offset(getOffsetH(), getOffsetV(), getOffsetH()).location(projectile.getLocation()).extra(getSpeed()).data(getDustOptions(projectile)).spawn();
+
+		new ParticleBuilder(getParticle())
+				.receivers(players)
+				.count(getCount())
+				.offset(getOffsetH(), getOffsetV(), getOffsetH())
+				.location(projectile.getLocation())
+				.extra(getSpeed())
+				.data(getDustOptions(projectile))
+				.spawn();
 	}
 
 	public void tick(Projectile projectile, Match match) {
-		tick(projectile, match.getMinigamers().stream().map(Minigamer::getPlayer).collect(Collectors.toList()));
+		tick(projectile, match.getMinigamers().stream()
+				.map(Minigamer::getPlayer)
+				.collect(Collectors.toList()));
 	}
 }

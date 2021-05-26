@@ -41,7 +41,6 @@ public class RainbowTrail extends ParticleProjectilePerk {
 
 	@Override
 	public Particle.DustOptions getDustOptions(@NotNull Projectile projectile) {
-		int[] rgb = ParticleUtils.incRainbow(projectile.getTicksLived());
-		return ParticleUtils.newDustOption(getParticle(), rgb[0], rgb[1], rgb[2]);
+		return ParticleUtils.newDustOption(getParticle(), ParticleUtils.incRainbow(projectile.getTicksLived()));
 	}
 }

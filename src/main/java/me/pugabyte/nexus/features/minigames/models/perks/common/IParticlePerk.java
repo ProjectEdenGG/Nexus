@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.minigames.models.perks.common;
 import org.bukkit.Particle;
 
 public interface IParticlePerk {
+
 	default int getCount() {
 		return 5;
 	}
@@ -14,5 +15,7 @@ public interface IParticlePerk {
 	}
 
 	double getOffsetH();
+
 	double getOffsetV();
+
 }

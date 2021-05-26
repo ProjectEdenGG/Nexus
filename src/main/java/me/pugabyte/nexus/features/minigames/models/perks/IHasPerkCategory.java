@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.perks;
 
 public interface IHasPerkCategory {
+
 	PerkCategory getPerkCategory();
 
 	/**
@@ -10,4 +11,5 @@ public interface IHasPerkCategory {
 	default boolean excludes(IHasPerkCategory other) {
 		return getPerkCategory().isExclusive() && getPerkCategory().getExclusionGroup() == other.getPerkCategory().getExclusionGroup();
 	}
+
 }

@@ -12,7 +12,7 @@ public enum PerkCategory implements IHasPerkCategory {
 	TEAM_HAT(2),
 	PARTICLE(1),
 	ARROW_TRAIL(3),
-	GADGET(0)
+	GADGET(0),
 	;
 
 	/**
