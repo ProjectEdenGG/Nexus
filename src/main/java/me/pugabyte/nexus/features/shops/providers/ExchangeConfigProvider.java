@@ -4,7 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
+import me.pugabyte.nexus.features.shops.ShopUtils;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
@@ -182,15 +182,15 @@ public class ExchangeConfigProvider extends _ShopProvider {
 				if (!ItemUtils.isNullOrAir(player.getItemOnCursor())) {
 					try {
 						ItemStack item = player.getItemOnCursor().clone();
-						if (Backpacks.isBackpack(item))
-							throw new InvalidInputException("Backpacks can not be sold in player shops");
+						if (!ShopUtils.isTradeable(item))
+							throw new InvalidInputException("You can not trade that item in shops");
 
 						itemStack.set(item);
 						PlayerUtils.giveItem(player, itemStack.get().clone());
 						player.setItemOnCursor(null);
 						open(player);
 					} catch (Exception ex) {
-						PlayerUtils.send(player, ex.getMessage());
+						PlayerUtils.send(player, Shops.PREFIX + "&c" + ex.getMessage());
 						open(player);
 					}
 				} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {
