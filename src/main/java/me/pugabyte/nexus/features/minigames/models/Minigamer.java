@@ -274,6 +274,30 @@ public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 		}
 	}
 
+	public void teleportAsync(Location location) {
+		teleportAsync(location, false);
+	}
+
+	public void teleportAsync(Location location, boolean withSlowness) {
+		if (location == null)
+			throw new InvalidInputException("Tried to teleport " + getName() + " to a null location");
+
+		Tasks.async(() -> {
+			player.setVelocity(new Vector(0, 0, 0));
+			canTeleport = true;
+			if (match == null)
+				player.teleportAsync(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
+			else
+				player.teleportAsync(location.clone().add(0, .5, 0));
+			canTeleport = false;
+			player.setVelocity(new Vector(0, 0, 0));
+			if (withSlowness) {
+				match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
+				match.getTasks().wait(2, () -> player.setVelocity(new Vector(0, 0, 0)));
+			}
+		});
+	}
+
 	public void setTeam(Team team) {
 		this.team = team;
 		assert match != null;
@@ -338,20 +362,26 @@ public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 			clearState();
 			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
 			hideAll();
-			match.getTasks().wait(match.getArena().getRespawnSeconds() * 20L, () -> {
+			Runnable respawn = () -> {
 				if (!match.isEnded()) {
 					unhideAll();
 					spawn();
 					respawning = false;
 					// hides players who are still respawning (as unhideAll unhides them)
 					match.getMinigamers().forEach(minigamer -> {
-						if (!minigamer.equals(this) && minigamer.isRespawning()) {
+						if (!minigamer.equals(this) && (minigamer.isRespawning() || !minigamer.isAlive())) {
 							hidePlayer(minigamer).from(this);
-							hidePlayer(this).from(minigamer);
+							if (minigamer.isAlive())
+								hidePlayer(this).from(minigamer);
 						}
 					});
 				}
-			});
+			};
+			int respawnIn = match.getArena().getRespawnSeconds() * 20;
+			if (respawnIn == 0)
+				respawn.run();
+			else
+				match.getTasks().wait(respawnIn, respawn);
 		}
 	}
 

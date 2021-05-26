@@ -150,7 +150,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	// moved this here because it's used by a couple "team" games (juggernaut) and copy-pasting was kinda icky
-	protected void announceTeamlessWinners(Match match) {
+	protected final void announceTeamlessWinners(Match match) {
 		Arena arena = match.getArena();
 		Map<Minigamer, Integer> scores = new HashMap<>();
 
@@ -196,7 +196,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			return component.append(Component.text(" have tied on "));
 	}
 
-	protected TextComponent getWinnersComponent(Nicknamed... components) {
+	protected TextComponent getWinnersComponent(Named... components) {
 		return getWinnersComponent(Arrays.asList(components));
 	}
 }

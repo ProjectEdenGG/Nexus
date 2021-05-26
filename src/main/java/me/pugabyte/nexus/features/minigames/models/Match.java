@@ -166,7 +166,6 @@ public class Match implements ForwardingAudience {
 		if (!event.callEvent()) return false;
 
 		minigamers.add(minigamer);
-		allMinigamers.add(minigamer);
 
 		try {
 			arena.getMechanic().processJoin(minigamer);
@@ -210,6 +209,7 @@ public class Match implements ForwardingAudience {
 		started = true;
 
 		try {
+			allMinigamers.addAll(minigamers);
 			clearEntities();
 			balance();
 			initializeScores();
@@ -232,8 +232,9 @@ public class Match implements ForwardingAudience {
 		if (!event.callEvent()) return;
 
 		ended = true;
-		if (tasks != null)
+		if (tasks != null) {
 			tasks.end();
+		}
 		broadcast("Match has ended");
 		//logScores();
 		broadcastNoPrefix("");
@@ -519,6 +520,7 @@ public class Match implements ForwardingAudience {
 		void end() {
 			List<Integer> tasks = new ArrayList<>(taskIds);
 			tasks.forEach(this::cancel);
+			new HashMap<>(taskTypeMap).forEach(this::cancel);
 		}
 
 		public void cancel(int taskId) {

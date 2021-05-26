@@ -69,8 +69,12 @@ public enum SabotageTeam implements ColoredAndNamed {
 		return match.getMinigamers().stream().filter(minigamer -> minigamer.isAlive() && of(minigamer) == this).collect(Collectors.toList());
 	}
 
-	public static List<Minigamer> getNonImpostors(Match match) {
+	public static List<Minigamer> getLivingNonImpostors(Match match) {
 		return match.getMinigamers().stream().filter(minigamer -> minigamer.isAlive() && of(minigamer) != IMPOSTOR).collect(Collectors.toList());
+	}
+
+	public static List<Minigamer> getNonImpostors(Match match) {
+		return match.getMinigamers().stream().filter(minigamer -> of(minigamer) != IMPOSTOR).collect(Collectors.toList());
 	}
 
 	public SabotageTeam render(SabotageTeam viewer) {

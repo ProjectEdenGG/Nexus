@@ -417,6 +417,24 @@ public class PlayerUtils {
 		return new ShowPlayer(player);
 	}
 
+	public static void hidePlayers(HasPlayer hideFrom, HasPlayer... hide) {
+		hidePlayers(hideFrom, Arrays.asList(hide));
+	}
+
+	public static void hidePlayers(HasPlayer hideFrom, Collection<? extends HasPlayer> hide) {
+		UUID hideFromUUID = hideFrom.getPlayer().getUniqueId();
+		hide.stream().map(HasPlayer::getPlayer).filter(player -> !player.getUniqueId().equals(hideFromUUID)).forEach(hasPlayer -> hidePlayer(hasPlayer).from(hideFrom));
+	}
+
+	public static void showPlayers(HasPlayer hideFrom, HasPlayer... hide) {
+		hidePlayers(hideFrom, Arrays.asList(hide));
+	}
+
+	public static void showPlayers(HasPlayer hideFrom, Collection<? extends HasPlayer> hide) {
+		UUID hideFromUUID = hideFrom.getPlayer().getUniqueId();
+		hide.stream().map(HasPlayer::getPlayer).filter(player -> !player.getUniqueId().equals(hideFromUUID)).forEach(hasPlayer -> hidePlayer(hasPlayer).from(hideFrom));
+	}
+
 	public static class HidePlayer {
 		private final Player player;
 
@@ -424,8 +442,13 @@ public class PlayerUtils {
 			this.player = player.getPlayer();
 		}
 
-		public void from(HasPlayer player) {
-			player.getPlayer().hidePlayer(Nexus.getInstance(), this.player);
+		public void from(HasPlayer... players) {
+			from(Arrays.asList(players));
+		}
+
+		public void from(Collection<? extends HasPlayer> players) {
+			UUID uuid = player.getUniqueId();
+			players.stream().map(HasPlayer::getPlayer).filter(player1 -> !player1.getUniqueId().equals(uuid)).forEach(player1 -> player1.getPlayer().hidePlayer(Nexus.getInstance(), this.player));
 		}
 	}
 
@@ -436,8 +459,13 @@ public class PlayerUtils {
 			this.player = player.getPlayer();
 		}
 
-		public void to(HasPlayer player) {
-			player.getPlayer().showPlayer(Nexus.getInstance(), this.player);
+		public void to(HasPlayer... players) {
+			to(Arrays.asList(players));
+		}
+
+		public void to(Collection<? extends HasPlayer> players) {
+			UUID uuid = player.getUniqueId();
+			players.stream().map(HasPlayer::getPlayer).filter(player1 -> !player1.getUniqueId().equals(uuid)).forEach(player1 -> player1.showPlayer(Nexus.getInstance(), this.player));
 		}
 	}
 

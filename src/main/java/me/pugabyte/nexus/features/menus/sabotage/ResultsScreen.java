@@ -1,0 +1,105 @@
+package me.pugabyte.nexus.features.menus.sabotage;
+
+import eden.utils.TimeUtils;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
+import me.pugabyte.nexus.features.minigames.mechanics.Sabotage;
+import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
+import me.pugabyte.nexus.features.particles.MathUtils;
+import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import org.apache.commons.lang3.Validate;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
+
+@NoArgsConstructor
+@Getter
+public class ResultsScreen extends AbstractVoteScreen {
+	private final SmartInventory inventory = SmartInventory.builder()
+			.provider(this)
+			.title(colorize("&3Voting Results"))
+			.size(6, 9)
+			.closeable(false)
+			.build();
+
+	@Override
+	public void open(Player viewer, int page) {
+		getInventory().open(viewer.getPlayer(), page);
+	}
+
+	private ClickableItem getResultHead(ItemBuilder item, VoteWrapper wrapper) {
+		item.amount(wrapper.getVoteCount());
+		item.lore("", "&6&l&nVoters");
+		item.lore(wrapper.getVotes().stream().map(minigamer -> AdventureUtils.asLegacyText(getColoredName(minigamer))).sorted().collect(Collectors.toList()));
+		return ClickableItem.empty(item.build());
+	}
+
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		SabotageMatchData matchData = PlayerManager.get(player).getMatch().getMatchData();
+
+		List<VoteWrapper> voteWrappers = new ArrayList<>(); // this was gonna be a sorted dict but that is a nightmare to do for values apparently
+		matchData.getMatch().getAliveMinigamers().forEach(minigamer -> voteWrappers.add(new VoteWrapper(minigamer, matchData.getVotesFor(minigamer).stream().map(PlayerManager::get).collect(Collectors.toSet()))));
+		Collections.sort(voteWrappers);
+		for (VoteWrapper voteWrapper : voteWrappers) {
+			int voteCount = voteWrapper.getVoteCount();
+			if (voteCount == 0)
+				break;
+
+			contents.add(getResultHead(headItemOf(voteWrapper.getTarget(), matchData), voteWrapper));
+		}
+		VoteWrapper skippers = new VoteWrapper(null, matchData.getVotesFor(null));
+		if (skippers.getVoteCount() > 0)
+			contents.add(getResultHead(new ItemBuilder(Material.BARRIER).name("&eSkipped"), skippers));
+
+		AtomicInteger taskId = new AtomicInteger(-1);
+		taskId.set(matchData.getMatch().getTasks().repeat(0, TimeUtils.Time.SECOND, () -> {
+			int sec = 1 + (int) Duration.between(LocalDateTime.now(), matchData.getMeetingEnded().plusSeconds(Sabotage.POST_MEETING_DELAY)).getSeconds();
+			setClock(contents, "Game resumes", sec);
+			if (sec == 1)
+				matchData.getMatch().getTasks().cancel(taskId.get());
+		}));
+	}
+
+	@RequiredArgsConstructor
+	@EqualsAndHashCode
+	@Getter
+	private static class VoteWrapper implements Comparable<VoteWrapper> {
+		@EqualsAndHashCode.Include
+		private final @Nullable Minigamer target;
+		private final @NotNull Set<Minigamer> votes;
+		public int getVoteCount() {
+			return votes.size();
+		}
+
+		@Override
+		public int compareTo(VoteWrapper other) {
+			int val = MathUtils.clamp(other.getVoteCount() - getVoteCount(), -1, 1);
+			if (val != 0)
+				return val;
+			Validate.notNull(target, "wrappers of null minigamers (skips) cannot be compared [self]");
+			Validate.notNull(other.target, "wrappers of null minigamers (skips) cannot be compared [target]");
+			return target.getNickname().compareTo(other.target.getNickname());
+		}
+	}
+}

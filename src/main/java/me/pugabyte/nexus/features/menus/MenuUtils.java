@@ -13,7 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
@@ -32,11 +34,16 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -61,6 +68,14 @@ public abstract class MenuUtils {
 	}
 
 	public void open(Player viewer, int page) {
+	}
+
+	public final void open(HasPlayer player) {
+		open(player.getPlayer());
+	}
+
+	public final void open(HasPlayer player, int page) {
+		open(player.getPlayer(), page);
 	}
 
 	protected boolean isRightClick(ItemClickData e) {
@@ -271,6 +286,81 @@ public abstract class MenuUtils {
 				.onClose(onClose)
 				.plugin(Nexus.getInstance())
 				.open(player);
+	}
+
+	/**
+	 * Opens an anvil menu which gets and sets a variable
+	 * @param click item click data
+	 * @param getter supplier of the current variable
+	 * @param setter setter to update the variable
+	 * @param checker checker to validate the user input
+	 * @param converter converter for the user input
+	 * @param writer optional method to run post-setter, like {@link Arena#write()}
+	 * @param error message to display to the user
+	 */
+	protected <T> void openAnvilMenu(@NotNull ItemClickData click, @NotNull Supplier<@Nullable ?> getter, @NotNull Consumer<@Nullable T> setter, @Nullable Predicate<@NotNull String> checker, Function<@NotNull String, @Nullable T> converter, @Nullable Runnable writer, @NotNull String error) {
+		openAnvilMenu(click.getPlayer(), String.valueOf(getter.get()), (p, text) -> {
+			try {
+				if (checker != null && checker.test(text)) {
+					setter.accept(converter.apply(text));
+					if (writer != null)
+						writer.run();
+					return AnvilGUI.Response.close();
+				}
+			} catch(Exception ignored){}
+			PlayerUtils.send(p, error);
+			return AnvilGUI.Response.close();
+		}, p -> Tasks.wait(1, () -> open(p)));
+	}
+
+	/**
+	 * Opens an anvil menu which gets and sets a variable
+	 * @param click item click data
+	 * @param getter supplier of the current variable
+	 * @param setter setter to update the variable
+	 * @param converter converter for the user input
+	 * @param writer optional method to run post-setter, like {@link Arena#write()}
+	 * @param error message to display to the user
+	 */
+	protected <T> void openAnvilMenu(@NotNull ItemClickData click, @NotNull Supplier<@Nullable T> getter, @NotNull Consumer<@Nullable T> setter, @NotNull Function<@NotNull String, @Nullable T> converter, @Nullable Runnable writer, @NotNull String error) {
+		openAnvilMenu(click, getter, setter, $ -> true, converter, writer, error);
+	}
+
+	/**
+	 * Opens an anvil menu which gets and sets an integer
+	 * @param click item click data
+	 * @param getter supplier of the current variable
+	 * @param setter setter to update the variable
+	 * @param checker checker to validate the user input
+	 * @param writer optional method to run post-setter, like {@link Arena#write()}
+	 * @param error message to display to the user
+	 */
+	protected void openIntAnvilMenu(@NotNull ItemClickData click, @NotNull Supplier<@Nullable Integer> getter, @NotNull Consumer<@Nullable Integer> setter, @Nullable Predicate<@NotNull String> checker, @Nullable Runnable writer, @NotNull String error) {
+		openAnvilMenu(click, getter, setter, checker, Integer::parseInt, writer, error);
+	}
+
+	/**
+	 * Opens an anvil menu which gets and sets an integer
+	 * @param click item click data
+	 * @param getter supplier of the current variable
+	 * @param setter setter to update the variable
+	 * @param writer optional method to run post-setter, like {@link Arena#write()}
+	 * @param error message to display to the user
+	 */
+	protected void openIntAnvilMenu(@NotNull ItemClickData click, @NotNull Supplier<@Nullable Integer> getter, @NotNull Consumer<@Nullable Integer> setter, @Nullable Runnable writer, @NotNull String error) {
+		openAnvilMenu(click, getter, setter, Utils::isInt, Integer::parseInt, writer, error);
+	}
+
+	/**
+	 * Opens an anvil menu which gets and sets a positive (>=0) integer
+	 * @param click item click data
+	 * @param getter supplier of the current variable
+	 * @param setter setter to update the variable
+	 * @param writer optional method to run post-setter, like {@link Arena#write()}
+	 * @param error message to display to the user
+	 */
+	protected void openPositiveIntAnvilMenu(@NotNull ItemClickData click, @NotNull Supplier<@Nullable Integer> getter, @NotNull Consumer<@Nullable Integer> setter, @Nullable Runnable writer, @NotNull String error) {
+		openAnvilMenu(click, getter, setter, text -> Utils.isInt(text) && Integer.parseInt(text) >= 0, Integer::parseInt, writer, error);
 	}
 
 	public static void colorSelectMenu(Player player, Material type, Consumer<ItemClickData> onClick) {

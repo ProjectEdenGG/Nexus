@@ -42,13 +42,15 @@ public class MinigamerDeathEvent extends MinigamerEvent {
 
 	public void broadcastDeathMessage() {
 		if (deathMessage == null) return;
-		if (deathMessage.length() == 0)
+		if (deathMessage.isEmpty()) {
+			boolean showTeam = minigamer.getMatch().getMechanic().showTeamOnDeath();
+			String victimName = showTeam ? minigamer.getColoredName() : "&3" + minigamer.getNickname();
 			if (attacker == null)
-				getMatch().broadcast(minigamer.getColoredName() + " &3died");
+				deathMessage = victimName + " &3died";
 			else
-				getMatch().broadcast(minigamer.getColoredName() + " &3was killed by " + attacker.getColoredName());
-		else
-			getMatch().broadcast(deathMessage);
+				deathMessage = victimName + " &3was killed by " + (showTeam ? attacker.getColoredName() : "&3" + attacker.getNickname());
+		}
+		getMatch().broadcast(deathMessage);
 	}
 
 }

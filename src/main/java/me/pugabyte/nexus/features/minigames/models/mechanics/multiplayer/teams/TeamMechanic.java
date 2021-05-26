@@ -408,11 +408,11 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	@Override
 	public void onDeath(MinigamerDeathEvent event) {
 		// auto-balancing
-		Match match = event.getMatch();
-		Minigamer minigamer = event.getMinigamer();
 		super.onDeath(event);
 		if (!usesAutoBalancing())
 			return;
+		Match match = event.getMatch();
+		Minigamer minigamer = event.getMinigamer();
 		if (!minigamer.isAlive() || match.isEnded())
 			return;
 		if (minigamer.getTeam().getMinigamers(match).size()-1 < minigamer.getTeam().getMinPlayers())

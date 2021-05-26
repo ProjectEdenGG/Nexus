@@ -373,4 +373,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.of(minigamer.getMatch().getTimer().getTime()).format() + ")");
 	}
 
+	public boolean showTeamOnDeath() {
+		return true;
+	}
+
 }

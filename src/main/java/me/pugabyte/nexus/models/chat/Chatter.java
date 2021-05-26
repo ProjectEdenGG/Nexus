@@ -63,9 +63,11 @@ public class Chatter implements PlayerOwnedObject {
 	}
 
 	public boolean canJoin(PublicChannel channel) {
+		if (channel.getPermission().isEmpty()) return true;
+
 		boolean hasPerm;
 		if (isOnline())
-			hasPerm = getOfflinePlayer().getPlayer().hasPermission(channel.getPermission());
+			hasPerm = getPlayer().hasPermission(channel.getPermission());
 		else
 			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
 
@@ -73,7 +75,7 @@ public class Chatter implements PlayerOwnedObject {
 			return false;
 
 		if (channel.getRank() != null)
-			return Nerd.of(getOfflinePlayer()).getRank().gte(channel.getRank());
+			return Nerd.of(getUuid()).getRank().gte(channel.getRank());
 
 		return true;
 	}

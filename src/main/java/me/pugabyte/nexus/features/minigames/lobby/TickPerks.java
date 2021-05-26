@@ -89,7 +89,7 @@ public class TickPerks implements Listener {
 						loadoutUsers.add(perkOwner);
 
 					if (perk instanceof TickablePerk tickablePerk) {
-						if (minigamer.isPlaying() && (minigamer.isRespawning() || !minigamer.usesPerk(perk)) || PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR) return;
+						if (minigamer.isPlaying() && (minigamer.isRespawning() || !minigamer.usesPerk(perk)) || PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR || !minigamer.isAlive()) return;
 
 						if (minigamer.isPlaying())
 							tickablePerk.tick(minigamer);
@@ -111,7 +111,7 @@ public class TickPerks implements Listener {
 			perkOwner = service.get(perkOwner.getUuid()); // update loadout perks...? not sure if necessary
 			OfflinePlayer _player = PlayerUtils.getPlayer(perkOwner.getUuid());
 			Minigamer minigamer = _player.getPlayer() != null ? PlayerManager.get(_player.getPlayer()) : null;
-			if (_player.getPlayer() == null || (!minigamer.isPlaying() && !isInRegion((Player) _player)) || (minigamer.isPlaying() && !minigamer.usesPerk(LoadoutPerk.class))
+			if (_player.getPlayer() == null || (!minigamer.isPlaying() && !isInRegion((Player) _player)) || (minigamer.isPlaying() && (!minigamer.usesPerk(LoadoutPerk.class) || !minigamer.isAlive() || minigamer.isRespawning()))
 					|| perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty() || PlayerUtils.isVanished(_player) || ((Player) _player).getGameMode() == GameMode.SPECTATOR) {
 				loadoutUsers.remove(perkOwner);
 				// send true packets

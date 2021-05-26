@@ -108,18 +108,18 @@ public class Team implements ConfigurationSerializable, ColoredAndNamed {
 	}
 
 	public void spawn(List<Minigamer> minigamers) {
-		List<Minigamer> members = getAliveMinigamers(minigamers);
-		if (members.isEmpty()) return;
+		if (minigamers.isEmpty()) return;
+		minigamers = new ArrayList<>(minigamers);
 
-		members.forEach(minigamer -> {
+		minigamers.forEach(minigamer -> {
 			minigamer.getPlayer().setGameMode(minigamer.getMatch().getMechanic().getGameMode());
 			minigamer.getPlayer().getInventory().setHeldItemSlot(0);
 		});
 
 		if (loadout != null)
-			members.forEach(minigamer -> loadout.apply(minigamer));
+			minigamers.forEach(minigamer -> loadout.apply(minigamer));
 
-		toSpawnpoints(members);
+		toSpawnpoints(minigamers);
 	}
 
 	public void toSpawnpoints(Match match) {
