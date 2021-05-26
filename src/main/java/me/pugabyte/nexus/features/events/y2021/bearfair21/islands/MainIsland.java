@@ -23,9 +23,17 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-				} else {
-					script.add("TODO");
+					script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
+					script.add("wait 80");
+					script.add("This year features several islands to explore, find easter eggs, and do quests!");
+					script.add("wait 80");
+					script.add("At the carnival, you can play daily minigames in which you can play to gain Event Points.");
+					script.add("wait 80");
+					script.add("At any point you can buy unique prizes and perks using those points.");
+					script.add("wait 80");
+					script.add("There are many ways to acquire the currency here, you should talk to the local merchants.");
+					script.add("wait 80");
+					script.add("And if you need help figuring out where you are, check out this map to my side.");
 				}
 
 				return script;
@@ -118,6 +126,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -130,6 +139,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -142,6 +152,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -154,6 +165,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -166,6 +178,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -178,6 +191,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -190,6 +204,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -202,6 +217,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -214,6 +230,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -226,6 +243,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;
@@ -238,6 +256,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					script.add("wait 20");
 				}
 
 				return script;

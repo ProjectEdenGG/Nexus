@@ -69,8 +69,9 @@ public class Listeners implements Listener {
 		event.getItem().setItemMeta(updated.getItemMeta());
 	}
 
+	// Includes Anvil, Grindstone, and Smithing Table
 	@EventHandler
-	public void onGrindstoneCraftItem(PrepareResultEvent event) {
+	public void onPrepareItem(PrepareResultEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player)) return;
 		if (isNotTesting((Player) event.getView().getPlayer())) return;
 
