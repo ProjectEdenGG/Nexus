@@ -101,10 +101,10 @@ public class HandlePurchaseCommand extends CustomCommand {
 						"&3Your donation is &3&ogreatly &3appreciated and will be put to good use."));
 
 				if (packageType == Package.CUSTOM_DONATION)
-					Koda.say("Thank you for your custom donation, " + purchase.getName() + "! " +
+					Koda.say("Thank you for your custom donation, " + purchase.getNickname() + "! " +
 							"We greatly appreciate your selfless contribution &4❤");
 				else
-					Koda.say("Thank you for your purchase, " + purchase.getName() + "! " +
+					Koda.say("Thank you for your purchase, " + purchase.getNickname() + "! " +
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (StringUtils.isV4Uuid(purchase.getPurchaserUuid())) {

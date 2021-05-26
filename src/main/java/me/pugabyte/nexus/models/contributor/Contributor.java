@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +46,12 @@ public class Contributor implements PlayerOwnedObject {
 	}
 
 	public double getSum() {
-		return purchases.stream().mapToDouble(Purchase::getPrice).sum();
+		return new HashMap<String, Double>() {{
+			for (Purchase purchase : purchases)
+				put(purchase.getTransactionId(), purchase.getPrice());
+		}}.values().stream()
+				.mapToDouble(Double::valueOf)
+				.sum();
 	}
 
 	public String getSumFormatted() {
