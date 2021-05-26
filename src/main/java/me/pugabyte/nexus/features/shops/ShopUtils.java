@@ -46,7 +46,7 @@ public class ShopUtils {
 
 	public static boolean isTradeable(ItemStack item) {
 		NBTItem nbtItem = new NBTItem(item);
-		if (!nbtItem.getBoolean("tradeable"))
+		if (nbtItem.hasKey("tradeable") && !nbtItem.getBoolean("tradeable"))
 			return false;
 		if (Backpacks.isBackpack(item))
 			return false;
