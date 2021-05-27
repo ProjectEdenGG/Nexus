@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.store.providers.EventStoreEmojiHatProvider;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreParticlesProvider;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -32,7 +33,7 @@ public enum Purchasable {
 
 		}
 	},
-	HEADS(1, 5, 75, Material.PLAYER_HEAD) {
+	HEADS(1, 5, 50, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -44,7 +45,7 @@ public enum Purchasable {
 			runCommand(player, "hdb");
 		}
 	},
-	EMOJI_HATS(1, 7, 999, Material.PLAYER_HEAD) {
+	EMOJI_HATS(1, 7, 75, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -53,16 +54,17 @@ public enum Purchasable {
 
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
+			new EventStoreEmojiHatProvider(currentMenu).open(player);
 
 		}
 	},
-	PARTICLES(3, 0, 999, Material.REDSTONE) {
+	PARTICLES(3, 0, 75, Material.REDSTONE) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreParticlesProvider(currentMenu).open(player);
 		}
 	},
-	PARTICLE_WINGS(3, 2, 999, Material.ELYTRA) {
+	PARTICLE_WINGS(3, 2, 75, Material.ELYTRA) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 

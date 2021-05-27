@@ -5,7 +5,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,8 +13,9 @@ import org.bukkit.event.Listener;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.events.Events.STORE_PREFIX;
+
 public class EventStoreListener implements Listener {
-	private static final String PREFIX = StringUtils.getPrefix("Event Store");
 
 	public EventStoreListener() {
 		Nexus.registerListener(this);
@@ -40,13 +40,13 @@ public class EventStoreListener implements Listener {
 
 		if (!hdb_allowedWorldGroups.contains(worldGroup)) {
 			event.setCancelled(true);
-			user.sendMessage(PREFIX + "You can not purchase heads here");
+			user.sendMessage(STORE_PREFIX + "You can not purchase heads here");
 			return;
 		}
 
 		if (!user.hasTokens(price)) {
 			event.setCancelled(true);
-			user.sendMessage(PREFIX + "&cYou do not have enough tokens to purchase a head");
+			user.sendMessage(STORE_PREFIX + "&cYou do not have enough tokens to purchase a head");
 			return;
 		}
 

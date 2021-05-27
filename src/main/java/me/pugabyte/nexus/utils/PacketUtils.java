@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class PacketUtils {
 	}
 
 	// self packet avoids playing the armor equip sound effect
-	public static void setSlot(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
+	public static void setSlot(Player player, Collection<Player> players, ItemStack item, EnumItemSlot slot) {
 		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
 		selfPacket.getIntegers().write(0, 0); // inventory ID (0 = player)
 		selfPacket.getIntegers().write(1, 9- slot.getSlotFlag()); // dumb hack to get the slot ID of the armor sets

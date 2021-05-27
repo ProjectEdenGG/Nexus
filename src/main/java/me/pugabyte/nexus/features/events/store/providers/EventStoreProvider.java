@@ -33,7 +33,7 @@ public class EventStoreProvider extends EventStoreMenu {
 		super.init(player, contents);
 
 		for (Purchasable purchasable : Purchasable.values()) {
-			ItemBuilder item = purchasable.getRawDisplayItem();
+			ItemBuilder item = purchasable.getDisplayItem();
 			contents.set(purchasable.getSlot(), ClickableItem.from(item.build(), e -> purchasable.onClick(player, this)));
 		}
 	}

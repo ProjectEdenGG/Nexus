@@ -1,18 +1,13 @@
 package me.pugabyte.nexus.features.events.store.providers;
 
-import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.store.Purchasable;
-import me.pugabyte.nexus.models.particle.ParticleOwner;
-import me.pugabyte.nexus.models.particle.ParticleService;
-import me.pugabyte.nexus.models.particle.ParticleType;
-import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.features.store.perks.emojihats.EmojiHat;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -21,14 +16,14 @@ import java.util.List;
 import static me.pugabyte.nexus.features.events.Events.STORE_PREFIX;
 
 @AllArgsConstructor
-public class EventStoreParticlesProvider extends EventStoreMenu {
+public class EventStoreEmojiHatProvider extends EventStoreMenu {
 	@Getter
 	private final EventStoreMenu previousMenu;
 
 	@Override
 	public void open(Player viewer, int page) {
 		SmartInventory.builder()
-				.title("Event Store - Particles")
+				.title("Event Store - Emoji Hats")
 				.size(6, 9)
 				.provider(this)
 				.build()
@@ -39,14 +34,12 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		ParticleService service = new ParticleService();
-		ParticleOwner particleOwner = service.get(player);
-		int price = Purchasable.PARTICLES.getPrice();
+		int price = Purchasable.EMOJI_HATS.getPrice();
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS)) {
-			if (particleOwner.canUse(type))
+		for (EmojiHat type : EmojiHat.values()) {
+			if (type.canUse(player))
 				continue;
 
 			ItemBuilder item = type.getDisplayItem()
@@ -59,8 +52,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 						chargeAndAddPermission(player, price, type.getPermission());
 					else {
 						player.closeInventory();
-						type.run(player);
-						Tasks.wait(Time.SECOND.x(15), particleOwner::cancel);
+						type.runSelf(player);
 					}
 				} catch (Exception ex) {
 					handleException(player, STORE_PREFIX, ex);
@@ -70,4 +62,5 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 
 		addPagination(player, contents, items);
 	}
+
 }

@@ -11,8 +11,10 @@ import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -683,24 +685,37 @@ public enum EmojiHat {
 	}
 
 	public boolean canUse(Player player) {
-		return player.hasPermission("emojihats.use." + name().toLowerCase());
+		return player.hasPermission(getPermission());
+	}
+
+	@NotNull
+	public String getPermission() {
+		return "emojihats.use." + name().toLowerCase();
 	}
 
 	public void run(Player player) {
+		start(player, player.getLocation().getNearbyPlayers(100));
+	}
+
+	public void runSelf(Player player) {
+		start(player, List.of(player));
+	}
+
+	private void start(Player player, Collection<Player> receivers) {
 		int wait = 0;
 		for (Pair<ItemStack, Long> frame : frames) {
 			final ItemStack item = frame.getFirst();
 			final long ticks = frame.getSecond();
 
 			for (int i = 0; i <= ticks; i++)
-				Tasks.wait(wait++, () -> packet(player, item));
+				Tasks.wait(wait++, () -> packet(player, receivers, item));
 		}
 
-		Tasks.wait(wait + 1, () -> packet(player, player.getInventory().getItem(EquipmentSlot.HEAD)));
+		Tasks.wait(wait + 1, () -> packet(player, receivers, player.getInventory().getItem(EquipmentSlot.HEAD)));
 	}
 
-	private void packet(Player player, ItemStack item) {
-		PacketUtils.setSlot(player, List.of(player), item, EnumItemSlot.HEAD);
+	private void packet(Player player, Collection<Player> receivers, ItemStack item) {
+		PacketUtils.setSlot(player, receivers, item, EnumItemSlot.HEAD);
 	}
 
 	public List<ItemStack> getFrameItems() {
