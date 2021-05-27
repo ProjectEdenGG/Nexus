@@ -8,9 +8,13 @@ import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import net.luckperms.api.LuckPerms;
+import net.luckperms.api.context.ImmutableContextSet;
+import net.luckperms.api.model.data.NodeMap;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.group.GroupManager;
 import net.luckperms.api.model.user.User;
+import net.luckperms.api.model.user.UserManager;
+import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 import static eden.utils.StringUtils.isNullOrEmpty;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
@@ -31,8 +37,13 @@ public class LuckPermsUtils {
 	}
 
 	@NotNull
-	private static GroupManager getGroupManager() {
+	private static GroupManager groupManager() {
 		return lp().getGroupManager();
+	}
+
+	@NotNull
+	private static UserManager userManager() {
+		return lp().getUserManager();
 	}
 
 	@NotNull
@@ -45,7 +56,7 @@ public class LuckPermsUtils {
 
 	@Nullable
 	public static Group getGroup(String group) {
-		return getGroupManager().getGroup(group);
+		return groupManager().getGroup(group);
 	}
 
 	@NotNull
@@ -76,9 +87,12 @@ public class LuckPermsUtils {
 		return Nexus.getPerms().playerHas(world == null ? null : world.getName(), player.getOfflinePlayer(), permission);
 	}
 
+	@AllArgsConstructor
 	public enum PermissionChangeType {
-		SET,
-		UNSET
+		SET(NodeMap::add),
+		UNSET(NodeMap::remove);
+
+		private final BiConsumer<NodeMap, Node> function;
 	}
 
 	@AllArgsConstructor
@@ -141,16 +155,23 @@ public class LuckPermsUtils {
 				return this;
 			}
 
+			@SneakyThrows
 			public void run() {
-				String command = "lp user " + uuid.toString() + " permission " + type + " " + permission;
-				if (type == PermissionChangeType.SET)
-					command += " " + value;
-
-				if (world != null)
-					command += " world=" + world.getName();
-
-				runCommandAsConsole(command);
+				runAsync().get();
 			}
+
+			@NotNull
+			public CompletableFuture<Void> runAsync() {
+				return userManager().modifyUser(uuid, user -> {
+					var node = Node.builder(permission).negated(!value);
+
+					if (world != null)
+						node.context(ImmutableContextSet.of("world", world.getName()));
+
+					type.function.accept(user.data(), node.build());
+				});
+			}
+
 		}
 	}
 
