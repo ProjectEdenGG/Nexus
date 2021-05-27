@@ -25,7 +25,7 @@ public class EmojiHatsCommand extends CustomCommand {
 
 	@Path("<type>")
 	void run(EmojiHat type) {
-		if (!type.canUse(player()))
+		if (!type.canBeUsedBy(player()))
 			error("You do not have permission for this emoji hat");
 
 		type.run(player());
@@ -46,7 +46,7 @@ public class EmojiHatsCommand extends CustomCommand {
 	@TabCompleterFor(EmojiHat.class)
 	List<String> tabCompleterForEmojiHat(String filter) {
 		return Arrays.stream(EmojiHat.values())
-				.filter(type -> type.canUse(player()))
+				.filter(type -> type.canBeUsedBy(player()))
 				.map(Enum::name)
 				.map(String::toLowerCase)
 				.toList();

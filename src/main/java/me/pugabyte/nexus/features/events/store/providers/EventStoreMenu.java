@@ -39,10 +39,23 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 		service.save(user);
 	}
 
-	protected void chargeAndAddPermission(Player player, int price, String permission) {
+	protected void chargeAndAddPermissions(Player player, int price, String... permissions) {
 		charge(player, price);
-		PermissionChange.set().player(player).permission(permission).run();
+		for (String permission : permissions)
+			PermissionChange.set().player(player).permission(permission).run();
 		open(player);
+	}
+
+	protected void lore(Player player, ItemBuilder item, int price) {
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
+
+		item
+				.lore("")
+				.lore("&6Price: " + (user.hasTokens(price) ? "&e" : "&c") + price + " event tokens")
+				.lore("")
+				.lore("&7Click to test")
+				.lore("&7Shift click to buy");
 	}
 
 }

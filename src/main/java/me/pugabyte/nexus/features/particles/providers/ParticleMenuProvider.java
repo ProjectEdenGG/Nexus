@@ -19,7 +19,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 	public void open(Player viewer, int page) {
 		SmartInventory.builder()
 				.title("Particles")
-				.size(viewer.hasPermission("particles.shapes") ? 6 : 3, 9)
+				.size(6, 9)
 				.provider(this)
 				.build()
 				.open(viewer);
@@ -38,43 +38,14 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			open(player);
 		}));
 
-		if (player.hasPermission("particles.shapes")) {
-			contents.set(1, 0, ClickableItem.empty(nameItem(Material.MAP, "&3Shapes")));
-			int i = 1;
-			for (ParticleType type : ParticleType.getShapes()) {
-				if (!owner.canUse(type))
-					continue;
-
-				ItemStack item = type.getDisplayItem().lore("&eLeft Click to toggle||&7&oRight click to edit settings").build();
-				boolean active = owner.isActive(type);
-
-				if (active)
-					addGlowing(item);
-
-				contents.set(1, i++, ClickableItem.from(item, e -> {
-					if (isLeftClick(e)) {
-						if (active)
-							owner.cancel(type);
-						else
-							owner.start(type);
-
-						open(player);
-					} else
-						new EffectSettingProvider(type).open(player);
-				}));
-			}
-		}
-
-		int row = (player.hasPermission("particles.shapes")) ? 3 : 1;
+		int row = 1;
 		int column = 1;
 
-		contents.set(3, 0, ClickableItem.empty(nameItem(Material.MAP, "&3Presets")));
-
-		for (ParticleType type : ParticleType.getPresets()) {
+		for (ParticleType type : ParticleType.values()) {
 			if (!owner.canUse(type))
 				continue;
 
-			ItemStack item = type.getDisplayItem().lore("&eLeft Click to toggle||&7&oRight click to edit settings").build();
+			ItemStack item = type.getDisplayItem().lore("&eLeft click to toggle||&7Right click to edit settings").build();
 			boolean active = owner.isActive(type);
 
 			if (active)

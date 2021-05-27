@@ -6,14 +6,24 @@ import lombok.Builder;
 import lombok.Getter;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.features.particles.VectorUtils;
+import me.pugabyte.nexus.models.particle.ParticleOwner;
 import me.pugabyte.nexus.models.particle.ParticleService;
+import me.pugabyte.nexus.models.particle.ParticleSetting;
+import me.pugabyte.nexus.models.particle.ParticleType;
+import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WingsEffect {
@@ -947,6 +957,56 @@ public class WingsEffect {
 			this.shape1 = shape1;
 			this.shape2 = shape2;
 			this.shape3 = shape3;
+		}
+
+		private static final List<String> wordToIndex = new ArrayList<>(Arrays.asList("zero", "one", "two", "three", "four", "five",
+				"six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen"));
+
+		public boolean canBeUsedBy(Player player) {
+			return player.hasPermission(getPermission());
+		}
+
+		public String getPermission() {
+			return "wings.style." + wordToIndex.indexOf(name().toLowerCase());
+		}
+
+		public ItemBuilder getDisplayItem() {
+			return new ItemBuilder(Material.ELYTRA).name("&3Style #" + (ordinal() + 1));
+		}
+
+		public void preview(Player player) {
+			ParticleOwner owner = new ParticleService().get(player);
+			owner.cancel(ParticleType.WINGS);
+
+			Map<ParticleSetting, Object> wingSettings = owner.getSettings(ParticleType.WINGS);
+			WingsEffect.WingStyle cur_Style = (WingsEffect.WingStyle) wingSettings.get(ParticleSetting.WINGS_STYLE);
+			Color cur_Color1 = (Color) wingSettings.get(ParticleSetting.WINGS_COLOR_ONE);
+			Color cur_Color2 = (Color) wingSettings.get(ParticleSetting.WINGS_COLOR_TWO);
+			Color cur_Color3 = (Color) wingSettings.get(ParticleSetting.WINGS_COLOR_THREE);
+			Boolean cur_Rainbow1 = (Boolean) wingSettings.get(ParticleSetting.WINGS_RAINBOW_ONE);
+			Boolean cur_Rainbow2 = (Boolean) wingSettings.get(ParticleSetting.WINGS_RAINBOW_TWO);
+			Boolean cur_Rainbow3 = (Boolean) wingSettings.get(ParticleSetting.WINGS_RAINBOW_THREE);
+
+			// Default Preview Settings
+			wingSettings.put(ParticleSetting.WINGS_STYLE, this);
+			wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, Color.YELLOW);
+			wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, Color.BLACK);
+			wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, ColorType.CYAN.getBukkitColor());
+			wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, false);
+			wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, false);
+			wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, false);
+
+			Tasks.wait(5, () -> ParticleType.WINGS.run(player));
+			Tasks.wait(Time.SECOND.x(15), () -> {
+				owner.cancel(ParticleType.WINGS);
+				wingSettings.put(ParticleSetting.WINGS_STYLE, cur_Style);
+				wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, cur_Color1);
+				wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, cur_Color2);
+				wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, cur_Color3);
+				wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, cur_Rainbow1);
+				wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, cur_Rainbow2);
+				wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, cur_Rainbow3);
+			});
 		}
 	}
 }

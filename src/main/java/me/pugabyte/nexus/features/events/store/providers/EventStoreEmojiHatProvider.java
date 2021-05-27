@@ -39,17 +39,16 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (EmojiHat type : EmojiHat.values()) {
-			if (type.canUse(player))
+			if (type.canBeUsedBy(player))
 				continue;
 
-			ItemBuilder item = type.getDisplayItem()
-					.lore("Click to test")
-					.lore("Shift+click to buy");
+			ItemBuilder item = type.getDisplayItem();
+			lore(player, item, price);
 
 			items.add(ClickableItem.from(item.build(), e -> {
 				try {
 					if (isShiftClick(e))
-						chargeAndAddPermission(player, price, type.getPermission());
+						chargeAndAddPermissions(player, price, type.getPermission());
 					else {
 						player.closeInventory();
 						type.runSelf(player);

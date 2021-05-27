@@ -684,7 +684,7 @@ public enum EmojiHat {
 		return new ItemBuilder(getSkull(menuTexture)).name(camelCase(this));
 	}
 
-	public boolean canUse(Player player) {
+	public boolean canBeUsedBy(Player player) {
 		return player.hasPermission(getPermission());
 	}
 

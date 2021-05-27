@@ -104,7 +104,7 @@ public class ParticleOwner implements PlayerOwnedObject {
 	}
 
 	public boolean canUse(ParticleType particleType) {
-		return getOnlinePlayer().hasPermission(particleType.getPermission());
+		return particleType.canBeUsedBy(getOnlinePlayer());
 	}
 
 	private void save() {

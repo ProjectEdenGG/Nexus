@@ -553,6 +553,10 @@ public enum ParticleType {
 		particleOwner.start(this, start(particleOwner));
 	}
 
+	public boolean canBeUsedBy(Player player) {
+		return player.hasPermission(getPermission());
+	}
+
 	public String getPermission() {
 		return "particles." + commandName;
 	}

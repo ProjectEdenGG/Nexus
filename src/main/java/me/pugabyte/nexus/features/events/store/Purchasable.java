@@ -8,6 +8,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreEmojiHatProvider;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreParticlesProvider;
+import me.pugabyte.nexus.features.events.store.providers.EventStoreWingsProvider;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -55,7 +56,6 @@ public enum Purchasable {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreEmojiHatProvider(currentMenu).open(player);
-
 		}
 	},
 	PARTICLES(3, 0, 75, Material.REDSTONE) {
@@ -67,7 +67,7 @@ public enum Purchasable {
 	PARTICLE_WINGS(3, 2, 75, Material.ELYTRA) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-
+			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
 	CHAT_EMOTES(3, 4, 999, Material.PAPER) {
