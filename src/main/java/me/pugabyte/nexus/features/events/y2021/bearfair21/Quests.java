@@ -9,11 +9,11 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.Clie
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.Mining;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.Farming;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.RegenCrops;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.mining.Mining;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.woodcutting.WoodCutting;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;

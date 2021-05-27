@@ -222,7 +222,7 @@ public class SoundUtils {
 			}
 		},
 
-		PUGMAS_TREE_FELLER {
+		TREE_FELLER {
 			@Override
 			public void play(HasPlayer player) {
 				Tasks.wait(0, () -> {

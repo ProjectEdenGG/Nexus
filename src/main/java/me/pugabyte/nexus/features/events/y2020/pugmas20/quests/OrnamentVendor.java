@@ -355,7 +355,7 @@ public class OrnamentVendor implements Listener {
 						})
 						.start();
 
-				Jingle.PUGMAS_TREE_FELLER.play(player);
+				Jingle.TREE_FELLER.play(player);
 
 				onBreak(id);
 			});

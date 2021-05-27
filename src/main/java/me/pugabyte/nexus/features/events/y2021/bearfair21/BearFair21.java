@@ -83,7 +83,7 @@ public class BearFair21 {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return location.getWorld().equals(getWorld()) && getWGUtils().isInRegion(location, region);
+		return isAtBearFair(location) && getWGUtils().isInRegion(location, region);
 	}
 
 	public static void send(String message, Player to) {

@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.mining;
+package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources;
 
 import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;

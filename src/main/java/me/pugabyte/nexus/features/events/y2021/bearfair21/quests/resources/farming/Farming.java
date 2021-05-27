@@ -4,7 +4,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.mining.Mining.OreType;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.Mining.OreType;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
