@@ -99,7 +99,7 @@ public class McMMOListener implements Listener {
 			return false;
 
 		// if player is in survival
-		WorldGroup world = WorldGroup.get(player);
+		WorldGroup world = WorldGroup.of(player);
 		if (!world.equals(WorldGroup.SURVIVAL))
 			return false;
 

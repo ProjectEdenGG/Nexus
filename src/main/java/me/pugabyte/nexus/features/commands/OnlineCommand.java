@@ -97,7 +97,7 @@ public class OnlineCommand extends CustomCommand {
 
 		int ping = PlayerUtils.getPing(player);
 		String onlineFor = Timespan.of(nerd.getLastJoin()).format();
-		WorldGroup world = WorldGroup.get(player);
+		WorldGroup world = WorldGroup.of(player);
 		ShopGroup shopGroup = ShopGroup.of(player);
 		if (shopGroup == null)
 			shopGroup = ShopGroup.SURVIVAL;

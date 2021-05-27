@@ -104,7 +104,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return;
 		if (victim.equals(attacker))
 			return;
-		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
@@ -188,7 +188,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
-		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
 		if (!(event.getEntity() instanceof Player)) return;
 		PVP victim = service.get(event.getEntity());
@@ -228,7 +228,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
 		if (getDamageCause(event.getEntity().getLastDamageCause()) == null) return;
 		PVP victim = service.get(event.getEntity());
 		if (!victim.isEnabled()) return;

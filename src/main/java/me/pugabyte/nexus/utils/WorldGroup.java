@@ -55,19 +55,19 @@ public enum WorldGroup {
 		return worldNames.stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
-	public static WorldGroup get(Entity entity) {
-		return get(entity.getWorld());
+	public static WorldGroup of(Entity entity) {
+		return of(entity.getWorld());
 	}
 
-	public static WorldGroup get(Location location) {
-		return get(location.getWorld());
+	public static WorldGroup of(Location location) {
+		return of(location.getWorld());
 	}
 
-	public static WorldGroup get(World world) {
-		return get(world.getName());
+	public static WorldGroup of(World world) {
+		return of(world.getName());
 	}
 
-	public static WorldGroup get(String world) {
+	public static WorldGroup of(String world) {
 		for (WorldGroup group : values())
 			if (group.getWorldNames() != null)
 				if (group.contains(world))

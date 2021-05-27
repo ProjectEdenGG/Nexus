@@ -46,7 +46,7 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (Arrays.asList(WorldGroup.CREATIVE, WorldGroup.MINIGAMES).contains(WorldGroup.get(player)))
+		if (Arrays.asList(WorldGroup.CREATIVE, WorldGroup.MINIGAMES).contains(WorldGroup.of(player)))
 			return;
 
 		Tasks.waitAsync(1, () -> {

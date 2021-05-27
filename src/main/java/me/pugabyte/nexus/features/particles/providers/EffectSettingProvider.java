@@ -1,6 +1,7 @@
-package me.pugabyte.nexus.features.particles.menu;
+package me.pugabyte.nexus.features.particles.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
@@ -15,27 +16,36 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class EffectSettingProvider extends MenuUtils implements InventoryProvider {
-
-	ParticleType type;
-	ParticleService service = new ParticleService();
+	private final ParticleService service = new ParticleService();
+	private final ParticleType type;
 
 	public EffectSettingProvider(ParticleType type) {
 		this.type = type;
 	}
 
 	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.title("Particle Settings")
+				.size(5, 9)
+				.provider(this)
+				.build()
+				.open(viewer);
+	}
+
+	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> ParticleMenu.openMain(player));
+		addBackItem(contents, e -> new ParticleMenuProvider().open(player));
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.TNT, "&cCancel Effect"), e -> {
 			ParticleOwner owner = service.get(player);
-			owner.cancelTasks(type);
+			owner.cancel(type);
 			player.closeInventory();
 		}));
 
 		contents.set(0, 8, ClickableItem.from(nameItem(Material.END_CRYSTAL, "&eUpdate Effect"), e -> {
 			ParticleOwner owner = service.get(player);
-			owner.cancelTasks(type);
+			owner.cancel(type);
 			type.run(player);
 		}));
 

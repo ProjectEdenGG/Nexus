@@ -170,6 +170,10 @@ public enum Rank implements ColoredAndNamed {
 		return null;
 	}
 
+	public boolean isAdmin() {
+		return this == ADMIN || this == OWNER;
+	}
+
 	public enum RankGroup {
 		ADMINS,
 		SENIOR_STAFF,

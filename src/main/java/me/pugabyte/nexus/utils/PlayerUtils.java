@@ -543,7 +543,7 @@ public class PlayerUtils {
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 
 		List<ItemStack> excess;
-		boolean alwaysDeliver = offlinePlayer.getPlayer() == null || WorldGroup.get(offlinePlayer.getPlayer()) != worldGroup;
+		boolean alwaysDeliver = offlinePlayer.getPlayer() == null || WorldGroup.of(offlinePlayer.getPlayer()) != worldGroup;
 		if (!alwaysDeliver)
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else

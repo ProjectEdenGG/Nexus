@@ -6,7 +6,9 @@ import me.pugabyte.nexus.features.particles.Particles;
 import me.pugabyte.nexus.features.particles.effects.DiscoEffect;
 import me.pugabyte.nexus.features.particles.effects.StormEffect;
 import me.pugabyte.nexus.features.particles.effects.WingsEffect;
-import me.pugabyte.nexus.features.particles.menu.ParticleMenu;
+import me.pugabyte.nexus.features.particles.providers.EffectSettingProvider;
+import me.pugabyte.nexus.features.particles.providers.ParticleColorMenuProvider;
+import me.pugabyte.nexus.features.particles.providers.WingsTypeProvider;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.utils.EnumUtils;
@@ -232,7 +234,7 @@ public enum ParticleSetting {
 	WINGS_STYLE(2, 7, Material.ELYTRA, WingsEffect.WingStyle.class, ParticleType.WINGS) {
 		@Override
 		public void onClick(Player player, ParticleType type) {
-			ParticleMenu.openWingsStyle(player);
+			new WingsTypeProvider().open(player);
 		}
 
 		@Override
@@ -358,20 +360,20 @@ public enum ParticleSetting {
 					.prefix(Features.get(Particles.class).getPrefix())
 					.response(lines -> {
 						setter(player, type, lines[0]);
-						ParticleMenu.openSettingEditor(player, type);
+						new EffectSettingProvider(type).open(player);
 					})
 					.open(player);
 		else if (value == Boolean.class) {
 			Boolean bool = !Boolean.parseBoolean(getter(player, type));
 			setter(player, type, bool.toString());
-			ParticleMenu.openSettingEditor(player, type);
+			new EffectSettingProvider(type).open(player);
 		} else if (value == Color.class) {
-			ParticleMenu.openColor(player, type, this);
+			new ParticleColorMenuProvider(type, this).open(player);
 		} else if (Enum.class.isAssignableFrom(value)) {
 			Enum<?> val = get(new ParticleService().get(player), type);
 			Enum<?> next = EnumUtils.nextWithLoop(val.getClass(), val.ordinal());
 			setter(player, type, next.name());
-			ParticleMenu.openSettingEditor(player, type);
+			new EffectSettingProvider(type).open(player);
 		}
 	}
 
@@ -399,15 +401,14 @@ public enum ParticleSetting {
 			Map<ParticleSetting, Object> settings = owner.getSettings(type);
 			settings.put(this, this.validate(type, value));
 			service.save(owner);
-		} catch (Exception ignore) {
-		}
+		} catch (Exception ignore) {}
 	}
 
 	public <T> T get(ParticleOwner particleOwner, ParticleType particleType) {
 		Map<ParticleSetting, Object> settings = particleOwner.getSettings(particleType);
-		if (settings != null && settings.containsKey(this)) {
+		if (settings != null && settings.containsKey(this))
 			return (T) settings.get(this);
-		}
+
 		return (T) getDefault(particleOwner, particleType);
 	}
 

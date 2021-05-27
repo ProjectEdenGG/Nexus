@@ -92,7 +92,7 @@ public class WingsEffect {
 
 		taskId = Tasks.repeatAsync(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				new ParticleService().get(player).cancelTasks(taskId);
+				new ParticleService().get(player).cancel(taskId);
 				return;
 			}
 

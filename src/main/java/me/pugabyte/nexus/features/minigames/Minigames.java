@@ -110,7 +110,7 @@ public class Minigames extends Feature {
 	}
 
 	public static boolean isMinigameWorld(World world) {
-		return WorldGroup.get(world) == WorldGroup.MINIGAMES;
+		return WorldGroup.of(world) == WorldGroup.MINIGAMES;
 	}
 
 	public static List<Player> getPlayers() {

@@ -50,7 +50,7 @@ public class CombatListener implements Listener {
 	@EventHandler
 	public void onPlayerDeath(EntityResurrectEvent event) {
 		if (event.getEntity() instanceof Player player) {
-			if (WorldGroup.get(player) != WorldGroup.SURVIVAL) return;
+			if (WorldGroup.of(player) != WorldGroup.SURVIVAL) return;
 			Achievement.AVOIDING_DEATH.check(player);
 		}
 	}

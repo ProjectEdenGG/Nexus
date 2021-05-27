@@ -86,7 +86,7 @@ public enum CrateType {
 		ItemStack item = getKey().clone();
 		item.setAmount(amount);
 
-		if (WorldGroup.get(player) != WorldGroup.SURVIVAL) {
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) {
 			PlayerUtils.send(player, "&cYou must be in survival to buy this");
 			return false;
 		}
@@ -103,7 +103,7 @@ public enum CrateType {
 	public void give(OfflinePlayer player, int amount) {
 		ItemStack item = getKey().clone();
 		item.setAmount(amount);
-		if (player.isOnline() && WorldGroup.get(player.getPlayer()) == WorldGroup.SURVIVAL && PlayerUtils.hasRoomFor(player.getPlayer(), item))
+		if (player.isOnline() && WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL && PlayerUtils.hasRoomFor(player.getPlayer(), item))
 			player.getPlayer().getInventory().addItem(item);
 		else {
 			DeliveryService service = new DeliveryService();

@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.particles;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.particles.effects.WingsEffect;
-import me.pugabyte.nexus.features.particles.menu.ParticleMenu;
+import me.pugabyte.nexus.features.particles.providers.EffectSettingProvider;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -37,13 +37,13 @@ public class WingsCommand extends CustomCommand implements Listener {
 
 	@Path()
 	void openMenu() {
-		ParticleMenu.openSettingEditor(player(), ParticleType.WINGS);
+		new EffectSettingProvider(ParticleType.WINGS).open(player());
 	}
 
 	@Path("stop")
 	void stop() {
 		ParticleOwner owner = service.get(player());
-		owner.cancelTasks(ParticleType.WINGS);
+		owner.cancel(ParticleType.WINGS);
 	}
 
 	@Path("preview <effect>")
@@ -51,7 +51,7 @@ public class WingsCommand extends CustomCommand implements Listener {
 		if (!player().hasPermission("wings.style." + (wingStyle.ordinal() + 1)))
 			error("You do not have permission to use that wing style");
 		ParticleOwner owner = service.get(player());
-		owner.cancelTasks(ParticleType.WINGS);
+		owner.cancel(ParticleType.WINGS);
 
 		Map<ParticleSetting, Object> wingSettings = owner.getSettings(ParticleType.WINGS);
 		WingsEffect.WingStyle cur_Style = (WingsEffect.WingStyle) wingSettings.get(ParticleSetting.WINGS_STYLE);
@@ -73,7 +73,7 @@ public class WingsCommand extends CustomCommand implements Listener {
 
 		Tasks.wait(5, () -> ParticleType.WINGS.run(player()));
 		Tasks.wait(Time.SECOND.x(15), () -> {
-			owner.cancelTasks(ParticleType.WINGS);
+			owner.cancel(ParticleType.WINGS);
 			wingSettings.put(ParticleSetting.WINGS_STYLE, cur_Style);
 			wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, cur_Color1);
 			wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, cur_Color2);
@@ -88,14 +88,14 @@ public class WingsCommand extends CustomCommand implements Listener {
 	public void onLeave(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase("exchange")) return;
 		ParticleOwner owner = new ParticleService().get(event.getPlayer());
-		owner.cancelTasks();
+		owner.cancel();
 	}
 
 	@EventHandler
 	public void onLeave(PlayerChangedWorldEvent event) {
 		if (!event.getFrom().getName().equalsIgnoreCase("bearfair")) return;
 		ParticleOwner owner = new ParticleService().get(event.getPlayer());
-		owner.cancelTasks();
+		owner.cancel();
 	}
 
 }

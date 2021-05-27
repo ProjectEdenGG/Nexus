@@ -211,7 +211,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected WorldGroup worldGroup() {
-		return WorldGroup.get(location());
+		return WorldGroup.of(location());
 	}
 
 	protected PlayerInventory inventory() {

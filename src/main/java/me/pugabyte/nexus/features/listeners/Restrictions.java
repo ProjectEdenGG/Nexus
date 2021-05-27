@@ -55,7 +55,7 @@ public class Restrictions implements Listener {
 	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
 
 	public static boolean isPerkAllowedAt(Location location) {
-		WorldGroup worldGroup = WorldGroup.get(location);
+		WorldGroup worldGroup = WorldGroup.of(location);
 		if (!allowedWorldGroups.contains(worldGroup))
 			return false;
 
@@ -129,13 +129,13 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onPortalEvent(PlayerPortalEvent event) {
-		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.get(event.getPlayer())))
+		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.of(event.getPlayer())))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onEndPortalCreate(PortalCreateEvent event) {
-		if (WorldGroup.get(event.getWorld()) != WorldGroup.SURVIVAL)
+		if (WorldGroup.of(event.getWorld()) != WorldGroup.SURVIVAL)
 			event.setCancelled(true);
 	}
 
@@ -149,7 +149,7 @@ public class Restrictions implements Listener {
 	@EventHandler
 	public void onOneBlockFallingCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))
+		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
 			return;
 
 		if (player.getFallDistance() > 5 && !player.isFlying()) {

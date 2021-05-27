@@ -147,11 +147,11 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public static ShopGroup of(String world) {
-			if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
+			if (WorldGroup.of(world) == WorldGroup.SURVIVAL)
 				return SURVIVAL;
-			if (WorldGroup.get(world) == WorldGroup.SKYBLOCK)
+			if (WorldGroup.of(world) == WorldGroup.SKYBLOCK)
 				return SKYBLOCK;
-			if (WorldGroup.get(world) == WorldGroup.ONEBLOCK)
+			if (WorldGroup.of(world) == WorldGroup.ONEBLOCK)
 				return ONEBLOCK;
 
 			return null;

@@ -1,6 +1,7 @@
-package me.pugabyte.nexus.features.particles.menu;
+package me.pugabyte.nexus.features.particles.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
@@ -20,12 +21,22 @@ import java.util.List;
 
 public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 
-	List<String> wordToInt = new ArrayList<>(Arrays.asList("zero", "one", "two", "three", "four", "five", "six", "seven",
+	private static final List<String> wordToInt = new ArrayList<>(Arrays.asList("zero", "one", "two", "three", "four", "five", "six", "seven",
 			"eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen"));
 
 	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.title("Wings Style")
+				.size(5, 9)
+				.provider(this)
+				.build()
+				.open(viewer);
+	}
+
+	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> ParticleMenu.openSettingEditor(player, ParticleType.WINGS));
+		addBackItem(contents, e -> new EffectSettingProvider(ParticleType.WINGS).open(player));
 
 		int row = 1;
 		int column = 1;
@@ -40,7 +51,7 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 					e -> {
 						owner.getSettings(ParticleType.WINGS).put(ParticleSetting.WINGS_STYLE, style);
 						service.save(owner);
-						Tasks.wait(5, () -> ParticleMenu.openWingsStyle(player));
+						Tasks.wait(5, () -> new WingsTypeProvider().open(player));
 					}));
 
 			if (column == 7) {

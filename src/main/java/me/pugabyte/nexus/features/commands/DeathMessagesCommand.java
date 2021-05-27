@@ -187,7 +187,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
 			Chat.broadcastIngame(player, output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
 
-			if (WorldGroup.get(player) == WorldGroup.SURVIVAL) {
+			if (WorldGroup.of(player) == WorldGroup.SURVIVAL) {
 				// workaround for dumb Adventure bug (#657)
 				if (deathString == null)
 					deathString = "☠ " + Nickname.of(player) + " died";

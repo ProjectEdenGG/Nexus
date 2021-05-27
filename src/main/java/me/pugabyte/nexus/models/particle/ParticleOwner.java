@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.Utils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,21 +44,11 @@ public class ParticleOwner implements PlayerOwnedObject {
 	private Set<ParticleType> activeParticles = new HashSet<>();
 
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
-		if (!settings.containsKey(particleType) || settings.get(particleType) == null)
-			settings.put(particleType, new HashMap<>());
-		Map<ParticleSetting, Object> map = settings.get(particleType);
+		Map<ParticleSetting, Object> map = settings.computeIfAbsent(particleType, $ -> new HashMap<>());
 
-		if (map != null && !map.isEmpty())
-			// Do some deserialization if necessary
-			new HashMap<>(map).forEach((key, value) -> {
-				if (value == null) return;
-				if (Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r")) {
-					Map<String, Integer> color = (Map<String, Integer>) value;
-					map.put(key, Color.fromRGB(color.get("r"), color.get("g"), color.get("b")));
-				} else if (Enum.class.isAssignableFrom(key.getValue()) && value instanceof String) {
-					map.put(key, EnumUtils.valueOf(key.getValue(), (String) value));
-				}
-			});
+		if (!Utils.isNullOrEmpty(map))
+			deserialize(map);
+
 		return map;
 	}
 
@@ -71,34 +62,71 @@ public class ParticleOwner implements PlayerOwnedObject {
 		return tasks.stream().filter(task -> task.getTaskId() == taskId).collect(Collectors.toList());
 	}
 
-	public void cancelTasks() {
+	public boolean isActive(ParticleType type) {
+		return getTasks(type).size() > 0;
+	}
+
+	public void cancel() {
 		activeParticles.clear();
-		new ParticleService().save(this);
+		save();
+
 		new HashSet<>(tasks).forEach(task -> {
 			Tasks.cancel(task.getTaskId());
 			tasks.remove(task);
 		});
 	}
 
-	public void cancelTasks(ParticleType particleType) {
+	public void cancel(ParticleType particleType) {
 		activeParticles.remove(particleType);
-		new ParticleService().save(this);
+		save();
+
 		getTasks(particleType).forEach(particleTask -> {
 			Tasks.cancel(particleTask.getTaskId());
 			tasks.remove(particleTask);
 		});
 	}
 
-	public void cancelTasks(int taskId) {
+	public void cancel(int taskId) {
 		Tasks.cancel(taskId);
 		getTasks(taskId).forEach(particleTask -> tasks.remove(particleTask));
 	}
 
-	public void addTasks(ParticleType particleType, int... taskIds) {
+	public void start(ParticleType type) {
+		type.run(this);
+	}
+
+	public void start(ParticleType particleType, int... taskIds) {
 		activeParticles.add(particleType);
-		new ParticleService().save(this);
+		save();
+
 		for (int taskId : taskIds)
 			tasks.add(new ParticleTask(particleType, taskId));
+	}
+
+	public boolean canUse(ParticleType particleType) {
+		return getOnlinePlayer().hasPermission(particleType.getPermission());
+	}
+
+	private void save() {
+		new ParticleService().save(this);
+	}
+
+	private void deserialize(Map<ParticleSetting, Object> map) {
+		new HashMap<>(map).forEach((key, value) -> {
+			if (value == null)
+				return;
+
+			boolean isRgbMap = Map.class.isAssignableFrom(value.getClass()) && ((Map<?, ?>) value).containsKey("r");
+			boolean isEnum = Enum.class.isAssignableFrom(key.getValue()) && value instanceof String;
+
+			if (isRgbMap) {
+				Map<String, Integer> color = (Map<String, Integer>) value;
+				map.put(key, Color.fromRGB(color.get("r"), color.get("g"), color.get("b")));
+			}
+
+			if (isEnum)
+				map.put(key, EnumUtils.valueOf(key.getValue(), (String) value));
+		});
 	}
 
 }

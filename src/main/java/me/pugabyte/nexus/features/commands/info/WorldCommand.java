@@ -24,7 +24,7 @@ public class WorldCommand extends CustomCommand {
 	@Path("[player]")
 	void run(@Arg("self") Player player) {
 		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
-		WorldGroup worldGroup = WorldGroup.get(player);
+		WorldGroup worldGroup = WorldGroup.of(player);
 		if (!isStaff(player()) && isStaff(player) && worldGroup == WorldGroup.STAFF)
 			send("&3" + (isSelf(player) ? "You are" : player.getName() + " is") + " in a staff world");
 		else

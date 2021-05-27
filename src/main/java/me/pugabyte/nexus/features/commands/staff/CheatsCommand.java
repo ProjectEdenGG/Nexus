@@ -40,7 +40,7 @@ public class CheatsCommand extends CustomCommand {
 			runCommand("vanish off");
 			godmode.setEnabled(false);
 			godmodeService.save(godmode);
-			if (WorldGroup.get(player()) != WorldGroup.CREATIVE) {
+			if (WorldGroup.of(player()) != WorldGroup.CREATIVE) {
 				if (!world().getEnvironment().equals(Environment.THE_END)) {
 					player().setAllowFlight(false);
 					player().setFlying(false);

@@ -175,7 +175,6 @@
             <id>skullcreator-repo</id>
             <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
         </repository>
-        <!-- HeadDatabase-API -->
         <repository>
             <id>headdatabase-api</id>
             <url>https://mvn.intellectualsites.com/content/repositories/thirdparty/</url>

@@ -82,7 +82,7 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (!mob.getActiveWorlds().contains(WorldGroup.get(player.getWorld()))) return;
+		if (!mob.getActiveWorlds().contains(WorldGroup.of(player.getWorld()))) return;
 
 		// TODO make this enum config driven
 		if (event.getEntityType() == EntityType.ENDERMAN && player.getWorld().getName().contains("the_end")) return;

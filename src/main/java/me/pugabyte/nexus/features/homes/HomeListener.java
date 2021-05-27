@@ -30,7 +30,7 @@ public class HomeListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		WorldGroup group = WorldGroup.get(event.getPlayer());
+		WorldGroup group = WorldGroup.of(event.getPlayer());
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(group))
 			return;
 
@@ -52,7 +52,7 @@ public class HomeListener implements Listener {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if (!WorldGroup.get(player).equals(WorldGroup.SURVIVAL)) return;
+		if (!WorldGroup.of(player).equals(WorldGroup.SURVIVAL)) return;
 
 		HomeService service = new HomeService();
 		HomeOwner homeOwner = service.get(player);
@@ -66,7 +66,7 @@ public class HomeListener implements Listener {
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		if (!WorldGroup.get(player).equals(WorldGroup.SURVIVAL)) return;
+		if (!WorldGroup.of(player).equals(WorldGroup.SURVIVAL)) return;
 
 		UUID uuid = player.getUniqueId();
 		if (!deathLocations.containsKey(uuid)) return;

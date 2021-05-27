@@ -110,7 +110,7 @@ public class Minigamer implements ColoredAndNicknamed, PlayerLike {
 	}
 
 	public void join(Arena arena) {
-		if (!WorldGroup.MINIGAMES.equals(WorldGroup.get(player.getWorld()))) {
+		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(player.getWorld()))) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;
