@@ -664,13 +664,14 @@ public enum EmojiHat {
 	EmojiHat(String menuTexture, List<Pair<String, Long>> frames) {
 		this.menuTexture = menuTexture;
 		this.frameTextures = frames;
+		Tasks.async(() -> new Timer("    EmojiHat." + name(), this::load));
+	}
 
-		Runnable load = () -> this.frames = new ArrayList<>() {{
-			for (Pair<String, Long> frame : frames)
+	private void load() {
+		this.frames = new ArrayList<>() {{
+			for (Pair<String, Long> frame : frameTextures)
 				add(new Pair<>(getSkull(frame.getFirst()), frame.getSecond()));
 		}};
-
-		Tasks.async(() -> new Timer("    EmojiHat." + name(), load));
 	}
 
 	public static void init() {
@@ -678,8 +679,7 @@ public enum EmojiHat {
 	}
 
 	public ItemBuilder getDisplayItem() {
-		ItemStack skull = getSkull(menuTexture);
-		return new ItemBuilder(skull).name(camelCase(this));
+		return new ItemBuilder(getSkull(menuTexture)).name(camelCase(this));
 	}
 
 	public void run(Player player) {
