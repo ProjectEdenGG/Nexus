@@ -5,7 +5,6 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -20,7 +19,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -65,19 +63,12 @@ public class WoodCutting implements Listener {
 		});
 	}
 
-	@EventHandler
-	public void onTreeBreak(BlockBreakEvent event) {
-		if (!BearFair21.isInRegion(event.getBlock().getLocation(), tree_region))
-			return;
-
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
-			return;
-
-		event.setCancelled(true);
+	public static boolean breakBlock(BlockBreakEvent event) {
+		if (!BearFair21.isInRegion(event.getBlock().getLocation(), tree_region)) return false;
 
 		BearFair21TreeType treeType = BearFair21TreeType.of(event.getBlock().getType());
 		if (treeType == null)
-			return;
+			return false;
 
 		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLike(tree_region + "_" + treeType.name() + "_[0-9]+");
 
@@ -88,14 +79,15 @@ public class WoodCutting implements Listener {
 		double distance = result.getValue().doubleValue();
 
 		if (region == null)
-			return;
+			return false;
 
 		int tree = Integer.parseInt(region.getId().split("_")[3]);
 
 		if (tree < 1 || distance > 20)
-			return;
+			return false;
 
 		treeType.feller(event.getPlayer(), tree);
+		return true;
 	}
 
 	public enum BearFair21TreeType {

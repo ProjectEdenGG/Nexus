@@ -4,10 +4,6 @@ import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
-import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -21,7 +17,6 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 import static me.pugabyte.nexus.utils.SoundUtils.playSound;
 
 public class Mining implements Listener {
@@ -56,39 +50,34 @@ public class Mining implements Listener {
 		});
 	}
 
-	@EventHandler
-	public void onOreBreak(BlockBreakEvent event) {
+	public static boolean canBreak(Material type) {
+		return OreType.getOres().contains(type);
+	}
+
+	public static boolean breakBlock(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(player))
-			return;
-
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
-			return;
-
-		event.setCancelled(true);
-
 		Block block = event.getBlock();
-		Material material = block.getType();
-		OreType oreType = OreType.ofOre(material);
-		if (oreType == null)
-			return;
+		Material type = block.getType();
 
-		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType())) {
-			if (new CooldownService().check(player, "BF21_cantbreak_ore", Time.MINUTE)) {
-				send(Errors.cantBreak, player);
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
-			}
-			return;
-		}
+		if (!OreType.getOres().contains(type))
+			return false;
+
+		OreType oreType = OreType.ofOre(type);
+		if (oreType == null)
+			return false;
+
+		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType()))
+			return false;
 
 		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack());
 
 		scheduleRegen(block);
 		block.setType(Material.STONE);
+		return true;
 	}
 
-	public void scheduleRegen(Block block) {
+	public static void scheduleRegen(Block block) {
 		new TaskService().save(new Task(taskId, new HashMap<>() {{
 			put("location", JSON.serializeLocation(block.getLocation()));
 			put("material", block.getType());

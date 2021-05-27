@@ -2,7 +2,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.SellCrates;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
@@ -28,11 +30,13 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -115,5 +119,26 @@ public class Quests implements Listener {
 		BearFair21User user = userService.get(player);
 		user.getMetNPCs().add(id);
 		userService.save(user);
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		Block block = event.getBlock();
+		Player player = event.getPlayer();
+
+		if (event.isCancelled()) return;
+		if (!isAtBearFair(block)) return;
+		if (player.hasPermission(WorldGuardEditCommand.getPermission())) return;
+
+		event.setCancelled(true);
+
+		if (Mining.breakBlock(event)) return;
+		if (WoodCutting.breakBlock(event)) return;
+		if (Farming.breakBlock(event)) return;
+
+		if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+			send(Errors.cantBreak, player);
+			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+		}
 	}
 }
