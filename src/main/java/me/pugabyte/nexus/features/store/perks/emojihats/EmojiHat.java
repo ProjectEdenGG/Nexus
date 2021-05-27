@@ -9,12 +9,15 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static eden.utils.StringUtils.camelCase;
 
@@ -669,7 +672,7 @@ public enum EmojiHat {
 				add(new Pair<>(getSkull(frame.getFirst()), frame.getSecond()));
 		}};
 
-		Tasks.async(() -> new Timer(" EmojiHat." + name(), load));
+		Tasks.async(() -> new Timer("    EmojiHat." + name(), load));
 	}
 
 	public static void init() {
@@ -684,17 +687,28 @@ public enum EmojiHat {
 	public void run(Player player) {
 		int wait = 0;
 		for (Pair<ItemStack, Long> frame : frames) {
-			Tasks.wait(wait, () -> PacketUtils.setSlot(player, List.of(player), frame.getFirst(), EnumItemSlot.HEAD));
-			wait += frame.getSecond() + 1;
+			final ItemStack item = frame.getFirst();
+			final long ticks = frame.getSecond();
+
+			for (int i = 0; i <= ticks; i++)
+				Tasks.wait(wait++, () -> packet(player, item));
 		}
+
+		Tasks.wait(wait + 1, () -> packet(player, player.getInventory().getItem(EquipmentSlot.HEAD)));
+	}
+
+	private void packet(Player player, ItemStack item) {
+		PacketUtils.setSlot(player, List.of(player), item, EnumItemSlot.HEAD);
 	}
 
 	public List<ItemStack> getFrameItems() {
 		return frames.stream().map(Pair::getFirst).distinct().toList();
 	}
 
+	private final static Map<String, ItemStack> loadedSkulls = new ConcurrentHashMap<>();
+
 	private ItemStack getSkull(String base64) {
-		return SkullCreator.itemFromUrl(URL + decode(base64));
+		return loadedSkulls.computeIfAbsent(base64, $ -> SkullCreator.itemFromUrl(URL + decode(base64)));
 	}
 
 	@NotNull
