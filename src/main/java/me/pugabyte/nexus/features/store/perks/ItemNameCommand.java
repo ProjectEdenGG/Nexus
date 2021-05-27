@@ -85,7 +85,9 @@ public class ItemNameCommand extends CustomCommand {
 			error("Max length is 50, input was " + length);
 
 		if (Censor.isCensored(player(), input)) {
-			Chat.broadcast("Item name content by " + nickname() + " was censored: " + input, StaticChannel.STAFF);
+			String message = "&cItem name content by " + nickname() + " was censored: &e" + input;
+			Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+			Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
 			error("Inappropriate input");
 		}
 	}

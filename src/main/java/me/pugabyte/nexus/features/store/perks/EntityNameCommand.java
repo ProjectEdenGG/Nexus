@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
@@ -119,7 +120,9 @@ public class EntityNameCommand extends CustomCommand {
 			return;
 
 		if (Censor.isCensored(player(), input)) {
-			Chat.broadcast("Entity name content by " + nickname() + " was censored: " + input, StaticChannel.STAFF);
+			String message = "&cEntity name content by " + nickname() + " was censored: &e" + input;
+			Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+			Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
 			error("Inappropriate input");
 		}
 	}

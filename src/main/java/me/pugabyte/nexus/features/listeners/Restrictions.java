@@ -11,7 +11,7 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
@@ -27,13 +27,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,31 +90,41 @@ public class Restrictions implements Listener {
 			return;
 
 		PlayerUtils.send(player, "&cInappropriate sign content");
-		Chat.broadcast("Sign content by " + Nickname.of(player) + " was censored: " + String.join(", ", lines), StaticChannel.STAFF);
+		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines);
+		Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+		Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
 	}
 
 	@EventHandler
-	public void onAnvilRenameItem(PrepareAnvilEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player))
+	public void onAnvilRenameItem(InventoryClickEvent event) {
+		if (!(event.getWhoClicked() instanceof Player player))
 			return;
 
-		if (ItemUtils.isNullOrAir(event.getResult()))
+		Inventory inventory = event.getClickedInventory();
+		if (inventory == null || inventory.getType() != InventoryType.ANVIL)
 			return;
 
-		ItemStack item1 = event.getInventory().getFirstItem();
-		ItemStack item2 = event.getInventory().getFirstItem();
-		if (ItemUtils.isNullOrAir(item1) && ItemUtils.isNullOrAir(item2))
+		if (event.getSlotType() != SlotType.RESULT)
 			return;
 
-		String input = event.getInventory().getRenameText();
+		ItemStack item = event.getCurrentItem();
+
+		if (ItemUtils.isNullOrAir(item))
+			return;
+
+		ItemMeta meta = item.getItemMeta();
+
+		String input = meta.getDisplayName();
 		if (!Censor.isCensored(player, input))
 			return;
 
-		event.setResult(null);
-		Tasks.sync(() -> event.setResult(null));
+		meta.setDisplayName(null);
+		item.setItemMeta(meta);
 
 		PlayerUtils.send(player, "&cInappropriate item name");
-		Chat.broadcast("Anvil name by " + Nickname.of(player) + " was censored: " + input, StaticChannel.STAFF);
+		String message = "&cAnvil name by " + Nickname.of(player) + " was censored: &e" + input;
+		Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+		Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
 	}
 
 	@EventHandler
