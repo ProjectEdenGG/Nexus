@@ -236,6 +236,9 @@ public class Koda {
 							respond(event, "[player], griefing is not allowed. Please take a look at the /rules for more information.");
 				break;
 			case "lag":
+				if (!event.getChatter().isOnline())
+					break;
+
 				int ping = event.getChatter().getOnlinePlayer().spigot().getPing();
 				double tps = Bukkit.getTPS()[1];
 
