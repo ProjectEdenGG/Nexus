@@ -1,7 +1,10 @@
 package me.pugabyte.nexus.features.events;
 
-import fr.minuskube.inv.SmartInventory;
+import eden.utils.Env;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.store.EventStoreListener;
+import me.pugabyte.nexus.features.events.store.providers.EventStoreProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -23,17 +26,16 @@ public class EventsCommand extends CustomCommand {
 			user = service.get(player());
 	}
 
+	static {
+		new EventStoreListener();
+	}
+
 	@Path("store")
 	void store() {
-		if (!isStaff())
+		if (Nexus.getEnv() == Env.PROD && !isStaff())
 			error("Coming Soon™");
 
-		SmartInventory menu = SmartInventory.builder()
-				.title("&3Event Store")
-				.size(5, 9)
-				.provider(new EventStoreProvider())
-				.build();
-		menu.open(player());
+		new EventStoreProvider().open(player());
 	}
 
 	// Token commands
