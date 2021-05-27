@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.chat.events;
 
+import me.pugabyte.nexus.models.nickname.Nickname;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -10,7 +11,7 @@ public abstract class MinecraftChatEvent extends ChatEvent implements Identified
 
 	@Override
 	public String getOrigin() {
-		return getChatter().getOfflinePlayer().getName();
+		return Nickname.of(getChatter());
 	}
 
 	@Override
