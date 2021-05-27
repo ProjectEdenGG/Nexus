@@ -682,6 +682,10 @@ public enum EmojiHat {
 		return new ItemBuilder(getSkull(menuTexture)).name(camelCase(this));
 	}
 
+	public boolean canUse(Player player) {
+		return player.hasPermission("emojihats.use." + name().toLowerCase());
+	}
+
 	public void run(Player player) {
 		int wait = 0;
 		for (Pair<ItemStack, Long> frame : frames) {
