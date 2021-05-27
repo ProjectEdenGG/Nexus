@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.store.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
@@ -12,10 +13,32 @@ import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public abstract class EventStoreMenu extends MenuUtils implements InventoryProvider {
 
 	abstract protected EventStoreMenu getPreviousMenu();
+
+	abstract protected String getTitle();
+
+	protected int getRows() {
+		return 6;
+	}
+
+	@NotNull
+	abstract protected List<ClickableItem> getItems(Player player);
+
+	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.title(getTitle())
+				.size(getRows(), 9)
+				.provider(this)
+				.build()
+				.open(viewer, page);
+	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
@@ -26,6 +49,8 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 
 		ItemStack tokens = new ItemBuilder(Material.BOOK).name("Tokens").build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
+
+		addPagination(player, contents, getItems(player));
 	}
 
 	protected void charge(Player player, int price) {
@@ -54,7 +79,7 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 				.lore("")
 				.lore("&6Price: " + (user.hasTokens(price) ? "&e" : "&c") + price + " event tokens")
 				.lore("")
-				.lore("&7Click to test")
+				.lore("&7Click to preview")
 				.lore("&7Shift click to buy");
 	}
 

@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.store.providers.EventStoreEmojiHatProvider;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
-import me.pugabyte.nexus.features.events.store.providers.EventStoreParticlesProvider;
-import me.pugabyte.nexus.features.events.store.providers.EventStoreWingsProvider;
+import me.pugabyte.nexus.features.events.store.providers.purchasable.EventStoreEmojiHatProvider;
+import me.pugabyte.nexus.features.events.store.providers.purchasable.EventStoreParticlesProvider;
+import me.pugabyte.nexus.features.events.store.providers.purchasable.EventStoreWingsProvider;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public enum Purchasable {
 			new EventStoreParticlesProvider(currentMenu).open(player);
 		}
 	},
-	PARTICLE_WINGS(3, 2, 75, Material.ELYTRA) {
+	WINGS(3, 2, 75, Material.ELYTRA) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreWingsProvider(currentMenu).open(player);

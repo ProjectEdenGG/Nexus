@@ -1,14 +1,14 @@
-package me.pugabyte.nexus.features.events.store.providers;
+package me.pugabyte.nexus.features.events.store.providers.purchasable;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.store.Purchasable;
+import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
 import me.pugabyte.nexus.features.store.perks.emojihats.EmojiHat;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,22 +21,16 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 	private final EventStoreMenu previousMenu;
 
 	@Override
-	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.title("Event Store - Emoji Hats")
-				.size(6, 9)
-				.provider(this)
-				.build()
-				.open(viewer, page);
+	protected String getTitle() {
+		return "Event Store - Emoji Hats";
 	}
 
+	@NotNull
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	protected List<ClickableItem> getItems(Player player) {
+		List<ClickableItem> items = new ArrayList<>();
 
 		int price = Purchasable.EMOJI_HATS.getPrice();
-
-		List<ClickableItem> items = new ArrayList<>();
 
 		for (EmojiHat type : EmojiHat.values()) {
 			if (type.canBeUsedBy(player))
@@ -58,8 +52,7 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 				}
 			}));
 		}
-
-		addPagination(player, contents, items);
+		return items;
 	}
 
 }

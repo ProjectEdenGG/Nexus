@@ -1,12 +1,11 @@
-package me.pugabyte.nexus.features.events.store.providers;
+package me.pugabyte.nexus.features.events.store.providers.purchasable;
 
 import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.store.Purchasable;
+import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
 import me.pugabyte.nexus.features.particles.effects.WingsEffect.WingStyle;
 import me.pugabyte.nexus.models.particle.ParticleOwner;
 import me.pugabyte.nexus.models.particle.ParticleService;
@@ -14,6 +13,7 @@ import me.pugabyte.nexus.models.particle.ParticleType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,24 +26,18 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 	private final EventStoreMenu previousMenu;
 
 	@Override
-	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.title("Event Store - Wings")
-				.size(6, 9)
-				.provider(this)
-				.build()
-				.open(viewer, page);
+	protected String getTitle() {
+		return "Event Store - Wings";
 	}
 
+	@NotNull
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	protected List<ClickableItem> getItems(Player player) {
+		List<ClickableItem> items = new ArrayList<>();
 
 		ParticleService service = new ParticleService();
 		ParticleOwner particleOwner = service.get(player);
-		int price = Purchasable.PARTICLE_WINGS.getPrice();
-
-		List<ClickableItem> items = new ArrayList<>();
+		int price = Purchasable.WINGS.getPrice();
 
 		for (WingStyle style : WingStyle.values()) {
 			if (style.canBeUsedBy(player))
@@ -66,7 +60,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 				}
 			}));
 		}
-
-		addPagination(player, contents, items);
+		return items;
 	}
+
 }

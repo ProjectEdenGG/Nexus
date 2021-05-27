@@ -1,13 +1,15 @@
 package me.pugabyte.nexus.features.events.store.providers;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.store.Purchasable;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 public class EventStoreProvider extends EventStoreMenu {
@@ -19,23 +21,20 @@ public class EventStoreProvider extends EventStoreMenu {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
-		SmartInventory.builder()
-				.title("Event Store")
-				.size(5, 9)
-				.provider(this)
-				.build()
-				.open(viewer, page);
+	protected String getTitle() {
+		return "Event Store";
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	protected @NotNull List<ClickableItem> getItems(Player player) {
+		List<ClickableItem> items = new ArrayList<>();
 
 		for (Purchasable purchasable : Purchasable.values()) {
 			ItemBuilder item = purchasable.getDisplayItem();
-			contents.set(purchasable.getSlot(), ClickableItem.from(item.build(), e -> purchasable.onClick(player, this)));
+			items.add(ClickableItem.from(item.build(), e -> purchasable.onClick(player, this)));
 		}
+
+		return items;
 	}
 
 }
