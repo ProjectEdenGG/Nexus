@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.mining.Mining.OreType;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -56,7 +57,10 @@ public class Farming implements Listener {
 			if (player.hasPermission(WorldGuardEditCommand.getPermission()))
 				return;
 
-			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+			if (OreType.getOres().contains(block.getType()))
+				return;
+
+			if (new CooldownService().check(player, "BF21_cantbreak_crop", Time.MINUTE)) {
 				send(Errors.cantBreak, player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}

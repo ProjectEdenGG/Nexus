@@ -6,6 +6,8 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 import static me.pugabyte.nexus.utils.SoundUtils.playSound;
 
 public class Mining implements Listener {
@@ -70,8 +73,13 @@ public class Mining implements Listener {
 		if (oreType == null)
 			return;
 
-		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType()))
+		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType())) {
+			if (new CooldownService().check(player, "BF21_cantbreak_ore", Time.MINUTE)) {
+				send(Errors.cantBreak, player);
+				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+			}
 			return;
+		}
 
 		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack());
@@ -88,7 +96,7 @@ public class Mining implements Listener {
 	}
 
 	@AllArgsConstructor
-	private enum OreType {
+	public enum OreType {
 		LAPIS(Material.LAPIS_ORE, Material.LAPIS_LAZULI, 1, 3, Material.STONE_PICKAXE),
 		COAL(Material.COAL_ORE, Material.COAL, 1, 3, Material.STONE_PICKAXE),
 		GOLD(Material.GOLD_ORE, Material.GOLD_NUGGET, 1, 2, Material.IRON_PICKAXE),
@@ -106,6 +114,10 @@ public class Mining implements Listener {
 
 		private static final List<Material> pickaxeOrder = Arrays.asList(Material.WOODEN_PICKAXE, Material.GOLDEN_PICKAXE,
 				Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE);
+
+		public static List<Material> getOres() {
+			return Arrays.stream(values()).map(OreType::getOre).toList();
+		}
 
 		public ItemStack getIngotItemStack() {
 			return new ItemBuilder(ingot).amount(RandomUtils.randomInt(min, max)).build();
