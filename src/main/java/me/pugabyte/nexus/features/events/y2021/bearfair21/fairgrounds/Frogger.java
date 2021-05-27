@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds;
 
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
@@ -322,7 +323,7 @@ public class Frogger implements Listener {
 			}
 
 		} else if (regionId.equalsIgnoreCase(killRg)) {
-			if (player.hasPermission("worldguard.region.bypass.*")) return;
+			if (player.hasPermission(WorldGuardEditCommand.getPermission())) return;
 			if (checkpointList.contains(player))
 				player.teleport(checkpointLoc);
 			else
@@ -330,7 +331,7 @@ public class Frogger implements Listener {
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
-			if (player.hasPermission("worldguard.region.bypass.*")) return;
+			if (player.hasPermission(WorldGuardEditCommand.getPermission())) return;
 
 			checkpointList.remove(player);
 			player.teleport(respawnLoc);

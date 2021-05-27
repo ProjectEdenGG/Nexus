@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
+import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
@@ -90,7 +91,7 @@ public class BearFair21 {
 	}
 
 	public static String isCheatingMsg(Player player) {
-		if (player.hasPermission("worldguard.region.bypass.*")) return "wgedit";
+		if (player.hasPermission(WorldGuardEditCommand.getPermission())) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";

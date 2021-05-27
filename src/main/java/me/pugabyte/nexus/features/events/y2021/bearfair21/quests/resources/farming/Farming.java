@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farm
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -52,7 +53,7 @@ public class Farming implements Listener {
 		if (event.isCancelled()) return;
 		if (!isAtBearFair(block)) return;
 		if (!breakList.contains(block.getType())) {
-			if (player.hasPermission("worldguard.region.bypass.*"))
+			if (player.hasPermission(WorldGuardEditCommand.getPermission()))
 				return;
 
 			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
@@ -63,7 +64,7 @@ public class Farming implements Listener {
 			return;
 		}
 
-		if (player.hasPermission("worldguard.region.bypass.*")) {
+		if (player.hasPermission(WorldGuardEditCommand.getPermission())) {
 			if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHER_BRICK))
 				return;
 		}
@@ -115,7 +116,7 @@ public class Farming implements Listener {
 					}
 				}
 			} else {
-				if (player.hasPermission("worldguard.region.bypass.*"))
+				if (player.hasPermission(WorldGuardEditCommand.getPermission()))
 					return;
 
 				if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
