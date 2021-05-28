@@ -6,6 +6,7 @@ import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,13 +27,19 @@ public class EventStoreListener implements Listener {
 
 	@EventHandler
 	public void onPlayerClickHeadDatabase(PlayerClickHeadEvent event) {
-		Player player = event.getPlayer();
-		WorldGroup worldGroup = WorldGroup.of(player);
-		EventUserService service = new EventUserService();
-		EventUser user = service.get(player);
+		final Player player = event.getPlayer();
+		final WorldGroup worldGroup = WorldGroup.of(player);
+		final Rank rank = Rank.of(player);
+
+		final EventUserService service = new EventUserService();
+		final EventUser user = service.get(player);
+
 		int price = Purchasable.HEADS.getPrice();
 
-		if (Rank.of(player).isAdmin())
+		if (rank.isAdmin())
+			return;
+
+		if (rank.isStaff() && player.getGameMode() == GameMode.CREATIVE)
 			return;
 
 		if (hdb_bypassWorldGroups.contains(worldGroup))
