@@ -3,9 +3,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import me.pugabyte.nexus.models.bearfair21.BearFair21User.BF21PointSource;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -39,8 +39,8 @@ public class Archery implements Listener {
 	private static final String targetRegion = gameRegion + "_targets";
 	private static boolean enabled = false;
 	private static int activeTargets = 0;
-	private final BF21PointSource SOURCE = BF21PointSource.ARCHERY;
 
+	// TODO BF21: kit
 	public Archery() {
 		Nexus.registerListener(this);
 		targetTask();
@@ -94,12 +94,7 @@ public class Archery implements Listener {
 		removeTarget(hitBlock);
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
-		// TODO BF21: give points, 5 targets = 1 point
-//		if (giveDailyPoints) {
-//			BearFair21User user = new BearFair21UserService().get(player);
-//			user.giveDailyPoints(SOURCE);
-//			new BearFair21UserService().save(user);
-//		}
+		BearFair21.giveDailyPoints(player, BF21PointSource.ARCHERY, 1);
 	}
 
 	private List<Location> getTargetLocs() {

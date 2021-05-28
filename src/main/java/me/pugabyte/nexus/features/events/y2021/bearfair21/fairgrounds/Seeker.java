@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -104,7 +105,6 @@ public class Seeker implements Listener {
 		removePlayer(player);
 		player.sendBlockChange(blockLocation, blockLocation.getBlock().getBlockData());
 
-		// TODO BF21: give points
-		player.sendMessage("TODO: give points");
+		BearFair21.giveDailyPoints(player, BF21PointSource.SEEKER, 5);
 	}
 }

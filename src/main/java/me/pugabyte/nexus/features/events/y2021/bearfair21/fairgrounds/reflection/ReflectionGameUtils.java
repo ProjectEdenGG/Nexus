@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflectio
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -94,12 +95,7 @@ public class ReflectionGameUtils {
 		for (Player player : players)
 			send(ReflectionGame.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
 
-		// TODO BF21: give points
-//		if (giveDailyPoints) {
-//			BearFair20User user = new BearFair20UserService().get(buttonPresser);
-//			user.giveDailyPoints(Reflection.SOURCE);
-//			new BearFair20UserService().save(user);
-//		}
+		BearFair21.giveDailyPoints(ReflectionGame.getButtonPresser(), BF21PointSource.REFLECTION, 5);
 
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			randomizeBanners();
