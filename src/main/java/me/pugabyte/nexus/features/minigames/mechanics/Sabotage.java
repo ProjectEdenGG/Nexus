@@ -88,7 +88,11 @@ import java.util.stream.Collectors;
 // TODO: color menu
 // TODO: meeting sound
 // TODO: task complete sound + action bar
-// TODO: emergency meeting is broken (cannot report bodies or use the button)
+// TODO: display room names on action bar
+// TODO: display subtitle on kill
+// TODO: move kill cooldown to ticks, don't tick in vents
+// TODO: support indefinite sabotages
+// TODO: block button during sabotage
 // TODO: venting is not working
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
@@ -469,6 +473,7 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 		SabotageMatchData.ButtonState state = matchData.button(minigamer);
 
+		// TODO: switch case?
 		if (state == SabotageMatchData.ButtonState.COOLDOWN) {
 			int canButtonIn = matchData.canButtonIn();
 			minigamer.sendActionBar(new JsonBuilder("&cYou may call an emergency meeting in " + StringUtils.plural(canButtonIn + " second", canButtonIn)));
