@@ -1,94 +1,86 @@
 package me.pugabyte.nexus.features.minigames.models.sabotage;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.AbstractTaskMenu;
+import me.pugabyte.nexus.features.menus.sabotage.tasks.SwipeCardTask;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 
-import java.util.function.Consumer;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Supplier;
 
-import static eden.utils.StringUtils.camelCase;
-
-@RequiredArgsConstructor
-public enum TaskPart {
-    SWIPE_CARD(new ItemStack(Material.DIRT), )
-    ;
-
+@Data
+@Builder
+public class TaskPart {
     private final String name;
+    private final ItemStack interactionItem;
+    private final Class<? extends AbstractTaskMenu> menu;
+    /**
+     * Class used to store data about this task part
+     */
+    @Builder.Default
+    private final Class<? extends TaskPartData> data = TaskPartData.class;
+
     /**
      * Item on an armor stand head which a player must right click to use the task
      */
-    private final ItemStack interactionItem;
-    private final Consumer<HasPlayer> action;
-    private final Class<? extends TaskPartData> data;
-
-    TaskPart(String name, ItemStack interactionItem, Consumer<HasPlayer> action) {
-        this(name, interactionItem, action, TaskPartData.class);
+    public ItemStack getInteractionItem() {
+        return interactionItem.clone();
     }
 
-    TaskPart(String name, ItemStack interactionItem, AbstractTaskMenu menu) {
-        this(name, interactionItem, menu, TaskPartData.class);
+    public AbstractTaskMenu instantiateMenu(Task task) {
+        try {
+            return menu.getConstructor(Task.class).newInstance(task);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Could not open menu for TaskPart " + name);
+        }
     }
 
-    TaskPart(String name, ItemStack interactionItem, AbstractTaskMenu menu, Class<? extends TaskPartData> data) {
-        this(name, interactionItem, menu::open, data);
+    public <T extends TaskPartData> T createTaskPartData() {
+        try {
+            return (T) data.getConstructor(TaskPart.class).newInstance(this);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("Could not create task data for TaskPart " + name);
+        }
     }
 
-    // automatic name
-
-    TaskPart(ItemStack interactionItem, Consumer<HasPlayer> action) {
-        this(interactionItem, action, TaskPartData.class);
+    public void openMenu(Task task, HasPlayer player) {
+        instantiateMenu(task).open(player);
     }
 
-    TaskPart(ItemStack interactionItem, AbstractTaskMenu menu) {
-        this(interactionItem, menu::open);
+    public static class TaskPartBuilder {
+        @Contract("_ -> this")
+        public TaskPartBuilder interactionItem(Supplier<ItemStack> item) {
+            return interactionItem(item.get());
+        }
+
+        @Contract("_ -> this") // manual overload
+        public TaskPartBuilder interactionItem(ItemStack item) {
+            interactionItem = item;
+            return this;
+        }
     }
 
-    TaskPart(ItemStack interactionItem, Consumer<HasPlayer> action, Class<? extends TaskPartData> data) {
-        name = camelCase(this);
-        this.interactionItem = interactionItem;
-        this.action = action;
-        this.data = data;
+    @Accessors(fluent = true)
+    private static final Set<TaskPart> values = new HashSet<>();
+    private static TaskPart add(TaskPart part) {
+        values.add(part);
+        return part;
     }
+    @Getter(AccessLevel.PRIVATE)
+    private static final ItemStack EMPTY_ITEM = new ItemBuilder(Material.BARRIER).customModelData(1).build();
+    private static ItemStack EMPTY_ITEM(String name) {return new ItemBuilder(EMPTY_ITEM).name(name).build();}
 
-    TaskPart(ItemStack interactionItem, AbstractTaskMenu menu, Class<? extends TaskPartData> data) {
-        this(interactionItem, menu::open, data);
-    }
-
-    // item builders
-
-    TaskPart(String name, ItemBuilder interactionItem, Consumer<HasPlayer> action, Class<? extends TaskPartData> data) {
-        this(name, interactionItem.build(), action, data);
-    }
-
-    TaskPart(String name, ItemBuilder interactionItem, Consumer<HasPlayer> action) {
-        this(name, interactionItem, action, TaskPartData.class);
-    }
-
-    TaskPart(String name, ItemBuilder interactionItem, AbstractTaskMenu menu) {
-        this(name, interactionItem, menu, TaskPartData.class);
-    }
-
-    TaskPart(String name, ItemBuilder interactionItem, AbstractTaskMenu menu, Class<? extends TaskPartData> data) {
-        this(name, interactionItem, menu::open, data);
-    }
-
-    TaskPart(ItemBuilder interactionItem, Consumer<HasPlayer> action) {
-        this(interactionItem, action, TaskPartData.class);
-    }
-
-    TaskPart(ItemBuilder interactionItem, AbstractTaskMenu menu) {
-        this(interactionItem, menu::open);
-    }
-
-    TaskPart(ItemBuilder interactionItem, Consumer<HasPlayer> action, Class<? extends TaskPartData> data) {
-        this(interactionItem.build(), action, data);
-    }
-
-    TaskPart(ItemBuilder interactionItem, AbstractTaskMenu menu, Class<? extends TaskPartData> data) {
-        this(interactionItem, menu::open, data);
-    }
+    public static final TaskPart SWIPE_CARD = add(new TaskPartBuilder().name("Swipe Card").interactionItem(EMPTY_ITEM("Swipe Card")).menu(SwipeCardTask.class).build());
 }

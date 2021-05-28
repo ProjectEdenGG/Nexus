@@ -38,11 +38,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-public class ItemBuilder implements Cloneable {
+public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	private ItemStack itemStack;
 	private ItemMeta itemMeta;
 	@Getter
@@ -313,7 +314,17 @@ public class ItemBuilder implements Cloneable {
 		return this;
 	}
 
-	/** Building */
+	public int customModelData() {
+		NBTItem nbtItem = new NBTItem(build());
+		return nbtItem.getInteger("CustomModelData");
+	}
+
+	// Building //
+
+	@Override
+	public ItemStack get() {
+		return build();
+	}
 
 	public ItemStack build() {
 		ItemStack result = itemStack.clone();

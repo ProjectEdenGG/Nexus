@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import me.lexikiq.HasPlayer;
+import me.pugabyte.nexus.features.particles.MathUtils;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,6 +21,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,6 +198,46 @@ public class LocationUtils {
 		return getShortFacingDirection(player.getPlayer().getFacing());
 	}
 
+	@NotNull
+	public static Location parse(@NotNull String text) throws IllegalArgumentException {
+		Validate.notNull(text, "input doesn't exist");
+		String[] split = StringUtils.stripColor(text).split(" ");
+		Validate.isTrue(split.length == 4 || split.length == 6, "text contains incorrect number of arguments");
+		World world = Bukkit.getWorld(split[0]);
+		if (world == null)
+			throw new IllegalArgumentException("world doesn't exist");
+		Location location = new Location(world,
+				Double.parseDouble(split[1]),
+				Double.parseDouble(split[2]),
+				Double.parseDouble(split[3]));
+		if (split.length == 4)
+			return location;
+		location.setYaw(Float.parseFloat(split[4]));
+		location.setPitch(Float.parseFloat(split[5]));
+		return location;
+	}
+
+	@Nullable
+	public static Location parseOrNull(String text) {
+		try {
+			return parse(text);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Tests if two locations are equal to each other while avoiding false negatives from floating point issues
+	 */
+	public static boolean locationsEqual(Location location1, Location location2) {
+		if (!location1.getWorld().equals(location2.getWorld())) return false;
+		if (Math.abs(location1.getX() - location2.getX()) > MathUtils.FLOAT_ROUNDING_ERROR) return false;
+		if (Math.abs(location1.getY() - location2.getY()) > MathUtils.FLOAT_ROUNDING_ERROR) return false;
+		if (Math.abs(location1.getZ() - location2.getZ()) > MathUtils.FLOAT_ROUNDING_ERROR) return false;
+		if (Math.abs(location1.getYaw() - location2.getYaw()) > MathUtils.FLOAT_ROUNDING_ERROR) return false;
+		return !(Math.abs(location1.getPitch() - location2.getPitch()) > MathUtils.FLOAT_ROUNDING_ERROR);
+	}
+
 	private static float toDegree(double angle) {
 		return (float) Math.toDegrees(angle);
 	}
@@ -334,8 +378,10 @@ public class LocationUtils {
 		}
 	}
 
-	public static boolean blockLocationsEqual(Location location1, Location location2) {
-		return location1.getBlockX() == location2.getBlockX() &&
+	public static boolean blockLocationsEqual(@Nullable Location location1, @Nullable Location location2) {
+		if (location1 == null || location2 == null) return false;
+		return location1.getWorld().equals(location2.getWorld()) &&
+				location1.getBlockX() == location2.getBlockX() &&
 				location1.getBlockY() == location2.getBlockY() &&
 				location1.getBlockZ() == location2.getBlockZ();
 	}

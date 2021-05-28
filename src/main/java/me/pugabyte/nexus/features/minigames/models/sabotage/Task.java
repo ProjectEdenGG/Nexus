@@ -2,9 +2,9 @@ package me.pugabyte.nexus.features.minigames.models.sabotage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.minigames.mechanics.Sabotage;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.SegmentedTaskData;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
+import net.md_5.bungee.api.ChatColor;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 @Getter
@@ -27,7 +27,7 @@ public class Task {
             return null;
         TaskPart part = task.getParts()[completed];
         if (data == null)
-            data = Sabotage.createTaskPartDataFor(part);
+            data = part.createTaskPartData();
         return part;
     }
 
@@ -52,5 +52,34 @@ public class Task {
         if (length == 1)
             return "";
         return completed + "/" + length;
+    }
+
+    public State getState() {
+        if (getTaskSize() == completed)
+            return State.COMPLETE;
+        else if (completed > 0)
+            return State.IN_PROGRESS;
+        return State.UNSTARTED;
+    }
+
+    public String render() {
+        TaskPart part = nextPart();
+        if (part == null)
+            part = task.getParts()[completed-1];
+        String output = part.getName();
+        String progress = progressStr();
+        if (!progress.isEmpty())
+            output += " (" + progress + ")";
+        return getState().getChatColor() + output;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public enum State {
+        COMPLETE(ChatColor.GREEN),
+        IN_PROGRESS(ChatColor.YELLOW),
+        UNSTARTED(ChatColor.WHITE);
+
+        private final ChatColor chatColor;
     }
 }

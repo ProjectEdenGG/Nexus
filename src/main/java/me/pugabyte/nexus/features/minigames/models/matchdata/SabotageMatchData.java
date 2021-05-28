@@ -4,26 +4,37 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import eden.utils.TimeUtils;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.menus.sabotage.AbstractVoteScreen;
 import me.pugabyte.nexus.features.menus.sabotage.ResultsScreen;
 import me.pugabyte.nexus.features.menus.sabotage.VotingScreen;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.mechanics.Sabotage;
+import me.pugabyte.nexus.features.minigames.models.Loadout;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.arenas.SabotageArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
+import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageScoreboard;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
+import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
+import me.pugabyte.nexus.features.minigames.models.sabotage.Tasks;
+import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.SabotageTaskPartData;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.utils.BossBarBuilder;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Utils;
@@ -32,16 +43,25 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,11 +69,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @MatchDataFor(Sabotage.class)
 public class SabotageMatchData extends MatchData {
 	public SabotageMatchData(Match match) {
 		super(match);
+		match.setScoreboardTeams(new SabotageScoreboard(match));
 	}
 
 	private final Map<UUID, UUID> votes = new HashMap<>();
@@ -63,7 +85,7 @@ public class SabotageMatchData extends MatchData {
 	private AbstractVoteScreen votingScreen;
 	private LocalDateTime roundStarted;
 	private final Set<UUID> buttonUsers = new HashSet<>();
-	private final BossBar bossbar = new BossBarBuilder().color(ColorType.GREEN).title("&aTask Completion").build();
+	private final BossBar bossbar = new BossBarBuilder().color(ColorType.GREEN).title("&aTask Completion").overlay(BossBar.Overlay.NOTCHED_12).progress(0).build();
 	private int endMeetingTask = -1;
 	private final PublicChannel gameChannel = PublicChannel.builder()
 			.name("Sabotage")
@@ -81,6 +103,23 @@ public class SabotageMatchData extends MatchData {
 			.permission("")
 			.build();
 	private final Map<UUID, LocalDateTime> killCooldowns = new HashMap<>();
+	private Task sabotage;
+	private int sabotageTaskId = -1;
+	private LocalDateTime sabotageStarted;
+	private final Map<UUID, Set<Task>> tasks = new HashMap<>();
+	private final Map<UUID, Body> bodies = new HashMap<>(); // this is a map of Armor Stand UUIDs to their report locations
+	private final Set<Tasks> commonTasks = randomTasks(Tasks.TaskType.COMMON);
+	private final Map<UUID, Location> venters = new HashMap<>();
+	private final Map<UUID, Location> lightMap = new HashMap<>();
+
+	private Set<Tasks> randomTasks(Tasks.TaskType type) {
+		List<Tasks> legalTasks = Tasks.getByType(type).stream().filter(tasks -> getArena().getTasks().contains(tasks)).collect(Collectors.toList());
+		Collections.shuffle(legalTasks);
+		int maxTasks = getArena().maxTasksOf(type);
+		while (legalTasks.size() > maxTasks)
+			legalTasks.remove(0);
+		return new HashSet<>(legalTasks);
+	}
 
 	public SabotageArena getArena() {
 		return (SabotageArena) super.getArena();
@@ -172,24 +211,91 @@ public class SabotageMatchData extends MatchData {
 		return meetingTaskID != -1;
 	}
 
+	@Getter
+	@RequiredArgsConstructor
+	@EqualsAndHashCode
+	public static class Body {
+		private final SabotageColor playerColor;
+		private final BoundingBox reportBoundingBox;
+	}
+
+	public void spawnBody(Minigamer minigamer) {
+		Location location = minigamer.getPlayerLocation();
+		while (MaterialTag.ALL_AIR.isTagged(location.getBlock().getRelative(0, -1, 0)) && location.getY() > location.getWorld().getMinHeight())
+			location.setY(location.getY() - 1);
+		location.setY(Math.floor(location.getY()));
+		location.add(0, -1.4, 0);
+		ArmorStand armorStand = minigamer.getMatch().spawn(location, ArmorStand.class);
+		armorStand.setInvulnerable(true);
+		armorStand.setInvisible(true);
+		armorStand.setGravity(false);
+		armorStand.getEquipment().setHelmet(getColor(minigamer).getHead());
+		bodies.put(armorStand.getUniqueId(), new Body(getColor(minigamer), BoundingBox.of(location, 5, 8, 5)));
+	}
+
+	private void clearBodies() {
+		new HashMap<>(bodies).forEach((uuid, $) -> {
+			Entity armorStand = Bukkit.getEntity(uuid);
+			if (armorStand != null) //failsafe
+				armorStand.remove();
+			bodies.remove(uuid);
+		});
+	}
+
+	public void exitVent(Minigamer minigamer) {
+		Player player = minigamer.getPlayer();
+		getVenters().remove(player.getUniqueId());
+		player.removePotionEffect(PotionEffectType.INVISIBILITY);
+		match.<Sabotage>getMechanic().onLoadout(new MinigamerLoadoutEvent(minigamer, new Loadout()));
+	}
+
+	public double getProgress() {
+		double progress = 0;
+		double total = 0;
+		for (Map.Entry<UUID, Set<Task>> entry : tasks.entrySet()) {
+			UUID uuid = entry.getKey();
+			Set<Task> taskSet = entry.getValue();
+			Minigamer minigamer;
+			try {
+				minigamer = PlayerManager.get(uuid);
+			} catch (PlayerNotOnlineException e) {continue;}
+			if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR) continue;
+			for (Task task : taskSet) {
+				if (task.getTask().getTaskType() == Tasks.TaskType.SABOTAGE) continue;
+				progress += task.getCompleted();
+				total += task.getTaskSize();
+			}
+		}
+		return progress / total;
+	}
+
 	public void startMeeting(Minigamer origin) {
+		startMeeting(origin, null);
+	}
+
+	public void startMeeting(Minigamer origin, SabotageColor bodyReported) {
 		meetingStarted = LocalDateTime.now();
-		votingScreen = new VotingScreen(origin);
+		votingScreen = new VotingScreen(origin, bodyReported);
+		clearBodies();
+		bossbar.progress((float) getProgress());
 		meetingTaskID = match.getTasks().repeat(0, 2, () -> match.getMinigamers().forEach(minigamer -> {
 			InventoryView openInv = minigamer.getPlayer().getOpenInventory();
-			if (LocationUtils.blockLocationsEqual(minigamer.getPlayer().getLocation(), getArena().getMeetingLocation())) {
+			if (LocationUtils.blockLocationsEqual(minigamer.getPlayer().getLocation(), getArena().getRespawnLocation())) {
 				if (openInv.getType() == InventoryType.CRAFTING) return;
 				if (openInv.getTitle().equals(votingScreen.getInventory().getTitle())) return;
 			} else
-				minigamer.teleport(getArena().getMeetingLocation());
+				minigamer.teleport(getArena().getRespawnLocation());
 			openInv.close();
 			votingScreen.open(minigamer);
 		}));
 
 		match.getMinigamers().forEach(minigamer -> {
+			if (venters.containsKey(minigamer.getUniqueId()))
+				exitVent(minigamer);
 			PlayerUtils.hidePlayers(minigamer, match.getMinigamers());
-			minigamer.teleport(getArena().getMeetingLocation());
+			minigamer.teleport(getArena().getRespawnLocation());
 			votingScreen.open(minigamer);
+			minigamer.getPlayer().getInventory().clear();
 			PlayerUtils.giveItem(minigamer, Sabotage.VOTING_ITEM.get());
 		});
 		endMeetingTask = match.getTasks().wait(TimeUtils.Time.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
@@ -252,6 +358,44 @@ public class SabotageMatchData extends MatchData {
 			} else if (ejected != null)
 				match.getMechanic().onDeath(new MinigamerDeathEvent(ejected));
 		});
+	}
+
+	public void sabotage(Tasks sabotage) {
+		this.sabotage = new Task(sabotage);
+		sabotageStarted = LocalDateTime.now();
+		sabotageTaskId = match.getTasks().wait(TimeUtils.Time.SECOND.x(sabotage.getParts()[0].<SabotageTaskPartData>createTaskPartData().getDuration()), () -> {
+			SabotageTeam.IMPOSTOR.players(match).forEach(Minigamer::scored);
+			match.end();
+		});
+	}
+
+	public void endSabotage() {
+		this.sabotage = null;
+		match.getTasks().cancel(sabotageTaskId);
+		sabotageTaskId = -1;
+		sabotageStarted = null;
+	}
+
+	public Set<Task> getTasks(HasUniqueId player) {
+		tasks.computeIfAbsent(player.getUniqueId(), $ -> {
+			Set<Tasks> ptasks = new HashSet<>(commonTasks);
+			ptasks.addAll(randomTasks(Tasks.TaskType.LONG));
+			ptasks.addAll(randomTasks(Tasks.TaskType.SHORT));
+			return ptasks.stream().map(Task::new).collect(Collectors.toCollection(LinkedHashSet::new));
+		});
+		Set<Task> tasks = new LinkedHashSet<>(this.tasks.get(player.getUniqueId()));
+		if (sabotage != null)
+			tasks.add(sabotage);
+		return tasks;
+	}
+
+	public int lightLevel() {
+		return (sabotage == null || sabotage.getTask() == Tasks.LIGHTS) ? 6 : 2;
+	}
+
+	public int killCooldown(HasUniqueId player) {
+		if (!killCooldowns.containsKey(player.getUniqueId())) return -1;
+		return (int) Math.max(0, 1 + Duration.between(LocalDateTime.now(), killCooldowns.get(player.getUniqueId()).plusSeconds(getArena().getKillCooldown())).getSeconds());
 	}
 
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);

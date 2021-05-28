@@ -15,8 +15,11 @@ import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -30,7 +33,8 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @RequiredArgsConstructor
 @Getter
 public class VotingScreen extends AbstractVoteScreen {
-	private final Minigamer reporter;
+	private final @NotNull Minigamer reporter;
+	private final @Nullable SabotageColor body;
 	private final SmartInventory inventory = SmartInventory.builder()
 			.provider(this)
 			.title(colorize("&cWho Is The Impostor?"))
@@ -47,7 +51,6 @@ public class VotingScreen extends AbstractVoteScreen {
 		taskId.set(match.getTasks().repeat(0, 2, () -> {
 			if (!matchData.isMeetingActive())
 				match.getTasks().cancel(taskId.get());
-
 
 			if (matchData.waitingToVote()) {
 				setClock(inventoryContents, "Voting starts", matchData.votingStartsIn());
@@ -86,7 +89,10 @@ public class VotingScreen extends AbstractVoteScreen {
 		components.add(SabotageTeam.render(voter, target).asComponent());
 		components.add(new JsonBuilder(target.isAlive() ? "&fAlive" : "&cDead"));
 		if (target.getUniqueId().equals(reporter.getUniqueId()))
-			components.add(new JsonBuilder("&eReporter"));
+			if (body == null)
+				components.add(new JsonBuilder("&eReporter"));
+			else
+				components.add(new JsonBuilder("Reporting ", NamedTextColor.YELLOW).next(body).next("'s body"));
 		if (matchData.hasVoted(target))
 			components.add(new JsonBuilder("&cVoted"));
 		return ClickableItem.from(builder.componentLore(components).build(), $ -> matchData.vote(voter, target));

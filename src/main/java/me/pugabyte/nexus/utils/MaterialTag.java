@@ -6,6 +6,7 @@ import me.pugabyte.nexus.Nexus;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -445,6 +446,10 @@ public class MaterialTag implements Tag<Material> {
 
 	public boolean isTagged(@NotNull ItemStack item) {
 		return isTagged(item.getType());
+	}
+
+	public boolean isTagged(@NotNull Block block) {
+		return isTagged(block.getType());
 	}
 
 	@Override

@@ -413,10 +413,6 @@ public class PlayerUtils {
 		return new HidePlayer(player);
 	}
 
-	public static ShowPlayer showPlayer(HasPlayer player) {
-		return new ShowPlayer(player);
-	}
-
 	public static void hidePlayers(HasPlayer hideFrom, HasPlayer... hide) {
 		hidePlayers(hideFrom, Arrays.asList(hide));
 	}
@@ -426,13 +422,17 @@ public class PlayerUtils {
 		hide.stream().map(HasPlayer::getPlayer).filter(player -> !player.getUniqueId().equals(hideFromUUID)).forEach(hasPlayer -> hidePlayer(hasPlayer).from(hideFrom));
 	}
 
-	public static void showPlayers(HasPlayer hideFrom, HasPlayer... hide) {
-		hidePlayers(hideFrom, Arrays.asList(hide));
+	public static ShowPlayer showPlayer(HasPlayer player) {
+		return new ShowPlayer(player);
 	}
 
-	public static void showPlayers(HasPlayer hideFrom, Collection<? extends HasPlayer> hide) {
-		UUID hideFromUUID = hideFrom.getPlayer().getUniqueId();
-		hide.stream().map(HasPlayer::getPlayer).filter(player -> !player.getUniqueId().equals(hideFromUUID)).forEach(hasPlayer -> hidePlayer(hasPlayer).from(hideFrom));
+	public static void showPlayers(HasPlayer showTo, HasPlayer... show) {
+		showPlayers(showTo, Arrays.asList(show));
+	}
+
+	public static void showPlayers(HasPlayer showTo, Collection<? extends HasPlayer> show) {
+		UUID showToUUID = showTo.getPlayer().getUniqueId();
+		show.stream().map(HasPlayer::getPlayer).filter(player -> !player.getUniqueId().equals(showToUUID)).forEach(hasPlayer -> showPlayer(hasPlayer).to(showTo));
 	}
 
 	public static class HidePlayer {

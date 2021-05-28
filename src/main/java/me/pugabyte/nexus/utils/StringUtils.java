@@ -305,6 +305,10 @@ public class StringUtils extends eden.utils.StringUtils {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ();
 	}
 
+	public static String getFlooredCoordinateString(Location loc) {
+		return (int) Math.floor(loc.getX()) + " " + (int) Math.floor(loc.getY()) + " " + (int) Math.floor(loc.getZ());
+	}
+
 	/**
 	 * Sends a message to the player with the input message as a teleportation link.
 	 * @param message message to display

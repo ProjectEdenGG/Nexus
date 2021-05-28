@@ -21,6 +21,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
 import me.pugabyte.nexus.framework.interfaces.HasDescription;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -92,7 +93,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	 * @return whether or not to allow the perk
 	 */
 	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
-		return true;
+		return !PlayerParticlePerk.class.isAssignableFrom(perk);
 	}
 
 	/**
@@ -235,8 +236,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public void tellMapAndMechanic(Minigamer minigamer) {
 		Arena arena = minigamer.getMatch().getArena();
 		String mechanicName = arena.getMechanic().getName();
+		String description = arena.getMechanic().getDescription();
 		String arenaName = arena.getDisplayName();
 		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equals(arenaName) ? "" : " &3on &e" + arenaName));
+		if (!description.isEmpty() && !description.toLowerCase().startsWith("todo"))
+			minigamer.tell("Objective: &e" + description);
 		MinigameModifier modifier = Minigames.getModifier();
 		if (modifier.getClass() != NoModifier.class) {
 			TitleUtils.sendTitle(minigamer.getPlayer(), "&3Modifier: &e" + modifier.getName(), "&6" + modifier.getDescription(), 5, Time.SECOND.x(5), 10);

@@ -107,9 +107,8 @@ public interface MinigameScoreboard {
 					if (removePlayer || !minigamer.getTeam().equals(team))
 						scoreboardTeam.removePlayer(minigamer.getPlayer());
 				});
-				if (removePlayer) return;
-
-				getScoreboardTeam(minigamer.getTeam()).addPlayer(minigamer.getPlayer());
+				if (minigamer.getTeam() != null) return;
+					getScoreboardTeam(minigamer.getTeam()).addPlayer(minigamer.getPlayer());
 			});
 
 			scoreboardTeams.values().forEach(scoreboardTeam -> Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe));
