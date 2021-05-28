@@ -49,9 +49,6 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 		super(event);
 
 		if (isPlayerCommandEvent()) {
-			if (world().getEnvironment() != Environment.THE_END)
-				error("You must be in the end to run this command");
-
 			worldEditUtils = new WorldEditUtils(player());
 			worldGuardUtils = new WorldGuardUtils(player());
 		}
@@ -59,7 +56,12 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	@Path
 	void explain() {
-
+		send();
+		send("&cThe staff team has decided to regulate enderman farms, in order to restore some balance to the game");
+		send();
+		send("&3You can still build &eyour own &3enderman farm, but they &emust be enabled by staff&3");
+		send();
+		send("&3Players can add up to &e5 players &3to their enderman farm, and we ask that they &eonly give access to trusted friends&3, not new players or strangers looking for easy exp");
 	}
 
 	private String getRegionId() {
@@ -87,6 +89,9 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	@Path("create [player]")
 	@Permission("group.moderator")
 	void create(OfflinePlayer player) {
+		if (world().getEnvironment() != Environment.THE_END)
+			error("You must be in the end to run this command");
+
 		final Region selection = worldEditUtils.getPlayerSelection(player());
 		if (selection == null)
 			error("You have not selected the farm");
@@ -102,6 +107,9 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("add <player> [owner]")
 	void add(OfflinePlayer player, @Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+		if (world().getEnvironment() != Environment.THE_END)
+			error("You must be in the end to run this command");
+
 		final UUID uuid = player.getUniqueId();
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());
 		final DefaultDomain members = region.getMembers();
@@ -122,6 +130,9 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("remove <player> [owner]")
 	void remove(OfflinePlayer player, @Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+		if (world().getEnvironment() != Environment.THE_END)
+			error("You must be in the end to run this command");
+
 		final UUID uuid = player.getUniqueId();
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());
 		final DefaultDomain members = region.getMembers();
