@@ -84,7 +84,7 @@ public class HomeOwner implements PlayerOwnedObject {
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
 		Trust trust = new TrustService().get(getOfflinePlayer());
-		return trust.trusts(Type.HOMES, player.getUniqueId());
+		return trust.trusts(Type.HOMES, player);
 	}
 
 	public void add(Home home) {

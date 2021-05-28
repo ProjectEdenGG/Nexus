@@ -59,6 +59,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static eden.utils.StringUtils.isUuid;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.Utils.getMin;
@@ -206,7 +207,7 @@ public class PlayerUtils {
 		String original = partialName;
 		partialName = partialName.toLowerCase().trim();
 
-		if (partialName.length() == 36)
+		if (isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
 		for (Player player : Bukkit.getOnlinePlayers())

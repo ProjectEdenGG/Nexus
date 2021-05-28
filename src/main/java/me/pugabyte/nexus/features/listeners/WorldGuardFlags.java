@@ -99,14 +99,12 @@ public class WorldGuardFlags implements Listener {
 			entityTypeSet.forEach(entityType -> {
 				try {
 					entityTypeList.add(EntityType.valueOf(entityType.getName().toUpperCase().replace("MINECRAFT:", "")));
-				} catch (Exception ig) {
-				}
+				} catch (Exception ignore) {}
 			});
 			if (entityTypeList.isEmpty()) return;
 			if (!entityTypeList.contains(event.getEntityType()))
 				event.setCancelled(true);
-		} catch (Exception ig) {
-		}
+		} catch (Exception ignore) {}
 	}
 
 	@EventHandler
