@@ -19,6 +19,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.contributor.Contributor;
+import me.pugabyte.nexus.models.contributor.ContributorService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -38,10 +41,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static eden.utils.StringUtils.prettyMoney;
+
 @Aliases({"donate", "buy"})
 public class StoreCommand extends CustomCommand {
 	public static final String URL = "https://store.projecteden.gg";
 	private static final String PLUS = "&3[+] &e";
+
+	private final ContributorService service = new ContributorService();
 
 	public StoreCommand(CommandEvent event) {
 		super(event);
@@ -64,6 +71,35 @@ public class StoreCommand extends CustomCommand {
 	@Path("packages [player]")
 	void packages(@Arg("self") OfflinePlayer player) {
 		new StoreProvider(player).open(player());
+	}
+
+	@Path("credit [player]")
+	void credit(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
+		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
+	}
+
+	@Permission("group.admin")
+	@Path("credit set <player> <amount>")
+	void set(Contributor contributor, double amount) {
+		contributor.setCredit(amount);
+		service.save(contributor);
+		send(PREFIX + "Set &e" + Nickname.of(contributor) + "'s &3balance to &e" + contributor.getCreditFormatted());
+	}
+
+	@Permission("group.admin")
+	@Path("credit give <player> <amount>")
+	void give(Contributor contributor, double amount) {
+		contributor.giveCredit(amount);
+		service.save(contributor);
+		send(PREFIX + "Added &e" + prettyMoney(amount) + " &3to &e" + Nickname.of(contributor) + "'s &3balance. New balance: &e" + contributor.getCreditFormatted());
+	}
+
+	@Permission("group.admin")
+	@Path("credit take <player> <amount>")
+	void take(Contributor contributor, double amount) {
+		contributor.takeCredit(amount);
+		service.save(contributor);
+		send(PREFIX + "Removed &e" + prettyMoney(amount) + " &3from &e" + Nickname.of(contributor) + "'s &3balance. New balance: &e" + contributor.getCreditFormatted());
 	}
 
 	@AllArgsConstructor

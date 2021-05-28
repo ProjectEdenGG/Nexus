@@ -191,7 +191,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 	private ItemStack getItem(Player player, String arg) throws InvalidInputException {
 		ItemStack item = new ItemStack(Material.AIR);
 		PlayerInventory inv = player.getInventory();
-		switch (arg) {
+		switch (arg.toLowerCase()) {
 			case "offhand":
 				if (!inv.getItemInOffHand().getType().equals(Material.AIR))
 					item = inv.getItemInOffHand();

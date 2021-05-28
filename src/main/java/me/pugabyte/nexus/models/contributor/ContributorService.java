@@ -40,7 +40,7 @@ public class ContributorService extends MongoService<Contributor> {
 	}
 
 	public List<Contributor> getTop(int count) {
-		return database.createQuery(Contributor.class).find().toList().stream()
+		return getAll().stream()
 				.sorted(Comparator.comparing(Contributor::getSum).reversed())
 				.collect(Collectors.toList())
 				.subList(0, count);
