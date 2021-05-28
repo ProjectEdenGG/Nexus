@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEve
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -19,6 +20,7 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -26,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
@@ -36,6 +39,8 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +61,33 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	@EventHandler
-	public void onBlockSpreadEvent(BlockSpreadEvent event) {
+	public void onBlockSpread(BlockSpreadEvent event) {
 		if (event.getNewState().getType() == Material.BAMBOO)
 			if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), Flags.CROP_GROWTH) == State.DENY)
 				event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBonemealUse(PlayerInteractEvent event) {
+		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
+		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) return;
+
+		ItemStack item = event.getItem();
+		if (ItemUtils.isNullOrAir(item)) return;
+		if (!item.getType().equals(Material.BONE_MEAL)) return;
+
+		Block clicked = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(clicked)) return;
+		if (!(clicked instanceof Ageable ageable)) return;
+
+		int age = ageable.getAge();
+		if (age == ageable.getMaximumAge()) return;
+
+		if (!event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (WorldGuardFlagUtils.query(clicked.getLocation(), Flags.CROP_GROWTH) != State.DENY) return;
+
+		ageable.setAge(++age);
+		clicked.setBlockData(ageable);
 	}
 
 	@EventHandler
