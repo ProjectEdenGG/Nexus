@@ -51,12 +51,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -448,7 +448,7 @@ public class Sabotage extends TeamMechanic {
 				}
 			} else if (SABOTAGE_MENU.get().isSimilar(item)) {
 				new ImpostorMenu().open(minigamer);
-			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("&eReport") && item.getItemMeta().hasLore()) {
+			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(StringUtils.colorize("&eReport")) && item.getItemMeta().hasLore()) {
 				String lore = AdventureUtils.asPlainText(item.getItemMeta().lore().get(0));
 				String color = lore.split(" ")[1].split("'")[0];
 				matchData.startMeeting(minigamer, SabotageColor.valueOf(color.replace(' ', '_').toUpperCase()));
@@ -457,12 +457,12 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@EventHandler
-	public void onButtonInteract(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player player)) return;
+	public void onButtonInteract(PlayerInteractAtEntityEvent event) {
+		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.isAlive()) return;
-		if (!(event.getEntity() instanceof ArmorStand armorStand)) return;
+		if (!(event.getRightClicked() instanceof ArmorStand armorStand)) return;
 		ItemStack helmet = armorStand.getEquipment().getHelmet();
 		if (ItemUtils.isNullOrAir(helmet) || helmet.getType() != Material.RED_CONCRETE) return;
 

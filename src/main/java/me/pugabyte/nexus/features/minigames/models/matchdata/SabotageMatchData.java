@@ -294,9 +294,9 @@ public class SabotageMatchData extends MatchData {
 				exitVent(minigamer);
 			PlayerUtils.hidePlayers(minigamer, match.getMinigamers());
 			minigamer.teleport(getArena().getRespawnLocation());
-			votingScreen.open(minigamer);
 			minigamer.getPlayer().getInventory().clear();
 			PlayerUtils.giveItem(minigamer, Sabotage.VOTING_ITEM.get());
+			match.getTasks().wait(1, () -> votingScreen.open(minigamer));
 		});
 		endMeetingTask = match.getTasks().wait(TimeUtils.Time.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
 	}

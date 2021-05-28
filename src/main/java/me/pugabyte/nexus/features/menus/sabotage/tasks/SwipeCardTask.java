@@ -61,7 +61,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 			}
 			Duration duration = Duration.between(time.get(), LocalDateTime.now());
 			double sec = duration.getSeconds() + (duration.getNano() / 1000000000d);
-			if (!(sec >= .1d && sec <= 1.2d)) {
+			if (!(sec >= .9d && sec <= 1.2d)) {
 				reset.run();
 				String fmt = sec < .4d ? "fast" : "slow";
 				inventoryContents.set(destination, inventoryContents.get(destination).get().clone(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Too "+fmt+", try again").build()));
