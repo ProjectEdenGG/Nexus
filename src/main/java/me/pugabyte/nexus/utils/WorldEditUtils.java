@@ -172,7 +172,7 @@ public class WorldEditUtils {
 			BlockVector3[] getVectors() {
 				List<BlockVector3> vectors = new ArrayList<>();
 				Stream.of(HORIZONTAL, VERTICAL).map(value -> Arrays.asList(value.getVectors())).forEach(vectors::addAll);
-				return vectors.toArray(new BlockVector3[0]);
+				return vectors.toArray(BlockVector3[]::new);
 			}
 		};
 

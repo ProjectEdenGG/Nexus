@@ -71,7 +71,7 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 			addBackItem(contents, e -> type.previewDrops(null).open(player));
 		}
 
-		page.setItems(items.toArray(new ClickableItem[0]));
+		page.setItems(items.toArray(ClickableItem[]::new));
 		page.setItemsPerPage(28);
 		SlotIterator.Impl iterator = new SlotIterator.Impl(contents, type.previewDrops(loot), SlotIterator.Type.HORIZONTAL, 1, 1);
 		for (int c = 0; c < 2; c++)

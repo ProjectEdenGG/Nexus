@@ -193,7 +193,7 @@ public class RadioUtils {
 	public static Playlist shufflePlaylist(Playlist playlist) {
 		List<Song> songList = playlist.getSongList();
 		Collections.shuffle(songList);
-		return new Playlist(songList.toArray(new Song[0]));
+		return new Playlist(songList.toArray(Song[]::new));
 	}
 
 	public static List<String> getPlaylistHover(Radio radio) {

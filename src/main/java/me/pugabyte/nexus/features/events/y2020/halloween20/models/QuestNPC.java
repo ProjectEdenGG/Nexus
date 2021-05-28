@@ -54,7 +54,7 @@ public enum QuestNPC {
 						ItemBuilder builder = new ItemBuilder(Material.ORANGE_SHULKER_BOX);
 						builder.name("&5Pumpkin Pouch");
 						for (Pumpkin pumpkin : Pumpkin.values())
-							builder.shulkerBox(pumpkin.getOriginal().getBlock().getDrops().toArray(new ItemStack[0]));
+							builder.shulkerBox(pumpkin.getOriginal().getBlock().getDrops().toArray(ItemStack[]::new));
 						PlayerUtils.giveItem(player, builder.build());
 						new BankerService().deposit(player, 5000, ShopGroup.SURVIVAL, TransactionCause.EVENT);
 						PlayerUtils.send(player, "&a$5,000 has been added to your account.");

@@ -59,7 +59,7 @@ public class OpenDeliveryMenuProvider extends MenuUtils implements InventoryProv
 
 		contents.set(0, 8, ClickableItem.empty(info));
 
-		ItemStack[] items = delivery.getItems().toArray(new ItemStack[0]);
+		ItemStack[] items = delivery.getItems().toArray(ItemStack[]::new);
 		int i = 0;
 		for (int row = 1; row <= 4; row++) {
 			for (int col = 0; col <= 8; col++) {

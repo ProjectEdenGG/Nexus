@@ -195,7 +195,7 @@ public abstract class Crate implements Listener {
 	}
 
 	public boolean canHoldItems(Player player) {
-		if (!PlayerUtils.hasRoomFor(player, loot.getItems().toArray(new ItemStack[0]))) {
+		if (!PlayerUtils.hasRoomFor(player, loot.getItems().toArray(ItemStack[]::new))) {
 			PlayerUtils.send(player, Crates.PREFIX + "You must clear room in your inventory before you can open crates");
 			reset();
 			return false;

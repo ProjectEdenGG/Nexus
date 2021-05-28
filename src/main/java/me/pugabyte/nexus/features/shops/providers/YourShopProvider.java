@@ -129,7 +129,7 @@ public class YourShopProvider extends _ShopProvider {
 			shop.getHolding().removeAll(items);
 			service.save(shop);
 
-			inv.setContents(items.toArray(new ItemStack[0]));
+			inv.setContents(items.toArray(ItemStack[]::new));
 			Nexus.registerTempListener(this);
 			player.openInventory(inv);
 		}

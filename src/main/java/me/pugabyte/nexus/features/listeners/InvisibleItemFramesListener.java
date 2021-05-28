@@ -26,7 +26,7 @@ public class InvisibleItemFramesListener implements Listener {
 		List<PotionEffectType> potionEffectTypes = new ArrayList<>();
 		event.getEntity().getEffects().forEach(e -> potionEffectTypes.add(e.getType()));
 		if (!potionEffectTypes.contains(PotionEffectType.INVISIBILITY)) return;
-		List<Entity> entities = Arrays.stream(event.getEntity().getNearbyEntities(2, 2, 2).toArray(new Entity[0])).filter(e -> e.getType() == EntityType.ITEM_FRAME).collect(Collectors.toList());
+		List<Entity> entities = Arrays.stream(event.getEntity().getNearbyEntities(2, 2, 2).toArray(Entity[]::new)).filter(e -> e.getType() == EntityType.ITEM_FRAME).collect(Collectors.toList());
 
 		// Cancel if in a region
 		if (!new WorldGuardUtils(event.getEntity().getWorld()).getRegionsAt(event.getEntity().getLocation()).isEmpty())

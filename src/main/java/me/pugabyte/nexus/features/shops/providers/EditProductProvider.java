@@ -205,7 +205,7 @@ public class EditProductProvider extends _ShopProvider {
 			for (ItemStack item : items)
 				itemsAdded += item.getAmount();
 
-			inv.setContents(items.toArray(new ItemStack[0]));
+			inv.setContents(items.toArray(ItemStack[]::new));
 			Nexus.registerTempListener(this);
 			player.openInventory(inv);
 		}

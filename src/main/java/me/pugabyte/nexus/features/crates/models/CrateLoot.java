@@ -80,7 +80,7 @@ public class CrateLoot implements ConfigurationSerializable {
 	public @NotNull Map<String, Object> serialize() {
 		return new LinkedHashMap<>() {{
 			put("title", title);
-			put("items", SerializationUtils.YML.serializeItems(items.toArray(getItems().toArray(new ItemStack[0]))));
+			put("items", SerializationUtils.YML.serializeItems(items.toArray(getItems().toArray(ItemStack[]::new))));
 			put("weight", weight);
 			put("active", active);
 			put("type", type.name());

@@ -119,7 +119,7 @@ public class CustomRecipes extends Feature implements Listener {
 			List<Material> slabs = new ArrayList<>();
 			for (int i = 0; i < 4; i++)
 				slabs.add(slab);
-			NexusRecipe.shapeless(new ItemStack(block, 2), "slabs", slabs.toArray(new Material[0])).type(RecipeType.SLABS).register();
+			NexusRecipe.shapeless(new ItemStack(block, 2), "slabs", slabs.toArray(Material[]::new)).type(RecipeType.SLABS).register();
 		}
 	}
 

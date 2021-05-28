@@ -178,7 +178,7 @@ public abstract class ICustomCommand {
 		return new ArrayList<>() {{
 			addAll(Arrays.asList(convertedParameters));
 			addAll(Arrays.asList(convertedSwitches));
-		}}.toArray(new Object[0]);
+		}}.toArray(Object[]::new);
 	}
 
 	private Object[] convertSwitches(Method method, CommandEvent event, boolean doValidation, List<Parameter> switches) {

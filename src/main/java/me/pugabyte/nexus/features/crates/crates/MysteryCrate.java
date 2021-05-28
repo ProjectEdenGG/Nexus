@@ -43,7 +43,7 @@ public class MysteryCrate extends Crate {
 		if (loot.getItems().size() > 9) {
 			Material material = RandomUtils.randomMaterial(MaterialTag.SHULKER_BOXES);
 			ItemStack shulker = new ItemBuilder(material).name(loot.getTitle())
-					.shulkerBox(loot.getItems().toArray(new ItemStack[0]))
+					.shulkerBox(loot.getItems().toArray(ItemStack[]::new))
 					.build();
 			PlayerUtils.giveItem(player, shulker);
 		} else super.giveItems();

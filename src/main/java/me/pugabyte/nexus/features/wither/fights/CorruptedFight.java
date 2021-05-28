@@ -193,7 +193,7 @@ public class CorruptedFight extends WitherFight {
 					ItemStack item = RandomUtils.randomElement(armor);
 					if (PlayerUtils.hasRoomFor(player, item)) {
 						armor.set(armor.indexOf(item), null);
-						player.getInventory().setArmorContents(armor.toArray(new ItemStack[0]));
+						player.getInventory().setArmorContents(armor.toArray(ItemStack[]::new));
 						player.getInventory().addItem(item);
 						player.sendTitle(new Title("", colorize("&8&kbbb &4&lArmor Piece Stripped &8&kbbb"), 10, 40, 10));
 					}

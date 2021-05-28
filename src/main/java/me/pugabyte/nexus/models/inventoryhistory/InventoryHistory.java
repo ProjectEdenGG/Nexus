@@ -107,7 +107,7 @@ public class InventoryHistory implements PlayerOwnedObject {
 
 			player.setLevel(level);
 			player.setExp(exp);
-			player.getInventory().setContents(contents.toArray(new ItemStack[0]));
+			player.getInventory().setContents(contents.toArray(ItemStack[]::new));
 			PlayerUtils.send(player, PREFIX + "Snapshot applied");
 			if (!applier.equals(player))
 				PlayerUtils.send(applier, PREFIX + "Snapshot applied to " + player.getName() + "'s inventory");

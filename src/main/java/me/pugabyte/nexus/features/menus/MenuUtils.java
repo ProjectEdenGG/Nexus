@@ -236,7 +236,7 @@ public abstract class MenuUtils {
 	protected void addPagination(InventoryContents contents, List<ClickableItem> items, int perPage, ClickableItem previous, ClickableItem next) {
 		Pagination page = contents.pagination();
 		page.setItemsPerPage(perPage);
-		page.setItems(items.toArray(new ClickableItem[0]));
+		page.setItems(items.toArray(ClickableItem[]::new));
 		if (page.getPage() > items.size() / perPage)
 			page.page(items.size() / perPage);
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
