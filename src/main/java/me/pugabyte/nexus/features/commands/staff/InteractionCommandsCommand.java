@@ -26,7 +26,7 @@ import org.bukkit.inventory.EquipmentSlot;
 @Aliases({"cmds", "cmdsign"})
 public class InteractionCommandsCommand extends CustomCommand implements Listener {
 	private final InteractionCommandConfigService service = new InteractionCommandConfigService();
-	private final InteractionCommandConfig config = service.get();
+	private final InteractionCommandConfig config = service.get0();
 	private Location location;
 	private InteractionCommand interactionCommand;
 
@@ -106,7 +106,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		if (event.getAction() != Action.PHYSICAL && MaterialTag.PRESSURE_PLATES.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getAction() == Action.PHYSICAL && PlayerUtils.isVanished(event.getPlayer())) return;
 
-		InteractionCommand interactionCommand = new InteractionCommandConfigService().get().get(event.getClickedBlock().getLocation());
+		InteractionCommand interactionCommand = new InteractionCommandConfigService().get0().get(event.getClickedBlock().getLocation());
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
 			return;
 
@@ -115,7 +115,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		if (new InteractionCommandConfigService().get().delete(event.getBlock().getLocation()))
+		if (new InteractionCommandConfigService().get0().delete(event.getBlock().getLocation()))
 			send(event.getPlayer(), PREFIX + "Cleared");
 	}
 }

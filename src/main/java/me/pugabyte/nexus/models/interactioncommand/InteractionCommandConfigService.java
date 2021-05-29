@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.interactioncommand;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -19,10 +18,6 @@ public class InteractionCommandConfigService extends MongoService<InteractionCom
 
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
-	}
-
-	public InteractionCommandConfig get() {
-		return get(Nexus.getUUID0());
 	}
 
 }

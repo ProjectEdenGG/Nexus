@@ -181,12 +181,12 @@ public class Minigames extends Feature {
 	}
 
 	public static @NotNull MinigameModifier getModifier() {
-		return new MinigamesSettingService().get().getModifier();
+		return new MinigamesSettingService().get0().getModifier();
 	}
 
 	public static void setModifier(@NotNull MinigameModifier modifier) {
 		MinigamesSettingService service = new MinigamesSettingService();
-		MinigamesSetting setting = service.get();
+		MinigamesSetting setting = service.get0();
 		setting.setModifier(modifier);
 		service.save(setting);
 	}

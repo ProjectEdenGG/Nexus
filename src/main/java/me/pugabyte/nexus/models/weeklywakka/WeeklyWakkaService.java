@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.weeklywakka;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -22,7 +21,7 @@ public class WeeklyWakkaService extends MongoService<WeeklyWakka> {
 	}
 
 	public WeeklyWakka get() {
-		return super.get(Nexus.getUUID0());
+		return super.get0();
 	}
 
 }

@@ -43,7 +43,7 @@ import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 @Description("A list of client-side modifications that have been reviewed by the staff team")
 public class ModReviewCommand extends CustomCommand implements Listener {
 	private final ModReviewService service = new ModReviewService();
-	private final ModReview modReview = service.get();
+	private final ModReview modReview = service.get0();
 	private final List<Mod> mods = modReview.getMods();
 	private final List<ModReviewRequest> requests = modReview.getRequests();
 
@@ -190,7 +190,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		if (Rank.of(event.getPlayer()) != Rank.ADMIN)
 			return;
 
-		ModReview modReview = new ModReviewService().get();
+		ModReview modReview = new ModReviewService().get0();
 		if (modReview.getRequests().isEmpty())
 			return;
 

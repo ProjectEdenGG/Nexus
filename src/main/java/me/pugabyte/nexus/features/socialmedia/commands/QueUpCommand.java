@@ -24,7 +24,7 @@ public class QueUpCommand extends CustomCommand {
 
 	private static boolean enabled = true;
 	private static final QueUpService service = new QueUpService();
-	private static final QueUp queup = service.get();
+	private static final QueUp queup = service.get0();
 
 	public QueUpCommand(@NonNull CommandEvent event) {
 		super(event);

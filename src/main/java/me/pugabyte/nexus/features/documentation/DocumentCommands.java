@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class DocumentCommands {
 	private final CommandsConfigService service = new CommandsConfigService();
-	private final CommandsConfig commandsConfig = service.get();
+	private final CommandsConfig commandsConfig = service.get0();
 
 	public DocumentCommands() {
 		Tasks.waitAsync(20, () -> {

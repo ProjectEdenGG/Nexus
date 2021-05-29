@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.radio;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
@@ -38,7 +37,7 @@ import static me.pugabyte.nexus.features.radio.RadioUtils.removePlayer;
 
 public class RadioCommand extends CustomCommand {
 	RadioConfigService configService = new RadioConfigService();
-	RadioConfig config = configService.get(Nexus.getUUID0());
+	RadioConfig config = configService.get0();
 	RadioUserService userService = new RadioUserService();
 	RadioUser user;
 

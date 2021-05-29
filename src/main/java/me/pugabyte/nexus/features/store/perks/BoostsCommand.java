@@ -54,7 +54,7 @@ import java.util.function.BiFunction;
 @NoArgsConstructor
 public class BoostsCommand extends CustomCommand implements Listener {
 	private final BoostConfigService configService = new BoostConfigService();
-	private final BoostConfig config = configService.get();
+	private final BoostConfig config = configService.get0();
 	private final BoosterService service = new BoosterService();
 	private Booster booster;
 
@@ -184,7 +184,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			final BoostConfigService configService = new BoostConfigService();
-			final BoostConfig config = configService.get();
+			final BoostConfig config = configService.get0();
 			final BoosterService service = new BoosterService();
 			final Booster booster = service.get(player);
 

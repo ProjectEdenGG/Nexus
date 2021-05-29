@@ -75,7 +75,7 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		private BoostConfig config() {
-			return new BoostConfigService().get();
+			return new BoostConfigService().get0();
 		}
 
 		@Override

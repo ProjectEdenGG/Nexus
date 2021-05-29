@@ -57,7 +57,7 @@ public class Changelog implements PlayerOwnedObject {
 		if (!from.getMinecraftVersion().equals(to.getMinecraftVersion()))
 			message += "**Minecraft version updated:** " + to.getMinecraftVersion() + nl;
 		if (!from.getPaperVersion().equals(to.getPaperVersion()))
-			message += "**Paper version updated:** #" + to.getPaperVersion() + nl + nl;
+			message += "**Parchment version updated:** " + to.getPaperVersion() + nl + nl;
 
 		List<String> pluginsAdded = new ArrayList<>();
 		List<String> pluginsRemoved = new ArrayList<>();
@@ -116,7 +116,7 @@ public class Changelog implements PlayerOwnedObject {
 			this.id = id;
 			this.timestamp = LocalDateTime.now().withNano(0);
 			this.minecraftVersion = Bukkit.getMinecraftVersion().split("-")[0];
-			this.paperVersion = Bukkit.getVersion().split(" ")[0].replace("git-Paper-", "");
+			this.paperVersion = Bukkit.getVersion().split(" ")[0].split("-", 3)[2].replace("\"", "");
 			for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
 				pluginVersions.put(plugin.getName(), plugin.getDescription().getVersion());
 		}

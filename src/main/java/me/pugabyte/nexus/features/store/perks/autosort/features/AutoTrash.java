@@ -43,7 +43,7 @@ public class AutoTrash implements Listener {
 		event.setCancelled(true);
 		if (user.getAutoTrashBehavior() == AutoTrashBehavior.TRASH) {
 			DumpsterService dumpsterService = new DumpsterService();
-			Dumpster dumpster = dumpsterService.get();
+			Dumpster dumpster = dumpsterService.get0();
 
 			dumpster.add(item);
 			dumpsterService.save(dumpster);

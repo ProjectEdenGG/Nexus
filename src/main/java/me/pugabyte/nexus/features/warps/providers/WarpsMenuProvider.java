@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.warps.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.shops.providers.MainMenuProvider;
 import me.pugabyte.nexus.features.warps.WarpMenu;
@@ -56,7 +55,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				contents.set(1, 5, ClickableItem.from(creative, e -> warp(player, "creative")));
 				contents.set(1, 7, ClickableItem.from(skyblock, e -> command(player, "ob")));
 				contents.set(2, 4, ClickableItem.from(other, e -> WarpsMenu.open(player, WarpMenu.OTHER)));
-				BuildContest buildContest = new BuildContestService().get(Nexus.getUUID0());
+				BuildContest buildContest = new BuildContestService().get0();
 				if (buildContest.isActive() && buildContest.getItemStack() != null)
 					contents.set(4, 4, ClickableItem.from(buildContest.getItemStack(), e -> warp(player, "buildcontest")));
 			}

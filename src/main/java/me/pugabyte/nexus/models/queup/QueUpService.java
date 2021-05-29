@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.queup;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -19,10 +18,6 @@ public class QueUpService extends MongoService<QueUp> {
 
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
-	}
-
-	public QueUp get() {
-		return get(Nexus.getUUID0());
 	}
 
 }

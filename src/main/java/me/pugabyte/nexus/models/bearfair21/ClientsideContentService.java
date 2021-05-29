@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.bearfair21;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 
@@ -23,11 +22,7 @@ public class ClientsideContentService extends MongoService<ClientsideContent> {
 		return saveQueue;
 	}
 
-	public ClientsideContent get() {
-		return get(Nexus.getUUID0());
-	}
-
 	public List<Content> getList() {
-		return get().getContentList();
+		return get0().getContentList();
 	}
 }

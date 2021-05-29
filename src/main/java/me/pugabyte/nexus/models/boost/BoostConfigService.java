@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.boost;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -19,10 +18,6 @@ public class BoostConfigService extends MongoService<BoostConfig> {
 
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
-	}
-
-	public BoostConfig get() {
-		return get(Nexus.getUUID0());
 	}
 
 }

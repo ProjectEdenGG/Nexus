@@ -46,7 +46,7 @@ public class BoostConfig implements PlayerOwnedObject {
 	private Map<Boostable, String> boosts = new ConcurrentHashMap<>();
 
 	public static BoostConfig get() {
-		return new BoostConfigService().get();
+		return new BoostConfigService().get0();
 	}
 
 	public static double multiplierOf(Boostable boostable) {

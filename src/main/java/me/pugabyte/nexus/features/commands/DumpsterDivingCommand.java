@@ -32,7 +32,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @Permission("group.staff")
 public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	private final DumpsterService service = new DumpsterService();
-	private final Dumpster dumpster = service.get();
+	private final Dumpster dumpster = service.get0();
 
 	public DumpsterDivingCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -66,11 +66,11 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	@NoArgsConstructor
 	private static class DumpsterProvider extends MenuUtils implements InventoryProvider {
 		private final DumpsterService service = new DumpsterService();
-		private final Dumpster dumpster = service.get();
+		private final Dumpster dumpster = service.get0();
 		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
 
 		public void open(Player player) {
-			if (new DumpsterService().get().getItems().size() == 0)
+			if (new DumpsterService().get0().getItems().size() == 0)
 				throw new InvalidInputException("Dumpster is empty");
 
 			SmartInventory.builder()

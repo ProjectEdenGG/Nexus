@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 
@@ -51,13 +50,13 @@ public class RadioUser implements PlayerOwnedObject {
 
 	public Radio getServerRadio() {
 		RadioConfigService configService = new RadioConfigService();
-		RadioConfig config = configService.get(Nexus.getUUID0());
+		RadioConfig config = configService.get0();
 		return config.getById(serverRadioId);
 	}
 
 	public Radio getLastServerRadio() {
 		RadioConfigService configService = new RadioConfigService();
-		RadioConfig config = configService.get(Nexus.getUUID0());
+		RadioConfig config = configService.get0();
 		return config.getById(lastServerRadioId);
 	}
 }

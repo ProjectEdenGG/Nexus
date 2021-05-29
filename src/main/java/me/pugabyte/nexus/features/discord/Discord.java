@@ -228,7 +228,7 @@ public class Discord extends Feature {
 				.collect(Collectors.joining(", " + System.lineSeparator()));
 
 		QueUpService queupService = new QueUpService();
-		QueUp queup = queupService.get();
+		QueUp queup = queupService.get0();
 		if (!Strings.isNullOrEmpty(queup.getLastSong()))
 			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
 

@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.minigamessetting;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -21,7 +20,4 @@ public class MinigamesSettingService extends MongoService<MinigamesSetting> {
 		return saveQueue;
 	}
 
-	public MinigamesSetting get() {
-		return get(Nexus.getUUID0());
-	}
 }

@@ -61,7 +61,8 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 		send();
 		send("&3You can still build &eyour own &3enderman farm, but they &emust be enabled by staff&3");
 		send();
-		send("&3Players can add up to &e5 players &3to their enderman farm, and we ask that they &eonly give access to trusted friends&3, not new players or strangers looking for easy exp");
+		send("&3Players can add up to &e5 players &3to their enderman farm, and we ask that they &eonly give access " +
+				"to trusted friends&3, not new players or strangers looking for easy exp");
 	}
 
 	private String getRegionId() {
@@ -87,7 +88,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("create [player]")
-	@Permission("group.moderator")
+	@Permission("group.seniorstaff")
 	void create(OfflinePlayer player) {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");

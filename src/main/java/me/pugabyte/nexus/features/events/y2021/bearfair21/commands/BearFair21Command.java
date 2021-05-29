@@ -37,7 +37,7 @@ import java.util.Set;
 public class BearFair21Command extends CustomCommand {
 	ClientsideContentService contentService = new ClientsideContentService();
 	BearFair21UserService userService = new BearFair21UserService();
-	ClientsideContent clientsideContent = contentService.get();
+	ClientsideContent clientsideContent = contentService.get0();
 	List<Content> contentList = clientsideContent.getContentList();
 
 	public BearFair21Command(CommandEvent event) {
