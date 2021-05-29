@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import eden.utils.TimeUtils;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
@@ -37,6 +38,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -72,6 +74,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,7 +95,6 @@ import static eden.utils.StringUtils.camelCase;
 // TODO: color menu
 // TODO: meeting sound
 // TODO: task complete sound + action bar
-// TODO: display subtitle on kill
 // TODO: move kill cooldown to ticks, don't tick in vents
 // TODO: venting is not working
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
@@ -296,6 +298,14 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = match.getMatchData();
 		Chat.setActiveChannel(minigamer, matchData.getSpectatorChannel());
 		event.setDeathMessage(null);
+		SoundUtils.playSound(minigamer, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER, 1.0f, 0.9f);
+		JsonBuilder builder = new JsonBuilder();
+		if (event.getAttacker() != null) {
+			SoundUtils.playSound(event.getAttacker(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER, .5f, 1.2f);
+			builder.next("You were killed by ").next(event.getAttacker().getNickname(), matchData.getColor(event.getAttacker()));
+		} else
+			builder.next("You have been ejected");
+		TitleUtils.sendTitle(minigamer, builder, TimeUtils.Time.SECOND.duration(4), Duration.ofSeconds(1).dividedBy(2));
 		minigamer.setAlive(false);
 		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1000000, 0, true, false, false));
 		PlayerUtils.showPlayers(minigamer, match.getMinigamers());
