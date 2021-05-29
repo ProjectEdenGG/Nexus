@@ -50,17 +50,17 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		clearRegions(event.getPlayer(), MovementType.DISCONNECT, event);
+		clearRegions(event.getPlayer(), MovementType.DISCONNECT, null, event);
 	}
 
 	@EventHandler
 	public void onEntityRemoveFromWorld(EntityRemoveFromWorldEvent event) {
-		clearRegions(event.getEntity(), MovementType.DESPAWN, event);
+		clearRegions(event.getEntity(), MovementType.DESPAWN, null, event);
 	}
 
 	@EventHandler
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-		clearRegions(event.getPlayer(), MovementType.WORLD_CHANGE, event);
+		clearRegions(event.getPlayer(), MovementType.WORLD_CHANGE, event.getPlayer().getLocation(), event);
 		updateRegions(event.getPlayer(), MovementType.WORLD_CHANGE, event.getPlayer().getLocation(), event);
 	}
 
@@ -70,7 +70,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		MovementType movementType = MovementType.TELEPORT;
 
 		if (cause == TeleportCause.END_PORTAL || cause == TeleportCause.NETHER_PORTAL) {
-			clearRegions(event.getPlayer(), MovementType.WORLD_CHANGE, event);
+			clearRegions(event.getPlayer(), MovementType.WORLD_CHANGE, event.getTo(), event);
 			movementType = MovementType.WORLD_CHANGE;
 		}
 
@@ -126,14 +126,14 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 		updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 
-	private void clearRegions(Entity entity, MovementType movementType, Event event) {
+	private void clearRegions(Entity entity, MovementType movementType, Location newLocation, Event event) {
 		Set<ProtectedRegion> regions = entityRegions.remove(entity.getUniqueId());
 		if (isNullOrEmpty(regions))
 			return;
 
 		for (ProtectedRegion region : regions) {
-			RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, event).callEvent();
-			RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, event).callEvent();
+			RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, newLocation, event).callEvent();
+			RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, newLocation, event).callEvent();
 		}
 	}
 
@@ -148,23 +148,23 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 		for (final ProtectedRegion region : applicableRegions)
 			if (!originalRegions.contains(region))
-				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
+				if (!RegionEventFactory.of(EnteringRegionEvent.class, region, entity, movementType, newLocation, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(originalRegions);
 					return true;
 				} else {
-					Tasks.wait(1, () -> RegionEventFactory.of(EnteredRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
+					Tasks.wait(1, () -> RegionEventFactory.of(EnteredRegionEvent.class, region, entity, movementType, newLocation, parentEvent).callEvent());
 					regions.add(region);
 				}
 
 		for (final ProtectedRegion region : originalRegions)
 			if (!applicableRegions.contains(region))
-				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, parentEvent).callEvent()) {
+				if (!RegionEventFactory.of(LeavingRegionEvent.class, region, entity, movementType, newLocation, parentEvent).callEvent()) {
 					regions.clear();
 					regions.addAll(originalRegions);
 					return true;
 				} else {
-					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, parentEvent).callEvent());
+					Tasks.wait(1, () -> RegionEventFactory.of(LeftRegionEvent.class, region, entity, movementType, newLocation, parentEvent).callEvent());
 					regions.remove(region);
 				}
 

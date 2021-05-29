@@ -177,8 +177,8 @@ public class RestoreInventoryCommand extends CustomCommand {
 		Map<String, Object> resultMap = new HashMap<>();
 		for (String key : section.getKeys(false)) {
 			Object obj = section.get(key);
-			if (obj instanceof ConfigurationSection) {
-				resultMap.put(key, convertSection((ConfigurationSection) obj));
+			if (obj instanceof ConfigurationSection subSection) {
+				resultMap.put(key, convertSection(subSection));
 			} else {
 				resultMap.put(key, obj);
 			}

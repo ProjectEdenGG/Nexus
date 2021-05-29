@@ -8,9 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.lexikiq.HasUniqueId;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 
 import java.math.BigDecimal;
@@ -64,13 +64,13 @@ public class Transaction {
 	}
 
 	public Transaction(HasUniqueId sender, HasUniqueId receiver, BigDecimal amount, ShopGroup shopGroup, String description, TransactionCause cause) {
-		if (receiver != null && !Nexus.isUUID0(receiver.getUniqueId())) {
+		if (receiver != null && !StringUtils.isUUID0(receiver.getUniqueId())) {
 			this.receiver = receiver.getUniqueId();
 			this.receiverOldBalance = rounded(new BankerService().get(receiver).getBalance(shopGroup));
 			this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
 		}
 
-		if (sender != null && !Nexus.isUUID0(sender.getUniqueId())) {
+		if (sender != null && !StringUtils.isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
 			this.senderOldBalance = rounded(new BankerService().get(sender).getBalance(shopGroup));
 			this.senderNewBalance = rounded(this.senderOldBalance.subtract(amount));

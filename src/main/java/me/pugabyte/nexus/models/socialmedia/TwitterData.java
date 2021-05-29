@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.discord.ReactionVoter;
@@ -84,7 +83,7 @@ public class TwitterData implements PlayerOwnedObject {
 
 		public void handle() {
 			TwitterService service = new TwitterService();
-			TwitterData data = service.get(Nexus.getUUID0());
+			TwitterData data = service.get0();
 
 			ReactionVoter.builder()
 					.channelId(TextChannel.STAFF_SOCIAL_MEDIA.getId())
@@ -143,7 +142,7 @@ public class TwitterData implements PlayerOwnedObject {
 					message.reply("Tweeted successfully: " + SocialMedia.getUrl(status)).queue();
 
 					TwitterService service = new TwitterService();
-					TwitterData data = service.get();
+					TwitterData data = service.get0();
 					data.getPendingTweets().remove(this);
 					service.save(data);
 				} catch (TwitterException ex) {

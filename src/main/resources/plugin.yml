@@ -4,17 +4,18 @@ version: ${project.version}
 api-version: 1.16
 load: POSTWORLD
 depend:
-  - Multiverse-Core
+  - helper
   - mcMMO
+  - Multiverse-Core
   - ProtocolLib
   - WorldGuard
-  - helper
 softdepend:
   - BentoBox
   - BlueMap
   - BuycraftX
   - Citizens
   - GlowAPI
+  - HeadDatabase
   - HolographicDisplays
   - LibsDisguises
   - LWC
@@ -25,4 +26,3 @@ softdepend:
   - SmartInvs
   - Vault
   - Votifier
-  - HeadDatabase

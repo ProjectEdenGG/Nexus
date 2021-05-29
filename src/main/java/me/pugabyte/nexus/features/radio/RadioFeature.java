@@ -62,7 +62,7 @@ public class RadioFeature extends Feature {
 		// Radio Particles Task
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			RadioConfigService configService = new RadioConfigService();
-			RadioConfig config = configService.get(Nexus.getUUID0());
+			RadioConfig config = configService.get0();
 			for (Radio radio : config.getRadios()) {
 				if (!radio.getType().equals(RadioType.RADIUS)) continue;
 				if (!radio.isEnabled()) continue;
@@ -109,7 +109,7 @@ public class RadioFeature extends Feature {
 	@Override
 	public void onStop() {
 		RadioConfigService configService = new RadioConfigService();
-		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
+		RadioConfig radioConfig = configService.get0();
 		for (Radio radio : radioConfig.getRadios()) {
 			if (radio.getSongPlayer() != null)
 				removeSongPlayer(radio.getSongPlayer());
@@ -119,7 +119,7 @@ public class RadioFeature extends Feature {
 
 	private void setupRadios() {
 		RadioConfigService configService = new RadioConfigService();
-		RadioConfig radioConfig = configService.get(Nexus.getUUID0());
+		RadioConfig radioConfig = configService.get0();
 		for (Radio radio : radioConfig.getRadios()) {
 			if (!radio.isEnabled())
 				continue;

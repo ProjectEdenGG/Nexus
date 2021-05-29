@@ -2,7 +2,10 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -10,14 +13,19 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
 
@@ -35,10 +43,12 @@ public class BearFair21 {
 
 
 	public BearFair21() {
-		new Timer("    Restrictions", Restrictions::new);
+		new Timer("    Restrictions", BearFair21Restrictions::new);
 		new Timer("    Fairgrounds", Fairgrounds::new);
 		if (enableQuests)
 			new Timer("    Quests", Quests::new);
+
+		Arrays.stream(BF21PointSource.values()).forEach(source -> addTokenMax(source, 25));
 	}
 
 	public static World getWorld() {
@@ -82,7 +92,7 @@ public class BearFair21 {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return location.getWorld().equals(getWorld()) && getWGUtils().isInRegion(location, region);
+		return isAtBearFair(location) && getWGUtils().isInRegion(location, region);
 	}
 
 	public static void send(String message, Player to) {
@@ -90,7 +100,7 @@ public class BearFair21 {
 	}
 
 	public static String isCheatingMsg(Player player) {
-		if (player.hasPermission("worldguard.region.bypass.*")) return "wgedit";
+		if (canWorldGuardEdit(player)) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";
@@ -106,5 +116,65 @@ public class BearFair21 {
 				result.add(player);
 		}
 		return result;
+	}
+
+	// point stuff
+
+	private static final Map<String, Integer> tokenMaxes = new HashMap<>();
+
+	public static void addTokenMax(BF21PointSource source, int amount) {
+		tokenMaxes.put("bearfair21_" + source.name().toLowerCase(), amount);
+	}
+
+	public static int checkDailyTokens(OfflinePlayer player, BF21PointSource source, int amount) {
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
+
+		return user.checkDaily("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
+	}
+
+	public static void giveDailyPoints(Player player, BF21PointSource source, int amount) {
+		// TODO BF21: Remove me
+		if (true) {
+			player.sendMessage("Give +" + amount + " points");
+			return;
+		}
+		//
+
+		if (!giveDailyPoints)
+			return;
+
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
+
+		user.giveTokens("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
+		service.save(user);
+
+		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Points");
+	}
+
+	public static void givePoints(Player player, int amount) {
+		// TODO BF21: Remove me
+		if (true) {
+			player.sendMessage("Give +" + amount + " points");
+			return;
+		}
+		//
+
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
+
+		user.giveTokens(amount);
+		service.save(user);
+
+		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Points");
+	}
+
+	public enum BF21PointSource {
+		ARCHERY,
+		MINIGOLF,
+		FROGGER,
+		SEEKER,
+		REFLECTION
 	}
 }

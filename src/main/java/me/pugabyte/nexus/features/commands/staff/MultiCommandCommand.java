@@ -6,7 +6,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,11 @@ public class MultiCommandCommand extends CustomCommand {
 	}
 
 	void run(final List<String> commands) {
+		run(player(), commands);
+
+	}
+
+	public static void run(Player player, List<String> commands) {
 		if (commands.size() == 0)
 			return;
 
@@ -34,7 +41,7 @@ public class MultiCommandCommand extends CustomCommand {
 			if (command.toLowerCase().matches("^wait \\d+$"))
 				wait.getAndAdd(Integer.parseInt(command.toLowerCase().replace("wait ", "")));
 			else
-				Tasks.wait(wait.getAndAdd(3), () -> runCommand(command));
+				Tasks.wait(wait.getAndAdd(3), () -> PlayerUtils.runCommand(player, command));
 		});
 	}
 

@@ -33,8 +33,8 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 	public void init(Player player, InventoryContents contents) {
 		if (game == null) {
 			openAnvilMenu(player, "New Game...", (player1, response) -> {
-				service.get().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
-				service.save(service.get());
+				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
+				service.save(service.get0());
 				SafeCrackerInventories.openAdminMenu(player);
 				return AnvilGUI.Response.text(response);
 			}, (player1) -> player.closeInventory());
@@ -66,7 +66,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 				int id = NPCHandler.createNPC(response, player.getLocation());
 				SafeCrackerEvent.SafeCrackerNPC npc = new SafeCrackerEvent.SafeCrackerNPC(id, response, "", new ArrayList<>(), "");
 				game.getNpcs().put(response, npc);
-				service.save(service.get());
+				service.save(service.get0());
 				SafeCrackerInventories.openNPCEditMenu(player, npc);
 				return AnvilGUI.Response.text(response);
 			}, (player1) -> SafeCrackerInventories.openAdminMenu(player));
@@ -75,7 +75,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 		contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eRiddle Answer").lore("&3" + game.getAnswer()).build(), e -> {
 			openAnvilMenu(player, game.getAnswer(), (player1, response) -> {
 				game.setAnswer(response);
-				service.save(service.get());
+				service.save(service.get0());
 				SafeCrackerInventories.openAdminMenu(player);
 				return AnvilGUI.Response.text(response);
 			}, (player1) -> SafeCrackerInventories.openAdminMenu(player));
@@ -99,7 +99,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 			}
 		}
 		game.setNpcs(npcs);
-		service.save(service.get());
+		service.save(service.get0());
 
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 			ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(PlayerUtils.getPlayer(npc.getName()))

@@ -70,8 +70,8 @@ public class SpawnEntityCommand extends CustomCommand {
 			Entity entity = location.getWorld().spawnEntity(location, type, spawnReason);
 
 			if (!Strings.isNullOrEmpty(data)) {
-				if ("baby".equalsIgnoreCase(data) && entity instanceof Ageable)
-					((Ageable) entity).setBaby();
+				if ("baby".equalsIgnoreCase(data) && entity instanceof Ageable ageable)
+					ageable.setBaby();
 
 				else if (StringUtils.isValidJson(data)) {
 					NBTEntity nbtEntity = new NBTEntity(entity);

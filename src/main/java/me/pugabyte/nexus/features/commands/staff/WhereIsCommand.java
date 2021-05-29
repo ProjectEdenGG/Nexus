@@ -33,7 +33,7 @@ public class WhereIsCommand extends CustomCommand {
 
 	@Path("<player>")
 	void whereIs(Player playerArg) {
-		if (WorldGroup.get(player()).equals(WorldGroup.MINIGAMES))
+		if (WorldGroup.of(player()).equals(WorldGroup.MINIGAMES))
 			error("Cannot use in gameworld");
 
 		Location playerArgLoc = playerArg.getLocation().clone();

@@ -315,7 +315,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public MaterialTag(String segment, MatchMode mode, MaterialTag materials) {
 		this.materials = EnumSet.noneOf(Material.class);
-		append(segment, mode, materials.getValues().toArray(new Material[0]));
+		append(segment, mode, materials.getValues().toArray(Material[]::new));
 	}
 
 	public MaterialTag(Predicate<Material> predicate) {
@@ -436,7 +436,7 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public Material[] toArray() {
-		return new ArrayList<>(materials).toArray(new Material[0]);
+		return new ArrayList<>(materials).toArray(Material[]::new);
 	}
 
 	@Override

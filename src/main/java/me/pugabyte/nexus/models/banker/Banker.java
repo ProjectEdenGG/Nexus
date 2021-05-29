@@ -18,13 +18,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.lexikiq.HasUniqueId;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.economy.events.BalanceChangeEvent;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -80,7 +80,7 @@ public class Banker implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return Nexus.isUUID0(uuid);
+		return StringUtils.isUUID0(uuid);
 	}
 
 	public String getBalanceFormatted(ShopGroup shopGroup) {

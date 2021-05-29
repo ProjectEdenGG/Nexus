@@ -4,14 +4,9 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
-import me.pugabyte.nexus.features.commands.KillerMoneyCommand;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import me.pugabyte.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
-import me.pugabyte.nexus.models.killermoney.KillerMoney;
-import me.pugabyte.nexus.models.killermoney.KillerMoneyService;
-import me.pugabyte.nexus.models.task.Task;
-import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -19,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,23 +49,6 @@ public enum VPSMenu {
 						.price(40)
 						.money(10000));
 
-				put(16, VPSSlot.builder()
-						.name("x3 KillerMoney boost for 3 days")
-						.display(Material.DIAMOND_SWORD, 3)
-						.price(30)
-						.takePoints(false)
-						.onPurchase((player, item) -> {
-							KillerMoneyService service = new KillerMoneyService();
-							KillerMoney km = service.get(player);
-							km.setBoost(3);
-							service.save(km);
-							new TaskService().save(new Task(KillerMoneyCommand.getExpireTaskId(), new HashMap<>() {{
-								put("uuid", player.getUniqueId().toString());
-							}}, LocalDateTime.now().plusDays(3)));
-							return true;
-						})
-						.close(true));
-
 				put(19, VPSSlot.builder()
 						.name("1 Vote Crate Key")
 						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(1))
@@ -93,7 +70,7 @@ public enum VPSMenu {
 						.price(64)
 						.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 32)));
 
-				put(25, VPSSlot.builder()
+				put(16, VPSSlot.builder()
 						.name("Uncraftable Banners")
 						.display(new ItemBuilder(Material.CYAN_BANNER)
 								.lore("&3Pre-selected banners or")

@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.shop;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -44,7 +43,7 @@ public class ShopService extends MongoService<Shop> {
 	}
 
 	public Shop getMarket() {
-		return get(Nexus.getUUID0());
+		return get0();
 	}
 
 	@Override

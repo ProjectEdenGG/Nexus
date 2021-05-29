@@ -125,7 +125,7 @@ public class InvisibleArmorCommand extends CustomCommand {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player)) return;
-		InvisibleArmor invisibleArmor = new InvisibleArmorService().get((Player) event.getWhoClicked());
+		InvisibleArmor invisibleArmor = new InvisibleArmorService().get(event.getWhoClicked());
 		if (!invisibleArmor.isEnabled())
 			return;
 

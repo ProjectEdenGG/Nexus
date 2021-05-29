@@ -20,9 +20,9 @@ import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
-public class Restrictions implements Listener {
+public class BearFair21Restrictions implements Listener {
 
-	public Restrictions() {
+	public BearFair21Restrictions() {
 		Nexus.registerListener(this);
 	}
 

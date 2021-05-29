@@ -42,7 +42,7 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 						NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
 						npcEntity.destroy();
 						game.getNpcs().remove(npc.getName());
-						service.save(service.get());
+						service.save(service.get0());
 						SafeCrackerInventories.openAdminMenu(player);
 					})
 					.onCancel(event -> SafeCrackerInventories.openNPCEditMenu(player, npc))
@@ -65,7 +65,7 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 				if (npc.getAnswers() == null)
 					npc.setAnswers(new ArrayList<>());
 				npc.getAnswers().add(response);
-				service.save(service.get());
+				service.save(service.get0());
 				SafeCrackerInventories.openNPCEditMenu(player, npc);
 				return AnvilGUI.Response.text(response);
 			}, (player1) -> SafeCrackerInventories.openNPCEditMenu(player, npc));
@@ -74,7 +74,7 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 		contents.set(1, 6, ClickableItem.from(new ItemBuilder(Material.DIAMOND).name("&eRiddle").loreize(true).lore("&3" + npc.getRiddle()).build(), e -> {
 			openAnvilMenu(player, npc.getRiddle(), (player1, response) -> {
 				npc.setRiddle(response);
-				service.save(service.get());
+				service.save(service.get0());
 				SafeCrackerInventories.openNPCEditMenu(player, npc);
 				return AnvilGUI.Response.text(response);
 			}, (player1) -> SafeCrackerInventories.openNPCEditMenu(player, npc));

@@ -104,7 +104,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return;
 		if (victim.equals(attacker))
 			return;
-		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
@@ -141,14 +141,14 @@ public class PVPCommand extends CustomCommand implements Listener {
 			if (entityEvent.getDamager() instanceof Player player) {
 				attacker = service.get(player);
 			} else if (entityEvent.getDamager() instanceof Projectile projectile) {
-				if (projectile.getShooter() instanceof Player)
-					attacker = service.get((Player) projectile.getShooter());
+				if (projectile.getShooter() instanceof Player shooter)
+					attacker = service.get(shooter);
 			} else if (entityEvent.getDamager() instanceof EnderCrystal crystal) {
 				// find last user to damage the end crystal
 				EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
 				if (crystalDamage == null) return null;
-				if (!(crystalDamage instanceof EntityDamageByEntityEvent)) return null;
-				Entity damager = ((EntityDamageByEntityEvent) crystalDamage).getDamager();
+				if (!(crystalDamage instanceof EntityDamageByEntityEvent crystalDamageEvent)) return null;
+				Entity damager = crystalDamageEvent.getDamager();
 				if (damager instanceof Player)
 					attacker = service.get(damager);
 				// check if last damager was a projectile shot by a player
@@ -169,16 +169,21 @@ public class PVPCommand extends CustomCommand implements Listener {
 						attacker = service.get(entity);
 				}
 			}
-		} else if (event instanceof EntityDamageByBlockEvent) {
-			Location location = ((EntityDamageByBlockEvent) event).getLocation();
-			if (location == null || event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION || !(event.getEntity() instanceof Player)) return null;
+		} else if (event instanceof EntityDamageByBlockEvent entityDamageByBlockEvent) {
+			Location location = entityDamageByBlockEvent.getLocation();
+			if (location == null)
+				return null;
+			if (event.getCause() != EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)
+				return null;
+			if (!(event.getEntity() instanceof Player player))
+				return null;
 
 			for (Map.Entry<UUID, Location> entry : bedLocations.entrySet()) {
 				UUID uuid = entry.getKey();
 				Location location1 = entry.getValue();
 
 				if (!LocationUtils.blockLocationsEqual(location, location1)) continue;
-				if (uuid.equals(event.getEntity().getUniqueId())) continue;
+				if (uuid.equals(player.getUniqueId())) continue;
 				attacker = service.get(uuid);
 				break;
 			}
@@ -188,10 +193,10 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
-		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
 
-		if (!(event.getEntity() instanceof Player)) return;
-		PVP victim = service.get(event.getEntity());
+		if (!(event.getEntity() instanceof Player player)) return;
+		PVP victim = service.get(player);
 		PVP attacker = getDamageCause(event);
 
 		processAttack(event, victim, attacker);
@@ -228,7 +233,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (WorldGroup.get(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
 		if (getDamageCause(event.getEntity().getLastDamageCause()) == null) return;
 		PVP victim = service.get(event.getEntity());
 		if (!victim.isEnabled()) return;

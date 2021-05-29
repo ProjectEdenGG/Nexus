@@ -1,12 +1,17 @@
 package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
+import me.pugabyte.nexus.features.chat.Censor;
+import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
@@ -19,13 +24,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +55,7 @@ public class Restrictions implements Listener {
 	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
 
 	public static boolean isPerkAllowedAt(Location location) {
-		WorldGroup worldGroup = WorldGroup.get(location);
+		WorldGroup worldGroup = WorldGroup.of(location);
 		if (!allowedWorldGroups.contains(worldGroup))
 			return false;
 
@@ -58,14 +70,72 @@ public class Restrictions implements Listener {
 	}
 
 	@EventHandler
+	public void onSignChange(SignChangeEvent event) {
+		Player player = event.getPlayer();
+		if (Rank.of(player).isStaff())
+			return;
+
+		String[] lines = event.getLines();
+		boolean censored = false;
+
+		for (int i = 0; i < lines.length; i++) {
+			String line = lines[i];
+			if (Censor.isCensored(player, line)) {
+				event.setLine(i, "");
+				censored = true;
+			}
+		}
+
+		if (!censored)
+			return;
+
+		PlayerUtils.send(player, "&cInappropriate sign content");
+		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines);
+		Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+		Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
+	}
+
+	@EventHandler
+	public void onAnvilRenameItem(InventoryClickEvent event) {
+		if (!(event.getWhoClicked() instanceof Player player))
+			return;
+
+		Inventory inventory = event.getClickedInventory();
+		if (inventory == null || inventory.getType() != InventoryType.ANVIL)
+			return;
+
+		if (event.getSlotType() != SlotType.RESULT)
+			return;
+
+		ItemStack item = event.getCurrentItem();
+
+		if (ItemUtils.isNullOrAir(item))
+			return;
+
+		ItemMeta meta = item.getItemMeta();
+
+		String input = meta.getDisplayName();
+		if (!Censor.isCensored(player, input))
+			return;
+
+		meta.setDisplayName(null);
+		item.setItemMeta(meta);
+
+		PlayerUtils.send(player, "&cInappropriate item name");
+		String message = "&cAnvil name by " + Nickname.of(player) + " was censored: &e" + input;
+		Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+		Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
+	}
+
+	@EventHandler
 	public void onPortalEvent(PlayerPortalEvent event) {
-		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.get(event.getPlayer())))
+		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.of(event.getPlayer())))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onEndPortalCreate(PortalCreateEvent event) {
-		if (WorldGroup.get(event.getWorld()) != WorldGroup.SURVIVAL)
+		if (WorldGroup.of(event.getWorld()) != WorldGroup.SURVIVAL)
 			event.setCancelled(true);
 	}
 
@@ -79,7 +149,7 @@ public class Restrictions implements Listener {
 	@EventHandler
 	public void onOneBlockFallingCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))
+		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
 			return;
 
 		if (player.getFallDistance() > 5 && !player.isFlying()) {

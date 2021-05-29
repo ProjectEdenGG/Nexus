@@ -12,6 +12,7 @@ public class ParticleProjectile {
 	private final Projectile projectile;
 	private final int taskId;
 	private final Match match;
+
 	public ParticleProjectile(ParticleProjectilePerk perk, Projectile projectile, Match match) {
 		this.perk = perk;
 		this.projectile = projectile;
@@ -24,4 +25,5 @@ public class ParticleProjectile {
 			perk.tick(projectile, match);
 		});
 	}
+
 }

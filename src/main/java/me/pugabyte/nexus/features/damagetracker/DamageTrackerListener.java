@@ -29,9 +29,7 @@ public class DamageTrackerListener implements Listener {
 			return;
 
 		LivingEntity entity = (LivingEntity) event.getEntity();
-		Entity damager = null;
-		DamageEvent damageEvent = new DamageEvent(entity, damager, event.getCause(), event.getDamage(), event);
-		Nexus.getInstance().getServer().getPluginManager().callEvent(damageEvent);
+		new DamageEvent(entity, null, event.getCause(), event.getDamage(), event).callEvent();
 	}
 
 	@EventHandler
@@ -41,14 +39,13 @@ public class DamageTrackerListener implements Listener {
 
 		LivingEntity entity = (LivingEntity) event.getEntity();
 		Entity damager;
-		if (event.getDamager() instanceof Projectile) {
-			damager = (Entity) ((Projectile) event.getDamager()).getShooter();
+		if (event.getDamager() instanceof Projectile projectile) {
+			damager = (Entity) projectile.getShooter();
 		} else {
 			damager = event.getDamager();
 		}
 
-		DamageEvent damageEvent = new DamageEvent(entity, damager, event.getCause(), event.getDamage(), event);
-		Nexus.getInstance().getServer().getPluginManager().callEvent(damageEvent);
+		new DamageEvent(entity, damager, event.getCause(), event.getDamage(), event).callEvent();
 	}
 
 	@EventHandler
@@ -59,8 +56,7 @@ public class DamageTrackerListener implements Listener {
 		LivingEntity entity = (LivingEntity) event.getEntity();
 		Block damager = event.getDamager();
 
-		DamageEvent damageEvent = new DamageEvent(entity, damager, event.getCause(), event.getDamage(), event);
-		Nexus.getInstance().getServer().getPluginManager().callEvent(damageEvent);
+		new DamageEvent(entity, damager, event.getCause(), event.getDamage(), event).callEvent();
 	}
 
 	boolean ignore(EntityDamageEvent event) {

@@ -7,8 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class MatchSidebar implements MinigameScoreboard {
-	private Match match;
-	private EdenScoreboard scoreboard;
+	private final Match match;
+	private final EdenScoreboard scoreboard;
 
 	public MatchSidebar(Match match) {
 		this.match = match;

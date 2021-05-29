@@ -80,10 +80,10 @@ public class ChatManager {
 					throw new InvalidInputException("You do not have permission to speak in that channel");
 
 				if ("G".equals(publicChannel.getNickname())) {
-					if ("Rai_Rai_".equals(chatter.getName())) {
+					if ("Tuniab".equals(chatter.getName())) {
 						String id = "chat-" + publicChannel.getName().toLowerCase();
 						CooldownService service = new CooldownService();
-						if (!service.check(chatter.getUuid(), id, Time.SECOND.x(15)))
+						if (!service.check(chatter.getUuid(), id, Time.SECOND.x(5)))
 							throw new InvalidInputException("You are talking too fast! (&e" + service.getDiff(chatter.getUuid(), id) + " left&c)");
 					}
 				}

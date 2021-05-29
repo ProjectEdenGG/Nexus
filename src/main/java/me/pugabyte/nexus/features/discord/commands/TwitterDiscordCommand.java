@@ -39,7 +39,7 @@ public class TwitterDiscordCommand extends Command {
 	protected void execute(CommandEvent event) {
 		Tasks.async(() -> {
 			TwitterService service = new TwitterService();
-			TwitterData data = service.get();
+			TwitterData data = service.get0();
 
 			try {
 				if (!event.getChannel().getId().equals(TextChannel.STAFF_SOCIAL_MEDIA.getId()))
@@ -97,7 +97,7 @@ public class TwitterDiscordCommand extends Command {
 
 		@Override
 		public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-			Tasks.async(() -> new TwitterService().get().getPendingTweets().stream()
+			Tasks.async(() -> new TwitterService().get0().getPendingTweets().stream()
 					.filter(pendingTweet -> pendingTweet.getMessageId().equals(event.getMessageId()))
 					.findFirst()
 					.ifPresent(PendingTweet::handle));
@@ -106,7 +106,7 @@ public class TwitterDiscordCommand extends Command {
 	}
 
 	static {
-		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> new TwitterService().get().getPendingTweets().forEach(PendingTweet::handle));
+		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> new TwitterService().get0().getPendingTweets().forEach(PendingTweet::handle));
 	}
 
 }

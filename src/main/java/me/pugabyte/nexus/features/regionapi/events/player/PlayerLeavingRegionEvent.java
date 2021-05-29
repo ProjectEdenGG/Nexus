@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import me.pugabyte.nexus.features.regionapi.MovementType;
 import me.pugabyte.nexus.features.regionapi.events.common.LeavingRegionEvent;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -21,10 +22,11 @@ public class PlayerLeavingRegionEvent extends LeavingRegionEvent {
 	 * @param region       the region the player is leaving
 	 * @param player       the player who triggered this event
 	 * @param movementType the type of movement how the player leaves the region
+	 * @param newLocation  the location the player moved to
 	 * @param parentEvent  the event that triggered this event
 	 */
-	public PlayerLeavingRegionEvent(ProtectedRegion region, Player player, MovementType movementType, Event parentEvent) {
-		super(region, player, movementType, parentEvent);
+	public PlayerLeavingRegionEvent(ProtectedRegion region, Player player, MovementType movementType, Location newLocation, Event parentEvent) {
+		super(region, player, movementType, newLocation, parentEvent);
 		this.player = player;
 	}
 

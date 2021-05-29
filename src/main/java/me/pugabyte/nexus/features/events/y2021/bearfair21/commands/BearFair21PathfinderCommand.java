@@ -4,7 +4,6 @@ import com.destroystokyo.paper.entity.Pathfinder;
 import com.sk89q.worldedit.regions.Region;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.PathfinderHelper;
 import me.pugabyte.nexus.features.particles.effects.LineEffect;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -59,7 +58,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 	@Path("list")
 	public void list() {
 		BearFair21WebConfigService service = new BearFair21WebConfigService();
-		BearFair21WebConfig config = service.get(Nexus.getUUID0());
+		BearFair21WebConfig config = service.get0();
 		send("Total Webs: " + config.getWebs().size());
 		for (Web web : config.getWebs()) {
 			send(" - Web: " + web.getId());
@@ -85,7 +84,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 	@Path("create")
 	public void create() {
 		BearFair21WebConfigService service = new BearFair21WebConfigService();
-		BearFair21WebConfig config = service.get(Nexus.getUUID0());
+		BearFair21WebConfig config = service.get0();
 		Web web = new Web("beehive");
 
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
@@ -244,7 +243,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 			return;
 
 		BearFair21WebConfigService service = new BearFair21WebConfigService();
-		BearFair21WebConfig config = service.get(Nexus.getUUID0());
+		BearFair21WebConfig config = service.get0();
 		Web web = config.getById("beehive");
 		if (web == null) {
 			send(player, "&cWeb is null");
@@ -319,7 +318,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 			return;
 
 		BearFair21WebConfigService service = new BearFair21WebConfigService();
-		BearFair21WebConfig config = service.get(Nexus.getUUID0());
+		BearFair21WebConfig config = service.get0();
 		Web web = config.getById("beehive");
 		if (web == null) {
 			send(player, "&cWeb is null");
@@ -452,7 +451,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 
 	private Web getWeb() {
 		BearFair21WebConfigService service = new BearFair21WebConfigService();
-		BearFair21WebConfig config = service.get(Nexus.getUUID0());
+		BearFair21WebConfig config = service.get0();
 		Web web = config.getById("beehive");
 		if (web == null)
 			error("web is null");

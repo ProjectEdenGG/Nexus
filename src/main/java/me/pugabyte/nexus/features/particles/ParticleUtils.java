@@ -40,6 +40,10 @@ public class ParticleUtils {
 			location.getWorld().spawnParticle(particle, location, count, x, y, z, speed, dustOptions);
 	}
 
+	public static Particle.DustOptions newDustOption(Particle particle, int[] rgb) {
+		return newDustOption(particle, rgb[0], rgb[1], rgb[2]);
+	}
+
 	public static Particle.DustOptions newDustOption(Particle particle, int red, int green, int blue) {
 		if (particle.equals(Particle.REDSTONE)) {
 			org.bukkit.Color color = org.bukkit.Color.fromRGB(red, green, blue);

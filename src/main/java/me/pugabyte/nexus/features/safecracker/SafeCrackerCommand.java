@@ -50,7 +50,7 @@ import java.util.LinkedHashMap;
 public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	public SafeCrackerEventService eventService = new SafeCrackerEventService();
-	public SafeCrackerEvent event = eventService.get();
+	public SafeCrackerEvent event = eventService.get0();
 	public SafeCrackerEvent.SafeCrackerGame game = eventService.getActiveEvent();
 	public SafeCrackerPlayerService playerService = new SafeCrackerPlayerService();
 	public SafeCrackerPlayer safeCrackerPlayer;

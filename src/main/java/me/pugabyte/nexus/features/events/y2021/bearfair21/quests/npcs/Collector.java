@@ -23,24 +23,21 @@ public class Collector {
 	public static List<TradeBuilder> randomTrades = new ArrayList<>();
 	@Getter
 	public static Location currentLoc = null;
-	private static NPC npc = null;
+	private static final NPC npc = BearFair21NPC.COLLECTOR.getNPC();
 	//
-	private static List<TradeBuilder> possibleTrades = new ArrayList<>();
-	private static List<Location> locations = new ArrayList<>();
+	private static final List<TradeBuilder> possibleTrades = loadTrades();
+	private static final List<Location> locations = loadLocations();
 	private static final List<Location> prevLocations = new ArrayList<>();
 	private static final World world = BearFair21.getWorld();
 
 	public static void startup() {
-		loadLocations();
-		loadTrades();
 		newTrades();
 
-		npc = BearFair21NPC.COLLECTOR.getNPC();
 		if (npc != null)
-			currentLoc = npc.getEntity().getLocation();
+			currentLoc = npc.getStoredLocation();
 	}
 
-	private static void loadLocations() {
+	private static List<Location> loadLocations() {
 		Location observatory = new Location(world, -108, 157, 12);
 		Location town1 = new Location(world, -105, 139, -104);
 		Location town2 = new Location(world, -125, 149, -26);
@@ -51,11 +48,11 @@ public class Collector {
 		Location carnival1 = new Location(world, 110, 138, -58);
 		Location carnival2 = new Location(world, 157, 137, -26);
 
-		locations = Arrays.asList(observatory, town1, town2, forest, flag, campsite, balloon, carnival1, carnival2);
+		return Arrays.asList(observatory, town1, town2, forest, flag, campsite, balloon, carnival1, carnival2);
 	}
 
-	private static void loadTrades() {
-		possibleTrades = new ArrayList<>() {{
+	private static List<TradeBuilder> loadTrades() {
+		return new ArrayList<>() {{
 			// Fishing Loot
 			add(new TradeBuilder()
 					.result(Merchants.goldNugget.clone().amount(1))

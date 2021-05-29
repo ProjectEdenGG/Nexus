@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.punishments;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -19,10 +18,6 @@ public class NameBanConfigService extends MongoService<NameBanConfig> {
 
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
-	}
-
-	public NameBanConfig get() {
-		return get(Nexus.getUUID0());
 	}
 
 }

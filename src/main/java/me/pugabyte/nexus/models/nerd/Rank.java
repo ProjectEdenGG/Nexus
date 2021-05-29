@@ -170,6 +170,10 @@ public enum Rank implements ColoredAndNamed {
 		return null;
 	}
 
+	public boolean isAdmin() {
+		return this == ADMIN || this == OWNER;
+	}
+
 	public enum RankGroup {
 		ADMINS,
 		SENIOR_STAFF,
@@ -178,16 +182,32 @@ public enum Rank implements ColoredAndNamed {
 		PLAYERS
 	}
 
-	public boolean gte(Rank rank) {
-		return ordinal() >= rank.ordinal();
-	}
-
 	public boolean gt(Rank rank) {
 		return ordinal() > rank.ordinal();
 	}
 
+	public boolean gte(Rank rank) {
+		return ordinal() >= rank.ordinal();
+	}
+
 	public boolean lt(Rank rank) {
 		return ordinal() < rank.ordinal();
+	}
+
+	public boolean lte(Rank rank) {
+		return ordinal() <= rank.ordinal();
+	}
+
+	public boolean between(Rank lower, Rank upper) {
+		if (lower.ordinal() == upper.ordinal())
+			return ordinal() == lower.ordinal();
+		if (lower.ordinal() > upper.ordinal()) {
+			Rank temp = lower;
+			lower = upper;
+			upper = temp;
+		}
+
+		return gte(lower) && lte(upper);
 	}
 
 	public Rank next() {

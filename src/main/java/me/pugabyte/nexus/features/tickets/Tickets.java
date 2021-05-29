@@ -47,8 +47,8 @@ public class Tickets {
 				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
 					uuids.add(staff.getUniqueId());
 
-		if (ticket.getOwner() instanceof Player)
-			uuids.add(((Player) ticket.getOwner()).getUniqueId());
+		if (ticket.getOwner() instanceof Player owner)
+			uuids.add(owner.getUniqueId());
 
 		uuids.forEach(uuid -> PlayerUtils.send(uuid, PREFIX + message));
 	}

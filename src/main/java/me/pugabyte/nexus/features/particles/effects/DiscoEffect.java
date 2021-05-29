@@ -117,7 +117,7 @@ public class DiscoEffect {
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				new ParticleService().get(player).cancelTasks(taskId);
+				new ParticleService().get(player).cancel(taskId);
 				return;
 			}
 
@@ -152,7 +152,7 @@ public class DiscoEffect {
 
 				Location target = loc.clone().subtract(x, y, z);
 				if (target == null) {
-					new ParticleService().get(player).cancelTasks(taskId);
+					new ParticleService().get(player).cancel(taskId);
 					return;
 				}
 

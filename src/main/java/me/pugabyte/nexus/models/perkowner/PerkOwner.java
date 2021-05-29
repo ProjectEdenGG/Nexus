@@ -17,6 +17,8 @@ import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.boost.BoostConfig;
+import me.pugabyte.nexus.models.boost.Boostable;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -40,6 +42,9 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @Converters(UUIDConverter.class)
 public class PerkOwner implements PlayerOwnedObject {
 	private static final int MAX_DAILY_TOKENS = 20;
+	public static int getMaxDailyTokens() {
+		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_DAILY_TOKENS));
+	}
 
 	@Id
 	@NonNull
@@ -101,7 +106,7 @@ public class PerkOwner implements PlayerOwnedObject {
 			tokenDate = date;
 			dailyTokens = 0;
 		}
-		int amount = Math.min(MAX_DAILY_TOKENS-dailyTokens, RandomUtils.randomInt(5, 10));
+		int amount = Math.min(getMaxDailyTokens()-dailyTokens, RandomUtils.randomInt(5, 10));
 		if (amount > 0) {
 			tokens += amount;
 			dailyTokens += amount;
@@ -109,7 +114,7 @@ public class PerkOwner implements PlayerOwnedObject {
 				if (getOnlinePlayer() != null)
 					SoundUtils.Jingle.PING.play(getOnlinePlayer()); // TODO: unique jingle
 				PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for scoring in &e" + arenaName);
-				if (dailyTokens == MAX_DAILY_TOKENS)
+				if (dailyTokens >= MAX_DAILY_TOKENS)
 					PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");
 			} catch (NullPointerException ignored) {/*failsafe to allow PerkOwnerTest to function*/}
 		}

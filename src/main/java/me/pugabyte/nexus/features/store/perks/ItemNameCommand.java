@@ -1,6 +1,9 @@
 package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.chat.Censor;
+import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -80,6 +83,13 @@ public class ItemNameCommand extends CustomCommand {
 		int length = StringUtils.stripColor(input).length();
 		if (length > 50)
 			error("Max length is 50, input was " + length);
+
+		if (Censor.isCensored(player(), input)) {
+			String message = "&cItem name content by " + nickname() + " was censored: &e" + input;
+			Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+			Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
+			error("Inappropriate input");
+		}
 	}
 
 }

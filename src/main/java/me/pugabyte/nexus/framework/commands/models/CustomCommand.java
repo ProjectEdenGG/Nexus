@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
@@ -211,7 +210,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected WorldGroup worldGroup() {
-		return WorldGroup.get(location());
+		return WorldGroup.of(location());
 	}
 
 	protected PlayerInventory inventory() {
@@ -240,12 +239,12 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected void send(UUID uuid, String message) {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid.toString());
 		if (player != null && player.isOnline())
-			send((CommandSender) PlayerUtils.getPlayer(uuid), message);
+			send(PlayerUtils.getPlayer(uuid), message);
 	}
 
 	protected void send(Object object) {
 		if (object instanceof String)
-			send(sender(), (String) object);
+			send(sender(), object);
 		else if (object instanceof JsonBuilder)
 			send(sender(), object);
 		else if (object instanceof Component)
@@ -363,7 +362,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected UUID uuid() {
 		if (isPlayer())
 			return player().getUniqueId();
-		return Nexus.getUUID0();
+		return StringUtils.getUUID0();
 	}
 
 	protected String name() {

@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -23,6 +24,7 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +40,7 @@ public class Contributor implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Purchase> purchases = new ArrayList<>();
+	private double credit;
 
 	public void add(Purchase purchase) {
 		purchases.removeIf(_purchase -> purchase.getId().equals(_purchase.getId()));
@@ -45,11 +48,35 @@ public class Contributor implements PlayerOwnedObject {
 	}
 
 	public double getSum() {
-		return purchases.stream().mapToDouble(Purchase::getPrice).sum();
+		return new HashMap<String, Double>() {{
+			for (Purchase purchase : purchases)
+				put(purchase.getTransactionId(), purchase.getPrice());
+		}}.values().stream()
+				.mapToDouble(Double::valueOf)
+				.sum();
 	}
 
 	public String getSumFormatted() {
 		return NumberFormat.getCurrencyInstance().format(getSum());
+	}
+
+	public void giveCredit(double credit) {
+		setCredit(this.credit + credit);
+	}
+
+	public void takeCredit(double credit) {
+		setCredit(this.credit - credit);
+	}
+
+	public void setCredit(double credit) {
+		if (credit < 0)
+			throw new NegativeBalanceException();
+
+		this.credit = credit;
+	}
+
+	public String getCreditFormatted() {
+		return NumberFormat.getCurrencyInstance().format(credit);
 	}
 
 	@Data

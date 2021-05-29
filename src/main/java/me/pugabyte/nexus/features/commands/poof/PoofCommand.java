@@ -63,7 +63,7 @@ public class PoofCommand extends CustomCommand {
 
 		Location targetLocation = Nerd.of(target).getLocation();
 		World targetWorld = targetLocation.getWorld();
-		WorldGroup targetWorldGroup = WorldGroup.get(targetWorld);
+		WorldGroup targetWorldGroup = WorldGroup.of(targetWorld);
 
 		if (!isStaff()) {
 			String cannotTeleport = "Cannot teleport to " + nickname(target);

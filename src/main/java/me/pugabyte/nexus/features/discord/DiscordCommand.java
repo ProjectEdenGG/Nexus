@@ -289,7 +289,7 @@ public class DiscordCommand extends CustomCommand {
 	@Permission("group.staff")
 	void unconfirm(String id) {
 		DiscordCaptchaService captchaService = new DiscordCaptchaService();
-		DiscordCaptcha captcha = captchaService.get();
+		DiscordCaptcha captcha = captchaService.get0();
 
 		User user = Bot.KODA.jda().retrieveUserById(id).complete();
 		Member member = Discord.getGuild().retrieveMemberById(id).complete();

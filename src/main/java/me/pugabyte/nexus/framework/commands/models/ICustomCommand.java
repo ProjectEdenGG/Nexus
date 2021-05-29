@@ -178,7 +178,7 @@ public abstract class ICustomCommand {
 		return new ArrayList<>() {{
 			addAll(Arrays.asList(convertedParameters));
 			addAll(Arrays.asList(convertedSwitches));
-		}}.toArray(new Object[0]);
+		}}.toArray(Object[]::new);
 	}
 
 	private Object[] convertSwitches(Method method, CommandEvent event, boolean doValidation, List<Parameter> switches) {
@@ -237,10 +237,6 @@ public abstract class ICustomCommand {
 		int i = 0;
 		int pathIndex = 0;
 		for (Parameter parameter : parameters) {
-			// TODO Delete - https://github.com/ProjectEdenGG/Issues/issues/641
-			Nexus.debug("Parameters for command event: " + event.getOriginalMessage());
-			Nexus.debug("  parameter.getName(): " + parameter.getName());
-			Nexus.debug("  parameter.getType(): " + parameter.getType());
 			String pathArg = "";
 			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<") && path.hasNext()) {
 				pathArg = path.next();
@@ -261,14 +257,10 @@ public abstract class ICustomCommand {
 			}
 
 			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !isNullOrEmpty(value)));
-			try {
-				Object converted = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
-				if (required && converted == null)
-					throw new MissingArgumentException();
-				objects[i++] = converted;
-			} catch (MissingArgumentException ex) {
-				event.getCommand().showUsage();
-			}
+			Object converted = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
+			if (required && converted == null)
+				throw new MissingArgumentException();
+			objects[i++] = converted;
 		}
 		return objects;
 	}
@@ -470,17 +462,17 @@ public abstract class ICustomCommand {
 	List<Method> getPathMethods(CommandEvent event) {
 		List<Method> methods = getPathMethods();
 
-		Map<String, Method> overriden = new HashMap<>();
+		Map<String, Method> overridden = new HashMap<>();
 		methods.forEach(method -> {
 			String key = method.getName() + "(" + Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.joining(",")) + ")";
-			if (!overriden.containsKey(key))
-				overriden.put(key, method);
-			else if (overriden.get(key).getDeclaringClass().isAssignableFrom(method.getDeclaringClass()))
-				overriden.put(key, method);
+			if (!overridden.containsKey(key))
+				overridden.put(key, method);
+			else if (overridden.get(key).getDeclaringClass().isAssignableFrom(method.getDeclaringClass()))
+				overridden.put(key, method);
 		});
 
 		methods.clear();
-		methods.addAll(overriden.values());
+		methods.addAll(overridden.values());
 
 		methods.sort(
 				Comparator.comparing(method ->
@@ -501,8 +493,7 @@ public abstract class ICustomCommand {
 
 	@NotNull
 	public List<Method> getPathMethods() {
-		List<Method> methods = new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
-		return methods;
+		return new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
 	}
 
 	private Method getMethod(CommandRunEvent event) {
@@ -560,7 +551,7 @@ public abstract class ICustomCommand {
 					ticks += part.value().get() * part.x();
 
 				CooldownService service = new CooldownService();
-				UUID uuid = cooldown.global() ? Nexus.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();
+				UUID uuid = cooldown.global() ? StringUtils.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();
 				String type = "command:" + commandId;
 
 				if (!service.check(uuid, type, ticks))

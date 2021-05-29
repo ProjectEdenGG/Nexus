@@ -23,7 +23,7 @@ import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 @Permission("group.moderator")
 public class NameBanCommand extends _JusticeCommand implements Listener {
 	private final NameBanConfigService service = new NameBanConfigService();
-	private final NameBanConfig config = service.get();
+	private final NameBanConfig config = service.get0();
 
 	public NameBanCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -79,7 +79,7 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 	@EventHandler
 	public void onLogin(AsyncPlayerPreLoginEvent event) {
 		final NameBanConfigService service = new NameBanConfigService();
-		final NameBanConfig config = service.get();
+		final NameBanConfig config = service.get0();
 
 		if (config.nameIsBanned(event.getName())) {
 			// TODO Improve

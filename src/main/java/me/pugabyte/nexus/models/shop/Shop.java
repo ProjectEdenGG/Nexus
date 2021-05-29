@@ -98,7 +98,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return uuid.equals(Nexus.getUUID0());
+		return uuid.equals(StringUtils.getUUID0());
 	}
 
 	public String[] getDescriptionArray() {
@@ -147,11 +147,11 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public static ShopGroup of(String world) {
-			if (WorldGroup.get(world) == WorldGroup.SURVIVAL)
+			if (WorldGroup.of(world) == WorldGroup.SURVIVAL)
 				return SURVIVAL;
-			if (WorldGroup.get(world) == WorldGroup.SKYBLOCK)
+			if (WorldGroup.of(world) == WorldGroup.SKYBLOCK)
 				return SKYBLOCK;
-			if (WorldGroup.get(world) == WorldGroup.ONEBLOCK)
+			if (WorldGroup.of(world) == WorldGroup.ONEBLOCK)
 				return ONEBLOCK;
 
 			return null;
@@ -553,7 +553,7 @@ public class Shop implements PlayerOwnedObject {
 			int stock = (int) product.getStock();
 			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
 
-			if (product.getUuid().equals(Nexus.getUUID0()))
+			if (product.getUuid().equals(StringUtils.getUUID0()))
 				return Arrays.asList(
 						desc,
 						"&7Owner: &6Market"
@@ -636,7 +636,7 @@ public class Shop implements PlayerOwnedObject {
 		public List<String> getLore() {
 			int stock = (int) product.getStock();
 			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
-			if (product.getUuid().equals(Nexus.getUUID0()))
+			if (product.getUuid().equals(StringUtils.getUUID0()))
 				return Arrays.asList(
 						desc,
 						"&7Owner: &6Market"
@@ -724,7 +724,7 @@ public class Shop implements PlayerOwnedObject {
 		@Override
 		public List<String> getLore() {
 			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
-			if (product.getUuid().equals(Nexus.getUUID0()))
+			if (product.getUuid().equals(StringUtils.getUUID0()))
 				return Arrays.asList(
 						desc,
 						"&7Owner: &6Market"

@@ -46,10 +46,10 @@ public abstract class CommandEvent extends Event implements Cancellable {
 	}
 
 	public Player getPlayer() throws NexusException {
-		if (!(sender instanceof Player))
+		if (!(sender instanceof Player player))
 			throw new MustBeIngameException();
 
-		return (Player) sender;
+		return player;
 	}
 
 	public String getAliasUsed() {

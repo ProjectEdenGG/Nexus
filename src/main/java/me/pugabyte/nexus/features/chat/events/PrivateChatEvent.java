@@ -15,6 +15,7 @@ public class PrivateChatEvent extends MinecraftChatEvent {
 	private final String originalMessage;
 	private String message;
 	private boolean filtered;
+	private boolean bad;
 
 	private Set<Chatter> recipients;
 

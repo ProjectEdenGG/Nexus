@@ -35,7 +35,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 	@Path("<materials...>")
 	void trash(@Arg(type = Material.class) List<Material> materials) {
 		DumpsterService dumpsterService = new DumpsterService();
-		Dumpster dumpster = dumpsterService.get();
+		Dumpster dumpster = dumpsterService.get0();
 
 		for (Material material : materials) {
 			dumpster.add(inventory().all(material).values());
@@ -52,7 +52,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
 
 		DumpsterService service = new DumpsterService();
-		Dumpster dumpster = service.get();
+		Dumpster dumpster = service.get0();
 
 		Arrays.stream(event.getInventory().getContents())
 				.filter(item -> !ItemUtils.isNullOrAir(item))

@@ -6,6 +6,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -14,8 +15,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.models.bearfair21.BearFair21User;
-import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJamService;
 import me.pugabyte.nexus.models.jigsawjam.JigsawJammer;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -159,9 +158,9 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
-		if (!(event.getRemover() instanceof Player)) return;
+		if (!(event.getRemover() instanceof Player player)) return;
 		if (!isInJigsawJam(event.getEntity())) return;
-		if (canWorldGuardEdit(event.getRemover())) return;
+		if (canWorldGuardEdit(player)) return;
 
 		event.setCancelled(true);
 	}
@@ -218,10 +217,10 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onMapPickup(EntityPickupItemEvent event) {
-		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
-		if (!isInJigsawJam(event.getEntity())) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (!player.getWorld().getName().equals(WORLD)) return;
+		if (!isInJigsawJam(player)) return;
 		if (event.getItem().getItemStack().getType() != Material.FILLED_MAP) return;
-		if (!(event.getEntity() instanceof Player)) return;
 
 		ItemBuilder.setName(event.getItem().getItemStack(), null);
 	}
@@ -234,7 +233,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (!(event.getInventory().getHolder() instanceof Chest)) return;
 		if (canWorldGuardEdit(event.getPlayer())) return;
 
-		JigsawJammer jammer = new JigsawJamService().get((Player) event.getPlayer());
+		JigsawJammer jammer = new JigsawJamService().get(event.getPlayer());
 		if (!jammer.isPlaying()) {
 			event.setCancelled(true);
 			jammer.sendMessage(PREFIX + "You must start the timer by clicking on the sign before collecting the pieces");
@@ -408,12 +407,9 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (correct == totalMaps) {
 			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
 
-			BearFair21UserService bearFairService = new BearFair21UserService();
-			BearFair21User user = bearFairService.get(player);
 
 			if (!jammer.hasPlayed()) {
-				user.givePoints(50);
-				bearFairService.save(user);
+				BearFair21.givePoints(jammer.getPlayer(), 50);
 				jammer.hasPlayed(true);
 				new JigsawJamService().save(jammer);
 			}

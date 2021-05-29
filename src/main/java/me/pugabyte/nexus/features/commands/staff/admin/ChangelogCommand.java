@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -30,7 +29,7 @@ import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 @Permission("group.admin")
 public class ChangelogCommand extends CustomCommand {
 	private final ChangelogService service = new ChangelogService();
-	private final Changelog changelog = service.get(Nexus.getUUID0());
+	private final Changelog changelog = service.get0();
 
 	public ChangelogCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -53,8 +52,8 @@ public class ChangelogCommand extends CustomCommand {
 		Discord.send(getMessage(from, to), TextChannel.CHANGELOG);
 	}
 
-	@Path("diff test [from] [to]")
-	void diffTest(ChangelogEntry from, ChangelogEntry to) {
+	@Path("testDiff [from] [to]")
+	void testDiff(ChangelogEntry from, ChangelogEntry to) {
 		Discord.send(getMessage(from, to), TextChannel.TEST);
 	}
 

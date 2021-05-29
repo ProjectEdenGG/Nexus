@@ -28,7 +28,7 @@ public class DiscordCaptchaListener extends ListenerAdapter {
 			final String id = event.getUser().getId();
 
 			DiscordCaptchaService captchaService = new DiscordCaptchaService();
-			DiscordCaptcha captcha = captchaService.get();
+			DiscordCaptcha captcha = captchaService.get0();
 			CaptchaResult result = captcha.check(id);
 
 			if (result == CaptchaResult.CONFIRMED) {
@@ -58,7 +58,7 @@ public class DiscordCaptchaListener extends ListenerAdapter {
 
 			final String id = event.getUser().getId();
 			DiscordCaptchaService captchaService = new DiscordCaptchaService();
-			DiscordCaptcha captcha = captchaService.get();
+			DiscordCaptcha captcha = captchaService.get0();
 
 			CaptchaResult result = captcha.check(id);
 			if (result == CaptchaResult.UNCONFIRMED) {

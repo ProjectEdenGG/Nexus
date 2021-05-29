@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
-import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import eden.utils.TimeUtils.Time;
@@ -37,12 +36,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -64,8 +61,6 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,7 +86,7 @@ public class Misc implements Listener {
 	public void onCoralDeath(BlockFadeEvent event) {
 		Block block = event.getBlock();
 		if (MaterialTag.ALL_CORALS.isTagged(block.getType())) {
-			WorldGroup worldGroup = WorldGroup.get(block.getWorld());
+			WorldGroup worldGroup = WorldGroup.of(block.getWorld());
 			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup) || WorldGroup.MINIGAMES.equals(worldGroup))
 				event.setCancelled(true);
 		}
@@ -109,7 +104,7 @@ public class Misc implements Listener {
 		List<EntityType> types = Arrays.asList(EntityType.WANDERING_TRADER, EntityType.TRADER_LLAMA);
 		List<WorldGroup> worlds = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
 		if (types.contains(event.getEntity().getType()))
-			if (!worlds.contains(WorldGroup.get(event.getLocation().getWorld())))
+			if (!worlds.contains(WorldGroup.of(event.getLocation().getWorld())))
 				event.setCancelled(true);
 	}
 
@@ -119,7 +114,7 @@ public class Misc implements Listener {
 		if (!(event.getEntity() instanceof Player player)) return;
 
 		if (event.getCause() == DamageCause.VOID)
-			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.get(player))
+			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player))
 					|| player.getWorld().getEnvironment() == Environment.THE_END)) {
 				if (PlayerManager.get(player).getMatch() != null)
 					Warps.spawn((Player) event.getEntity());
@@ -134,7 +129,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlaceChest(BlockPlaceEvent event) {
-		if (WorldGroup.get(event.getPlayer()) != WorldGroup.SURVIVAL)
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
 		if (!event.getBlockPlaced().getType().equals(Material.CHEST))
@@ -148,7 +143,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlaceFurnace(BlockPlaceEvent event) {
-		if (WorldGroup.get(event.getPlayer()) != WorldGroup.SURVIVAL)
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
 		if (!event.getBlockPlaced().getType().equals(Material.FURNACE))
@@ -244,7 +239,7 @@ public class Misc implements Listener {
 				toSpawn.remove(event.getPlayer().getUniqueId());
 			}
 
-			WorldGroup worldGroup = WorldGroup.get(event.getPlayer());
+			WorldGroup worldGroup = WorldGroup.of(event.getPlayer());
 			if (worldGroup == WorldGroup.MINIGAMES)
 				joinMinigames(event.getPlayer());
 			else if (worldGroup == WorldGroup.CREATIVE)
@@ -267,7 +262,7 @@ public class Misc implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 
-		WorldGroup worldGroup = WorldGroup.get(player);
+		WorldGroup worldGroup = WorldGroup.of(player);
 		if (worldGroup == WorldGroup.MINIGAMES)
 			Tasks.wait(5, () -> joinMinigames(player));
 		else if (worldGroup == WorldGroup.CREATIVE)
@@ -281,7 +276,7 @@ public class Misc implements Listener {
 			player.setFlying(false);
 		}
 
-		if (WorldGroup.get(event.getFrom()) == WorldGroup.CREATIVE) {
+		if (WorldGroup.of(event.getFrom()) == WorldGroup.CREATIVE) {
 			if (Nerd.of(player).isVanished())
 				if (player.hasPermission("essentials.fly")) {
 					player.setFallDistance(0);
@@ -385,16 +380,6 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
-	}
-
-	private static final LocalDate XP_BOOST_END = LocalDate.of(2021, 5, 17);
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onXP(PlayerPickupExperienceEvent event) {
-		if (XP_BOOST_END.atStartOfDay().isBefore(LocalDateTime.now()))
-			return;
-
-		ExperienceOrb orb = event.getExperienceOrb();
-		orb.setExperience(orb.getExperience() * 2);
 	}
 
 }

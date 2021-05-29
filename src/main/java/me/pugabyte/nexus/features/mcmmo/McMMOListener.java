@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.mcmmo;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
-import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.util.player.UserManager;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
@@ -27,14 +26,11 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Sapling;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,15 +43,6 @@ public class McMMOListener implements Listener {
 	public McMMOListener() {
 		Nexus.registerListener(this);
 		scheduler();
-	}
-
-	private static final LocalDate boostEnd = LocalDate.of(2021, 5, 17);
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onMcMMOExpGain(McMMOPlayerXpGainEvent event) {
-		if (boostEnd.atStartOfDay().isBefore(LocalDateTime.now()))
-			return;
-
-		event.setRawXpGained(event.getRawXpGained() * 2.5f);
 	}
 
 	@EventHandler
@@ -112,7 +99,7 @@ public class McMMOListener implements Listener {
 			return false;
 
 		// if player is in survival
-		WorldGroup world = WorldGroup.get(player);
+		WorldGroup world = WorldGroup.of(player);
 		if (!world.equals(WorldGroup.SURVIVAL))
 			return false;
 

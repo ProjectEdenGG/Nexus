@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
-import me.pugabyte.nexus.models.bearfair21.BearFair21User.BF21PointSource;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -38,7 +37,6 @@ import static org.bukkit.block.BlockFace.SOUTH_EAST;
 import static org.bukkit.block.BlockFace.SOUTH_WEST;
 import static org.bukkit.block.BlockFace.WEST;
 
-// TODO BF21
 public class ReflectionGame {
 	@Getter
 	private static final String gameRg = BearFair21.getRegion() + "_reflection";
@@ -50,8 +48,6 @@ public class ReflectionGame {
 	private static final Location center = new Location(BearFair21.getWorld(), 49, 132, -93);
 	@Getter
 	private static final List<BlockFace> angles = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
-	@Getter
-	private static final BF21PointSource SOURCE = BF21PointSource.REFLECTION;
 	//
 	@Getter
 	@Setter

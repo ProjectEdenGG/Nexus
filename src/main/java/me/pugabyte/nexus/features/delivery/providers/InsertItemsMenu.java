@@ -36,7 +36,7 @@ public class InsertItemsMenu implements Listener {
 
 		Inventory inv = Bukkit.createInventory(null, 27, TITLE);
 		if (!Utils.isNullOrEmpty(items))
-			inv.setContents(items.toArray(new ItemStack[0]));
+			inv.setContents(items.toArray(ItemStack[]::new));
 
 		Nexus.registerTempListener(this);
 		user.getOnlinePlayer().openInventory(inv);

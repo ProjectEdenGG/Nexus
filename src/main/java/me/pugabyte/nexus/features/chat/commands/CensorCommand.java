@@ -26,8 +26,9 @@ public class CensorCommand extends CustomCommand {
 		ChatEvent event = new PublicChatEvent(new ChatService().get(player()), channel, message, message, new HashSet<>());
 		Censor.process(event);
 		send(PREFIX + "Processed message:" + (event.isCancelled() ? " &c(Cancelled)" : ""));
-		send("&eOriginal: &f" + message);
+		send("&eOriginal: &f" + event.getOriginalMessage());
 		send("&eResult: &f" + event.getMessage());
+		send("&eChanged: " + (event.wasChanged() ? "&aYes" : "&cNo"));
 	}
 
 	@Path("reload")

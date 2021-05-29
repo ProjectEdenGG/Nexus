@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.quests.pathfinder;
 
 import com.sk89q.worldedit.regions.Region;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -46,7 +45,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 	@Path("list")
 	public void list() {
 		WebConfigService service = new WebConfigService();
-		WebConfig config = service.get(Nexus.getUUID0());
+		WebConfig config = service.get0();
 		send("Total Webs: " + config.getWebs().size());
 		for (Web web : config.getWebs()) {
 			send(" - Web: " + web.getId());
@@ -73,7 +72,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 	@Path("new test")
 	public void newTest() {
 		WebConfigService service = new WebConfigService();
-		WebConfig config = service.get(Nexus.getUUID0());
+		WebConfig config = service.get0();
 		Web web = new Web("test");
 
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
@@ -109,7 +108,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 			return;
 
 		WebConfigService service = new WebConfigService();
-		WebConfig config = service.get(Nexus.getUUID0());
+		WebConfig config = service.get0();
 		Web web = config.getById("test");
 		if (web == null) {
 			send(player, "&cWeb is null");
@@ -183,7 +182,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 			return;
 
 		WebConfigService service = new WebConfigService();
-		WebConfig config = service.get(Nexus.getUUID0());
+		WebConfig config = service.get0();
 		Web web = config.getById("test");
 		if (web == null) {
 			send(player, "&cWeb is null");

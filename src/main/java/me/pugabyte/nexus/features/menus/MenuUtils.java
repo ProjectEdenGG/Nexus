@@ -253,7 +253,7 @@ public abstract class MenuUtils {
 	protected void addPagination(InventoryContents contents, List<ClickableItem> items, int perPage, ClickableItem previous, ClickableItem next) {
 		Pagination page = contents.pagination();
 		page.setItemsPerPage(perPage);
-		page.setItems(items.toArray(new ClickableItem[0]));
+		page.setItems(items.toArray(ClickableItem[]::new));
 		if (page.getPage() > items.size() / perPage)
 			page.page(items.size() / perPage);
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
@@ -369,18 +369,18 @@ public abstract class MenuUtils {
 	public static class ConfirmationMenu extends MenuUtils implements InventoryProvider {
 		@Getter
 		@Builder.Default
-		private String title = "&4Are you sure?";
+		private final String title = "&4Are you sure?";
 		@Builder.Default
-		private String cancelText = "&cNo";
-		private String cancelLore;
+		private final String cancelText = "&cNo";
+		private final String cancelLore;
 		@Builder.Default
-		private String confirmText = "&aYes";
-		private String confirmLore;
+		private final String confirmText = "&aYes";
+		private final String confirmLore;
 		@Builder.Default
-		private Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
+		private final Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@NonNull
-		private Consumer<ItemClickData> onConfirm;
-		private Consumer<ItemClickData> onFinally;
+		private final Consumer<ItemClickData> onConfirm;
+		private final Consumer<ItemClickData> onFinally;
 
 		public static class ConfirmationMenuBuilder {
 
@@ -409,24 +409,32 @@ public abstract class MenuUtils {
 			ItemStack confirmItem = nameItem(Material.LIME_CONCRETE, confirmText, confirmLore);
 
 			contents.set(1, 2, ClickableItem.from(cancelItem, (e) -> {
-				if (onCancel != null)
-					onCancel.accept(e);
+				try {
+					if (onCancel != null)
+						onCancel.accept(e);
 
-				if (title.equals(e.getPlayer().getOpenInventory().getTitle()))
-					e.getPlayer().closeInventory();
+					if (title.equals(e.getPlayer().getOpenInventory().getTitle()))
+						e.getPlayer().closeInventory();
 
-				if (onFinally != null)
-					onFinally.accept(e);
+					if (onFinally != null)
+						onFinally.accept(e);
+				} catch (Exception ex) {
+					PlayerUtils.send(player, "&c" + ex.getMessage());
+				}
 			}));
 
 			contents.set(1, 6, ClickableItem.from(confirmItem, e -> {
-				onConfirm.accept(e);
+				try {
+					onConfirm.accept(e);
 
-				if (colorize(title).equals(e.getPlayer().getOpenInventory().getTitle()))
-					e.getPlayer().closeInventory();
+					if (colorize(title).equals(e.getPlayer().getOpenInventory().getTitle()))
+						e.getPlayer().closeInventory();
 
-				if (onFinally != null)
-					onFinally.accept(e);
+					if (onFinally != null)
+						onFinally.accept(e);
+				} catch (Exception ex) {
+					PlayerUtils.send(player, "&c" + ex.getMessage());
+				}
 			}));
 		}
 	}

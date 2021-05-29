@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import org.bukkit.Particle;
 
 public interface IParticlePerk extends IHasPerkCategory, Perk {
+
 	int getCount();
 
 	Particle getParticle();
@@ -14,5 +15,7 @@ public interface IParticlePerk extends IHasPerkCategory, Perk {
 	}
 
 	double getOffsetH();
+
 	double getOffsetV();
+
 }

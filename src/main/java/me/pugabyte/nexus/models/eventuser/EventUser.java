@@ -72,14 +72,21 @@ public class EventUser implements PlayerOwnedObject {
 
 	public void giveTokens(int tokens, boolean actionBar) {
 		this.tokens += tokens;
-		sendMessage(Events.PREFIX + "You have received &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
+		if (isOnline()) {
+			sendMessage(Events.PREFIX + "You have &areceived &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
 
-		if (isOnline() && actionBar)
-			ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + tokens + plural(" event token", tokens));
+			if (actionBar)
+				ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + tokens + plural(" event token", tokens));
+		}
 	}
 
 	public void takeTokens(int tokens) {
 		this.tokens -= tokens;
+		sendMessage(Events.PREFIX + "You have &cspent &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
+	}
+
+	public boolean hasTokens(int tokens) {
+		return this.tokens >= tokens;
 	}
 
 }

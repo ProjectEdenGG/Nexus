@@ -21,7 +21,7 @@ public class SafeCrackerGameSelector extends MenuUtils implements InventoryProvi
 
 
 	SafeCrackerEventService service = new SafeCrackerEventService();
-	SafeCrackerEvent event = service.get();
+	SafeCrackerEvent event = service.get0();
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
@@ -30,7 +30,7 @@ public class SafeCrackerGameSelector extends MenuUtils implements InventoryProvi
 		contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Event").build(), e -> {
 			openAnvilMenu(player, "New Game...", (player1, response) -> {
 				service.getActiveEvent().setActive(false);
-				service.get().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
+				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
 				service.save(event);
 				SafeCrackerInventories.openGameSelectorMenu(player);
 				return AnvilGUI.Response.text(response);

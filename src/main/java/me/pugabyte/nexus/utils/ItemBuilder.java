@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -305,13 +306,25 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder customModelData(int id) {
-		if (id > 0) {
-			NBTItem nbtItem = new NBTItem(build());
-			nbtItem.setInteger("CustomModelData", id);
-			itemStack = nbtItem.getItem();
-			itemMeta = itemStack.getItemMeta();
-		}
+		if (id > 0)
+			nbt(item -> item.setInteger("CustomModelData", id));
 		return this;
+	}
+
+	public ItemBuilder untradeable() {
+		return tradeable(false);
+	}
+
+	public ItemBuilder tradeable(boolean tradeable) {
+		nbt(item -> item.setBoolean("tradeable", tradeable));
+		return this;
+	}
+
+	public void nbt(Consumer<NBTItem> consumer) {
+		NBTItem nbtItem = new NBTItem(build());
+		consumer.accept(nbtItem);
+		itemStack = nbtItem.getItem();
+		itemMeta = itemStack.getItemMeta();
 	}
 
 	public int customModelData() {

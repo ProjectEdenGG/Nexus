@@ -150,7 +150,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 			items.add(inv.getItem(i));
 		}
 		Kit kit = KitManager.get(id);
-		kit.setItems(items.toArray(new ItemStack[0]));
+		kit.setItems(items.toArray(ItemStack[]::new));
 		KitManager.getConfig().set(id + "", kit);
 		KitManager.saveConfig();
 	}

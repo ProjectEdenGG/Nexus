@@ -68,7 +68,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	private final HoneyPotGrieferService grieferService = new HoneyPotGrieferService();
 	private HoneyPotGriefer griefer;
 	private final HoneyPotBansService bansService = new HoneyPotBansService();
-	private final HoneyPotBans honeyPotBans = bansService.get(Nexus.getUUID0());
+	private final HoneyPotBans honeyPotBans = bansService.get0();
 
 	private WorldGuardUtils WGUtils;
 	private WorldEditUtils WEUtils;
@@ -286,9 +286,9 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onEntityKill(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player player)) return;
-		if (!(event.getEntity() instanceof Animals)) return;
+		if (!(event.getEntity() instanceof Animals animal)) return;
 		if (player.hasPermission("honeypot.bypass")) return;
-		incrementPlayer(player, event.getEntity().getLocation(), 1);
+		incrementPlayer(player, animal.getLocation(), 1);
 	}
 
 	public boolean incrementPlayer(Player player, Location location, double amount) {
@@ -318,7 +318,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 			if (triggered >= 10) {
 				final HoneyPotBansService bansService = new HoneyPotBansService();
-				final HoneyPotBans honeyPotBans = bansService.get(Nexus.getUUID0());
+				final HoneyPotBans honeyPotBans = bansService.get0();
 				honeyPotBans.get(region.getId()).addBan();
 				bansService.save(honeyPotBans);
 

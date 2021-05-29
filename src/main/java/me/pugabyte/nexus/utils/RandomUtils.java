@@ -88,7 +88,7 @@ public class RandomUtils {
 	}
 
 	public static Material randomMaterial(MaterialTag tag) {
-		return randomMaterial(tag.getValues().toArray(new Material[0]));
+		return randomMaterial(tag.getValues().toArray(Material[]::new));
 	}
 
 	public static Material randomMaterial(Material[] materials) {

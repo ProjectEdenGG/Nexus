@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 @Permission("group.admin")
 public class CouponCommand extends CustomCommand implements Listener {
 	private final CouponService service = new CouponService();
-	private final Coupons coupons = service.get(Nexus.getUUID0());
+	private final Coupons coupons = service.get0();
 
 	@Getter
 	@AllArgsConstructor
@@ -161,7 +161,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 
 		public Coupons getCoupons() {
 			final CouponService service = new CouponService();
-			return service.get(Nexus.getUUID0());
+			return service.get0();
 		}
 
 		public Coupon getCoupon() {
@@ -280,7 +280,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		if (ItemUtils.isNullOrAir(event.getItem())) return;
 
 		final CouponService service = new CouponService();
-		final Coupons coupons = service.get(Nexus.getUUID0());
+		final Coupons coupons = service.get0();
 
 		Coupon coupon = coupons.of(event.getItem());
 		if (coupon == null) return;

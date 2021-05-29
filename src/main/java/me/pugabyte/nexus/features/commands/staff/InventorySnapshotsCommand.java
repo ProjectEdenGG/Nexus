@@ -195,7 +195,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			}));
 			contents.set(0, 7, ClickableItem.from(teleport, e -> player.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
 			contents.set(0, 8, ClickableItem.empty(info));
-			formatInventoryContents(contents, snapshot.getContents().toArray(new ItemStack[0]));
+			formatInventoryContents(contents, snapshot.getContents().toArray(ItemStack[]::new));
 		}
 	}
 

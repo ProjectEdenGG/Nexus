@@ -5,7 +5,6 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -33,7 +32,7 @@ import java.util.List;
 public class BuildContestCommand extends CustomCommand implements Listener {
 	private final WarpService warpService = new WarpService();
 	private final BuildContestService service = new BuildContestService();
-	private final BuildContest buildContest = service.get(Nexus.getUUID0());
+	private final BuildContest buildContest = service.get0();
 
 	public BuildContestCommand(@NonNull CommandEvent event) {
 		super(event);

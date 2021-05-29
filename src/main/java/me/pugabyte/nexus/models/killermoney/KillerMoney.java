@@ -25,5 +25,4 @@ public class KillerMoney implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean muted;
-	private double boost;
 }

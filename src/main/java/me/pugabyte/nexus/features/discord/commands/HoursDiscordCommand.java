@@ -5,7 +5,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import eden.exceptions.EdenException;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import joptsimple.internal.Strings;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -38,7 +37,6 @@ public class HoursDiscordCommand extends Command {
 				else
 					try {
 						DiscordUser user = new DiscordUserService().checkVerified(event.getAuthor().getId());
-						Nexus.log(user.toString());
 						player = user.getOfflinePlayer();
 					} catch (InvalidInputException ex) {
 						throw new InvalidInputException("You must either link your Discord and Minecraft accounts or supply a name");

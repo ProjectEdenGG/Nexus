@@ -15,10 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class SerializationUtils {
 
@@ -48,14 +51,16 @@ public class SerializationUtils {
 
 		public static List<String> serializeMaterialSet(Set<Material> materials) {
 			if (materials == null) return null;
-			return new ArrayList<>() {{
-				addAll(materials.stream().map(Material::name).collect(Collectors.toList()));
-			}};
+			return materials.stream().map(Material::name).sorted().collect(toList());
 		}
 
 		public static Set<Material> deserializeMaterialSet(List<String> materials) {
 			if (materials == null) return null;
-			return materials.stream().map(block -> Material.matchMaterial(block.toUpperCase())).collect(Collectors.toSet());
+			return new LinkedHashSet<>(materials.stream()
+					.map(material -> Material.matchMaterial(material.toUpperCase()))
+					.filter(Objects::nonNull)
+					.sorted()
+					.toList());
 		}
 
 	}
@@ -145,8 +150,8 @@ public class SerializationUtils {
 			if (value == null)
 				return null;
 
-			if (value instanceof ConfigurationSerializable)
-				return serialize((ConfigurationSerializable) value);
+			if (value instanceof ConfigurationSerializable configurationSerializable)
+				return serialize(configurationSerializable);
 
 			if (Collection.class.isAssignableFrom(value.getClass()))
 				if (((Collection<?>) value).iterator().hasNext())
@@ -190,8 +195,8 @@ public class SerializationUtils {
 		}
 
 		private static void addExtraValues(Map<String, Object> serialized, ConfigurationSerializable value) {
-			if (value instanceof ItemStack)
-				serialized.computeIfAbsent("amount", $ -> ((ItemStack) value).getAmount());
+			if (value instanceof ItemStack itemStack)
+				serialized.computeIfAbsent("amount", $ -> itemStack.getAmount());
 		}
 
 		private static final List<String> intKeys = Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "custom-model-data",
@@ -200,8 +205,8 @@ public class SerializationUtils {
 		private static void fixItemMetaClasses(Map<String, Object> deserialized) {
 			intKeys.forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
-						if (metaValue instanceof Number)
-							return ((Number) metaValue).intValue();
+						if (metaValue instanceof Number number)
+							return number.intValue();
 						return metaValue;
 					}));
 
@@ -214,8 +219,8 @@ public class SerializationUtils {
 			return new HashMap<>() {{
 				map.forEach((key, value) -> {
 					put(key, value);
-					if (value instanceof Number)
-						put(key, ((Number) value).intValue());
+					if (value instanceof Number number)
+						put(key, number.intValue());
 				});
 			}};
 		}

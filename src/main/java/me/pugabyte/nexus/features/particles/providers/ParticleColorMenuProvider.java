@@ -1,6 +1,7 @@
-package me.pugabyte.nexus.features.particles.menu;
+package me.pugabyte.nexus.features.particles.providers;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
@@ -23,14 +24,23 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParticleColorMenuProvider extends MenuUtils implements InventoryProvider {
-
-	ParticleService service = new ParticleService();
-	ParticleType type;
-	ParticleSetting setting;
+	private final ParticleService service = new ParticleService();
+	private final ParticleType type;
+	private final ParticleSetting setting;
 
 	public ParticleColorMenuProvider(ParticleType type, ParticleSetting setting) {
 		this.type = type;
 		this.setting = setting;
+	}
+
+	@Override
+	public void open(Player viewer, int page) {
+		SmartInventory.builder()
+				.title("Set RGB Color")
+				.size(5, 9)
+				.provider(this)
+				.build()
+				.open(viewer);
 	}
 
 	@Getter
@@ -71,7 +81,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> ParticleMenu.openSettingEditor(player, type));
+		addBackItem(contents, e -> new EffectSettingProvider(type).open(player));
 
 		ParticleOwner owner = service.get(player);
 		Color color = setting.get(owner, type);
@@ -90,7 +100,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 					e -> {
 						owner.getSettings(type).put(setting, colorItem.getColorType().getBukkitColor());
 						service.save(owner);
-						Tasks.wait(5, () -> ParticleMenu.openColor(player, type, setting));
+						Tasks.wait(5, () -> new ParticleColorMenuProvider(type, setting).open(player));
 					}));
 		}
 
@@ -129,7 +139,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 							}
 							owner.getSettings(type).put(setting, newColor);
 							service.save(owner);
-							Tasks.wait(5, () -> ParticleMenu.openColor(player, type, setting));
+							Tasks.wait(5, () -> new ParticleColorMenuProvider(type, setting).open(player));
 						}));
 			}
 		}

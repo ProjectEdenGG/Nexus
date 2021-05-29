@@ -10,7 +10,8 @@ import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.StringUtils;
 
 public class Events extends Feature {
-	public static String PREFIX = StringUtils.getPrefix("Events");
+	public static final String PREFIX = StringUtils.getPrefix("Events");
+	public static final String STORE_PREFIX = StringUtils.getPrefix("Event Store");
 
 	@Override
 	public void onStart() {

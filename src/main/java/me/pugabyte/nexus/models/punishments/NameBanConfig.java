@@ -10,9 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.StringUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -59,7 +59,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 	}
 
 	public void ban(UUID uuid, String name) {
-		ban(Nexus.getUUID0(), uuid, name);
+		ban(StringUtils.getUUID0(), uuid, name);
 	}
 
 	public void ban(UUID executor, UUID uuid, String name) {

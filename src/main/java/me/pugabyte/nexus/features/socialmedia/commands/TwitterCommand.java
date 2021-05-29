@@ -46,7 +46,7 @@ public class TwitterCommand extends CustomCommand {
 	private static void lookForNewTweets0() {
 		try {
 			TwitterService service = new TwitterService();
-			TwitterData data = service.get();
+			TwitterData data = service.get0();
 
 			List<Status> tweets = SocialMedia.getTwitter().search().search(new Query("from:ProjectEdenGG")).getTweets();
 			for (Status tweet : tweets) {

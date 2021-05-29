@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.features.particles.effects.LineEffect;
-import me.pugabyte.nexus.features.particles.menu.ParticleMenu;
+import me.pugabyte.nexus.features.particles.providers.ParticleMenuProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -35,25 +35,25 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 		particleOwner = service.get(player());
 	}
 
-	@Path()
+	@Path
 	void menu() {
-		ParticleMenu.openMain(player());
+		new ParticleMenuProvider().open(player());
 	}
 
 	@Path("<effectType>")
 	@Permission("group.admin")
 	void run(ParticleType particleType) {
-		particleType.run(player());
+		particleOwner.start(particleType);
 	}
 
 	@Path("stop <effectType>")
 	void stop(ParticleType particleType) {
-		particleOwner.cancelTasks(particleType);
+		particleOwner.cancel(particleType);
 	}
 
 	@Path("stopall")
 	void stopAll() {
-		particleOwner.cancelTasks();
+		particleOwner.cancel();
 	}
 
 	@EventHandler

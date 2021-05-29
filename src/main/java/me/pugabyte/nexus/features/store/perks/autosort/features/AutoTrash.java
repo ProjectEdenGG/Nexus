@@ -29,7 +29,7 @@ public class AutoTrash implements Listener {
 		if (!user.hasFeatureEnabled(AutoSortFeature.AUTOTRASH))
 			return;
 
-		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.get(player)))
+		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
 			return;
 
 		ItemStack item = event.getItem().getItemStack();
@@ -43,7 +43,7 @@ public class AutoTrash implements Listener {
 		event.setCancelled(true);
 		if (user.getAutoTrashBehavior() == AutoTrashBehavior.TRASH) {
 			DumpsterService dumpsterService = new DumpsterService();
-			Dumpster dumpster = dumpsterService.get();
+			Dumpster dumpster = dumpsterService.get0();
 
 			dumpster.add(item);
 			dumpsterService.save(dumpster);

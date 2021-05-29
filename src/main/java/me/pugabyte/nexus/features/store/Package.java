@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.store;
 
 import com.google.common.base.Strings;
+import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
@@ -34,6 +35,9 @@ import me.pugabyte.nexus.features.store.perks.fireworks.FireworkCommand;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.autotorch.AutoTorchService;
 import me.pugabyte.nexus.models.autotorch.AutoTorchUser;
+import me.pugabyte.nexus.models.boost.Boostable;
+import me.pugabyte.nexus.models.boost.Booster;
+import me.pugabyte.nexus.models.boost.BoosterService;
 import me.pugabyte.nexus.models.contributor.Contributor;
 import me.pugabyte.nexus.models.contributor.ContributorService;
 import me.pugabyte.nexus.models.task.Task;
@@ -151,7 +155,7 @@ public enum Package {
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
-	@Command("/permhelper vaults add [player] 1")
+	@Command("/permhelper add vaults [player] 1")
 	@Display(Material.ENDER_CHEST)
 	VAULTS {
 		@Override
@@ -173,7 +177,7 @@ public enum Package {
 
 	@Id("2019261")
 	@Category(StoreCategory.MISC)
-	@Command("/permhelper homes add [player] 5")
+	@Command("/permhelper add homes [player] 5")
 	@Display(Material.CYAN_BED)
 	EXTRA_SETHOMES {
 		@Override
@@ -190,7 +194,7 @@ public enum Package {
 	@Id("2559650")
 	@Category(StoreCategory.VISUALS)
 	@PermissionGroup("store.npc")
-	@Command("/permhelper npcs add [player] 1")
+	@Command("/permhelper add npcs [player] 1")
 	@Display(Material.ARMOR_STAND)
 	NPC {
 		@Override
@@ -254,7 +258,7 @@ public enum Package {
 
 	@Id("2495909")
 	@Category(StoreCategory.MISC)
-	@Command("/permhelper plots add [player] 1")
+	@Command("/permhelper add plots [player] 1")
 	@World("creative")
 	@Display(Material.WOODEN_AXE)
 	CREATIVE_PLOTS {
@@ -458,7 +462,226 @@ public enum Package {
 	@Category(StoreCategory.DISGUISES)
 	@PermissionGroup("store.disguises.other")
 	@Display(Material.SLIME_SPAWN_EGG)
-	DISGUISES_OTHER;
+	DISGUISES_OTHER,
+
+	@Id("4496330")
+	@Category(StoreCategory.BOOSTS)
+	EXPERIENCE {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496331")
+	@Category(StoreCategory.BOOSTS)
+	MCMMO_EXPERIENCE {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 1.5, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496334")
+	@Category(StoreCategory.BOOSTS)
+	MARKET_SELL_PRICES {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 1.5, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496339")
+	@Category(StoreCategory.BOOSTS)
+	VOTE_POINTS {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 1.5, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496341")
+	@Category(StoreCategory.BOOSTS)
+	MINIGAME_DAILY_TOKENS {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496340")
+	@Category(StoreCategory.BOOSTS)
+	KILLER_MONEY {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496336")
+	@Category(StoreCategory.BOOSTS)
+	MYSTERY_CRATE_KEY {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 10, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	;
 
 	public void handleApply(HasUniqueId uuid) {}
 

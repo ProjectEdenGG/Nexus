@@ -50,7 +50,7 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 
 	@Path
 	void main() {
-		WorldGroup worldGroup = WorldGroup.get(player());
+		WorldGroup worldGroup = WorldGroup.of(player());
 		if (!DeliveryUser.getSupportedWorldGroups().contains(worldGroup))
 			error("You cannot use Deliveries in this world");
 
@@ -75,7 +75,7 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
-		WorldGroup worldGroup = WorldGroup.get(player);
+		WorldGroup worldGroup = WorldGroup.of(player);
 		DeliveryUser user = service.get(player);
 
 		List<Delivery> deliveries = new ArrayList<>(user.get(worldGroup));

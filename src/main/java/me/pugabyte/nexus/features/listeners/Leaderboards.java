@@ -25,6 +25,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -164,7 +165,7 @@ public class Leaderboards implements Listener {
 				if (top == null)
 					return;
 
-				if (!new CooldownService().check(Nexus.getUUID0(), "leaderboards_" + name(), Time.MINUTE.x(5)))
+				if (!new CooldownService().check(StringUtils.getUUID0(), "leaderboards_" + name(), Time.MINUTE.x(5)))
 					return;
 
 				updateActual();

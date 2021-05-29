@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.crates.Crates;
+import me.pugabyte.nexus.models.boost.BoostConfig;
+import me.pugabyte.nexus.models.boost.Boostable;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.SerializationUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -78,7 +80,7 @@ public class CrateLoot implements ConfigurationSerializable {
 	public @NotNull Map<String, Object> serialize() {
 		return new LinkedHashMap<>() {{
 			put("title", title);
-			put("items", SerializationUtils.YML.serializeItems(items.toArray(getItems().toArray(new ItemStack[0]))));
+			put("items", SerializationUtils.YML.serializeItems(items.toArray(getItems().toArray(ItemStack[]::new))));
 			put("weight", weight);
 			put("active", active);
 			put("type", type.name());
@@ -95,5 +97,10 @@ public class CrateLoot implements ConfigurationSerializable {
 		Crates.config.set(id + "", null);
 		Crates.save();
 		Crates.lootCache.remove(this);
+	}
+
+	public double getWeight() {
+		double multiplier = items.size() == 1 && items.get(0).isSimilar(CrateType.MYSTERY.getKey()) ? BoostConfig.multiplierOf(Boostable.MYSTERY_CRATE_KEY) : 1;
+		return weight * multiplier;
 	}
 }

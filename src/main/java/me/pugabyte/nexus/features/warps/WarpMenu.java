@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.warps;
 
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.buildcontest.BuildContest;
 import me.pugabyte.nexus.models.buildcontest.BuildContestService;
 
@@ -25,7 +24,7 @@ public enum WarpMenu {
 
 	public int getSize() {
 		if (this == MAIN) {
-			BuildContest buildContest = new BuildContestService().get(Nexus.getUUID0());
+			BuildContest buildContest = new BuildContestService().get0();
 			if (buildContest.isActive())
 				return size + 2;
 		}

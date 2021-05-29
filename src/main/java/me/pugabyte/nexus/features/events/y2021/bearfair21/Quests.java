@@ -3,17 +3,20 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.ClientsideContentManager;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.SellCrates;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.Mining;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.Farming;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.RegenCrops;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.mining.Mining;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.woodcutting.WoodCutting;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -26,11 +29,14 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -105,7 +111,34 @@ public class Quests implements Listener {
 			return;
 
 		int id = event.getNPC().getId();
-		BearFair21Talker.startScript(userService.get(player), id);
-		Merchants.openMerchant(player, id);
+		if (BearFair21NPC.from(id) == null)
+			return;
+
+		BearFair21Talker.runScript(userService.get(player), id).thenRun(() -> Merchants.openMerchant(player, id));
+
+		BearFair21User user = userService.get(player);
+		user.getMetNPCs().add(id);
+		userService.save(user);
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		Block block = event.getBlock();
+		Player player = event.getPlayer();
+
+		if (event.isCancelled()) return;
+		if (!isAtBearFair(block)) return;
+		if (canWorldGuardEdit(player)) return;
+
+		event.setCancelled(true);
+
+		if (Mining.breakBlock(event)) return;
+		if (WoodCutting.breakBlock(event)) return;
+		if (Farming.breakBlock(event)) return;
+
+		if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+			send(Errors.cantBreak, player);
+			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+		}
 	}
 }

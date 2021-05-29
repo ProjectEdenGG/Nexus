@@ -14,6 +14,7 @@ import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -121,6 +122,7 @@ public class Koda {
 							.contains(section.getStringList("contains"))
 							.responses(section.getStringList("responses"))
 							.routine(section.getString("routine"))
+							.cooldown(section.getInt("cooldown"))
 							.build());
 			}
 		}
@@ -133,6 +135,7 @@ public class Koda {
 		private final List<String> contains;
 		private final List<String> responses;
 		private final String routine;
+		private final Integer cooldown;
 
 		String getResponse() {
 			return RandomUtils.randomElement(responses);
@@ -144,6 +147,10 @@ public class Koda {
 			for (String contains : trigger.getContains())
 				if (!(" " + event.getMessage() + " ").matches("(?i).*(" + contains + ").*"))
 					continue responses;
+
+			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
+				if (!new CooldownService().check(StringUtils.getUUID0(), "koda_" + trigger.getName(), Time.SECOND.x(trigger.getCooldown())))
+					continue;
 
 			if (!isNullOrEmpty(trigger.getRoutine()))
 				routine(event, trigger.getRoutine());
@@ -229,6 +236,9 @@ public class Koda {
 							respond(event, "[player], griefing is not allowed. Please take a look at the /rules for more information.");
 				break;
 			case "lag":
+				if (!event.getChatter().isOnline())
+					break;
+
 				int ping = event.getChatter().getOnlinePlayer().spigot().getPing();
 				double tps = Bukkit.getTPS()[1];
 

@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.documentation;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -19,10 +18,6 @@ public class CommandsConfigService extends MongoService<CommandsConfig> {
 
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
-	}
-
-	public CommandsConfig get() {
-		return super.get(Nexus.getUUID0());
 	}
 
 }

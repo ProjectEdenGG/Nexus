@@ -84,7 +84,7 @@ public class KitManager {
 			kit.setId(Integer.parseInt(section));
 			kits.add(kit);
 		}
-		return kits.toArray(new Kit[0]);
+		return kits.toArray(Kit[]::new);
 	}
 
 }

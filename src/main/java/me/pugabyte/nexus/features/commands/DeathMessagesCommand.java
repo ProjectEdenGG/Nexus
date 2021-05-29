@@ -1,12 +1,15 @@
 package me.pugabyte.nexus.features.commands;
 
 import com.gmail.nossr50.mcMMO;
+import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -21,6 +24,7 @@ import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
@@ -52,20 +56,36 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("behavior <behavior> [player]")
-	void toggle(Behavior behavior, @Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	static {
+		Tasks.repeatAsync(Time.SECOND.x(10), Time.MINUTE, () -> {
+			DeathMessagesService service = new DeathMessagesService();
+			for (DeathMessages deathMessages : service.getExpired()) {
+				deathMessages.setBehavior(Behavior.SHOWN);
+				deathMessages.setExpiration(null);
+				service.save(deathMessages);
+			}
+		});
+	}
+
+	@Path("behavior <behavior> [player] [duration...]")
+	void toggle(Behavior behavior, @Arg(value = "self", permission = "group.staff") OfflinePlayer player, @Arg(permission = "group.staff") Timespan duration) {
 		final DeathMessages deathMessages = service.get(player);
 
 		deathMessages.setBehavior(behavior);
+		if (!duration.isNull())
+			deathMessages.setExpiration(duration.fromNow());
+
 		service.save(deathMessages);
-		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message behavior to &e" + camelCase(behavior));
+		send(PREFIX + "Set " + (isSelf(deathMessages) ? "your" : "&e" + player.getName() + "'s") + " &3death message " +
+				"behavior to &e" + camelCase(behavior) + (duration.isNull() ? "" : " &3for &e" + duration.format()));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onDeath(PlayerDeathEvent event) {
 		String deathString = event.getDeathMessage();
+		Player player = event.getEntity();
 		DeathMessagesService service = new DeathMessagesService();
-		DeathMessages deathMessages = service.get(event.getEntity());
+		DeathMessages deathMessages = service.get(player);
 
 		Component deathMessageRaw = event.deathMessage();
 
@@ -76,14 +96,14 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			// i'm still mad that i have to do this
 			Component deathMessage = deathMessageRaw;
 			TextReplacementConfig replacementConfig1 = TextReplacementConfig.builder()
-					.matchLiteral(event.getEntity().getName())
+					.matchLiteral(player.getName())
 					.replacement(
 							Component.text(deathMessages.getNickname(), NamedTextColor.YELLOW)
 					).build();
 			deathMessage = deathMessage.replaceText(replacementConfig1);
 
-			if (event.getEntity().getKiller() != null) {
-				Player killer = event.getEntity().getKiller();
+			if (player.getKiller() != null) {
+				Player killer = player.getKiller();
 				TextReplacementConfig replacementConfig2 = TextReplacementConfig.builder()
 						.matchLiteral(killer.getName())
 						.replacement(
@@ -101,9 +121,9 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			deathMessage.args().forEach(component -> {
 				// get the name of the player (or entity)
 				String playerName;
-				if (component.children().size() > 0 && component.children().get(0) instanceof TextComponent)
-					playerName = ((TextComponent) component.children().get(0)).content();
-				else if (component instanceof TextComponent textComponent && !((TextComponent) component).content().isEmpty()) {
+				if (component.children().size() > 0 && component.children().get(0) instanceof TextComponent textComponent)
+					playerName = textComponent.content();
+				else if (component instanceof TextComponent textComponent && !textComponent.content().isEmpty()) {
 					playerName = textComponent.content();
 					component = textComponent.content("");
 				} else {
@@ -165,15 +185,26 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
-			Chat.broadcastIngame(event.getEntity(), output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
+			Chat.broadcastIngame(player, output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
 
-			if (WorldGroup.get(event.getEntity()) == WorldGroup.SURVIVAL)
-				Chat.broadcastDiscord("☠ " + deathString); // dumb fix :(
+			if (WorldGroup.of(player) == WorldGroup.SURVIVAL) {
+				// workaround for dumb Adventure bug (#657)
+				if (deathString == null)
+					deathString = "☠ " + Nickname.of(player) + " died";
+				else {
+					deathString = ("☠ " + HEART_PATTERN.matcher(deathString).replaceAll("a mob"))
+							.replace(" " + player.getName() + " ", " " + Nickname.of(player) + " ");
+
+					if (player.getKiller() != null)
+						deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
+				}
+				Chat.broadcastDiscord(Discord.discordize(deathString));
+			}
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
-			Chatter chatter = new ChatService().get(event.getEntity());
+			Chatter chatter = new ChatService().get(player);
 			for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 				if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
-					recipient.sendMessage(event.getEntity(), output, MessageType.CHAT);
+					recipient.sendMessage(player, output, MessageType.CHAT);
 		}
 	}
 

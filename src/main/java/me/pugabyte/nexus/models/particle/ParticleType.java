@@ -11,12 +11,13 @@ import me.pugabyte.nexus.features.particles.effects.SpiralEffect;
 import me.pugabyte.nexus.features.particles.effects.StarEffect;
 import me.pugabyte.nexus.features.particles.effects.StormEffect;
 import me.pugabyte.nexus.features.particles.effects.WingsEffect;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
@@ -90,7 +91,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	SQUARE(new ItemStack(Material.YELLOW_CARPET), true) {
+	SQUARE(Material.YELLOW_CARPET, true) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
@@ -162,7 +163,7 @@ public enum ParticleType {
 			return new int[]{taskId};
 		}
 	},
-	NYAN_CAT(new ItemStack(Material.OCELOT_SPAWN_EGG)) {
+	NYAN_CAT(Material.OCELOT_SPAWN_EGG) {
 		@Override
 		int[] start(ParticleOwner particleOwner) {
 			int taskId = NyanCatEffect.builder()
@@ -499,29 +500,35 @@ public enum ParticleType {
 					.getTaskId();
 			return new int[] {taskId};
 		}
+
+		@Override
+		public String getPermission() {
+			return "wings.use";
+		}
 	};
 
-	ItemStack itemStack;
-	boolean isShape = false;
-	String commandName = name().replace("_", "").toLowerCase();
-	String displayName = StringUtils.camelCase(name().replace("_", " "));
-
-	ParticleType(ItemStack itemStack) {
-		this.itemStack = itemStack;
-	}
+	private final Material material;
+	private final int customModelData;
+	private final boolean isShape;
+	private final String commandName = name().replace("_", "").toLowerCase();
+	private final String displayName = StringUtils.camelCase(name().replace("_", " "));
 
 	ParticleType(Material material) {
-		this.itemStack = new ItemStack(material);
+		this(material, 0, false);
 	}
 
 	ParticleType(Material material, boolean isShape) {
-		this.itemStack = new ItemStack(material);
+		this(material, 0, isShape);
+	}
+
+	ParticleType(Material material, int customModelData, boolean isShape) {
+		this.material = material;
+		this.customModelData = customModelData;
 		this.isShape = isShape;
 	}
 
-	ParticleType(ItemStack itemStack, boolean isShape) {
-		this.itemStack = itemStack;
-		this.isShape = isShape;
+	public ItemBuilder getDisplayItem() {
+		return new ItemBuilder(material).customModelData(customModelData).itemFlags(ItemFlag.HIDE_ATTRIBUTES).name("&3" + getDisplayName());
 	}
 
 	public static ParticleType[] getShapes() {
@@ -539,7 +546,18 @@ public enum ParticleType {
 	abstract int[] start(ParticleOwner particleOwner);
 
 	public void run(Player player) {
-		ParticleOwner particleOwner = new ParticleService().get(player);
-		particleOwner.addTasks(this, start(particleOwner));
+		run(new ParticleService().get(player));
+	}
+
+	public void run(ParticleOwner particleOwner) {
+		particleOwner.start(this, start(particleOwner));
+	}
+
+	public boolean canBeUsedBy(Player player) {
+		return player.hasPermission(getPermission());
+	}
+
+	public String getPermission() {
+		return "particles." + commandName;
 	}
 }

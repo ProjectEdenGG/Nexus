@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.models.dumpster;
 
 import eden.mongodb.annotations.PlayerClass;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.util.Map;
@@ -19,10 +18,6 @@ public class DumpsterService extends MongoService<Dumpster> {
 
 	protected Map<UUID, Integer> getSaveQueue() {
 		return saveQueue;
-	}
-
-	public Dumpster get() {
-		return super.get(Nexus.getUUID0());
 	}
 
 }

@@ -46,7 +46,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean shouldFilterItems(HumanEntity player) {
-		return WorldGroup.get(player.getWorld()) == WorldGroup.CREATIVE && Rank.of((Player) player) == Rank.GUEST;
+		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of((Player) player) == Rank.GUEST;
 	}
 
 	private void filter(Supplier<HumanEntity> player, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
@@ -101,7 +101,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onItemSpawn(ItemSpawnEvent event) {
-		if (WorldGroup.get(event.getEntity().getWorld()) != WorldGroup.CREATIVE)
+		if (WorldGroup.of(event.getEntity().getWorld()) != WorldGroup.CREATIVE)
 			return;
 
 		synchronized (resetDropsTaskId) {
@@ -150,7 +150,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlaceBlock(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (WorldGroup.get(player.getWorld()) != WorldGroup.CREATIVE)
+		if (WorldGroup.of(player.getWorld()) != WorldGroup.CREATIVE)
 			return;
 
 		if (Rank.of(player) != Rank.GUEST)

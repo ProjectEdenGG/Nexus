@@ -108,7 +108,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	public void onNPCClick(NPCRightClickEvent event) {
 		if (event.getNPC().getId() != npcId) return;
 		WeeklyWakkaService service = new WeeklyWakkaService();
-		WeeklyWakka weeklyWakka = service.get();
+		WeeklyWakka weeklyWakka = service.get0();
 		Player player = event.getClicker();
 		if (weeklyWakka.getFoundPlayers().contains(player.getUniqueId())) {
 			send(player, "&cYou have already found this week's Weekly Wakka. Come back next week!");
@@ -126,7 +126,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	public void move() {
 		List<Warp> warps = new WarpService().getWarpsByType(WarpType.WEEKLY_WAKKA);
 		WeeklyWakkaService service = new WeeklyWakkaService();
-		WeeklyWakka weeklyWakka = service.get();
+		WeeklyWakka weeklyWakka = service.get0();
 		Warp currentWarp = warps.stream().filter(warp -> warp.getName().equals(weeklyWakka.getCurrentLocation())).findFirst().orElse(null);
 		if (currentWarp != null)
 			warps.remove(currentWarp);

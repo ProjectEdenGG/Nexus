@@ -171,8 +171,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(Nexus.getUUID0(), "reload", Time.SECOND.x(15)))
-			throw new CommandCooldownException(Nexus.getUUID0(), "reload");
+		if (!cooldownService.check(StringUtils.getUUID0(), "reload", Time.SECOND.x(15)))
+			throw new CommandCooldownException(StringUtils.getUUID0(), "reload");
 
 		runCommand("plugman reload Nexus");
 	}
@@ -1046,6 +1046,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 				.map(OfflinePlayer::getName)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
+	}
+
+	@ConverterFor(Timespan.class)
+	Timespan convertToTimespan(String input) {
+		return Timespan.of(input);
 	}
 
 }

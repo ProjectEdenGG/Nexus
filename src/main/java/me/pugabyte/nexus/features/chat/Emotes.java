@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.chat;
 
 import lombok.Getter;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.commands.EmotesCommand;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.models.emote.EmoteService;
@@ -93,7 +92,6 @@ public enum Emotes {
 	}
 
 	public static String process(EmoteUser user, String message, ChatColor resetColor) {
-		Nexus.debug("Message: " + message);
 		String reset = resetColor == null ? "" : resetColor.toString();
 		boolean canUseAllEmotes = LuckPermsUtils.hasPermission(user, EmotesCommand.PERMISSION);
 		for (Emotes emote : values()) {
@@ -103,7 +101,6 @@ public enum Emotes {
 				continue;
 
 			while (indexOfIgnoreCase(message, emote.getKey()) > -1) {
-				Nexus.debug("Found emote " + emote.getKey());
 				String result = emote.getEmote();
 
 				if (emote.getColors().size() > 0)
@@ -111,9 +108,7 @@ public enum Emotes {
 
 				result = colorize(result + reset);
 				int index = indexOfIgnoreCase(message, emote.getKey());
-				Nexus.debug("  Index: " + index);
 				message = message.substring(0, index) + result + message.substring(index + emote.getKey().length());
-				Nexus.debug("  New message: " + message);
 			}
 		}
 		return message;

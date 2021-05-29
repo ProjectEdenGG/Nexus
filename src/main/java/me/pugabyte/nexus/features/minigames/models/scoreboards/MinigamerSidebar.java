@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MinigamerSidebar implements MinigameScoreboard {
-	private Match match;
-	private Map<Minigamer, EdenScoreboard> scoreboards = new HashMap<>();
+	private final Match match;
+	private final Map<Minigamer, EdenScoreboard> scoreboards = new HashMap<>();
 
 	public MinigamerSidebar(Match match) {
 		this.match = match;

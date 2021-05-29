@@ -27,6 +27,7 @@ public @interface Category {
 	@RequiredArgsConstructor
 	enum StoreCategory {
 		CHAT(Material.WRITABLE_BOOK),
+		BOOSTS(Material.EXPERIENCE_BOTTLE),
 		VISUALS(Material.NETHER_STAR),
 		INVENTORY(Material.CHEST),
 		MISC(Material.EMERALD),

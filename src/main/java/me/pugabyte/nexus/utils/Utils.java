@@ -63,17 +63,18 @@ public class Utils extends eden.utils.Utils {
 
 	public static void tryRegisterListener(Object object) {
 		try {
-			if (!canEnable(object.getClass()))
+			final Class<?> clazz = object.getClass();
+			if (!canEnable(clazz))
 				return;
 
-			boolean hasNoArgsConstructor = Stream.of(object.getClass().getConstructors()).anyMatch(c -> c.getParameterCount() == 0);
-			if (object instanceof Listener) {
-				if (!hasNoArgsConstructor)
-					Nexus.warn("Cannot register listener on " + object.getClass().getSimpleName() + ", needs @NoArgsConstructor");
+			boolean hasNoArgsConstructor = Stream.of(clazz.getConstructors()).anyMatch(c -> c.getParameterCount() == 0);
+			if (object instanceof Listener listener) {
+				if (hasNoArgsConstructor)
+					Nexus.registerListener(listener.getClass().newInstance());
 				else
-					Nexus.registerListener((Listener) object.getClass().newInstance());
-			} else if (new ArrayList<>(getAllMethods(object.getClass(), withAnnotation(EventHandler.class))).size() > 0)
-				Nexus.warn("Found @EventHandlers in " + object.getClass().getSimpleName() + " which does not implement Listener"
+					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
+			} else if (new ArrayList<>(getAllMethods(clazz, withAnnotation(EventHandler.class))).size() > 0)
+				Nexus.warn("Found @EventHandlers in " + clazz.getSimpleName() + " which does not implement Listener"
 						+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -150,7 +151,7 @@ public class Utils extends eden.utils.Utils {
 	@Target(ElementType.FIELD)
 	public @interface SerializedExclude {}
 
-	private static ExclusionStrategy strategy = new ExclusionStrategy() {
+	private static final ExclusionStrategy strategy = new ExclusionStrategy() {
 		@Override
 		public boolean shouldSkipClass(Class<?> clazz) {
 			return false;
@@ -163,7 +164,7 @@ public class Utils extends eden.utils.Utils {
 	};
 
 	@Getter
-	private static Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
+	private static final Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
 
 	@Contract(mutates = "param2")
 	public static <T extends Collection<? extends HasUniqueId>> void removeEntityFrom(HasUniqueId entity, T from) {

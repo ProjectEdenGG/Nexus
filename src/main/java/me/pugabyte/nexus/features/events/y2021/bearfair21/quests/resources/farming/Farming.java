@@ -15,7 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -23,17 +22,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
 public class Farming implements Listener {
-	private final Set<Material> breakList = new HashSet<>();
+	private static final Set<Material> breakList = new HashSet<>();
 
-	private final Set<Material> crops = new HashSet<>(Arrays.asList(Material.WHEAT, Material.POTATOES,
+	private static final Set<Material> crops = new HashSet<>(Arrays.asList(Material.WHEAT, Material.POTATOES,
 			Material.CARROTS, Material.BEETROOTS, Material.COCOA));
-	private final Set<Material> cropSingleBlock = new HashSet<>(Arrays.asList(Material.PUMPKIN, Material.MELON));
-	private final Set<Material> cropMultiBlock = new HashSet<>(Arrays.asList(Material.SUGAR_CANE, Material.CACTUS));
-	private final Set<Material> cropFlower = new HashSet<>(MaterialTag.SMALL_FLOWERS.getValues());
+	private static final Set<Material> cropSingleBlock = new HashSet<>(Arrays.asList(Material.PUMPKIN, Material.MELON));
+	private static final Set<Material> cropMultiBlock = new HashSet<>(Arrays.asList(Material.SUGAR_CANE, Material.CACTUS));
+	private static final Set<Material> cropFlower = new HashSet<>(MaterialTag.SMALL_FLOWERS.getValues());
 
 	public Farming() {
 		Nexus.registerListener(this);
@@ -44,32 +42,16 @@ public class Farming implements Listener {
 		new RegenCrops();
 	}
 
-	@EventHandler
-	public void onBlockBreak(BlockBreakEvent event) {
+	public static boolean breakBlock(BlockBreakEvent event) {
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
 
-		if (event.isCancelled()) return;
-		if (!isAtBearFair(block)) return;
-		if (!breakList.contains(block.getType())) {
-			if (player.hasPermission("worldguard.region.bypass.*"))
-				return;
-
-			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
-				send(Errors.cantBreak, player);
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
-			}
-			event.setCancelled(true);
-			return;
-		}
-
-		if (player.hasPermission("worldguard.region.bypass.*")) {
-			if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHER_BRICK))
-				return;
-		}
+		if (!breakList.contains(block.getType()))
+			return false;
 
 		BlockData blockData = block.getState().getBlockData();
 		Material material = block.getType();
+
 		if (!(blockData instanceof Ageable ageable) || cropMultiBlock.contains(material)) {
 
 			// Flower
@@ -83,8 +65,7 @@ public class Farming implements Listener {
 						send(Errors.decorOnly, player);
 						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					}
-					event.setCancelled(true);
-					return;
+					return true;
 				}
 				Tasks.wait(20, () -> RegenCrops.getBlockRegenMap().put(block.getLocation(), material));
 
@@ -95,8 +76,7 @@ public class Farming implements Listener {
 						send(Errors.bottomBlock, player);
 						player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					}
-					event.setCancelled(true);
-					return;
+					return true;
 				}
 
 				RegenCrops.getMultiRegenMap().put(block.getLocation(), material);
@@ -114,18 +94,9 @@ public class Farming implements Listener {
 						above = above.getRelative(0, 1, 0);
 					}
 				}
-			} else {
-				if (player.hasPermission("worldguard.region.bypass.*"))
-					return;
-
-				if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
-					send(Errors.cantBreak, player);
-					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
-				}
-				event.setCancelled(true);
 			}
 
-			return;
+			return true;
 		}
 
 		if (ageable.getAge() != ageable.getMaximumAge()) {
@@ -133,9 +104,7 @@ public class Farming implements Listener {
 				send(Errors.notFullyGrown, player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
-
-			event.setCancelled(true);
-			return;
+			return true;
 		}
 
 		Tasks.wait(5, () -> {
@@ -145,5 +114,9 @@ public class Farming implements Listener {
 			Location loc = block.getLocation();
 			RegenCrops.getCropRegenList().add(loc);
 		});
+
+		event.setCancelled(false);
+		return true;
+
 	}
 }

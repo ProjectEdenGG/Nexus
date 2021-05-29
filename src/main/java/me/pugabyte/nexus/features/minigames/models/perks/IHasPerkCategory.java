@@ -3,6 +3,8 @@ package me.pugabyte.nexus.features.minigames.models.perks;
 import org.jetbrains.annotations.NotNull;
 
 public interface IHasPerkCategory {
+
+	PerkCategory getPerkCategory();
 	@NotNull PerkCategory getPerkCategory();
 
 	/**
@@ -12,4 +14,5 @@ public interface IHasPerkCategory {
 	default boolean excludes(IHasPerkCategory other) {
 		return getPerkCategory().isExclusive() && getPerkCategory().getExclusionGroup() == other.getPerkCategory().getExclusionGroup();
 	}
+
 }

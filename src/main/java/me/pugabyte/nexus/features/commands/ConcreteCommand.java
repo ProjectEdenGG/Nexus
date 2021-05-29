@@ -57,7 +57,7 @@ public class ConcreteCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (WorldGroup.get(event.getPlayer()) != WorldGroup.SURVIVAL)
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
 		if (!MaterialTag.CONCRETE_POWDERS.isTagged(event.getBlock().getType()))

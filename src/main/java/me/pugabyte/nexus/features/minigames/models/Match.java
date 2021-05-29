@@ -61,6 +61,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -232,9 +233,8 @@ public class Match implements ForwardingAudience {
 		if (!event.callEvent()) return;
 
 		ended = true;
-		if (tasks != null) {
+		if (tasks != null)
 			tasks.end();
-		}
 		broadcast("Match has ended");
 		//logScores();
 		broadcastNoPrefix("");
@@ -515,12 +515,11 @@ public class Match implements ForwardingAudience {
 	public static class MatchTasks {
 		private final Set<Integer> taskIds = new HashSet<>();
 		@Getter
-		private final Map<MatchTaskType, Integer> taskTypeMap = new HashMap<>();
+		private final Map<MatchTaskType, Integer> taskTypeMap = new ConcurrentHashMap<>();
 
 		void end() {
 			List<Integer> tasks = new ArrayList<>(taskIds);
 			tasks.forEach(this::cancel);
-			new HashMap<>(taskTypeMap).forEach(this::cancel);
 		}
 
 		public void cancel(int taskId) {

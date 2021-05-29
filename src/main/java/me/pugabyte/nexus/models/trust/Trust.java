@@ -11,12 +11,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,7 +43,6 @@ public class Trust implements PlayerOwnedObject {
 			case HOMES -> homes;
 			case LOCKS -> locks;
 			case TELEPORTS -> teleports;
-			default -> throw new UnsupportedOperationException();
 		};
 	}
 
@@ -55,11 +53,7 @@ public class Trust implements PlayerOwnedObject {
 		}};
 	}
 
-	public boolean trusts(Type type, Player player) {
-		return trusts(type, player.getUniqueId());
-	}
-
-	public boolean trusts(Type type, OfflinePlayer player) {
+	public boolean trusts(Type type, HasUniqueId player) {
 		return trusts(type, player.getUniqueId());
 	}
 

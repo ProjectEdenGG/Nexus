@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.votes;
 
 import eden.utils.TimeUtils.Timespan;
+import eden.utils.Utils;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.votes.vps.VPS;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -13,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.vote.Vote;
@@ -20,12 +22,21 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.TimeUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static me.pugabyte.nexus.utils.StringUtils.progressBar;
@@ -65,6 +76,12 @@ public class VoteCommand extends CustomCommand {
 		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://projecteden.gg/vote"));
 	}
 
+	@Permission("group.admin")
+	@Path("extra")
+	void extra() {
+		send("Extra config: " + Votes.getExtras());
+	}
+
 	@Path("time [player]")
 	void time(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		voter = new VoteService().get(player);
@@ -78,6 +95,40 @@ public class VoteCommand extends CustomCommand {
 				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(Nerd.of(player()).getName())));
 			}
 		}
+	}
+
+	@Async
+	@Permission("group.admin")
+	@Path("getTopDays [page]")
+	void getTopDays(@Arg("1") int page) {
+		Map<LocalDate, Integer> days = new VoteService().getVotesByDay();
+
+		send(PREFIX + "Most votes in a day");
+		BiFunction<LocalDate, String, JsonBuilder> formatter = (date, index) -> {
+			String color = date.equals(LocalDate.now()) ? "&6" : "&e";
+			return json("&3" + index + " " + color + TimeUtils.shortishDateFormat(date) + " &7- " + days.get(date));
+		};
+
+		paginate(days.keySet(), formatter, "/votes getTopDays", page);
+	}
+
+	@Async
+	@Permission("group.admin")
+	@Path("allCounts")
+	void allCounts() {
+		Map<Integer, List<Player>> activeVotes = new HashMap<>();
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			Voter voter = new VoteService().get(player);
+			int count = voter.getActiveVotes().size();
+
+			List<Player> players = activeVotes.getOrDefault(count, new ArrayList<>());
+			players.add(player);
+			activeVotes.put(count, players);
+		}
+
+		send(PREFIX + "Vote counts");
+		Utils.sortByKeyReverse(activeVotes).forEach((count, players) ->
+				send("&e" + count + " &7- " + players.stream().map(Nickname::of).collect(Collectors.joining(", "))));
 	}
 
 	@Path("reminders [enable]")

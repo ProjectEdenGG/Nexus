@@ -35,7 +35,7 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path
 	void main() {
-		if (WorldGroup.SURVIVAL != WorldGroup.get(player()))
+		if (WorldGroup.SURVIVAL != WorldGroup.of(player()))
 			error("&cYou must be in the survival worlds to claim this reward.");
 
 		DailyRewardsFeature.menu(player(), dailyReward);

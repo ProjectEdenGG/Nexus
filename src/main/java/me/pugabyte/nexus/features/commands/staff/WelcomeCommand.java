@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.commands.staff;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
@@ -18,6 +17,7 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -52,7 +52,7 @@ public class WelcomeCommand extends CustomCommand {
 			).count() < 4)
 				return;
 
-			if (!new CooldownService().check(Nexus.getUUID0(), "bumpReminder", Time.DAY))
+			if (!new CooldownService().check(StringUtils.getUUID0(), "bumpReminder", Time.DAY))
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
@@ -72,7 +72,7 @@ public class WelcomeCommand extends CustomCommand {
 				error("Prevented accidental welcome");
 		}
 
-		if (new CooldownService().check(Nexus.getUUID0(), "welc", Time.SECOND.x(20))) {
+		if (new CooldownService().check(StringUtils.getUUID0(), "welc", Time.SECOND.x(20))) {
 			String message = getMessage();
 			if (player == null)
 				message = message.replaceAll(" \\[player]", "");

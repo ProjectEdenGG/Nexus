@@ -63,6 +63,7 @@ public class MuteMenuCommand extends CustomCommand {
 			BOSS_FIGHT("Boss Fight Broadcasts", Material.NETHER_STAR),
 			CRATES("Crate Broadcasts", Material.CHEST, List.of("Broadcasts when players win", "rare items from crates")),
 			EVENTS("Event Broadcasts", Material.BEACON),
+			BOOSTS("Boost Broadcasts", Material.EXPERIENCE_BOTTLE),
 			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD),
 			QUEUP("QueUp Song Updates", Material.MUSIC_DISC_MALL),
 			// Sounds

@@ -45,7 +45,7 @@ public class AntiXray implements Listener {
 	@EventHandler
 	public void onBreakOre(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (WorldGroup.get(player) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) return;
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return;
 		Nerd nerd = Nerd.of(player);
 		if (nerd.getRank().isStaff()) return;

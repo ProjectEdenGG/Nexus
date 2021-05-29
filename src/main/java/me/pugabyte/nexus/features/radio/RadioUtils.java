@@ -11,7 +11,6 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.radio.RadioConfig;
 import me.pugabyte.nexus.models.radio.RadioConfig.Radio;
 import me.pugabyte.nexus.models.radio.RadioConfigService;
@@ -77,7 +76,7 @@ public class RadioUtils {
 
 	public static Set<Radio> getRadios() {
 		RadioConfigService configService = new RadioConfigService();
-		RadioConfig config = configService.get(Nexus.getUUID0());
+		RadioConfig config = configService.get0();
 		return config.getRadios();
 	}
 
@@ -163,7 +162,7 @@ public class RadioUtils {
 		RadioFeature.removeSongPlayer(radio.getSongPlayer());
 
 		RadioConfigService configService = new RadioConfigService();
-		RadioConfig config = configService.get(Nexus.getUUID0());
+		RadioConfig config = configService.get0();
 		config.getRadios().remove(radio);
 		configService.save(config);
 	}
@@ -193,7 +192,7 @@ public class RadioUtils {
 	public static Playlist shufflePlaylist(Playlist playlist) {
 		List<Song> songList = playlist.getSongList();
 		Collections.shuffle(songList);
-		return new Playlist(songList.toArray(new Song[0]));
+		return new Playlist(songList.toArray(Song[]::new));
 	}
 
 	public static List<String> getPlaylistHover(Radio radio) {

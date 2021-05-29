@@ -51,7 +51,7 @@ public class MobHeads extends Feature implements Listener {
 		if (!Dev.WAKKA.is(killer)) return;
 		//
 
-		if (WorldGroup.get(killer) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(killer) != WorldGroup.SURVIVAL) return;
 		if (isUnnaturalSpawn(victim)) return;
 		if (isBaby(victim)) return;
 		if (handledEntities.contains(victim.getUniqueId())) return;

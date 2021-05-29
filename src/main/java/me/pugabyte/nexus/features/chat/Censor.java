@@ -8,6 +8,8 @@ import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.framework.commands.Commands;
+import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.punishments.Punishment;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
@@ -16,9 +18,11 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,11 +88,18 @@ public class Censor {
 		Emotes.process(event);
 	}
 
+	public static boolean isCensored(Player player, String input) {
+		ChatEvent chatEvent = new PublicChatEvent(new ChatService().get(player), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
+		Censor.censor(chatEvent);
+		return chatEvent.isBad() || chatEvent.isCancelled();
+	}
+
 	public static void censor(ChatEvent event) {
 		String message = event.getMessage();
 
-		if (event.getChannel() instanceof PublicChannel && !((PublicChannel) event.getChannel()).isCensor())
-			return;
+		if (event.getChannel() instanceof PublicChannel publicChannel)
+			if (!publicChannel.isCensor())
+				return;
 
 		int bad = 0;
 		for (CensorItem censorItem : censorItems) {
@@ -123,7 +134,7 @@ public class Censor {
 								type = PunishmentType.WARN;
 
 							Punishments.of(event.getChatter().getOfflinePlayer()).add(Punishment.ofType(type)
-									.punisher(Nexus.getUUID0())
+									.punisher(StringUtils.getUUID0())
 									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
 									.now(true));
 						}
@@ -133,7 +144,14 @@ public class Censor {
 		}
 
 		if (bad >= 1) {
-			Nexus.fileLog("swears", event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
+			event.setBad(true);
+			String channelNick = "";
+			if (event.getChannel() instanceof PublicChannel publicChannel)
+				channelNick = "[" + publicChannel.getNickname() + "] ";
+			else if (event.getChannel() instanceof PrivateChannel privateChannel)
+				channelNick = "[" + String.join(", ", privateChannel.getOthersNames(event.getChatter())) + "] ";
+
+			Nexus.fileLog("swears", channelNick + event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
 				event.getChatter().sendMessage("&cPlease watch your language!");
 				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), StaticChannel.STAFF);

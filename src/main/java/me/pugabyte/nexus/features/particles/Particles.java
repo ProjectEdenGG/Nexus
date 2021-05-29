@@ -19,15 +19,19 @@ public class Particles extends Feature {
 	protected static void startParticles(Player player) {
 		try {
 			ParticleOwner particleOwner = new ParticleService().get(player);
-			new ArrayList<>(particleOwner.getActiveParticles()).forEach(particleType -> particleType.run(player));
+			new ArrayList<>(particleOwner.getActiveParticles()).forEach(particleType -> {
+				if (particleOwner.canUse(particleType))
+					particleOwner.start(particleType);
+				else
+					particleOwner.cancel(particleType);
+			});
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	protected static void stopParticles(Player player) {
-		ParticleOwner particleOwner = new ParticleService().get(player);
-		particleOwner.cancelTasks();
+		new ParticleService().get(player).cancel();
 	}
 
 

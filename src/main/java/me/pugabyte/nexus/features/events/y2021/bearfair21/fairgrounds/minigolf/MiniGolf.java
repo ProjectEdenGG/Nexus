@@ -6,6 +6,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.ProjectileListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.PuttListener;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners.RegionListener;
@@ -13,7 +14,6 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.m
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
 import me.pugabyte.nexus.features.particles.ParticleUtils;
-import me.pugabyte.nexus.models.bearfair21.BearFair21User.BF21PointSource;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
 import me.pugabyte.nexus.utils.FireworkLauncher;
@@ -55,45 +55,27 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MiniGolf {
 	// @formatter:off
-	@Getter
-	private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter
-	private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter
-	private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter
-	private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-	@Getter
-	private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
 	//
-	@Getter
-	private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
-	@Getter
-	private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
+	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
+	@Getter private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
 	//
-	@Getter
-	private static final MiniGolf21UserService service = new MiniGolf21UserService();
-	@Getter
-	private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
-	@Getter
-	private static final double floorOffset = 0.05;
-	@Getter
-	private static final double maxVelLen = 2;
-	@Getter
-	private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
+	@Getter private static final MiniGolf21UserService service = new MiniGolf21UserService();
+	@Getter private static final String PREFIX = StringUtils.getPrefix("MiniGolf");
+	@Getter private static final double floorOffset = 0.05;
+	@Getter private static final double maxVelLen = 2;
+	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
 			Material.PETRIFIED_OAK_SLAB, Material.SAND, Material.RED_SAND, Material.SOUL_SOIL, Material.BLUE_ICE,
 			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
 			Material.REDSTONE_BLOCK, Material.SPRUCE_FENCE);
-	@Getter
-	private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
-	@Getter
-	private static final String regionHole = gameRegion + "_hole_";
-	//
-	private BF21PointSource SOURCE = BF21PointSource.MINIGOLF;
+	@Getter private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
+	@Getter private static final String regionHole = gameRegion + "_hole_";
 	// @formatter:on
 
-	// TODO BF21:
-	//  - Give points for playing
 	public MiniGolf() {
 		new ProjectileListener();
 		new PuttListener();
@@ -309,8 +291,15 @@ public class MiniGolf {
 								.launch());
 
 						// Send message
+						int wait = Time.SECOND.get();
+						if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
+							wait = 0;
+
+						BearFair21.giveDailyPoints(user.getPlayer(), BF21PointSource.MINIGOLF, 5);
 						int strokes = user.getCurrentStrokes();
-						MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + MiniGolfUtils.getScore(user) + ")");
+						Tasks.wait(wait, () ->
+								MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + MiniGolfUtils.getScore(user) + ")"));
+
 						MiniGolfUtils.giveBall(user);
 
 						if (strokes == 1 && !user.isRainbow()) {

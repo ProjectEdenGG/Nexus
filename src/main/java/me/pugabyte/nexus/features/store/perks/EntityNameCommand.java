@@ -1,6 +1,9 @@
 package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NonNull;
+import me.pugabyte.nexus.features.chat.Censor;
+import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -9,6 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
@@ -34,13 +38,16 @@ public class EntityNameCommand extends CustomCommand {
 		super(event);
 		if (isCommandEvent()) {
 			targetEntity = getTargetEntityRequired();
+
 			if (!(targetEntity instanceof LivingEntity) && !(targetEntity instanceof ItemFrame))
 				error("You must be looking at a living entity or an item frame");
-			if ((targetEntity.isInvulnerable() ||
-					(targetEntity instanceof LivingEntity && !((LivingEntity) targetEntity).hasAI()) ||
-					(targetEntity instanceof ItemFrame && ((ItemFrame) targetEntity).isFixed()) ||
-					(targetEntity instanceof ArmorStand && ((ArmorStand) targetEntity).isMarker()))
-				&& !hasPermission("group.staff"))
+
+			boolean hasAI = targetEntity instanceof LivingEntity livingEntity && !livingEntity.hasAI();
+			boolean isFixed = targetEntity instanceof ItemFrame itemFrame && itemFrame.isFixed();
+			boolean isMarker = targetEntity instanceof ArmorStand armorStand && armorStand.isMarker();
+			boolean isInvulnerable = targetEntity.isInvulnerable();
+
+			if (!hasPermission("group.staff") && (isInvulnerable || hasAI || isFixed || isMarker))
 				error("You cannot name that entity");
 		}
 	}
@@ -60,6 +67,7 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean magic
 	) {
 		input = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
+		verify(input);
 
 		if (targetEntity instanceof ItemFrame itemFrame) {
 			ItemStack item = itemFrame.getItem();
@@ -81,6 +89,7 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean italic,
 			@Switch boolean magic
 	) {
+		verify(input);
 		name(Gradient.of(colors).apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
@@ -93,6 +102,7 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean italic,
 			@Switch boolean magic
 	) {
+		verify(input);
 		name(Rainbow.apply(input), bold, strikethrough, underline, italic, magic);
 	}
 
@@ -103,6 +113,18 @@ public class EntityNameCommand extends CustomCommand {
 
 		targetEntity.setCustomNameVisible(enable);
 		send(PREFIX + "Name tag visibility " + (enable ? "&aenabled" : "&cdisabled"));
+	}
+
+	private void verify(String input) {
+		if (input == null)
+			return;
+
+		if (Censor.isCensored(player(), input)) {
+			String message = "&cEntity name content by " + nickname() + " was censored: &e" + input;
+			Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
+			Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
+			error("Inappropriate input");
+		}
 	}
 
 }

@@ -31,7 +31,7 @@ public class SubscribeDiscordCommand extends Command {
 
 				Role role = getRole(args[0]);
 				if (role == null)
-					throw new InvalidInputException("Unknown role, available options are `minigames` and `movienight`");
+					throw new InvalidInputException("Unknown role, available options are `minigames`, `movienight` and `coding`");
 
 				Discord.addRole(event.getAuthor().getId(), role);
 				event.reply(event.getAuthor().getAsMention() + " You have subscribed to " + camelCase(role.name()));
@@ -47,6 +47,7 @@ public class SubscribeDiscordCommand extends Command {
 		return switch (input) {
 			case "minigames", "minigame", "minigamesnews", "minigamenews" -> Role.MINIGAME_NEWS;
 			case "movienight", "theatre", "moviegoer", "moviegoers" -> Role.MOVIE_GOERS;
+			case "coding", "codinglessons" -> Role.CODING_LESSONS;
 			default -> null;
 		};
 
