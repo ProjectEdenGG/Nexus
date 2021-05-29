@@ -61,7 +61,6 @@ import java.util.stream.Collectors;
 
 import static eden.utils.StringUtils.isUuid;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
 @UtilityClass
@@ -303,26 +302,34 @@ public class PlayerUtils {
 
 		if (recipient == null || message == null)
 			return;
-		if (recipient instanceof CommandSender) {
-			if (message instanceof String)
-				((CommandSender) recipient).sendMessage(colorize((String) message));
-			else if (message instanceof ComponentLike)
-				((CommandSender) recipient).sendMessage(((ComponentLike) message));
-		} else if (recipient instanceof OfflinePlayer) {
-			Player player = ((OfflinePlayer) recipient).getPlayer();
+
+		if (recipient instanceof CommandSender sender) {
+			if (message instanceof String string)
+				sender.sendMessage(Identity.nil(), new JsonBuilder(string));
+			else if (message instanceof ComponentLike componentLike)
+				sender.sendMessage(Identity.nil(), componentLike);
+		}
+
+		else if (recipient instanceof OfflinePlayer offlinePlayer) {
+			Player player = offlinePlayer.getPlayer();
 			if (player != null)
 				send(player, message);
-		} else if (recipient instanceof HasOfflinePlayer) {
-			send(((HasOfflinePlayer) recipient).getOfflinePlayer(), message);
-		} else if (recipient instanceof UUID) {
-			send(getPlayer((UUID) recipient), message);
-		} else if (recipient instanceof HasUniqueId) {
-			send(getPlayer((HasUniqueId) recipient), message);
-		} else if (recipient instanceof Identity) {
-			send(getPlayer((Identity) recipient), message);
-		} else if (recipient instanceof Identified) {
-			send(getPlayer(((Identified) recipient).identity()), message);
 		}
+
+		else if (recipient instanceof HasOfflinePlayer hasOfflinePlayer)
+			send(hasOfflinePlayer.getOfflinePlayer(), message);
+
+		else if (recipient instanceof UUID uuid)
+			send(getPlayer(uuid), message);
+
+		else if (recipient instanceof HasUniqueId hasUniqueId)
+			send(getPlayer(hasUniqueId), message);
+
+		else if (recipient instanceof Identity identity)
+			send(getPlayer(identity), message);
+
+		else if (recipient instanceof Identified identified)
+			send(getPlayer(identified.identity()), message);
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
