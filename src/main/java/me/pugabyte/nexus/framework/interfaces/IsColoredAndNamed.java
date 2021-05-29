@@ -6,19 +6,19 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
-public interface ColoredAndNamed extends Named, Colored, ComponentLike {
+public interface IsColoredAndNamed extends Named, IsColored, ComponentLike {
 	/**
 	 * Returns this object's name with a chat color prefixed.
 	 */
 	default @NotNull String getColoredName() {
-		return getChatColor() + getName();
+		return colored().getChatColor() + getName();
 	}
 
 	/**
-	 * Returns this object's name with a vanilla chat color per {@link #getVanillaChatColor()} prefixed.
+	 * Returns this object's name with a vanilla chat color per {@link Colored#getVanillaChatColor()} prefixed.
 	 */
 	default @NotNull String getVanillaColoredName() {
-		return getVanillaChatColor() + getName();
+		return colored().getVanillaChatColor() + getName();
 	}
 
 	/**
@@ -26,6 +26,6 @@ public interface ColoredAndNamed extends Named, Colored, ComponentLike {
 	 * @return an adventure text component
 	 */
 	default @NotNull TextComponent asComponent() {
-		return Component.text(getName(), this);
+		return Component.text(getName(), colored());
 	}
 }

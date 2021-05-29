@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.IsColored;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
-public enum ColorType implements Colored {
+public enum ColorType implements IsColored {
 
 	WHITE(
 			"white",
@@ -176,9 +177,8 @@ public enum ColorType implements Colored {
 	}
 
 	@Override
-	@NotNull
-	public java.awt.Color getColor() {
-		return new java.awt.Color(bukkitColor.asRGB());
+	public @NotNull Colored colored() {
+		return Colored.colored(chatColor);
 	}
 
 	@Nullable
@@ -415,5 +415,4 @@ public enum ColorType implements Colored {
 				.filter(entry -> entry.getValue().getColor() == null)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
-
 }

@@ -246,7 +246,7 @@ public class JsonBuilder implements ComponentLike {
 	 * @param prefix prefix text
 	 * @param contents component to append after the prefix, or null for nothing
 	 */
-	public JsonBuilder(@NotNull String prefix, @Nullable ComponentLike contents) {
+	private JsonBuilder(@NotNull String prefix, @Nullable ComponentLike contents) {
 		color(NamedTextColor.DARK_AQUA).next("&8&l[").next(prefix, NamedTextColor.YELLOW).next("&8&l]").next(" ").next(contents);
 	}
 
@@ -255,10 +255,19 @@ public class JsonBuilder implements ComponentLike {
 	 * @param prefix prefix text
 	 * @return a new builder
 	 */
-	// this is gonna pollute json builder instances and idk what to do about it
 	@Contract("_ -> new")
 	public static JsonBuilder fromPrefix(@NotNull String prefix) {
-		return new JsonBuilder(prefix, (ComponentLike) null);
+		return fromPrefix(prefix, null);
+	}
+
+	/**
+	 * Creates a new builder with a prefix.
+	 * @param prefix prefix text
+	 * @return a new builder
+	 */
+	@Contract("_, _ -> new")
+	public static JsonBuilder fromPrefix(@NotNull String prefix, @Nullable ComponentLike contents) {
+		return new JsonBuilder(prefix, contents);
 	}
 
 	/**

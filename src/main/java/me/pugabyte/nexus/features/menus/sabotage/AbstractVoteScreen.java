@@ -10,7 +10,6 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
-import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.TextComponent;
@@ -28,11 +27,11 @@ public abstract class AbstractVoteScreen extends MenuUtils implements InventoryP
 	}
 
 	protected static TextComponent getColoredName(Minigamer minigamer) {
-		return new JsonBuilder(minigamer.getNickname(), (Colored) minigamer.getMatch().<SabotageMatchData>getMatchData().getColor(minigamer)).build();
+		return new JsonBuilder(minigamer.getNickname(), minigamer.getMatch().<SabotageMatchData>getMatchData().getColor(minigamer).colored()).build();
 	}
 
 	protected static ItemBuilder headItemOf(Nicknamed minigamer, SabotageColor color) {
-		return new ItemBuilder(color.getHead()).name(new JsonBuilder(minigamer.getNickname(), (Colored) color));
+		return new ItemBuilder(color.getHead()).name(new JsonBuilder(minigamer.getNickname(), color.colored()));
 	}
 
 	protected static ItemBuilder headItemOf(Minigamer minigamer, SabotageMatchData matchData) {

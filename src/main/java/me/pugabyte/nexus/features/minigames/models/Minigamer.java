@@ -20,7 +20,8 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
+import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -50,7 +51,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer implements ColoredAndNicknamed, PlayerLike {
+public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	@NonNull
 	private Player player;
 	@ToString.Exclude

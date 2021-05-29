@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.framework.interfaces;
 
+import me.pugabyte.nexus.framework.interfaces.impl.ColoredImpl;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.util.RGBLike;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +11,7 @@ import java.util.Arrays;
 
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
 
-public interface Colored extends TextColor {
+public interface Colored extends TextColor, IsColored {
 	/**
 	 * Returns the color corresponding to this object.
 	 * @return an RGB color
@@ -50,5 +52,40 @@ public interface Colored extends TextColor {
 	@Override
 	default int value() {
 		return getColor().getRGB();
+	}
+
+	@Override
+	default @NotNull Colored colored() {
+		return this;
+	}
+
+	static Colored colored(int rgb) {
+		return new ColoredImpl(rgb);
+	}
+
+	static Colored colored(int r, int g, int b) {
+		int rgb = r;
+		rgb = (rgb << 8) + g;
+		rgb = (rgb << 8) + b;
+		return colored(rgb);
+	}
+
+	static Colored colored(Color color) {
+		return colored(color.getRGB());
+	}
+
+	static Colored colored(ChatColor chatColor) {
+		Color color = chatColor.getColor();
+		if (color == null)
+			throw new IllegalArgumentException("Cannot create color of formatting type");
+		return colored(color);
+	}
+
+	static Colored colored(org.bukkit.Color color) {
+		return colored(color.asRGB());
+	}
+
+	static Colored colored(RGBLike color) {
+		return colored(color.red(), color.green(), color.blue());
 	}
 }

@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.freeze.FreezeService;
@@ -23,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -34,7 +34,7 @@ import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Getter
 @AllArgsConstructor
-public enum PunishmentType implements ColoredAndNamed {
+public enum PunishmentType implements IsColoredAndNamed {
 	BAN("banned", ChatColor.DARK_RED, true, true, false, true) {
 		@Override
 		public void action(Punishment punishment) {
@@ -238,8 +238,8 @@ public enum PunishmentType implements ColoredAndNamed {
 	}
 
 	@Override
-	public @NotNull Color getColor() {
-		return chatColor.getColor();
+	public @NotNull Colored colored() {
+		return Colored.colored(chatColor);
 	}
 
 	@Override

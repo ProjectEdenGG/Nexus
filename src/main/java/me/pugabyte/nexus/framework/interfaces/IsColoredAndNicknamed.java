@@ -5,19 +5,19 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
-public interface ColoredAndNicknamed extends ColoredAndNamed, Nicknamed {
+public interface IsColoredAndNicknamed extends IsColoredAndNamed, Nicknamed {
 	/**
 	 * Returns this object's nickname with a chat color prefixed.
 	 */
 	default @NotNull String getColoredName() {
-		return getChatColor() + getNickname();
+		return colored().getChatColor() + getNickname();
 	}
 
 	/**
-	 * Returns this object's nickname with a vanilla chat color per {@link #getVanillaChatColor()} prefixed.
+	 * Returns this object's nickname with a vanilla chat color per {@link Colored#getVanillaChatColor()} prefixed.
 	 */
 	default @NotNull String getVanillaColoredName() {
-		return getVanillaChatColor() + getNickname();
+		return colored().getVanillaChatColor() + getNickname();
 	}
 
 	/**
@@ -26,6 +26,6 @@ public interface ColoredAndNicknamed extends ColoredAndNamed, Nicknamed {
 	 */
 	@Override
 	default @NotNull TextComponent asComponent() {
-		return Component.text(getNickname(), this);
+		return Component.text(getNickname(), colored());
 	}
 }

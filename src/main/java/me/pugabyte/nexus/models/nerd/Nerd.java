@@ -20,7 +20,8 @@ import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.commands.PronounsCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
+import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
@@ -52,7 +53,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, ColoredAndNicknamed {
+public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
 
 	// Set to null after they have moved
 	private Location loginLocation;
@@ -127,7 +128,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Co
 	}
 
 	public @NotNull Color getColor() {
-		return getRank().getColor();
+		return getRank().colored().getColor();
 	}
 
 	private boolean isKoda() {

@@ -7,7 +7,8 @@ import lombok.experimental.Accessors;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.luckperms.api.model.group.Group;
@@ -27,7 +28,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public enum Rank implements ColoredAndNamed {
+public enum Rank implements IsColoredAndNamed {
 	GUEST(ChatColor.of("#aaaaaa"), GlowAPI.Color.GRAY, false, false, false, true),
 	MEMBER(ChatColor.of("#ffffff"), GlowAPI.Color.WHITE, false, false, false, true),
 	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED, false, false, false, false, true, false, Color.decode("#ff7069")),
@@ -81,8 +82,8 @@ public enum Rank implements ColoredAndNamed {
 	}
 
 	@Override
-	public @NotNull Color getColor() {
-		return chatColor.getColor();
+	public @NotNull Colored colored() {
+		return Colored.colored(chatColor);
 	}
 
 	public String getPrefix() {
@@ -236,5 +237,4 @@ public enum Rank implements ColoredAndNamed {
 			next = next.getPromotion();
 		return next;
 	}
-
 }

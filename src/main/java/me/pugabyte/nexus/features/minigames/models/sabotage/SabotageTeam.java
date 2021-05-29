@@ -6,7 +6,7 @@ import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.framework.interfaces.Colored;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
-public enum SabotageTeam implements ColoredAndNamed {
+public enum SabotageTeam implements IsColoredAndNamed {
 	CREWMATE(ChatColor.WHITE),
 	IMPOSTOR(ChatColor.RED) {
 		@Override
@@ -45,8 +45,8 @@ public enum SabotageTeam implements ColoredAndNamed {
 	}
 
 	@Override
-	public @NotNull Color getColor() {
-		return teamColor.getColor();
+	public @NotNull Colored colored() {
+		return Colored.colored(teamColor);
 	}
 
 	// doesn't use ChatColor cus its static values are never equal to custom values

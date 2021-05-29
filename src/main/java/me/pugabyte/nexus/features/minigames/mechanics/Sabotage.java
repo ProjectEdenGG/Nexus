@@ -26,7 +26,6 @@ import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
 import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -312,7 +311,7 @@ public class Sabotage extends TeamMechanic {
 		JsonBuilder builder = new JsonBuilder();
 		if (event.getAttacker() != null) {
 			SoundUtils.playSound(event.getAttacker(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER, .5f, 1.2f);
-			builder.next("You were killed by ").next(event.getAttacker().getNickname(), matchData.getColor(event.getAttacker()));
+			builder.next("You were killed by ").next(event.getAttacker().getNickname(), matchData.getColor(event.getAttacker()).colored());
 		} else
 			builder.next("You have been ejected");
 		TitleUtils.sendTitle(minigamer, builder, TimeUtils.Time.SECOND.duration(4), Duration.ofSeconds(1).dividedBy(2));
@@ -521,7 +520,7 @@ public class Sabotage extends TeamMechanic {
 		else {
 			builder.next(AdventureUtils.commaJoinText(winners.stream().map(minigamer -> {
 				SabotageTeam team = SabotageTeam.of(minigamer);
-				return new JsonBuilder(minigamer.getNickname(), (Colored) team).hover(team); // weirdly required cast
+				return new JsonBuilder(minigamer.getNickname(), team.colored()).hover(team); // weirdly required cast
 			}).collect(Collectors.toList())));
 			builder.next(StringUtils.plural(" has won on ", " have won on ", winners.size()));
 		}

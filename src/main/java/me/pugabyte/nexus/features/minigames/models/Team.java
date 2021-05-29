@@ -8,7 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
+import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ActionBarUtils.ActionBar;
 import me.pugabyte.nexus.utils.ColorType;
@@ -39,7 +40,7 @@ import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 @AllArgsConstructor
 @SerializableAs("Team")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Team implements ConfigurationSerializable, ColoredAndNamed {
+public class Team implements ConfigurationSerializable, IsColoredAndNamed, Colored {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private String name = "Default";

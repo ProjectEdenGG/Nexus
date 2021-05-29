@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IHasPerkCategory {
 
-	PerkCategory getPerkCategory();
 	@NotNull PerkCategory getPerkCategory();
 
 	/**

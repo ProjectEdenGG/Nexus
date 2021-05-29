@@ -3,8 +3,8 @@ package me.pugabyte.nexus.utils;
 import io.papermc.paper.text.PaperComponents;
 import lombok.experimental.UtilityClass;
 import me.lexikiq.HasUniqueId;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
-import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
+import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -149,13 +149,13 @@ public class AdventureUtils {
 	}
 
 	@NotNull
-	public static TextComponent colorText(@NotNull ColoredAndNamed coloredAndNamed) {
-		return Component.text(coloredAndNamed.getName(), coloredAndNamed);
+	public static TextComponent colorText(@NotNull IsColoredAndNamed coloredAndNamed) {
+		return Component.text(coloredAndNamed.getName(), coloredAndNamed.colored());
 	}
 
 	@NotNull
-	public static TextComponent colorText(@NotNull ColoredAndNicknamed coloredAndNicknamed) {
-		return Component.text(coloredAndNicknamed.getNickname(), coloredAndNicknamed);
+	public static TextComponent colorText(@NotNull IsColoredAndNicknamed coloredAndNicknamed) {
+		return Component.text(coloredAndNicknamed.getNickname(), coloredAndNicknamed.colored());
 	}
 
 	/**

@@ -715,7 +715,7 @@ public enum EmojiHat {
 	}
 
 	private void packet(Player player, Collection<Player> receivers, ItemStack item) {
-		PacketUtils.setSlot(player, receivers, item, EnumItemSlot.HEAD);
+		PacketUtils.sendFakeItem(player, receivers, item, EnumItemSlot.HEAD);
 	}
 
 	public List<ItemStack> getFrameItems() {

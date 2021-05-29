@@ -102,7 +102,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			skin = nerd.getName();
 		} catch (PlayerNotFoundException e) {
 			// probably a veteran
-			name = Rank.VETERAN.getHex() + player;
+			name = Rank.VETERAN.colored().getHex() + player;
 			skin = player;
 		}
 		// is there a better workaround for this? :P
