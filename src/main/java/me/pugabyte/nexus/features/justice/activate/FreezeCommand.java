@@ -202,29 +202,29 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 	@EventHandler
 	public void onPickUp(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		if (!isFrozen((Player) event.getEntity())) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onDamage(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Player)) return;
-		if (!isFrozen((Player) event.getDamager())) return;
+		if (!(event.getDamager() instanceof Player player)) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onTakeDamage(EntityDamageByEntityEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-		if (!isFrozen((Player) event.getEntity())) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onTarget(EntityTargetEvent event) {
-		if (!(event.getTarget() instanceof Player)) return;
-		if (!isFrozen((Player) event.getTarget())) return;
+		if (!(event.getTarget() instanceof Player player)) return;
+		if (!isFrozen(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -243,10 +243,8 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 	@EventHandler
 	public void onCommand(CommandRunEvent event) {
-		if (!(event.getSender() instanceof Player))
+		if (!(event.getSender() instanceof Player player))
 			return;
-
-		Player player = event.getPlayer();
 
 		if (!isFrozen(player))
 			return;

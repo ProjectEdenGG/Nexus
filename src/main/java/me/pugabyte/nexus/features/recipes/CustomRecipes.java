@@ -65,11 +65,11 @@ public class CustomRecipes extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreCraft(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
 		if (event.getRecipe() == null) return;
 		NexusRecipe recipe = getCraftByRecipe(event.getRecipe());
 		if (recipe == null) return;
-		if (recipe.getPermission() != null && !event.getView().getPlayer().hasPermission(recipe.getPermission()))
+		if (recipe.getPermission() != null && !player.hasPermission(recipe.getPermission()))
 			event.getInventory().setResult(null);
 		else if (recipe.getResult().hasItemMeta())
 			event.getInventory().setResult(recipe.getResult());

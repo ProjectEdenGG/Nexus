@@ -286,9 +286,9 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onEntityKill(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player player)) return;
-		if (!(event.getEntity() instanceof Animals)) return;
+		if (!(event.getEntity() instanceof Animals animal)) return;
 		if (player.hasPermission("honeypot.bypass")) return;
-		incrementPlayer(player, event.getEntity().getLocation(), 1);
+		incrementPlayer(player, animal.getLocation(), 1);
 	}
 
 	public boolean incrementPlayer(Player player, Location location, double amount) {

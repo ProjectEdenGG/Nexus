@@ -216,10 +216,10 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onMapPickup(EntityPickupItemEvent event) {
-		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (!player.getWorld().getName().equals(WORLD)) return;
 		if (event.getItem().getItemStack().getType() != Material.FILLED_MAP) return;
-		if (!(event.getEntity() instanceof Player)) return;
-		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
+		if (!new WorldGuardUtils(player).getRegionNamesAt(player.getLocation()).contains("jigsawjam")) return;
 
 		ItemBuilder.setName(event.getItem().getItemStack(), null);
 	}
@@ -232,7 +232,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getInventory().getLocation()).contains("jigsawjam")) return;
 
 		JigsawJamService service = new JigsawJamService();
-		JigsawJammer jammer = service.get((Player) event.getPlayer());
+		JigsawJammer jammer = service.get(event.getPlayer());
 		if (!jammer.isPlaying()) {
 			event.setCancelled(true);
 			jammer.sendMessage(PREFIX + "You must start the timer by clicking on the sign before collecting the pieces");

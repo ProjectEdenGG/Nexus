@@ -239,12 +239,12 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected void send(UUID uuid, String message) {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid.toString());
 		if (player != null && player.isOnline())
-			send((CommandSender) PlayerUtils.getPlayer(uuid), message);
+			send(PlayerUtils.getPlayer(uuid), message);
 	}
 
 	protected void send(Object object) {
 		if (object instanceof String)
-			send(sender(), (String) object);
+			send(sender(), object);
 		else if (object instanceof JsonBuilder)
 			send(sender(), object);
 		else if (object instanceof Component)

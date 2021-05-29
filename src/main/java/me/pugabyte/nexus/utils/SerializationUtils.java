@@ -150,8 +150,8 @@ public class SerializationUtils {
 			if (value == null)
 				return null;
 
-			if (value instanceof ConfigurationSerializable)
-				return serialize((ConfigurationSerializable) value);
+			if (value instanceof ConfigurationSerializable configurationSerializable)
+				return serialize(configurationSerializable);
 
 			if (Collection.class.isAssignableFrom(value.getClass()))
 				if (((Collection<?>) value).iterator().hasNext())
@@ -195,8 +195,8 @@ public class SerializationUtils {
 		}
 
 		private static void addExtraValues(Map<String, Object> serialized, ConfigurationSerializable value) {
-			if (value instanceof ItemStack)
-				serialized.computeIfAbsent("amount", $ -> ((ItemStack) value).getAmount());
+			if (value instanceof ItemStack itemStack)
+				serialized.computeIfAbsent("amount", $ -> itemStack.getAmount());
 		}
 
 		private static final List<String> intKeys = Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "custom-model-data",
@@ -205,8 +205,8 @@ public class SerializationUtils {
 		private static void fixItemMetaClasses(Map<String, Object> deserialized) {
 			intKeys.forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
-						if (metaValue instanceof Number)
-							return ((Number) metaValue).intValue();
+						if (metaValue instanceof Number number)
+							return number.intValue();
 						return metaValue;
 					}));
 

@@ -77,7 +77,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onEntityCombust(final EntityCombustEvent event) {
 		if (event.getEntity() instanceof Player) {
-			Godmode godmode = new GodmodeService().get((Player) event.getEntity());
+			Godmode godmode = new GodmodeService().get(event.getEntity());
 			if (godmode.isEnabled())
 				event.setCancelled(true);
 		}
@@ -87,7 +87,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 	public void onEntityCombustByEntity(final EntityCombustByEntityEvent event) {
 		if (event.getCombuster() instanceof Arrow combuster && event.getEntity() instanceof Player) {
 			if (combuster.getShooter() instanceof Player) {
-				Godmode godmode = new GodmodeService().get((Player) event.getEntity());
+				Godmode godmode = new GodmodeService().get(event.getEntity());
 				if (godmode.isEnabled())
 					event.setCancelled(true);
 			}

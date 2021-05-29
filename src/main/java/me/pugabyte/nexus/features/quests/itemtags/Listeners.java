@@ -31,8 +31,8 @@ public class Listeners implements Listener {
 
 	@EventHandler
 	public void onEnchantItem(EnchantItemEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		if (isNotTesting((Player) event.getView().getPlayer())) return;
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
+		if (isNotTesting(player)) return;
 
 		ItemStack result = event.getItem();
 		if (isNullOrAir(result)) return;
@@ -45,8 +45,8 @@ public class Listeners implements Listener {
 
 	@EventHandler
 	public void onCraftItem(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		if (isNotTesting((Player) event.getView().getPlayer())) return;
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
+		if (isNotTesting(player)) return;
 
 		ItemStack result = event.getInventory().getResult();
 		if (isNullOrAir(result)) return;
@@ -72,8 +72,8 @@ public class Listeners implements Listener {
 	// Includes Anvil, Grindstone, and Smithing Table
 	@EventHandler
 	public void onPrepareItem(PrepareResultEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-		if (isNotTesting((Player) event.getView().getPlayer())) return;
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
+		if (isNotTesting(player)) return;
 
 		ItemStack result = event.getResult();
 		if (isNullOrAir(result)) return;

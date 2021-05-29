@@ -112,7 +112,7 @@ public class TickPerks implements Listener {
 			OfflinePlayer _player = PlayerUtils.getPlayer(perkOwner.getUuid());
 			Minigamer minigamer = _player.isOnline() ? PlayerManager.get(_player.getPlayer()) : null;
 			if (!_player.isOnline() || (!minigamer.isPlaying() && !isInRegion((Player) _player)) || (minigamer.isPlaying() && !minigamer.usesPerk(LoadoutPerk.class))
-					|| perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty() || PlayerUtils.isVanished((Player) _player) || ((Player) _player).getGameMode() == GameMode.SPECTATOR) {
+					|| perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty() || PlayerUtils.isVanished(_player) || ((Player) _player).getGameMode() == GameMode.SPECTATOR) {
 				loadoutUsers.remove(perkOwner);
 				// send true packets
 				Player player = _player.getPlayer();

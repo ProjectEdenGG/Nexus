@@ -85,8 +85,8 @@ public class CitizensUtils {
 			npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, useLatest);
 
 			Entity npcEntity = npc.getEntity();
-			if (npcEntity instanceof SkinnableEntity) {
-				((SkinnableEntity) npcEntity).getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
+			if (npcEntity instanceof SkinnableEntity skinnableEntity) {
+				skinnableEntity.getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
 			}
 		});
 	}

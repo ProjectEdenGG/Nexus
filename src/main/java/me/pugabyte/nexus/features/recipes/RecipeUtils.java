@@ -64,14 +64,11 @@ public class RecipeUtils {
 				return Arrays.equals(matrix1, matrix2);
 			}
 			return true;
-		} else if (recipe1 instanceof ShapelessRecipe) {
-			if (!(recipe2 instanceof ShapelessRecipe))
+		} else if (recipe1 instanceof ShapelessRecipe r1) {
+			if (!(recipe2 instanceof ShapelessRecipe r2))
 				return false;
 
 			try {
-				ShapelessRecipe r1 = (ShapelessRecipe) recipe1;
-				ShapelessRecipe r2 = (ShapelessRecipe) recipe2;
-
 				if (r1.getIngredientList().isEmpty() || r2.getIngredientList().isEmpty())
 					return false;
 

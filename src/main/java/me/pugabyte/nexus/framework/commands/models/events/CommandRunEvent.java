@@ -50,10 +50,10 @@ public class CommandRunEvent extends CommandEvent {
 		if (isNullOrEmpty(PREFIX))
 			PREFIX = Commands.getPrefix(command);
 
-		if (ex.getCause() != null && ex.getCause() instanceof NexusException)
-			reply(new JsonBuilder(PREFIX + "&c").next(((NexusException) ex.getCause()).getJson()));
-		else if (ex instanceof NexusException)
-			reply(new JsonBuilder(PREFIX + "&c").next(((NexusException) ex).getJson()));
+		if (ex.getCause() != null && ex.getCause() instanceof NexusException nexusException)
+			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
+		else if (ex instanceof NexusException nexusException)
+			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
 		else if (ex.getCause() != null && ex.getCause() instanceof EdenException)
 			reply(PREFIX + "&c" + ex.getCause().getMessage());
 		else if (ex instanceof EdenException)

@@ -97,8 +97,9 @@ public class Censor {
 	public static void censor(ChatEvent event) {
 		String message = event.getMessage();
 
-		if (event.getChannel() instanceof PublicChannel && !((PublicChannel) event.getChannel()).isCensor())
-			return;
+		if (event.getChannel() instanceof PublicChannel publicChannel)
+			if (!publicChannel.isCensor())
+				return;
 
 		int bad = 0;
 		for (CensorItem censorItem : censorItems) {

@@ -121,9 +121,9 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			deathMessage.args().forEach(component -> {
 				// get the name of the player (or entity)
 				String playerName;
-				if (component.children().size() > 0 && component.children().get(0) instanceof TextComponent)
-					playerName = ((TextComponent) component.children().get(0)).content();
-				else if (component instanceof TextComponent textComponent && !((TextComponent) component).content().isEmpty()) {
+				if (component.children().size() > 0 && component.children().get(0) instanceof TextComponent textComponent)
+					playerName = textComponent.content();
+				else if (component instanceof TextComponent textComponent && !textComponent.content().isEmpty()) {
 					playerName = textComponent.content();
 					component = textComponent.content("");
 				} else {
