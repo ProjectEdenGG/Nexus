@@ -133,7 +133,7 @@ public class Censor {
 								type = PunishmentType.WARN;
 
 							Punishments.of(event.getChatter().getOfflinePlayer()).add(Punishment.ofType(type)
-									.punisher(Nexus.getUUID0())
+									.punisher(StringUtils.getUUID0())
 									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
 									.now(true));
 						}

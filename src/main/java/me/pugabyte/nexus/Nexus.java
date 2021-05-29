@@ -58,7 +58,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import static java.util.stream.Collectors.joining;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
@@ -72,8 +71,6 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private Features features;
 	private static Nexus instance;
-	@Getter
-	private final static UUID UUID0 = new UUID(0, 0);
 	@Getter
 	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
 
@@ -101,10 +98,6 @@ public class Nexus extends JavaPlugin {
 			Nexus.severe("Defaulting to " + Env.DEV.name() + " environment");
 			return Env.DEV;
 		}
-	}
-
-	public static boolean isUUID0(UUID uuid) {
-		return UUID0.equals(uuid);
 	}
 
 	@Getter

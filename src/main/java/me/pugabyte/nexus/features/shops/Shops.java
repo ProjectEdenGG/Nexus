@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.shops;
 
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.update.ShopDisabler;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.boost.BoostConfig;
@@ -217,7 +216,7 @@ public class Shops extends Feature {
 		}
 
 		private void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
+			add(new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
 		}
 
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
@@ -225,7 +224,7 @@ public class Shops extends Feature {
 		}
 
 		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-			add(new Product(Nexus.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES)));
+			add(new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES)));
 		}
 
 		private void add(Product product) {

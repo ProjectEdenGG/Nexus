@@ -5,7 +5,6 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
@@ -20,6 +19,7 @@ import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
@@ -323,7 +323,7 @@ public class OrnamentVendor implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(Nexus.getUUID0(), getRegion(id).getId(), Time.SECOND.x(3)))
+			if (!new CooldownService().check(StringUtils.getUUID0(), getRegion(id).getId(), Time.SECOND.x(3)))
 				return;
 
 			Pugmas20.setTreeAnimating(true);

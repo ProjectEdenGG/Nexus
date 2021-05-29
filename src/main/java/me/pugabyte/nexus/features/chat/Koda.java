@@ -149,7 +149,7 @@ public class Koda {
 					continue responses;
 
 			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
-				if (!new CooldownService().check(Nexus.getUUID0(), "koda_" + trigger.getName(), Time.SECOND.x(trigger.getCooldown())))
+				if (!new CooldownService().check(StringUtils.getUUID0(), "koda_" + trigger.getName(), Time.SECOND.x(trigger.getCooldown())))
 					continue;
 
 			if (!isNullOrEmpty(trigger.getRoutine()))

@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.delivery.DeliveryWorldMenu;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -135,28 +134,28 @@ public class DeliveryUser implements PlayerOwnedObject {
 		}
 
 		public static Delivery serverDelivery(List<ItemStack> items) {
-			return new Delivery(Nexus.getUUID0(), items);
+			return new Delivery(StringUtils.getUUID0(), items);
 		}
 
 		public static Delivery serverDelivery(ItemStack... items) {
-			return new Delivery(Nexus.getUUID0(), Arrays.asList(items));
+			return new Delivery(StringUtils.getUUID0(), Arrays.asList(items));
 		}
 
 		public static Delivery serverDelivery(String message) {
-			return new Delivery(message, Nexus.getUUID0());
+			return new Delivery(message, StringUtils.getUUID0());
 		}
 
 		public static Delivery serverDelivery(String message, ItemStack... items) {
-			return new Delivery(Nexus.getUUID0(), message, Arrays.asList(items));
+			return new Delivery(StringUtils.getUUID0(), message, Arrays.asList(items));
 		}
 
 		public static Delivery serverDelivery(String message, List<ItemStack> items) {
-			return new Delivery(Nexus.getUUID0(), message, items);
+			return new Delivery(StringUtils.getUUID0(), message, items);
 		}
 
 		public String getFrom() {
 			String from = "Server";
-			if (!this.fromUUID.equals(Nexus.getUUID0()))
+			if (!this.fromUUID.equals(StringUtils.getUUID0()))
 				from = Nickname.of(this.fromUUID);
 			return from;
 		}

@@ -13,6 +13,7 @@ import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils.Paste;
 import org.bukkit.Location;
@@ -204,7 +205,7 @@ public class WoodCutting implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(Nexus.getUUID0(), getRegion(id).getId(), Time.SECOND.x(3)))
+			if (!new CooldownService().check(StringUtils.getUUID0(), getRegion(id).getId(), Time.SECOND.x(3)))
 				return;
 
 			treeAnimating = true;

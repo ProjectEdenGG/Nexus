@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
@@ -363,7 +362,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected UUID uuid() {
 		if (isPlayer())
 			return player().getUniqueId();
-		return Nexus.getUUID0();
+		return StringUtils.getUUID0();
 	}
 
 	protected String name() {

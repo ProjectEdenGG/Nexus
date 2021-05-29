@@ -169,7 +169,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 		if (StringUtils.isV4Uuid(uuid))
 			return Nickname.of(uuid);
-		else if (Nexus.isUUID0(uuid))
+		else if (StringUtils.isUUID0(uuid))
 			return "Market";
 		else
 			return "Unknown";

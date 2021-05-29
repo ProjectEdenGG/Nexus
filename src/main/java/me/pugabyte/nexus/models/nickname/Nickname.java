@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.lexikiq.HasUniqueId;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.DiscordId;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
@@ -86,7 +85,7 @@ public class Nickname extends eden.models.nickname.Nickname implements PlayerOwn
 	}
 
 	public @NotNull String getNickname() {
-		if (Nexus.isUUID0(uuid))
+		if (StringUtils.isUUID0(uuid))
 			return "Console";
 		if (isNullOrEmpty(nickname))
 			return getName();

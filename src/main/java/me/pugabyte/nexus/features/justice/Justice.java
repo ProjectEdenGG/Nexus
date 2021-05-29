@@ -289,7 +289,7 @@ public class Justice extends Feature implements Listener {
 
 		if (fraudScore >= 75) {
 			punishments.add(Punishment.ofType(PunishmentType.MUTE)
-					.punisher(Nexus.getUUID0())
+					.punisher(StringUtils.getUUID0())
 					.input("Suspected bot")
 					.now(true));
 

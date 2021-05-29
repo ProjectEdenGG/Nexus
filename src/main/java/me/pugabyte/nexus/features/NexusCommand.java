@@ -171,8 +171,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(Nexus.getUUID0(), "reload", Time.SECOND.x(15)))
-			throw new CommandCooldownException(Nexus.getUUID0(), "reload");
+		if (!cooldownService.check(StringUtils.getUUID0(), "reload", Time.SECOND.x(15)))
+			throw new CommandCooldownException(StringUtils.getUUID0(), "reload");
 
 		runCommand("plugman reload Nexus");
 	}

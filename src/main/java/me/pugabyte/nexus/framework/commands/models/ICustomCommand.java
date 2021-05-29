@@ -551,7 +551,7 @@ public abstract class ICustomCommand {
 					ticks += part.value().get() * part.x();
 
 				CooldownService service = new CooldownService();
-				UUID uuid = cooldown.global() ? Nexus.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();
+				UUID uuid = cooldown.global() ? StringUtils.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();
 				String type = "command:" + commandId;
 
 				if (!service.check(uuid, type, ticks))
