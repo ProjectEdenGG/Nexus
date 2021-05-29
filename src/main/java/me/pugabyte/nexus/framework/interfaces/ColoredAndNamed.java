@@ -22,10 +22,10 @@ public interface ColoredAndNamed extends Named, Colored, ComponentLike {
 	}
 
 	/**
-	 * Returns a component corresponding with this object. Uses the object's name and {@link #getTextColor()}.
+	 * Returns a component corresponding with this object. The default implementation uses the object's name and color.
 	 * @return an adventure text component
 	 */
 	default @NotNull TextComponent asComponent() {
-		return Component.text(getName(), getTextColor());
+		return Component.text(getName(), this);
 	}
 }

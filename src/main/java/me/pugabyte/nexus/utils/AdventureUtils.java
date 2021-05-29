@@ -3,7 +3,6 @@ package me.pugabyte.nexus.utils;
 import io.papermc.paper.text.PaperComponents;
 import lombok.experimental.UtilityClass;
 import me.lexikiq.HasUniqueId;
-import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNamed;
 import me.pugabyte.nexus.framework.interfaces.ColoredAndNicknamed;
 import net.kyori.adventure.identity.Identified;
@@ -101,13 +100,6 @@ public class AdventureUtils {
 		if (color == null)
 			return null;
 		return textColorOf(color.getColor());
-	}
-
-	@Contract("null -> null; !null -> !null")
-	public static TextColor textColorOf(@Nullable Colored color) {
-		if (color == null)
-			return null;
-		return color.getTextColor();
 	}
 
 	/**

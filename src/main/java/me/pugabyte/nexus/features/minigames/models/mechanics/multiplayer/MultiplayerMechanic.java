@@ -11,7 +11,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
-import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import me.pugabyte.nexus.models.perkowner.PerkOwnerService;
 import me.pugabyte.nexus.utils.AdventureUtils;
@@ -21,6 +20,7 @@ import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -188,7 +188,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	protected TextComponent getWinnersComponent(List<? extends Named> winners) {
 		TextComponent component = AdventureUtils.commaJoinText(winners.stream()
-				.map(named -> Component.text(named instanceof Nicknamed ? ((Nicknamed) named).getNickname() : named.getName(), named instanceof Colored ? ((Colored) named).getTextColor() : NamedTextColor.YELLOW))
+				.map(named -> Component.text(named instanceof Nicknamed ? ((Nicknamed) named).getNickname() : named.getName(), named instanceof TextColor ? (TextColor) named : NamedTextColor.YELLOW))
 				.collect(Collectors.toList()));
 		if (winners.size() == 1)
 			return component.append(Component.text(" has won "));

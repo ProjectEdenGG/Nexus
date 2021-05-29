@@ -21,11 +21,11 @@ public interface ColoredAndNicknamed extends ColoredAndNamed, Nicknamed {
 	}
 
 	/**
-	 * Returns a component corresponding with this object. Uses the object's nickname by default. May include colors.
+	 * Returns a component corresponding with this object. This implementation uses the object's nickname and color.
 	 * @return an adventure text component
 	 */
 	@Override
 	default @NotNull TextComponent asComponent() {
-		return Component.text(getNickname(), getTextColor());
+		return Component.text(getNickname(), this);
 	}
 }

@@ -25,15 +25,6 @@ public interface Colored extends TextColor {
 	}
 
 	/**
-	 * Returns the Adventure text color corresponding to this object.
-	 * @deprecated Colored interface now extends TextColor
-	 */
-	@Deprecated
-	default @NotNull TextColor getTextColor() {
-		return this;
-	}
-
-	/**
 	 * Returns the Bukkit color corresponding to this object.
 	 */
 	default @NotNull org.bukkit.Color getBukkitColor() {
