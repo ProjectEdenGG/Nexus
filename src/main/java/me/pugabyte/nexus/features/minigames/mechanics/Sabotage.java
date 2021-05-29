@@ -75,7 +75,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -86,6 +85,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static eden.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 // TODO: ensure new players can figure out how to play
 // TODO: use glow API to display tasks (and maybe packets to show an ! above tasks with hidden items?)
@@ -95,7 +95,6 @@ import static eden.utils.StringUtils.camelCase;
 // TODO: color menu
 // TODO: meeting sound
 // TODO: task complete sound + action bar
-// TODO: move kill cooldown to ticks, don't tick in vents
 // TODO: venting is not working
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
@@ -207,21 +206,22 @@ public class Sabotage extends TeamMechanic {
 			match.getMinigamers().forEach(minigamer -> {
 				Player player = minigamer.getPlayer();
 				Location location = player.getLocation();
+				PlayerInventory inventory = player.getInventory();
 				List<Minigamer> otherPlayers = new ArrayList<>(match.getAliveMinigamers());
 				Utils.removeEntityFrom(minigamer, otherPlayers);
 				PacketUtils.sendFakeItem(minigamer, otherPlayers, new ItemStack(Material.AIR), EnumItemSlot.MAINHAND);
 				SabotageTeam team = SabotageTeam.of(minigamer);
 				if (team != SabotageTeam.IMPOSTOR) {
 					Tasks.sync(() -> {
-								List<Minigamer> nearby = new ArrayList<>();
-								location.getNearbyEntitiesByType(Player.class, lightLevel).forEach(_player -> {
-									Minigamer other = PlayerManager.get(_player);
-									if (!other.isAlive() || !other.isPlaying(match)) return;
-									nearby.add(other);
-								});
-								otherPlayers.removeAll(nearby);
-								PlayerUtils.hidePlayers(minigamer, otherPlayers);
-								PlayerUtils.showPlayers(minigamer, nearby);
+						List<Minigamer> nearby = new ArrayList<>();
+						location.getNearbyEntitiesByType(Player.class, lightLevel).forEach(_player -> {
+							Minigamer other = PlayerManager.get(_player);
+							if (!other.isAlive() || !other.isPlaying(match)) return;
+							nearby.add(other);
+						});
+						otherPlayers.removeAll(nearby);
+						PlayerUtils.hidePlayers(minigamer, otherPlayers);
+						PlayerUtils.showPlayers(minigamer, nearby);
 					});
 					Location lastKnownLight = matchData.getLightMap().get(player.getUniqueId());
 					if (!LocationUtils.blockLocationsEqual(location, lastKnownLight) || lightLevel <= 2) {
@@ -237,7 +237,14 @@ public class Sabotage extends TeamMechanic {
 						}
 					}
 				} else {
-					player.getInventory().setItem(3, KILL_ITEM.get().asQuantity(Math.max(1, 1 + matchData.killCooldown(minigamer))));
+					int killCooldown = matchData.getKillCooldown(minigamer);
+					if (killCooldown != -1 && !matchData.getVenters().containsKey(minigamer.getUniqueId())) {
+						if (killCooldown - 1 == 0)
+							matchData.getKillCooldowns().remove(minigamer.getUniqueId());
+						else
+							matchData.getKillCooldowns().put(minigamer.getUniqueId(), killCooldown - 1);
+					}
+					inventory.setItem(3, KILL_ITEM.get().asQuantity(Math.max(1, 1 + matchData.getKillCooldownAsSeconds(minigamer))));
 					if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
 						Location dest = matchData.getVenters().get(minigamer.getUniqueId());
 						if (!LocationUtils.locationsEqual(location, dest))
@@ -245,19 +252,22 @@ public class Sabotage extends TeamMechanic {
 						minigamer.sendActionBar(new JsonBuilder("Crouch (", NamedTextColor.RED).next(Component.keybind("key.sneak")).next(") to exit vent"));
 					}
 				}
-				boolean bodyFound = false;
-				if (minigamer.isAlive()) {
-					for (SabotageMatchData.Body body : matchData.getBodies().values()) {
-						if (body.getReportBoundingBox().contains(location.toVector())) {
-							player.getInventory().setItem(2, new ItemBuilder(REPORT_ITEM.get())
-									.componentLore(new JsonBuilder("Report ", NamedTextColor.DARK_AQUA).next(body.getPlayerColor()).next("'s body")).build());
-							bodyFound = true;
-							break;
+				ItemStack currentItem = inventory.getItem(2);
+				if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName() && AdventureUtils.asPlainText(currentItem.getItemMeta().displayName()).equals("Report")) {
+					boolean bodyFound = false;
+					if (minigamer.isAlive()) {
+						for (SabotageMatchData.Body body : matchData.getBodies().values()) {
+							if (body.getReportBoundingBox().contains(location.toVector())) {
+								inventory.setItem(2, new ItemBuilder(REPORT_ITEM.get())
+										.componentLore(new JsonBuilder("Report ", NamedTextColor.DARK_AQUA).next(body.getPlayerColor()).next("'s body")).build());
+								bodyFound = true;
+								break;
+							}
 						}
 					}
+					if (!bodyFound)
+						inventory.setItem(2, EMPTY_REPORT_ITEM.get());
 				}
-				if (!bodyFound)
-					player.getInventory().setItem(2, EMPTY_REPORT_ITEM.get());
 			});
 		});
 	}
@@ -338,7 +348,7 @@ public class Sabotage extends TeamMechanic {
 			inventory.setItem(1, USE_ITEM.get());
 			inventory.setItem(2, EMPTY_REPORT_ITEM.get());
 			if (team == SabotageTeam.IMPOSTOR) {
-				matchData.getKillCooldowns().put(minigamer.getUniqueId(), LocalDateTime.now());
+				matchData.putKillCooldown(minigamer);
 				inventory.setItem(3, KILL_ITEM.get());
 				inventory.setItem(4, SABOTAGE_MENU.get());
 			}
@@ -463,7 +473,7 @@ public class Sabotage extends TeamMechanic {
 				}
 			} else if (SABOTAGE_MENU.get().isSimilar(item)) {
 				new ImpostorMenu().open(minigamer);
-			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(StringUtils.colorize("&eReport")) && item.getItemMeta().hasLore()) {
+			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(colorize("&eReport")) && item.getItemMeta().hasLore()) {
 				String lore = AdventureUtils.asPlainText(item.getItemMeta().lore().get(0));
 				String color = lore.split(" ")[1].split("'")[0];
 				matchData.startMeeting(minigamer, SabotageColor.valueOf(color.replace(' ', '_').toUpperCase()));
@@ -529,8 +539,8 @@ public class Sabotage extends TeamMechanic {
 	public void onDamage(MinigamerDamageEvent event) {
 		SabotageMatchData matchData = event.getMatch().getMatchData();
 		if (event.getAttacker() != null && event.getAttacker().isAlive() && SabotageTeam.of(event.getAttacker()) == SabotageTeam.IMPOSTOR && SabotageTeam.of(event.getMinigamer()) != SabotageTeam.IMPOSTOR
-				&& event.getAttacker().getPlayer().getInventory().getItemInMainHand().isSimilar(KILL_ITEM.get()) && matchData.killCooldown(event.getMinigamer()) <= 0) {
-			matchData.getKillCooldowns().put(event.getAttacker().getUniqueId(), LocalDateTime.now());
+				&& event.getAttacker().getPlayer().getInventory().getItemInMainHand().isSimilar(KILL_ITEM.get()) && matchData.getKillCooldown(event.getMinigamer()) <= 0) {
+			matchData.putKillCooldown(event.getAttacker());
 			matchData.spawnBody(event.getMinigamer());
 			onDeath(new MinigamerDeathEvent(event.getMinigamer(), event.getAttacker(), event.getOriginalEvent()));
 			if (event.getOriginalEvent() instanceof Cancellable cancellable)

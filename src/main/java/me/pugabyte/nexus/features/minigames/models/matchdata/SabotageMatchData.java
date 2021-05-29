@@ -102,7 +102,7 @@ public class SabotageMatchData extends MatchData {
 			.color(ChatColor.DARK_GRAY)
 			.permission("")
 			.build();
-	private final Map<UUID, LocalDateTime> killCooldowns = new HashMap<>();
+	private final Map<UUID, Integer> killCooldowns = new HashMap<>();
 	private Task sabotage;
 	private int sabotageTaskId = -1;
 	private LocalDateTime sabotageStarted;
@@ -123,6 +123,10 @@ public class SabotageMatchData extends MatchData {
 
 	public SabotageArena getArena() {
 		return (SabotageArena) super.getArena();
+	}
+
+	public void putKillCooldown(HasUniqueId player) {
+		killCooldowns.put(player.getUniqueId(), TimeUtils.Time.SECOND.x(getArena().getKillCooldown()));
 	}
 
 	public int canButtonIn() {
@@ -417,9 +421,14 @@ public class SabotageMatchData extends MatchData {
 		return (sabotage == null || sabotage.getTask() == Tasks.LIGHTS) ? 6 : 2;
 	}
 
-	public int killCooldown(HasUniqueId player) {
-		if (!killCooldowns.containsKey(player.getUniqueId())) return -1;
-		return (int) Math.max(0, 1 + Duration.between(LocalDateTime.now(), killCooldowns.get(player.getUniqueId()).plusSeconds(getArena().getKillCooldown())).getSeconds());
+	public int getKillCooldown(HasUniqueId player) {
+		return killCooldowns.getOrDefault(player.getUniqueId(), -1);
+	}
+
+	public int getKillCooldownAsSeconds(HasUniqueId player) {
+		int ticks = getKillCooldown(player);
+		if (ticks == -1) return -1;
+		return (int) Math.ceil(ticks / 20d);
 	}
 
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);
