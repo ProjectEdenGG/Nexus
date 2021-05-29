@@ -93,8 +93,6 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 // TODO: admin table (imageonmap "api"?)
 // TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
 // TODO: color menu
-// TODO: meeting sound
-// TODO: task complete sound + action bar
 // TODO: venting is not working
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
@@ -276,6 +274,8 @@ public class Sabotage extends TeamMechanic {
 	public void onTaskCompletion(MinigamerCompleteTaskPartEvent event) {
 		Match match = event.getMatch();
 		if (!match.isMechanic(this)) return;
+		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMinigamer());
+		event.getMinigamer().sendActionBar(new JsonBuilder("Task Complete!", NamedTextColor.GREEN));
 		if (match.<SabotageMatchData>getMatchData().getProgress() == 1)
 			match.end();
 	}

@@ -311,8 +311,18 @@ public class SoundUtils {
 		SABOTAGE_VOTE {
 			@Override
 			public void play(HasPlayer player) {
-				Tasks.wait(0, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, .8F, 1.7F));
+				playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, .8F, 1.7F);
 				Tasks.wait(3, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, .8F, 2.0F));
+			}
+		},
+		SABOTAGE_MEETING {
+			@Override
+			public void play(HasPlayer player) {
+				playSound(player, Sound.BLOCK_BELL_USE, 1F, .8F);
+				playSound(player, Sound.BLOCK_BELL_RESONATE, .25F, 1F);
+				Tasks.wait(7, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, .6F, .2F));
+				Tasks.wait(12, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, .6F, .6F));
+				Tasks.wait(17, () -> playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, .6F, .8F));
 			}
 		}
 		;

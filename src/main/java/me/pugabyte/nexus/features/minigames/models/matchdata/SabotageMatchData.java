@@ -37,6 +37,7 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.sound.Sound;
@@ -321,6 +322,7 @@ public class SabotageMatchData extends MatchData {
 			minigamer.getPlayer().getInventory().clear();
 			PlayerUtils.giveItem(minigamer, Sabotage.VOTING_ITEM.get());
 			match.getTasks().wait(1, () -> votingScreen.open(minigamer));
+			SoundUtils.Jingle.SABOTAGE_MEETING.play(minigamer);
 		});
 		endMeetingTask = match.getTasks().wait(TimeUtils.Time.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
 	}
