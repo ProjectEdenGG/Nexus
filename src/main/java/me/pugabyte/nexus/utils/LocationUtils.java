@@ -202,10 +202,10 @@ public class LocationUtils {
 	public static Location parse(@NotNull String text) throws IllegalArgumentException {
 		Validate.notNull(text, "input doesn't exist");
 		String[] split = StringUtils.stripColor(text).split(" ");
-		Validate.isTrue(split.length == 4 || split.length == 6, "text contains incorrect number of arguments");
+		Validate.isTrue(split.length == 4 || split.length == 6, "text contains incorrect number of arguments (expected: 4 or 6, got: " + split.length + ") [" + text + "]");
 		World world = Bukkit.getWorld(split[0]);
 		if (world == null)
-			throw new IllegalArgumentException("world doesn't exist");
+			throw new IllegalArgumentException("world \"" + split[0] +"\" doesn't exist");
 		Location location = new Location(world,
 				Double.parseDouble(split[1]),
 				Double.parseDouble(split[2]),

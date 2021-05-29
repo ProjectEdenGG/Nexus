@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.SlotPos;
 import lombok.Getter;
+import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -67,7 +68,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 				inventoryContents.set(destination, inventoryContents.get(destination).get().clone(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Too "+fmt+", try again").build()));
 				SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.MASTER, 2f, 1f);
 			} else {
-				getTask().partCompleted();
+				getTask().partCompleted(PlayerManager.get(player));
 				inventory.close(player);
 			}
 		}));

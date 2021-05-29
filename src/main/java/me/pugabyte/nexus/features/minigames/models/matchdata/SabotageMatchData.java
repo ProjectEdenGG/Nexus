@@ -51,7 +51,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -243,7 +242,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public void spawnBody(Minigamer minigamer) {
-		Location location = minigamer.getPlayerLocation();
+		Location location = minigamer.getPlayer().getLocation();
 		while (MaterialTag.ALL_AIR.isTagged(location.getBlock().getRelative(0, -1, 0)) && location.getY() > location.getWorld().getMinHeight())
 			location.setY(location.getY() - 1);
 		location.setY(Math.floor(location.getY()));
@@ -268,7 +267,6 @@ public class SabotageMatchData extends MatchData {
 	public void exitVent(Minigamer minigamer) {
 		Player player = minigamer.getPlayer();
 		getVenters().remove(player.getUniqueId());
-		player.removePotionEffect(PotionEffectType.INVISIBILITY);
 		match.<Sabotage>getMechanic().onLoadout(new MinigamerLoadoutEvent(minigamer, new Loadout()));
 	}
 
@@ -321,8 +319,12 @@ public class SabotageMatchData extends MatchData {
 			minigamer.teleport(getArena().getRespawnLocation());
 			minigamer.getPlayer().getInventory().clear();
 			PlayerUtils.giveItem(minigamer, Sabotage.VOTING_ITEM.get());
-			match.getTasks().wait(1, () -> votingScreen.open(minigamer));
-			SoundUtils.Jingle.SABOTAGE_MEETING.play(minigamer);
+			match.getTasks().wait(1, () -> {
+				votingScreen.open(minigamer);
+				SoundUtils.Jingle.SABOTAGE_MEETING.play(minigamer);
+			});
+			if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR)
+				putKillCooldown(minigamer);
 		});
 		endMeetingTask = match.getTasks().wait(TimeUtils.Time.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
 	}

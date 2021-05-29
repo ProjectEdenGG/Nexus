@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.sabotage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -32,7 +33,12 @@ public enum SabotageTeam implements IsColoredAndNamed {
 	JESTER(ChatColor.LIGHT_PURPLE)
 	;
 
-	private final ChatColor teamColor;
+	@Accessors(fluent = true)
+	private final Colored colored;
+
+	SabotageTeam(ChatColor color) {
+		this(Colored.colored(color));
+	}
 
 	@Override
 	public String toString() {
@@ -44,17 +50,12 @@ public enum SabotageTeam implements IsColoredAndNamed {
 		return toString();
 	}
 
-	@Override
-	public @NotNull Colored colored() {
-		return Colored.colored(teamColor);
-	}
-
 	// doesn't use ChatColor cus its static values are never equal to custom values
 	private static final Map<Color, SabotageTeam> BY_COLOR;
 	static {
 		Map<Color, SabotageTeam> byChatColor = new HashMap<>();
 		for (SabotageTeam team : SabotageTeam.values())
-			byChatColor.put(team.getTeamColor().getColor(), team);
+			byChatColor.put(team.colored.getColor(), team);
 		BY_COLOR = Map.copyOf(byChatColor);
 	}
 

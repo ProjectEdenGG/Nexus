@@ -283,20 +283,18 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 		if (location == null)
 			throw new InvalidInputException("Tried to teleport " + getName() + " to a null location");
 
-		Tasks.async(() -> {
-			player.setVelocity(new Vector(0, 0, 0));
-			canTeleport = true;
-			if (match == null)
-				player.teleportAsync(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
-			else
-				player.teleportAsync(location.clone().add(0, .5, 0));
-			canTeleport = false;
-			player.setVelocity(new Vector(0, 0, 0));
-			if (withSlowness) {
-				match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
-				match.getTasks().wait(2, () -> player.setVelocity(new Vector(0, 0, 0)));
-			}
-		});
+		player.setVelocity(new Vector(0, 0, 0));
+		canTeleport = true;
+		if (match == null)
+			player.teleportAsync(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
+		else
+			player.teleportAsync(location.clone().add(0, .5, 0));
+		canTeleport = false;
+		player.setVelocity(new Vector(0, 0, 0));
+		if (withSlowness) {
+			match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
+			match.getTasks().wait(2, () -> player.setVelocity(new Vector(0, 0, 0)));
+		}
 	}
 
 	public void setTeam(Team team) {

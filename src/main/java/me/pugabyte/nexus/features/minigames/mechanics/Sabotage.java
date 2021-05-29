@@ -92,7 +92,6 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 // TODO: admin table (imageonmap "api"?)
 // TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
 // TODO: color menu
-// TODO: venting is not working
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;
@@ -195,6 +194,7 @@ public class Sabotage extends TeamMechanic {
 		Match match = event.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		matchData.setRoundStarted();
+		SabotageTeam.IMPOSTOR.players(match).forEach(matchData::putKillCooldown);
 		match.showBossBar(matchData.getBossbar());
 		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, matchData.getGameChannel()));
 		match.getTasks().repeatAsync(0, 1, () -> {
@@ -216,6 +216,7 @@ public class Sabotage extends TeamMechanic {
 							if (!other.isAlive() || !other.isPlaying(match)) return;
 							nearby.add(other);
 						});
+						nearby.removeAll(matchData.getVenters().keySet().stream().map(PlayerManager::get).collect(Collectors.toList()));
 						otherPlayers.removeAll(nearby);
 						PlayerUtils.hidePlayers(minigamer, otherPlayers);
 						PlayerUtils.showPlayers(minigamer, nearby);
@@ -234,18 +235,20 @@ public class Sabotage extends TeamMechanic {
 						}
 					}
 				} else {
-					int killCooldown = matchData.getKillCooldown(minigamer);
-					if (killCooldown != -1 && !matchData.getVenters().containsKey(minigamer.getUniqueId())) {
-						if (killCooldown - 1 == 0)
-							matchData.getKillCooldowns().remove(minigamer.getUniqueId());
-						else
-							matchData.getKillCooldowns().put(minigamer.getUniqueId(), killCooldown - 1);
+					if (KILL_ITEM.get().isSimilar(inventory.getItem(3))) {
+						int killCooldown = matchData.getKillCooldown(minigamer);
+						if (killCooldown != -1) {
+							if (killCooldown - 1 == 0)
+								matchData.getKillCooldowns().remove(minigamer.getUniqueId());
+							else
+								matchData.getKillCooldowns().put(minigamer.getUniqueId(), killCooldown - 1);
+						}
+						inventory.setItem(3, KILL_ITEM.get().asQuantity(Math.max(1, 1 + matchData.getKillCooldownAsSeconds(minigamer))));
 					}
-					inventory.setItem(3, KILL_ITEM.get().asQuantity(Math.max(1, 1 + matchData.getKillCooldownAsSeconds(minigamer))));
 					if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
 						Location dest = matchData.getVenters().get(minigamer.getUniqueId());
 						if (!LocationUtils.locationsEqual(location, dest))
-							minigamer.teleportAsync(dest);
+							match.getTasks().sync(() -> minigamer.teleportAsync(dest));
 						minigamer.sendActionBar(new JsonBuilder("Crouch (", NamedTextColor.RED).next(Component.keybind("key.sneak")).next(") to exit vent"));
 					}
 				}
@@ -343,11 +346,11 @@ public class Sabotage extends TeamMechanic {
 			setArmor(minigamer.getPlayer(), color);
 
 			PlayerInventory inventory = minigamer.getPlayer().getInventory();
+			inventory.clear();
 			SabotageTeam team = SabotageTeam.of(minigamer);
 			inventory.setItem(1, USE_ITEM.get());
 			inventory.setItem(2, EMPTY_REPORT_ITEM.get());
 			if (team == SabotageTeam.IMPOSTOR) {
-				matchData.putKillCooldown(minigamer);
 				inventory.setItem(3, KILL_ITEM.get());
 				inventory.setItem(4, SABOTAGE_MENU.get());
 			}
@@ -368,27 +371,31 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	private void giveVentItems(Minigamer minigamer, Block vent, Container container) {
-		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, true, false, false));
 		PlayerInventory inventory = minigamer.getPlayer().getInventory();
 		inventory.clear();
-		inventory.setHeldItemSlot(0);
-		inventory.setItem(0, new ItemBuilder(Material.ARROW).customModelData(2001).name("Crouch to Exit").lore(StringUtils.getFlooredCoordinateString(vent.getLocation()) + container.getCustomName()).loreize(false).build());
+		Location currentLoc = vent.getLocation();
+		inventory.setItem(0, new ItemBuilder(Material.ARROW).customModelData(2001).name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
 		int count = 1;
 		for (ItemStack itemStack : container.getInventory()) {
 			if (ItemUtils.isNullOrAir(itemStack)) continue;
-			inventory.setItem(count, new ItemBuilder(Material.ARROW).customModelData(2000 + count).name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
+			inventory.setItem(count, new ItemBuilder(Material.ARROW).customModelData(2001 + count).name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
 			count += 1;
 			if (count > 8)
 				break;
 		}
+		onItemHeldEvent(new PlayerItemHeldEvent(minigamer.getPlayer(), inventory.getHeldItemSlot(), 0));
+		inventory.setHeldItemSlot(0);
 	}
 
 	private Container getVentContainer(Location location) {
 		Location loc = location.clone();
 		loc.setY(0);
-		if (loc.getBlock().getState() instanceof Container container && Utils.isDouble(container.getCustomName()))
-			return container;
-		return null;
+		if (!(loc.getBlock().getState() instanceof Container container)) return null;
+		Component customName = container.customName();
+		if (customName == null) return null;
+		String containerName = AdventureUtils.asPlainText(customName);
+		if (!Utils.isDouble(containerName)) return null;
+		return container;
 	}
 
 	private Container getVentContainer(Block block) {
@@ -415,10 +422,10 @@ public class Sabotage extends TeamMechanic {
 		if (!item.hasItemMeta()) return;
 		ItemMeta itemMeta = item.getItemMeta();
 		if (!itemMeta.hasLore()) return;
-		if (!itemMeta.getDisplayName().equals("&fCrouch to Exit")) return;
-		Location location = LocationUtils.parseOrNull(itemMeta.getLore().get(0));
-		if (location == null) return;
-		location.add(.5, .1875, .5);
+		if (!itemMeta.hasDisplayName()) return;
+		if (!AdventureUtils.asPlainText(itemMeta.displayName()).equals("Crouch to Exit")) return;
+		Location location = LocationUtils.parse(minigamer.getPlayer().getWorld().getName() + " " + itemMeta.getLore().get(0));
+		location.add(.5, .1875-.5, .5);
 		minigamer.getMatch().<SabotageMatchData>getMatchData().getVenters().put(minigamer.getUniqueId(), location);
 	}
 
@@ -443,9 +450,6 @@ public class Sabotage extends TeamMechanic {
 					Block block = minigamer.getPlayerLocation().getBlock();
 					Container container = getVentContainer(block);
 					if (block.getType() == Material.IRON_TRAPDOOR && block.getRelative(0, -1, 0).getType() == Material.COAL_BLOCK && container != null) {
-						Location setLoc = block.getLocation().add(0, .1875, 0);
-						setLoc.setYaw((float) Double.parseDouble(container.getCustomName()));
-						matchData.getVenters().put(minigamer.getUniqueId(), setLoc);
 						giveVentItems(minigamer, block, container);
 					}
 				} else {

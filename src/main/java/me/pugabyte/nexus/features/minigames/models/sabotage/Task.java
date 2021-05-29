@@ -2,6 +2,10 @@ package me.pugabyte.nexus.features.minigames.models.sabotage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
+import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
+import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerCompleteTaskPartEvent;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.SegmentedTaskData;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
 import net.md_5.bungee.api.ChatColor;
@@ -31,8 +35,13 @@ public class Task {
         return part;
     }
 
-    public void partCompleted() {
+    public void partCompleted(Minigamer minigamer) {
+        new MinigamerCompleteTaskPartEvent(minigamer, nextPart()).callEvent();
         completed += 1;
+    }
+
+    public void partCompleted(HasUniqueId player) {
+        partCompleted(PlayerManager.get(player));
     }
 
     public double progress() {

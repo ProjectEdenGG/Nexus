@@ -568,6 +568,7 @@ public class Match implements ForwardingAudience {
 		public int wait(long delay, Runnable runnable) {
 			int taskId = Tasks.wait(delay, runnable);
 			taskIds.add(taskId);
+			Tasks.wait(delay, () -> taskIds.remove(taskId));
 			return taskId;
 		}
 
@@ -578,6 +579,7 @@ public class Match implements ForwardingAudience {
 		public int waitAsync(long delay, Runnable runnable) {
 			int taskId = Tasks.waitAsync(delay, runnable);
 			taskIds.add(taskId);
+			Tasks.wait(delay, () -> taskIds.remove(taskId));
 			return taskId;
 		}
 
@@ -617,9 +619,17 @@ public class Match implements ForwardingAudience {
 			return taskId;
 		}
 
+		public int sync(Runnable runnable) {
+			int taskId = Tasks.sync(runnable);
+			taskIds.add(taskId);
+			Tasks.sync(() -> taskIds.remove(taskId));
+			return taskId;
+		}
+
 		public int async(Runnable runnable) {
 			int taskId = Tasks.async(runnable);
 			taskIds.add(taskId);
+			Tasks.async(() -> taskIds.remove(taskId));
 			return taskId;
 		}
 

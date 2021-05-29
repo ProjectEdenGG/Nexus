@@ -86,7 +86,7 @@ public class VotingScreen extends AbstractVoteScreen {
 		SabotageColor targetColor = matchData.getColor(target);
 		ItemBuilder builder = headItemOf(target, targetColor);
 		List<ComponentLike> components = new ArrayList<>();
-		components.add(SabotageTeam.render(voter, target).asComponent());
+		components.add(SabotageTeam.render(voter, target));
 		components.add(new JsonBuilder(target.isAlive() ? "&fAlive" : "&cDead"));
 		if (target.getUniqueId().equals(reporter.getUniqueId()))
 			if (body == null)

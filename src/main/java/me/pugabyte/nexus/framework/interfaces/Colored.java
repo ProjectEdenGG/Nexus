@@ -71,7 +71,7 @@ public interface Colored extends TextColor, IsColored {
 	}
 
 	static Colored colored(Color color) {
-		return colored(color.getRGB());
+		return colored(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
 	static Colored colored(ChatColor chatColor) {
