@@ -24,7 +24,9 @@ import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
 import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -80,6 +82,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static eden.utils.StringUtils.camelCase;
+
 // TODO: ensure new players can figure out how to play
 // TODO: use glow API to display tasks (and maybe packets to show an ! above tasks with hidden items?)
 // TODO: sabotage menu
@@ -88,7 +92,6 @@ import java.util.stream.Collectors;
 // TODO: color menu
 // TODO: meeting sound
 // TODO: task complete sound + action bar
-// TODO: display room names on action bar
 // TODO: display subtitle on kill
 // TODO: move kill cooldown to ticks, don't tick in vents
 // TODO: venting is not working
@@ -539,5 +542,13 @@ public class Sabotage extends TeamMechanic {
 			line -= 1;
 		}
 		return lines;
+	}
+
+	@EventHandler
+	public void onEnterRegion(PlayerEnteredRegionEvent event) {
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+		if (!event.getRegion().getId().startsWith(minigamer.getMatch().getArena().getRegionBaseName()+"_room_")) return;
+		ActionBarUtils.sendActionBar(minigamer, camelCase(event.getRegion().getId().split("_room_")[1]));
 	}
 }

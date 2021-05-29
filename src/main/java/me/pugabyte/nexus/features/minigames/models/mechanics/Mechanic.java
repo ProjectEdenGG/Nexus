@@ -363,7 +363,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return true;
 	}
 
-	public boolean isInRegion(Match match, Block block, String region) {
+	public static boolean isInRegion(Match match, Block block, String region) {
 		return match.getArena().isInRegion(block, region);
 	}
 
