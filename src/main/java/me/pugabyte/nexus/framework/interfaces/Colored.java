@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
 
-public interface Colored {
+public interface Colored extends TextColor {
 	/**
 	 * Returns the color corresponding to this object.
 	 * @return an RGB color
@@ -26,9 +26,11 @@ public interface Colored {
 
 	/**
 	 * Returns the Adventure text color corresponding to this object.
+	 * @deprecated Colored interface now extends TextColor
 	 */
+	@Deprecated
 	default @NotNull TextColor getTextColor() {
-		return TextColor.color(getColor().getRGB());
+		return this;
 	}
 
 	/**
@@ -52,5 +54,10 @@ public interface Colored {
 	 */
 	default @NotNull String getHex() {
 		return "&" + toHex(getChatColor());
+	}
+
+	@Override
+	default int value() {
+		return getColor().getRGB();
 	}
 }

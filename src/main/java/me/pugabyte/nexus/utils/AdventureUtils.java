@@ -144,11 +144,6 @@ public class AdventureUtils {
 		return Component.text(text, textColorOf(color));
 	}
 
-	@NotNull
-	public static TextComponent colorText(@Nullable Colored color, @NotNull String text) {
-		return Component.text(text, textColorOf(color));
-	}
-
 	/**
 	 * Parses a hexadecimal number
 	 * @param color number in the format "#FFFFFF" (# optional)
@@ -163,12 +158,12 @@ public class AdventureUtils {
 
 	@NotNull
 	public static TextComponent colorText(@NotNull ColoredAndNamed coloredAndNamed) {
-		return Component.text(coloredAndNamed.getName(), coloredAndNamed.getTextColor());
+		return Component.text(coloredAndNamed.getName(), coloredAndNamed);
 	}
 
 	@NotNull
 	public static TextComponent colorText(@NotNull ColoredAndNicknamed coloredAndNicknamed) {
-		return Component.text(coloredAndNicknamed.getNickname(), coloredAndNicknamed.getTextColor());
+		return Component.text(coloredAndNicknamed.getNickname(), coloredAndNicknamed);
 	}
 
 	/**

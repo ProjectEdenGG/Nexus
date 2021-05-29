@@ -2,7 +2,6 @@ package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.framework.interfaces.Colored;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -62,13 +61,6 @@ public class JsonBuilder implements ComponentLike {
 	/**
 	 * Creates a new builder with its color set
 	 */
-	public JsonBuilder(@Nullable Colored color) {
-		color(color);
-	}
-
-	/**
-	 * Creates a new builder with its color set
-	 */
 	public JsonBuilder(@Nullable ChatColor color) {
 		color(color);
 	}
@@ -91,14 +83,6 @@ public class JsonBuilder implements ComponentLike {
 	 * Creates a new builder with its color and text decorations set
 	 */
 	public JsonBuilder(@Nullable TextColor color, @NotNull TextDecoration... decorations) {
-		color(color);
-		decorate(decorations);
-	}
-
-	/**
-	 * Creates a new builder with its color and text decorations set
-	 */
-	public JsonBuilder(@Nullable Colored color, @NotNull TextDecoration... decorations) {
 		color(color);
 		decorate(decorations);
 	}
@@ -184,15 +168,6 @@ public class JsonBuilder implements ComponentLike {
 	 * Creates a new builder with its raw text set and the provided color applied
 	 * @param rawText raw text, meaning formatting codes are ignored
 	 */
-	public JsonBuilder(@NotNull String rawText, @Nullable Colored color) {
-		content(rawText);
-		color(color);
-	}
-
-	/**
-	 * Creates a new builder with its raw text set and the provided color applied
-	 * @param rawText raw text, meaning formatting codes are ignored
-	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable ChatColor color) {
 		content(rawText);
 		color(color);
@@ -221,16 +196,6 @@ public class JsonBuilder implements ComponentLike {
 	 * @param rawText raw text, meaning formatting codes are ignored
 	 */
 	public JsonBuilder(@NotNull String rawText, @Nullable TextColor color, @NotNull TextDecoration... decorations) {
-		content(rawText);
-		color(color);
-		decorate(decorations);
-	}
-
-	/**
-	 * Creates a new builder with its raw text set, provided color applied, and text decorations set
-	 * @param rawText raw text, meaning formatting codes are ignored
-	 */
-	public JsonBuilder(@NotNull String rawText, @Nullable Colored color, @NotNull TextDecoration... decorations) {
 		content(rawText);
 		color(color);
 		decorate(decorations);
@@ -326,16 +291,6 @@ public class JsonBuilder implements ComponentLike {
 	 * @return this builder
 	 */
 	@NotNull @Contract("_, _ -> this")
-	public JsonBuilder next(@Nullable String rawText, @Nullable Colored color) {
-		return next(rawText, AdventureUtils.textColorOf(color));
-	}
-
-	/**
-	 * Creates a component with its text and color set and appends it to the internal builder
-	 * @param rawText raw text, color codes are ignored
-	 * @return this builder
-	 */
-	@NotNull @Contract("_, _ -> this")
 	public JsonBuilder next(@Nullable String rawText, @Nullable ChatColor color) {
 		return next(rawText, AdventureUtils.textColorOf(color));
 	}
@@ -370,16 +325,6 @@ public class JsonBuilder implements ComponentLike {
 		if (rawText != null)
 			builder.append(Component.text(rawText, color, decorations));
 		return this;
-	}
-
-	/**
-	 * Creates a component with its text, color, and decorations set, and appends it to the internal builder
-	 * @param rawText raw text, color codes are ignored
-	 * @return this builder
-	 */
-	@NotNull @Contract("_, _, _ -> this")
-	public JsonBuilder next(@Nullable String rawText, @Nullable Colored color, TextDecoration... decorations) {
-		return next(rawText, AdventureUtils.textColorOf(color), decorations);
 	}
 
 	/**
@@ -518,15 +463,6 @@ public class JsonBuilder implements ComponentLike {
 	public JsonBuilder color(@Nullable TextColor color) {
 		builder.color(color);
 		return this;
-	}
-
-	/**
-	 * Sets the color for the internal builder
-	 * @return this builder
-	 */
-	@NotNull @Contract("_ -> this")
-	public JsonBuilder color(@Nullable Colored color) {
-		return color(AdventureUtils.textColorOf(color));
 	}
 
 	/**
