@@ -71,7 +71,7 @@ public class ActionBarUtils {
 	}
 
 	public static void sendActionBar(final List<? extends HasPlayer> players, String message, int duration, boolean fade) {
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (HasPlayer player : players)
 			sendActionBar(player, message, duration, fade);
 	}
 
@@ -102,5 +102,4 @@ public class ActionBarUtils {
 		private int duration;
 		private boolean fade;
 	}
-
 }
