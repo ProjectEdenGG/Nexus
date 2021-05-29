@@ -133,15 +133,33 @@ public class SabotageMatchData extends MatchData {
 		return canButtonIn() == 0;
 	}
 
+	/**
+	 * Gets the state of a player's ability to use the emergency meeting button
+	 */
 	public enum ButtonState {
+		/**
+		 * The round has just started and the button is on cooldown
+		 */
 		COOLDOWN,
+		/**
+		 * The player has already used their button
+		 */
 		USED,
+		/**
+		 * A sabotage is currently active and thus the button cannot be called
+		 */
+		SABOTAGE,
+		/**
+		 * Player is able to use the button to call an emergency meeting
+		 */
 		USABLE;
 	}
 
 	public ButtonState canButton(HasUniqueId reporter) {
 		if (!canButton())
 			return ButtonState.COOLDOWN;
+		if (sabotage != null)
+			return ButtonState.SABOTAGE;
 		if (buttonUsers.contains(reporter.getUniqueId()))
 			return ButtonState.USED;
 		return ButtonState.USABLE;

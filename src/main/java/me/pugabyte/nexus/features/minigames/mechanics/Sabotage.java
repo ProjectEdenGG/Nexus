@@ -473,13 +473,18 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 		SabotageMatchData.ButtonState state = matchData.button(minigamer);
 
-		// TODO: switch case?
-		if (state == SabotageMatchData.ButtonState.COOLDOWN) {
-			int canButtonIn = matchData.canButtonIn();
-			minigamer.sendActionBar(new JsonBuilder("&cYou may call an emergency meeting in " + StringUtils.plural(canButtonIn + " second", canButtonIn)));
-		}
-		else if (state == SabotageMatchData.ButtonState.USED)
-			minigamer.sendActionBar(new JsonBuilder("&cYou have used your emergency meeting button!"));
+		JsonBuilder builder = switch (state) {
+			case COOLDOWN -> {
+				int canButtonIn = matchData.canButtonIn();
+				yield new JsonBuilder("&cYou may call an emergency meeting in " + StringUtils.plural(canButtonIn + " second", canButtonIn));
+			}
+			case USED -> new JsonBuilder("&cYou have used your emergency meeting button");
+			case SABOTAGE -> new JsonBuilder("&cMeetings cannot be called during a crisis");
+			case USABLE -> null;
+		};
+
+		if (builder != null)
+			minigamer.sendActionBar(builder);
 		else
 			matchData.startMeeting(minigamer);
 	}
