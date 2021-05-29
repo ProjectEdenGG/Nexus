@@ -292,6 +292,8 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public void startMeeting(Minigamer origin, SabotageColor bodyReported) {
+		if (sabotage != null && sabotageTaskId == -1)
+			endSabotage(); // sabotage is non-persistent (i.e. reactor) so it should end when a meeting starts
 		meetingStarted = LocalDateTime.now();
 		votingScreen = new VotingScreen(origin, bodyReported);
 		clearBodies();
