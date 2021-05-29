@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds;
 
 import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -29,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getWEUtils;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isInRegion;
@@ -322,7 +322,7 @@ public class Frogger implements Listener {
 			}
 
 		} else if (regionId.equalsIgnoreCase(killRg)) {
-			if (player.hasPermission(WorldGuardEditCommand.getPermission())) return;
+			if (canWorldGuardEdit(player)) return;
 			if (checkpointList.contains(player))
 				player.teleport(checkpointLoc);
 			else
@@ -330,7 +330,7 @@ public class Frogger implements Listener {
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
-			if (player.hasPermission(WorldGuardEditCommand.getPermission())) return;
+			if (canWorldGuardEdit(player)) return;
 
 			checkpointList.remove(player);
 			player.teleport(respawnLoc);

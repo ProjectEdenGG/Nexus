@@ -62,58 +62,51 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 			send(PREFIX + "Godmode " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
 	}
 
+	private boolean hasGodmode(Player player) {
+		return new GodmodeService().get(player).isEnabled();
+	}
+
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onEntityDamage(final EntityDamageEvent event) {
-		if (event.getEntity() instanceof final Player player) {
-			Godmode godmode = new GodmodeService().get(player);
-			if (godmode.isEnabled()) {
+		if (event.getEntity() instanceof final Player player)
+			if (hasGodmode(player)) {
 				player.setFireTicks(0);
 				player.setRemainingAir(player.getMaximumAir());
 				event.setCancelled(true);
 			}
-		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onEntityCombust(final EntityCombustEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Godmode godmode = new GodmodeService().get(event.getEntity());
-			if (godmode.isEnabled())
+		if (event.getEntity() instanceof Player player)
+			if (hasGodmode(player))
 				event.setCancelled(true);
-		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntityCombustByEntity(final EntityCombustByEntityEvent event) {
-		if (event.getCombuster() instanceof Arrow combuster && event.getEntity() instanceof Player) {
-			if (combuster.getShooter() instanceof Player) {
-				Godmode godmode = new GodmodeService().get(event.getEntity());
-				if (godmode.isEnabled())
+		if (event.getCombuster() instanceof Arrow combuster && event.getEntity() instanceof Player player)
+			if (combuster.getShooter() instanceof Player)
+				if (hasGodmode(player))
 					event.setCancelled(true);
-			}
-		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onFoodLevelChange(final FoodLevelChangeEvent event) {
-		if (event.getEntity() instanceof Player player) {
-			Godmode godmode = new GodmodeService().get(player);
-			if (godmode.isEnabled()) {
+		if (event.getEntity() instanceof Player player)
+			if (hasGodmode(player)) {
 				player.setFoodLevel(20);
 				player.setSaturation(10);
 				event.setCancelled(true);
 			}
-		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onPotionSplashEvent(final PotionSplashEvent event) {
 		for (LivingEntity entity : event.getAffectedEntities())
-			if (entity instanceof Player player) {
-				Godmode godmode = new GodmodeService().get(player);
-				if (godmode.isEnabled() || player.getGameMode() == GameMode.CREATIVE || isVanished(player))
+			if (entity instanceof Player player)
+				if (hasGodmode(player) || player.getGameMode() == GameMode.CREATIVE || isVanished(player))
 					event.setIntensity(player, 0f);
-			}
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -121,11 +114,9 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 		if (event.getEntity().getType() == EntityType.EXPERIENCE_ORB)
 			return;
 
-		if (event.getTarget() instanceof Player player) {
-			Godmode godmode = new GodmodeService().get(player);
-			if (godmode.isEnabled())
+		if (event.getTarget() instanceof Player player)
+			if (hasGodmode(player))
 				event.setCancelled(true);
-		}
 	}
 
 }

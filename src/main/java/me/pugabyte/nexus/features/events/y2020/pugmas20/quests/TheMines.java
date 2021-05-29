@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.events.y2020.pugmas20.quests;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
@@ -52,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.addTokenMax;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
@@ -213,7 +213,7 @@ public class TheMines implements Listener {
 		if (!isAtPugmas(player, "cave"))
 			return;
 
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+		if (canWorldGuardEdit(player))
 			return;
 
 		event.setCancelled(true);

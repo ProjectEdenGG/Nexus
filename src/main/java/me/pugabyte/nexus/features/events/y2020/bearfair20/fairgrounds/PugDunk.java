@@ -153,12 +153,10 @@ public class PugDunk implements Listener {
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE)) return;
 
 		if (!isInRegion(hitBlock, targetRg)) return;
-		if (!(projectile.getShooter() instanceof Player)) return;
+		if (!(projectile.getShooter() instanceof Player shooter)) return;
 
 		projectile.remove();
-		if (canWin) {
-			Player player = (Player) projectile.getShooter();
-			win(player);
-		}
+		if (canWin)
+			win(shooter);
 	}
 }

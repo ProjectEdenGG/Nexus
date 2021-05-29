@@ -22,7 +22,7 @@ public class FixCommand extends CustomCommand {
 	void run() {
 		ItemStack item = getToolRequired();
 
-		if (!(item.getItemMeta() instanceof Damageable damageable))
+		if (!(item.getItemMeta() instanceof Damageable))
 			error(item.getType().name() + " is not damageable");
 
 		Damageable damage = (Damageable) item.getItemMeta();

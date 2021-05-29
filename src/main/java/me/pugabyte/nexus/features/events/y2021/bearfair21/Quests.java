@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
@@ -35,6 +34,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
@@ -128,7 +128,7 @@ public class Quests implements Listener {
 
 		if (event.isCancelled()) return;
 		if (!isAtBearFair(block)) return;
-		if (player.hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (canWorldGuardEdit(player)) return;
 
 		event.setCancelled(true);
 

@@ -4,7 +4,6 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import eden.utils.TimeUtils.Time;
 import joptsimple.internal.Strings;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
@@ -46,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.EntityUtils.isHostile;
 import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.*;
 
@@ -83,7 +83,7 @@ public class WorldGuardFlags implements Listener {
 		int age = ageable.getAge();
 		if (age == ageable.getMaximumAge()) return;
 
-		if (!event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (canWorldGuardEdit(event.getPlayer())) return;
 		if (WorldGuardFlagUtils.query(clicked.getLocation(), Flags.CROP_GROWTH) != State.DENY) return;
 
 		ageable.setAge(++age);
@@ -162,7 +162,7 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		if (WorldGuardFlagUtils.query(block, USE_TRAP_DOORS) == State.DENY) {
-			if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+			if (canWorldGuardEdit(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}

@@ -5,7 +5,6 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20;
 import me.pugabyte.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
@@ -50,6 +49,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static me.pugabyte.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static me.pugabyte.nexus.utils.BlockUtils.createDistanceSortedQueue;
@@ -166,7 +166,7 @@ public class OrnamentVendor implements Listener {
 		if (!isAtPugmas(event.getBlock().getLocation(), "trees"))
 			return;
 
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission()))
+		if (!canWorldGuardEdit(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);

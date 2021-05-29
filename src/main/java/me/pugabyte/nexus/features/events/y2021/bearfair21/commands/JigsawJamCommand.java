@@ -158,9 +158,9 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
-		if (!(event.getRemover() instanceof Player)) return;
+		if (!(event.getRemover() instanceof Player player)) return;
 		if (!isInJigsawJam(event.getEntity())) return;
-		if (canWorldGuardEdit(event.getRemover())) return;
+		if (canWorldGuardEdit(player)) return;
 
 		event.setCancelled(true);
 	}

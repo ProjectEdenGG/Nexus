@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
-import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -60,6 +59,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -159,9 +159,9 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	@EventHandler
 	public void onEntityDamage(HangingBreakByEntityEvent event) {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
-		if (!(event.getRemover() instanceof Player)) return;
+		if (!(event.getRemover() instanceof Player player)) return;
 		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
-		if (event.getRemover().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (canWorldGuardEdit(player)) return;
 
 		event.setCancelled(true);
 	}
@@ -170,7 +170,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (canWorldGuardEdit(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
@@ -179,7 +179,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (event.getPlayer().hasPermission(WorldGuardEditCommand.getPermission())) return;
+		if (canWorldGuardEdit(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}

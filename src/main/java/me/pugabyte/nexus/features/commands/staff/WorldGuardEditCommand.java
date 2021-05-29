@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.commands.staff;
 
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -14,11 +13,12 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
-import org.bukkit.entity.Entity;
+import net.dv8tion.jda.annotations.ReplaceWith;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.permissions.Permissible;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,8 +27,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Permission("group.staff")
 public class WorldGuardEditCommand extends CustomCommand implements Listener {
-	@Getter
-	public static String permission = "worldguard.region.bypass.*";
+	@Deprecated
+	@ReplaceWith("canWorldGuardEdit")
+	private static final String PERMISSION = "worldguard.region.bypass.*";
 
 	public WorldGuardEditCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -36,7 +37,7 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 
 	@Path("[enable]")
 	void toggle(Boolean enable) {
-		if (enable == null) enable = !player().hasPermission(permission);
+		if (enable == null) enable = !player().hasPermission(PERMISSION);
 
 		if (enable) {
 			on(player());
@@ -48,22 +49,22 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void on(Player player) {
-		PermissionChange.set().player(player).permission(permission).run();
+		PermissionChange.set().player(player).permission(PERMISSION).run();
 	}
 
 	private void off(Player player) {
-		Nexus.getPerms().playerRemove(player, permission);
-		PermissionChange.unset().player(player).permission(permission).world(player.getLocation()).run();
-		PermissionChange.unset().player(player).permission(permission).run();
+		Nexus.getPerms().playerRemove(player, PERMISSION);
+		PermissionChange.unset().player(player).permission(PERMISSION).world(player.getLocation()).run();
+		PermissionChange.unset().player(player).permission(PERMISSION).run();
 	}
 
-	public static boolean canWorldGuardEdit(Entity player) {
-		return player.hasPermission(permission);
+	public static boolean canWorldGuardEdit(Permissible permissible) {
+		return permissible.hasPermission(PERMISSION);
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (event.getPlayer().hasPermission(permission))
+		if (canWorldGuardEdit(event.getPlayer()))
 			off(event.getPlayer());
 	}
 
