@@ -10,6 +10,7 @@ import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
@@ -51,6 +52,10 @@ public enum BearFair21NPC {
 				return bearFair21NPC;
 		}
 		return null;
+	}
+
+	public static BearFair21NPC of(Integer id) {
+		return Arrays.stream(values()).filter(bearFair21NPC -> bearFair21NPC.getId() == id).findFirst().orElse(null);
 	}
 
 	public @Nullable NPC getNPC() {

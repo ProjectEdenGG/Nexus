@@ -95,6 +95,10 @@ public class BearFair21 {
 		return isAtBearFair(location) && getWGUtils().isInRegion(location, region);
 	}
 
+	public static boolean isInRegionRegex(Location location, String regex) {
+		return isAtBearFair(location) && getWGUtils().getRegionsLikeAt(regex, location).size() > 0;
+	}
+
 	public static void send(String message, Player to) {
 		PlayerUtils.send(to, message);
 	}

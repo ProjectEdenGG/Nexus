@@ -297,8 +297,9 @@ public class MiniGolf {
 
 						BearFair21.giveDailyPoints(user.getPlayer(), BF21PointSource.MINIGOLF, 5);
 						int strokes = user.getCurrentStrokes();
+						String userScore = MiniGolfUtils.getScore(user);
 						Tasks.wait(wait, () ->
-								MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + MiniGolfUtils.getScore(user) + ")"));
+								MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + userScore + ")"));
 
 						MiniGolfUtils.giveBall(user);
 
