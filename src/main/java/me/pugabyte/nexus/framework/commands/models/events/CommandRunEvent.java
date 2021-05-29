@@ -45,32 +45,51 @@ public class CommandRunEvent extends CommandEvent {
 	}
 
 	public void handleException(Throwable ex) {
-		if (Nexus.isDebug())
+		if (Nexus.isDebug()) {
+			Nexus.debug("Handling command framework exception for " + getSender().getName());
 			ex.printStackTrace();
+		}
+
 		String PREFIX = command.getPrefix();
 		if (isNullOrEmpty(PREFIX))
 			PREFIX = Commands.getPrefix(command);
 
-		if (ex instanceof MissingArgumentException)
+		if (ex instanceof MissingArgumentException) {
 			reply(PREFIX + "&c" + getUsageMessage());
-		else if (ex.getCause() != null && ex.getCause() instanceof NexusException nexusException)
-			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
-		else if (ex instanceof NexusException nexusException)
-			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
-		else if (ex.getCause() != null && ex.getCause() instanceof EdenException)
-			reply(PREFIX + "&c" + ex.getCause().getMessage());
-		else if (ex instanceof EdenException)
-			reply(PREFIX + "&c" + ex.getMessage());
-		else if (ex instanceof IllegalArgumentException && ex.getMessage() != null && ex.getMessage().contains("type mismatch"))
-			reply(PREFIX + "&c" + getUsageMessage());
-		else {
-			reply("&cAn internal error occurred while attempting to execute this command");
-
-			if (ex.getCause() != null && ex instanceof InvocationTargetException)
-				ex.getCause().printStackTrace();
-			else
-				ex.printStackTrace();
+			return;
 		}
+
+		if (ex.getCause() != null && ex.getCause() instanceof NexusException nexusException) {
+			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
+			return;
+		}
+
+		if (ex instanceof NexusException nexusException) {
+			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
+			return;
+		}
+
+		if (ex.getCause() != null && ex.getCause() instanceof EdenException edenException) {
+			reply(PREFIX + "&c" + edenException.getMessage());
+			return;
+		}
+
+		if (ex instanceof EdenException) {
+			reply(PREFIX + "&c" + ex.getMessage());
+			return;
+		}
+
+		if (ex instanceof IllegalArgumentException && ex.getMessage() != null && ex.getMessage().contains("type mismatch")) {
+			reply(PREFIX + "&c" + getUsageMessage());
+			return;
+		}
+
+		reply("&cAn internal error occurred while attempting to execute this command");
+
+		if (ex.getCause() != null && ex instanceof InvocationTargetException)
+			ex.getCause().printStackTrace();
+		else
+			ex.printStackTrace();
 	}
 
 }
