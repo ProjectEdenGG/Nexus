@@ -91,8 +91,6 @@ import java.util.stream.Collectors;
 // TODO: display room names on action bar
 // TODO: display subtitle on kill
 // TODO: move kill cooldown to ticks, don't tick in vents
-// TODO: support indefinite sabotages
-// TODO: block button during sabotage
 // TODO: venting is not working
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {

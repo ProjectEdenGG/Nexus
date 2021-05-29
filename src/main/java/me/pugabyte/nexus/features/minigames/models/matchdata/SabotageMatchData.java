@@ -381,16 +381,20 @@ public class SabotageMatchData extends MatchData {
 	public void sabotage(Tasks sabotage) {
 		this.sabotage = new Task(sabotage);
 		sabotageStarted = LocalDateTime.now();
-		sabotageTaskId = match.getTasks().wait(TimeUtils.Time.SECOND.x(sabotage.getParts()[0].<SabotageTaskPartData>createTaskPartData().getDuration()), () -> {
-			SabotageTeam.IMPOSTOR.players(match).forEach(Minigamer::scored);
-			match.end();
-		});
+		int duration = sabotage.getParts()[0].<SabotageTaskPartData>createTaskPartData().getDuration();
+		if (duration > 0)
+			sabotageTaskId = match.getTasks().wait(TimeUtils.Time.SECOND.x(duration), () -> {
+				SabotageTeam.IMPOSTOR.players(match).forEach(Minigamer::scored);
+				match.end();
+			});
 	}
 
 	public void endSabotage() {
 		this.sabotage = null;
-		match.getTasks().cancel(sabotageTaskId);
-		sabotageTaskId = -1;
+		if (sabotageTaskId != -1) {
+			match.getTasks().cancel(sabotageTaskId);
+			sabotageTaskId = -1;
+		}
 		sabotageStarted = null;
 	}
 
