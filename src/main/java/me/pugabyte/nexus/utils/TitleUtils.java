@@ -115,6 +115,14 @@ public class TitleUtils {
 		sendTitle(player, title, subtitle, durationOf(fadeIn), durationOf(stay), durationOf(fadeOut));
 	}
 
+	public static void sendTitle(final Audience player, final ComponentLike title, final ComponentLike subtitle, final Duration stay) {
+		sendTitle(player, title, subtitle, stay, Duration.ofSeconds(1));
+	}
+
+	public static void sendTitle(final Audience player, final ComponentLike title, final ComponentLike subtitle, final Duration stay, final Duration fade) {
+		sendTitle(player, title, subtitle, fade, stay, fade);
+	}
+
 	public static void sendTitle(final Audience player, final ComponentLike title, final ComponentLike subtitle, final Duration fadeIn, final Duration stay, final Duration fadeOut) {
 		sendTitle(player, title, subtitle, Title.Times.of(fadeIn, stay, fadeOut));
 	}
@@ -145,6 +153,14 @@ public class TitleUtils {
 		sendTitle(player, title, durationOf(fadeIn), durationOf(stay), durationOf(fadeOut));
 	}
 
+	public static void sendTitle(final Audience player, final ComponentLike title, final Duration stay) {
+		sendTitle(player, title, stay, Duration.ofSeconds(1));
+	}
+
+	public static void sendTitle(final Audience player, final ComponentLike title, final Duration stay, final Duration fade) {
+		sendTitle(player, title, fade, stay, fade);
+	}
+
 	public static void sendTitle(final Audience player, final ComponentLike title, final Duration fadeIn, final Duration stay, final Duration fadeOut) {
 		sendTitle(player, title, Title.Times.of(fadeIn, stay, fadeOut));
 	}
@@ -169,6 +185,14 @@ public class TitleUtils {
 
 	public static void sendSubtitle(final Audience player, final ComponentLike subtitle, final int fadeIn, final int stay, final int fadeOut) {
 		sendSubtitle(player, subtitle, durationOf(fadeIn), durationOf(stay), durationOf(fadeOut));
+	}
+
+	public static void sendSubtitle(final Audience player, final ComponentLike subtitle, final Duration stay) {
+		sendSubtitle(player, subtitle, stay, Duration.ofSeconds(1));
+	}
+
+	public static void sendSubtitle(final Audience player, final ComponentLike subtitle, final Duration stay, final Duration fade) {
+		sendSubtitle(player, subtitle, fade, stay, fade);
 	}
 
 	public static void sendSubtitle(final Audience player, final ComponentLike subtitle, final Duration fadeIn, final Duration stay, final Duration fadeOut) {
