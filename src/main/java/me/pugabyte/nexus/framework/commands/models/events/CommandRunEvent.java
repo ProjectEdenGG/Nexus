@@ -9,6 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
+import me.pugabyte.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import org.bukkit.command.CommandSender;
 
@@ -50,7 +51,9 @@ public class CommandRunEvent extends CommandEvent {
 		if (isNullOrEmpty(PREFIX))
 			PREFIX = Commands.getPrefix(command);
 
-		if (ex.getCause() != null && ex.getCause() instanceof NexusException nexusException)
+		if (ex instanceof MissingArgumentException)
+			reply(PREFIX + "&c" + getUsageMessage());
+		else if (ex.getCause() != null && ex.getCause() instanceof NexusException nexusException)
 			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
 		else if (ex instanceof NexusException nexusException)
 			reply(new JsonBuilder(PREFIX + "&c").next(nexusException.getJson()));
