@@ -16,6 +16,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -46,10 +47,14 @@ public class ItemNameCommand extends CustomCommand {
 			@Switch boolean magic
 	) {
 		verify(input);
-		ItemBuilder.setName(getToolRequired(), applyFormattingToAll(input, bold, strikethrough, underline, italic, magic));
+
+		final ItemStack tool = getToolRequired();
+		final String name = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
+		ItemBuilder.setName(tool, name);
+		send(PREFIX + "Name of &e" + camelCase(tool.getType()).toLowerCase() + " &3set to " + name);
 	}
 
-	@Path("gradient <colors> <name...>")
+	@Path("gradient <color1,color2,...> <name...>")
 	void gradient(
 			@Arg(type = ChatColor.class) List<ChatColor> colors,
 			String input,
