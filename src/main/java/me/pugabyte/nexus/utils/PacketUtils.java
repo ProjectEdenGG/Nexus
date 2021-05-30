@@ -12,6 +12,7 @@ import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import net.minecraft.server.v1_16_R3.*;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutEntityLook;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -25,6 +26,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -85,19 +87,23 @@ public class PacketUtils {
 		});
 	}
 
-	// can't get move to work correctly
-//	public static void entityMove(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, double x, double y, double z) {
-//		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-//		PacketPlayOutRelEntityMove movePacket = new PacketPlayOutRelEntityMove(entity.getId(), (short)(x * 4096), (short)(y * 4096), (short)(z * 4096), true);
-//		sendPacket(player, movePacket);
-//	}
+	// untested
+	public static void entityRelativeMove(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, Vector delta, boolean onGround) {
+		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
+		PacketPlayOutRelEntityMove movePacket = new PacketPlayOutRelEntityMove(entity.getId(),
+				encodePosition(delta.getX()), encodePosition(delta.getY()), encodePosition(delta.getZ()), onGround);
 
-	// can't get move to work correctly
-//	public static void entityMoveLook(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, double x, double y, double z, float yaw, float pitch){
-//		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-//		PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutRelEntityMoveLook(entity.getId(), (short)(x * 4096), (short)(y * 4096), (short)(z * 4096), (byte)(yaw * 256 / 360), (byte)(pitch * 256 / 360), true);
-//		sendPacket(player, moveLookPacket);
-//	}
+		sendPacket(player, movePacket);
+	}
+
+	public static void entityTeleport(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, Location location, boolean onGround) {
+		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
+		entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		entity.setOnGround(onGround);
+
+		sendPacket(player, new PacketPlayOutEntityTeleport(entity));
+		entityLook(player, bukkitEntity, location.getYaw(), location.getPitch());
+	}
 
 	// NPC
 
@@ -285,6 +291,18 @@ public class PacketUtils {
 			Nexus.log("Error trying to send " + packetContainer + " packet to " + name);
 			e.printStackTrace();
 		}
+	}
+
+	private static byte encodeAngle(float angle) {
+		return (byte) (angle * 256f / 360f);
+	}
+
+	private static int encodeVelocity(double v) {
+		return (int) (v * 8000D);
+	}
+
+	private static short encodePosition(double d) {
+		return (short) (d * 4096D);
 	}
 
 	// TODO 1.17: Update object and living ids
