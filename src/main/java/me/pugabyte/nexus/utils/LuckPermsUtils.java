@@ -223,7 +223,7 @@ public class LuckPermsUtils {
 			}
 
 			public void run() {
-				String command = "lp user " + uuid.toString() + " group " + type + " " + group;
+				String command = "lp user " + uuid.toString() + " parent " + type + " " + group;
 
 				runCommandAsConsole(command);
 			}
