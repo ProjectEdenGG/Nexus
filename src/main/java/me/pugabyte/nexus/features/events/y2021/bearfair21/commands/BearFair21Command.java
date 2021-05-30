@@ -156,6 +156,15 @@ public class BearFair21Command extends CustomCommand {
 
 	//
 
+//	@Path("teleport")
+//	@Permission("group.admin")
+//	public void teleport(){
+//		Entity entity = getTargetEntity();
+//		if (entity != null && CitizensUtils.isNPC(entity)) {
+//			PacketUtils.entityTeleport(player(), entity, location(), player().isOnGround());
+//		}
+//	}
+
 //	@Path("changeName <name...>")
 //	@Permission("group.admin")
 //	public void changeName(String name) {

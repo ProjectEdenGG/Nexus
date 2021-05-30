@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.pride20;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.annotations.Disabled;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+@Disabled
 public class Pride20Command extends CustomCommand {
 
 	SettingService service = new SettingService();
