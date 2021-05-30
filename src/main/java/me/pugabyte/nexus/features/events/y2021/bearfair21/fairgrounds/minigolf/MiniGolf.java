@@ -291,7 +291,7 @@ public class MiniGolf {
 								.launch());
 
 						// Send message
-						int wait = Time.SECOND.get();
+						int wait = Time.SECOND.x(2);
 						if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
 							wait = 0;
 
