@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import eden.utils.TimeUtils;
+import me.lexikiq.event.sound.LocationNamedSoundEvent;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
@@ -26,6 +27,7 @@ import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
 import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -39,6 +41,7 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
@@ -79,6 +82,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -575,5 +579,42 @@ public class Sabotage extends TeamMechanic {
 		if (!minigamer.isPlaying(this)) return;
 		if (!event.getRegion().getId().startsWith(minigamer.getMatch().getArena().getRegionBaseName()+"_room_")) return;
 		ActionBarUtils.sendActionBar(minigamer, camelCase(event.getRegion().getId().split("_room_")[1]));
+	}
+
+	private static final Set<Sound> BLOCKED_SOUNDS = Set.of(
+			Sound.ITEM_ARMOR_EQUIP_GENERIC,
+			Sound.ITEM_ARMOR_EQUIP_IRON,
+			Sound.ITEM_ARMOR_EQUIP_DIAMOND,
+			Sound.ITEM_ARMOR_EQUIP_NETHERITE,
+			Sound.ITEM_ARMOR_EQUIP_TURTLE,
+			Sound.ITEM_ARMOR_EQUIP_CHAIN,
+			Sound.ITEM_ARMOR_EQUIP_ELYTRA,
+			Sound.ITEM_ARMOR_EQUIP_LEATHER,
+			Sound.ITEM_ARMOR_EQUIP_GOLD,
+			Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
+			Sound.ENTITY_PLAYER_ATTACK_CRIT,
+			Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK,
+			Sound.ENTITY_PLAYER_ATTACK_STRONG,
+			Sound.ENTITY_PLAYER_ATTACK_SWEEP,
+			Sound.ENTITY_PLAYER_ATTACK_WEAK,
+			Sound.ENTITY_PLAYER_HURT,
+			Sound.ENTITY_ARMOR_STAND_HIT,
+			Sound.ENTITY_ARMOR_STAND_FALL,
+			Sound.ENTITY_ARMOR_STAND_BREAK,
+			Sound.ENTITY_ARMOR_STAND_PLACE
+			);
+
+	@EventHandler
+	public void onSoundEvent(LocationNamedSoundEvent event) {
+		try {
+			Minigamer minigamer = PlayerManager.get(event.getPlayer());
+			// only acknowledge events inside of a sabotage map
+			if (!(minigamer != null && minigamer.isPlaying(this)))
+				if (new WorldGuardUtils(event.getWorld()).getRegionsLikeAt("sabotage_\\w+", event.getVector()).isEmpty())
+					return;
+
+			if (BLOCKED_SOUNDS.contains(event.getSound()))
+				event.setCancelled(true);
+		} catch (PlayerNotOnlineException ignored) {}
 	}
 }
