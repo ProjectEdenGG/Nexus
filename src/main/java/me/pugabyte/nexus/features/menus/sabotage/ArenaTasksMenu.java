@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static eden.utils.StringUtils.camelCase;
+
 @RequiredArgsConstructor
 public class ArenaTasksMenu extends MenuUtils implements InventoryProvider {
 	private final SabotageArena arena;
@@ -36,11 +38,12 @@ public class ArenaTasksMenu extends MenuUtils implements InventoryProvider {
 		addBackItem(contents, $ -> Minigames.getMenus().openCustomSettingsMenu(player, arena));
 		int row = 1;
 		int col = 0;
-		for (Tasks task : Tasks.crewmateTasks()) {
+		for (Tasks task : Tasks.values()) {
 			boolean enabled = arena.getTasks().contains(task);
 			contents.set(row, col, ClickableItem.from(
 					new ItemBuilder(enabled ? Material.WHITE_CONCRETE : Material.BLACK_CONCRETE)
 							.name("&e" + task.name())
+							.lore("&e" + camelCase(task.getTaskType()) + "&3 task")
 							.lore("", "&3Parts:")
 							.lore(Arrays.stream(task.getParts())
 									.map(taskPart -> "&e" + taskPart.getName())

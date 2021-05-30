@@ -88,7 +88,6 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 // TODO: ensure new players can figure out how to play
 // TODO: use glow API to display tasks (and maybe packets to show an ! above tasks with hidden items?)
-// TODO: sabotage menu
 // TODO: admin table (imageonmap "api"?)
 // TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
 // TODO: color menu
@@ -341,12 +340,13 @@ public class Sabotage extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this)) return;
 		event.getMatch().getTasks().wait(1, () -> {
 			Minigamer minigamer = event.getMinigamer();
+			PlayerInventory inventory = minigamer.getPlayer().getInventory();
+			inventory.clear();
+
 			SabotageMatchData matchData = event.getMatch().getMatchData();
 			SabotageColor color = matchData.getColor(minigamer);
 			setArmor(minigamer.getPlayer(), color);
 
-			PlayerInventory inventory = minigamer.getPlayer().getInventory();
-			inventory.clear();
 			SabotageTeam team = SabotageTeam.of(minigamer);
 			inventory.setItem(1, USE_ITEM.get());
 			inventory.setItem(2, EMPTY_REPORT_ITEM.get());
@@ -371,6 +371,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	private void giveVentItems(Minigamer minigamer, Block vent, Container container) {
+		SoundUtils.playSound(minigamer, Sound.BLOCK_IRON_TRAPDOOR_OPEN);
 		PlayerInventory inventory = minigamer.getPlayer().getInventory();
 		inventory.clear();
 		Location currentLoc = vent.getLocation();
@@ -408,6 +409,7 @@ public class Sabotage extends TeamMechanic {
 		if (event.isSneaking() && minigamer.isPlaying(this)) {
 			SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 			if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
+				SoundUtils.playSound(minigamer, Sound.BLOCK_IRON_TRAPDOOR_CLOSE);
 				matchData.exitVent(minigamer);
 			}
 		}
@@ -475,7 +477,7 @@ public class Sabotage extends TeamMechanic {
 						task.nextPart().instantiateMenu(task).open(minigamer);
 				}
 			} else if (SABOTAGE_MENU.get().isSimilar(item)) {
-				new ImpostorMenu().open(minigamer);
+				new ImpostorMenu(matchData.getArena()).open(minigamer);
 			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(colorize("&eReport")) && item.getItemMeta().hasLore()) {
 				String lore = AdventureUtils.asPlainText(item.getItemMeta().lore().get(0));
 				String color = lore.split(" ")[1].split("'")[0];
