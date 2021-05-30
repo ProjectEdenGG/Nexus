@@ -57,7 +57,7 @@ public class ImpostorMenu extends MenuUtils implements InventoryProvider {
             int row = 0;
             int col = 0;
             // TODO: block sabotages/doors if one of the other was just called
-            boolean canSabotage = matchData.getSabotage() != null;
+            boolean canSabotage = matchData.getSabotage() == null;
             ItemBuilder builder = new ItemBuilder(canSabotage ? Material.WHITE_CONCRETE : Material.BLACK_CONCRETE);
             for (Tasks tasks : sabotages) {
                 inventoryContents.set(row, col, ClickableItem.from(builder.clone().name(camelCase(tasks.name())).build(), $ -> sabotage(minigamer, tasks)));
@@ -72,7 +72,7 @@ public class ImpostorMenu extends MenuUtils implements InventoryProvider {
 
     private void sabotage(Minigamer player, Tasks task) {
         SabotageMatchData matchData = player.getMatch().getMatchData();
-        if (matchData.getSabotage() != null)
+        if (matchData.getSabotage() == null)
             matchData.sabotage(task);
         else
             SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, .8f, 1f);
