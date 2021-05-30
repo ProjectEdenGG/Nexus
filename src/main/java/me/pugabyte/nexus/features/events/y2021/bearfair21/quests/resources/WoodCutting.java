@@ -66,18 +66,12 @@ public class WoodCutting implements Listener {
 	}
 
 	public static boolean breakBlock(BlockBreakEvent event) {
-		Player player = event.getPlayer();
-
-		if (!BearFair21.isInRegionRegex(event.getBlock().getLocation(), tree_region + ".*")) {
-			player.sendMessage("not in tree region");
+		if (!BearFair21.isInRegionRegex(event.getBlock().getLocation(), tree_region + ".*"))
 			return false;
-		}
 
 		BearFair21TreeType treeType = BearFair21TreeType.of(event.getBlock().getType());
-		if (treeType == null) {
-			player.sendMessage("tree type is null");
+		if (treeType == null)
 			return false;
-		}
 
 		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLike(tree_region + "_" + treeType.name() + "_[0-9]+");
 
@@ -87,19 +81,14 @@ public class WoodCutting implements Listener {
 		ProtectedRegion region = result.getObject();
 		double distance = result.getValue().doubleValue();
 
-		if (region == null) {
-			player.sendMessage("region is null");
+		if (region == null)
 			return false;
-		}
 
 		int tree = Integer.parseInt(region.getId().split("_")[3]);
 
-		if (tree < 1 || distance > 5) {
-			player.sendMessage("tree < 1 || distance > 5");
+		if (tree < 1 || distance > 5)
 			return false;
-		}
 
-		player.sendMessage("felling tree...");
 		treeType.feller(event.getPlayer(), tree);
 		return true;
 	}
