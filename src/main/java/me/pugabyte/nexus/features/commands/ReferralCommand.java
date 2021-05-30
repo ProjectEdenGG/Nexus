@@ -2,8 +2,12 @@ package me.pugabyte.nexus.features.commands;
 
 import com.google.common.base.Strings;
 import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
+import eden.utils.Utils;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -16,23 +20,33 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.referral.Referral;
 import me.pugabyte.nexus.models.referral.Referral.Origin;
 import me.pugabyte.nexus.models.referral.ReferralService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.Utils.sortByValueReverse;
@@ -52,7 +66,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path
 	void run() {
 		JsonBuilder json = json();
-		for (Referral.Origin origin : Referral.Origin.values())
+		for (Origin origin : Origin.values())
 			json.next("&3" + origin.getDisplay())
 					.hover("&e" + origin.getLink())
 					.command("/referral choose " + origin.name().toLowerCase())
@@ -126,8 +140,10 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		for (Referral referral : referrals) {
 			if (referral.getOrigin() != null)
 				manuals.put(referral.getOrigin(), manuals.getOrDefault(referral.getOrigin(), 0) + 1);
-			if (referral.getIp() != null)
-				ips.put(referral.getIp(), ips.getOrDefault(referral.getIp(), 0) + 1);
+			if (referral.getIp() != null) {
+				final String site = getSite(referral.getIp());
+				ips.put(site, ips.getOrDefault(site, 0) + 1);
+			}
 		}
 
 		line();
@@ -137,6 +153,118 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		line();
 		send(" &3IPs:");
 		sortByValueReverse(ips).forEach((ip, count) -> send("&7  " + count + " - &e" + ip));
+	}
+
+	@Data
+	@RequiredArgsConstructor
+	private static class TurnoverData {
+		private final String ip;
+		private final List<UUID> players = new ArrayList<>();
+		private final Map<UUID, Integer> secondsPlayed = new HashMap<>();
+		private final List<UUID> punished = new ArrayList<>();
+		private final List<UUID> member = new ArrayList<>();
+		private final List<UUID> trusted = new ArrayList<>();
+		private final HoursService hoursService = new HoursService();
+
+		void add(OfflinePlayer player) {
+			final UUID uuid = player.getUniqueId();
+			players.add(uuid);
+			secondsPlayed.put(uuid, hoursService.get(player).getTotal());
+
+			if (!Punishments.of(uuid).getPunishments().isEmpty())
+				punished.add(uuid);
+
+			Rank rank = Rank.of(uuid);
+			if (rank.gte(Rank.TRUSTED))
+				trusted.add(uuid);
+			else if (rank == Rank.MEMBER)
+				member.add(uuid);
+		}
+
+		public int count() {
+			return secondsPlayed.size();
+		}
+
+		// average
+		public double mean() {
+			return secondsPlayed.values().stream().mapToInt(Integer::intValue).sum() / secondsPlayed.size();
+		}
+
+		public double median() {
+			final Integer[] array = secondsPlayed.values().toArray(Integer[]::new);
+			int length = array.length;
+
+			Arrays.sort(array);
+
+			if (length % 2 != 0)
+				return (double) array[length / 2];
+
+			return (double) (array[(length - 1) / 2] + array[length / 2]) / 2d;
+		}
+	}
+
+	@Async
+	@Path("turnover")
+	void turnover() {
+		List<Referral> referrals = service.getAll();
+		if (referrals.isEmpty())
+			error("No referral stats available");
+
+		Map<String, TurnoverData> turnoverData = new HashMap<>();
+		for (Referral referral : referrals) {
+			String ip = referral.getIp();
+			if (ip == null)
+				continue;
+
+			final String site = getSite(ip);
+
+			if (Utils.isInt(site))
+				continue;
+
+			turnoverData.computeIfAbsent(site, $ -> new TurnoverData(site)).add(referral.getOfflinePlayer());
+		}
+
+		final List<TurnoverData> sorted = turnoverData.values().stream().sorted(Comparator.comparing(TurnoverData::mean)).toList();
+
+		line();
+		send(PREFIX + "Turnover:");
+
+		sorted.stream().map(data -> {
+			final int count = data.count();
+			Function<Integer, String> percentage = amount ->
+					StringUtils.getDf().format((amount / (double) count) * 100L) + "%";
+
+			return json("&e" + data.getIp())
+					.newline().next("&7  Count: &f" + count)
+					.newline().next("&7  Mean playtime: &f" + Timespan.of((int) data.mean()).format())
+					.newline().next("&7  Median playtime: &f" + Timespan.of((int) data.median()).format())
+					.newline().next("&7  % Punished: &f" + percentage.apply(data.getPunished().size()))
+					.newline().next("&7  % Trusted: &f" + percentage.apply(data.getTrusted().size()))
+					.newline().next("&7  % Member: &f" + percentage.apply(data.getMember().size()));
+		}).forEach(this::send);
+	}
+
+	private static final Map<String, List<String>> siteMap = new HashMap<>() {{
+		put("direct", List.of("server", "bnn.gg", "projecteden.gg", "51.", "192."));
+		put("biz", List.of("bi", "bl", "bz", "iz", "play.biz", "baz"));
+		put("mcsl", List.of("mscl", "mscsl", "mcssl", "mccl"));
+		put("mcmp", List.of("mmcmp"));
+		put("topg", List.of("gopg"));
+		put("mcs", List.of("mmcs"));
+		put("pmc", List.of("pcm"));
+		put("db", List.of("dn"));
+	}};
+
+	@NotNull
+	private String getSite(String ip) {
+		ip = ip.toLowerCase();
+
+		for (Entry<String, List<String>> entry : siteMap.entrySet())
+			for (String start : entry.getValue())
+				if (ip.startsWith(start))
+					return entry.getKey();
+
+		return ip.split("\\.", 2)[0].toLowerCase();
 	}
 
 	@EventHandler
