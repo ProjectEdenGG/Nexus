@@ -4,7 +4,7 @@ import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.events.store.Purchasable;
+import me.pugabyte.nexus.features.events.store.EventStoreItem;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
 import me.pugabyte.nexus.models.particle.ParticleOwner;
 import me.pugabyte.nexus.models.particle.ParticleService;
@@ -37,7 +37,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 
 		ParticleService service = new ParticleService();
 		ParticleOwner particleOwner = service.get(player);
-		int price = Purchasable.PARTICLES.getPrice();
+		int price = EventStoreItem.PARTICLES.getPrice();
 
 		for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS)) {
 			if (particleOwner.canUse(type))

@@ -76,6 +76,7 @@ public class StoreCommand extends CustomCommand {
 	@Path("credit [player]")
 	void credit(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
 		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
+		// TODO Info on how to convert to coupons
 	}
 
 	@Permission("group.admin")

@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.events.store.providers;
 import fr.minuskube.inv.ClickableItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.events.store.Purchasable;
+import me.pugabyte.nexus.features.events.store.EventStoreItem;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -29,9 +29,9 @@ public class EventStoreProvider extends EventStoreMenu {
 	protected @NotNull List<ClickableItem> getItems(Player player) {
 		List<ClickableItem> items = new ArrayList<>();
 
-		for (Purchasable purchasable : Purchasable.values()) {
-			ItemBuilder item = purchasable.getDisplayItem();
-			items.add(ClickableItem.from(item.build(), e -> purchasable.onClick(player, this)));
+		for (EventStoreItem eventStoreItem : EventStoreItem.values()) {
+			ItemBuilder item = eventStoreItem.getDisplayItem();
+			items.add(ClickableItem.from(item.build(), e -> eventStoreItem.onClick(player, this)));
 		}
 
 		return items;
