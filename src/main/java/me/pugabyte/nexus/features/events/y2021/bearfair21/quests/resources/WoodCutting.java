@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static eden.utils.StringUtils.camelCase;
@@ -113,11 +114,11 @@ public class WoodCutting implements Listener {
 		private final List<Material> others;
 
 		@Getter
-		private final Map<Integer, Paste> pasters = new HashMap<>();
+		private final Map<Integer, Paste> pasters = new ConcurrentHashMap<>();
 		@Getter
-		private final Map<Integer, Queue<Location>> queues = new HashMap<>();
+		private final Map<Integer, Queue<Location>> queues = new ConcurrentHashMap<>();
 		@Getter
-		private final Map<Integer, ProtectedRegion> regions = new HashMap<>();
+		private final Map<Integer, ProtectedRegion> regions = new ConcurrentHashMap<>();
 
 		private static final int animationTime = Time.SECOND.x(3);
 
