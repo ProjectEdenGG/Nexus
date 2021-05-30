@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.NonNull;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -84,11 +85,11 @@ public class WorldGuardUtils {
 		return null;
 	}
 
-	public Vector3 toVector3(Location location) {
+	public static Vector3 toVector3(Location location) {
 		return Vector3.at(location.getX(), location.getY(), location.getZ());
 	}
 
-	public BlockVector3 toBlockVector3(Location location) {
+	public static BlockVector3 toBlockVector3(Location location) {
 		return BlockVector3.at(location.getX(), location.getY(), location.getZ());
 	}
 
@@ -126,6 +127,10 @@ public class WorldGuardUtils {
 		return isInRegion(player.getPlayer().getLocation(), region);
 	}
 
+	public boolean isInRegion(HasPlayer player, ProtectedRegion region) {
+		return isInRegion(player.getPlayer().getLocation(), region);
+	}
+
 	public boolean isInRegion(Location location, String region) {
 		return isSameWorld(location) && getRegionNamesAt(location).contains(region);
 	}
@@ -140,6 +145,14 @@ public class WorldGuardUtils {
 
 	public Collection<Player> getPlayersInRegion(ProtectedRegion region) {
 		return Bukkit.getOnlinePlayers().stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
+	}
+
+	public Collection<NPC> getNPCsInRegion(String region) {
+		return getNPCsInRegion(getProtectedRegion(region));
+	}
+
+	public Collection<NPC> getNPCsInRegion(ProtectedRegion region) {
+		return CitizensUtils.GetNPCs.builder().world(world).region(region).build().get();
 	}
 
 	public Collection<Entity> getEntitiesInRegion(String region) {

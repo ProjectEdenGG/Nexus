@@ -1,22 +1,32 @@
 package me.pugabyte.nexus.utils;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.Builder;
 import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
@@ -101,19 +111,85 @@ public class CitizensUtils {
 	}
 	*/
 
-	@NotNull
-	public static List<NPC> list(OfflinePlayer player, World world, Boolean spawned) {
-		return new ArrayList<>() {{
-			for (NPC npc : Nexus.getCitizens().getNPCRegistry()) {
-				if (player != null && !player.getUniqueId().equals(npc.getTrait(Owner.class).getOwnerId()))
-					continue;
-				if (world != null && !world.equals(npc.getStoredLocation().getWorld()))
-					continue;
-				if (spawned != null && npc.getTrait(Spawned.class).shouldSpawn() != spawned)
-					continue;
+	public static NPC spawnNPC(HasOfflinePlayer owner, Location location) {
+		NPC npc = Nexus.getCitizens().getNPCRegistry().createNPC(EntityType.PLAYER, Nickname.of(owner.getOfflinePlayer()));
+		npc.spawn(location, SpawnReason.PLUGIN);
+		updateSkin(npc, owner.getOfflinePlayer().getName(), true);
+		return npc;
+	}
 
-				add(npc);
+	/**
+	 * Gets a list of NPCs owned by the specified player in a provided world. All parameters are optional.
+	 * @deprecated replaced by {@link GetNPCs}
+	 */
+	@NotNull
+	@Deprecated
+	public static List<NPC> list(@Nullable OfflinePlayer player, @Nullable World world, @Nullable Boolean spawned) {
+		return GetNPCs.builder().owner(player).world(world).spawned(spawned).build().get();
+	}
+
+	@Builder
+	public static class GetNPCs {
+		private final @Nullable World world;
+		private final @Nullable ProtectedRegion region;
+		private final @Nullable Boolean spawned;
+		private final @Nullable UUID owner;
+
+		private boolean filter(NPC npc) {
+			if (owner != null && !owner.equals(npc.getTrait(Owner.class).getOwnerId()))
+				return false;
+			if (world != null && !world.equals(npc.getStoredLocation().getWorld()))
+				return false;
+			if (region != null && !region.contains(WorldGuardUtils.toBlockVector3(npc.getStoredLocation())))
+				return false;
+			return spawned == null || npc.getTrait(Spawned.class).shouldSpawn() == spawned;
+		}
+
+		public List<NPC> get() {
+			return StreamSupport.stream(Nexus.getCitizens().getNPCRegistry().spliterator(), false)
+					.filter(this::filter).collect(Collectors.toList());
+		}
+
+		public boolean anyMatch() {
+			return !get().isEmpty();
+		}
+
+		public static class GetNPCsBuilder {
+			public @Contract("_ -> this") GetNPCsBuilder owner(@Nullable UUID owner) {
+				this.owner = owner;
+				return this;
 			}
-		}};
+
+			public @Contract("_ -> this") GetNPCsBuilder owner(@Nullable HasUniqueId owner) {
+				if (owner == null)
+					return this;
+				return owner(owner.getUniqueId());
+			}
+
+			/**
+			 * Sets the region and, if unset, the world of the builder
+			 */
+			public @Contract("_ -> this") GetNPCsBuilder region(@Nullable ProtectedRegion region) {
+				if (region != null) {
+					this.region = region;
+					if (world == null)
+						world = WorldGuardUtils.getWorld(region);
+				}
+				return this;
+			}
+
+			/**
+			 * Sets the region of the builder. {@link #world(World)} must be set first.
+			 * @throws IllegalArgumentException method was called before the world was set or the region was not found
+			 */
+			public @Contract("_ -> this") GetNPCsBuilder region(@Nullable String regionName) throws IllegalArgumentException {
+				if (regionName == null)
+					return this;
+				if (world == null)
+					throw new IllegalArgumentException("Call to #region(String) must be done after #world(World)");
+				region = new WorldGuardUtils(world).getProtectedRegion(regionName);
+				return this;
+			}
+		}
 	}
 }
