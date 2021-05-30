@@ -213,7 +213,7 @@ public class PacketUtils {
 		armorStand.setLocation(loc.getX(), y, loc.getZ(), 0, 0);
 		armorStand.setMarker(true);
 		armorStand.setInvisible(true);
-		armorStand.setBasePlate(false);
+		armorStand.setBasePlate(true);
 		armorStand.setSmall(true);
 		if (customName != null) {
 			armorStand.setCustomName(new ChatComponentText(StringUtils.colorize(customName)));

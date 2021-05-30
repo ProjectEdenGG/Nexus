@@ -32,9 +32,7 @@ public class Collector {
 
 	public static void startup() {
 		newTrades();
-
-		if (npc != null)
-			currentLoc = npc.getStoredLocation();
+		move();
 	}
 
 	private static List<Location> loadLocations() {

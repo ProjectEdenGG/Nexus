@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.Fairgrounds;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -30,6 +31,7 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -84,6 +86,28 @@ public class BearFair21Command extends CustomCommand {
 	public void toCollector() {
 		player().teleport(Collector.getCurrentLoc());
 	}
+
+	@Confirm
+	@Path("database delete [player]")
+	@Permission("group.admin")
+	public void databaseDelete(@Arg("self") Player player) {
+		BearFair21User user = userService.get(player);
+		userService.delete(user);
+		send("deleted bearfair21 user: " + player.getName());
+	}
+
+	@Path("database debug [player]")
+	@Permission("group.admin")
+	public void databaseDebug(@Arg("self") Player player) {
+		BearFair21User user = userService.get(player);
+
+		send("BearFair21 User: " + user.getName());
+		send("Locations Size: " + user.getClientsideLocations().size());
+		send("JunkWeight: " + user.getJunkWeight());
+		send("Recycled Items: " + user.getRecycledItems());
+		send("Met NPCs: " + Arrays.toString(user.getMetNPCs().stream().map(id -> BearFair21NPC.of(id).getName()).toArray()));
+	}
+
 
 	// Command Blocks
 

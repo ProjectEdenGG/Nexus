@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.events.store.providers.purchasable;
 import fr.minuskube.inv.ClickableItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.events.store.Purchasable;
+import me.pugabyte.nexus.features.events.store.EventStoreItem;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
 import me.pugabyte.nexus.features.store.perks.emojihats.EmojiHat;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -30,7 +30,7 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 	protected List<ClickableItem> getItems(Player player) {
 		List<ClickableItem> items = new ArrayList<>();
 
-		int price = Purchasable.EMOJI_HATS.getPrice();
+		int price = EventStoreItem.EMOJI_HATS.getPrice();
 
 		for (EmojiHat type : EmojiHat.values()) {
 			if (type.canBeUsedBy(player))

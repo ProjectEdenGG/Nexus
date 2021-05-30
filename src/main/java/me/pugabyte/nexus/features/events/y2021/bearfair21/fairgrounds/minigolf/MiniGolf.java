@@ -291,14 +291,15 @@ public class MiniGolf {
 								.launch());
 
 						// Send message
-						int wait = Time.SECOND.get();
+						int wait = Time.SECOND.x(2);
 						if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
 							wait = 0;
 
 						BearFair21.giveDailyPoints(user.getPlayer(), BF21PointSource.MINIGOLF, 5);
 						int strokes = user.getCurrentStrokes();
+						String userScore = MiniGolfUtils.getScore(user);
 						Tasks.wait(wait, () ->
-								MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + MiniGolfUtils.getScore(user) + ")"));
+								MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + userScore + ")"));
 
 						MiniGolfUtils.giveBall(user);
 

@@ -82,7 +82,7 @@ public class EventUser implements PlayerOwnedObject {
 
 	public void takeTokens(int tokens) {
 		this.tokens -= tokens;
-		sendMessage(Events.PREFIX + "You have &cspent &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
+		sendMessage(Events.STORE_PREFIX + "You have &cspent &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
 	}
 
 	public boolean hasTokens(int tokens) {

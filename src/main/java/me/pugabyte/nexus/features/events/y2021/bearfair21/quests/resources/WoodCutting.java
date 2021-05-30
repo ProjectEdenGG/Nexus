@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static eden.utils.StringUtils.camelCase;
@@ -65,7 +66,8 @@ public class WoodCutting implements Listener {
 	}
 
 	public static boolean breakBlock(BlockBreakEvent event) {
-		if (!BearFair21.isInRegion(event.getBlock().getLocation(), tree_region)) return false;
+		if (!BearFair21.isInRegionRegex(event.getBlock().getLocation(), tree_region + ".*"))
+			return false;
 
 		BearFair21TreeType treeType = BearFair21TreeType.of(event.getBlock().getType());
 		if (treeType == null)
@@ -84,7 +86,7 @@ public class WoodCutting implements Listener {
 
 		int tree = Integer.parseInt(region.getId().split("_")[3]);
 
-		if (tree < 1 || distance > 20)
+		if (tree < 1 || distance > 5)
 			return false;
 
 		treeType.feller(event.getPlayer(), tree);
@@ -101,11 +103,11 @@ public class WoodCutting implements Listener {
 		private final List<Material> others;
 
 		@Getter
-		private final Map<Integer, Paste> pasters = new HashMap<>();
+		private final Map<Integer, Paste> pasters = new ConcurrentHashMap<>();
 		@Getter
-		private final Map<Integer, Queue<Location>> queues = new HashMap<>();
+		private final Map<Integer, Queue<Location>> queues = new ConcurrentHashMap<>();
 		@Getter
-		private final Map<Integer, ProtectedRegion> regions = new HashMap<>();
+		private final Map<Integer, ProtectedRegion> regions = new ConcurrentHashMap<>();
 
 		private static final int animationTime = Time.SECOND.x(3);
 

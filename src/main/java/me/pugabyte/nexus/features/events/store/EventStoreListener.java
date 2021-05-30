@@ -34,7 +34,7 @@ public class EventStoreListener implements Listener {
 		final EventUserService service = new EventUserService();
 		final EventUser user = service.get(player);
 
-		int price = Purchasable.HEADS.getPrice();
+		int price = EventStoreItem.HEADS.getPrice();
 
 		if (rank.isAdmin())
 			return;

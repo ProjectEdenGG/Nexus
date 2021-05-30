@@ -4,7 +4,7 @@ import eden.utils.TimeUtils.Time;
 import fr.minuskube.inv.ClickableItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.events.store.Purchasable;
+import me.pugabyte.nexus.features.events.store.EventStoreItem;
 import me.pugabyte.nexus.features.events.store.providers.EventStoreMenu;
 import me.pugabyte.nexus.features.particles.effects.WingsEffect.WingStyle;
 import me.pugabyte.nexus.models.particle.ParticleOwner;
@@ -37,7 +37,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 
 		ParticleService service = new ParticleService();
 		ParticleOwner particleOwner = service.get(player);
-		int price = Purchasable.WINGS.getPrice();
+		int price = EventStoreItem.WINGS.getPrice();
 
 		for (WingStyle style : WingStyle.values()) {
 			if (style.canBeUsedBy(player))
