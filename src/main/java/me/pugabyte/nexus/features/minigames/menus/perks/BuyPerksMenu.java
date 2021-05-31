@@ -4,7 +4,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
@@ -37,14 +36,14 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 		SmartInventory.builder()
 				.provider(this)
 				.title("Purchase Collectibles")
-				.size(getRows(PerkType.getByCategory(category).size(), 2), 9)
+				.size(Math.max(3, getRows(PerkType.getByCategory(category).size(), 1)), 9)
 				.build()
 				.open(viewer, page);
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, $ -> new PerkMenu().open(player));
+		addBackItem(contents, $ -> new CategoryMenu<>(getClass()).open(player));
 
 		PerkOwner perkOwner = service.get(player);
 

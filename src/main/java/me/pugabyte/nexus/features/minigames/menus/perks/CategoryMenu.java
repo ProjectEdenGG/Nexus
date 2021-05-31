@@ -11,11 +11,6 @@ import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RequiredArgsConstructor
 public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implements InventoryProvider {
 	private final Class<T> menu;
@@ -26,19 +21,24 @@ public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implement
 			.provider(this)
 			.build();
 
+	@Override
+	public void open(Player viewer, int page) {
+		inventory.open(viewer, page);
+	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		List<ClickableItem> items = new ArrayList<>();
-		items.add(ClickableItem.from(backItem(), $ -> new PerkMenu().open(player)));
-		items.addAll(Arrays.stream(PerkCategory.values())
-				.map(perkCategory -> ClickableItem.from(perkCategory.getMenuItem(), $ -> {
-					try {
-						menu.getConstructor(PerkCategory.class).newInstance(perkCategory);
-					} catch (Exception e) {
-						throw new RuntimeException("Could not open menu");
-					}
-				})).collect(Collectors.toList()));
-		centerItems(items.toArray(new ClickableItem[]{}), contents, 1);
+		addBackItem(contents, 1, 1, $ -> new PerkMenu().open(player));
+		int col = 2;
+		for (PerkCategory perkCategory : PerkCategory.values()) {
+			contents.set(1, col, ClickableItem.from(perkCategory.getMenuItem(), $ -> {
+				try {
+					menu.getConstructor(PerkCategory.class).newInstance(perkCategory).open(player);
+				} catch (Exception e) {
+					throw new RuntimeException("Could not open menu");
+				}
+			}));
+			col += 1;
+		}
 	}
 }
