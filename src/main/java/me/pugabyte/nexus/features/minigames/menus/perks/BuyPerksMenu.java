@@ -54,7 +54,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 		// get perks and sort them
 		List<PerkSortWrapper> perkSortWrappers = new ArrayList<>();
 		PerkType.getByCategory(category).forEach(perkType -> perkSortWrappers.add(PerkSortWrapper.of(perkOwner, perkType)));
-		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::isOwned).thenComparing(PerkSortWrapper::getCategory).thenComparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
+		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::isOwned).thenComparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
 
 		// create the items
@@ -89,9 +89,5 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 	protected static void error(Player player, String message) {
 		send(player, "&c"+message);
 		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, 0.8f, 1.0f);
-	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
 	}
 }

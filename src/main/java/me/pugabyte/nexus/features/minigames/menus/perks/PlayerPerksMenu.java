@@ -41,7 +41,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 		// get perks and sort them
 		List<PerkSortWrapper> perkSortWrappers = new ArrayList<>();
 		perkOwner.getPurchasedPerkTypesByCategory(category).forEach(perkType -> perkSortWrappers.add(new PerkSortWrapper(true, perkType)));
-		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::getCategory).thenComparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
+		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
@@ -68,9 +68,5 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 		PerkOwner perkOwner = service.get(player);
 		perkOwner.toggle(perkType);
 		open(player, contents.pagination().getPage());
-	}
-
-	@Override
-	public void update(Player player, InventoryContents inventoryContents) {
 	}
 }

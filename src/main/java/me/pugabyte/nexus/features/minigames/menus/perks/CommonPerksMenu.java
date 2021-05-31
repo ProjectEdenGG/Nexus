@@ -44,14 +44,12 @@ public abstract class CommonPerksMenu extends MenuUtils {
 	@Getter
 	protected static class PerkSortWrapper {
 		private final boolean owned;
-		private final int category;
 		private final String name;
 		private final PerkType perkType;
 		private final int price;
 
 		public PerkSortWrapper(boolean owned, PerkType perkType) {
 			this.owned = owned;
-			category = perkType.getPerkCategory().ordinal();
 			name = perkType.getPerk().getName();
 			this.perkType = perkType;
 			price = -1 * perkType.getPerk().getPrice(); // lazy reversal lol
