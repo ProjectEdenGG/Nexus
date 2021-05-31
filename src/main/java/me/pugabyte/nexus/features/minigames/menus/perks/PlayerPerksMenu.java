@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.minigames.menus.PerkMenu;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkType;
 import me.pugabyte.nexus.models.perkowner.PerkOwner;
 import org.bukkit.entity.Player;
@@ -17,13 +18,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvider {
+	public PlayerPerksMenu(PerkCategory category) {
+		super(category);
+	}
+
 	@Override
 	public void open(Player viewer, int page) {
 		PerkOwner perkOwner = service.get(viewer);
 		SmartInventory.builder()
 				.provider(this)
 				.title("Your Collectibles")
-				.size(Math.max(3, getRows(perkOwner.getPurchasedPerks().size(), 2)), 9)
+				.size(Math.max(3, getRows(perkOwner.getPurchasedPerkTypesByCategory(category).size(), 2)), 9)
 				.build()
 				.open(viewer, page);
 	}
@@ -36,7 +41,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 
 		// get perks and sort them
 		List<PerkSortWrapper> perkSortWrappers = new ArrayList<>();
-		perkOwner.getPurchasedPerks().keySet().forEach(perkType -> perkSortWrappers.add(new PerkSortWrapper(true, perkType)));
+		perkOwner.getPurchasedPerkTypesByCategory(category).forEach(perkType -> perkSortWrappers.add(new PerkSortWrapper(true, perkType)));
 		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::getCategory).thenComparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
 

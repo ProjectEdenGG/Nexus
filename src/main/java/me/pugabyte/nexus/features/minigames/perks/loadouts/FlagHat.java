@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.minigames.perks.loadouts;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.events.y2021.pride21.Flags;
+import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.features.minigames.models.perks.common.HatPerk;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -29,5 +30,10 @@ public class FlagHat implements HatPerk {
 	@Override
 	public @NotNull ItemStack getItem() {
 		return getFlag().getFlag();
+	}
+
+	@Override
+	public @NotNull PerkCategory getPerkCategory() {
+		return PerkCategory.PRIDE_FLAG_HAT;
 	}
 }

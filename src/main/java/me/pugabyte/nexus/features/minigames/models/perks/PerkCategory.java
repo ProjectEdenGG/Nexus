@@ -2,6 +2,10 @@ package me.pugabyte.nexus.features.minigames.models.perks;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.pugabyte.nexus.features.events.y2021.pride21.Flags;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
@@ -9,11 +13,12 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 @AllArgsConstructor
 @Getter
 public enum PerkCategory implements IHasPerkCategory {
-	HAT(2),
-	TEAM_HAT(2),
-	PARTICLE(1),
-	ARROW_TRAIL(3),
-	GADGET(0),
+	HAT(2, Material.CREEPER_HEAD),
+	TEAM_HAT(2, Material.RED_WOOL),
+	PRIDE_FLAG_HAT(2, Flags.GAY.getFlag()),
+	PARTICLE(1, Material.REDSTONE),
+	ARROW_TRAIL(3, Material.SPECTRAL_ARROW),
+	GADGET(0, Material.SUGAR),
 	;
 
 	/**
@@ -22,6 +27,11 @@ public enum PerkCategory implements IHasPerkCategory {
 	 * See {@link #excludes(IHasPerkCategory)} to determine if a perk blocks another perk.
 	 */
 	private final int exclusionGroup;
+	private final ItemStack menuItem;
+
+	PerkCategory(int exclusionGroup, Material menuMaterial) {
+		this(exclusionGroup, new ItemStack(menuMaterial));
+	}
 
 	@Override
 	public String toString() {
@@ -35,5 +45,9 @@ public enum PerkCategory implements IHasPerkCategory {
 	@Override
 	public @NotNull PerkCategory getPerkCategory() {
 		return this;
+	}
+
+	public ItemStack getMenuItem() {
+		return new ItemBuilder(menuItem).name("&e"+this).build();
 	}
 }

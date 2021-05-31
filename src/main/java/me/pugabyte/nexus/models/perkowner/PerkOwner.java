@@ -73,6 +73,10 @@ public class PerkOwner implements PlayerOwnedObject {
 		return getEnabledPerks().stream().filter(perkType -> perkType.getPerkCategory() == category).map(PerkType::getPerk).collect(Collectors.toSet());
 	}
 
+	public Set<PerkType> getPurchasedPerkTypesByCategory(PerkCategory category) {
+		return purchasedPerks.keySet().stream().filter(perkType -> perkType.getPerkCategory() == category).collect(Collectors.toSet());
+	}
+
 	public boolean equals(PerkOwner other) {
 		return uuid.equals(other.getUuid());
 	}

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.perks;
 
+import eden.interfaces.Named;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.pride21.Flags;
@@ -26,9 +27,13 @@ import me.pugabyte.nexus.features.minigames.perks.particles.SplashParticle;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @Getter
-public enum PerkType implements IHasPerkCategory {
+public enum PerkType implements IHasPerkCategory, Named {
 	FLAME_PARTICLE(new FlameParticle()),
 	HEART_PARTICLE(new HeartParticle()),
 	UNICORN_HORN(new HatMaterialImpl(Material.END_ROD, "Unicorn Horn", 25, "Become a pretty unicorn with this glowing horn on top of your head")),
@@ -91,11 +96,15 @@ public enum PerkType implements IHasPerkCategory {
 		return perk.getPerkCategory();
 	}
 
-	public String getName() {
+	public @NotNull String getName() {
 		return perk.getName();
 	}
 
 	public int getPrice() {
 		return perk.getPrice();
+	}
+
+	public static Set<PerkType> getByCategory(PerkCategory category) {
+		return Arrays.stream(PerkType.values()).filter(perkType -> perkType.getPerkCategory() == category).collect(Collectors.toSet());
 	}
 }
