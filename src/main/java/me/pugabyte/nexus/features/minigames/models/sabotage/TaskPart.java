@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.AbstractTaskMenu;
+import me.pugabyte.nexus.features.menus.sabotage.tasks.LightsTask;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.SwipeCardTask;
+import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.LightsTaskPartData;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -91,4 +93,5 @@ public class TaskPart {
     private static ItemStack EMPTY_ITEM(String name) {return new ItemBuilder(EMPTY_ITEM).name(name).build();}
 
     public static final TaskPart SWIPE_CARD = add(new TaskPartBuilder().name("Swipe Card").interactionItem(EMPTY_ITEM("Swipe Card")).menu(SwipeCardTask.class).build());
+    public static final TaskPart LIGHTS = add(new TaskPartBuilder().name("Fix Lights").interactionItem(new ItemBuilder(Material.REDSTONE_BLOCK).customModelData(904)).data(LightsTaskPartData.class).menu(LightsTask.class).build());
 }

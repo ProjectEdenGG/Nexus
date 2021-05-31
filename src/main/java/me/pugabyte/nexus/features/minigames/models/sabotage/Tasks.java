@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Getter
 public enum Tasks {
     SWIPE_CARD(TaskType.COMMON, TaskPart.SWIPE_CARD),
-    LIGHTS(TaskType.SABOTAGE, TaskPart.SWIPE_CARD)
+    LIGHTS(TaskType.SABOTAGE, TaskPart.LIGHTS)
     ;
 
     private final TaskType taskType;

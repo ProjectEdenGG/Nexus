@@ -95,6 +95,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 // TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
 // TODO: color menu
 // TODO: vent animation (open/close trapdoor)
+// TODO: doors
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;

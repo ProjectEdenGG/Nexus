@@ -9,18 +9,20 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sab
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.SegmentedTaskData;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
 import net.md_5.bungee.api.ChatColor;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 @Getter
 @RequiredArgsConstructor
 public class Task {
     private final Tasks task;
     private int completed = 0;
+    private TaskPartData data = null;
+
     /**
-     * Instantiated when calling {@link #nextPart()}
+     * Must be called after running {@link #nextPart()}
      */
-    @Getter
-    private @MonotonicNonNull TaskPartData data = null;
+    public <T extends TaskPartData> T getData() {
+        return (T) data;
+    }
 
     public int getTaskSize() {
         return task.getParts().length;
