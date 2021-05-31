@@ -15,12 +15,12 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 public enum Decorations {
-	RED("40533", -649, 77, 185),
-	ORANGE("40534", -732, 74, 57),
-	LIME("40537", -689, 82, 130),
-	TEAL("40532", -571, 72, 118),
-	BLUE("40536", -681, 75, 268),
-	MAGENTA("40535", -696, 77, 266);
+	RED("40533", -649, 76, 185),
+	ORANGE("40534", -732, 73, 57),
+	LIME("40537", -689, 81, 130),
+	TEAL("40532", -571, 71, 118),
+	BLUE("40536", -681, 74, 268),
+	MAGENTA("40535", -696, 76, 266);
 
 	@Getter
 	private final String headID;
