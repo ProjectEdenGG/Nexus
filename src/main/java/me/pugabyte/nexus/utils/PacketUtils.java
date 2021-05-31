@@ -4,8 +4,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.mojang.authlib.GameProfile;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -24,14 +24,15 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,40 +116,66 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(HasPlayer owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumItemSlot slot) {
-		Player player = owner.getPlayer();
-
+	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumItemSlot slot) {
 		// self packet avoids playing the armor equip sound effect
 		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
 		selfPacket.getIntegers().write(0, 0); // inventory ID (0 = player)
 		int slotInt = getSlotInt(slot);
-		if (slotInt == -1)
-			slotInt = owner.getPlayer().getInventory().getHeldItemSlot() + 36;
+		if (slotInt == -1 && owner instanceof HumanEntity player)
+			slotInt = player.getInventory().getHeldItemSlot() + 36;
 		selfPacket.getIntegers().write(1, slotInt);
 		selfPacket.getItemModifier().write(0, item);
 
 		// other packet is sent to all other players to show the armor piece
 		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipmentList = new ArrayList<>();
 		equipmentList.add(new Pair<>(slot, CraftItemStack.asNMSCopy(item)));
-		PacketPlayOutEntityEquipment rawPacket = new PacketPlayOutEntityEquipment(player.getEntityId(), equipmentList);
+		PacketPlayOutEntityEquipment rawPacket = new PacketPlayOutEntityEquipment(owner.getEntityId(), equipmentList);
 		PacketContainer otherPacket = PacketContainer.fromPacket(rawPacket);
 
 		// send packets
-		recipients.stream().filter(_player -> player.getWorld() == _player.getPlayer().getWorld()).forEach(_player -> {
-			PacketContainer packet = _player.getPlayer().getUniqueId().equals(player.getUniqueId()) ? selfPacket : otherPacket;
-			sendPacket(_player, packet);
+		recipients.stream().filter(player -> owner.getWorld().equals(player.getPlayer().getWorld())).forEach(player -> {
+			PacketContainer packet = player.getPlayer().getUniqueId().equals(owner.getUniqueId()) ? selfPacket : otherPacket;
+			sendPacket(player, packet);
 		});
 	}
 
 	/**
+	 * Sends a fake packet for an armor piece or main/off-hand item for a player.
+	 * <p>
+	 * To avoid sending a packet to the item owner, remove them from <code>recipients</code>.
+	 * @param owner player to "give" the item
+	 * @param recipient packet recipient
+	 * @param item item to "give"
+	 * @param slot slot to "set"
+	 */
+	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EnumItemSlot slot) {
+		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
+	}
+
+	/**
 	 * Sends fake packets for an armor piece or main/off-hand item for a player.
+	 * <p>
+	 * To avoid sending a packet to the item owner, remove them from <code>recipients</code>.
 	 * @param owner player to "give" the item
 	 * @param recipients packet recipients
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(HasPlayer owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
+	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
 		sendFakeItem(owner, recipients, item, getEnumItemSlot(slot));
+	}
+
+	/**
+	 * Sends a fake packet for an armor piece or main/off-hand item for a player.
+	 * <p>
+	 * To avoid sending a packet to the item owner, remove them from <code>recipients</code>.
+	 * @param owner player to "give" the item
+	 * @param recipient packet recipient
+	 * @param item item to "give"
+	 * @param slot slot to "set"
+	 */
+	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EnumWrappers.ItemSlot slot) {
+		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
 	}
 
 

@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.models.sabotage;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -14,7 +13,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -72,13 +73,20 @@ public class TaskPart {
         }
     }
 
-    @Accessors(fluent = true)
+    @Getter @Accessors(fluent = true)
     private static final Set<TaskPart> values = new HashSet<>();
+    private static final Map<ItemStack, TaskPart> itemMap = new HashMap<>();
+
     private static TaskPart add(TaskPart part) {
         values.add(part);
+        itemMap.put(part.getInteractionItem(), part);
         return part;
     }
-    @Getter(AccessLevel.PRIVATE)
+
+    public static TaskPart get(ItemStack interactionItem) {
+        return itemMap.get(interactionItem.asOne());
+    }
+
     private static final ItemStack EMPTY_ITEM = new ItemBuilder(Material.BARRIER).customModelData(1).build();
     private static ItemStack EMPTY_ITEM(String name) {return new ItemBuilder(EMPTY_ITEM).name(name).build();}
 

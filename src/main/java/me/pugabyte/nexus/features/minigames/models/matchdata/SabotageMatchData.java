@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.menus.sabotage.AbstractVoteScreen;
 import me.pugabyte.nexus.features.menus.sabotage.ResultsScreen;
@@ -26,15 +27,19 @@ import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageScoreboard;
 import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
 import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
+import me.pugabyte.nexus.features.minigames.models.sabotage.TaskPart;
 import me.pugabyte.nexus.features.minigames.models.sabotage.Tasks;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.SabotageTaskPartData;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.utils.BossBarBuilder;
 import me.pugabyte.nexus.utils.ColorType;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -44,19 +49,26 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,6 +79,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
@@ -111,6 +124,57 @@ public class SabotageMatchData extends MatchData {
 	private final Set<Tasks> commonTasks = randomTasks(Tasks.TaskType.COMMON);
 	private final Map<UUID, Location> venters = new HashMap<>();
 	private final Map<UUID, Location> lightMap = new HashMap<>();
+	private final Set<ArmorStandTask> armorStandTasks = armorStandTasksInit();
+
+	private Set<ArmorStandTask> armorStandTasksInit() {
+		Set<ArmorStandTask> set = new HashSet<>();
+		getArena().getWGUtils().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
+			if (armorStand.getEquipment() == null) return;
+			ItemStack item = armorStand.getEquipment().getHelmet();
+			if (ItemUtils.isNullOrAir(item)) return;
+			TaskPart part = TaskPart.get(item);
+			if (part == null) return;
+			BlockFace facing = armorStand.getFacing();
+			LocationUtils.CardinalDirection direction = LocationUtils.CardinalDirection.of(facing);
+			Vector corner1 = armorStand.getEyeLocation()
+					.add(0, 2, 0)
+					.add(facing.getDirection())
+					.add(direction.turnRight().toVector()).toVector();
+			Vector corner2 = armorStand.getLocation()
+					.subtract(0, 2, 0)
+					.add(direction.turnLeft().toVector()).toVector();
+			set.add(new ArmorStandTask(armorStand.getUniqueId(), part, BoundingBox.of(corner1, corner2)));
+		});
+		return set;
+	}
+
+	@Data
+	public static class ArmorStandTask {
+		private final UUID uuid;
+		private final TaskPart part;
+		private final BoundingBox boundingBox;
+
+		public @NotNull ArmorStand getEntity() {
+			return (ArmorStand) Bukkit.getEntity(uuid);
+		}
+	}
+
+	public @Nullable Task getNearbyTask(HasPlayer minigamer) {
+		Vector pos = minigamer.getPlayer().getLocation().toVector();
+		Map<TaskPart, Task> tasks = new HashMap<>();
+		getTasks(minigamer.getPlayer()).forEach(task -> {
+			TaskPart part = task.nextPart();
+			if (part != null)
+				tasks.put(part, task);
+		});
+		for (ArmorStandTask wrapper : armorStandTasks) {
+			if (!wrapper.boundingBox.contains(pos))
+				continue;
+			if (tasks.containsKey(wrapper.part))
+				return tasks.get(wrapper.part);
+		}
+		return null;
+	}
 
 	private Set<Tasks> randomTasks(Tasks.TaskType type) {
 		List<Tasks> legalTasks = Tasks.getByType(type).stream().filter(tasks -> getArena().getTasks().contains(tasks)).collect(Collectors.toList());
@@ -435,7 +499,30 @@ public class SabotageMatchData extends MatchData {
 		return (int) Math.ceil(ticks / 20d);
 	}
 
+	public void initGlow(HasPlayer minigamer) {
+		Player player = minigamer.getPlayer();
+		List<ArmorStand> disable = new ArrayList<>();
+		List<ArmorStand> enable = new ArrayList<>();
+		Set<TaskPart> tasks = getTasks(player).stream().map(Task::nextPart).filter(Objects::nonNull).collect(Collectors.toSet());
+		armorStandTasks.forEach(armorStandTask -> {
+			ArmorStand entity = armorStandTask.getEntity();
+			if (tasks.contains(armorStandTask.part)) {
+				PlayerUtils.Dev.LEXI.send("enabled " + armorStandTask.part.getName());
+				enable.add(entity);
+				ItemStack item = armorStandTask.part.getInteractionItem();
+				if (item.getType() == Material.BARRIER)
+					PacketUtils.sendFakeItem(entity, minigamer, new ItemBuilder(Material.BARRIER).customModelData(2).build(), EnumItemSlot.HEAD);
+			} else {
+				disable.add(entity);
+				PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumItemSlot.HEAD);
+			}
+		});
+		GlowAPI.setGlowing(disable, GlowAPI.Color.NONE, player);
+		GlowAPI.setGlowing(enable, GlowAPI.Color.WHITE, player);
+	}
+
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);
+	private static final Supplier<ItemStack> EXCLAMATION_ITEM = () -> new ItemBuilder(Material.BARRIER).customModelData(2).build();
 
 	public void setRoundStarted() {
 		setRoundStarted(LocalDateTime.now());

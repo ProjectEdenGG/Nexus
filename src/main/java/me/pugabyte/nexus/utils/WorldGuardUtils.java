@@ -190,6 +190,14 @@ public class WorldGuardUtils {
 		return world.getEntities().stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
 	}
 
+	public <T extends Entity> Collection<T> getEntitiesInRegionByClass(String region, Class<T> type) {
+		return getEntitiesInRegionByClass(getProtectedRegion(region), type);
+	}
+
+	public <T extends Entity> Collection<T> getEntitiesInRegionByClass(ProtectedRegion region, Class<T> type) {
+		return world.getEntitiesByClass(type).stream().filter(entity -> isInRegion(entity.getLocation(), region)).collect(Collectors.toList());
+	}
+
 	public Set<ProtectedRegion> getRegionsLike(String regex) {
 		Map<String, ProtectedRegion> regions = manager.getRegions();
 		Pattern pattern = RegexUtils.ignoreCasePattern(regex);

@@ -298,6 +298,10 @@ public class LocationUtils {
 			return BlockFace.valueOf(name());
 		}
 
+		public Vector toVector() {
+			return toBlockFace().getDirection();
+		}
+
 		public static BlockFace[] blockFaces() {
 			return Arrays.stream(values()).map(CardinalDirection::toBlockFace).toArray(BlockFace[]::new);
 		}

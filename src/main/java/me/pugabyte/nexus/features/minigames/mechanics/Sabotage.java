@@ -74,11 +74,11 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,10 +91,10 @@ import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 // TODO: ensure new players can figure out how to play
-// TODO: use glow API to display tasks (and maybe packets to show an ! above tasks with hidden items?)
 // TODO: admin table (imageonmap "api"?)
 // TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
 // TODO: color menu
+// TODO: vent animation (open/close trapdoor)
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;
@@ -199,7 +199,10 @@ public class Sabotage extends TeamMechanic {
 		matchData.setRoundStarted();
 		SabotageTeam.IMPOSTOR.players(match).forEach(matchData::putKillCooldown);
 		match.showBossBar(matchData.getBossbar());
-		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, matchData.getGameChannel()));
+		match.getMinigamers().forEach(minigamer -> {
+			Chat.setActiveChannel(minigamer, matchData.getGameChannel());
+			matchData.initGlow(minigamer);
+		});
 		match.getTasks().repeatAsync(0, 1, () -> {
 			if (matchData.isMeetingActive()) return;
 			int lightLevel = matchData.lightLevel();
@@ -209,7 +212,7 @@ public class Sabotage extends TeamMechanic {
 				PlayerInventory inventory = player.getInventory();
 				List<Minigamer> otherPlayers = new ArrayList<>(match.getAliveMinigamers());
 				Utils.removeEntityFrom(minigamer, otherPlayers);
-				PacketUtils.sendFakeItem(minigamer, otherPlayers, new ItemStack(Material.AIR), EnumItemSlot.MAINHAND);
+				PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), EnumItemSlot.MAINHAND);
 				SabotageTeam team = SabotageTeam.of(minigamer);
 				if (team != SabotageTeam.IMPOSTOR) {
 					Tasks.sync(() -> {
@@ -281,7 +284,9 @@ public class Sabotage extends TeamMechanic {
 		if (!match.isMechanic(this)) return;
 		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMinigamer());
 		event.getMinigamer().sendActionBar(new JsonBuilder("Task Complete!", NamedTextColor.GREEN));
-		if (match.<SabotageMatchData>getMatchData().getProgress() == 1)
+		SabotageMatchData matchData = match.getMatchData();
+		matchData.initGlow(event.getMinigamer());
+		if (matchData.getProgress() == 1)
 			match.end();
 	}
 
@@ -295,6 +300,7 @@ public class Sabotage extends TeamMechanic {
 		matchData.getVenters().remove(uuid);
 		matchData.getTasks().remove(uuid);
 		matchData.getPlayerColors().remove(uuid);
+		GlowAPI.setGlowing(matchData.getArmorStandTasks().stream().map(SabotageMatchData.ArmorStandTask::getEntity).collect(Collectors.toList()), GlowAPI.Color.NONE, event.getMinigamer().getPlayer());
 	}
 
 	@Override
@@ -304,6 +310,7 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = match.getMatchData();
 		match.hideBossBar(matchData.getBossbar());
 		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, Chat.StaticChannel.MINIGAMES));
+		GlowAPI.setGlowing(matchData.getArmorStandTasks().stream().map(SabotageMatchData.ArmorStandTask::getEntity).collect(Collectors.toList()), GlowAPI.Color.NONE, event.getMatch().getPlayers());
 	}
 
 	@Override
@@ -459,24 +466,7 @@ public class Sabotage extends TeamMechanic {
 						giveVentItems(minigamer, block, container);
 					}
 				} else {
-					Map<ItemStack, Task> playerTaskItems = new HashMap<>();
-					for (Task task : matchData.getTasks(minigamer)) {
-						if (task.nextPart() == null)
-							continue;
-						playerTaskItems.put(task.nextPart().getInteractionItem(), task);
-					}
-
-					Collection<ArmorStand> armorStands = minigamer.getPlayer().getLocation().getNearbyEntitiesByType(ArmorStand.class, 2);
-					Task task = null;
-					for (ArmorStand armorStand : armorStands) {
-						ItemStack helmet = armorStand.getEquipment().getHelmet();
-						if (ItemUtils.isNullOrAir(helmet))
-							continue;
-						task = playerTaskItems.get(helmet);
-						if (task != null)
-							break;
-					}
-
+					Task task = matchData.getNearbyTask(minigamer);
 					if (task != null)
 						task.nextPart().instantiateMenu(task).open(minigamer);
 				}

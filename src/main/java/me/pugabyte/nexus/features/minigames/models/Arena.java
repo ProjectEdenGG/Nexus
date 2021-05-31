@@ -242,6 +242,10 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return getWGUtils().getRegionsLikeAt(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER, location);
 	}
 
+	public ProtectedRegion getProtectedRegion() {
+		return getWGUtils().getProtectedRegion(getRegionBaseName());
+	}
+
 	public ProtectedRegion getProtectedRegion(String type) {
 		return getWGUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}
