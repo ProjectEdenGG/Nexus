@@ -25,6 +25,7 @@ import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.features.recipes.CustomRecipes;
+import me.pugabyte.nexus.features.store.perks.NPCListener;
 import me.pugabyte.nexus.features.warps.Warps.LegacySurvivalWarp;
 import me.pugabyte.nexus.features.warps.Warps.SurvivalWarp;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
@@ -60,6 +61,7 @@ import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -72,6 +74,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.ExpBarCountdown;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
+import net.citizensnpcs.api.npc.NPC;
 import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -990,6 +993,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("playJingle <jingle>")
 	void playJingle(Jingle jingle) {
 		jingle.play(player());
+	}
+
+	@Path("forceTpNPC")
+	void forceTpNPC() {
+		NPC npc = CitizensUtils.getSelectedNPC(player());
+		NPCListener.allowNPC(npc);
+		runCommand("npc tphere");
 	}
 
 	@ConverterFor(Nerd.class)

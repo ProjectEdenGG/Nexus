@@ -4,15 +4,19 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static me.pugabyte.nexus.features.listeners.Restrictions.isPerkAllowedAt;
@@ -20,6 +24,23 @@ import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 @NoArgsConstructor
 public class NPCListener implements Listener {
+
+	private static final Set<Integer> ALLOWED_NPCS = new HashSet<>();
+
+	/**
+	 * Removes teleportation/spawning limits for an NPC for one tick
+	 */
+	public static void allowNPC(Integer npc) {
+		ALLOWED_NPCS.add(npc);
+		Tasks.wait(1, () -> ALLOWED_NPCS.remove(npc));
+	}
+
+	/**
+	 * Removes teleportation/spawning limits for an NPC for one tick
+	 */
+	public static void allowNPC(NPC npc) {
+		allowNPC(npc.getId());
+	}
 
 	@EventHandler
 	public void onNpcCreate(PlayerCreateNPCEvent event) {
@@ -40,6 +61,9 @@ public class NPCListener implements Listener {
 	public void onNpcTeleport(NPCTeleportEvent event) {
 		UUID uuid = event.getNPC().getTrait(Owner.class).getOwnerId();
 		if (uuid == null)
+			return;
+
+		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
 			return;
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
@@ -67,6 +91,9 @@ public class NPCListener implements Listener {
 	public void onNpcSpawn(NPCSpawnEvent event) {
 		UUID uuid = event.getNPC().getTrait(Owner.class).getOwnerId();
 		if (uuid == null)
+			return;
+
+		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
 			return;
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);

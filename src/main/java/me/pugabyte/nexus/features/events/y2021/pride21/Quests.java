@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.pride21;
 
+import com.sk89q.worldedit.math.BlockVector3;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.features.events.models.Talker;
@@ -10,15 +11,22 @@ import me.pugabyte.nexus.models.pride21.Pride21User;
 import me.pugabyte.nexus.models.pride21.Pride21UserService;
 import me.pugabyte.nexus.utils.DescParseTickFormat;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,7 +37,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static eden.utils.StringUtils.plural;
@@ -76,15 +83,13 @@ public class Quests implements Listener {
 			SoundUtils.playSound(event, Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 2F);
 			user.getDecorationsCollected().add(decoration);
 			service.save(user);
-			if (!LocalDate.now().isBefore(LocalDate.of(2021, 6, 1))) { // ignore "beta testers" TODO - remove this
-				int tokens = 5;
-				if (user.decorationsFound() == 3 || user.isComplete())
-					tokens += 10;
-				EventUserService eventService = new EventUserService();
-				EventUser eventUser = eventService.get(user);
-				eventUser.giveTokens(tokens);
-				eventService.save(eventUser);
-			}
+			int tokens = 5;
+			if (user.decorationsFound() == 3 || user.isComplete())
+				tokens += 10;
+			EventUserService eventService = new EventUserService();
+			EventUser eventUser = eventService.get(user);
+			eventUser.giveTokens(tokens);
+			eventService.save(eventUser);
 			if (user.isComplete())
 				json.next("You've found the last bag! You should take them back to the &eParade Manager&3.");
 			else
@@ -111,9 +116,11 @@ public class Quests implements Listener {
 		int waitTicks = Talker.sendScript(player, PARADE_MANAGER);
 		Pride21User user = service.get(player);
 		if (user.isComplete()) {
-			player.resetPlayerTime();
-			if (!user.isBonusTokenRewardClaimed()) {
-				Tasks.waitAsync(waitTicks, () -> {
+			Tasks.wait(waitTicks, () -> player.teleport(player.getLocation()));
+			Tasks.waitAsync(waitTicks, () -> {
+				player.resetPlayerTime();
+				viewFloat(player, true);
+				if (!user.isBonusTokenRewardClaimed()) {
 					user.setBonusTokenRewardClaimed(true);
 					EventUserService eventUserService = new EventUserService();
 					EventUser eventUser = eventUserService.get(user);
@@ -122,18 +129,37 @@ public class Quests implements Listener {
 					ItemStack dyeBomb = DyeBombCommand.getDyeBomb();
 					dyeBomb.setAmount(16);
 					PlayerUtils.giveItemAndDeliverExcess(player, dyeBomb, "Pride 2021 Reward", WorldGroup.SURVIVAL);
-				});
-			}
+				}
+			});
 		}
+	}
+
+	public void viewFloat(Player player, boolean view) {
+		Tasks.async(() -> {
+			World world = Bukkit.getWorld("events");
+			BlockData air = Material.AIR.createBlockData();
+			BlockData gray = Material.GRAY_TERRACOTTA.createBlockData();
+			if (world == null) return;
+			for (BlockVector3 blockVector3 : new WorldGuardUtils(world).getRegion("pride21_val")) {
+				Location location = new Location(world, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ());
+				Material material = location.getBlock().getType();
+				if (MaterialTag.ALL_TERRACOTTAS.isTagged(material))
+					player.sendBlockChange(location, view ? location.getBlock().getBlockData() : gray);
+				else if (MaterialTag.SKULLS.isTagged(material))
+					player.sendBlockChange(location, view ? location.getBlock().getBlockData() : air);
+			}
+		});
 	}
 
 	@EventHandler
 	public void onTeleportEvent(PlayerTeleportEvent event) {
 		boolean fromPride = Pride21.isInRegion(event.getFrom());
 		boolean toPride = Pride21.isInRegion(event.getTo());
-		if (fromPride && !toPride)
+		Player player = event.getPlayer();
+		if ((fromPride && !toPride) || (toPride && service.get(player).isComplete()))
 			event.getPlayer().resetPlayerTime();
-		else if (toPride && !fromPride && !service.get(event.getPlayer()).isComplete())
+		else if (toPride)
 			event.getPlayer().setPlayerTime(DescParseTickFormat.parseAlias("dawn"), false);
+			viewFloat(player, false);
 	}
 }

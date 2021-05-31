@@ -15,12 +15,12 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 public enum Decorations {
-	RED("40533", -1659, 9, -1468),
-	ORANGE("40534", -1742, 6, -1596),
-	LIME("40537", -1699, 14, -1523),
-	TEAL("40532", -1581, 4, -1535),
-	BLUE("40536", -1691, 7, -1385),
-	MAGENTA("40535", -1706, 9, -1387);
+	RED("40533", -649, 77, 185),
+	ORANGE("40534", -732, 74, 57),
+	LIME("40537", -689, 82, 130),
+	TEAL("40532", -571, 72, 118),
+	BLUE("40536", -681, 75, 268),
+	MAGENTA("40535", -696, 77, 266);
 
 	@Getter
 	private final String headID;
@@ -33,7 +33,7 @@ public enum Decorations {
 	}
 
 	public @NotNull Location getLocation() {
-		return new Location(Bukkit.getWorld("buildadmin"), x, y, z);
+		return new Location(Bukkit.getWorld("events"), x, y, z);
 	}
 
 

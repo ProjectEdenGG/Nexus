@@ -26,7 +26,7 @@ public class Pride21 implements Listener {
 	}
 
 	public static WorldGuardUtils getWGUtils() {
-		return new WorldGuardUtils("buildadmin");
+		return new WorldGuardUtils("events");
 	}
 
 	public static boolean isInRegion(Location location) {
