@@ -60,7 +60,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		add(new JsonBuilder("&3Complete Discord verification with Koda to unlock several commands, like &c/pay&3, from the Discord's #bridge channel. You can even be reminded to vote!"));
 		add(new JsonBuilder("&3Did you know you can ").group()
 				.next("&c/vote").command("/vote").hover("&eClick to run the command!").group()
-				.next("&3for the server for free rewards? After voting, you can redeem your points in our vote point store with ").group()
+				.next("&3 for the server for free rewards? After voting, you can redeem your points in our vote point store with ").group()
 				.next("&c/vps!").command("/vps").hover("&eClick to run the command!").group());
 		add(new JsonBuilder("&3The walls of grace (&c/wog&3) are a great way to share your love for the server. Leave a sign for others to read").command("/wog").hover("&eClick to run the command!"));
 	}};
