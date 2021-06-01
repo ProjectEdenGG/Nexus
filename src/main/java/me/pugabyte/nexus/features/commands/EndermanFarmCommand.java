@@ -171,8 +171,6 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	private OfflinePlayer getOwner(Location location) {
 		final Set<String> regions = new WorldGuardUtils(location).getRegionNamesAt(location);
-		if (!regions.contains("endermanfarm-deny"))
-			return null;
 
 		for (String region : regions)
 			if (isEndermanFarmRegion(region))
@@ -191,6 +189,10 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 			return;
 
 		if (entityType != EntityType.ENDERMAN)
+			return;
+
+		final Set<String> regions = new WorldGuardUtils(location).getRegionNamesAt(location);
+		if (!regions.contains("endermanfarm-deny"))
 			return;
 
 		if (getOwner(location) != null)
