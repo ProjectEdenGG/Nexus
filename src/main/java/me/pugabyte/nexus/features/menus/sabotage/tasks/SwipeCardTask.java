@@ -64,7 +64,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 			double sec = duration.getSeconds() + (duration.getNano() / 1000000000d);
 			if (!(sec >= .9d && sec <= 1.2d)) {
 				reset.run();
-				String fmt = sec < .4d ? "fast" : "slow";
+				String fmt = sec < .9d ? "fast" : "slow";
 				inventoryContents.set(destination, inventoryContents.get(destination).get().clone(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Too "+fmt+", try again").build()));
 				SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, SoundCategory.MASTER, 2f, 1f);
 			} else {

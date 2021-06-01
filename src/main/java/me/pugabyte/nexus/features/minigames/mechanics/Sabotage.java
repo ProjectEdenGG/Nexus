@@ -90,12 +90,13 @@ import java.util.stream.Collectors;
 import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-// TODO: ensure new players can figure out how to play
 // TODO: admin table (imageonmap "api"?)
 // TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
-// TODO: color menu
+// TODO: color menu (on interact with lobby armor stand/item frame)
 // TODO: vent animation (open/close trapdoor)
 // TODO: doors
+// TODO: show count of all teams on start
+// TODO: set up vents + rooms on Skeld
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;

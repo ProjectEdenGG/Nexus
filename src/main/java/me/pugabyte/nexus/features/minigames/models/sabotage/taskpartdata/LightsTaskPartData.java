@@ -28,4 +28,9 @@ public class LightsTaskPartData extends SabotageTaskPartData {
 				return false;
 		return true;
 	}
+
+	@Override
+	public boolean hasTask() {
+		return false;
+	}
 }

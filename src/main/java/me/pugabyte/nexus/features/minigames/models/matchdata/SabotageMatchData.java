@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.menus.sabotage.AbstractVoteScreen;
 import me.pugabyte.nexus.features.menus.sabotage.ResultsScreen;
@@ -118,6 +117,7 @@ public class SabotageMatchData extends MatchData {
 	private final Map<UUID, Integer> killCooldowns = new HashMap<>();
 	private Task sabotage;
 	private int sabotageTaskId = -1;
+	private int customSabotageTaskId = -1; // custom task created by the sabotage
 	private LocalDateTime sabotageStarted;
 	private final Map<UUID, Set<Task>> tasks = new HashMap<>();
 	private final Map<UUID, Body> bodies = new HashMap<>(); // this is a map of Armor Stand UUIDs to their report locations
@@ -159,10 +159,10 @@ public class SabotageMatchData extends MatchData {
 		}
 	}
 
-	public @Nullable Task getNearbyTask(HasPlayer minigamer) {
+	public @Nullable Task getNearbyTask(Minigamer minigamer) {
 		Vector pos = minigamer.getPlayer().getLocation().toVector();
 		Map<TaskPart, Task> tasks = new HashMap<>();
-		getTasks(minigamer.getPlayer()).forEach(task -> {
+		getTasks(minigamer).forEach(task -> {
 			TaskPart part = task.nextPart();
 			if (part != null)
 				tasks.put(part, task);
@@ -455,12 +455,15 @@ public class SabotageMatchData extends MatchData {
 	public void sabotage(Tasks sabotage) {
 		this.sabotage = new Task(sabotage);
 		sabotageStarted = LocalDateTime.now();
-		int duration = sabotage.getParts()[0].<SabotageTaskPartData>createTaskPartData().getDuration();
+		SabotageTaskPartData data = sabotage.getParts()[0].createTaskPartData();
+		int duration = data.getDuration();
 		if (duration > 0)
 			sabotageTaskId = match.getTasks().wait(TimeUtils.Time.SECOND.x(duration), () -> {
 				SabotageTeam.IMPOSTOR.players(match).forEach(Minigamer::scored);
 				match.end();
 			});
+		if (data.hasTask())
+			customSabotageTaskId = match.getTasks().repeat(0, 1, () -> data.task(match));
 	}
 
 	public void endSabotage() {
@@ -469,10 +472,14 @@ public class SabotageMatchData extends MatchData {
 			match.getTasks().cancel(sabotageTaskId);
 			sabotageTaskId = -1;
 		}
+		if (customSabotageTaskId != -1) {
+			match.getTasks().cancel(customSabotageTaskId);
+			customSabotageTaskId = -1;
+		}
 		sabotageStarted = null;
 	}
 
-	public Set<Task> getTasks(HasUniqueId player) {
+	public Set<Task> getTasks(Minigamer player) {
 		tasks.computeIfAbsent(player.getUniqueId(), $ -> {
 			Set<Tasks> ptasks = new HashSet<>(commonTasks);
 			ptasks.addAll(randomTasks(Tasks.TaskType.LONG));
@@ -480,7 +487,7 @@ public class SabotageMatchData extends MatchData {
 			return ptasks.stream().map(Task::new).collect(Collectors.toCollection(LinkedHashSet::new));
 		});
 		Set<Task> tasks = new LinkedHashSet<>(this.tasks.get(player.getUniqueId()));
-		if (sabotage != null)
+		if (sabotage != null && player.isAlive())
 			tasks.add(sabotage);
 		return tasks;
 	}
@@ -499,11 +506,11 @@ public class SabotageMatchData extends MatchData {
 		return (int) Math.ceil(ticks / 20d);
 	}
 
-	public void initGlow(HasPlayer minigamer) {
+	public void initGlow(Minigamer minigamer) {
 		Player player = minigamer.getPlayer();
 		List<ArmorStand> disable = new ArrayList<>();
 		List<ArmorStand> enable = new ArrayList<>();
-		Set<TaskPart> tasks = getTasks(player).stream().map(Task::nextPart).filter(Objects::nonNull).collect(Collectors.toSet());
+		Set<TaskPart> tasks = getTasks(minigamer).stream().map(Task::nextPart).filter(Objects::nonNull).collect(Collectors.toSet());
 		armorStandTasks.forEach(armorStandTask -> {
 			ArmorStand entity = armorStandTask.getEntity();
 			if (tasks.contains(armorStandTask.part)) {
