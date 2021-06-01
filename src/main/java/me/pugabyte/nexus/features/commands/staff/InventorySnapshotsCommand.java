@@ -102,7 +102,6 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	void nearbyDeaths(@Arg("1") int page) {
 		Map<InventorySnapshot, Double> nearbyDeaths = new HashMap<>();
 		for (InventoryHistory history : service.getAll()) {
-			history.janitor();
 			for (InventorySnapshot snapshot : history.getSnapshots()) {
 				if (snapshot.getReason() != SnapshotReason.DEATH)
 					continue;

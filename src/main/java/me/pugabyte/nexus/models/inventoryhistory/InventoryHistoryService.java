@@ -23,9 +23,9 @@ public class InventoryHistoryService extends MongoService<InventoryHistory> {
 	}
 
 	@Override
-	public void saveSync(InventoryHistory history) {
+	protected void beforeSave(InventoryHistory history) {
+		history.janitor();
 		history.getSnapshots().sort(Comparator.comparing(InventorySnapshot::getTimestamp).reversed());
-		super.saveSync(history);
 	}
 
 }

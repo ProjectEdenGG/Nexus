@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
-import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -42,7 +42,7 @@ public class BrowseShopsProvider extends _ShopProvider {
 			int outOfStock = shop.getOutOfStock(shopGroup).size();
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop.getOfflinePlayer())
-					.name(Nerd.of(shop.getOfflinePlayer()).getColoredName())
+					.name(new NerdService().get(shop.getOfflinePlayer()).getColoredName())
 					.lore((inStock == 0 ? "&c" : "&a") + inStock + " " + plural("product", inStock) + " in stock")
 					.lore((outOfStock == 0 ? "&a" : "&c") + outOfStock + " " + plural("product", outOfStock) + " out of stock");
 
