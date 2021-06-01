@@ -223,9 +223,9 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 		pronouns.add(pronoun);
 		String log;
 		if (executor == null || executor.equals(getNickname()))
-			log = getNickname() + " added the ";
+			log = getNickname() + " added the";
 		else
-			log = executor + " added " + getNickname() + "'s ";
+			log = executor + " added " + getNickname() + "'s";
 		Discord.staffLog(log + " pronoun `" + pronoun + "`");
 		updatePronouns();
 	}
