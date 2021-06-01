@@ -8,7 +8,11 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PronounsCommand extends CustomCommand {
@@ -40,7 +44,7 @@ public class PronounsCommand extends CustomCommand {
 	void add(String pronoun, @Arg(value = "self", permission = "group.staff") Nerd nerd) {
 		boolean isSelf = nerd.getUuid().equals(uuid());
 		String user = isSelf ? "your" : nerd.getNickname()+"'s";
-		nerd.addPronoun(pronoun);
+		nerd.addPronoun(pronoun, !isPlayer() ? "Console" : nickname());
 		send(PREFIX + "Added &e"+getPronoun(pronoun).replace("&", "")+"&3 to "+user+" pronouns");
 	}
 
@@ -48,7 +52,7 @@ public class PronounsCommand extends CustomCommand {
 	void remove(String pronoun, @Arg(value = "self", permission = "group.staff") Nerd nerd) {
 		boolean isSelf = nerd.getUuid().equals(uuid());
 		String user = isSelf ? "your" : nerd.getNickname()+"'s";
-		nerd().removePronoun(pronoun);
+		nerd.removePronoun(pronoun, !isPlayer() ? "Console" : nickname());
 		send(PREFIX + "Removed &e"+getPronoun(pronoun).replace("&", "")+"&3 from "+user+" pronouns");
 	}
 

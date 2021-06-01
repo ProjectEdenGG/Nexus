@@ -34,6 +34,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.File;
@@ -214,16 +215,34 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 	}
 
 	public void addPronoun(String pronoun) {
+		addPronoun(pronoun, null);
+	}
+
+	public void addPronoun(String pronoun, @Nullable String executor) {
 		pronoun = PronounsCommand.getPronoun(pronoun);
 		pronouns.add(pronoun);
-		Discord.staffLog(getNickname() + " added the pronoun `" + pronoun + "`");
+		String log;
+		if (executor == null || executor.equals(getNickname()))
+			log = getNickname() + " added the ";
+		else
+			log = executor + " added " + getNickname() + "'s ";
+		Discord.staffLog(log + " pronoun `" + pronoun + "`");
 		updatePronouns();
 	}
 
 	public void removePronoun(String pronoun) {
+		removePronoun(pronoun, null);
+	}
+
+	public void removePronoun(String pronoun, @Nullable String executor) {
 		pronoun = PronounsCommand.getPronoun(pronoun);
 		pronouns.remove(pronoun);
-		Discord.staffLog(getNickname() + " removed the pronoun `" + pronoun + "`");
+		String log;
+		if (executor == null || executor.equals(getNickname()))
+			log = getNickname() + " removed the ";
+		else
+			log = executor + " removed " + getNickname() + " 's ";
+		Discord.staffLog(log + " pronoun `" + pronoun + "`");
 		updatePronouns();
 	}
 
