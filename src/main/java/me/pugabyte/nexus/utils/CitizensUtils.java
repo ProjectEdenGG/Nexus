@@ -11,7 +11,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
-import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -135,17 +134,22 @@ public class CitizensUtils {
 	public static class GetNPCs {
 		private final @Nullable World world;
 		private final @Nullable ProtectedRegion region;
-		private final @Nullable Boolean spawned;
+		@Builder.Default
+		private final @Nullable Boolean spawned = true;
 		private final @Nullable UUID owner;
 
 		private boolean filter(NPC npc) {
 			if (owner != null && !owner.equals(npc.getTrait(Owner.class).getOwnerId()))
 				return false;
+			if (spawned != null && (npc.getStoredLocation() == null || !npc.isSpawned()) && spawned)
+				return false;
+			if (npc.getStoredLocation() == null)
+				return true;
 			if (world != null && !world.equals(npc.getStoredLocation().getWorld()))
 				return false;
 			if (region != null && !region.contains(WorldGuardUtils.toBlockVector3(npc.getStoredLocation())))
 				return false;
-			return spawned == null || npc.getTrait(Spawned.class).shouldSpawn() == spawned;
+			return true;
 		}
 
 		public List<NPC> get() {

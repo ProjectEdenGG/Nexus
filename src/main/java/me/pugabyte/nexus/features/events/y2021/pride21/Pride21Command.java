@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events.y2021.pride21;
 
-import me.pugabyte.nexus.features.store.perks.NPCListener;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -44,7 +43,6 @@ public class Pride21Command extends CustomCommand {
 			error("You must be standing in the Pride parade to use this command");
 
 		Location npcLoc = LocationUtils.getCenteredLocation(player.getLocation());
-		NPCListener.allowNPC(npcLoc);
 		CitizensUtils.spawnNPC(player, npcLoc);
 
 		setting.setBoolean(true);

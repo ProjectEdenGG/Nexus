@@ -3,15 +3,14 @@ package me.pugabyte.nexus.features.store.perks;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.event.NPCTeleportEvent;
 import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,7 +27,6 @@ import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 public class NPCListener implements Listener {
 
 	private static final Set<Integer> ALLOWED_NPCS = new HashSet<>();
-	private static final Set<Location> ALLOWED_LOCS = new HashSet<>();
 
 	/**
 	 * Removes teleportation/spawning limits for an NPC for one tick
@@ -45,25 +43,16 @@ public class NPCListener implements Listener {
 		allowNPC(npc.getId());
 	}
 
-	/**
-	 * Removes creation limits for an NPC for one tick
-	 */
-	public static void allowNPC(Location location) {
-		final Location loc = LocationUtils.getCenteredRotationlessLocation(location);
-		ALLOWED_LOCS.add(loc);
-		Tasks.wait(1, () -> ALLOWED_LOCS.remove(loc));
-	}
-
 	@EventHandler
 	public void onNpcCreate(PlayerCreateNPCEvent event) {
 		Player owner = event.getCreator();
 		if (Rank.of(owner).gte(Rank.NOBLE))
 			return;
 
-		if (ALLOWED_LOCS.contains(LocationUtils.getCenteredRotationlessLocation(owner.getLocation())))
+		if (isPerkAllowedAt(owner.getLocation()))
 			return;
 
-		if (isPerkAllowedAt(owner.getLocation()))
+		if (event.getCreator().getWorld().getName().equals("events") && new WorldGuardUtils(event.getCreator()).isInRegion(event.getCreator(), "pride21_parade"))
 			return;
 
 		event.getNPC().despawn();
@@ -79,6 +68,9 @@ public class NPCListener implements Listener {
 			return;
 
 		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
+			return;
+
+		if (event.getTo().getWorld().getName().equals("events") && new WorldGuardUtils(event.getTo()).isInRegion(event.getTo(), "pride21_parade"))
 			return;
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
@@ -109,6 +101,9 @@ public class NPCListener implements Listener {
 			return;
 
 		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
+			return;
+
+		if (event.getLocation().getWorld().getName().equals("events") && new WorldGuardUtils(event.getLocation()).isInRegion(event.getLocation(), "pride21_parade"))
 			return;
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
