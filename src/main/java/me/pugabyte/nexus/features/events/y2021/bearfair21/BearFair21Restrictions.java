@@ -2,16 +2,22 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingEvent;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTameEvent;
@@ -26,16 +32,41 @@ public class BearFair21Restrictions implements Listener {
 		Nexus.registerListener(this);
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onItemFrameBreak(EntityDamageByEntityEvent event) {
+		if (!isAtBearFair(event.getEntity()))
+			return;
+
+		EntityType breakType = event.getEntityType();
+		if (!breakType.equals(EntityType.ITEM_FRAME) && !breakType.equals(EntityType.PAINTING))
+			return;
+
+		Entity damager = event.getDamager();
+		if (!(damager instanceof Player) && !(damager instanceof Projectile))
+			return;
+
+		if (damager instanceof Projectile) {
+			Entity shooter = (Entity) ((Projectile) damager).getShooter();
+			if (shooter instanceof Player) {
+				if (WorldGuardFlagUtils.hasBypass((HasPlayer) shooter))
+					return;
+			}
+		} else {
+			if (WorldGuardFlagUtils.hasBypass((HasPlayer) damager))
+				return;
+		}
+
+		event.setCancelled(true);
+	}
+
 	@EventHandler
 	public void onInteractWithVillager(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
+		if (!isAtBearFair(entity)) return;
 		if (!(entity instanceof Villager)) return;
 		if (CitizensAPI.getNPCRegistry().isNPC(entity)) return;
 
-		Player player = event.getPlayer();
-
-		if (isAtBearFair(player))
-			event.setCancelled(true);
+		event.setCancelled(true);
 	}
 
 	@EventHandler
