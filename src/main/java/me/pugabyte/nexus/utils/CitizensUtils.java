@@ -114,6 +114,9 @@ public class CitizensUtils {
 	public static NPC spawnNPC(HasOfflinePlayer owner, Location location) {
 		NPC npc = Nexus.getCitizens().getNPCRegistry().createNPC(EntityType.PLAYER, Nickname.of(owner.getOfflinePlayer()));
 		npc.spawn(location, SpawnReason.PLUGIN);
+		Owner npcOwner = new Owner();
+		npcOwner.setOwner(Nickname.of(owner.getOfflinePlayer()), owner.getOfflinePlayer().getUniqueId());
+		npc.addTrait(npcOwner);
 		updateSkin(npc, owner.getOfflinePlayer().getName(), true);
 		return npc;
 	}

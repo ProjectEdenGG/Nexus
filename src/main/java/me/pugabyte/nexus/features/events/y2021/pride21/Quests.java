@@ -142,10 +142,9 @@ public class Quests implements Listener {
 		}
 	}
 
-	public void viewFloat(Player player, boolean view) {
+	public static void viewFloat(Player player, boolean view) {
 		Tasks.async(() -> {
 			World world = Bukkit.getWorld("events");
-			BlockData air = Material.AIR.createBlockData();
 			BlockData gray = Material.GRAY_TERRACOTTA.createBlockData();
 			if (world == null) return;
 			for (BlockVector3 blockVector3 : new WorldGuardUtils(world).getRegion("pride21_val")) {
@@ -153,8 +152,6 @@ public class Quests implements Listener {
 				Material material = location.getBlock().getType();
 				if (MaterialTag.ALL_TERRACOTTAS.isTagged(material))
 					player.sendBlockChange(location, view ? location.getBlock().getBlockData() : gray);
-				else if (MaterialTag.SKULLS.isTagged(material))
-					player.sendBlockChange(location, view ? location.getBlock().getBlockData() : air);
 			}
 		});
 	}
@@ -166,8 +163,9 @@ public class Quests implements Listener {
 		Player player = event.getPlayer();
 		if ((fromPride && !toPride) || (toPride && service.get(player).isComplete()))
 			event.getPlayer().resetPlayerTime();
-		else if (toPride)
-			event.getPlayer().setPlayerTime(DescParseTickFormat.parseAlias("dawn"), false);
+		else if (toPride) {
+			Tasks.wait(TimeUtils.Time.SECOND, () -> event.getPlayer().setPlayerTime(DescParseTickFormat.parseAlias("dawn"), false));
 			viewFloat(player, false);
+		}
 	}
 }

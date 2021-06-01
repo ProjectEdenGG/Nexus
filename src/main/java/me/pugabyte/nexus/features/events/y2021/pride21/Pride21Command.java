@@ -30,7 +30,7 @@ public class Pride21Command extends CustomCommand {
 	void joinParade(@Arg(value = "self", permission = "group.staff") Player player) {
 		String playerText = isSelf(player) ? "You have" : Nickname.of(player) + " has";
 
-		Setting setting = service.get(player, "pride20Parade");
+		Setting setting = service.get(player, "pride21Parade");
 		if (setting.getBoolean())
 			error(playerText + " already joined the parade");
 

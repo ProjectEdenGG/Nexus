@@ -9,12 +9,14 @@ import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pride21.Pride21User;
 import me.pugabyte.nexus.models.pride21.Pride21UserService;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -58,6 +60,7 @@ public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 			inventoryContents.add(ClickableItem.from(flagItem, $ -> purchase(flag, player, false)));
 			inventoryContents.add(ClickableItem.from(buntingItem, $ -> purchase(flag, player, true)));
 		});
+		inventoryContents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.PAPER).name("&3Your balance: &e" + eventService.get(player).getTokens() + " tokens").build()));
 	}
 
 	private void purchase(Flags flag, Player player, boolean bunting) {
