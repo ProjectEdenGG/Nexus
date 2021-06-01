@@ -158,10 +158,8 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 
 		Material type = event.getBlock().getType();
 		if (disallowedPlacement.contains(type)) {
-			if (!new CooldownService().check(player, player.getUniqueId() + "-" + type.name(), Time.MINUTE))
-				return;
-
-			player.sendMessage("You must be Member rank to place " + StringUtils.camelCase(type));
+			if (new CooldownService().check(player, player.getUniqueId() + "-" + type.name(), Time.MINUTE))
+				player.sendMessage("You must be Member rank to place " + StringUtils.camelCase(type));
 			event.setCancelled(true);
 		}
 	}
