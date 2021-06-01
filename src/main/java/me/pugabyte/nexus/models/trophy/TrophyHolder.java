@@ -12,7 +12,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,6 +44,15 @@ public class TrophyHolder implements PlayerOwnedObject {
 
 		earned.add(trophy);
 		return true;
+	}
+
+	/**
+	 * Earns the trophy and sends a congratulatory message (if the user didn't already earn it)
+	 */
+	public void earnAndMessage(Trophy trophy) {
+		if (earn(trophy))
+			PlayerUtils.send(this, JsonBuilder.fromPrefix("Trophy").next("You have earned the ").next(trophy.toString(), NamedTextColor.YELLOW).next("! To view your trophies and claim the item, ")
+			.next(new JsonBuilder("click here", NamedTextColor.YELLOW).command("trophy")).next(" or run ").next(new JsonBuilder("/trophy", NamedTextColor.YELLOW).command("trophy")));
 	}
 
 	public boolean hasClaimed(Trophy trophy) {

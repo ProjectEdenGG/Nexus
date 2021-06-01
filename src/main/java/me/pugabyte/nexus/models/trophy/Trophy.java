@@ -32,8 +32,8 @@ public enum Trophy {
 //	EASTER_2021_PARTICIPATION(Material.STONE),
 //	EASTER_2021_COMPLETION(Material.STONE),
 
-	PRIDE_2021_PARTICIPATION(Material.STONE),
-	PRIDE_2021_COMPLETION(Material.STONE),
+//	PRIDE_2021_PARTICIPATION(Material.STONE),
+	PRIDE_2021(Material.STONE),
 
 //	BEAR_FAIR_2021_PARTICIPATION(Material.STONE),
 //	BEAR_FAIR_2021_COMPLETION(Material.STONE),
@@ -43,8 +43,13 @@ public enum Trophy {
 	private final Material material;
 	private int customModelData;
 
+	@Override
+	public String toString() {
+		return camelCase(name()) + " Trophy";
+	}
+
 	public ItemBuilder getItem() {
-		return new ItemBuilder(material).name(camelCase(name()) + " Trophy").customModelData(customModelData).untradeable();
+		return new ItemBuilder(material).name(toString()).customModelData(customModelData).untradeable();
 	}
 
 	public String getEvent() {
