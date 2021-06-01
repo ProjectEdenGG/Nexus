@@ -221,7 +221,7 @@ public class PacketUtils {
 		int index = 0;
 		List<EntityArmorStand> armorStands = new ArrayList<>();
 		for (String customName : customNames)
-			armorStands.add(entityNameFake(player, bukkitEntity, customName, index++, distance));
+			armorStands.add(entityNameFake(player, bukkitEntity, distance, customName, index++));
 
 		if (armorStands.isEmpty())
 			armorStands = null;
@@ -234,10 +234,10 @@ public class PacketUtils {
 	}
 
 	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName, int index) {
-		return entityNameFake(player, bukkitEntity, customName, index, 0.3);
+		return entityNameFake(player, bukkitEntity, 0.3, customName, index);
 	}
 
-	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName, int index, double distance) {
+	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
 		Location loc = bukkitEntity.getLocation();
@@ -392,7 +392,7 @@ public class PacketUtils {
 		}
 	}
 
-	private static byte encodeAngle(float angle) {
+	public static byte encodeAngle(float angle) {
 		return (byte) (angle * 256f / 360f);
 	}
 
