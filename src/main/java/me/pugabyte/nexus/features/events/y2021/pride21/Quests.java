@@ -124,12 +124,13 @@ public class Quests implements Listener {
 				player.resetPlayerTime();
 				viewFloat(player, true);
 				if (!user.isBonusTokenRewardClaimed()) {
-					TrophyHolderService service = new TrophyHolderService();
-					TrophyHolder holder = service.get(player);
+					TrophyHolderService trophyService = new TrophyHolderService();
+					TrophyHolder holder = trophyService.get(player);
 					holder.earnAndMessage(Trophy.PRIDE_2021);
-					service.save(holder);
+					trophyService.save(holder);
 
 					user.setBonusTokenRewardClaimed(true);
+					service.save(user);
 					EventUserService eventUserService = new EventUserService();
 					EventUser eventUser = eventUserService.get(user);
 					eventUser.giveTokens(50);
@@ -161,7 +162,7 @@ public class Quests implements Listener {
 		boolean fromPride = Pride21.isInRegion(event.getFrom());
 		boolean toPride = Pride21.isInRegion(event.getTo());
 		Player player = event.getPlayer();
-		if ((fromPride && !toPride) || (toPride && service.get(player).isComplete()))
+		if ((fromPride && !toPride) || (toPride && service.get(player).isBonusTokenRewardClaimed()))
 			event.getPlayer().resetPlayerTime();
 		else if (toPride) {
 			Tasks.wait(TimeUtils.Time.SECOND, () -> event.getPlayer().setPlayerTime(DescParseTickFormat.parseAlias("dawn"), false));

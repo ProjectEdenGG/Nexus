@@ -29,7 +29,7 @@ public class Pride21 implements Listener {
 		Nexus.registerListener(this);
 		Tasks.repeat(5, TimeUtils.Time.SECOND, () -> {
 			getWGUtils().getPlayersInRegion(REGION).forEach(player -> {
-				if (!service.get(player).isComplete())
+				if (!service.get(player).isBonusTokenRewardClaimed())
 					Quests.viewFloat(player, false);
 			});
 		});
