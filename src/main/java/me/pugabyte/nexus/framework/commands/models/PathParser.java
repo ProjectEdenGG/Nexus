@@ -374,7 +374,7 @@ class PathParser {
 				if (fallback == null) {
 					if (args.size() >= getRequiredArgs(path))
 						fallback = method;
-					else if (args.size() == 0 && getLiteralWords(path).length() == 0)
+					else if (args.size() == 0)
 						fallback = method;
 				} else if (args.size() == 0 && getPathString(method).length() < getPathString(fallback).length())
 					fallback = method;
@@ -399,11 +399,11 @@ class PathParser {
 
 		String literalWords = "";
 		if (path.length() > 0)
-			for (String pathArg : pathArgs)
+			pathArgLoop: for (String pathArg : pathArgs)
 				switch (left(pathArg, 1)) {
 					case "[":
 					case "<":
-						break;
+						break pathArgLoop;
 					default:
 						literalWords += pathArg + " ";
 				}

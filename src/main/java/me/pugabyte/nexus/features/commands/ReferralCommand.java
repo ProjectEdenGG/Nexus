@@ -3,8 +3,8 @@ package me.pugabyte.nexus.features.commands;
 import com.google.common.base.Strings;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
-import eden.utils.Utils;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -27,6 +28,8 @@ import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.referral.Referral;
 import me.pugabyte.nexus.models.referral.Referral.Origin;
 import me.pugabyte.nexus.models.referral.ReferralService;
+import me.pugabyte.nexus.models.rule.HasReadRules;
+import me.pugabyte.nexus.models.rule.HasReadRulesService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -44,8 +47,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -164,6 +167,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		private final List<UUID> punished = new ArrayList<>();
 		private final List<UUID> member = new ArrayList<>();
 		private final List<UUID> trusted = new ArrayList<>();
+		private final List<UUID> readRules = new ArrayList<>();
 		private final HoursService hoursService = new HoursService();
 
 		void add(OfflinePlayer player) {
@@ -179,6 +183,10 @@ public class ReferralCommand extends CustomCommand implements Listener {
 				trusted.add(uuid);
 			else if (rank == Rank.MEMBER)
 				member.add(uuid);
+
+			final HasReadRules hasReadRules = new HasReadRulesService().get(uuid);
+			if (hasReadRules.getReadSections().size() >= 2)
+				readRules.add(uuid);
 		}
 
 		public int count() {
@@ -218,9 +226,6 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 			final String site = getSite(ip);
 
-			if (Utils.isInt(site))
-				continue;
-
 			turnoverData.computeIfAbsent(site, $ -> new TurnoverData(site)).add(referral.getOfflinePlayer());
 		}
 
@@ -240,29 +245,85 @@ public class ReferralCommand extends CustomCommand implements Listener {
 					.newline().next("&7  Median playtime: &f" + Timespan.of((int) data.median()).format())
 					.newline().next("&7  % Punished: &f" + percentage.apply(data.getPunished().size()))
 					.newline().next("&7  % Trusted: &f" + percentage.apply(data.getTrusted().size()))
-					.newline().next("&7  % Member: &f" + percentage.apply(data.getMember().size()));
+					.newline().next("&7  % Member: &f" + percentage.apply(data.getMember().size()))
+					.newline().next("&7  % Read rules: &f" + percentage.apply(data.getReadRules().size()));
 		}).forEach(this::send);
 	}
 
-	private static final Map<String, List<String>> siteMap = new HashMap<>() {{
-		put("direct", List.of("server", "bnn.gg", "projecteden.gg", "51.", "192."));
-		put("biz", List.of("bi", "bl", "bz", "iz", "play.biz", "baz"));
-		put("mcsl", List.of("mscl", "mscsl", "mcssl", "mccl"));
-		put("mcmp", List.of("mmcmp"));
-		put("topg", List.of("gopg"));
-		put("mcs", List.of("mmcs"));
-		put("pmc", List.of("pcm"));
-		put("db", List.of("dn"));
-	}};
+	@Path("who has rank <rank> from <site> [page]")
+	void whoHasRank(Rank rank, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
+		List<Hours> players = getPlayersFrom(subdomain).stream()
+				.map(uuid -> new HoursService().get(uuid))
+				.filter(uuid -> Rank.of(uuid).gte(rank))
+				.sorted(Comparator.comparing(Hours::getTotal).reversed())
+				.toList();
+
+		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json("&3" + index + " &e" + Nerd.of(hours).getColoredName());
+		paginate(players, formatter, "/referral who has rank " + rank.name().toLowerCase() + " from " + subdomain, page);
+	}
+
+	@Path("who has playtime <playtime> from <site> [page]")
+	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
+		final int seconds = Timespan.of(playtime).getOriginal();
+
+		List<Hours> players = getPlayersFrom(subdomain).stream()
+				.map(uuid -> new HoursService().get(uuid))
+				.filter(hours -> hours.getTotal() >= seconds)
+				.sorted(Comparator.comparing(Hours::getTotal).reversed())
+				.toList();
+
+		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json("&3" + index + " &e" + Nerd.of(hours).getColoredName() +
+				" &7- " + Timespan.of(hours.getTotal()).format());
+		paginate(players, formatter, "/referral who has playtime " + playtime + " from " + subdomain, page);
+	}
+
+	@NotNull
+	private List<UUID> getPlayersFrom(String subdomain) {
+		List<Referral> referrals = service.getAll();
+		if (referrals.isEmpty())
+			error("No referral stats available");
+
+		List<UUID> players = new ArrayList<>();
+		for (Referral referral : referrals) {
+			String ip = referral.getIp();
+			if (ip == null)
+				continue;
+
+			final String site = getSite(ip);
+			if (subdomain.equalsIgnoreCase(site))
+				players.add(referral.getUuid());
+		}
+		return players;
+	}
+
+	@Getter
+	private enum ReferralSite {
+		DIRECT("server", "bnn.gg", "projecteden.gg", "51.", "192."),
+		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz"),
+		MCSL("mscl", "mscsl", "mcssl", "mccl"),
+		MCMP("mmcmp"),
+		TOPG("gopg"),
+		MCS("mmcs"),
+		PMC("pcm"),
+		DB("dn"),
+		;
+
+		private final List<String> subdomains;
+
+		ReferralSite(String... subdomains) {
+			this.subdomains = List.of(subdomains);
+		}
+	}
 
 	@NotNull
 	private String getSite(String ip) {
 		ip = ip.toLowerCase();
 
-		for (Entry<String, List<String>> entry : siteMap.entrySet())
-			for (String start : entry.getValue())
+		for (ReferralSite site : ReferralSite.values()) {
+			for (String start : site.getSubdomains())
 				if (ip.startsWith(start))
-					return entry.getKey();
+					return site.name().toLowerCase();
+		}
 
 		return ip.split("\\.", 2)[0].toLowerCase();
 	}
