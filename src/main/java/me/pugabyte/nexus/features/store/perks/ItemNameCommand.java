@@ -54,7 +54,7 @@ public class ItemNameCommand extends CustomCommand {
 		send(PREFIX + "Name of &e" + camelCase(tool.getType()).toLowerCase() + " &3set to " + name);
 	}
 
-	@Path("gradient <color1,color2,...> <name...>")
+	@Path("gradient <colors> <name...>")
 	void gradient(
 			@Arg(type = ChatColor.class) List<ChatColor> colors,
 			String input,
