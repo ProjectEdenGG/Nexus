@@ -81,8 +81,11 @@ public class ProjectileListener implements Listener {
 				if (killMaterial.contains(_mat)) {
 					user.debug("  ball is on a killMaterial, respawning...");
 					MiniGolfUtils.respawnBall(ball);
+					return;
+				} else {
+					// Bounce off of entity
+					vel.multiply(-1).multiply(0.25);
 				}
-				return;
 			}
 
 			// Bounce off surfaces

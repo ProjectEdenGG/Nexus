@@ -92,6 +92,11 @@ public class MiniGolf21User implements PlayerOwnedObject {
 		return this.miniGolfColor.getColorType().getGlowColor();
 	}
 
+	public void debug(boolean bool, String debug) {
+		if (bool)
+			debug(debug);
+	}
+
 	public void debug(String debug) {
 		if (this.isDebug())
 			sendMessage(debug);

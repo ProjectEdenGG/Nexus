@@ -72,7 +72,7 @@ public class MiniGolf {
 	@Getter private static final List<Material> inBounds = Arrays.asList(Material.GREEN_WOOL, Material.GREEN_CONCRETE,
 			Material.PETRIFIED_OAK_SLAB, Material.SAND, Material.RED_SAND, Material.SOUL_SOIL, Material.BLUE_ICE,
 			Material.PACKED_ICE, Material.ICE, Material.MAGENTA_GLAZED_TERRACOTTA, Material.SLIME_BLOCK, Material.OBSERVER,
-			Material.REDSTONE_BLOCK, Material.SPRUCE_FENCE);
+			Material.REDSTONE_BLOCK, Material.SPRUCE_FENCE, Material.AIR);
 	@Getter private static final String gameRegion = BearFair21.getRegion() + "_minigolf";
 	@Getter private static final String regionHole = gameRegion + "_hole_";
 	// @formatter:on
@@ -441,10 +441,7 @@ public class MiniGolf {
 
 						// Stop & respawn ball if slow enough
 						if (vel.getY() >= 0.0 && vel.length() <= 0.01) {
-//							if(vel.length() == 0.0)
-//								break;
-
-							user.debug("  ball is too slow, stopping...");
+							user.debug(vel.length() != 0.0, "  ball is too slow, stopping...");
 							ball.setVelocity(new Vector(0, 0, 0));
 							ball.setGravity(false);
 							ball.teleport(ball.getLocation());
