@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -25,8 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static me.pugabyte.nexus.features.homes.HomesFeature.maxHomes;
 
 @Data
 @Builder
@@ -42,6 +39,7 @@ public class HomeOwner implements PlayerOwnedObject {
 	private List<Home> homes = new ArrayList<>();
 	private boolean autoLock;
 	private boolean usedDeathHome;
+	private int extraHomes;
 
 	public List<String> getNames() {
 		return getNames(null);
@@ -63,17 +61,21 @@ public class HomeOwner implements PlayerOwnedObject {
 	}
 
 	@ToString.Include
-	public int getMaxHomes() {
-		for (int i = maxHomes; i > 0; i--)
-			if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "homes.limit." + i))
-				return i;
+	public int getHomesLimit() {
+		return getNerd().getRank().enabledOrdinal() + 3 + extraHomes;
+	}
 
-		return 0;
+	public void addExtraHomes(int extraHomes) {
+		this.extraHomes += extraHomes;
+	}
+
+	public void removeExtraHomes(int extraHomes) {
+		this.extraHomes -= extraHomes;
 	}
 
 	public int getHomesLeft() {
 		int homes = this.homes.size();
-		int max = getMaxHomes();
+		int max = getHomesLimit();
 		return Math.max(0, max - homes);
 	}
 

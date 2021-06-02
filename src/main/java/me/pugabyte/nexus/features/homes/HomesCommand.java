@@ -66,16 +66,21 @@ public class HomesCommand extends CustomCommand {
 			HomesMenu.edit(home);
 	}
 
-	@Path("limit")
-	void limit() {
+	@Path("limit [player]")
+	void limit(@Arg(value = "self", permission = "group.staff") HomeOwner homeOwner) {
 		int homes = homeOwner.getHomes().size();
-		int max = homeOwner.getMaxHomes();
+		int max = homeOwner.getHomesLimit();
 		int left = Math.max(0, max - homes);
-		send(PREFIX + "You have set &e" + homes + " &3of your &e" + max + " &3homes");
-		if (left > 0)
-			send(PREFIX + "You can set &e" + left + " &3more");
-		else
-			send(PREFIX + "&cYou have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
+		if (!isSelf(homeOwner))
+			send(PREFIX + homeOwner.getNickname() + " has set &e" + homes + " &3of their &e" + max + " &3homes");
+		else {
+			send(PREFIX + "You have set &e" + homes + " &3of your &e" + max + " &3homes");
+
+			if (left > 0)
+				send(PREFIX + "You can set &e" + left + " &3more");
+			else
+				send(PREFIX + "&cYou have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
+		}
 	}
 
 	@Async
@@ -162,6 +167,24 @@ public class HomesCommand extends CustomCommand {
 		});
 
 		send(PREFIX + "Fixed " + fixed.get() + " homes");
+	}
+
+	@Async
+	@Permission("group.admin")
+	@Path("addExtraHomes <player> <amount>")
+	void addExtraHomes(HomeOwner homeOwner, int amount) {
+		homeOwner.addExtraHomes(amount);
+		service.save(homeOwner);
+		send(PREFIX + "Added &e" + amount + " &3homes to &e" + homeOwner.getNickname() + "&3. New limit: &e" + homeOwner.getHomesLimit());
+	}
+
+	@Async
+	@Permission("group.admin")
+	@Path("removeExtraHomes <player> <amount>")
+	void removeExtraHomes(HomeOwner homeOwner, int amount) {
+		homeOwner.removeExtraHomes(amount);
+		service.save(homeOwner);
+		send(PREFIX + "Removed &e" + amount + " &3homes from &e" + homeOwner.getNickname() + "&3. New limit: &e" + homeOwner.getHomesLimit());
 	}
 
 }

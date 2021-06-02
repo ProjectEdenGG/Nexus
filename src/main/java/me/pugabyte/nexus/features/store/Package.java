@@ -40,6 +40,7 @@ import me.pugabyte.nexus.models.boost.Booster;
 import me.pugabyte.nexus.models.boost.BoosterService;
 import me.pugabyte.nexus.models.contributor.Contributor;
 import me.pugabyte.nexus.models.contributor.ContributorService;
+import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -177,12 +178,16 @@ public enum Package {
 
 	@Id("2019261")
 	@Category(StoreCategory.MISC)
-	@Command("/permhelper add homes [player] 5")
 	@Display(Material.CYAN_BED)
 	EXTRA_SETHOMES {
 		@Override
+		public void handleApply(HasUniqueId uuid) {
+			new HomeService().get(uuid).addExtraHomes(5);
+		}
+
+		@Override
 		public int count(OfflinePlayer player) {
-			return NumericPermission.HOMES.getLimit(player);
+			return new HomeService().get(player).getHomesLimit();
 		}
 
 		@Override

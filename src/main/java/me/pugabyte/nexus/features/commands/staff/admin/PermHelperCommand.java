@@ -42,7 +42,6 @@ public class PermHelperCommand extends CustomCommand {
 	@AllArgsConstructor
 	@RequiredArgsConstructor
 	public enum NumericPermission {
-		HOMES("homes.limit."),
 		NPCS("citizens.npc.limit."),
 		PLOTS("plots.plot.", "creative"),
 		VAULTS("playervaults.amount."),

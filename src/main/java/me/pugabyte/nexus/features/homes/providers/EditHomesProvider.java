@@ -56,7 +56,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 
 	public void format_SetNewHome(InventoryContents contents) {
 		int homes = homeOwner.getHomes().size();
-		int max = homeOwner.getMaxHomes();
+		int max = homeOwner.getHomesLimit();
 		int left = max - homes;
 
 		ItemBuilder item = new ItemBuilder(Material.NAME_TAG);

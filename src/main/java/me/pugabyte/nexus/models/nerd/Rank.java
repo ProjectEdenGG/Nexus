@@ -237,4 +237,8 @@ public enum Rank implements IsColoredAndNamed {
 			next = next.getPromotion();
 		return next;
 	}
+
+	public int enabledOrdinal() {
+		return Arrays.stream(Rank.values()).filter(Rank::isActive).toList().indexOf(this);
+	}
 }

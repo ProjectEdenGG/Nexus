@@ -6,7 +6,6 @@ import com.gmail.nossr50.util.player.UserManager;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.model.Protection;
 import lombok.NonNull;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -128,7 +127,8 @@ public class AccountTransferCommand extends CustomCommand {
 
 				current.setAutoLock(previous.isAutoLock());
 				current.setUsedDeathHome(previous.isUsedDeathHome());
-				Nexus.getPerms().playerAdd(null, target, "homes.limit." + previous.getMaxHomes());
+				current.addExtraHomes(previous.getExtraHomes());
+				previous.setExtraHomes(0);
 
 				service.save(previous);
 				service.save(current);
