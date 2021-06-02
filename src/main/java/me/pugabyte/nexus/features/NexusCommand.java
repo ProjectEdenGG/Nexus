@@ -119,6 +119,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -427,6 +428,20 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void clearCache(MongoService service) {
 		service.clearCache();
 		send(PREFIX + service.getClass().getSimpleName() + " cached cleared");
+	}
+
+	@Path("cacheSize <service>")
+	void cacheSize(MongoService service) {
+		send(PREFIX + service.getClass().getSimpleName() + " cache size: &e" + service.getCache().size());
+	}
+
+	@SneakyThrows
+	@Path("allCacheSizes")
+	void allCacheSizes() {
+		services.values().stream()
+				.sorted(Comparator.comparing(service -> service.getCache().size()))
+				.forEach(service ->
+						send(PREFIX + service.getClass().getSimpleName() + " cache size: &e" + service.getCache().size()));
 	}
 
 	@Path("setFirstJoin <player> <date>")
