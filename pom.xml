@@ -106,6 +106,12 @@
     <properties>
         <lombok.encoding>UTF-8</lombok.encoding>
     </properties>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
     <repositories>
         <repository>
             <id>jitpack-repo</id>
