@@ -60,7 +60,6 @@ public class NPCUtilsCommand extends CustomCommand {
 
 		npcs.sort(comparator);
 
-
 		final BiFunction<NPC, String, JsonBuilder> formatter = (npc, index) -> {
 			final String extra;
 			if (radius == null)
@@ -72,6 +71,8 @@ public class NPCUtilsCommand extends CustomCommand {
 					.command("/mcmd npc sel " + npc.getId() + " ;; npc tp")
 					.hover("Click to teleport");
 		};
+
+		send(PREFIX + "Total: &e" + npcs.size());
 
 		paginate(npcs, formatter, command, page);
 	}
