@@ -258,6 +258,7 @@ public class MiniGolf {
 
 				Material _type = loc.getBlock().getType();
 				if (_type.equals(Material.LAVA) || _type.equals(Material.WATER)) {
+					user.sendMessage("  ball is in water/lava, respawning...");
 					MiniGolfUtils.respawnBall(ball);
 					continue;
 				}
@@ -272,6 +273,7 @@ public class MiniGolf {
 							continue;
 
 						if (ballHole == null || !ballHole.equals(user.getCurrentHole())) {
+							user.sendMessage("  ball landed in wrong hole, respawning...");
 							MiniGolfUtils.respawnBall(ball);
 							continue;
 						}
@@ -437,18 +439,22 @@ public class MiniGolf {
 							ball.setGravity(true);
 
 						if (ball.getLocation().getY() < 0) {
+							user.sendMessage("  ball is in void, respawning...");
 							MiniGolfUtils.respawnBall(ball);
 							break;
 						}
 
 						// Stop & respawn ball if slow enough
 						if (vel.getY() >= 0 && vel.length() <= 0.01) {
+							user.sendMessage("  ball is too slow, stopping...");
 							ball.setVelocity(new Vector(0, 0, 0));
 							ball.setGravity(false);
 							ball.teleport(ball.getLocation());
 
-							if (!MiniGolfUtils.isInBounds(user, ball.getLocation()))
+							if (!MiniGolfUtils.isInBounds(user, ball.getLocation())) {
+								user.sendMessage("    ball is out of bounds, respawning...");
 								MiniGolfUtils.respawnBall(ball);
+							}
 
 							break;
 						}
