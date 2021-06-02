@@ -128,6 +128,15 @@ public class MiniGolfCommand extends CustomCommand {
 		MiniGolfParticleMenu.getInv().open(player());
 	}
 
+	@Permission("group.admin")
+	@Path("debug <boolean>")
+	void debug(boolean bool) {
+		user.setDebug(bool);
+		service.save(user);
+
+		send("Set debug to: " + user.isDebug());
+	}
+
 	@Path("clearDatabase")
 	@Confirm
 	@Permission("group.admin")

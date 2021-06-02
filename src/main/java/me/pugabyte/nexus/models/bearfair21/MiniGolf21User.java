@@ -46,6 +46,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	private MiniGolfParticle miniGolfParticle = null;
 	private boolean playing = false;
 	private boolean rainbow = false;
+	private boolean debug = false;
 	//
 	private Set<MiniGolfHole> holeInOne = new HashSet<>();
 	private Map<MiniGolfHole, Integer> score = new HashMap<>();
@@ -61,6 +62,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 
 	public void removeBall() {
 		if (snowball != null) {
+			getOnlinePlayer().sendMessage("removing ball from user");
 			snowball.remove();
 			snowball = null;
 			ballLocation = null;
@@ -90,4 +92,8 @@ public class MiniGolf21User implements PlayerOwnedObject {
 		return this.miniGolfColor.getColorType().getGlowColor();
 	}
 
+	public void debug(String debug) {
+		if (this.isDebug())
+			sendMessage(debug);
+	}
 }

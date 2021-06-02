@@ -82,6 +82,8 @@ public class MiniGolfUtils {
 		if (user == null)
 			return;
 
+		user.debug("found user from ball, respawning ball...");
+
 		ball.setVelocity(new Vector(0, 0, 0));
 		ball.setGravity(false);
 		ball.teleport(user.getBallLocation().add(0, MiniGolf.getFloorOffset(), 0));

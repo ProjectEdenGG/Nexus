@@ -76,11 +76,10 @@ public class ProjectileListener implements Listener {
 
 			// Golf ball hit entity
 			if (event.getHitBlockFace() == null) {
-				user.sendMessage("ball hit an entity, canceling event");
-				event.setCancelled(true);
+				user.debug("ball hit an entity");
 				Material _mat = loc.getBlock().getType();
 				if (killMaterial.contains(_mat)) {
-					user.sendMessage("  ball is on a killMaterial, respawning...");
+					user.debug("  ball is on a killMaterial, respawning...");
 					MiniGolfUtils.respawnBall(ball);
 				}
 				return;
@@ -119,14 +118,14 @@ public class ProjectileListener implements Listener {
 						} else {
 							Material _mat = loc.getBlock().getType();
 							if (killMaterial.contains(mat) || killMaterial.contains(_mat)) {
-								user.sendMessage("  ball hit out of bounds, respawning...");
+								user.debug("  ball hit out of bounds, respawning...");
 								// Ball hit out of bounds
 								MiniGolfUtils.respawnBall(ball);
 								return;
 							}
 
 							if (vel.getY() >= 0 && vel.length() <= 0.01 && !MiniGolf.getInBounds().contains(mat)) {
-								user.sendMessage("  ball stopped out of bounds, respawning...");
+								user.debug("  ball stopped out of bounds, respawning...");
 								// Ball stopped in out of bounds
 								MiniGolfUtils.respawnBall(ball);
 								return;
