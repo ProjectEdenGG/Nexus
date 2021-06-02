@@ -30,7 +30,7 @@ public class LightsTaskPartData extends SabotageTaskPartData {
 	}
 
 	@Override
-	public boolean hasTask() {
+	public boolean hasRunnable() {
 		return false;
 	}
 }

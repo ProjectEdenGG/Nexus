@@ -59,6 +59,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
@@ -124,7 +125,7 @@ public class SabotageMatchData extends MatchData {
 	private final Set<Tasks> commonTasks = randomTasks(Tasks.TaskType.COMMON);
 	private final Map<UUID, Location> venters = new HashMap<>();
 	private final Map<UUID, Location> lightMap = new HashMap<>();
-	private final Set<ArmorStandTask> armorStandTasks = armorStandTasksInit();
+	private Set<ArmorStandTask> armorStandTasks = null;
 
 	private Set<ArmorStandTask> armorStandTasksInit() {
 		Set<ArmorStandTask> set = new HashSet<>();
@@ -179,10 +180,18 @@ public class SabotageMatchData extends MatchData {
 	private Set<Tasks> randomTasks(Tasks.TaskType type) {
 		List<Tasks> legalTasks = Tasks.getByType(type).stream().filter(tasks -> getArena().getTasks().contains(tasks)).collect(Collectors.toList());
 		Collections.shuffle(legalTasks);
+		List<Tasks> finalTasks = new ArrayList<>();
+		Set<String> groups = new HashSet<>();
+		legalTasks.forEach(task -> {
+			String group = task.getGroup();
+			if (groups.contains(group)) return;
+			groups.add(group);
+			finalTasks.add(task);
+		});
 		int maxTasks = getArena().maxTasksOf(type);
-		while (legalTasks.size() > maxTasks)
-			legalTasks.remove(0);
-		return new HashSet<>(legalTasks);
+		while (finalTasks.size() > maxTasks)
+			finalTasks.remove(0);
+		return new HashSet<>(finalTasks);
 	}
 
 	public SabotageArena getArena() {
@@ -389,6 +398,7 @@ public class SabotageMatchData extends MatchData {
 			});
 			if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR)
 				putKillCooldown(minigamer);
+			minigamer.getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
 		});
 		endMeetingTask = match.getTasks().wait(TimeUtils.Time.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
 	}
@@ -462,8 +472,9 @@ public class SabotageMatchData extends MatchData {
 				SabotageTeam.IMPOSTOR.players(match).forEach(Minigamer::scored);
 				match.end();
 			});
-		if (data.hasTask())
-			customSabotageTaskId = match.getTasks().repeat(0, 1, () -> data.task(match));
+		if (data.hasRunnable())
+			customSabotageTaskId = match.getTasks().repeat(0, 1, () -> data.runnable(match));
+		match.getMinigamers().forEach(this::initGlow);
 	}
 
 	public void endSabotage() {
@@ -477,6 +488,7 @@ public class SabotageMatchData extends MatchData {
 			customSabotageTaskId = -1;
 		}
 		sabotageStarted = null;
+		match.getMinigamers().forEach(this::initGlow);
 	}
 
 	public Set<Task> getTasks(Minigamer player) {
@@ -507,24 +519,35 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public void initGlow(Minigamer minigamer) {
+		if (armorStandTasks == null)
+			armorStandTasks = armorStandTasksInit();
+
 		Player player = minigamer.getPlayer();
 		List<ArmorStand> disable = new ArrayList<>();
 		List<ArmorStand> enable = new ArrayList<>();
-		Set<TaskPart> tasks = getTasks(minigamer).stream().map(Task::nextPart).filter(Objects::nonNull).collect(Collectors.toSet());
+
+		Set<TaskPart> tasks;
+		if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR) {
+			if (sabotage != null)
+				tasks = Set.of(sabotage.nextPart());
+			else
+				tasks = Set.of();
+		} else
+			tasks = getTasks(minigamer).stream().map(Task::nextPart).filter(Objects::nonNull).collect(Collectors.toSet());
+
 		armorStandTasks.forEach(armorStandTask -> {
 			ArmorStand entity = armorStandTask.getEntity();
 			if (tasks.contains(armorStandTask.part)) {
-				PlayerUtils.Dev.LEXI.send("enabled " + armorStandTask.part.getName());
 				enable.add(entity);
 				ItemStack item = armorStandTask.part.getInteractionItem();
 				if (item.getType() == Material.BARRIER)
-					PacketUtils.sendFakeItem(entity, minigamer, new ItemBuilder(Material.BARRIER).customModelData(2).build(), EnumItemSlot.HEAD);
+					match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, EXCLAMATION_ITEM.get(), EnumItemSlot.HEAD));
 			} else {
 				disable.add(entity);
-				PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumItemSlot.HEAD);
+				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumItemSlot.HEAD));
 			}
 		});
-		GlowAPI.setGlowing(disable, GlowAPI.Color.NONE, player);
+		GlowAPI.setGlowing(disable, null, player);
 		GlowAPI.setGlowing(enable, GlowAPI.Color.WHITE, player);
 	}
 

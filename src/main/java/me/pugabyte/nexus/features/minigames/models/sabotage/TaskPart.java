@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.AbstractTaskMenu;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.LightsTask;
+import me.pugabyte.nexus.features.menus.sabotage.tasks.MedicalScanTask;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.ReactorTask;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.SwipeCardTask;
 import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.LightsTaskPartData;
@@ -87,6 +88,10 @@ public class TaskPart {
         return part;
     }
 
+    private static TaskPart add(TaskPartBuilder part) {
+        return add(part.build());
+    }
+
     public static TaskPart get(ItemStack interactionItem) {
         return itemMap.get(interactionItem.asOne());
     }
@@ -94,7 +99,8 @@ public class TaskPart {
     private static final ItemStack EMPTY_ITEM = new ItemBuilder(Material.BARRIER).customModelData(1).build();
     private static ItemStack EMPTY_ITEM(String name) {return new ItemBuilder(EMPTY_ITEM).name(name).build();}
 
-    public static final TaskPart SWIPE_CARD = add(builder().name("Swipe Card").interactionItem(EMPTY_ITEM("Swipe Card")).menu(SwipeCardTask.class).build());
-    public static final TaskPart LIGHTS = add(builder().name("Fix Lights").interactionItem(new ItemBuilder(Material.REDSTONE_BLOCK)).data(LightsTaskPartData.class).menu(LightsTask.class).build()); // TODO: model/texture
-    public static final TaskPart REACTOR = add(builder().name("Reactor Meltdown").interactionItem(new ItemBuilder(Material.ICE).customModelData(904)).data(ReactorTaskPartData.class).menu(ReactorTask.class).build());
+    public static final TaskPart SWIPE_CARD = add(builder().name("Swipe Card").interactionItem(EMPTY_ITEM("Swipe Card")).menu(SwipeCardTask.class));
+    public static final TaskPart LIGHTS = add(builder().name("Fix Lights").interactionItem(new ItemBuilder(Material.ICE).customModelData(905)).data(LightsTaskPartData.class).menu(LightsTask.class));
+    public static final TaskPart REACTOR = add(builder().name("Reactor Meltdown").interactionItem(new ItemBuilder(Material.ICE).customModelData(904)).data(ReactorTaskPartData.class).menu(ReactorTask.class));
+    public static final TaskPart SUBMIT_SCAN = add(builder().name("Submit Scan").interactionItem(EMPTY_ITEM("Medical Scan")).menu(MedicalScanTask.class).menu(MedicalScanTask.class));
 }

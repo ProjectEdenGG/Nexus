@@ -21,12 +21,12 @@ public class ReactorTask extends AbstractTaskMenu {
 	private final SmartInventory inventory = SmartInventory.builder()
 			.title(TITLE)
 			.provider(this)
-			.size(3, 3)
+			.size(3, 9)
 			.build();
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(1, 1, ClickableItem.empty(new ItemBuilder(Material.RED_CONCRETE).name("&cWaiting...").lore("&4Waiting for another crew member").build()));
+		contents.set(1, 4, ClickableItem.empty(new ItemBuilder(Material.RED_CONCRETE).name("&cWaiting...").lore("&4Waiting for another crew member").build()));
 	}
 
 	public static boolean isOpen(HasPlayer player) {

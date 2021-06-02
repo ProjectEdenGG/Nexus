@@ -20,12 +20,12 @@ public class ReactorTaskPartData extends SabotageTaskPartData {
 	}
 
 	@Override
-	public boolean hasTask() {
+	public boolean hasRunnable() {
 		return true;
 	}
 
 	@Override
-	public void task(Match match) {
+	public void runnable(Match match) {
 		List<Player> players = match.getAlivePlayers().stream().filter(ReactorTask::isOpen).collect(Collectors.toList());
 		if (players.size() == 2) {
 			players.forEach(Player::closeInventory);

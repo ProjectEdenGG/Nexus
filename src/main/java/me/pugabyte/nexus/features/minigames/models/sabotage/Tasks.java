@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 public enum Tasks {
     SWIPE_CARD(TaskType.COMMON, TaskPart.SWIPE_CARD),
     LIGHTS(TaskType.SABOTAGE, TaskPart.LIGHTS),
-    REACTOR(TaskType.SABOTAGE, TaskPart.REACTOR)
+    REACTOR(TaskType.SABOTAGE, TaskPart.REACTOR),
+    SUBMIT_SCAN(TaskType.SHORT, TaskPart.SUBMIT_SCAN),
     ;
 
     private final TaskType taskType;
@@ -25,6 +26,10 @@ public enum Tasks {
         Validate.notEmpty(parts, "Tasks must specify atleast one part");
         this.taskType = taskType;
         this.parts = parts;
+    }
+
+    public String getGroup() {
+        return name().split("\\d")[0];
     }
 
     public enum TaskType {

@@ -96,7 +96,10 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 // TODO: vent animation (open/close trapdoor)
 // TODO: doors
 // TODO: show count of all teams on start
-// TODO: set up vents + rooms on Skeld
+// TODO: show sabotage duration + progress on sidebar
+// TODO: crisis sfx
+// TODO: flash the red worldborder color during crisis??
+// TODO: let impostors fix sabotages
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;
@@ -201,10 +204,8 @@ public class Sabotage extends TeamMechanic {
 		matchData.setRoundStarted();
 		SabotageTeam.IMPOSTOR.players(match).forEach(matchData::putKillCooldown);
 		match.showBossBar(matchData.getBossbar());
-		match.getMinigamers().forEach(minigamer -> {
-			Chat.setActiveChannel(minigamer, matchData.getGameChannel());
-			matchData.initGlow(minigamer);
-		});
+		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, matchData.getGameChannel()));
+		match.getTasks().wait(TimeUtils.Time.SECOND.x(1.5), () -> match.getMinigamers().forEach(matchData::initGlow));
 		match.getTasks().repeatAsync(0, 1, () -> {
 			if (matchData.isMeetingActive()) return;
 			int lightLevel = matchData.lightLevel();
@@ -287,7 +288,7 @@ public class Sabotage extends TeamMechanic {
 		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMinigamer());
 		event.getMinigamer().sendActionBar(new JsonBuilder("Task Complete!", NamedTextColor.GREEN));
 		SabotageMatchData matchData = match.getMatchData();
-		matchData.initGlow(event.getMinigamer());
+		match.getTasks().wait(1, () -> matchData.initGlow(event.getMinigamer()));
 		if (matchData.getProgress() == 1)
 			match.end();
 	}
@@ -513,20 +514,22 @@ public class Sabotage extends TeamMechanic {
 
 	@Override
 	public void announceWinners(Match match) {
-		List<Minigamer> winners = match.getMinigamers().stream().filter(minigamer -> minigamer.getScore() > 0).collect(Collectors.toList());
-		JsonBuilder builder = new JsonBuilder();
-		if (winners.isEmpty())
-			builder.group().next("&bThe Crewmates")
-					.hover(new JsonBuilder(AdventureUtils.commaJoinText(winners)).color(NamedTextColor.DARK_AQUA))
-					.group().color(NamedTextColor.DARK_AQUA).next(" have won on ");
-		else {
-			builder.next(AdventureUtils.commaJoinText(winners.stream().map(minigamer -> {
-				SabotageTeam team = SabotageTeam.of(minigamer);
-				return new JsonBuilder(minigamer.getNickname(), team.colored()).hover(team); // weirdly required cast
-			}).collect(Collectors.toList())));
-			builder.next(StringUtils.plural(" has won on ", " have won on ", winners.size()));
+		if (false) {
+			List<Minigamer> winners = match.getMinigamers().stream().filter(minigamer -> minigamer.getScore() > 0).collect(Collectors.toList());
+			JsonBuilder builder = new JsonBuilder();
+			if (winners.isEmpty())
+				builder.group().next("&bThe Crewmates")
+						.hover(new JsonBuilder(AdventureUtils.commaJoinText(winners)).color(NamedTextColor.DARK_AQUA))
+						.group().color(NamedTextColor.DARK_AQUA).next(" have won on ");
+			else {
+				builder.next(AdventureUtils.commaJoinText(winners.stream().map(minigamer -> {
+					SabotageTeam team = SabotageTeam.of(minigamer);
+					return new JsonBuilder(minigamer.getNickname(), team.colored()).hover(team); // weirdly required cast
+				}).collect(Collectors.toList())));
+				builder.next(StringUtils.plural(" has won on ", " have won on ", winners.size()));
+			}
+			Minigames.broadcast(builder.next(match.getArena()));
 		}
-		Minigames.broadcast(builder.next(match.getArena()));
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

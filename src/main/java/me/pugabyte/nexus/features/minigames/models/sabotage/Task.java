@@ -29,7 +29,7 @@ public class Task {
     }
 
     public TaskPart nextPart() {
-        if (completed == task.getParts().length)
+        if (completed >= task.getParts().length)
             return null;
         TaskPart part = task.getParts()[completed];
         if (data == null)
