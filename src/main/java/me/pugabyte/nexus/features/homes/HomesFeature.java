@@ -29,8 +29,9 @@ public class HomesFeature extends Feature {
 			deleted.clear();
 			List<HomeOwner> all = service.getAll();
 			all.forEach(homeOwner -> {
-				homeOwner.getHomes().stream().filter(home ->
-						home.getLocation() == null || home.getLocation().getWorld() == null || home.getLocation().getWorld().getName().equals(world)
+				homeOwner.getHomes().stream().filter(home -> home.getLocation() == null
+						|| home.getLocation().getWorld() == null
+						|| home.getLocation().getWorld().getName().equals(world)
 				).forEach(deleted::add);
 
 				deleted.forEach(homeOwner::delete);
@@ -40,7 +41,8 @@ public class HomesFeature extends Feature {
 				service.saveSync(homeOwner);
 			});
 
-			callback.run();
+			if (callback != null)
+				callback.run();
 		});
 	}
 

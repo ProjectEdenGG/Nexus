@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.listeners;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.homes.HomesFeature;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -209,8 +210,7 @@ public class ResourceWorld implements Listener {
 	private static final int radius = 7500;
 
 	public static void reset(boolean test) {
-		NPC filid = CitizensAPI.getNPCRegistry().getById(filidId);
-		filid.despawn();
+		getFilidNPC().despawn();
 
 		AtomicInteger wait = new AtomicInteger();
 		Tasks.wait(wait.getAndAdd(5), () -> {
@@ -224,18 +224,14 @@ public class ResourceWorld implements Listener {
 				File newFolder = Paths.get(root + "old_" + worldName).toFile();
 
 				World world = Bukkit.getWorld(worldName);
-				if (world == null) {
-					Nexus.severe("World " + worldName + " not loaded");
-					return;
-				}
-
-				try {
-					Nexus.getMultiverseCore().getMVWorldManager().unloadWorld(worldName);
-				} catch (Exception ex) {
-					Nexus.severe("Error unloading world " + worldName);
-					ex.printStackTrace();
-					return;
-				}
+				if (world != null)
+					try {
+						Nexus.getMultiverseCore().getMVWorldManager().unloadWorld(worldName);
+					} catch (Exception ex) {
+						Nexus.severe("Error unloading world " + worldName);
+						ex.printStackTrace();
+						return;
+					}
 
 				if (newFolder.exists())
 					if (!newFolder.delete()) {
@@ -275,24 +271,28 @@ public class ResourceWorld implements Listener {
 				});
 			}
 		});
+	}
 
-		Tasks.wait(wait.getAndAdd(20), () -> {
-			String worldName = (test ? "test_" : "") + "resource";
+	public static void setup(boolean test) {
+		String worldName = (test ? "test_" : "") + "resource";
 
-			new WorldEditUtils(worldName).paster()
-					.file("resource-world-spawn")
-					.at(new Location(Bukkit.getWorld(worldName), 0, 150, 0))
-					.air(false)
-					.paste();
+		new WorldEditUtils(worldName).paster()
+				.file("resource-world-spawn")
+				.at(new Location(Bukkit.getWorld(worldName), 0, 150, 0))
+				.air(false)
+				.paste();
 
-			Warp warp = new WarpService().get(worldName, WarpType.NORMAL);
-			Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
-			filid.spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
+		Warp warp = new WarpService().get(worldName, WarpType.NORMAL);
+		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
+		getFilidNPC().spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
 
-			runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
-			runCommandAsConsole("bluemap purge " + worldName);
-			Tasks.wait(wait.getAndAdd(10), () -> runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle"));
-		});
+		runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
+		runCommandAsConsole("bluemap purge " + worldName);
+		Tasks.wait(Time.MINUTE, () -> runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle"));
+	}
+
+	private static NPC getFilidNPC() {
+		return CitizensAPI.getNPCRegistry().getById(filidId);
 	}
 
 }

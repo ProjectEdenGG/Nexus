@@ -378,6 +378,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		ResourceWorld.reset(test);
 	}
 
+	@Confirm
+	@Path("resourceWorld setup <test>")
+	void resourceWorldSetup(boolean test) {
+		ResourceWorld.setup(test);
+	}
+
 	@Path("listTest <player...>")
 	void listTest(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(players.stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
