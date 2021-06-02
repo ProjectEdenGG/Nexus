@@ -144,17 +144,26 @@ public class CitizensUtils {
 		private boolean filter(NPC npc) {
 			if (owner != null && !owner.equals(npc.getTrait(Owner.class).getOwnerId()))
 				return false;
+
 			if (spawned != null && (npc.getStoredLocation() == null || !npc.isSpawned()) && spawned)
 				return false;
+
 			if (npc.getStoredLocation() == null)
-				return true;
+				return false;
+
 			if (world != null && !world.equals(npc.getStoredLocation().getWorld()))
 				return false;
+
 			if (region != null && !region.contains(WorldGuardUtils.toBlockVector3(npc.getStoredLocation())))
 				return false;
-			if (radius != null && from != null)
-				if (from.getWorld().equals(npc.getStoredLocation().getWorld()) && from.distance(npc.getStoredLocation()) > radius)
+
+			if (radius != null && from != null) {
+				if (!from.getWorld().equals(npc.getStoredLocation().getWorld()))
 					return false;
+				if (from.distance(npc.getStoredLocation()) > radius)
+					return false;
+			}
+
 			return true;
 		}
 

@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.CitizensUtils;
@@ -22,6 +23,7 @@ import org.bukkit.World;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.StringUtils.toHex;
@@ -55,14 +57,16 @@ ColorUtilsCommand extends CustomCommand {
 		send(StringUtils.getLastColor(message) + "Last color");
 	}
 
-	@Path("gradient <colors> <input>")
-	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
-		send(Gradient.of(colors).apply(input));
+	@Path("gradient <colors> <input> [--decolorize]")
+	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input, @Switch boolean decolorize) {
+		final String gradient = Gradient.of(colors).apply(input);
+		player().sendMessage(decolorize ? decolorize(gradient) : colorize(gradient));
 	}
 
-	@Path("rainbow <input>")
-	void rainbow(String input) {
-		send(Rainbow.apply(input));
+	@Path("rainbow <input...> [--decolorize]")
+	void rainbow(String input, @Switch boolean decolorize) {
+		final String rainbow = Rainbow.apply(input);
+		player().sendMessage(decolorize ? decolorize(rainbow) : colorize(rainbow));
 	}
 
 	@Path("updateAllHOHNpcs")
