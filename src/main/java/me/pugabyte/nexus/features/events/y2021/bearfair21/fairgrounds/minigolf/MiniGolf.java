@@ -137,18 +137,13 @@ public class MiniGolf {
 		// Kit
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!BearFair21.isAtBearFair(player))
-					continue;
-
+				MiniGolf21User user = service.get(player);
 				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
 
-				MiniGolf21User user = service.get(player);
-				if (user.isPlaying() && regions == 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+				if (user.isPlaying() && regions == 0)
 					PlayerUtils.runCommand(player, "minigolf quit");
-				} else if (!user.isPlaying() && regions > 0 && player.getGameMode().equals(GameMode.SURVIVAL)) {
+				else if (!user.isPlaying() && regions > 0 && player.getGameMode().equals(GameMode.SURVIVAL))
 					PlayerUtils.runCommand(player, "minigolf play");
-				}
-
 			}
 		});
 
@@ -444,8 +439,14 @@ public class MiniGolf {
 							break;
 						}
 
+
 						// Stop & respawn ball if slow enough
-						if (vel.getY() >= 0 && vel.length() <= 0.01) {
+						if (vel.getY() > 0 && vel.length() < 0.01) {
+
+							// ball is already stopped
+							if (vel.length() == 0.0)
+								break;
+
 							user.sendMessage("  ball is too slow, stopping...");
 							ball.setVelocity(new Vector(0, 0, 0));
 							ball.setGravity(false);
