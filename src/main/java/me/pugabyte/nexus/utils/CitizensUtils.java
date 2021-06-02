@@ -122,21 +122,24 @@ public class CitizensUtils {
 
 	/**
 	 * Gets a list of NPCs owned by the specified player in a provided world. All parameters are optional.
-	 * @deprecated replaced by {@link GetNPCs}
+	 * @deprecated replaced by {@link NPCFinder}
 	 */
 	@NotNull
 	@Deprecated
 	public static List<NPC> list(@Nullable OfflinePlayer player, @Nullable World world, @Nullable Boolean spawned) {
-		return GetNPCs.builder().owner(player).world(world).spawned(spawned).build().get();
+		return NPCFinder.builder().owner(player).world(world).spawned(spawned).build().get();
 	}
 
 	@Builder
-	public static class GetNPCs {
-		private final @Nullable World world;
-		private final @Nullable ProtectedRegion region;
+	public static class NPCFinder {
 		@Builder.Default
 		private final @Nullable Boolean spawned = true;
+		private final @Nullable ProtectedRegion region;
+		private final @Nullable World world;
 		private final @Nullable UUID owner;
+
+		private final @Nullable Integer radius;
+		private final @Nullable Location from;
 
 		private boolean filter(NPC npc) {
 			if (owner != null && !owner.equals(npc.getTrait(Owner.class).getOwnerId()))
@@ -149,6 +152,9 @@ public class CitizensUtils {
 				return false;
 			if (region != null && !region.contains(WorldGuardUtils.toBlockVector3(npc.getStoredLocation())))
 				return false;
+			if (radius != null && from != null)
+				if (from.getWorld().equals(npc.getStoredLocation().getWorld()) && from.distance(npc.getStoredLocation()) > radius)
+					return false;
 			return true;
 		}
 
@@ -161,13 +167,13 @@ public class CitizensUtils {
 			return !get().isEmpty();
 		}
 
-		public static class GetNPCsBuilder {
-			public @Contract("_ -> this") GetNPCsBuilder owner(@Nullable UUID owner) {
+		public static class NPCFinderBuilder {
+			public @Contract("_ -> this") NPCFinderBuilder owner(@Nullable UUID owner) {
 				this.owner = owner;
 				return this;
 			}
 
-			public @Contract("_ -> this") GetNPCsBuilder owner(@Nullable HasUniqueId owner) {
+			public @Contract("_ -> this") NPCFinderBuilder owner(@Nullable HasUniqueId owner) {
 				if (owner == null)
 					return this;
 				return owner(owner.getUniqueId());
@@ -176,7 +182,7 @@ public class CitizensUtils {
 			/**
 			 * Sets the region and, if unset, the world of the builder
 			 */
-			public @Contract("_ -> this") GetNPCsBuilder region(@Nullable ProtectedRegion region) {
+			public @Contract("_ -> this") NPCFinderBuilder region(@Nullable ProtectedRegion region) {
 				if (region != null) {
 					this.region = region;
 					if (world == null)
@@ -189,7 +195,7 @@ public class CitizensUtils {
 			 * Sets the region of the builder. {@link #world(World)} must be set first.
 			 * @throws IllegalArgumentException method was called before the world was set or the region was not found
 			 */
-			public @Contract("_ -> this") GetNPCsBuilder region(@Nullable String regionName) throws IllegalArgumentException {
+			public @Contract("_ -> this") NPCFinderBuilder region(@Nullable String regionName) throws IllegalArgumentException {
 				if (regionName == null)
 					return this;
 				if (world == null)

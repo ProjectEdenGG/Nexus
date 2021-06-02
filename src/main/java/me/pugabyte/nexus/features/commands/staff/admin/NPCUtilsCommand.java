@@ -9,7 +9,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.utils.CitizensUtils;
+import me.pugabyte.nexus.utils.CitizensUtils.NPCFinder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -17,9 +17,9 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -32,17 +32,16 @@ public class NPCUtilsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@NotNull
-	private JsonBuilder getClickToTeleport(NPC npc) {
-		return json("&3" + npc.getId() + " &e" + npc.getName() + " &7- " + npc.getStoredLocation().getWorld().getName())
-				.command("/mcmd npc sel " + npc.getId() + " ;; npc tp")
-				.hover("Click to teleport");
-	}
-
 	@Async
-	@Path("list [page] [--owner] [--world] [--spawned]")
-	void getByOwner(@Arg("1") int page, @Switch OfflinePlayer owner, @Switch World world, @Switch Boolean spawned) {
-		List<NPC> npcs = CitizensUtils.list(owner, world, spawned);
+	@Path("list [page] [--owner] [--world] [--radius] [--spawned]")
+	void getByOwner(@Arg("1") int page, @Switch OfflinePlayer owner, @Switch World world, @Switch Integer radius, @Switch Boolean spawned) {
+		List<NPC> npcs = NPCFinder.builder()
+				.owner(owner)
+				.world(world)
+				.spawned(spawned)
+				.radius(radius)
+				.from(location())
+				.build().get();
 
 		if (npcs.isEmpty())
 			error("No matches found");
@@ -50,15 +49,41 @@ public class NPCUtilsCommand extends CustomCommand {
 		String command = "/npcutils list" +
 				" --player=" + (owner == null ? "null" : owner.getName()) +
 				" --world=" + (world == null ? "null" : world.getName()) +
+				" --radius=" + (radius == null ? "null" : radius) +
 				" --spawned=" + spawned;
 
-		paginate(npcs, (npc, index) -> getClickToTeleport(npc), command, page);
+		Comparator<NPC> comparator;
+		if (radius != null)
+			comparator = Comparator.comparingDouble(npc -> location().distance(npc.getStoredLocation()));
+		else
+			comparator = Comparator.comparing(NPC::getId);
+
+		npcs.sort(comparator);
+
+
+		final BiFunction<NPC, String, JsonBuilder> formatter = (npc, index) -> {
+			final String extra;
+			if (radius == null)
+				extra = npc.getStoredLocation().getWorld().getName();
+			else
+				extra = StringUtils.getDf().format(location().distance(npc.getStoredLocation())) + "m";
+
+			return json("&3" + npc.getId() + " &e" + npc.getName() + " &7- " + extra)
+					.command("/mcmd npc sel " + npc.getId() + " ;; npc tp")
+					.hover("Click to teleport");
+		};
+
+		paginate(npcs, formatter, command, page);
 	}
 
 	@Async
 	@Path("removeDespawned [--owner] [--world]")
 	void removeDespawned(@Switch OfflinePlayer owner, @Switch World world) {
-		List<NPC> npcs = CitizensUtils.list(owner, world, false);
+		List<NPC> npcs = NPCFinder.builder()
+				.owner(owner)
+				.world(world)
+				.spawned(false)
+				.build().get();
 
 		if (npcs.isEmpty())
 			error("No matches found");

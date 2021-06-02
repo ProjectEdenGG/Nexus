@@ -8,6 +8,7 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.CitizensUtils;
+import me.pugabyte.nexus.utils.CitizensUtils.NPCFinder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.npc.NPC;
@@ -63,7 +64,7 @@ public class Pride21Command extends CustomCommand {
 			error("Could not load the event world, please report to a dev <3");
 
 		WorldGuardUtils wgUtils = new WorldGuardUtils(world);
-		for (NPC npc : CitizensUtils.GetNPCs.builder().owner(player).world(world).region(wgUtils.getProtectedRegion("pride21_parade")).build().get())
+		for (NPC npc : NPCFinder.builder().owner(player).world(world).region(wgUtils.getProtectedRegion("pride21_parade")).build().get())
 			npc.destroy();
 
 		setting.setBoolean(false);

@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.NonNull;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.utils.CitizensUtils.NPCFinder;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -179,7 +180,7 @@ public class WorldGuardUtils {
 	}
 
 	public Collection<NPC> getNPCsInRegion(ProtectedRegion region) {
-		return CitizensUtils.GetNPCs.builder().world(world).region(region).build().get();
+		return NPCFinder.builder().world(world).region(region).build().get();
 	}
 
 	public Collection<Entity> getEntitiesInRegion(String region) {
