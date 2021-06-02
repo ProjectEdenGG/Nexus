@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
@@ -30,14 +31,11 @@ public class ProjectileListener implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onProjectileHit(ProjectileHitEvent event) {
 		Entity entity = event.getEntity();
-		if (!BearFair21.isAtBearFair(entity))
-			return;
-
-		if (!MiniGolfUtils.isInMiniGolf(entity.getLocation()))
-			return;
+		if (!BearFair21.isAtBearFair(entity)) return;
+		if (!MiniGolfUtils.isInMiniGolf(entity.getLocation())) return;
 
 		// Check if golf ball
 		if (entity instanceof Snowball) {
@@ -78,10 +76,13 @@ public class ProjectileListener implements Listener {
 
 			// Golf ball hit entity
 			if (event.getHitBlockFace() == null) {
+				user.sendMessage("ball hit an entity, canceling event");
 				event.setCancelled(true);
 				Material _mat = loc.getBlock().getType();
-				if (killMaterial.contains(_mat))
+				if (killMaterial.contains(_mat)) {
+					user.sendMessage("  ball is on a killMaterial, respawning...");
 					MiniGolfUtils.respawnBall(ball);
+				}
 				return;
 			}
 
@@ -118,12 +119,14 @@ public class ProjectileListener implements Listener {
 						} else {
 							Material _mat = loc.getBlock().getType();
 							if (killMaterial.contains(mat) || killMaterial.contains(_mat)) {
+								user.sendMessage("  ball hit out of bounds, respawning...");
 								// Ball hit out of bounds
 								MiniGolfUtils.respawnBall(ball);
 								return;
 							}
 
 							if (vel.getY() >= 0 && vel.length() <= 0.01 && !MiniGolf.getInBounds().contains(mat)) {
+								user.sendMessage("  ball stopped out of bounds, respawning...");
 								// Ball stopped in out of bounds
 								MiniGolfUtils.respawnBall(ball);
 								return;

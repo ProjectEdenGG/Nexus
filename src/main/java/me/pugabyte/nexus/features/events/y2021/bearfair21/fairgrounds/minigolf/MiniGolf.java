@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+// TODO BF21: ball doesn't get deleted when it hits an entity, and respawns
 public class MiniGolf {
 	// @formatter:off
 	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
@@ -462,15 +463,13 @@ public class MiniGolf {
 	}
 
 	private Vector getDirection(BlockFace face, double power) {
-		Vector vector = switch (face) {
+		return switch (face) {
 			case NORTH -> new Vector(0, 0, power);
 			case SOUTH -> new Vector(0, 0, -power);
 			case EAST -> new Vector(-power, 0, 0);
 			case WEST -> new Vector(power, 0, 0);
 			default -> null;
 		};
-
-		return vector;
 	}
 
 }
