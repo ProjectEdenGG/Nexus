@@ -147,6 +147,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_MINERALS = new MaterialTag(MINERAL_ORES, MINERAL_NUGGETS, MINERAL_INGOTS, MINERAL_BLOCKS);
 
 	public static final MaterialTag ALL_DIRT = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT, GRASS_PATH, MYCELIUM);
+	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, RED_SAND);
 
 	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(BLAST_FURNACE, SMOKER,
 			CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,

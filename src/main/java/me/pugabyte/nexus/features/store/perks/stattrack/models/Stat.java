@@ -19,6 +19,7 @@ public enum Stat {
 	STONE_MINED(Tool.PICKAXE, MaterialTag.ALL_STONE),
 	WOOD_CHOPPED(Tool.AXE, MaterialTag.ALL_WOOD),
 	DIRT_EXCAVATED(Tool.SHOVEL, MaterialTag.ALL_DIRT),
+	SAND_EXCAVATED(Tool.SHOVEL, MaterialTag.ALL_SAND),
 	PATHS_CREATED(Tool.SHOVEL, Material.GRASS_PATH),
 	DIRT_TILLED(Tool.HOE, Material.FARMLAND),
 	FLOWERS_PICKED(Tool.SHEARS, MaterialTag.ALL_FLOWERS);
@@ -57,5 +58,9 @@ public enum Stat {
 
 	public String toString() {
 		return (name().charAt(0) + name().substring(1).toLowerCase()).replaceAll("_", " ");
+	}
+
+	public static Stat of(String stat) {
+		return valueOf(stat.replaceAll(" ", "_").toUpperCase());
 	}
 }

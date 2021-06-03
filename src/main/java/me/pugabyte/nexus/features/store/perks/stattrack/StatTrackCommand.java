@@ -39,6 +39,7 @@ public class StatTrackCommand extends CustomCommand {
 				return;
 			}
 		}
+
 		send(PREFIX + "Statistic tracking cannot be enabled on " + camelCase(item.getType()));
 	}
 
