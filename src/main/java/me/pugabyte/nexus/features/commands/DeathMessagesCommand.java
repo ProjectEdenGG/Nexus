@@ -24,12 +24,12 @@ import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -84,73 +84,57 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	public void onDeath(PlayerDeathEvent event) {
 		String deathString = event.getDeathMessage();
 		Player player = event.getEntity();
-		DeathMessagesService service = new DeathMessagesService();
 		DeathMessages deathMessages = service.get(player);
 
 		Component deathMessageRaw = event.deathMessage();
-
-		TextComponent output = Component.text("☠ ", NamedTextColor.RED);
-		if (deathMessageRaw == null) {
+		if (deathMessageRaw == null)
 			return;
-		} else if (deathMessageRaw instanceof TextComponent) {
-			// i'm still mad that i have to do this
-			Component deathMessage = deathMessageRaw;
-			TextReplacementConfig replacementConfig1 = TextReplacementConfig.builder()
-					.matchLiteral(player.getName())
-					.replacement(
-							Component.text(deathMessages.getNickname(), NamedTextColor.YELLOW)
-					).build();
-			deathMessage = deathMessage.replaceText(replacementConfig1);
 
-			if (player.getKiller() != null) {
-				Player killer = player.getKiller();
-				TextReplacementConfig replacementConfig2 = TextReplacementConfig.builder()
-						.matchLiteral(killer.getName())
-						.replacement(
-								Component.text(Nickname.of(killer), NamedTextColor.YELLOW)
-						).build();
-				deathMessage = deathMessage.replaceText(replacementConfig2);
-			}
-
-			output = output.append(deathMessage);
-		} else if (!(deathMessageRaw instanceof TranslatableComponent deathMessage)) {
+		JsonBuilder output = new JsonBuilder("☠ ", NamedTextColor.RED);
+		if (!(deathMessageRaw instanceof TranslatableComponent deathMessage)) {
 			Nexus.warn("Death message ("+deathMessageRaw.examinableName()+") is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
-			output = output.append(deathMessageRaw);
-		} else {
-			List<Component> args = new ArrayList<>();
+			output.next(deathMessageRaw);
+		} else { // get the name of the player (or entity)
+			List<Component> args = new ArrayList<>(); // new list of component args
+
 			deathMessage.args().forEach(component -> {
-				// get the name of the player (or entity)
+				Component originalComponent = component;
+
+				HoverEvent<?> _hoverEvent = component.hoverEvent();
+				HoverEvent.ShowEntity hover;
+				if (_hoverEvent != null && _hoverEvent.value() instanceof HoverEvent.ShowEntity _hover)
+					hover = _hover;
+				else
+					hover = null;
+
 				String playerName;
-				if (component.children().size() > 0 && component.children().get(0) instanceof TextComponent textComponent)
+				// for some reason, these children differ depending on system. lexi's local test server triggers the
+				// first if block, the BN server triggered the 2nd, unsure of which eden fires
+				if (!component.children().isEmpty() && component.children().get(0) instanceof TextComponent textComponent)
 					playerName = textComponent.content();
 				else if (component instanceof TextComponent textComponent && !textComponent.content().isEmpty()) {
 					playerName = textComponent.content();
-					component = textComponent.content("");
+					component = textComponent.content(""); // preserves hover text/click events but clears the content as we manually add it back it
 				} else {
 					args.add(component);
 					return;
 				}
 
 				Component finalComponent;
-				HoverEvent<?> hoverEvent = component.hoverEvent();
-				boolean hasEntityHover = hoverEvent != null && hoverEvent.value() instanceof HoverEvent.ShowEntity;
 
-				if (HEART_PATTERN.matcher(playerName).matches() && hasEntityHover) {
+				if (HEART_PATTERN.matcher(playerName).matches() && hover != null) {
 					// fix mcMMO hearts
 					Component failsafeComponent = Component.text("A Very Scary Mob");
 					finalComponent = failsafeComponent; // failsafe
 
-					HoverEvent.ShowEntity hover = (HoverEvent.ShowEntity) hoverEvent.value();
 					Entity entity = Bukkit.getEntity(hover.id());
 
 					if (entity != null) {
 						// get mcMMO's saved entity name
 						if (entity.hasMetadata(mcMMO.customNameKey)) {
 							String name = entity.getMetadata(mcMMO.customNameKey).get(0).asString();
-							if (!name.isEmpty()) {
-								finalComponent = Component.text(name);
-								finalComponent = finalComponent.hoverEvent(HoverEvent.showEntity(hover.type(), hover.id(), finalComponent));
-							}
+							if (!name.isEmpty())
+								finalComponent = new JsonBuilder().content(name).hover(HoverEvent.showEntity(hover.type(), hover.id(), finalComponent)).build();
 						}
 
 						// if that failed or was empty, get a translatable text component instead
@@ -160,26 +144,26 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 								finalComponent = Component.translatable(key);
 						}
 					}
-				} else if (hasEntityHover && !((HoverEvent.ShowEntity) hoverEvent.value()).type().value().equalsIgnoreCase("player")) {
+				} else if (hover == null || !hover.type().value().equalsIgnoreCase("player")) {
 					// ignore non-mcMMO, non-player entities
-					finalComponent = component;
+					finalComponent = originalComponent;
 				} else {
 					// finally display player (nick)names + colors
-					TextComponent playerComponent = Component.text(playerName, NamedTextColor.YELLOW);
+					JsonBuilder playerComponent = new JsonBuilder(playerName, NamedTextColor.YELLOW);
 
 					if (playerName.equals(deathMessages.getName()))
-						playerComponent = playerComponent.content(deathMessages.getNickname());
+						playerComponent.content(deathMessages.getNickname());
 					else {
 						try {
-							playerComponent = playerComponent.content(Nickname.of(playerName));
+							playerComponent.content(Nickname.of(playerName));
 						} catch (PlayerNotFoundException|InvalidInputException ignored) {}
 					}
-					finalComponent = playerComponent;
+					finalComponent = playerComponent.build();
 				}
 
 				args.add(component.children(Collections.singletonList(finalComponent)));
 			});
-			output = output.append(deathMessage.args(args));
+			output.next(deathMessage.args(args));
 		}
 
 		event.deathMessage(null);
@@ -188,7 +172,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			Chat.broadcastIngame(player, output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
 
 			if (WorldGroup.of(player) == WorldGroup.SURVIVAL) {
-				// workaround for dumb Adventure bug (#657)
+				// workaround for dumb Adventure bug (ProjectEdenGG/Issues#657)
 				if (deathString == null)
 					deathString = "☠ " + Nickname.of(player) + " died";
 				else {
