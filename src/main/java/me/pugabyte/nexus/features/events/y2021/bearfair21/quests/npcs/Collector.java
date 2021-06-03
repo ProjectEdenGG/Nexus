@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 
 import lombok.Getter;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -108,17 +109,22 @@ public class Collector {
 			add(new TradeBuilder()
 					.result(Merchants.goldNugget.clone().amount(1))
 					.ingredient(new ItemStack(Material.BOOK)));
-
 		}};
 	}
 
 	public static void move() {
-		if (npc == null) return;
+		if (npc == null) {
+			Nexus.warn("Could not find Collector NPC");
+			return;
+		}
 
 		prevLocations.clear();
 
 		Location newLoc = RandomUtils.randomElement(locations);
-		if (newLoc == null) return;
+		if (newLoc == null) {
+			Nexus.warn("Could not find new location to move collector to");
+			return;
+		}
 
 		for (int i = 0; i < 10; i++) {
 			if (!prevLocations.contains(newLoc)) {
@@ -128,7 +134,10 @@ public class Collector {
 			newLoc = RandomUtils.randomElement(locations);
 		}
 
-		if (newLoc == null) return;
+		if (newLoc == null) {
+			Nexus.warn("Could not find unused new location to move collector to");
+			return;
+		}
 		currentLoc = LocationUtils.getCenteredLocation(newLoc);
 
 		Location oldLoc = npc.getEntity().getLocation();

@@ -84,7 +84,7 @@ public class BearFair21Command extends CustomCommand {
 	@Path("toCollector")
 	@Permission("group.admin")
 	public void toCollector() {
-		player().teleport(Collector.getCurrentLoc());
+		player().teleportAsync(Collector.getCurrentLoc());
 	}
 
 	@Confirm
