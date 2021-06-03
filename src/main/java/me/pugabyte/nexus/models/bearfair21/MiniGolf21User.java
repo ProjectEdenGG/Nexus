@@ -62,7 +62,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 
 	public void removeBall() {
 		if (snowball != null) {
-			getOnlinePlayer().sendMessage("removing ball from user");
+			debug("removing ball from user");
 			snowball.remove();
 			snowball = null;
 			ballLocation = null;

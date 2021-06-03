@@ -70,6 +70,9 @@ public class NPCListener implements Listener {
 		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
 			return;
 
+		if (event.getTo() == null)
+			return;
+
 		if (event.getTo().getWorld().getName().equals("events") && new WorldGuardUtils(event.getTo()).isInRegion(event.getTo(), "pride21_parade"))
 			return;
 

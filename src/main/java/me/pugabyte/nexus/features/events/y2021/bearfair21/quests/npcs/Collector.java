@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -29,14 +30,13 @@ public class Collector {
 	private static final List<TradeBuilder> possibleTrades = loadTrades();
 	private static final List<Location> locations = loadLocations();
 	private static final List<Location> prevLocations = new ArrayList<>();
-	private static final World world = BearFair21.getWorld();
 
 	public static void startup() {
 		newTrades();
-		move();
 	}
 
 	private static List<Location> loadLocations() {
+		World world = BearFair21.getWorld();
 		Location observatory = new Location(world, -108, 157, 12);
 		Location town1 = new Location(world, -105, 139, -104);
 		Location town2 = new Location(world, -125, 149, -26);
@@ -138,21 +138,21 @@ public class Collector {
 			Nexus.warn("Could not find unused new location to move collector to");
 			return;
 		}
+
 		currentLoc = LocationUtils.getCenteredLocation(newLoc);
+		Location oldLoc = npc.getStoredLocation();
 
-		Location oldLoc = npc.getEntity().getLocation();
+		oldLoc.getWorld().playSound(oldLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		oldLoc.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, oldLoc, 500, 0.5, 1, 0.5, 0);
+		oldLoc.getWorld().spawnParticle(Particle.FLASH, oldLoc, 10, 0, 0, 0);
 
-		world.playSound(oldLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
-		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, oldLoc, 500, 0.5, 1, 0.5, 0);
-		world.spawnParticle(Particle.FLASH, oldLoc, 10, 0, 0, 0);
-		npc.despawn();
+		npc.teleport(currentLoc, TeleportCause.PLUGIN);
+
+		currentLoc.getWorld().playSound(currentLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		currentLoc.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, currentLoc, 500, 0.5, 1, 0.5, 0);
+		currentLoc.getWorld().spawnParticle(Particle.FLASH, currentLoc, 10, 0, 0, 0);
 
 		newTrades();
-
-		world.playSound(currentLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
-		world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, currentLoc, 500, 0.5, 1, 0.5, 0);
-		world.spawnParticle(Particle.FLASH, currentLoc, 10, 0, 0, 0);
-		npc.spawn(currentLoc);
 	}
 
 	private static void newTrades() {
@@ -178,6 +178,6 @@ public class Collector {
 	public static void spawn() {
 		if (npc == null) return;
 		if (npc.isSpawned()) return;
-		npc.spawn(currentLoc);
+		npc.spawn(npc.getStoredLocation());
 	}
 }
