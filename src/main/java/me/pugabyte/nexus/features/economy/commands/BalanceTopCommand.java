@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-@Aliases({"baltop", "moneytop"})
+@Aliases({"baltop", "moneytop", "btop"})
 public class BalanceTopCommand extends CustomCommand {
 	private final BankerService service = new BankerService();
 	private static final Set<UUID> processing = new HashSet<>();

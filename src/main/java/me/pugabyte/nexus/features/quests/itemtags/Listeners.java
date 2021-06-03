@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.quests.itemtags;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -26,7 +25,7 @@ public class Listeners implements Listener {
 	}
 
 	public static boolean isNotTesting(Player player) {
-		return !Dev.GRIFFIN.is(player);
+		return true;
 	}
 
 	@EventHandler

@@ -1,46 +1,75 @@
 package me.pugabyte.nexus.features.store.perks.stattrack.models;
 
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.Data;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.store.perks.stattrack.utils.HiddenLore;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 public class StatItem {
 	@NonNull
-	private final ItemStack item;
+	private ItemStack item;
 	private UUID id;
 	private Map<Stat, Integer> stats = new HashMap<>();
 
-	private static final String ID_PREFIX = "StatTrackId:";
+	public static final String NBT_KEY = "StatTrackId";
 
 	public StatItem(@NonNull ItemStack item) {
 		this.item = item;
 		parse();
 	}
 
+	public static int find(Player player, ItemStack item1) {
+		int notFound = -1;
+		int slot = notFound;
+
+		if (isNullOrAir(item1))
+			return notFound;
+
+		try {
+			for (ItemStack item2 : player.getInventory().getContents()) {
+				++slot;
+				if (isNullOrAir(item2)) continue;
+				if (item1.getType() != item2.getType()) continue;
+
+				final NBTItem nbtItem1 = new NBTItem(item1);
+				final NBTItem nbtItem2 = new NBTItem(item2);
+
+				if (!nbtItem1.hasKey(NBT_KEY)) continue;
+				if (!nbtItem2.hasKey(NBT_KEY)) continue;
+
+				final String id1 = nbtItem1.getString(NBT_KEY);
+				final String id2 = nbtItem2.getString(NBT_KEY);
+				if (StringUtils.isNullOrEmpty(id1)) continue;
+				if (StringUtils.isNullOrEmpty(id2)) continue;
+
+				if (!id1.equals(id2)) continue;
+
+				return slot;
+			}
+		} catch (NullPointerException ignore) {}
+
+		return notFound;
+	}
+
 	public void parse() {
 		ItemMeta meta = item.getItemMeta();
 		stats = new HashMap<>();
 		if (isEnabled()) {
-			List<String> lore = meta.getLore();
-
-			id = UUID.fromString(HiddenLore.decode(lore.get(0)).replace(ID_PREFIX, ""));
-
-			lore.stream()
+			meta.getLore().stream()
 					.filter(line -> line.contains(": "))
 					.forEach((line) -> {
 						String[] split = stripColor(line).split(": ");
@@ -48,21 +77,25 @@ public class StatItem {
 						int value = Integer.parseInt(split[1]);
 						stats.put(stat, value);
 					});
+
 		} else
 			id = UUID.randomUUID();
 	}
 
 	public StatItem write() {
-		List<String> lore = new ArrayList<>();
-		String id = HiddenLore.encode(ID_PREFIX + this.id);
-		lore.add(id);
-		stats.entrySet().stream().sorted(Map.Entry.comparingByKey())
-			.forEachOrdered(entry -> lore.add(ChatColor.DARK_AQUA + entry.getKey().toString() + ": " + ChatColor.YELLOW + entry.getValue()));
+		item = new ItemBuilder(item)
+				.nbt(nbt -> nbt.setString(NBT_KEY, id.toString()))
+				.setLore(getLore())
+				.build();
 
-		ItemMeta meta = item.getItemMeta();
-		meta.setLore(lore);
-		item.setItemMeta(meta);
 		return this;
+	}
+
+	private List<String> getLore() {
+		return stats.entrySet().stream()
+				.sorted(Entry.comparingByKey())
+				.map(entry -> "&3" + entry.getKey() + ": &e" + entry.getValue())
+				.toList();
 	}
 
 	public StatItem increaseStat(Stat stat, int value) {
@@ -71,13 +104,11 @@ public class StatItem {
 	}
 
 	public boolean isEnabled() {
-		List<String> lore = item.getItemMeta().getLore();
-		if (!Utils.isNullOrEmpty(lore)) {
-			if (HiddenLore.isEncoded(lore.get(0))) {
-				String decoded = HiddenLore.decode(lore.get(0));
-				return !isNullOrEmpty(decoded) && decoded.matches(ID_PREFIX + StringUtils.UUID_REGEX);
-			}
-		}
-		return false;
+		final NBTItem nbtItem = new NBTItem(item);
+		if (!nbtItem.hasKey(NBT_KEY))
+			return false;
+
+		id = UUID.fromString(nbtItem.getString(NBT_KEY));
+		return true;
 	}
 }

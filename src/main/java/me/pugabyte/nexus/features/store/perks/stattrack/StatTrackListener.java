@@ -4,7 +4,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.store.perks.stattrack.models.Stat;
 import me.pugabyte.nexus.features.store.perks.stattrack.models.StatIncreaseEvent;
 import me.pugabyte.nexus.features.store.perks.stattrack.models.StatItem;
-import me.pugabyte.nexus.features.store.perks.stattrack.utils.StatTrackUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import org.bukkit.GameMode;
@@ -16,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
 
@@ -31,13 +29,12 @@ public class StatTrackListener implements Listener {
 
 	@EventHandler
 	public void onStatIncrease(StatIncreaseEvent event) {
-		PlayerInventory inv = event.getPlayer().getInventory();
 		ItemStack item = event.getItem();
 
-		int slot = StatTrackUtils.findItem(inv, item);
+		int slot = StatItem.find(event.getPlayer(), item);
 		ItemStack newItem = new StatItem(item).increaseStat(event.getStat(), event.getValue()).write().getItem();
 
-		inv.setItem(slot, newItem);
+		event.getPlayer().getInventory().setItem(slot, newItem);
 	}
 
 	private void checkStats(Player player, Block block, Stat... stats) {

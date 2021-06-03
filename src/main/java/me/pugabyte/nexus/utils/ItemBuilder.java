@@ -118,6 +118,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder setLore(List<String> lore) {
+		this.lore.clear();
+		if (lore != null)
+			this.lore.addAll(lore);
+		return this;
+	}
+
 	public ItemBuilder lore(String... lore) {
 		return lore(Arrays.asList(lore));
 	}
@@ -320,11 +327,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
-	public void nbt(Consumer<NBTItem> consumer) {
+	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
 		NBTItem nbtItem = new NBTItem(build());
 		consumer.accept(nbtItem);
 		itemStack = nbtItem.getItem();
 		itemMeta = itemStack.getItemMeta();
+		return this;
 	}
 
 	public int customModelData() {
@@ -381,6 +389,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public static ItemStack addItemFlags(ItemStack item, ItemFlag... flags) {
 		ItemMeta meta = item.getItemMeta();
 		meta.addItemFlags(flags);
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	public static ItemStack setLore(ItemStack item, List<String> lore) {
+		ItemMeta meta = item.getItemMeta();
+		meta.setLore(lore.stream().map(StringUtils::colorize).collect(Collectors.toList()));
 		item.setItemMeta(meta);
 		return item;
 	}
