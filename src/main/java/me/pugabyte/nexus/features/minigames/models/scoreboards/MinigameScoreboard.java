@@ -107,7 +107,7 @@ public interface MinigameScoreboard {
 					if (removePlayer || !minigamer.getTeam().equals(team))
 						scoreboardTeam.removePlayer(minigamer.getPlayer());
 				});
-				if (minigamer.getTeam() != null) return;
+				if (minigamer.getTeam() != null)
 					getScoreboardTeam(minigamer.getTeam()).addPlayer(minigamer.getPlayer());
 			});
 
