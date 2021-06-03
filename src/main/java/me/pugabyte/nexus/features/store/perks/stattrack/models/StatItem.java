@@ -7,7 +7,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -35,8 +34,7 @@ public class StatItem {
 	}
 
 	public void parse() {
-		final ItemMeta meta = item.getItemMeta();
-		final List<String> lore = meta.getLore();
+		final List<String> lore = item.getItemMeta().getLore();
 
 		if (!isEnabled()) {
 			id = UUID.randomUUID();
