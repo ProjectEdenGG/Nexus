@@ -3,6 +3,9 @@ package me.pugabyte.nexus.features.commands;
 import com.gmail.nossr50.mcMMO;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
+import eden.utils.Utils;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
@@ -25,6 +28,7 @@ import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
@@ -36,6 +40,7 @@ import net.kyori.adventure.text.event.HoverEvent.ShowEntity;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,7 +52,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 @NoArgsConstructor
@@ -68,6 +76,91 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 				service.save(deathMessages);
 			}
 		});
+	}
+
+	@Data
+	@Builder
+	private static class DeathMessageConfig {
+		private final String key;
+		private final String defaultMessage;
+		private final List<String> customMessages;
+
+		public String random() {
+			return RandomUtils.randomElement(customMessages);
+		}
+
+		public int count() {
+			return customMessages.size();
+		}
+
+		public static DeathMessageConfig of(String key) {
+			return messages.get(key);
+		}
+	}
+
+	private static final Map<String, DeathMessageConfig> messages = new HashMap<>();
+
+	public static void reloadConfig() {
+		messages.clear();
+		ConfigurationSection config = Nexus.getConfig("death-messages.yml").getConfigurationSection("messages");
+		if (config != null) {
+			for (String key : config.getKeys(true)) {
+				ConfigurationSection section = config.getConfigurationSection(key);
+				if (config.isConfigurationSection(key) && section != null) {
+					DeathMessageConfig deathMessageConfig = DeathMessageConfig.builder()
+							.key(key)
+							.defaultMessage(section.getString("default"))
+							.customMessages(section.getStringList("custom"))
+							.build();
+					if (deathMessageConfig.count() > 0)
+						messages.put(key, deathMessageConfig);
+				}
+			}
+		}
+	}
+
+	static {
+		reloadConfig();
+	}
+
+	@Path("reload")
+	void reload() {
+		reloadConfig();
+		int total = messages.values().stream().map(DeathMessageConfig::count).reduce(0, Integer::sum);
+		send(PREFIX + "Loaded " + messages.size() + " keys with " + total + " custom messages");
+	}
+
+	@Path("list [page]")
+	void list(@Arg("1") int page) {
+		if (messages.isEmpty())
+			error("No custom death messages configured");
+
+		BiFunction<DeathMessageConfig, String, JsonBuilder> formatter = (config, index) -> {
+			final JsonBuilder json = json("&3" + index + " &e" + config.getKey() + " &3(" + config.count() + ") &7- " + config.getDefaultMessage());
+			int shown = 0;
+			for (String customMessage : config.getCustomMessages()) {
+				if (++shown > 5) {
+					json.hover("&7And " + (config.count() - 5) + " more...");
+					break;
+				}
+
+				json.hover("&7" + customMessage);
+			}
+			return json;
+		};
+
+		paginate(messages.values(), formatter, "/deathmessages list", page);
+	}
+
+	@Path("messages <key> [page]")
+	void list(String key, @Arg("1") int page) {
+		final List<String> customMessages = DeathMessageConfig.of(key).getCustomMessages();
+		if (Utils.isNullOrEmpty(customMessages))
+			error("No custom messages for key &e" + key);
+
+		send(PREFIX + "Custom messages for key &e" + key);
+
+		paginate(customMessages, (message, index) -> json("&3" + index + " &7" + message), "/deathmessages list " + key, page);
 	}
 
 	@Path("behavior <behavior> [player] [duration...]")
