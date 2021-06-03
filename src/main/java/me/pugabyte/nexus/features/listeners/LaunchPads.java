@@ -4,7 +4,6 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -127,33 +126,33 @@ public class LaunchPads implements Listener {
 					|| fBlock.getVelocity().length() == 0.0 || endFlight || player.isOnGround()) {
 
 
-				if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
-					if (!player.isOnGround()) {
-						player.sendMessage("");
-						player.sendMessage("Ending launch because:");
-						if (fBlock == null)
-							player.sendMessage("  block is null");
-						else if (fBlock.isOnGround())
-							player.sendMessage("  block is on ground");
-						else if (fBlock.isDead())
-							player.sendMessage("  block is dead");
-						else if (fBlock.getLocation().getY() < -10.0)
-							player.sendMessage("  block is in void");
-						else if (fBlock.getVelocity().length() == 0.0)
-							player.sendMessage("  block velocity is 0");
-						else if (endFlight)
-							player.sendMessage("  either player world and block world are different OR block is in liquid");
-					}
-				}
+//				if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
+//					if (!player.isOnGround()) {
+//						player.sendMessage("");
+//						player.sendMessage("Ending launch because:");
+//						if (fBlock == null)
+//							player.sendMessage("  block is null");
+//						else if (fBlock.isOnGround())
+//							player.sendMessage("  block is on ground");
+//						else if (fBlock.isDead())
+//							player.sendMessage("  block is dead");
+//						else if (fBlock.getLocation().getY() < -10.0)
+//							player.sendMessage("  block is in void");
+//						else if (fBlock.getVelocity().length() == 0.0)
+//							player.sendMessage("  block velocity is 0");
+//						else if (endFlight)
+//							player.sendMessage("  either player world and block world are different OR block is in liquid");
+//					}
+//				}
 
 				if (player.isOnGround()) {
 					Tasks.wait(Time.SECOND, () -> {
 						if (player.isOnGround()) {
-							if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
-								player.sendMessage("");
-								player.sendMessage("Ending launch because:");
-								player.sendMessage("  player is on ground");
-							}
+//							if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
+//								player.sendMessage("");
+//								player.sendMessage("Ending launch because:");
+//								player.sendMessage("  player is on ground");
+//							}
 							cancelLaunch(player);
 						}
 					});
