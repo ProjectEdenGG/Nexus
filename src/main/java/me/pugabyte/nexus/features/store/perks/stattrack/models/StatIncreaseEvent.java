@@ -35,7 +35,7 @@ public class StatIncreaseEvent {
 			if (itemInSlot != null)
 				if (itemInSlot.getType() == item.getType()) {
 					player.getInventory().setItem(slot, statItem.update());
-					player.updateInventory();
+					player.updateInventory(); // TODO remove?
 					Nexus.log("StatTrack item " + item.getType() + " updated in slot " + slot);
 				} else
 					Nexus.warn("Could not update StatTrack item - slot " + slot + " is not correct type (" + camelCase(itemInSlot.getType()) + " != " + camelCase(item.getType()) + ")");

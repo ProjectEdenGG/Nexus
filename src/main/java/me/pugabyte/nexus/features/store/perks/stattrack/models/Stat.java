@@ -76,6 +76,7 @@ public enum Stat {
 		return false;
 	}
 
+	@Contract("null -> false; !null -> _")
 	public boolean isMaterialApplicable(ItemStack item) {
 		if (isNullOrAir(item))
 			return false;
