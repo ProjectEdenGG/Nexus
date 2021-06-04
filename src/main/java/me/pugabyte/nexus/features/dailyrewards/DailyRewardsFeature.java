@@ -21,18 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
-import static org.bukkit.enchantments.Enchantment.ARROW_DAMAGE;
-import static org.bukkit.enchantments.Enchantment.ARROW_INFINITE;
-import static org.bukkit.enchantments.Enchantment.ARROW_KNOCKBACK;
-import static org.bukkit.enchantments.Enchantment.DAMAGE_ALL;
-import static org.bukkit.enchantments.Enchantment.DIG_SPEED;
-import static org.bukkit.enchantments.Enchantment.DURABILITY;
-import static org.bukkit.enchantments.Enchantment.FIRE_ASPECT;
-import static org.bukkit.enchantments.Enchantment.KNOCKBACK;
-import static org.bukkit.enchantments.Enchantment.LUCK;
-import static org.bukkit.enchantments.Enchantment.LURE;
-import static org.bukkit.enchantments.Enchantment.MENDING;
-import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
+import static org.bukkit.enchantments.Enchantment.*;
 
 public class DailyRewardsFeature extends Feature {
 	private static final List<Reward> rewards1 = setupDailyRewards(1);
@@ -211,7 +200,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  72 */ add(new Reward("25 Steak")								.item(COOKED_BEEF, 25));
 				/*  73 */ add(new Reward("45 Leather")								.item(LEATHER, 45));
 				/*  74 */ add(new Reward("45 Bread")								.item(BREAD, 45));
-				/*  75 */ add(new Reward("1 Notch Apple")							.item(ENCHANTED_GOLDEN_APPLE, 1));
+				/*  75 */ add(new Reward("1 Enchanted Golden Apple")				.item(ENCHANTED_GOLDEN_APPLE, 1));
 				/*  76 */ add(new Reward("64 Pumpkin Pie")							.item(PUMPKIN_PIE, 64));
 				/*  77 */ add(new Reward("16 firework stars")						.item(FIREWORK_STAR, 16));
 				/*  78 */ add(new Reward("2 Villager Spawn Eggs")					.item(VILLAGER_SPAWN_EGG, 2));
@@ -222,7 +211,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  83 */ add(new Reward("70 Leather")								.item(LEATHER, 70));
 				/*  84 */ add(new Reward("Coupon for 2 McMMO levels")				.item(new ItemBuilder(PAPER).name("&eCoupon for 2 McMMO levels").lore("&3Daily Reward").build()));
 				/*  85 */ add(new Reward("2 Horse Spawn Eggs")						.item(HORSE_SPAWN_EGG, 2));
-				/*  86 */ add(new Reward("3 Notch Apples")							.item(ENCHANTED_GOLDEN_APPLE, 3));
+				/*  86 */ add(new Reward("3 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 3));
 				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armour")		.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
 				/*  88 */ add(new Reward("64 Golden Carrots")						.item(GOLDEN_CARROT, 64));
 				/*  89 */ add(new Reward("16 End Crystals")							.item(END_CRYSTAL, 16));
@@ -231,7 +220,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  92 */ add(new Reward("100 Steak")								.item(COOKED_BEEF, 100));
 				/*  93 */ add(new Reward("200 Leather")								.item(LEATHER, 200));
 				/*  94 */ add(new Reward("Coupon for 5 McMMO levels")				.item(new ItemBuilder(PAPER).name("&eCoupon for 5 McMMO levels").lore("&3Daily Reward").build()));
-				/*  95 */ add(new Reward("5 Notch Apples")							.item(ENCHANTED_GOLDEN_APPLE, 5));
+				/*  95 */ add(new Reward("5 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 5));
 				/*  96 */ add(new Reward("Super Fishing Pole")						.item(new ItemBuilder(FISHING_ROD).enchant(LURE, 5).enchant(LUCK, 3).enchant(DURABILITY, 4)));
 				/*  97 */ add(new Reward("Maxed Diamond Sword")						.item(new ItemBuilder(DIAMOND_SWORD).enchantMax(DAMAGE_ALL).enchantMax(MENDING).enchantMax(FIRE_ASPECT).enchantMax(KNOCKBACK).enchant(DURABILITY, 4)));
 				/*  98 */ add(new Reward("Full set of Diamond gear and tools")		.item(MaterialTag.ARMOR_DIAMOND).item(MaterialTag.TOOLS_DIAMOND));

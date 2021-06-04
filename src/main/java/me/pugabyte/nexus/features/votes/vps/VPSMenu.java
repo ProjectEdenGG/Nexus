@@ -382,7 +382,7 @@ public enum VPSMenu {
 						.displayAndGive(Material.EXPERIENCE_BOTTLE, 64)
 						.price(15));
 				put(38, VPSSlot.builder()
-						.name("1 Notch Apple")
+						.name("1 Enchanted Golden Apple")
 						.displayAndGive(Material.ENCHANTED_GOLDEN_APPLE)
 						.price(30));
 				put(39, VPSSlot.builder()
