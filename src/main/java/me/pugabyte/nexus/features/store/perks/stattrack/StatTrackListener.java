@@ -5,18 +5,22 @@ import me.pugabyte.nexus.features.store.perks.stattrack.models.Stat;
 import me.pugabyte.nexus.features.store.perks.stattrack.models.StatIncreaseEvent;
 import me.pugabyte.nexus.features.store.perks.stattrack.models.StatItem;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 // Potion effect effect absorption, only apply absorption if they are wearing armor
 // damage and absorption for bow
@@ -27,18 +31,7 @@ public class StatTrackListener implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	@EventHandler
-	public void onStatIncrease(StatIncreaseEvent event) {
-		ItemStack item = event.getItem();
-
-		int slot = StatItem.find(event.getPlayer(), item);
-		ItemStack newItem = new StatItem(item).increaseStat(event.getStat(), event.getValue()).write().getItem();
-
-		event.getPlayer().getInventory().setItem(slot, newItem);
-	}
-
 	private void checkStats(Player player, Block block, Stat... stats) {
-		if (!Dev.GRIFFIN.is(player)) return;
 		if (player.getGameMode() != GameMode.SURVIVAL) return;
 		final ItemStack tool = ItemUtils.getTool(player);
 		if (tool == null || !new StatItem(tool).isEnabled()) return;
@@ -47,21 +40,44 @@ public class StatTrackListener implements Listener {
 			List<Material> materials = stat.getMaterials();
 			if (stat.isToolApplicable(tool.getType()))
 				if (materials.isEmpty() || materials.contains(block.getType()))
-					new StatIncreaseEvent(player, tool, stat, 1).callEvent();
+					new StatIncreaseEvent(player, tool, stat, 1);
 		}
 	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getBlock().getDrops().isEmpty()) // TODO: Remove?
-			checkStats(event.getPlayer(), event.getBlock(), Stat.BLOCKS_BROKEN, Stat.STONE_MINED, Stat.WOOD_CHOPPED, Stat.DIRT_EXCAVATED, Stat.FLOWERS_PICKED);
+			checkStats(event.getPlayer(), event.getBlock(), Stat.BLOCKS_BROKEN, Stat.STONE_MINED, Stat.WOOD_CHOPPED, Stat.DIRT_EXCAVATED, Stat.SAND_EXCAVATED, Stat.FLOWERS_PICKED);
 	}
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		checkStats(event.getPlayer(), event.getBlock(), Stat.PATHS_CREATED, Stat.DIRT_TILLED);
 	}
-}
+
+	// TODO: Lore updates but causes item to not actually mend
+	@EventHandler
+	public void onPlayerItemMend(PlayerItemMendEvent event) {
+		new StatIncreaseEvent(event.getPlayer(), event.getItem(), Stat.DURABILITY_MENDED, event.getRepairAmount());
+	}
+
+	// TODO: Fires correctly but does not update item
+	@EventHandler
+	public void onPlayerFish(PlayerFishEvent event) {
+		if (!(event.getCaught() instanceof Item item))
+			return;
+
+		final Player player = event.getPlayer();
+		final ItemStack tool = ItemUtils.getTool(player);
+
+		if (isNullOrAir(tool))
+			return;
+
+		if (Stat.FISH_CAUGHT.isMaterialApplicable(item.getItemStack()))
+			new StatIncreaseEvent(player, tool, Stat.FISH_CAUGHT, 1);
+		else
+			new StatIncreaseEvent(player, tool, Stat.TREASURE_FISHED, 1);
+	}
 
 	// Add this to the items lore?
 //	Map<Player, Integer> hits = new HashMap<>();
@@ -74,18 +90,6 @@ public class StatTrackListener implements Listener {
 
 	private boolean isPlayer(Entity e){
 		return e instanceof Player;
-	}
-
-	// ItemMendEvent: DIAMOND_SWORD (2456 + 15)
-	@EventHandler
-	public void onItemMend(PlayerItemMendEvent event){
-		String output = "ItemMendEvent: ";
-		ItemStack item = event.getItem();
-		int repairAmt = event.getRepairAmount();
-		int oldDur = item.getType().getMaxDurability() - item.getDurability();
-		output += item.getType() + "(" + oldDur + " + " + repairAmt +")";
-		Bukkit.broadcastMessage(" ");
-		Bukkit.broadcastMessage(output);
 	}
 
 	@EventHandler
@@ -393,22 +397,5 @@ public class StatTrackListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onBlockPlace(BlockPlaceEvent event){
-		String output = "BlockPlaceEvent";
-		ItemStack inHand = event.getItemInHand();
-		String StrInHand = inHand.getType().toString().toLowerCase();
-		if(StrInHand.contains("hoe")){
-			output += " > Tilled";
-			Bukkit.broadcastMessage(" ");
-			Bukkit.broadcastMessage(output);
-		}
-		if(StrInHand.contains("spade")){
-			output += " > CreatePath";
-			Bukkit.broadcastMessage(" ");
-			Bukkit.broadcastMessage(output);
-		}
-	}
-
-}
 */
+}

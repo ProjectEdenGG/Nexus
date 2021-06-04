@@ -5,9 +5,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import eden.annotations.Disabled;
 import lombok.Getter;
-import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import org.bukkit.Material;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
@@ -47,14 +44,7 @@ public class Utils extends eden.utils.Utils {
 	}
 
 	public static void registerListeners(String packageName) {
-		new Reflections(packageName).getSubTypesOf(Listener.class).forEach(listener -> {
-			try {
-				if (listener.getAnnotation(Disabled.class) == null)
-					Nexus.registerListener(new ObjenesisStd().newInstance(listener));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		});
+		new Reflections(packageName).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);
 	}
 
 	public static void tryRegisterListener(Class<?> clazz) {

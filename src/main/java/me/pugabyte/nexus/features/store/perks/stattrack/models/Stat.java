@@ -5,11 +5,16 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tool;
 import me.pugabyte.nexus.utils.Tool.ToolGroup;
 import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 public enum Stat {
 	BLOCKS_BROKEN(ToolGroup.TOOLS),
@@ -22,7 +27,9 @@ public enum Stat {
 	SAND_EXCAVATED(Tool.SHOVEL, MaterialTag.ALL_SAND),
 	PATHS_CREATED(Tool.SHOVEL, Material.GRASS_PATH),
 	DIRT_TILLED(Tool.HOE, Material.FARMLAND),
-	FLOWERS_PICKED(Tool.SHEARS, MaterialTag.ALL_FLOWERS);
+	FLOWERS_PICKED(Tool.SHEARS, MaterialTag.ALL_FLOWERS),
+	FISH_CAUGHT(Tool.FISHING_ROD, MaterialTag.ITEMS_FISHES),
+	TREASURE_FISHED(Tool.FISHING_ROD);
 
 	@Getter
 	private List<Tool> tools = new ArrayList<>();
@@ -31,7 +38,7 @@ public enum Stat {
 
 	Stat() {}
 
-	Stat(Tool... tools) {
+	Stat(Tool tools) {
 		this.tools = Arrays.asList(tools);
 	}
 
@@ -44,9 +51,22 @@ public enum Stat {
 		this.materials = Arrays.asList(materials);
 	}
 
+	Stat(Tool tool, Tag<Material> materials) {
+		this.tools = Collections.singletonList(tool);
+		this.materials = new ArrayList<>(materials.getValues());
+	}
+
 	Stat(Tool tool, MaterialTag materials) {
 		this.tools = Collections.singletonList(tool);
 		this.materials = new ArrayList<>(materials.getValues());
+	}
+
+	@Contract("null -> false; !null -> _")
+	public boolean isToolApplicable(ItemStack item) {
+		if (isNullOrAir(item))
+			return false;
+
+		return isToolApplicable(item.getType());
 	}
 
 	public boolean isToolApplicable(Material material) {
@@ -54,6 +74,17 @@ public enum Stat {
 			if (tool.getTools().contains(material))
 				return true;
 		return false;
+	}
+
+	public boolean isMaterialApplicable(ItemStack item) {
+		if (isNullOrAir(item))
+			return false;
+
+		return isMaterialApplicable(item.getType());
+	}
+
+	public boolean isMaterialApplicable(Material material) {
+		return materials.contains(material);
 	}
 
 	public String toString() {

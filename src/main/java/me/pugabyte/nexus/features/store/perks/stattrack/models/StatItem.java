@@ -61,6 +61,11 @@ public class StatItem {
 		return this;
 	}
 
+	public ItemStack update() {
+		write();
+		return getItem();
+	}
+
 	private List<String> getLore() {
 		return stats.entrySet().stream()
 				.sorted(Entry.comparingByKey())
@@ -80,6 +85,10 @@ public class StatItem {
 	@NotNull
 	private NBTItem nbt() {
 		return new NBTItem(item);
+	}
+
+	public int find(Player player) {
+		return find(player, item);
 	}
 
 	public static int find(Player player, ItemStack item1) {

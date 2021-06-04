@@ -23,7 +23,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -247,7 +246,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 	}
 
 	public void updatePronouns() {
-		new DiscordUserService().<DiscordUser>get(this).updatePronouns(pronouns);
+		new DiscordUserService().get(this).updatePronouns(pronouns);
 		new NerdService().save(this);
 	}
 
