@@ -50,7 +50,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -189,8 +188,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		JsonBuilder output = new JsonBuilder("☠ ", NamedTextColor.RED);
 
 		if (deathMessageRaw instanceof TranslatableComponent deathMessage) {
-			List<Component> args = new ArrayList<>();
-			deathMessage.args().forEach(arg -> args.add(handleArgument(deathMessages, arg)));
+			List<Component> args = deathMessage.args().stream().map(arg -> handleArgument(deathMessages, arg)).toList();
 			output.next(deathMessage.args(args));
 		} else {
 			Nexus.warn("Death message ("+deathMessageRaw.examinableName()+") is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
@@ -265,18 +263,16 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Nullable
-	private HoverEvent.ShowEntity getEntityHover(Component component) {
+	private ShowEntity getEntityHover(Component component) {
 		HoverEvent<?> _hoverEvent = component.hoverEvent();
-		ShowEntity hover;
 		if (_hoverEvent != null && _hoverEvent.value() instanceof ShowEntity _hover)
-			hover = _hover;
+			return _hover;
 		else
-			hover = null;
-		return hover;
+			return null;
 	}
 
 	@NotNull
-	private Component fixMcMMOHearts(HoverEvent.ShowEntity hover) {
+	private Component fixMcMMOHearts(ShowEntity hover) {
 		Component failsafeComponent = Component.text("A Very Scary Mob");
 		Component finalComponent = failsafeComponent;
 
