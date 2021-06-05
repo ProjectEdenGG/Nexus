@@ -20,6 +20,8 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
@@ -33,6 +35,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
@@ -100,6 +105,41 @@ public class Quests implements Listener {
 		return sign.getLines();
 	}
 
+	public static boolean hasItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
+		List<ItemStack> result = new ArrayList<>();
+		for (ItemBuilder item : items) {
+			if (ItemUtils.isNullOrAir(item.build()))
+				continue;
+
+			ItemStack itemLike = getItemLikeFrom(user, item);
+			if (!ItemUtils.isNullOrAir(itemLike))
+				result.add(itemLike);
+		}
+		return result.size() > 0;
+	}
+
+	public static ItemStack getItemLikeFrom(BearFair21User user, ItemBuilder itemBuilder) {
+		ItemStack _item = itemBuilder.build();
+		for (ItemStack item : user.getOnlinePlayer().getInventory()) {
+			if (ItemUtils.isNullOrAir(item))
+				continue;
+
+			if (ItemUtils.isFuzzyMatch(itemBuilder.build(), item) && item.getAmount() >= _item.getAmount())
+				return item;
+		}
+		return null;
+	}
+
+	public static void removeItems(Player player, List<ItemBuilder> items) {
+		for (ItemBuilder itemBuilder : items) {
+			ItemStack item = itemBuilder.build();
+			if (ItemUtils.isNullOrAir(item))
+				continue;
+
+			player.getInventory().removeItemAnySlot(item);
+		}
+	}
+
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
@@ -111,12 +151,13 @@ public class Quests implements Listener {
 			return;
 
 		int id = event.getNPC().getId();
-		if (BearFair21NPC.from(id) == null)
+		BearFair21NPC npc = BearFair21NPC.from(id);
+		if (npc == null)
 			return;
 
-		BearFair21Talker.runScript(userService.get(player), id).thenRun(() -> Merchants.openMerchant(player, id));
-
 		BearFair21User user = userService.get(player);
+		BearFair21Talker.runScript(user, id).thenRun(() -> Merchants.openMerchant(player, id));
+
 		user.getMetNPCs().add(id);
 		userService.save(user);
 	}

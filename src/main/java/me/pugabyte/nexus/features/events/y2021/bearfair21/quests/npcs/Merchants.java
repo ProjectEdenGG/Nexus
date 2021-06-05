@@ -3,8 +3,12 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 import eden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -42,9 +46,15 @@ public class Merchants {
 
 	@AllArgsConstructor
 	public enum BFMerchant {
+		ARCHITECT(BearFair21NPC.ARCHITECT) {
+			@Override
+			public List<TradeBuilder> getTrades(BearFair21User user) {
+				return null;
+			}
+		},
 		ARTIST(BearFair21NPC.ARTIST) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					for (Material material : MaterialTag.DYES.getValues()) {
 						add(new TradeBuilder()
@@ -56,7 +66,7 @@ public class Merchants {
 		},
 		BAKER(BearFair21NPC.BAKER) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
@@ -66,7 +76,7 @@ public class Merchants {
 		},
 		BARTENDER(BearFair21NPC.BARTENDER) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false))
@@ -82,7 +92,7 @@ public class Merchants {
 		},
 		BLACKSMITH(BearFair21NPC.BLACKSMITH) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
@@ -107,22 +117,22 @@ public class Merchants {
 		},
 		BOTANIST(BearFair21NPC.BOTANIST) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return FarmingLoot.getTrades();
 			}
 		},
-		BREWER(BearFair21NPC.BREWER) {
+		CARPENTER(BearFair21NPC.CARPENTER) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return null;
 			}
 		},
 		COLLECTOR(BearFair21NPC.COLLECTOR) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(Quests.getBackPack(player))
+							.result(Quests.getBackPack(user.getPlayer()))
 							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemStack(Material.ELYTRA))
@@ -134,7 +144,7 @@ public class Merchants {
 		},
 		FISHERMAN(BearFair21NPC.FISHERMAN1) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemStack(Material.STRING))
@@ -147,13 +157,13 @@ public class Merchants {
 		},
 		INVENTOR(BearFair21NPC.INVENTOR) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return null;
 			}
 		},
 		PASTRY_CHEF(BearFair21NPC.PASTRY_CHEF) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.EGG))
@@ -161,12 +171,20 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.EGG)));
+
+					if (user.getQuestStage_Main() == QuestStage.STEP_THREE) {
+						add(new TradeBuilder()
+								.result(MainIsland.bf_cake.clone())
+								.ingredient(new ItemBuilder(Material.CAKE).build())
+								.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
+					}
+
 				}};
 			}
 		},
 		SORCERER(BearFair21NPC.SORCERER) {
 			@Override
-			public List<TradeBuilder> getTrades(Player player) {
+			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3))
@@ -196,6 +214,11 @@ public class Merchants {
 			return null;
 		}
 
-		public abstract List<TradeBuilder> getTrades(Player player);
+		public abstract List<TradeBuilder> getTrades(BearFair21User user);
+
+		public List<TradeBuilder> getTrades(Player player) {
+			BearFair21UserService userService = new BearFair21UserService();
+			return getTrades(userService.get(player));
+		}
 	}
 }

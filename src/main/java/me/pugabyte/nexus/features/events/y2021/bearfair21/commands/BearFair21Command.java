@@ -154,39 +154,6 @@ public class BearFair21Command extends CustomCommand {
 		send("cleared met NPCs");
 	}
 
-	//
-
-//	@Path("teleport")
-//	@Permission("group.admin")
-//	public void teleport(){
-//		Entity entity = getTargetEntity();
-//		if (entity != null && CitizensUtils.isNPC(entity)) {
-//			PacketUtils.entityTeleport(player(), entity, location(), player().isOnGround());
-//		}
-//	}
-
-//	@Path("changeName <name...>")
-//	@Permission("group.admin")
-//	public void changeName(String name) {
-//		Entity entity = getTargetEntity();
-//		if (entity != null && CitizensUtils.isNPC(entity)) {
-//			PacketUtils.entityNameFake(player(), entity, name + " 0", name + " 1");
-//			send("Setting entity name to: " + name);
-//		}
-//	}
-
-//	@Path("look")
-//	@Permission("group.admin")
-//	public void look() {
-//		PacketUtils.entityLook(player(), getTargetEntityRequired(), location().getYaw(), location().getPitch());
-//	}
-//
-//	@Path("invisible <boolean>")
-//	@Permission("group.admin")
-//	public void invisible(boolean invisible) {
-//		PacketUtils.entityInvisible(player(), getTargetEntityRequired(), invisible);
-//	}
-
 	@Confirm
 	@Permission("group.admin")
 	@Path("clientside clearUser [category]")

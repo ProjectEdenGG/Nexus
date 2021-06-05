@@ -72,15 +72,17 @@ public class Talker {
 		}
 
 		final String playerName = Nickname.of(player);
-		int wait = 0;
+		AtomicInteger wait = new AtomicInteger(0);
 
 		Iterator<String> iterator = script.iterator();
 		while (iterator.hasNext()) {
 			String line = iterator.next();
 			if (line.toLowerCase().matches("^wait \\d+$")) {
-				wait += Integer.parseInt(line.toLowerCase().replace("wait ", ""));
-				if (!iterator.hasNext())
-					Tasks.wait(wait, () -> future.complete(null));
+				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
+				if (!iterator.hasNext()) {
+					// TODO: This wait doesn't seen to be working properly
+					Tasks.wait(wait.get(), () -> future.complete(null));
+				}
 			} else {
 				line = line.replaceAll("<player>", playerName);
 				final String npcName;
@@ -92,7 +94,7 @@ public class Talker {
 					npcName = talker.getName();
 				String message = "&3" + npcName + " &7> &f" + line;
 
-				Tasks.wait(wait, () -> {
+				Tasks.wait(wait.get(), () -> {
 					PlayerUtils.send(player, message);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 

@@ -11,5 +11,20 @@ public enum QuestStage {
 	STEP_FIVE,
 	STEPS_DONE,
 	FOUND_ALL,
-	COMPLETE
+	COMPLETE;
+
+	public boolean isInProgress() {
+		return switch (this) {
+			case INELIGIBLE, NOT_STARTED, COMPLETE -> false;
+			default -> true;
+		};
+	}
+
+	public boolean isComplete() {
+		return this == COMPLETE;
+	}
+
+	public boolean canStart() {
+		return this != INELIGIBLE;
+	}
 }

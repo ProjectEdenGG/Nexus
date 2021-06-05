@@ -41,6 +41,11 @@ public class ItemUtils {
 		if (!Objects.equals(itemMeta1.getLore(), itemMeta2.getLore()))
 			return false;
 
+		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData()) {
+			if (itemMeta1.getCustomModelData() != itemMeta2.getCustomModelData())
+				return false;
+		}
+
 		return true;
 	}
 

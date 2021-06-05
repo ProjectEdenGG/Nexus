@@ -5,8 +5,11 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
+import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
+import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -195,5 +198,25 @@ public class ClientsideContentManager implements Listener {
 		}
 
 		return null;
+	}
+
+	public static void addCategory(BearFair21User user, ContentCategory category) {
+		BearFair21UserService userService = new BearFair21UserService();
+		ClientsideContent clientsideContent = contentService.get0();
+		List<Content> contentList = clientsideContent.getContentList();
+
+		List<Location> locations = new ArrayList<>();
+		List<Content> newContent = new ArrayList<>();
+		for (Content content : contentList) {
+			if (content.getCategory().equals(category)) {
+				newContent.add(content);
+				locations.add(content.getLocation());
+			}
+		}
+
+		user.getClientsideLocations().addAll(locations);
+		userService.save(user);
+
+		ClientsideContentManager.sendSpawnItemFrames(user.getPlayer(), newContent);
 	}
 }

@@ -32,6 +32,8 @@ public class Collector {
 	private static final List<Location> prevLocations = new ArrayList<>();
 
 	public static void startup() {
+		if (npc != null)
+			currentLoc = npc.getStoredLocation();
 		newTrades();
 	}
 

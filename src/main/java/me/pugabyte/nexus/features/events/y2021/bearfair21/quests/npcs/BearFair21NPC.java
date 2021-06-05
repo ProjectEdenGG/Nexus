@@ -16,12 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 public enum BearFair21NPC {
 	// Merchants
+	ARCHITECT("Zach", 4109),
 	ARTIST("Sage", 2657),
 	BAKER("Rye", 2659),
 	BARTENDER("Cosmo", 2655),
 	BLACKSMITH("Alvor", 2656),
 	BOTANIST("Fern", 2661),
-	BREWER("Charlie", 2662),
+	CARPENTER("Ron", 4110),
 	COLLECTOR("Pluto", 2750),
 	FISHERMAN1("Gage", 2653),
 	INVENTOR("Joshua", 2660),
@@ -32,9 +33,11 @@ public enum BearFair21NPC {
 	LUMBERJACK("Flint", 3845),
 	BEEKEEPER("Harold", 3844),
 	FISHERMAN2("Nate", 3841),
+	AERONAUT("Skye", 4111),
 	// Misc
 	ADMIRAL("Phoenix", 3839),
 	ORGANIZER("Wakka", 3798),
+
 	// MGN
 	// PUGMAS
 	// HALLOWEEN

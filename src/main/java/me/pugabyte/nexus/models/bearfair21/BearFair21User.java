@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -28,11 +29,19 @@ public class BearFair21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	// Quest Stuff
+	// General Quest Stuff
 	private Set<Location> clientsideLocations = new HashSet<>();
 	private JunkWeight junkWeight = JunkWeight.MAX;
 	private int recycledItems = 0;
 	private Set<Integer> metNPCs = new HashSet<>();
+
+	// Specific
+	QuestStage questStage_Main = QuestStage.NOT_STARTED;
+	Set<Integer> invitees = new HashSet<>();
+
+	QuestStage questStage_Recycle = QuestStage.NOT_STARTED;
+	QuestStage questStage_BeeKeeper = QuestStage.NOT_STARTED;
+	QuestStage questStage_Lumberjack = QuestStage.NOT_STARTED;
 
 	public void addRecycledItems(int count) {
 		this.recycledItems += count;
