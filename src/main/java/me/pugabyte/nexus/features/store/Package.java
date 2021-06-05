@@ -187,7 +187,7 @@ public enum Package {
 
 		@Override
 		public int count(OfflinePlayer player) {
-			return new HomeService().get(player).getHomesLimit();
+			return new HomeService().get(player).getExtraHomes();
 		}
 
 		@Override

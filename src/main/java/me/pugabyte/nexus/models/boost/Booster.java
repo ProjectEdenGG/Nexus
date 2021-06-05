@@ -230,7 +230,7 @@ public class Booster implements PlayerOwnedObject {
 	}
 
 	public int count(Boostable type) {
-		return get(type).size();
+		return getNonExpiredBoosts(type).size();
 	}
 
 	public List<Boost> getNonExpiredBoosts() {
