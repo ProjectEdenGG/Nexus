@@ -29,6 +29,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -190,6 +191,10 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 			return Bukkit.getWorlds().get(0);
 
 		return Bukkit.getWorld(dimension);
+	}
+
+	public @NotNull WorldGroup getWorldGroup() {
+		return WorldGroup.of(getLocation());
 	}
 
 	public Location getLocation() {

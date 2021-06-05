@@ -17,9 +17,9 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.models.delivery.DeliveryUser;
-import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
+import me.pugabyte.nexus.models.mail.Mailer;
+import me.pugabyte.nexus.models.mail.Mailer.Mail;
+import me.pugabyte.nexus.models.mail.MailerService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -525,19 +525,19 @@ public class PlayerUtils {
 		}
 	}
 
-	public static void giveItem(HasPlayer player, ItemStack item) {
+	public static void giveItem(HasOfflinePlayer player, ItemStack item) {
 		giveItems(player, Collections.singletonList(item));
 	}
 
-	public static void giveItem(HasPlayer player, ItemStack item, String nbt) {
+	public static void giveItem(HasOfflinePlayer player, ItemStack item, String nbt) {
 		giveItems(player, Collections.singletonList(item), nbt);
 	}
 
-	public static void giveItems(HasPlayer player, Collection<ItemStack> items) {
+	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items) {
 		giveItems(player, items, null);
 	}
 
-	public static void giveItems(HasPlayer player, Collection<ItemStack> items, String nbt) {
+	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 		if (!Strings.isNullOrEmpty(nbt)) {
@@ -550,56 +550,57 @@ public class PlayerUtils {
 			}
 		}
 
-		final Player _player = player.getPlayer();
-		if (_player.isOnline())
-			dropExcessItems(player, giveItemsAndGetExcess(player, finalItems));
+		OfflinePlayer _player = player.getOfflinePlayer();
+		if (_player.isOnline() && _player.getPlayer() != null)
+			dropExcessItems(_player.getPlayer(), giveItemsAndGetExcess(_player.getPlayer(), finalItems));
 		else
-			giveItemsAndDeliverExcess(player.getPlayer(), finalItems, null, WorldGroup.of(Nerd.of(_player).getLocation()));
+			giveItemsAndMailExcess(_player, finalItems, null, WorldGroup.of(Nerd.of(_player).getLocation()));
 	}
 
-	public static List<ItemStack> giveItemsAndGetExcess(HasPlayer player, ItemStack items) {
+	public static List<ItemStack> giveItemsAndGetExcess(HasOfflinePlayer player, ItemStack items) {
 		return giveItemsAndGetExcess(player, Collections.singletonList(items));
 	}
 
-	public static List<ItemStack> giveItemsAndGetExcess(HasPlayer player, List<ItemStack> items) {
+	public static List<ItemStack> giveItemsAndGetExcess(HasOfflinePlayer player, List<ItemStack> items) {
+		if (!player.getOfflinePlayer().isOnline() || player.getOfflinePlayer().getPlayer() == null)
+			return items;
+
 		List<ItemStack> excess = new ArrayList<>();
 		for (ItemStack item : items)
 			if (!isNullOrAir(item))
-				excess.addAll(player.getPlayer().getInventory().addItem(item.clone()).values());
+				excess.addAll(player.getOfflinePlayer().getPlayer().getInventory().addItem(item.clone()).values());
 
 		return excess;
 	}
 
-	public static void giveItemAndDeliverExcess(HasOfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
-		giveItemsAndDeliverExcess(player, Collections.singleton(items), null, worldGroup);
+	public static void giveItemAndMailExcess(HasOfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
+		giveItemsAndMailExcess(player, Collections.singleton(items), null, worldGroup);
 	}
 
-	public static void giveItemAndDeliverExcess(HasOfflinePlayer player, ItemStack items, String message, WorldGroup worldGroup) {
-		giveItemsAndDeliverExcess(player, Collections.singleton(items), message, worldGroup);
+	public static void giveItemAndMailExcess(HasOfflinePlayer player, ItemStack items, String message, WorldGroup worldGroup) {
+		giveItemsAndMailExcess(player, Collections.singleton(items), message, worldGroup);
 	}
 
-	public static void giveItemsAndDeliverExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
+	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
 
 		List<ItemStack> excess;
-		boolean alwaysDeliver = offlinePlayer.getPlayer() == null || WorldGroup.of(offlinePlayer.getPlayer()) != worldGroup;
-		if (!alwaysDeliver)
+		boolean alwaysMail = offlinePlayer.getPlayer() == null || Nerd.of(offlinePlayer).getWorldGroup() != worldGroup;
+		if (!alwaysMail)
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = ItemUtils.clone(items);
 		if (Utils.isNullOrEmpty(excess)) return;
 
-		DeliveryService service = new DeliveryService();
-		DeliveryUser user = service.get(offlinePlayer);
-		Delivery delivery = Delivery.fromServer(message, excess);
+		MailerService service = new MailerService();
+		Mailer mailer = service.get(offlinePlayer);
+		Mail.fromServer(mailer.getUuid(), worldGroup, message, excess).send();
+		service.save(mailer);
 
-		user.add(worldGroup, delivery);
-		service.save(user);
-
-		String send = alwaysDeliver ? "Items have been given to you as a &c/delivery" : "Your inventory was full. Excess items were given to you as a &c/delivery";
-		user.sendMessage(JsonBuilder.fromPrefix("Delivery").next(send).command("/delivery").hover("&eClick to view deliveries"));
+		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";
+		mailer.sendMessage(JsonBuilder.fromPrefix("Mail").next(send).command("/mail box").hover("&eClick to view your mail box"));
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {

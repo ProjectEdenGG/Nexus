@@ -76,7 +76,7 @@ public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 			SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, 0.8f, 1.0f);
 			return;
 		}
-		PlayerUtils.giveItemAndDeliverExcess(player, item, "Pride 2021 Purchase", WorldGroup.SURVIVAL);
+		PlayerUtils.giveItemAndMailExcess(player, item, "Pride 2021 Purchase", WorldGroup.SURVIVAL);
 		open(player);
 	}
 }

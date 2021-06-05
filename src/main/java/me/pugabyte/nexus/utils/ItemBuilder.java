@@ -346,6 +346,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder bookPages(String... pages) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		bookMeta.addPages(Arrays.stream(pages).map(message -> new JsonBuilder(message).asComponent()).toArray(Component[]::new));
+		return this;
+	}
+
 	public ItemBuilder bookPages(ComponentLike... pages) {
 		final BookMeta bookMeta = (BookMeta) itemMeta;
 		bookMeta.addPages(Arrays.stream(pages).map(ComponentLike::asComponent).toArray(Component[]::new));

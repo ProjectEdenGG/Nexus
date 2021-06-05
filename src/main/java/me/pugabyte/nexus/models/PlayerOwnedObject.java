@@ -4,9 +4,7 @@ import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.models.delivery.DeliveryUser;
-import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
+import me.pugabyte.nexus.models.mail.Mailer.Mail;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
@@ -80,6 +78,14 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 		return Nerd.of(this);
 	}
 
+	default @NotNull Nerd getOnlineNerd() {
+		return Nerd.of(getOnlinePlayer());
+	}
+
+	default @NotNull WorldGroup getWorldGroup() {
+		return getOnlineNerd().getWorldGroup();
+	}
+
 	@Override
 	default @NotNull String getName() {
 		String name = getOfflinePlayer().getName();
@@ -108,12 +114,8 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 	default void sendOrMail(String message) {
 		if (isOnline())
 			sendMessage(json(message));
-		else {
-			DeliveryService service = new DeliveryService();
-			DeliveryUser deliveryUser = service.get(getUuid());
-			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.fromServer(message));
-			service.save(deliveryUser);
-		}
+		else
+			Mail.fromServer(getUuid(), WorldGroup.SURVIVAL, message).send();
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {

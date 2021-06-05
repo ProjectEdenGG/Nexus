@@ -185,15 +185,15 @@ public abstract class WitherFight implements Listener {
 		OfflinePlayer itemReceiver = getHostOfflinePlayer();
 		if (getDifficulty() == WitherChallenge.Difficulty.CORRUPTED)
 			if (getAlternateDrops() != null)
-				PlayerUtils.giveItemsAndDeliverExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
+				PlayerUtils.giveItemsAndMailExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
 		if (shouldGiveStar()) {
 			gotStar = true;
-			PlayerUtils.giveItemsAndDeliverExcess(itemReceiver, Collections.singleton(new ItemStack(Material.NETHER_STAR)), null, WorldGroup.SURVIVAL);
+			PlayerUtils.giveItemsAndMailExcess(itemReceiver, Collections.singleton(new ItemStack(Material.NETHER_STAR)), null, WorldGroup.SURVIVAL);
 			broadcastToParty("&3Congratulations! You have gotten a wither star for this fight!");
 		} else {
 			broadcastToParty("&cUnfortunately, you did not get a star this time. You can try a harder difficulty for a higher chance");
 			if (getAlternateDrops() != null)
-				PlayerUtils.giveItemsAndDeliverExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
+				PlayerUtils.giveItemsAndMailExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
 		}
 	}
 

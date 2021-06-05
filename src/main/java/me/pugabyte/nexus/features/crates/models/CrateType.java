@@ -9,9 +9,7 @@ import me.pugabyte.nexus.features.crates.crates.MysteryCrate;
 import me.pugabyte.nexus.features.crates.crates.VoteCrate;
 import me.pugabyte.nexus.features.crates.crates.WeeklyWakkaCrate;
 import me.pugabyte.nexus.features.crates.menus.CratePreviewProvider;
-import me.pugabyte.nexus.models.delivery.DeliveryService;
-import me.pugabyte.nexus.models.delivery.DeliveryUser;
-import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
+import me.pugabyte.nexus.models.mail.Mailer.Mail;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -103,15 +101,11 @@ public enum CrateType {
 	public void give(OfflinePlayer player, int amount) {
 		ItemStack item = getKey().clone();
 		item.setAmount(amount);
-		if (player.isOnline() && WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL && PlayerUtils.hasRoomFor(player.getPlayer(), item))
+		if (player.isOnline() && player.getPlayer() != null && WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL && PlayerUtils.hasRoomFor(player.getPlayer(), item))
 			player.getPlayer().getInventory().addItem(item);
 		else {
-			DeliveryService service = new DeliveryService();
-			DeliveryUser deliveryUser = service.get(player);
+			Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, item).send();
 
-			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.fromServer(item));
-
-			service.save(deliveryUser);
 			if (player.isOnline()) {
 				PlayerUtils.send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " +
 						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + "&3 but your inventory was full." +

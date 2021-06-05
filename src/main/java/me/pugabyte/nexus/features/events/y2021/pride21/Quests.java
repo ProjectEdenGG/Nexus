@@ -137,7 +137,7 @@ public class Quests implements Listener {
 					eventUserService.save(eventUser);
 					ItemStack dyeBomb = DyeBombCommand.getDyeBomb();
 					dyeBomb.setAmount(16);
-					PlayerUtils.giveItemAndDeliverExcess(player, dyeBomb, "Pride 2021 Reward", WorldGroup.SURVIVAL);
+					PlayerUtils.giveItemAndMailExcess(player, dyeBomb, "Pride 2021 Reward", WorldGroup.SURVIVAL);
 				}
 			});
 		}

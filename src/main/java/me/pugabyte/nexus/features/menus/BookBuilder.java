@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,6 +31,10 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 			if (Strings.isNullOrEmpty(meta.getAuthor()))
 				this.meta.setAuthor("Server");
 		}
+	}
+
+	public T addPage(String message) {
+		return addPage(new JsonBuilder(message));
 	}
 
 	public T addPage(ComponentLike component) {
