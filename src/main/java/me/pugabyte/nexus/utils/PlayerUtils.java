@@ -550,7 +550,11 @@ public class PlayerUtils {
 			}
 		}
 
-		dropExcessItems(player, giveItemsAndGetExcess(player, finalItems));
+		final Player _player = player.getPlayer();
+		if (_player.isOnline())
+			dropExcessItems(player, giveItemsAndGetExcess(player, finalItems));
+		else
+			giveItemsAndDeliverExcess(player.getPlayer(), finalItems, null, WorldGroup.of(Nerd.of(_player).getLocation()));
 	}
 
 	public static List<ItemStack> giveItemsAndGetExcess(HasPlayer player, ItemStack items) {

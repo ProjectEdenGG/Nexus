@@ -2,7 +2,9 @@ package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
@@ -16,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -104,8 +105,9 @@ public class YourShopProvider extends _ShopProvider {
 		addPagination(player, contents, items);
 	}
 
-	public static class CollectItemsProvider extends _ShopProvider implements Listener {
+	public static class CollectItemsProvider extends _ShopProvider implements TemporaryListener {
 		private final static String TITLE = colorize("&0Collect Items");
+		@Getter
 		private Player player;
 		private final _ShopProvider previousMenu;
 
@@ -130,7 +132,7 @@ public class YourShopProvider extends _ShopProvider {
 			service.save(shop);
 
 			inv.setContents(items.toArray(ItemStack[]::new));
-			Nexus.registerTempListener(this);
+			Nexus.registerTemporaryListener(this);
 			player.openInventory(inv);
 		}
 
@@ -149,7 +151,7 @@ public class YourShopProvider extends _ShopProvider {
 
 			service.save(shop);
 
-			Nexus.unregisterTempListener(this);
+			Nexus.unregisterTemporaryListener(this);
 			event.getPlayer().closeInventory();
 			if (previousMenu != null)
 				Tasks.wait(1, () -> previousMenu.open(player));

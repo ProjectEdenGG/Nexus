@@ -9,7 +9,6 @@ import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
 import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
-import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -119,14 +118,10 @@ public class SendDeliveryMenuProvider extends MenuUtils implements InventoryProv
 			new InsertItemsMenu(this);
 		}));
 
-		// TODO Enable for all
-		if (Rank.of(player).isAdmin())
-			contents.set(1, 4, ClickableItem.from(buttonMessage.build(), e -> {
-				getMenu().close(player);
-				new AddMessageListener(this);
-			}));
-		else
-			contents.set(1, 4, ClickableItem.empty(buttonMessage.lore("&cTemporarily Disabled").build()));
+		contents.set(1, 4, ClickableItem.from(buttonMessage.build(), e -> {
+			getMenu().close(player);
+			new MailListener(this);
+		}));
 
 		contents.set(1, 7, ClickableItem.from(buttonConfirm.build(), e -> {
 			if (buttonConfirm.get().getType() == Material.LIME_STAINED_GLASS_PANE)

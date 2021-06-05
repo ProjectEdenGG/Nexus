@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -21,7 +22,6 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -211,10 +211,11 @@ public class Backpacks extends FunctionalRecipe {
 		}
 	}
 
-	public static class BackPackMenuListener implements Listener {
+	public static class BackPackMenuListener implements TemporaryListener {
 
 		ItemStack backpack;
 		String backpackId;
+		@Getter
 		Player player;
 		Inventory inv;
 		ItemStack[] originalItems;
@@ -232,7 +233,7 @@ public class Backpacks extends FunctionalRecipe {
 			inv.setContents(originalItems);
 			this.inv = inv;
 			player.openInventory(inv);
-			Nexus.registerTempListener(this);
+			Nexus.registerTemporaryListener(this);
 		}
 
 		public void saveContents(ItemStack[] contents) {
@@ -289,7 +290,7 @@ public class Backpacks extends FunctionalRecipe {
 		@EventHandler
 		public void onInventoryClose(InventoryCloseEvent event) {
 			if (player != event.getPlayer()) return;
-			Nexus.unregisterTempListener(this);
+			Nexus.unregisterTemporaryListener(this);
 			ItemStack[] contents = event.getView().getTopInventory().getContents();
 			saveContents(contents);
 		}

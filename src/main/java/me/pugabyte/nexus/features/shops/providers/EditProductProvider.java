@@ -2,7 +2,9 @@ package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.shops.ShopCommand;
 import me.pugabyte.nexus.features.shops.Shops;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -20,7 +22,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -135,8 +136,9 @@ public class EditProductProvider extends _ShopProvider {
 
 	}
 
-	public static class AddStockProvider extends _ShopProvider implements Listener {
+	public static class AddStockProvider extends _ShopProvider implements TemporaryListener {
 		private final static String TITLE = colorize("&0Add Stock");
+		@Getter
 		private Player player;
 		private final _ShopProvider previousMenu;
 		private final Product product;
@@ -151,7 +153,7 @@ public class EditProductProvider extends _ShopProvider {
 			product.setEditing(true);
 
 			Inventory inv = Bukkit.createInventory(null, 54, TITLE);
-			Nexus.registerTempListener(this);
+			Nexus.registerTemporaryListener(this);
 			player.openInventory(inv);
 		}
 
@@ -175,14 +177,15 @@ public class EditProductProvider extends _ShopProvider {
 			new ShopService().save(product.getShop());
 			product.setEditing(false);
 
-			Nexus.unregisterTempListener(this);
+			Nexus.unregisterTemporaryListener(this);
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}
 	}
 
-	public static class RemoveStockProvider extends _ShopProvider implements Listener {
+	public static class RemoveStockProvider extends _ShopProvider implements TemporaryListener {
 		private final static String TITLE = colorize("&0Remove Stock");
+		@Getter
 		private Player player;
 		private final _ShopProvider previousMenu;
 		private final Product product;
@@ -206,7 +209,7 @@ public class EditProductProvider extends _ShopProvider {
 				itemsAdded += item.getAmount();
 
 			inv.setContents(items.toArray(ItemStack[]::new));
-			Nexus.registerTempListener(this);
+			Nexus.registerTemporaryListener(this);
 			player.openInventory(inv);
 		}
 
@@ -234,7 +237,7 @@ public class EditProductProvider extends _ShopProvider {
 			new ShopService().save(product.getShop());
 			product.setEditing(false);
 
-			Nexus.unregisterTempListener(this);
+			Nexus.unregisterTemporaryListener(this);
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}

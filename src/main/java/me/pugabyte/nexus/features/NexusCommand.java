@@ -20,6 +20,7 @@ import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.listeners.ResourceWorld;
+import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -43,6 +44,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
@@ -118,6 +120,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -167,7 +170,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 			ReloadCondition.tryReload();
 		} catch (Exception ex) {
 			reloader = uuid();
-			error(new JsonBuilder(ex.getMessage(), NamedTextColor.RED).next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
+			JsonBuilder json = new JsonBuilder(ex.getMessage(), NamedTextColor.RED);
+			if (ex instanceof NexusException nex)
+				json = new JsonBuilder(nex.getJson());
+
+			error(json.next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -207,11 +214,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		SMARTINVS(() -> {
 			long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
 			if (invCount > 0)
-				throw new InvalidInputException("There are " + invCount + " SmartInvs menus open");
+				throw new InvalidInputException(new JsonBuilder("There are " + invCount + " SmartInvs menus open").command("/nexus smartInvs").hover("&eClick to view"));
 		}),
 		TEMP_LISTENERS(() -> {
-			if (Nexus.getTempListenerCount() > 0)
-				throw new InvalidInputException("There are " + Nexus.getTempListenerCount() + " temporary listeners registered");
+			if (!Nexus.getTemporaryListeners().isEmpty())
+				throw new InvalidInputException(new JsonBuilder("There are " + Nexus.getTemporaryListeners().size() + " temporary listeners registered").command("/nexus temporaryListeners").hover("&eClick to view"));
 		}),
 		SIGN_MENUS(() -> {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
@@ -313,13 +320,45 @@ public class NexusCommand extends CustomCommand implements Listener {
 			send(" &7- " + entry.getKey() + " - " + entry.getValue());
 	}
 
+	@Path("temporaryListeners unregisterOffline")
+	void temporaryListeners_unregisterOffline() {
+		List<TemporaryListener> unregistered = new ArrayList<>() {{
+			for (TemporaryListener temporaryListener : Nexus.getTemporaryListeners())
+				if (!temporaryListener.getPlayer().isOnline())
+					add(temporaryListener);
+		}};
+
+		if (unregistered.isEmpty())
+			error("Could not unregister any temporary listeners");
+
+		send(PREFIX + "Unregistered:");
+		for (TemporaryListener temporaryListener : unregistered) {
+			Nexus.unregisterTemporaryListener(temporaryListener);
+			send("&c" + Nickname.of(temporaryListener.getPlayer()) + " &7- " + temporaryListener.getClass().getSimpleName());
+		}
+	}
+
+	@Path("temporaryListeners")
+	void temporaryListeners() {
+		if (Nexus.getTemporaryListeners().isEmpty())
+			error("No temporary listeners registered");
+
+		send(PREFIX + "Temporary listeners");
+
+		for (TemporaryListener temporaryListener : Nexus.getTemporaryListeners()) {
+			final Player player = temporaryListener.getPlayer();
+
+			send((player.isOnline() ? "&e" : "&c") + Nickname.of(player) + " &7- " + temporaryListener.getClass().getSimpleName());
+		}
+	}
+
 	@Path("stats")
 	void stats() {
 		send("Features: " + Features.getFeatures().size());
 		send("Commands: " + new HashSet<>(Commands.getCommands().values()).size());
-		send("Listeners: " + Nexus.getListenerCount());
-		send("Temp Listeners: " + Nexus.getTempListenerCount());
-		send("EventHandlers: " + Nexus.getEventHandlers().size());
+		send("Listeners: " + Nexus.getListeners().size());
+		send("Temporary Listeners: " + Nexus.getTemporaryListeners().size());
+		send("Event Handlers: " + Nexus.getEventHandlers().size());
 		send("Services: " + MongoService.getServices().size());
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);

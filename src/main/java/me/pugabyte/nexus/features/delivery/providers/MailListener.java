@@ -1,8 +1,10 @@
 package me.pugabyte.nexus.features.delivery.providers;
 
 import de.tr7zw.nbtapi.NBTItem;
-import eden.utils.TimeUtils.Time;
+import eden.utils.Utils;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -10,33 +12,42 @@ import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-public class AddMessageListener implements Listener {
+import static me.pugabyte.nexus.features.delivery.DeliveryCommand.PREFIX;
+
+public class MailListener implements TemporaryListener {
 	private static final String NBT_KEY = "DeliveryMessageId";
 
 	private final SendDeliveryMenuProvider menu;
+	@Getter
 	private final Player player;
 	private final UUID uuid = UUID.randomUUID();
 
-	public AddMessageListener(SendDeliveryMenuProvider menu) {
+	@Override
+	public void unregister() {
+		if (!Utils.isNullOrEmpty(menu.items))
+			PlayerUtils.giveItems(player, menu.items);
+	}
+
+	public MailListener(SendDeliveryMenuProvider menu) {
 		this.menu = menu;
 		this.player = menu.user.getOnlinePlayer();
 
-		Nexus.registerTempListener(this);
+		Nexus.registerTemporaryListener(this);
 
 		final ItemStack book = new ItemBuilder(Material.WRITABLE_BOOK)
 				.name("Sign to Continue")
 				.nbt(nbt -> nbt.setString(NBT_KEY, uuid.toString()))
 				.build();
 
-		Nexus.log("Giving book to " + player.getName());
 		PlayerUtils.giveItem(player, book);
+
+		PlayerUtils.send(player, PREFIX + "Write your message in the book given to you, and sign it to continue");
 	}
 
 	@EventHandler
@@ -59,15 +70,12 @@ public class AddMessageListener implements Listener {
 				.build();
 
 		event.setCancelled(true);
-//		System.out.println(player.getInventory().getItem(hand));
-//		player.getInventory().setItem(hand, null);
-		player.getInventory().removeItem(book);
-//		player.updateInventory();
-//		System.out.println(player.getInventory().getItem(hand));
-//		Tasks.wait(1, () -> System.out.println(player.getInventory().getItem(hand)));
 
-		Tasks.wait(Time.SECOND.x(5), () -> menu.open(player));
-		Nexus.unregisterTempListener(this);
+		Tasks.wait(1, () -> {
+			player.getInventory().removeItem(book);
+			menu.open(player);
+			Nexus.unregisterTemporaryListener(this);
+		});
 	}
 
 }

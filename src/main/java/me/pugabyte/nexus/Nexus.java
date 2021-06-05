@@ -12,6 +12,7 @@ import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.menus.SignMenuFactory;
 import me.pugabyte.nexus.framework.commands.Commands;
 import me.pugabyte.nexus.framework.features.Features;
@@ -122,26 +123,27 @@ public class Nexus extends JavaPlugin {
 	}
 
 	@Getter
-	private static int listenerCount = 0;
+	private static final List<Listener> listeners = new ArrayList<>();
 	@Getter
-	private static int tempListenerCount = 0;
+	private static final List<TemporaryListener> temporaryListeners = new ArrayList<>();
 	@Getter
 	private static final List<Class<? extends Event>> eventHandlers = new ArrayList<>();
 
-	public static void registerTempListener(Listener listener) {
+	public static void registerTemporaryListener(TemporaryListener listener) {
 		registerListener(listener);
-		++tempListenerCount;
+		temporaryListeners.add(listener);
 	}
 
-	public static void unregisterTempListener(Listener listener) {
+	public static void unregisterTemporaryListener(TemporaryListener listener) {
+		listener.unregister();
 		unregisterListener(listener);
-		--tempListenerCount;
+		temporaryListeners.remove(listener);
 	}
 
 	public static void registerListener(Listener listener) {
 		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
-			++listenerCount;
+			listeners.add(listener);
 			for (Method method : getMethods(listener.getClass(), withAnnotation(EventHandler.class)))
 				eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
@@ -151,7 +153,7 @@ public class Nexus extends JavaPlugin {
 	public static void unregisterListener(Listener listener) {
 		try {
 			HandlerList.unregisterAll(listener);
-			--listenerCount;
+			listeners.remove(listener);
 		} catch (Exception ex) {
 			log("Could not unregister listener " + listener.toString() + "!");
 			ex.printStackTrace();

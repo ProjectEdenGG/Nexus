@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.store.perks.autosort.commands;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -14,8 +15,8 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -54,9 +55,14 @@ public class AutoTrashCommand extends CustomCommand {
 		send(PREFIX + "Auto Trash behavior set to " + camelCase(behavior));
 	}
 
-	public static class AutoTrashMaterialEditor implements Listener {
+	public static class AutoTrashMaterialEditor implements TemporaryListener {
 		private static final String TITLE = StringUtils.colorize("&eAuto Trash");
 		private final AutoSortUser user;
+
+		@Override
+		public Player getPlayer() {
+			return user.getOnlinePlayer();
+		}
 
 		public AutoTrashMaterialEditor(AutoSortUser user) {
 			this.user = user;
@@ -67,7 +73,7 @@ public class AutoTrashCommand extends CustomCommand {
 					.sorted(new ItemStackComparator())
 					.toArray(ItemStack[]::new));
 
-			Nexus.registerTempListener(this);
+			Nexus.registerTemporaryListener(this);
 			user.getOnlinePlayer().openInventory(inv);
 		}
 
@@ -87,7 +93,7 @@ public class AutoTrashCommand extends CustomCommand {
 
 			user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
 
-			Nexus.unregisterTempListener(this);
+			Nexus.unregisterTemporaryListener(this);
 			event.getPlayer().closeInventory();
 		}
 	}
