@@ -48,7 +48,8 @@ public class Utils extends eden.utils.Utils {
 	}
 
 	public static void tryRegisterListener(Class<?> clazz) {
-		tryRegisterListener(new ObjenesisStd().newInstance(clazz));
+		if (canEnable(clazz))
+			tryRegisterListener(new ObjenesisStd().newInstance(clazz));
 	}
 
 	public static void tryRegisterListener(Object object) {
