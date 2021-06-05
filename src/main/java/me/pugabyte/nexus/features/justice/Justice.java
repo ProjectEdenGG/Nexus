@@ -282,6 +282,10 @@ public class Justice extends Feature implements Listener {
 		if (geoip.isMitigated())
 			return;
 
+		// TODO git#672
+		if (true)
+			return;
+
 		Punishments punishments = Punishments.of(event.getUniqueId());
 
 		if (punishments.getActiveMute().isPresent())
