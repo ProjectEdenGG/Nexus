@@ -27,6 +27,7 @@ import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -225,7 +226,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 			log = getNickname() + " added the";
 		else
 			log = executor + " added " + getNickname() + "'s";
-		Discord.staffLog(log + " pronoun `" + pronoun + "`");
+		Discord.staffLog(StringUtils.getDiscordPrefix("Pronouns") + log + " pronoun `" + pronoun + "`");
 		updatePronouns();
 	}
 
@@ -241,7 +242,7 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 			log = getNickname() + " removed the";
 		else
 			log = executor + " removed " + getNickname() + " 's";
-		Discord.staffLog(log + " pronoun `" + pronoun + "`");
+		Discord.staffLog(StringUtils.getDiscordPrefix("Pronouns") + log + " pronoun `" + pronoun + "`");
 		updatePronouns();
 	}
 
