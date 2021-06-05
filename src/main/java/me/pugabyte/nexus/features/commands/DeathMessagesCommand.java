@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
@@ -15,7 +16,9 @@ import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.Mute
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
+import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -41,6 +44,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,12 +54,15 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang.StringUtils.countMatches;
 
 @NoArgsConstructor
 public class DeathMessagesCommand extends CustomCommand implements Listener {
@@ -93,7 +100,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		}
 
 		public static DeathMessageConfig of(String key) {
-			return messages.get(key);
+			return messages.get(key.toLowerCase());
 		}
 	}
 
@@ -101,21 +108,38 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	public static void reloadConfig() {
 		messages.clear();
-		ConfigurationSection config = Nexus.getConfig("death-messages.yml").getConfigurationSection("messages");
+		ConfigurationSection config = getConfig().getConfigurationSection("messages");
 		if (config != null) {
 			for (String key : config.getKeys(true)) {
 				ConfigurationSection section = config.getConfigurationSection(key);
 				if (config.isConfigurationSection(key) && section != null) {
-					DeathMessageConfig deathMessageConfig = DeathMessageConfig.builder()
+					messages.put(key.toLowerCase(), DeathMessageConfig.builder()
 							.key(key)
 							.defaultMessage(section.getString("default"))
 							.customMessages(section.getStringList("custom"))
-							.build();
-					if (deathMessageConfig.count() > 0)
-						messages.put(key, deathMessageConfig);
+							.build());
 				}
 			}
 		}
+	}
+
+	@NotNull
+	private static YamlConfiguration getConfig() {
+		return Nexus.getConfig(getFileName());
+	}
+
+	public static File getFile() {
+		return Nexus.getFile(getFileName());
+	}
+
+	@NotNull
+	private static String getFileName() {
+		return "death-messages.yml";
+	}
+
+	@SneakyThrows
+	private void save(YamlConfiguration yml) {
+		yml.save(getFile());
 	}
 
 	static {
@@ -131,6 +155,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	@Path("list [page]")
 	void list(@Arg("1") int page) {
+		final List<DeathMessageConfig> messages = DeathMessagesCommand.messages.values().stream().filter(config -> config.count() > 0).toList();
 		if (messages.isEmpty())
 			error("No custom death messages configured");
 
@@ -148,18 +173,44 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			return json;
 		};
 
-		paginate(messages.values(), formatter, "/deathmessages list", page);
+		paginate(messages, formatter, "/deathmessages list", page);
 	}
 
 	@Path("messages <key> [page]")
-	void list(String key, @Arg("1") int page) {
-		final List<String> customMessages = DeathMessageConfig.of(key).getCustomMessages();
+	void list(DeathMessageConfig config, @Arg("1") int page) {
+		final List<String> customMessages = config.getCustomMessages();
 		if (Utils.isNullOrEmpty(customMessages))
-			error("No custom messages for key &e" + key);
+			error("No custom messages for key &e" + config.getKey());
 
-		send(PREFIX + "Custom messages for key &e" + key);
+		send(PREFIX + "Custom messages for key &e" + config.getKey());
 
-		paginate(customMessages, (message, index) -> json("&3" + index + " &7" + message), "/deathmessages list " + key, page);
+		paginate(customMessages, (message, index) -> json("&3" + index + " &7" + message), "/deathmessages list " + config.getKey(), page);
+	}
+
+	@Path("suggest <key> <message...>")
+	void suggest(DeathMessageConfig config, String message) {
+		final int expectedVariables = countMatches(config.getDefaultMessage(), "%s");
+		final int foundVariables = countMatches(message, "%s");
+
+		if (expectedVariables != foundVariables)
+			error("Your message must contain the same amount of variables (&e%s&c) as the default message " +
+					"(Found &e" + foundVariables + "&c, expected &e" + expectedVariables + "&c: &7" + config.getDefaultMessage() + "&c)");
+
+		final YamlConfiguration yml = getConfig();
+		if (!yml.isConfigurationSection("suggestions"))
+			yml.createSection("suggestions");
+
+		final ConfigurationSection suggestions = yml.getConfigurationSection("suggestions");
+		if (!suggestions.contains(config.getKey(), true))
+			suggestions.set(config.getKey(), Collections.emptyList());
+
+		final List<String> messages = suggestions.getStringList(config.getKey());
+		messages.add(message);
+		suggestions.set(config.getKey(), messages);
+
+		save(yml);
+
+		send(PREFIX + "Added suggestion for key " + config.getKey());
 	}
 
 	@Path("behavior <behavior> [player] [duration...]")
@@ -309,6 +360,22 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			} catch (PlayerNotFoundException|InvalidInputException ignored) {}
 		}
 		return playerComponent.build();
+	}
+
+	@ConverterFor(DeathMessageConfig.class)
+	DeathMessageConfig convertToDeathMessageConfig(String input) {
+		final DeathMessageConfig config = DeathMessageConfig.of(input);
+		if (config == null)
+			throw new InvalidInputException("Death message config from key &e" + input + " not found");
+		return config;
+	}
+
+	@TabCompleterFor(DeathMessageConfig.class)
+	List<String> tabCompleteDeathMessageConfig(String filter) {
+		return messages.values().stream()
+				.map(DeathMessageConfig::getKey)
+				.filter(key -> key.toLowerCase().startsWith(filter.toLowerCase()))
+				.toList();
 	}
 
 }
