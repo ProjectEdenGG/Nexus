@@ -22,13 +22,13 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 
 	public BookBuilder(ItemStack book) {
 		this.book = book;
-		meta = (BookMeta) book.getItemMeta();
+		this.meta = (BookMeta) book.getItemMeta();
 
 		if (book.getType() == Material.WRITTEN_BOOK) {
 			if (Strings.isNullOrEmpty(meta.getTitle()))
-				meta.setTitle("Book Menu");
+				this.meta.setTitle("Book Menu");
 			if (Strings.isNullOrEmpty(meta.getAuthor()))
-				meta.setAuthor("Server");
+				this.meta.setAuthor("Server");
 		}
 	}
 

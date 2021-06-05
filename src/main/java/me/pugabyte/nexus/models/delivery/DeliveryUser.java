@@ -14,15 +14,21 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.delivery.DeliveryCommand;
 import me.pugabyte.nexus.features.delivery.DeliveryWorldMenu;
+import me.pugabyte.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,48 +115,49 @@ public class DeliveryUser implements PlayerOwnedObject {
 	public static class Delivery {
 		@NonNull
 		private UUID fromUUID;
+		private ItemStack message = null;
 		private List<ItemStack> items = new ArrayList<>();
-		private String message = null;
 
-		public Delivery(UUID fromUUID, String message, List<ItemStack> items) {
+		public Delivery(@NotNull UUID fromUUID, ItemStack message, List<ItemStack> items) {
 			this.fromUUID = fromUUID;
 			this.items = items;
 			this.message = message;
 		}
 
-		public Delivery(UUID fromUUID, List<ItemStack> items) {
+		public Delivery(@NotNull UUID fromUUID, List<ItemStack> items) {
 			this.fromUUID = fromUUID;
 			this.items = items;
 		}
 
-		public Delivery(UUID fromUUID, ItemStack... items) {
+		public Delivery(@NotNull UUID fromUUID, ItemStack... items) {
 			this.fromUUID = fromUUID;
 			this.items = Arrays.asList(items);
 		}
 
-		public Delivery(String message, UUID fromUUID) {
+		public Delivery(@NotNull UUID fromUUID, ItemStack message) {
 			this.fromUUID = fromUUID;
 			this.message = message;
 		}
 
-		public static Delivery serverDelivery(List<ItemStack> items) {
-			return new Delivery(StringUtils.getUUID0(), items);
+		public static Delivery fromServer(String message) {
+			return fromServer(message, Collections.emptyList());
 		}
 
-		public static Delivery serverDelivery(ItemStack... items) {
-			return new Delivery(StringUtils.getUUID0(), Arrays.asList(items));
+		public static Delivery fromServer(ItemStack... items) {
+			return fromServer(null, Arrays.asList(items));
 		}
 
-		public static Delivery serverDelivery(String message) {
-			return new Delivery(message, StringUtils.getUUID0());
+		public static Delivery fromServer(List<ItemStack> items) {
+			return fromServer(null, items);
 		}
 
-		public static Delivery serverDelivery(String message, ItemStack... items) {
-			return new Delivery(StringUtils.getUUID0(), message, Arrays.asList(items));
+		public static Delivery fromServer(String message, ItemStack... items) {
+			return fromServer(message, Arrays.asList(items));
 		}
 
-		public static Delivery serverDelivery(String message, List<ItemStack> items) {
-			return new Delivery(StringUtils.getUUID0(), message, items);
+		public static Delivery fromServer(String message, List<ItemStack> items) {
+			final WrittenBookMenu builder = new WrittenBookMenu().addPage(new JsonBuilder(message));
+			return new Delivery(StringUtils.getUUID0(), builder.getBook(), items);
 		}
 
 		public String getFrom() {
@@ -158,6 +165,14 @@ public class DeliveryUser implements PlayerOwnedObject {
 			if (!this.fromUUID.equals(StringUtils.getUUID0()))
 				from = Nickname.of(this.fromUUID);
 			return from;
+		}
+
+		public boolean hasMessage() {
+			return !ItemUtils.isNullOrAir(message);
+		}
+
+		public boolean hasItems() {
+			return !Utils.isNullOrEmpty(items);
 		}
 	}
 

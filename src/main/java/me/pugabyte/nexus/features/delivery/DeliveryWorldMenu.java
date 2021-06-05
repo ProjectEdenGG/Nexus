@@ -55,7 +55,7 @@ public class DeliveryWorldMenu extends MenuUtils implements InventoryProvider {
 		ItemStack skyblock = new ItemBuilder(Material.COBBLESTONE).name("&3Skyblock").lore("&cCurrently disabled").build();
 
 		Consumer<WorldGroup> save = worldGroup -> {
-			deliveryUser.add(worldGroup, Delivery.serverDelivery(items));
+			deliveryUser.add(worldGroup, Delivery.fromServer(items));
 			service.save(deliveryUser);
 
 			menu.close(player);

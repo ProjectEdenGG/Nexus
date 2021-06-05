@@ -61,15 +61,12 @@ public class DeliveryCommand extends CustomCommand implements Listener {
 	public void onInvClose(InventoryCloseEvent event) {
 		Player player = (Player) event.getPlayer();
 		Optional<SmartInventory> inv = SmartInvsPlugin.manager().getInventory(player);
-		if (!inv.isPresent()) return;
-		if (!(inv.get().getProvider() instanceof OpenDeliveryMenuProvider openDeliveryMenuProvider)) return;
+		if (inv.isEmpty()) return;
+		if (!(inv.get().getProvider() instanceof OpenDeliveryMenuProvider)) return;
 
-		List<ItemStack> items = openDeliveryMenuProvider.getDelivery().getItems(); // check against inv items and diff
-		List<ItemStack> contents = Arrays.asList(event.getInventory().getContents());
-
-		for (ItemStack item : items)
-			if (contents.contains(item))
-				PlayerUtils.giveItem(player, item);
+		ItemStack[] menuContents = event.getInventory().getContents();
+		for (ItemStack item : Arrays.copyOfRange(menuContents, 9, menuContents.length))
+			PlayerUtils.giveItem(player, item);
 	}
 
 	@EventHandler

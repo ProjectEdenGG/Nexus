@@ -111,7 +111,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 		else {
 			DeliveryService service = new DeliveryService();
 			DeliveryUser deliveryUser = service.get(getUuid());
-			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.serverDelivery(message));
+			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.fromServer(message));
 			service.save(deliveryUser);
 		}
 	}

@@ -19,6 +19,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundExcep
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.models.delivery.DeliveryService;
 import me.pugabyte.nexus.models.delivery.DeliveryUser;
+import me.pugabyte.nexus.models.delivery.DeliveryUser.Delivery;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -588,9 +589,7 @@ public class PlayerUtils {
 
 		DeliveryService service = new DeliveryService();
 		DeliveryUser user = service.get(offlinePlayer);
-		DeliveryUser.Delivery delivery = DeliveryUser.Delivery.serverDelivery(excess);
-		if (!Strings.isNullOrEmpty(message))
-			delivery.setMessage(message);
+		Delivery delivery = Delivery.fromServer(message, excess);
 
 		user.add(worldGroup, delivery);
 		service.save(user);

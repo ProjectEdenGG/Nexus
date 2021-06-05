@@ -109,7 +109,7 @@ public enum CrateType {
 			DeliveryService service = new DeliveryService();
 			DeliveryUser deliveryUser = service.get(player);
 
-			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.serverDelivery(item));
+			deliveryUser.add(WorldGroup.SURVIVAL, Delivery.fromServer(item));
 
 			service.save(deliveryUser);
 			if (player.isOnline()) {

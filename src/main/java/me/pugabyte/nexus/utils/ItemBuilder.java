@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
 import net.kyori.adventure.text.Component;
@@ -14,6 +15,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -22,6 +24,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.BookMeta.Generation;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -61,7 +65,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder(ItemStack itemStack) {
 		this.itemStack = itemStack.clone();
-		this.itemMeta = itemStack.getItemMeta();
+		this.itemMeta = itemStack.getItemMeta() == null ? null : itemStack.getItemMeta().clone();
 		if (itemMeta != null && itemMeta.getLore() != null)
 			this.lore.addAll(itemMeta.getLore());
 	}
@@ -199,6 +203,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// Custom meta types
 
+	// Leather armor
+
 	public ItemBuilder armorColor(Color color) {
 		((LeatherArmorMeta) itemMeta).setColor(color);
 		return this;
@@ -312,11 +318,58 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
-	public ItemBuilder customModelData(int id) {
-		if (id > 0)
-			nbt(item -> item.setInteger("CustomModelData", id));
+	// Books
+
+	public ItemBuilder bookTitle(String title) {
+		return bookTitle(new JsonBuilder(title));
+	}
+
+	public ItemBuilder bookTitle(@Nullable ComponentLike title) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		if (title != null)
+			bookMeta.title(title.asComponent());
 		return this;
 	}
+
+	public ItemBuilder bookAuthor(OfflinePlayer author) {
+		return bookAuthor(Nickname.of(author));
+	}
+
+	public ItemBuilder bookAuthor(String author) {
+		return bookAuthor(new JsonBuilder(author));
+	}
+
+	public ItemBuilder bookAuthor(@Nullable ComponentLike author) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		if (author != null)
+			bookMeta.author(author.asComponent());
+		return this;
+	}
+
+	public ItemBuilder bookPages(ComponentLike... pages) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		bookMeta.addPages(Arrays.stream(pages).map(ComponentLike::asComponent).toArray(Component[]::new));
+		return this;
+	}
+
+	public ItemBuilder bookPages(List<Component> pages) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		bookMeta.pages(pages);
+		return this;
+	}
+
+	public ItemBuilder bookGeneration(Generation generation) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		bookMeta.setGeneration(generation);
+		return this;
+	}
+
+	public ItemBuilder bookMeta(BookMeta bookMeta) {
+		itemMeta = bookMeta;
+		return this;
+	}
+
+	// NBT
 
 	public ItemBuilder untradeable() {
 		return tradeable(false);
@@ -332,6 +385,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		consumer.accept(nbtItem);
 		itemStack = nbtItem.getItem();
 		itemMeta = itemStack.getItemMeta();
+		return this;
+	}
+
+	public ItemBuilder customModelData(int id) {
+		if (id > 0)
+			nbt(item -> item.setInteger("CustomModelData", id));
 		return this;
 	}
 
