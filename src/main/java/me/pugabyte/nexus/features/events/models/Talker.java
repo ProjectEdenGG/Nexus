@@ -79,10 +79,8 @@ public class Talker {
 			String line = iterator.next();
 			if (line.toLowerCase().matches("^wait \\d+$")) {
 				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
-				if (!iterator.hasNext()) {
-					// TODO: This wait doesn't seen to be working properly
+				if (!iterator.hasNext())
 					Tasks.wait(wait.get(), () -> future.complete(null));
-				}
 			} else {
 				line = line.replaceAll("<player>", playerName);
 				final String npcName;
