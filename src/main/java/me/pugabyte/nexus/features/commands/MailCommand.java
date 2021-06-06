@@ -195,13 +195,13 @@ public class MailCommand extends CustomCommand {
 
 			List<ClickableItem> items = new ArrayList<>();
 
-			List<Mail> mails = mailer.getMail(worldGroup);
+			List<Mail> mails = mailer.getUnreadMail(worldGroup);
 			if (Utils.isNullOrEmpty(mails))
 				throw new InvalidInputException("There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox");
 
 			for (Mail mail : mails)
 				items.add(ClickableItem.from(mail.getDisplayItem().build(), e -> {
-					mailer.removeMail(worldGroup, mail);
+					mail.received();
 					service.save(mailer);
 					new OpenMailMenu(mail);
 				}));

@@ -56,6 +56,10 @@ public class Mailer implements PlayerOwnedObject {
 		return mail.computeIfAbsent(worldGroup, $ -> new ArrayList<>());
 	}
 
+	public List<Mail> getUnreadMail(WorldGroup worldGroup) {
+		return getMail(worldGroup).stream().filter(mail -> mail.getReceived() == null).toList();
+	}
+
 	public void removeMail(WorldGroup worldGroup, Mail mail) {
 		getMail(worldGroup).remove(mail);
 	}
