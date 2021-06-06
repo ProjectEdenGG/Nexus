@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static eden.utils.StringUtils.camelCase;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @Data
 @AllArgsConstructor
@@ -21,6 +22,8 @@ public class CustomModel implements Comparable<CustomModel> {
 	private int data;
 	private CustomModelMeta meta;
 	private String fileName;
+
+	public static final String NBT_KEY = "CustomModelData";
 
 	public CustomModel(@NonNull CustomModelGroup.Override override, @NonNull Material material) {
 		this.override = override;
@@ -43,7 +46,17 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static boolean exists(ItemStack item) {
-		return new NBTItem(item).hasKey("CustomModelData");
+		return new NBTItem(item).hasKey(NBT_KEY);
+	}
+
+	public boolean equals(ItemStack itemStack) {
+		if (isNullOrAir(itemStack))
+			return false;
+		if (itemStack.getType() != material)
+			return false;
+
+		final NBTItem nbtItem = new NBTItem(itemStack);
+		return nbtItem.hasKey(NBT_KEY) && nbtItem.getInteger(NBT_KEY) == data;
 	}
 
 	public ItemStack getItem() {

@@ -14,6 +14,7 @@ import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayer;
 import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -372,6 +373,17 @@ public class PlayerUtils {
 	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
 		if (player.getPlayer() == null) return false;
 		return getAllInventoryContents(player.getPlayer()).contains(itemStack);
+	}
+
+	public static ItemStack searchInventory(OptionalPlayer player, CustomModel customModel) {
+		if (player.getPlayer() == null)
+			return null;
+
+		for (ItemStack content : getAllInventoryContents(player.getPlayer()))
+			if (customModel.equals(content))
+				return content;
+
+		return null;
 	}
 
 	@NotNull

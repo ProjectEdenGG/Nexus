@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
 import me.pugabyte.nexus.features.resourcepack.CustomModel;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -23,10 +22,16 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+
 public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack item = CustomModel.itemOf(Material.TOTEM_OF_UNDYING, 1);
+	private static final ItemStack item = getCustomModel().getItem();
+
+	public static CustomModel getCustomModel() {
+		return CustomModel.of(Material.TOTEM_OF_UNDYING, 1);
+	}
 
 	@Override
 	public ItemStack getResult() {
@@ -70,21 +75,19 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 			return;
 
 		PlayerInventory inv = player.getInventory();
-		if (inv.getItemInMainHand().getType().equals(Material.TOTEM_OF_UNDYING) || inv.getItemInOffHand().getType().equals(Material.TOTEM_OF_UNDYING)) {
+		if (inv.getItemInMainHand().getType().equals(Material.TOTEM_OF_UNDYING) || inv.getItemInOffHand().getType().equals(Material.TOTEM_OF_UNDYING))
 			return;
-		}
 
-		if (!PlayerUtils.playerHas(player, item)) {
+		final ItemStack item = PlayerUtils.searchInventory(player, getCustomModel());
+		if (isNullOrAir(item))
 			return;
-		}
 
 		// Delete the totem they have
 		inv.removeItemAnySlot(item);
 		// Move item from offhand
 		ItemStack offHand = inv.getItemInOffHand();
-		if (!ItemUtils.isNullOrAir(offHand)) {
+		if (!isNullOrAir(offHand))
 			Tasks.wait(1, () -> inv.setItemInOffHand(offHand));
-		}
 
 		// Put a totem in their offhand
 		inv.setItemInOffHand(item);
