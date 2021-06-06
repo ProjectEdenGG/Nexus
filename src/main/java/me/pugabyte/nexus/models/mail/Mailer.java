@@ -60,10 +60,6 @@ public class Mailer implements PlayerOwnedObject {
 		return getMail(worldGroup).stream().filter(mail -> mail.getReceived() == null).toList();
 	}
 
-	public void removeMail(WorldGroup worldGroup, Mail mail) {
-		getMail(worldGroup).remove(mail);
-	}
-
 	public void addPending(Mail mail) {
 		pendingMail.put(getWorldGroup(), mail);
 	}

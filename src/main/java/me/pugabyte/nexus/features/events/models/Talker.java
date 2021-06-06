@@ -97,10 +97,10 @@ public class Talker {
 				Tasks.wait(wait.get(), () -> {
 					PlayerUtils.send(player, message);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
-
-					if (!iterator.hasNext())
-						future.complete(null);
 				});
+
+				if (!iterator.hasNext())
+					Tasks.wait(wait.get(), () -> future.complete(null));
 			}
 		}
 
