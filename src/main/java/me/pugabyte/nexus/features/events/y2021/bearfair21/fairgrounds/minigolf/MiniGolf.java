@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-// TODO BF21: ball doesn't get deleted when it hits an entity, and respawns
 public class MiniGolf {
 	// @formatter:off
 	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();

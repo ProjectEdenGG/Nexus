@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import eden.utils.TimeUtils.Time;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
@@ -23,6 +24,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -45,6 +47,9 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
+
+	@Getter
+	private static final ItemStack crateKey = new ItemBuilder(Material.TRIPWIRE_HOOK).amount(1).name("Bear Fair Crate Key").build();
 
 	public Quests() {
 		Nexus.registerListener(this);
@@ -71,6 +76,15 @@ public class Quests implements Listener {
 
 	public static ItemStack getBackPack(Player player) {
 		return Backpacks.getBackpack(null, player);
+	}
+
+	public static void giveItem(BearFair21User user, ItemStack itemStack) {
+		giveItem(user.getOnlinePlayer(), itemStack);
+	}
+
+	public static void giveItem(Player player, ItemStack itemStack) {
+		PlayerUtils.giveItem(player, itemStack);
+		chime(player);
 	}
 
 	public static void chime(Player player) {

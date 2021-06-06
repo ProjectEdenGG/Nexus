@@ -1,10 +1,11 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
-import lombok.Getter;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.SummerDownUnderIsland.SummerDownUnderNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
@@ -18,20 +19,26 @@ public class SummerDownUnderIsland implements Listener, BearFair21Island {
 	public enum SummerDownUnderNPCs implements BearFair21TalkingNPC {
 		;
 
-		@Getter
-		private final int npcId;
-		private final String name;
-		@Getter
+		private final BearFair21NPC npc;
 		private final List<String> script;
 
 		@Override
-		public String getName() {
-			return this.name;
+		public List<String> getScript(BearFair21User user) {
+			return this.script;
 		}
 
-		SummerDownUnderNPCs(String name, int npcId) {
-			this.name = name;
-			this.npcId = npcId;
+		@Override
+		public String getName() {
+			return this.npc.getName();
+		}
+
+		@Override
+		public int getNpcId() {
+			return this.npc.getId();
+		}
+
+		SummerDownUnderNPCs(BearFair21NPC npc) {
+			this.npc = npc;
 			this.script = new ArrayList<>();
 		}
 	}

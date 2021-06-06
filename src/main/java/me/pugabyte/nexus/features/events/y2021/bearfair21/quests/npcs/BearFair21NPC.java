@@ -39,8 +39,16 @@ public enum BearFair21NPC {
 	ORGANIZER("Wakka", 3798),
 
 	// MGN
+	AXEL("Axel", 4126),
+	XAVIER("Xavier", 5127),
+	RYAN("Ryan", 4128),
 	// PUGMAS
+	MAYOR_PUGMAS("Mayor", 4139),
+	GRINCH("Grinch", 4129),
 	// HALLOWEEN
+	JOSE("José", 4131),
+	SANTIAGO("Santiago", 4132),
+	ANA("Ana", 4133),
 	// SDU
 	;
 

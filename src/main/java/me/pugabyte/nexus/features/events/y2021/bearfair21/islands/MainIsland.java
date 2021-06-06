@@ -13,7 +13,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -61,6 +61,42 @@ public class MainIsland implements Listener, BearFair21Island {
 			}
 		},
 		ADMIRAL(BearFair21NPC.ADMIRAL) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add("TODO - Thanks!");
+					invite(user, this.getNpcId(), tool);
+				} else {
+					script.add("TODO");
+				}
+
+				return script;
+			}
+		},
+		ARCHITECT(BearFair21NPC.ARCHITECT) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add("TODO - Thanks!");
+					invite(user, this.getNpcId(), tool);
+				} else {
+					script.add("TODO");
+				}
+
+				return script;
+			}
+		},
+		CARPENTER(BearFair21NPC.CARPENTER) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
@@ -146,14 +182,18 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-					script.add("Welcome to our village!");
+					script.add("Welcome to the village!");
+					script.add("wait 40");
 					script.add("I would love to give you a tour, but I’m swamped in preparation work for the upcoming anniversary event.");
-					script.add("Do you have any time to spare? I’d greatly appreciate some help, if you do.");
+					script.add("wait 80");
+					script.add("You know, if you want to give a good first impression, helping me out would certainly do the trick.");
+					script.add("wait 80");
+					script.add("When you get some spare, come back and talk to me. I'd greatly appreciate the help.");
 				} else {
 					switch (user.getQuestStage_Main()) {
 						case NOT_STARTED -> {
 							script.add("Oh splendid, I could really use some help gathering the necessary decorations, I've got a few tasks for you.");
+							script.add("wait 80");
 							script.add("For your first task, could you gather the materials, and craft me 4 cyan & 4 yellow banners? I've seem to forgotten the recipe.");
 							user.setQuestStage_Main(QuestStage.STARTED);
 							return script;
@@ -167,6 +207,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
+							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BANNER);
@@ -184,6 +225,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
+							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 32 White Wool and 8 of each red, green, and blue dyes?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON);
@@ -204,6 +246,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
+							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you follow up with Maple the Pastry Chef about my cake order?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON);
@@ -220,9 +263,11 @@ public class MainIsland implements Listener, BearFair21Island {
 
 							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
-							script.add("TODO - That's almost everything, there's just one last task I need you to do.");
-							script.add("TODO - I had these invitations custom made, could you go around the island and give one to each of the townspeople?");
-							PlayerUtils.giveItem(user.getOnlinePlayer(), invitation.clone().amount(invitees.size()).build());
+							script.add("wait 20");
+							script.add("That's almost everything, there's just one last task I need you to do, while I'm finishing up.");
+							script.add("wait 40");
+							script.add("I had these invitations custom made, could you go around the island and give one to each of the townspeople?");
+							Tasks.wait(80, () -> Quests.giveItem(user, invitation.clone().amount(invitees.size()).build()));
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FOOD);
 							user.setQuestStage_Main(QuestStage.STEP_FOUR);
@@ -230,18 +275,19 @@ public class MainIsland implements Listener, BearFair21Island {
 							return script;
 						}
 						case STEP_FOUR -> {
-							script.add("TODO - I had those invitations custom made, could you go around the island and give one to each of the townspeople?");
+							script.add("I had those invitations custom made, could you go around the island and give one to each of the townspeople?");
 							return script;
 						}
 						case STEP_FIVE -> {
-							script.add("TODO - Thanks! And as a token of my gratitude, have this key to the village *gives BF21 Key*");
+							script.add("You're a life saver, thank you! And as a token of my gratitude, have this...");
+							Tasks.wait(40, () -> Quests.giveItem(user, Quests.getCrateKey()));
 
 							user.setQuestStage_Main(QuestStage.COMPLETE);
 							userService.save(user);
 							return script;
 						}
 						case COMPLETE -> {
-							script.add("TODO - Thanks for all the hard work!");
+							script.add("Thanks for all the hard work!");
 							return script;
 						}
 					}
@@ -270,25 +316,6 @@ public class MainIsland implements Listener, BearFair21Island {
 			}
 		},
 		// Merchants
-		ARCHITECT(BearFair21NPC.ARCHITECT) {
-			@Override
-			public List<String> getScript(BearFair21User user) {
-				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
-
-				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-					script.add("wait 20");
-				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
-					script.add("wait 40");
-
-					invite(user, this.getNpcId(), tool);
-				}
-
-				return script;
-			}
-		},
 		ARTIST(BearFair21NPC.ARTIST) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
@@ -374,25 +401,6 @@ public class MainIsland implements Listener, BearFair21Island {
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					script.add("wait 40");
-					invite(user, this.getNpcId(), tool);
-				}
-
-				return script;
-			}
-		},
-		CARPENTER(BearFair21NPC.CARPENTER) {
-			@Override
-			public List<String> getScript(BearFair21User user) {
-				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
-
-				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-					script.add("wait 20");
-				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
-					script.add("wait 40");
-
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -502,6 +510,10 @@ public class MainIsland implements Listener, BearFair21Island {
 		private static void invite(BearFair21User user, int npcId, ItemStack tool) {
 			tool.setAmount(tool.getAmount() - 1);
 			user.getInvitees().add(npcId);
+			if (user.getInvitees().size() == invitees.size()) {
+				user.sendMessage("TODO - You've completed the task, return to Mayor John");
+				user.setQuestStage_Main(QuestStage.STEP_FIVE);
+			}
 			userService.save(user);
 		}
 

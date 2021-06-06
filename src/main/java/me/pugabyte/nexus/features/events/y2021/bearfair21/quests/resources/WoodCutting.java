@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils.MinMaxResult;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
@@ -11,7 +12,9 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -126,12 +129,13 @@ public class WoodCutting implements Listener {
 			});
 		}
 
-		public ItemStack getLog() {
-			return getLog(1);
-		}
+		public List<ItemStack> getDrops(ItemStack tool) {
+			List<ItemStack> drops = new ArrayList<>();
+			drops.add(new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(Tool.from(tool.getType()).getAmount()).build());
+			if (RandomUtils.chanceOf(25))
+				drops.add(new ItemBuilder(Material.STICK).amount(RandomUtils.randomInt(1, 5)).build());
 
-		public ItemStack getLog(int amount) {
-			return new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(amount).build();
+			return drops;
 		}
 
 		public List<Material> getAllMaterials() {
@@ -235,7 +239,7 @@ public class WoodCutting implements Listener {
 						.duration(randomInt(8, 12) * 4)
 						.onTick(i -> {
 							if (i % 4 == 0)
-								PlayerUtils.giveItem(player, getLog());
+								PlayerUtils.giveItems(player, getDrops(ItemUtils.getTool(player)));
 						})
 						.start();
 
@@ -250,6 +254,38 @@ public class WoodCutting implements Listener {
 				put("tree", name());
 				put("id", id);
 			}}, LocalDateTime.now().plusSeconds(randomInt(3 * 60, 5 * 60))));
+		}
+	}
+
+	@AllArgsConstructor
+	private enum Tool {
+		AIR(1, 5),
+		WOODEN(3, 6),
+		STONE(4, 7),
+		GOLDEN(3, 6),
+		IRON(5, 9),
+		DIAMOND(6, 10),
+		NETHERITE(7, 12),
+		;
+
+		int min;
+		int max;
+
+		public static Tool from(Material material) {
+			return switch (material) {
+				case WOODEN_AXE -> WOODEN;
+				case STONE_AXE -> STONE;
+				case GOLDEN_AXE -> GOLDEN;
+				case IRON_AXE -> IRON;
+				case DIAMOND_AXE -> DIAMOND;
+				case NETHERITE_AXE -> NETHERITE;
+				default -> AIR;
+			};
+
+		}
+
+		public int getAmount() {
+			return RandomUtils.randomInt(min, max);
 		}
 	}
 

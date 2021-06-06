@@ -25,6 +25,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
+// TODO BF21: Make WoodCutter sell crate
 public class SellCrates implements Listener {
 	public SellCrates() {
 		Nexus.registerListener(this);

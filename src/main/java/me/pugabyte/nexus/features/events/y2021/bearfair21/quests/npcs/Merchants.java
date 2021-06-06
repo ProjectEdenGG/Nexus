@@ -46,12 +46,6 @@ public class Merchants {
 
 	@AllArgsConstructor
 	public enum BFMerchant {
-		ARCHITECT(BearFair21NPC.ARCHITECT) {
-			@Override
-			public List<TradeBuilder> getTrades(BearFair21User user) {
-				return null;
-			}
-		},
 		ARTIST(BearFair21NPC.ARTIST) {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
@@ -119,12 +113,6 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return FarmingLoot.getTrades();
-			}
-		},
-		CARPENTER(BearFair21NPC.CARPENTER) {
-			@Override
-			public List<TradeBuilder> getTrades(BearFair21User user) {
-				return null;
 			}
 		},
 		COLLECTOR(BearFair21NPC.COLLECTOR) {
