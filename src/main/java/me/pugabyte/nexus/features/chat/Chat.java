@@ -185,7 +185,7 @@ public class Chat extends Feature {
 			this.message = message;
 			this.muteMenuItem = muteMenuItem;
 			this.messageType = messageType == null ? MessageType.SYSTEM : messageType;
-			this.targets = Utils.isNullOrEmpty(targets) ? List.of(Target.values()) : targets;
+			this.targets = Utils.isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 
 			for (Target target : this.targets)
 				target.execute(this);
