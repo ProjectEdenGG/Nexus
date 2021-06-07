@@ -13,7 +13,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.features.chat.Chat.Broadcast;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -39,10 +38,8 @@ import java.util.function.Consumer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
-import static me.pugabyte.nexus.features.justice.Justice.DISCORD_PREFIX;
 import static me.pugabyte.nexus.features.justice.Justice.PREFIX;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Builder
@@ -213,8 +210,7 @@ public class Punishments implements PlayerOwnedObject {
 					.hover("&eClick for more information")
 					.command("/history " + getName());
 
-			Broadcast.ingame().channel(StaticChannel.STAFF).message(ingame).send();
-			Broadcast.discord().channel(StaticChannel.STAFF).message(DISCORD_PREFIX + stripColor(message)).send();
+			Broadcast.staff().prefix("Justice").message(ingame).send();
 		}
 		sendMessage("");
 		sendMessage("&cPlease make sure to read the /rules to avoid future punishments");

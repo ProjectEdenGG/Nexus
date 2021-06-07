@@ -13,7 +13,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
@@ -164,15 +163,12 @@ public class WitherCommand extends CustomCommand {
 		if (!checkHasItems()) return;
 		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
 		int partySize = WitherChallenge.currentFight.getParty().size();
-		String ingame = "&e" + WitherChallenge.currentFight.getHostPlayer().getName() +
+
+		String message = "&e" + WitherChallenge.currentFight.getHostPlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
 				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode";
-		String discord = WitherChallenge.currentFight.getHostPlayer().getName() +
-				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " are" : " is") +
-				" challenging the wither to a fight in " + StringUtils.camelCase(WitherChallenge.currentFight.getDifficulty().name()) + " mode";
 
-		Broadcast.ingame().prefix("Wither").message(ingame).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-		Broadcast.discord().prefix("Wither").message(discord).send();
+		Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
 		WitherChallenge.currentFight.teleportPartyToArena();
 		Tasks.Countdown.builder()
