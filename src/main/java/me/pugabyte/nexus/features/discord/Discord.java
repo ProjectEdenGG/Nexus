@@ -145,7 +145,7 @@ public class Discord extends Feature {
 	}
 
 	public static void send(String message, TextChannel... targets) {
-		send(new MessageBuilder(stripColor(message)), targets);
+		send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
 	public static void send(MessageBuilder message, TextChannel... targets) {

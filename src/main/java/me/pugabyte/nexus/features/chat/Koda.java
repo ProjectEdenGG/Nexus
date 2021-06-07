@@ -56,7 +56,7 @@ public class Koda {
 	@Getter @NotNull
 	private static final String dmFormat = colorize("&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e");
 	@Getter @NotNull
-	private static final String discordFormat = "<@&&f" + Role.KODA.getId() + "> **>** ";
+	private static final String discordFormat = "<@role" + Role.KODA.getId() + "> **>** ";
 	@Getter @NotNull
 	private static final OfflinePlayer player = Bukkit.getOfflinePlayer(name);
 	@Getter @NotNull
