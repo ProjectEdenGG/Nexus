@@ -228,6 +228,7 @@ public class MailCommand extends CustomCommand {
 
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			player.closeInventory();
 			PlayerUtils.giveItems((Player) event.getPlayer(), contents);
 
 			if (!mailer.getMail(mail.getWorldGroup()).isEmpty())
