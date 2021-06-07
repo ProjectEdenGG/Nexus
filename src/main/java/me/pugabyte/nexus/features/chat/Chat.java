@@ -164,8 +164,6 @@ public class Chat extends Feature {
 		setActiveChannel(player, channel.getChannel());
 	}
 
-	// Broadcasts
-
 	public static class Broadcast {
 		private final PublicChannel channel;
 		private final Identity sender;
@@ -216,7 +214,7 @@ public class Chat extends Feature {
 		}
 
 		public static BroadcastBuilder log() {
-			return staff().log();
+			return staff().targets(Target.LOG);
 		}
 
 		public static BroadcastBuilder admin() {
@@ -231,8 +229,6 @@ public class Chat extends Feature {
 			return discord().channel(StaticChannel.ADMIN);
 		}
 
-
-		@Getter
 		@AllArgsConstructor
 		public enum Target {
 			INGAME(StringUtils::getPrefix) {
@@ -267,9 +263,10 @@ public class Chat extends Feature {
 			ComponentLike getMessage(Broadcast broadcast) {
 				if (broadcast.prefix == null)
 					return broadcast.message;
-
-				return new JsonBuilder(getPrefixFormatter().apply(broadcast.prefix)).next(broadcast.message);
+				else
+					return new JsonBuilder(prefixFormatter.apply(broadcast.prefix)).next(broadcast.message);
 			}
+
 		}
 
 		public static class BroadcastBuilder {
@@ -320,18 +317,6 @@ public class Chat extends Feature {
 
 				this.targets.addAll(List.of(targets));
 				return this;
-			}
-
-			public BroadcastBuilder ingame() {
-				return targets(Target.INGAME);
-			}
-
-			public BroadcastBuilder discord() {
-				return targets(Target.DISCORD);
-			}
-
-			public BroadcastBuilder log() {
-				return targets(Target.LOG);
 			}
 
 		}
