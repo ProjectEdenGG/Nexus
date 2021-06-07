@@ -190,6 +190,9 @@ public class Restrictions implements Listener {
 	// TODO This should be handled by WE but its broken
 	@EventHandler
 	public void onWorldEditCommand(PlayerCommandPreprocessEvent event) {
+		if (event.getPlayer().hasPermission("worldedit.bypass.material"))
+			return;
+
 		if (!Arrays.asList(Rank.GUEST, Rank.MEMBER).contains(Nerd.of(event.getPlayer()).getRank()))
 			return;
 
