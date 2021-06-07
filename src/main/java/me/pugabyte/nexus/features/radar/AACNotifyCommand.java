@@ -2,8 +2,7 @@ package me.pugabyte.nexus.features.radar;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.afk.AFK;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -50,7 +49,7 @@ public class AACNotifyCommand extends CustomCommand {
 				String ingame = message;
 				if (ingameCounts.getOrDefault(uuid, 0) > 0)
 					ingame += (" &c(" + ingameCounts.get(uuid) + " more...)");
-				Chat.broadcastIngame("&7&l[&cRadar&7&l] " + ingame, StaticChannel.STAFF);
+				Broadcast.staffIngame().message("&7&l[&cRadar&7&l] " + ingame).send();
 				ingameCounts.remove(uuid);
 			} else
 				ingameCounts.put(uuid, ingameCounts.getOrDefault(uuid, 0) + 1);
@@ -59,7 +58,7 @@ public class AACNotifyCommand extends CustomCommand {
 				String discord = message;
 				if (discordCounts.getOrDefault(uuid, 0) > 0)
 					discord += " (" + discordCounts.get(uuid) + " more...)";
-				Chat.broadcastDiscord("**[Radar]** " + discord, StaticChannel.STAFF);
+				Broadcast.staffDiscord().prefix("Radar").message(discord).send();
 				discordCounts.remove(uuid);
 			} else
 				discordCounts.put(uuid, discordCounts.getOrDefault(uuid, 0) + 1);

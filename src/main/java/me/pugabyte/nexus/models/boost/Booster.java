@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -133,8 +133,7 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		private void broadcast(String message) {
-			Chat.broadcastIngame(StringUtils.getPrefix("Boosts") + message, MuteMenuItem.BOOSTS);
-			Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Boosts") + message);
+			Broadcast.all().prefix("Boosts").message(message).muteMenuItem(MuteMenuItem.BOOSTS).send();
 		}
 
 		public boolean isActive() {

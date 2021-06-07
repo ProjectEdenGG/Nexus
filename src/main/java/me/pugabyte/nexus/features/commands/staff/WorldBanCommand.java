@@ -1,10 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -56,19 +53,18 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 				send(PREFIX + "&e" + player.getName() + "&7 - &3" + String.join("&e, &3", worldBan.getBanNames()));
 		} else {
 			if (worldGroup.equals(WorldGroup.SURVIVAL) || worldGroup.equals(WorldGroup.UNKNOWN))
-				error("Cannot world ban from " + worldGroup.toString());
+				error("Cannot world ban from " + worldGroup);
 
 			List<WorldGroup> worldList = worldBan.getBans();
 
 			if (worldList.contains(worldGroup))
-				error(player.getName() + " is already banned from " + worldGroup.toString());
+				error(player.getName() + " is already banned from " + worldGroup);
 
 			worldList.add(worldGroup);
 			service.save(worldBan);
 
-			String message = "&a" + name() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup.toString();
-			Chat.broadcast(message, StaticChannel.STAFF);
-			Discord.send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
+			String message = "&a" + name() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup;
+			Broadcast.log().prefix("WorldBan").message(message).send();
 
 			if (player.isOnline() && player.getPlayer() != null)
 				if (WorldGroup.of(player.getPlayer()).equals(worldGroup)) {

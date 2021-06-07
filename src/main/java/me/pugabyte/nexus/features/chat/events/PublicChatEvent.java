@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.chat.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -37,7 +38,7 @@ public class PublicChatEvent extends MinecraftChatEvent {
 	@Override
 	public void respond(String response) {
 		super.respond(response);
-		channel.broadcastDiscord(response);
+		Broadcast.discord().channel(channel).message(response).send();
 	}
 
 }

@@ -2,8 +2,7 @@ package me.pugabyte.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import me.pugabyte.nexus.features.chat.Censor;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -11,7 +10,6 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
@@ -91,8 +89,7 @@ public class Restrictions implements Listener {
 
 		PlayerUtils.send(player, "&cInappropriate sign content");
 		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines);
-		Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
-		Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
+		Broadcast.staff().prefix("Censor").message(message).send();
 	}
 
 	@EventHandler
@@ -123,8 +120,7 @@ public class Restrictions implements Listener {
 
 		PlayerUtils.send(player, "&cInappropriate item name");
 		String message = "&cAnvil name by " + Nickname.of(player) + " was censored: &e" + input;
-		Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
-		Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
+		Broadcast.staff().prefix("Censor").message(message).send();
 	}
 
 	@EventHandler

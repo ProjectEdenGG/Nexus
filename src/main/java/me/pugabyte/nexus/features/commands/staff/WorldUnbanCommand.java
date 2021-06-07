@@ -1,10 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -49,8 +46,7 @@ public class WorldUnbanCommand extends CustomCommand {
 
 		service.save(worldBan);
 
-		Chat.broadcast(message, StaticChannel.STAFF);
-		Discord.send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
+		Broadcast.log().prefix("WorldBan").message(message).send();
 	}
 
 }

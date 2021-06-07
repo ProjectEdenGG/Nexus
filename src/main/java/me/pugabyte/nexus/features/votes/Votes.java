@@ -4,7 +4,7 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.votes.vps.VPS;
@@ -134,13 +134,13 @@ public class Votes extends Feature implements Listener {
 		new VoteService().save(vote);
 
 		if (new CooldownService().check(UUID.fromString(uuid), "vote-announcement", Time.HOUR)) {
-			Chat.broadcastIngame("&a[✔] &3" + name + " &bvoted &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!");
-			Chat.broadcastDiscord(":white_check_mark: **" + name + " voted** for the server and received **" + basePoints + plural(" vote point", basePoints) + "** per site!");
+			Broadcast.ingame().message("&a[✔] &3" + name + " &bvoted &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!").send();
+			Broadcast.discord().message(":white_check_mark: **" + name + " voted** for the server and received **" + basePoints + plural(" vote point", basePoints) + "** per site!").send();
 		}
 
 		if (vote.getExtra() > 0) {
-			Chat.broadcastIngame("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!");
-			Chat.broadcastDiscord(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!");
+			Broadcast.ingame().message("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!").send();
+			Broadcast.discord().message(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!").send();
 		}
 
 		if (player != null) {

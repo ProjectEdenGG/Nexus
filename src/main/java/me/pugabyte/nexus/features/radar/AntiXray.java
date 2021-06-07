@@ -2,8 +2,7 @@ package me.pugabyte.nexus.features.radar;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.warps.Warp;
 import me.pugabyte.nexus.models.warps.WarpService;
@@ -81,12 +80,14 @@ public class AntiXray implements Listener {
 				logs.clear();
 
 				String name = player.getName();
-				Chat.broadcastIngame(new JsonBuilder
+				final JsonBuilder message = new JsonBuilder
 						("&7&l[&cRadar&7&l] &a" + name + "&f is possibly xraying. ")
 						.next("&e[Click to Teleport]")
 						.command("mcmd vanish on ;; xraywarp " + name)
-						.hover("This will automatically vanish you"), StaticChannel.STAFF);
-				Chat.broadcastDiscord("**[Radar]** " + name + " is possibly xraying. `/xraywarp " + name + "`", StaticChannel.STAFF);
+						.hover("This will automatically vanish you");
+
+				Broadcast.staffIngame().message(message).send();
+				Broadcast.staffDiscord().prefix("Radar").message(name + " is possibly xraying. `/xraywarp " + name + "`").send();
 
 				break;
 			}

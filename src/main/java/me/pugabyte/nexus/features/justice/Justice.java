@@ -4,8 +4,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
 import me.pugabyte.nexus.features.chat.events.MinecraftChatEvent;
@@ -13,8 +12,6 @@ import me.pugabyte.nexus.features.chat.events.PrivateChatEvent;
 import me.pugabyte.nexus.features.commands.BoopCommand;
 import me.pugabyte.nexus.features.commands.poof.PoofCommand;
 import me.pugabyte.nexus.features.commands.poof.PoofHereCommand;
-import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.economy.commands.PayCommand;
 import me.pugabyte.nexus.features.tickets.ReportCommand;
 import me.pugabyte.nexus.features.tickets.TicketCommand;
@@ -54,7 +51,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
@@ -66,11 +62,8 @@ public class Justice extends Feature implements Listener {
 		broadcast(historyClick(punishment, new JsonBuilder(message)));
 	}
 
-	private void broadcast(JsonBuilder json) {
-		Chat.broadcastIngame(new JsonBuilder(PREFIX).next(json), StaticChannel.STAFF);
-		String discord = DISCORD_PREFIX + stripColor(json.toString());
-		Chat.broadcastDiscord(discord, StaticChannel.STAFF);
-		Discord.send(discord, TextChannel.STAFF_LOG);
+	private void broadcast(JsonBuilder message) {
+		Broadcast.log().prefix("Justice").message(message).send();
 	}
 
 	private JsonBuilder historyClick(Punishment punishment, JsonBuilder ingame) {
@@ -201,8 +194,7 @@ public class Justice extends Feature implements Listener {
 		event.setCancelled(true);
 		nerd.sendMessage("&cYou must move before you can speak in chat");
 		String message = "&e" + nerd.getNickname() + " &ctried to speak before moving: &7" + getMessageDetails(event);
-		Chat.broadcastIngame(Justice.PREFIX + message, StaticChannel.STAFF);
-		Chat.broadcastDiscord(Justice.DISCORD_PREFIX + message, StaticChannel.STAFF);
+		Broadcast.staff().prefix("Justice").message(message).send();
 	}
 
 	// Warning
@@ -236,8 +228,7 @@ public class Justice extends Feature implements Listener {
 					Punishments.of(onlinePlayer).getActiveWatchlist().ifPresent(watchlist ->
 							PlayerUtils.send(player, new JsonBuilder(PREFIX).next(notification.apply(watchlist))));
 
-			Punishments.of(player).getActiveWatchlist().ifPresent(watchlist ->
-					Chat.broadcastIngame(new JsonBuilder(PREFIX).next(notification.apply(watchlist)), StaticChannel.STAFF));
+			Punishments.of(player).getActiveWatchlist().ifPresent(watchlist -> Broadcast.staffIngame().prefix("Justice").message(notification.apply(watchlist)).send());
 		});
 	}
 
@@ -252,7 +243,7 @@ public class Justice extends Feature implements Listener {
 			if (player.hasPermission("justice.alts.hide"))
 				return;
 
-			Punishments.of(player).sendAltsMessage(json -> Chat.broadcastIngame(json, StaticChannel.STAFF));
+			Punishments.of(player).sendAltsMessage(json -> Broadcast.staffIngame().message(json).send());
 		});
 	}
 
@@ -302,8 +293,7 @@ public class Justice extends Feature implements Listener {
 
 			String message = "&e" + name + " &chas a fraud score of &e" + fraudScore + "&c, they have been automatically muted";
 
-			Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
-			Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
+			Broadcast.staff().prefix("Justice").message(message).send();
 		}
 
 	}

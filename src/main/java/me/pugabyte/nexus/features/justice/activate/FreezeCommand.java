@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.justice.activate;
 
 import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.commands.ChannelCommand;
 import me.pugabyte.nexus.features.chat.commands.MessageCommand;
@@ -124,8 +124,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 			player.getVehicle().remove();
 
 		String message = "&e" + player.getName() + " &3has logged out while frozen.";
-		Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
-		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
+		Broadcast.all().channel(StaticChannel.STAFF).prefix("Freeze").message(message).send();
 	}
 
 	@EventHandler
@@ -146,8 +145,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 			get(event.getPlayer()).mount();
 
 			String message = "&e" + event.getPlayer().getName() + " &3has logged in while frozen.";
-			Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
-			Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
+			Broadcast.all().channel(StaticChannel.STAFF).prefix("Freeze").message(message).send();
 		});
 	}
 

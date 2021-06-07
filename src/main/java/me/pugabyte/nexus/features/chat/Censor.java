@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
@@ -154,7 +155,7 @@ public class Censor {
 			Nexus.fileLog("swears", channelNick + event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
 				event.getChatter().sendMessage("&cPlease watch your language!");
-				Chat.broadcast(PREFIX + "&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage(), StaticChannel.STAFF);
+				Broadcast.staff().prefix("Censor").message("&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage()).send();
 				event.setCancelled(true);
 			}
 		}
@@ -181,7 +182,7 @@ public class Censor {
 
 	public static void dots(ChatEvent event) {
 		if (event.getMessage().toLowerCase().matches(".*(\\(|<|\\{|\\[)dot(]|}|>|\\)).*")) {
-			Chat.broadcast(PREFIX + "Prevented a possible advertisement attempt by " + event.getOrigin() + ": " + event.getMessage(), StaticChannel.STAFF);
+			Broadcast.staff().prefix("Censor").message("Prevented a possible advertisement attempt by " + event.getOrigin() + ": " + event.getMessage()).send();
 			event.setCancelled(true);
 		}
 	}

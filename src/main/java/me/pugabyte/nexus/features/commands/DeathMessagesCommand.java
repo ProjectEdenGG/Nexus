@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -240,7 +240,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
-			Chat.broadcastIngame(player, output, MessageType.CHAT, MuteMenuItem.DEATH_MESSAGES);
+			Broadcast.ingame().sender(player).message(output).messageType(MessageType.CHAT).muteMenuItem(MuteMenuItem.DEATH_MESSAGES).send();
 
 			if (WorldGroup.of(player) == WorldGroup.SURVIVAL)
 				discord(deathString, player);
@@ -282,7 +282,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			if (player.getKiller() != null)
 				deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
 		}
-		Chat.broadcastDiscord(Discord.discordize(deathString));
+		Broadcast.discord().message(Discord.discordize(deathString)).send();
 	}
 
 	private void local(Player player, JsonBuilder output) {

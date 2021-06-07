@@ -5,10 +5,7 @@ import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.FormatType;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.justice.Justice;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -121,9 +118,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	}
 
 	private void broadcast(String message) {
-		Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
-		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
-		Discord.send(DISCORD_PREFIX + message, TextChannel.STAFF_LOG);
+		Broadcast.log().prefix("Justice").message(message).send();
 	}
 
 	public boolean canBypass(UUID player) {

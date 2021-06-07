@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.chat.commands;
 
 import lombok.NonNull;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -16,7 +16,7 @@ public class BroadcastCommand extends CustomCommand {
 
 	@Path("<message...>")
 	void run(String message) {
-		Chat.broadcast(message);
+		Broadcast.all().message(message).send();
 	}
 
 }

@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.crates.crates;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
@@ -54,8 +54,7 @@ public class MysteryCrate extends Crate {
 		if (event.getCrateType() != getCrateType()) return;
 		if (!event.getCrateLoot().getItems().contains(new ItemStack(Material.BEACON))) return;
 		String message = "&e" + event.getPlayer().getName() + " &3has received a &eBeacon &3from the &eMystery Crate";
-		Chat.broadcastIngame(Crates.PREFIX + message, MuteMenuItem.CRATES);
-		Chat.broadcastDiscord("**[Crates]** " + message);
+		Broadcast.all().prefix("Crates").message(message).muteMenuItem(MuteMenuItem.CRATES).send();
 	}
 
 	@Override

@@ -2,8 +2,7 @@ package me.pugabyte.nexus.features.store.perks;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.features.chat.Censor;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -12,7 +11,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
@@ -121,8 +119,7 @@ public class EntityNameCommand extends CustomCommand {
 
 		if (Censor.isCensored(player(), input)) {
 			String message = "&cEntity name content by " + nickname() + " was censored: &e" + input;
-			Chat.broadcastIngame(StringUtils.getPrefix("Censor") + message, StaticChannel.STAFF);
-			Chat.broadcastDiscord(StringUtils.getDiscordPrefix("Censor") + message, StaticChannel.STAFF);
+			Broadcast.staff().prefix("Censor").message(message).send();
 			error("Inappropriate input");
 		}
 	}

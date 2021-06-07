@@ -6,7 +6,7 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.wither.BeginningCutscene;
@@ -103,8 +103,8 @@ public abstract class WitherFight implements Listener {
 	public void start() {
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(location -> {
-			Chat.broadcastIngame(new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
-					.command("/wither spectate").hover("&eYou will be teleported to the wither arena"), MuteMenuItem.BOSS_FIGHT);
+			Broadcast.ingame().message(new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
+						.command("/wither spectate").hover("&eYou will be teleported to the wither arena")).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
 			new WorldEditUtils("events").set("witherarena-lobby", BlockTypes.NETHERRACK);
@@ -322,12 +322,17 @@ public abstract class WitherFight implements Listener {
 		if (alivePlayers.size() == 1) {
 			tasks.forEach(Tasks::cancel);
 			int partySize = party.size();
-			Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
+
+			String ingame = "&e" + getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode", MuteMenuItem.BOSS_FIGHT);
-			Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
+					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
+			String discord = getHostOfflinePlayer().getName() +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
-					" lost to the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode");
+					" lost to the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode";
+
+			Broadcast.ingame().prefix("Wither").message(ingame).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			Broadcast.discord().prefix("Wither").message(discord).send();
+
 			WitherChallenge.reset();
 		} else {
 			WitherChallenge.currentFight.broadcastToParty("&e" + player.getName() + " &chas " + reason + " and is out of the fight!");
@@ -359,13 +364,15 @@ public abstract class WitherFight implements Listener {
 		giveItems();
 
 		int partySize = party.size();
-		Chat.broadcastIngame(WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
+		String message1 = WitherChallenge.PREFIX + "&e" + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" successfully beaten the Wither in " +
-				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star"), MuteMenuItem.BOSS_FIGHT);
-		Chat.broadcastDiscord("**[Wither]** " + getHostOfflinePlayer().getName() +
+				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");
+		Broadcast.ingame().message(message1).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+		String message = "**[Wither]** " + getHostOfflinePlayer().getName() +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " have" : " has") +
-				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "and got the star" : "but did not get the star"));
+				" successfully beaten the Wither in " + StringUtils.camelCase(getDifficulty().name()) + " mode. " + (gotStar ? "and got the star" : "but did not get the star");
+		Broadcast.discord().message(message).send();
 
 		new WorldGuardUtils("events").getEntitiesInRegion("witherarena").forEach(e -> {
 			if (e.getType() != EntityType.PLAYER)

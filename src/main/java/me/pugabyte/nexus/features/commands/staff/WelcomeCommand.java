@@ -4,8 +4,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.afk.AFK;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -56,10 +55,10 @@ public class WelcomeCommand extends CustomCommand {
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
-			Chat.broadcastIngame("", StaticChannel.STAFF);
-			Chat.broadcastIngame("&eHi Staff. &3It looks like there's a few of you online. Time to &ebump the server!", StaticChannel.STAFF);
-			Chat.broadcastIngame(new JsonBuilder("&eClick me").url(url).group().next(" &3for the instructions"), StaticChannel.STAFF);
-			Chat.broadcastIngame("", StaticChannel.STAFF);
+			Broadcast.staffIngame().message("").send();
+			Broadcast.staffIngame().message("&eHi Staff. &3It looks like there's a few of you online. Time to &ebump the server!").send();
+			Broadcast.staffIngame().message(new JsonBuilder("&eClick me").url(url).group().next(" &3for the instructions")).send();
+			Broadcast.staffIngame().message("").send();
 		});
 	}
 

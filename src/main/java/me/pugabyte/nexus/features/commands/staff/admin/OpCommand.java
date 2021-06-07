@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -36,9 +36,9 @@ public class OpCommand extends CustomCommand {
 
 		player.setOp(true);
 		if (player.equals(player()))
-			Chat.broadcastIngame(PREFIX + oper + " opped themselves", StaticChannel.ADMIN);
+			Broadcast.ingame().channel(StaticChannel.ADMIN).message(PREFIX + oper + " opped themselves").send();
 		else
-			Chat.broadcastIngame(PREFIX + oper + " opped " + opee, StaticChannel.ADMIN);
+			Broadcast.ingame().channel(StaticChannel.ADMIN).message(PREFIX + oper + " opped " + opee).send();
 
 		send(player, PREFIX + "You are now op");
 

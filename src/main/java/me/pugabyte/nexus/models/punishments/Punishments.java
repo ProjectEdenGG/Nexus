@@ -12,10 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasUniqueId;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
-import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -189,9 +187,7 @@ public class Punishments implements PlayerOwnedObject {
 	}
 
 	static void broadcast(String message) {
-		Chat.broadcastIngame(PREFIX + message, StaticChannel.STAFF);
-		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
-		Discord.send(DISCORD_PREFIX + message, TextChannel.STAFF_LOG);
+		Broadcast.log().prefix("Justice").message(message).send();
 	}
 
 	public List<Punishment> showWarns() {
@@ -217,8 +213,8 @@ public class Punishments implements PlayerOwnedObject {
 					.hover("&eClick for more information")
 					.command("/history " + getName());
 
-			Chat.broadcastIngame(ingame, StaticChannel.STAFF);
-			Chat.broadcastDiscord(DISCORD_PREFIX + stripColor(message), StaticChannel.STAFF);
+			Broadcast.ingame().channel(StaticChannel.STAFF).message(ingame).send();
+			Broadcast.discord().channel(StaticChannel.STAFF).message(DISCORD_PREFIX + stripColor(message)).send();
 		}
 		sendMessage("");
 		sendMessage("&cPlease make sure to read the /rules to avoid future punishments");

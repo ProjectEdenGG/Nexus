@@ -11,8 +11,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.commands.worldedit.ExpandAllCommand;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -303,12 +302,13 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			double triggered = Math.max(griefer.getTriggered() + amount, 0);
 
 			if (amount > 0 && new CooldownService().check(player, "hp_" + name, Time.MINUTE.x(10))) {
-				Chat.broadcastIngame(json("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + name + ")")
+				final JsonBuilder message = json("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + name + ")")
 						.next(" &e[Click to Teleport]")
 						.command("mcmd vanish on ;; tp " + player.getName())
-						.hover("This will automatically vanish you"), StaticChannel.STAFF);
+						.hover("This will automatically vanish you");
 
-				Chat.broadcastDiscord("**[Radar]** " + player.getName() + " has triggered a Honey Pot. `HP: " + name + "`", StaticChannel.STAFF);
+				Broadcast.staffIngame().message(message).send();
+				Broadcast.staffDiscord().prefix("Radar").message(player.getName() + " has triggered a Honey Pot. `HP: " + name + "`").send();
 			}
 
 			if ((triggered == 3 || triggered == 3.5) && !griefer.isWarned()) {

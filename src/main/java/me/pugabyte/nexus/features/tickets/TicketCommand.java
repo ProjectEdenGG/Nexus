@@ -1,8 +1,7 @@
 package me.pugabyte.nexus.features.tickets;
 
 import eden.utils.TimeUtils.Time;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -64,9 +63,9 @@ public class TicketCommand extends CustomCommand {
 			Discord.staffBridge(message + (onlineMods.size() == 0 ? " [ @here ]" : ""));
 
 			onlineMods.forEach(mod -> Jingle.PING.play(mod.getOnlinePlayer()));
-			Chat.broadcastIngame("", StaticChannel.STAFF);
-			Chat.broadcastIngame(PREFIX + "&e" + name() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription(), StaticChannel.STAFF);
-			Chat.broadcastIngame(Tickets.getTicketButtons(ticket), StaticChannel.STAFF);
+			Broadcast.staffIngame().message("").send();
+			Broadcast.staffIngame().message(PREFIX + "&e" + name() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription()).send();
+			Broadcast.staffIngame().message(Tickets.getTicketButtons(ticket)).send();
 		};
 
 		if (isStaff())

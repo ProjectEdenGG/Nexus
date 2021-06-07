@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.bridge.IngameBridgeListener;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -22,6 +23,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -90,7 +92,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 				.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
 				.hover(item);
 
-		channel.broadcastIngame(chatter, json);
+		Broadcast.all().channel(channel).sender(chatter).message(json).messageType(MessageType.CHAT).send();
 
 		// Discord
 		if (channel.getDiscordTextChannel() != null) {

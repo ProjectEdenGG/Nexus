@@ -1,9 +1,8 @@
 package me.pugabyte.nexus.features.crates.crates;
 
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
@@ -41,8 +40,7 @@ public class VoteCrate extends Crate {
 		CrateLoot loot = event.getCrateLoot();
 		if (loot.getItems().contains(CrateType.MYSTERY.getKey())) {
 			String message = "&e" + event.getPlayer().getName() + " &3has received a &eMystery Crate Key &3from the &eVote Crate";
-			Chat.broadcastIngame(Crates.PREFIX + message, MuteMenuItem.CRATES);
-			Chat.broadcastDiscord("**[Crates]** " + message);
+			Broadcast.all().prefix("Crates").message(message).muteMenuItem(MuteMenuItem.CRATES).send();
 		}
 	}
 }

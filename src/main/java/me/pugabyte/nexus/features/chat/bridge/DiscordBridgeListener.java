@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.chat.bridge;
 
 import com.vdurmont.emoji.EmojiParser;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.ChatManager;
 import me.pugabyte.nexus.features.chat.events.DiscordChatEvent;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -69,7 +70,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 						.url(attachment.getUrl());
 
 			Identity identity = user == null ? Identity.nil() : user.identity();
-			channel.get().broadcastIngame(identity, builder, MessageType.CHAT);
+			Broadcast.ingame().channel(channel.get()).sender(identity).message(builder).messageType(MessageType.CHAT).send();
 		});
 	}
 

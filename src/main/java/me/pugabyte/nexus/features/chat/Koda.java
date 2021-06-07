@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.chat.events.ChatEvent;
 import me.pugabyte.nexus.features.commands.AgeCommand.ServerAge;
 import me.pugabyte.nexus.features.discord.Discord;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -82,11 +82,11 @@ public class Koda {
 	}
 
 	public static void sayIngame(@NotNull String message) {
-		Chat.broadcastIngame(chatter, AdventureUtils.fromLegacyText(colorize(globalFormat + message)));
+		Broadcast.ingame().sender(chatter).message(globalFormat + message).send();
 	}
 
 	public static void sayDiscord(@NotNull String message) {
-		Chat.broadcastDiscord(discordFormat + message);
+		Broadcast.discord().message(discordFormat + message).send();
 	}
 
 	public static void announce(@NotNull String message) {
@@ -168,7 +168,7 @@ public class Koda {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
 			PublicChannel channel = (PublicChannel) event.getChannel();
 			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter) + finalResponse));
-			channel.broadcastDiscord(discordFormat + finalResponse);
+			Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
 		});
 	}
 

@@ -3,8 +3,7 @@ package me.pugabyte.nexus.features.commands;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.chat.Chat;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -93,8 +92,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		save();
 		send(PREFIX + "Requested mod &e" + name + " &3to be reviewed");
 		String message = "&e" + name() + " &3has requested mod &e" + name + " &3to be reviewed";
-		Chat.broadcastIngame(json(PREFIX + message).command("/modreview requests"), StaticChannel.STAFF);
-		Chat.broadcastDiscord(DISCORD_PREFIX + message, StaticChannel.STAFF);
+		Broadcast.staff().prefix("ModReview").message(json(message).command("/modreview requests")).send();
 	}
 
 	@Permission("group.staff")
