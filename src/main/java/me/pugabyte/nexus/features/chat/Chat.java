@@ -195,7 +195,6 @@ public class Chat extends Feature {
 			return new BroadcastBuilder().targets(Target.INGAME, Target.DISCORD);
 		}
 
-
 		public static BroadcastBuilder ingame() {
 			return new BroadcastBuilder().targets(Target.INGAME);
 		}
@@ -213,12 +212,25 @@ public class Chat extends Feature {
 		}
 
 		public static BroadcastBuilder staffDiscord() {
-			return ingame().channel(StaticChannel.STAFF);
+			return discord().channel(StaticChannel.STAFF);
 		}
 
 		public static BroadcastBuilder log() {
 			return staff().log();
 		}
+
+		public static BroadcastBuilder admin() {
+			return all().channel(StaticChannel.ADMIN);
+		}
+
+		public static BroadcastBuilder adminIngame() {
+			return ingame().channel(StaticChannel.ADMIN);
+		}
+
+		public static BroadcastBuilder adminDiscord() {
+			return discord().channel(StaticChannel.ADMIN);
+		}
+
 
 		@Getter
 		@AllArgsConstructor

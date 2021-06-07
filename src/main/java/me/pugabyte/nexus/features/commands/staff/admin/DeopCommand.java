@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
 import me.pugabyte.nexus.features.chat.Chat.Broadcast;
-import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -35,9 +34,9 @@ public class DeopCommand extends CustomCommand {
 
 		player.setOp(false);
 		if (isSelf(player))
-			Broadcast.ingame().channel(StaticChannel.ADMIN).message(PREFIX + oper + " deopped themselves").send();
+			Broadcast.adminIngame().message(PREFIX + oper + " deopped themselves").send();
 		else
-			Broadcast.ingame().channel(StaticChannel.ADMIN).message(PREFIX + oper + " deopped " + opee).send();
+			Broadcast.adminIngame().message(PREFIX + oper + " deopped " + opee).send();
 
 		if (!player.equals(player()))
 			send(player, PREFIX + "You are no longer op");
