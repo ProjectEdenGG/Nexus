@@ -501,8 +501,7 @@ public enum VPSMenu {
 								.display(new ItemBuilder(Material.SANDSTONE_SLAB)
 										.lore("&3You may purchase up to")
 										.lore("&efour &3addition plots either")
-										.lore("&3from the VPS or the server")
-										.lore("&3store (&c/donate&3)")
+										.lore("&3from the VPS or the server &c/store")
 										.lore("")
 										.lore("&6Price: &e150vp"))
 								.command("vps buy plot"));

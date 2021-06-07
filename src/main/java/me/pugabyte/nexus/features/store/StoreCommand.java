@@ -65,7 +65,7 @@ public class StoreCommand extends CustomCommand {
 		line();
 		send(json().next("&3Visit our store: &e" + URL));
 		line();
-		send(json(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you donate for anything.").command("/donate tac"));
+		send(json(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you purchase for anything").command("/store tac"));
 	}
 
 	@Path("packages [player]")

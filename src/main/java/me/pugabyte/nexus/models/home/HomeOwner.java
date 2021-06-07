@@ -81,7 +81,7 @@ public class HomeOwner implements PlayerOwnedObject {
 
 	public void checkHomesLimit() {
 		if (getHomesLeft() <= 0)
-			throw new InvalidInputException("You have used all of your available homes! &3To set more homes, you will need to either &erank up &3or &c/donate");
+			throw new InvalidInputException("You have used all of your available homes! &3To set more homes, you will need to either &erank up &3or purchase more from the &c/store");
 	}
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
