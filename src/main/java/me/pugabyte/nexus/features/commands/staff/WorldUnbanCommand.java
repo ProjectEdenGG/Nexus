@@ -46,7 +46,7 @@ public class WorldUnbanCommand extends CustomCommand {
 
 		service.save(worldBan);
 
-		Broadcast.log().prefix("WorldBan").message(message).send();
+		Broadcast.log().prefix("Justice").message(message).send();
 	}
 
 }

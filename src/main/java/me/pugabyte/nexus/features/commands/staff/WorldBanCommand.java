@@ -64,7 +64,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			service.save(worldBan);
 
 			String message = "&a" + name() + " &fhas world banned &a" + player.getName() + " &ffrom &a" + worldGroup;
-			Broadcast.log().prefix("WorldBan").message(message).send();
+			Broadcast.log().prefix("Justice").message(message).send();
 
 			if (player.isOnline() && player.getPlayer() != null)
 				if (WorldGroup.of(player.getPlayer()).equals(worldGroup)) {
