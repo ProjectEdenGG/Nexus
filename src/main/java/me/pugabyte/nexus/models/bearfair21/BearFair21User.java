@@ -30,6 +30,7 @@ public class BearFair21User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	// General Quest Stuff
+	// TODO BF21: Change this to category instead, so not every player has a list of 400+ locations
 	private Set<Location> clientsideLocations = new HashSet<>();
 	private JunkWeight junkWeight = JunkWeight.MAX;
 	private int recycledItems = 0;
@@ -42,6 +43,18 @@ public class BearFair21User implements PlayerOwnedObject {
 	QuestStage questStage_Recycle = QuestStage.NOT_STARTED;
 	QuestStage questStage_BeeKeeper = QuestStage.NOT_STARTED;
 	QuestStage questStage_Lumberjack = QuestStage.NOT_STARTED;
+
+	// MGN
+	QuestStage questStage_MGN = QuestStage.NOT_STARTED;
+
+	// Pugmas
+	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;
+
+	// Halloween
+	QuestStage questStage_Halloween = QuestStage.NOT_STARTED;
+
+	// SDU
+	QuestStage questStage_SDU = QuestStage.NOT_STARTED;
 
 	public void addRecycledItems(int count) {
 		this.recycledItems += count;

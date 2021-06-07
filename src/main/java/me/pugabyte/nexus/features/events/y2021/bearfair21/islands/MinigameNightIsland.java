@@ -26,10 +26,10 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
-				script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! … Hold up, [player name]? Is that you?");
+				script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! ...Hold up, <player>? Is that you?");
 				script.add("wait 80");
 				script.add("<self> Hey, Axel!");
-				script.add("wait 20");
+				script.add("wait 40");
 				script.add("Yooo how ya been dude? It'd be hard to forget the hero who saved last year's arcade tourney! Thanks again for that.");
 				script.add("wait 80");
 				script.add("<self> Always glad to help out where I can!");
@@ -37,21 +37,22 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 				script.add("Broo, its hard to find people as dope as you these days.");
 				script.add("wait 60");
 				script.add("<self> Aw, thanks! So how're things at GG?");
-				script.add("wait 20");
+				script.add("wait 40");
 				script.add("Pretty stressful, not gonna lie. Lots of good business, but its hard to keep up with it all, being self employed, " +
 						"especially during bearfair. Just barely found a few moments to come out here and help the bros get set up for our " +
 						"Bear Fair Band-sesh' tonight.");
-				script.add("wait 120");
+				script.add("wait 140");
 				script.add("<self> Anything I can do to help?");
-				script.add("wait 20");
+				script.add("wait 40");
 				script.add("Nah I couldn't keep you from the bear fair celebration...");
 				script.add("wait 40");
 				script.add("<self> No really, I wouldn't mind.");
-				script.add("wait 20");
+				script.add("wait 40");
 				script.add("Really? Well if you're sure, we all could actually use more practice… Would you mind running the store for me? Just till " +
-						"we close tonight; and I'll totally pay you. In fact, here. [player gets GG hat] You're an official employee of GG! With your " +
+						"we close tonight; and I'll totally pay you. In fact, here.You're an official employee of GG! With your " +
 						"tech skills, it'll be a breeze.");
-				script.add("wait 120");
+				// TODO: give hat
+				script.add("wait 140");
 				script.add("<self> I got you bro, practice all you need. I wanna hear an awesome song when I get back!");
 				script.add("wait 80");
 				script.add("Duude, you're a lifesaver!");

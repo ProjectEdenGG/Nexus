@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland.P
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
 public class PugmasIsland implements Listener, BearFair21Island {
+	static BearFair21UserService userService = new BearFair21UserService();
 
 	public enum PugmasNPCs implements BearFair21TalkingNPC {
 		;

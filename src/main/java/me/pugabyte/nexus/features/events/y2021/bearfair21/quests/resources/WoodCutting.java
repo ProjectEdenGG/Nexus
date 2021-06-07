@@ -131,9 +131,13 @@ public class WoodCutting implements Listener {
 
 		public List<ItemStack> getDrops(ItemStack tool) {
 			List<ItemStack> drops = new ArrayList<>();
-			drops.add(new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(Tool.from(tool.getType()).getAmount()).build());
-			if (RandomUtils.chanceOf(25))
-				drops.add(new ItemBuilder(Material.STICK).amount(RandomUtils.randomInt(1, 5)).build());
+			Material toolType = ItemUtils.isNullOrAir(tool) ? Material.AIR : tool.getType();
+			boolean chance = Tool.from(toolType).chance();
+			if (chance) {
+				drops.add(new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(1).build());
+				if (RandomUtils.chanceOf(25))
+					drops.add(new ItemBuilder(Material.STICK).amount(RandomUtils.randomInt(1, 3)).build());
+			}
 
 			return drops;
 		}
@@ -238,7 +242,7 @@ public class WoodCutting implements Listener {
 				Tasks.Countdown.builder()
 						.duration(randomInt(8, 12) * 4)
 						.onTick(i -> {
-							if (i % 4 == 0)
+							if (i % 2 == 0)
 								PlayerUtils.giveItems(player, getDrops(ItemUtils.getTool(player)));
 						})
 						.start();
@@ -259,13 +263,13 @@ public class WoodCutting implements Listener {
 
 	@AllArgsConstructor
 	private enum Tool {
-		AIR(1, 5),
-		WOODEN(3, 6),
-		STONE(4, 7),
-		GOLDEN(3, 6),
-		IRON(5, 9),
-		DIAMOND(6, 10),
-		NETHERITE(7, 12),
+		AIR(10, 15),
+		WOODEN(15, 25),
+		STONE(25, 40),
+		GOLDEN(40, 45),
+		IRON(45, 60),
+		DIAMOND(60, 75),
+		NETHERITE(75, 90),
 		;
 
 		int min;
@@ -284,8 +288,8 @@ public class WoodCutting implements Listener {
 
 		}
 
-		public int getAmount() {
-			return RandomUtils.randomInt(min, max);
+		public boolean chance() {
+			return RandomUtils.chanceOf(RandomUtils.randomInt(min, max));
 		}
 	}
 

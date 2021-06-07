@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -40,7 +41,7 @@ public enum BearFair21NPC {
 
 	// MGN
 	AXEL("Axel", 4126),
-	XAVIER("Xavier", 5127),
+	XAVIER("Xavier", 4127),
 	RYAN("Ryan", 4128),
 	HEATHER("Heather", 4134),
 	TRENT("Trent", 4135),
@@ -49,7 +50,7 @@ public enum BearFair21NPC {
 	MAYOR_PUGMAS("Mayor", 4139),
 	GRINCH("Grinch", 4129),
 	// HALLOWEEN
-	JOSE("José", 4131),
+	JOSE("Jose", 4131),
 	SANTIAGO("Santiago", 4132),
 	ANA("Ana", 4133),
 	// SDU
@@ -81,6 +82,9 @@ public enum BearFair21NPC {
 		if (npc == null) return null;
 
 		String npcJob = StringUtils.camelCase(this).replaceAll("[0-9]+", "");
-		return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, name);
+		if (npcJob.equalsIgnoreCase(name))
+			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), name));
+		else
+			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, name);
 	}
 }
