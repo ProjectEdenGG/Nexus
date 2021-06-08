@@ -51,7 +51,7 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 				script.add("Really? Well if you're sure, we all could actually use more practice… Would you mind running the store for me? Just till " +
 						"we close tonight; and I'll totally pay you. In fact, here.You're an official employee of GG! With your " +
 						"tech skills, it'll be a breeze.");
-				// TODO: give hat
+				// TODO BF21: give hat
 				script.add("wait 140");
 				script.add("<self> I got you bro, practice all you need. I wanna hear an awesome song when I get back!");
 				script.add("wait 80");

@@ -129,6 +129,10 @@ public class WoodCutting implements Listener {
 			});
 		}
 
+		public ItemBuilder getDrop() {
+			return new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(1);
+		}
+
 		public List<ItemStack> getDrops(ItemStack tool) {
 			List<ItemStack> drops = new ArrayList<>();
 			Material toolType = ItemUtils.isNullOrAir(tool) ? Material.AIR : tool.getType();

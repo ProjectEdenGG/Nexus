@@ -4,6 +4,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Fairgrounds.BearFair21Kit;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
@@ -40,7 +41,6 @@ public class Archery implements Listener {
 	private static boolean enabled = false;
 	private static int activeTargets = 0;
 
-	// TODO BF21: kit
 	public Archery() {
 		Nexus.registerListener(this);
 		targetTask();
@@ -63,9 +63,13 @@ public class Archery implements Listener {
 
 	@EventHandler
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
-		if (!event.getRegion().getId().equalsIgnoreCase(gameRegion)) return;
-		if (enabled) return;
-		enabled = true;
+		String id = event.getRegion().getId();
+		if (id.equalsIgnoreCase(gameRegion)) {
+			if (enabled) return;
+			enabled = true;
+		} else if (id.equalsIgnoreCase(kitRegion)) {
+			BearFair21Kit.ARCHERY.giveItems(event.getPlayer());
+		}
 	}
 
 	@EventHandler

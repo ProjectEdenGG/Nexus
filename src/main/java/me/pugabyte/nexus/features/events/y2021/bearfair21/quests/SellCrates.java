@@ -25,7 +25,6 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.decolorize;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-// TODO BF21: Make WoodCutter sell crate
 public class SellCrates implements Listener {
 	public SellCrates() {
 		Nexus.registerListener(this);
@@ -74,6 +73,8 @@ public class SellCrates implements Listener {
 			tradeBuilders = FarmingLoot.getTrades();
 		else if (crateType.contains("dyes"))
 			tradeBuilders = BFMerchant.ARTIST.getTrades(player);
+		else if (crateType.contains("woodcutting"))
+			tradeBuilders = BFMerchant.LUMBERJACK.getTrades(player);
 
 		// Give items back if no trades found
 		if (tradeBuilders.isEmpty()) {

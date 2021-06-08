@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
@@ -119,12 +120,6 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
-					add(new TradeBuilder()
-							.result(Quests.getBackPack(user.getPlayer()))
-							.ingredient(goldNugget.clone().amount(1)));
-					add(new TradeBuilder()
-							.result(new ItemStack(Material.ELYTRA))
-							.ingredient(goldNugget.clone().amount(1)));
 					if (!Utils.isNullOrEmpty(Collector.getRandomTrades()))
 						this.addAll(Collector.getRandomTrades());
 				}};
@@ -146,7 +141,30 @@ public class Merchants {
 		INVENTOR(BearFair21NPC.INVENTOR) {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
-				return null;
+				return new ArrayList<>() {{
+					add(new TradeBuilder()
+							.result(Quests.getBackPack(user.getPlayer()))
+							.ingredient(goldNugget.clone().amount(1)));
+					add(new TradeBuilder()
+							.result(new ItemStack(Material.ELYTRA))
+							.ingredient(goldNugget.clone().amount(1)));
+				}};
+			}
+		},
+		LUMBERJACK(BearFair21NPC.LUMBERJACK) {
+			@Override
+			public List<TradeBuilder> getTrades(BearFair21User user) {
+				return new ArrayList<>() {{
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(BearFair21TreeType.OAK.getDrop().clone().amount(4)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.OAK_PLANKS).amount(16))); // oak amount * 4
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.STICK).amount(32))); // plank amount * 2
+				}};
 			}
 		},
 		PASTRY_CHEF(BearFair21NPC.PASTRY_CHEF) {
@@ -165,8 +183,24 @@ public class Merchants {
 								.result(MainIsland.bf_cake.clone())
 								.ingredient(new ItemBuilder(Material.CAKE).build())
 								.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
+					} else {
+						add(new TradeBuilder()
+								.result(goldNugget.clone().amount(1))
+								.ingredient(new ItemBuilder(Material.CAKE)));
+						add(new TradeBuilder()
+								.result(goldNugget.clone().amount(1))
+								.ingredient(new ItemBuilder(Material.COCOA_BEANS)));
 					}
 
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.COOKIE)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.MILK_BUCKET)));
+					add(new TradeBuilder()
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.COCOA_BEANS)));
 				}};
 			}
 		},

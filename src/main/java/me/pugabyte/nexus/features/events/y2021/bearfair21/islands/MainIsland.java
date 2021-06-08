@@ -134,7 +134,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
 
-				// TODO: undo the greeting changes i made to certain NPCs, it worked fine
+				// TODO BF21: undo the greeting changes i made to certain NPCs, it worked fine
 
 				if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");

@@ -56,7 +56,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 						script.add("My son’s birthday party? Oh yes.. I will totally share these cookies with him.. Yes..");
 						script.add("wait 60");
 						script.add("Here, have this as a thank you for bringing me.. I mean us these cookies!");
-						// TODO: Give reward
+						// TODO BF21: Give reward
 						script.add("wait 60");
 						script.add("You’re always welcome here again, amigo!");
 
@@ -66,7 +66,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 					}
 				}
 
-				script.add("TODO - Greeting");
+				script.add("TODO BF21 - Greeting");
 				return script;
 			}
 		},
@@ -91,7 +91,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 					}
 				}
 
-				script.add("TODO - Greeting");
+				script.add("TODO BF21 - Greeting");
 				return script;
 			}
 		},
@@ -126,7 +126,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 						script.add("...");
 						script.add("wait 40");
 						script.add("Aaaand, done. Here. Please bring these to my son, &oJosé&f.");
-						// TODO: Give Cookies
+						// TODO BF21: Give Cookies
 						script.add("wait 40");
 						script.add("Take care, young one!");
 
@@ -136,7 +136,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 					}
 				}
 
-				script.add("TODO - Greeting");
+				script.add("TODO BF21 - Greeting");
 				return script;
 			}
 		},
