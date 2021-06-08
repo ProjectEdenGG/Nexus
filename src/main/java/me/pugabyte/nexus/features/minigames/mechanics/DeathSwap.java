@@ -17,6 +17,7 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -135,17 +136,12 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	private void randomTeleport(Minigamer minigamer) {
-		Location center = getWorld().getWorldBorder().getCenter();
-		int x = RandomUtils.randomInt(-radius / 2, radius / 2);
-		int z = RandomUtils.randomInt(-radius / 2, radius / 2);
-		Location random = new Location(getWorld(), x, 0, z).add(center.getX(), 0, center.getZ());
+		Location random = WorldUtils.getRandomLocationInBorder(getWorld());
 		PaperLib.getChunkAtAsync(random, true).thenRun(() -> {
 			Location location = getWorld().getHighestBlockAt(random).getLocation();
-			if (location.getBlock().getType().isSolid()) {
-				minigamer.canTeleport(true);
-				PaperLib.teleportAsync(minigamer.getPlayer(), location.clone().add(0, 2, 0))
-						.thenRun(() -> minigamer.canTeleport(false));
-			} else
+			if (location.getBlock().getType().isSolid())
+				minigamer.teleport(location);
+			else
 				randomTeleport(minigamer);
 		});
 	}

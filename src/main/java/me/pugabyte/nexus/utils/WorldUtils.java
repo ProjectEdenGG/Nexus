@@ -2,8 +2,10 @@ package me.pugabyte.nexus.utils;
 
 import me.pugabyte.nexus.framework.exceptions.NexusException;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldUtils {
 
@@ -29,6 +31,16 @@ public class WorldUtils {
 			throw new NexusException("Could not find `world-settings.default." + setting + "` in spigot.yml");
 
 		return defaultSection.getInt(setting);
+	}
+
+	@NotNull
+	public static Location getRandomLocationInBorder(World world) {
+		double radius = world.getWorldBorder().getSize();
+		double x = RandomUtils.randomDouble(-radius / 2, radius / 2);
+		double z = RandomUtils.randomDouble(-radius / 2, radius / 2);
+
+		Location center = world.getWorldBorder().getCenter();
+		return new Location(world, x, 0, z).add(center.getX(), 0, center.getZ());
 	}
 
 }

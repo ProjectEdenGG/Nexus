@@ -6,6 +6,7 @@ public enum MechanicType {
 	ANVIL_DROP(new AnvilDrop()),
 	ARCHERY(new Archery()),
 	BATTLESHIP(new Battleship()),
+	BINGO(new Bingo()),
 	CAPTURE_THE_FLAG(new CaptureTheFlag()),
 	DEATH_SWAP(new DeathSwap()),
 	DOGFIGHTING(new Dogfighting()),

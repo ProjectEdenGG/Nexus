@@ -1,6 +1,8 @@
 package me.pugabyte.nexus.features.minigames.commands;
 
 import com.sk89q.worldguard.protection.flags.Flag;
+import eden.utils.Env;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
@@ -99,6 +101,16 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("use")
 	void join(Arena arena) {
 		minigamer.join(arena);
+	}
+
+	@Path("allJoin <arena>")
+	@Permission(value = "group.admin", absolute = true)
+	void allJoin(Arena arena) {
+		if (Nexus.getEnv() == Env.PROD)
+			error("Cannot use this command on production server");
+
+		for (Player player : Bukkit.getOnlinePlayers())
+			PlayerManager.get(player).join(arena);
 	}
 
 	@Path("(quit|leave)")

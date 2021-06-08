@@ -289,7 +289,8 @@ public class MatchListener implements Listener {
 		event.setCancelled(true);
 
 		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, event);
-		if (!deathEvent.callEvent()) return;
+		if (!deathEvent.callEvent())
+			return;
 
 		if (!victim.getMatch().isEnded())
 			mechanic.onDeath(deathEvent);
