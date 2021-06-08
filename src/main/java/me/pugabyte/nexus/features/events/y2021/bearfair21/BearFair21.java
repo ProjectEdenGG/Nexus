@@ -115,7 +115,7 @@ public class BearFair21 {
 
 	public static Set<Player> getPlayers() {
 		Set<Player> result = new HashSet<>();
-		for (Player player : PlayerUtils.getRealPlayers()) {
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			if (isAtBearFair(player))
 				result.add(player);
 		}

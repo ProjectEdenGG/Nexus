@@ -114,7 +114,7 @@ public class PlayerUtils {
 		}
 	}
 
-	public static List<? extends Player> getRealPlayers() {
+	public static List<? extends Player> getOnlinePlayers() {
 		return Bukkit.getOnlinePlayers().stream().filter(player -> !CitizensUtils.isNPC(player)).toList();
 	}
 
