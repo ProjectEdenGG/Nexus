@@ -28,6 +28,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
@@ -49,33 +50,49 @@ public class PuttListener implements Listener {
 			return;
 		}
 
+		MiniGolf21User user = MiniGolfUtils.getUser(player.getUniqueId());
+		if (!MiniGolfUtils.isInMiniGolf(player.getLocation())) {
+			user.debug("PuttListener > user is not in minigolf");
+			return;
+		}
+		user.debug("PuttListener > user is in minigolf region");
+
 		if (isInteracting(event)) {
+			user.debug("PuttListener > user is interacting, returning");
 			return;
 		}
 
 		ItemStack item = event.getItem();
 		if (ItemUtils.isNullOrAir(item)) {
+			user.debug("PuttListener > item is null or air, returning");
 			return;
 		}
 
 		// quick fix
 		ItemStack clone = item.clone();
 		clone.setAmount(1);
+		ItemMeta itemMeta = clone.getItemMeta();
+		itemMeta.setCustomModelData(null);
+		clone.setItemMeta(itemMeta);
 		boolean stop = true;
 		for (ItemStack _item : MiniGolf.getItems()) {
 			if (ItemUtils.isFuzzyMatch(clone, _item))
 				stop = false;
 		}
 		if (stop) {
+			user.debug("PuttListener > doesn't have a kit item, returning");
 			return;
 		}
 		//
 
+		user.debug("PuttListener > user is using a kit item");
 		event.setCancelled(true);
 
-		MiniGolf21User user = MiniGolfUtils.getUser(player.getUniqueId());
-		if (!user.isPlaying())
+		if (!user.isPlaying()) {
+			user.debug("PuttListener > user is not playing, returning");
 			return;
+		}
+		user.debug("PuttListener > user is playing minigolf");
 
 		// Get info
 		World world = player.getWorld();
@@ -87,6 +104,7 @@ public class PuttListener implements Listener {
 		boolean wedge = ItemUtils.isFuzzyMatch(item, MiniGolf.getWedge());
 
 		if (putter || wedge) {
+			user.debug("PuttListener > Using putter or wedge...");
 			// Find entities
 			List<Entity> entities = player.getNearbyEntities(5.5, 5.5, 5.5);
 
@@ -94,8 +112,10 @@ public class PuttListener implements Listener {
 			Vector dir = eye.getDirection();
 			Vector loc = eye.toVector();
 
-			if (user.getSnowball() == null)
+			if (user.getSnowball() == null) {
+				user.debug("PuttListener > user snow ball is null, returning");
 				return;
+			}
 
 			for (Entity entity : entities) {
 
@@ -104,7 +124,7 @@ public class PuttListener implements Listener {
 
 					// Check this again, cuz NPE for some reason
 					if (user.getSnowball() == null) {
-						MiniGolfUtils.error(user, "Ball is null (2)");
+						user.debug("PuttListener > Ball is null (2)");
 						return;
 					}
 
@@ -154,9 +174,10 @@ public class PuttListener implements Listener {
 					}
 				}
 			}
-		} else if (ItemUtils.isFuzzyMatch(item, MiniGolf.getGolfBall().build())) {
+		} else if (item.getType().equals(Material.SNOWBALL) && item.getItemMeta().hasCustomModelData()) {
 			// Is player placing golf ball?
 			if (action == Action.RIGHT_CLICK_BLOCK) {
+				user.debug("PuttListener > Placing golf ball...");
 				// Has already placed a ball
 				if (user.getSnowball() != null) {
 					MiniGolfUtils.error(user, "You already have a ball placed");
@@ -202,6 +223,7 @@ public class PuttListener implements Listener {
 		} else if (ItemUtils.isFuzzyMatch(item, MiniGolf.getWhistle())) {
 			// Return ball
 			if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
+				user.debug("PuttListener > Using whistle...");
 				// Get last player ball
 				Snowball ball = user.getSnowball();
 				if (ball == null || !ball.isValid()) {
@@ -218,7 +240,10 @@ public class PuttListener implements Listener {
 				world.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 0.9f, 1.9f);
 			}
 		} else if (ItemUtils.isFuzzyMatch(item, MiniGolf.getScoreBook())) {
+			user.debug("PuttListener > Using score book");
 			PlayerUtils.runCommand(player, "minigolf score 1");
+		} else {
+			user.debug("PuttListener > Unknown kit item, do nothing");
 		}
 
 	}
