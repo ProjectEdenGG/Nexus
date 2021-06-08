@@ -168,7 +168,6 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 			Material.DISPENSER,
 			Material.STICKY_PISTON,
 			Material.PISTON,
-			Material.REDSTONE_TORCH,
 			Material.DROPPER,
 			Material.OBSERVER,
 			Material.REPEATER,
