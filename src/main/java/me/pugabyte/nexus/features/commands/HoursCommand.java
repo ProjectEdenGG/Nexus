@@ -20,6 +20,7 @@ import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.hours.HoursService.HoursTopArguments;
 import me.pugabyte.nexus.models.hours.HoursService.PageResult;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -95,7 +96,7 @@ public class HoursCommand extends CustomCommand {
 		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
-				json("&3" + index + " &e" + PlayerUtils.getPlayer(result.getUuid()).getName() + " &7- " + Timespan.of(result.getTotal()).format());
+				json("&3" + index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.of(result.getTotal()).format());
 
 		paginate(results, formatter, "/hours top " + args.getInput(), page);
 	}
