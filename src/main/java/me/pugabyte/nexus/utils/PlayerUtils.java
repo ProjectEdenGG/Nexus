@@ -114,6 +114,10 @@ public class PlayerUtils {
 		}
 	}
 
+	public static List<? extends Player> getRealPlayers() {
+		return Bukkit.getOnlinePlayers().stream().filter(player -> !CitizensUtils.isNPC(player)).toList();
+	}
+
 	public static boolean isVanished(OptionalPlayer player) {
 		if (player.getPlayer() == null) return false;
 		for (MetadataValue meta : player.getPlayer().getMetadata("vanished"))
@@ -334,7 +338,21 @@ public class PlayerUtils {
 			send(getPlayer(identified.identity()), message);
 	}
 
+	public static boolean hasRoomFor(OptionalPlayer player, ItemStack... items) {
+		if (player.getPlayer() == null) return false;
+		return hasRoomFor(player.getPlayer(), items);
+	}
+
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
+		return hasRoomFor(player, Arrays.asList(items));
+	}
+
+	public static boolean hasRoomFor(OptionalPlayer player, List<ItemStack> items) {
+		if (player.getPlayer() == null) return false;
+		return hasRoomFor(player.getPlayer(), items);
+	}
+
+	public static boolean hasRoomFor(Player player, List<ItemStack> items) {
 		int usedSlots = 0;
 		int openSlots = 0;
 		boolean[] fullSlot = new boolean[36];
@@ -360,11 +378,6 @@ public class PlayerUtils {
 				usedSlots += Math.ceil((double) needed / (double) maxStack);
 		}
 		return openSlots >= usedSlots;
-	}
-
-	public static boolean hasRoomFor(OptionalPlayer player, ItemStack... items) {
-		if (player.getPlayer() == null) return false;
-		return hasRoomFor(player.getPlayer(), items);
 	}
 
 	/**

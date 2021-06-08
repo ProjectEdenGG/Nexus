@@ -37,7 +37,7 @@ public class BearFair21 {
 	@Getter
 	private static final boolean allowWarp = false;
 	//
-	// TODO: When BF is over, disable these, and disable block break/place on regions
+	// TODO BF21: When BF is over, disable these, and disable block break/place on regions
 	public static boolean enableQuests = true;
 	public static boolean giveDailyPoints = false;
 
@@ -115,7 +115,7 @@ public class BearFair21 {
 
 	public static Set<Player> getPlayers() {
 		Set<Player> result = new HashSet<>();
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : PlayerUtils.getRealPlayers()) {
 			if (isAtBearFair(player))
 				result.add(player);
 		}
