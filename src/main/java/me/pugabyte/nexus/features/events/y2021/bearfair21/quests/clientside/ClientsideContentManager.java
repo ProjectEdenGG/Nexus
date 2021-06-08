@@ -98,7 +98,7 @@ public class ClientsideContentManager implements Listener {
 					NPC npc = bearFair21NPC.getNPC();
 					if (npc == null) continue;
 
-					if (!isNear(player, npc.getEntity().getLocation(), 8)) {
+					if (!isNear(player, npc.getStoredLocation(), 8)) {
 						if (canSee(player, bearFair21NPC))
 							removeNPCNameTag(player, bearFair21NPC);
 						continue;

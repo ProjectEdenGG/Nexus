@@ -47,7 +47,7 @@ public enum BearFair21NPC {
 	TRENT("Trent", 4135),
 	GARY("Gary", 4136),
 	// PUGMAS
-	MAYOR_PUGMAS("Mayor", 4139),
+	MAYOR_PUGMAS("Mayor", 4130),
 	GRINCH("Grinch", 4129),
 	// HALLOWEEN
 	JOSE("Jose", 4131),
