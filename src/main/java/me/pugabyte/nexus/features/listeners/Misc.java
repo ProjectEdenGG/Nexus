@@ -14,8 +14,6 @@ import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.setting.Setting;
-import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.models.tip.Tip;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.models.tip.TipService;
@@ -245,17 +243,6 @@ public class Misc implements Listener {
 			else if (worldGroup == WorldGroup.CREATIVE)
 				joinCreative(event.getPlayer());
 		});
-
-		// Moved home for pork splegg map build
-		SettingService settingService = new SettingService();
-		if (event.getPlayer().getUniqueId().toString().equalsIgnoreCase("5bff3b47-06f3-4766-9468-edfe19266997")) {
-			Setting setting = settingService.get(event.getPlayer(), "s6oobertTP");
-			if (!setting.getBoolean()) {
-				PlayerUtils.runCommand(event.getPlayer(), "home");
-				setting.setBoolean(true);
-				settingService.save(setting);
-			}
-		}
 	}
 
 	@EventHandler
