@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.matchdata;
 
 import lombok.Data;
 import me.pugabyte.nexus.features.minigames.mechanics.Bingo;
+import me.pugabyte.nexus.features.minigames.mechanics.Bingo.Challenge;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -18,6 +19,7 @@ import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 @MatchDataFor(Bingo.class)
 public class BingoMatchData extends MatchData {
 	private Map<UUID, Location> spawnpoints = new HashMap<>();
+	private Challenge[][] challenges;
 
 	public BingoMatchData(Match match) {
 		super(match);
