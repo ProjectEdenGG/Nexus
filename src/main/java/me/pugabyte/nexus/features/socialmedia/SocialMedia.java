@@ -146,7 +146,7 @@ public class SocialMedia extends Feature implements Listener {
 		INSTAGRAM("https://instagram.com/ProjectEdenGG"),
 		REDDIT("https://reddit.com/u/ProjectEdenGG"),
 		STEAM("https://steamcommunity.com/groups/ProjectEdenGG"),
-		QUEUP("https://queup.net/join/ProjectEdenGG");
+		QUEUP("https://queup.net/join/projectedengg");
 
 		@Getter
 		private String name = "&3" + camelCase(name());
