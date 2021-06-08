@@ -261,40 +261,22 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 		if (location == null)
 			throw new InvalidInputException("Tried to teleport " + getName() + " to a null location");
 
-		player.setVelocity(new Vector(0, 0, 0));
-		canTeleport = true;
-		if (match == null)
-			player.teleport(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
-		else
-			player.teleport(location.clone().add(0, .5, 0));
-		canTeleport = false;
-		player.setVelocity(new Vector(0, 0, 0));
-		if (withSlowness) {
-			match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
-			match.getTasks().wait(2, () -> player.setVelocity(new Vector(0, 0, 0)));
-		}
-	}
+		final Location up = location.clone().add(0, .5, 0);
+		final Vector still = new Vector(0, 0, 0);
 
-	public void teleportAsync(Location location) {
-		teleportAsync(location, false);
-	}
+		location.getWorld().getChunkAtAsyncUrgently(up).thenRun(() -> {
+			player.setVelocity(still);
+			canTeleport = true;
 
-	public void teleportAsync(Location location, boolean withSlowness) {
-		if (location == null)
-			throw new InvalidInputException("Tried to teleport " + getName() + " to a null location");
+			player.teleport(up, match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN);
 
-		player.setVelocity(new Vector(0, 0, 0));
-		canTeleport = true;
-		if (match == null)
-			player.teleportAsync(location.clone().add(0, .5, 0), TeleportCause.COMMAND);
-		else
-			player.teleportAsync(location.clone().add(0, .5, 0));
-		canTeleport = false;
-		player.setVelocity(new Vector(0, 0, 0));
-		if (withSlowness) {
-			match.getTasks().wait(1, () -> player.setVelocity(new Vector(0, 0, 0)));
-			match.getTasks().wait(2, () -> player.setVelocity(new Vector(0, 0, 0)));
-		}
+			canTeleport = false;
+			player.setVelocity(still);
+			if (withSlowness) {
+				match.getTasks().wait(1, () -> player.setVelocity(still));
+				match.getTasks().wait(2, () -> player.setVelocity(still));
+			}
+		});
 	}
 
 	public void setTeam(Team team) {
