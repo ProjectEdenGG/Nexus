@@ -6,6 +6,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.listeners.TemporaryMenuListener;
 import me.pugabyte.nexus.features.menus.MenuUtils;
@@ -31,6 +32,7 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -41,9 +43,10 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
+@NoArgsConstructor
 @Aliases("delivery")
 @Redirect(from = "/mailbox", to = "/mail box")
-public class MailCommand extends CustomCommand {
+public class MailCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Mail");
 	private final MailerService service = new MailerService();
 	private Mailer from;
