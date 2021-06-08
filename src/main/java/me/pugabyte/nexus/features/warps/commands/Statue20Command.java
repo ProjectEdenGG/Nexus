@@ -137,7 +137,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		final String DISCORD_PREFIX = "**[StatueHunt]** ";
 
 		if (disabled) {
-			send(event.getPlayer(), PREFIX + "You've found a statue from the &e2020 Statue Hunt!'");
+			send(event.getPlayer(), PREFIX + "You've found a statue from the &e2020 Statue Hunt!");
 			return;
 		}
 
