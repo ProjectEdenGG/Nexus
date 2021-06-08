@@ -164,7 +164,7 @@ public class Shop implements PlayerOwnedObject {
 	@AllArgsConstructor
 	@RequiredArgsConstructor
 	@Converters({UUIDConverter.class, ItemStackConverter.class})
-	public static class Product implements Comparable {
+	public static class Product implements Comparable<Product> {
 		@NonNull
 		private UUID uuid;
 		@NonNull
@@ -388,8 +388,7 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		@Override
-		public int compareTo(@NotNull Object o) {
-			Product product = (Product) o;
+		public int compareTo(@NotNull Product product) {
 			if (item.getType().name().equals(product.getItem().getType().name())) {
 				if (price instanceof Number && product.getPrice() instanceof Number)
 					return ((Double) price).compareTo((Double) product.getPrice());
