@@ -64,10 +64,10 @@ public class Talker {
 	 * @param script script to send
 	 * @return CompletableFuture
 	 */
-	public static CompletableFuture<Void> runScript(Player player, TalkingNPC talker, List<String> script) {
-		CompletableFuture<Void> future = new CompletableFuture<>();
+	public static CompletableFuture<Boolean> runScript(Player player, TalkingNPC talker, List<String> script) {
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		if (script == null || script.isEmpty()) {
-			future.complete(null);
+			future.complete(true);
 			return future;
 		}
 
@@ -77,10 +77,12 @@ public class Talker {
 		Iterator<String> iterator = script.iterator();
 		while (iterator.hasNext()) {
 			String line = iterator.next();
-			if (line.toLowerCase().matches("^wait \\d+$")) {
+			if (line.toLowerCase().contains("<exit>")) {
+				Tasks.wait(wait.get(), () -> future.complete(false));
+			} else if (line.toLowerCase().matches("^wait \\d+$")) {
 				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 				if (!iterator.hasNext())
-					Tasks.wait(wait.get(), () -> future.complete(null));
+					Tasks.wait(wait.get(), () -> future.complete(true));
 			} else {
 				line = line.replaceAll("<player>", playerName);
 				final String npcName;
@@ -98,7 +100,7 @@ public class Talker {
 				});
 
 				if (!iterator.hasNext())
-					Tasks.wait(wait.get(), () -> future.complete(null));
+					Tasks.wait(wait.get(), () -> future.complete(true));
 			}
 		}
 

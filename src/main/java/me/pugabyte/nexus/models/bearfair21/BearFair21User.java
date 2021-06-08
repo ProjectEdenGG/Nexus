@@ -13,11 +13,20 @@ import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import org.bukkit.Location;
+import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.AXEL;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BEEKEEPER;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.FISHERMAN2;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.JOSE;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.LUMBERJACK;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.MAYOR_PUGMAS;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.ORGANIZER;
 
 @Data
 @Entity("bearfair21_user")
@@ -30,11 +39,20 @@ public class BearFair21User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	// General Quest Stuff
-	// TODO BF21: Change this to category instead, so not every player has a list of 400+ locations
-	private Set<Location> clientsideLocations = new HashSet<>();
+	private Set<ContentCategory> contentCategories = new HashSet<>();
 	private JunkWeight junkWeight = JunkWeight.MAX;
 	private int recycledItems = 0;
 	private Set<Integer> metNPCs = new HashSet<>();
+	private Set<Integer> nextStepNPCs = new HashSet<>(Arrays.asList(
+			ORGANIZER.getId(), // Main
+			BEEKEEPER.getId(), // Side
+			LUMBERJACK.getId(), // Side
+			FISHERMAN2.getId(), // Side
+			AXEL.getId(), // MGN
+			MAYOR_PUGMAS.getId(), // Pugmas
+			JOSE.getId() // HALLOWEEN
+			// SDU
+	));
 
 	// Specific
 	QuestStage questStage_Main = QuestStage.NOT_STARTED;

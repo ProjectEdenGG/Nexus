@@ -170,7 +170,10 @@ public class Quests implements Listener {
 			return;
 
 		BearFair21User user = userService.get(player);
-		BearFair21Talker.runScript(user, id).thenRun(() -> Merchants.openMerchant(player, id));
+		BearFair21Talker.runScript(user, id).thenAccept(bool -> {
+			if (bool)
+				Merchants.openMerchant(player, id);
+		});
 
 		user.getMetNPCs().add(id);
 		userService.save(user);

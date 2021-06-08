@@ -124,7 +124,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private static boolean canSee(Player player, Content content) {
-		return userService.get(player).getClientsideLocations().contains(content.getLocation());
+		return userService.get(player).getContentCategories().contains(content.getCategory());
 	}
 
 	private static boolean canSee(Player player, BearFair21NPC npc) {
@@ -205,16 +205,14 @@ public class ClientsideContentManager implements Listener {
 		ClientsideContent clientsideContent = contentService.get0();
 		List<Content> contentList = clientsideContent.getContentList();
 
-		List<Location> locations = new ArrayList<>();
 		List<Content> newContent = new ArrayList<>();
 		for (Content content : contentList) {
 			if (content.getCategory().equals(category)) {
 				newContent.add(content);
-				locations.add(content.getLocation());
 			}
 		}
 
-		user.getClientsideLocations().addAll(locations);
+		user.getContentCategories().add(category);
 		userService.save(user);
 
 		ClientsideContentManager.sendSpawnItemFrames(user.getPlayer(), newContent);

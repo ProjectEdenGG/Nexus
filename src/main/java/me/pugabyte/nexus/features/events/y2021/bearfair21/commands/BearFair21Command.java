@@ -102,8 +102,8 @@ public class BearFair21Command extends CustomCommand {
 		BearFair21User user = userService.get(player);
 
 		send("BearFair21 User: " + user.getName());
-		send("Locations Size: " + user.getClientsideLocations().size());
-		send("JunkWeight: " + user.getJunkWeight());
+		send("Visible Categories: " + Arrays.toString(user.getContentCategories().toArray()));
+		send("Junk Weight: " + user.getJunkWeight());
 		send("Recycled Items: " + user.getRecycledItems());
 		send("Met NPCs: " + Arrays.toString(user.getMetNPCs().stream().map(id -> BearFair21NPC.of(id).getName()).toArray()));
 	}
@@ -159,26 +159,20 @@ public class BearFair21Command extends CustomCommand {
 	@Path("clientside clearUser [category]")
 	void clientsideClear(ContentCategory category) {
 		BearFair21User user = userService.get(uuid());
-		int count = 0;
 		if (category == null) {
-			user.getClientsideLocations().clear();
+			user.getContentCategories().clear();
 			userService.save(user);
 
 			send("removed all locations from " + user.getNickname());
 			return;
 		} else {
-			Set<Location> locations = user.getClientsideLocations();
-			for (Content content : contentList) {
-				if (content.getCategory().equals(category)) {
-					locations.remove(content.getLocation());
-					count++;
-				}
-			}
-			user.setClientsideLocations(locations);
+			Set<ContentCategory> categories = user.getContentCategories();
+			categories.remove(category);
+			user.setContentCategories(categories);
 		}
 
 		userService.save(user);
-		send("removed " + count + " locations");
+		send("removed " + category + " Content Category");
 	}
 
 	@Permission("group.admin")
@@ -186,21 +180,15 @@ public class BearFair21Command extends CustomCommand {
 	void clientsideAddAll(ContentCategory category, @Arg("self") Player player) {
 
 		BearFair21User user = userService.get(player);
-		Set<Location> locations = user.getClientsideLocations();
-		List<Content> newContent = new ArrayList<>();
+		Set<ContentCategory> categories = user.getContentCategories();
 
-		for (Content content : contentList) {
-			if (content.getCategory().equals(category)) {
-				newContent.add(content);
-				locations.add(content.getLocation());
-			}
-		}
-
-		user.setClientsideLocations(locations);
+		categories.add(category);
+		user.setContentCategories(categories);
 		userService.save(user);
-		send(player.getName() + " can now see " + user.getClientsideLocations().size() + " locations");
 
-		ClientsideContentManager.sendSpawnItemFrames(player, newContent);
+		send(player.getName() + " visible categories: " + Arrays.toString(user.getContentCategories().toArray()));
+
+		ClientsideContentManager.sendSpawnItemFrames(player, contentService.getList(category));
 	}
 
 //	@Permission("group.admin")

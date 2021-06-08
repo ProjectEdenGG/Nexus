@@ -57,6 +57,8 @@ public class MainIsland implements Listener, BearFair21Island {
 				script.add("wait 80");
 				script.add("And if you need help figuring out where you are, check out this map to my side.");
 
+				user.getNextStepNPCs().remove(this.getNpcId());
+				userService.save(user);
 				return script;
 			}
 		},
@@ -66,15 +68,13 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-				} else if (isInviting(user, this.getNpcId(), tool)) {
+				if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-				} else {
-					script.add("TODO");
+					return script;
 				}
 
+				script.add("TODO - Greeting");
 				return script;
 			}
 		},
@@ -84,15 +84,13 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-				} else if (isInviting(user, this.getNpcId(), tool)) {
+				if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-				} else {
-					script.add("TODO");
+					return script;
 				}
 
+				script.add("TODO - Greeting");
 				return script;
 			}
 		},
@@ -102,15 +100,14 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-				} else if (isInviting(user, this.getNpcId(), tool)) {
+
+				if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-				} else {
-					script.add("TODO");
+					return script;
 				}
 
+				script.add("TODO - Greeting");
 				return script;
 			}
 		},
@@ -121,15 +118,13 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-				} else if (isInviting(user, this.getNpcId(), tool)) {
+				if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-				} else {
-					script.add("TODO");
+					return script;
 				}
 
+				script.add("TODO - Greeting");
 				return script;
 			}
 		},
@@ -139,22 +134,30 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
-				} else if (isInviting(user, this.getNpcId(), tool)) {
+				// TODO: undo the greeting changes i made to certain NPCs, it worked fine
+
+				if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-				} else {
-					script.add("TODO");
+					return script;
+				} else if (user.getQuestStage_Recycle() == QuestStage.NOT_STARTED) {
+					script.add("TODO - better dialog");
 					script.add("wait 20");
 					script.add("You can get useful materials from recycling");
 					script.add("wait 20");
 					script.add("The more trash you recycle, the less trash you will catch");
 					script.add("wait 20");
 					script.add("You've recycled: " + user.getRecycledItems() + " trash");
+
+					user.setQuestStage_Recycle(QuestStage.STARTED);
+					userService.save(user);
+					return script;
+				} else if (user.getQuestStage_Recycle() == QuestStage.STARTED) {
+					script.add("You've recycled: " + user.getRecycledItems() + " trash");
+					return script;
 				}
 
-
+				script.add("TODO - Greeting");
 				return script;
 			}
 		},
@@ -188,7 +191,9 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 80");
 					script.add("You know, if you want to give a good first impression, helping me out would certainly do the trick.");
 					script.add("wait 80");
-					script.add("When you get some spare, come back and talk to me. I'd greatly appreciate the help.");
+					script.add("When you get some spare time, come back and talk to me. I'd greatly appreciate the help.");
+
+					return script;
 				} else {
 					switch (user.getQuestStage_Main()) {
 						case NOT_STARTED -> {
@@ -196,6 +201,7 @@ public class MainIsland implements Listener, BearFair21Island {
 							script.add("wait 80");
 							script.add("For your first task, could you gather the materials, and craft me 4 cyan & 4 yellow banners? I've seem to forgotten the recipe.");
 							user.setQuestStage_Main(QuestStage.STARTED);
+							userService.save(user);
 							return script;
 						}
 						case STARTED -> {
@@ -307,7 +313,9 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("TODO - Greeting");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
+
 				} else {
 					script.add("TODO");
 				}
@@ -327,7 +335,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -345,7 +353,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -363,8 +371,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
-
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -382,7 +389,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -400,7 +407,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -418,7 +425,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -436,7 +443,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -454,7 +461,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -480,7 +487,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
@@ -498,7 +505,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
-					script.add("wait 40");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 				}
 
