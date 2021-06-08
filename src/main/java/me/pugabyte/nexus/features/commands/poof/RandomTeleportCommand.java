@@ -13,7 +13,9 @@ import me.pugabyte.nexus.models.lwc.LWCProtection;
 import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -21,6 +23,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Aliases({"randomtp", "rtp", "wild"})
@@ -37,9 +40,11 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Async
 	@Cooldown(value = @Part(value = Time.SECOND, x = 30), bypass = "group.admin")
 	void rtp() {
-		if (world().getEnvironment() != Environment.NORMAL)
+		final World world = world().getName().equalsIgnoreCase("legacy") ? Objects.requireNonNull(Bukkit.getWorld("survival")) : world();
+
+		if (world.getEnvironment() != Environment.NORMAL)
 			error("You must be in a survival overworld to run this command");
-		if (!Arrays.asList("world", "survival", "resource").contains(world().getName()))
+		if (!Arrays.asList("world", "survival", "resource").contains(world.getName()))
 			error("You must be in the survival world to run this command");
 
 		if (!running) {
@@ -49,15 +54,14 @@ public class RandomTeleportCommand extends CustomCommand {
 		count.getAndIncrement();
 
 		int radius = 0;
-		switch (world().getName()) {
-			case "world" -> radius = 17500;
+		switch (world.getName()) {
 			case "survival" -> radius = 7500;
 			case "resource" -> radius = 2500;
 			default -> error("Could not find world border of current world");
 		}
 
 		int range = 250;
-		List<Location> locationList = LocationUtils.getRandomPointInCircle(world(), radius);
+		List<Location> locationList = LocationUtils.getRandomPointInCircle(world, radius);
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
@@ -67,7 +71,7 @@ public class RandomTeleportCommand extends CustomCommand {
 		}
 
 		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
-			Block highestBlock = world().getHighestBlockAt(best);
+			Block highestBlock = world.getHighestBlockAt(best);
 			if (!highestBlock.getType().isSolid() && count.get() < 10) {
 				Tasks.async(this::rtp);
 				return;
