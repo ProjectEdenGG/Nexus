@@ -228,11 +228,12 @@ public class MailCommand extends CustomCommand {
 
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			player.closeInventory();
 			PlayerUtils.giveItems((Player) event.getPlayer(), contents);
 
-			if (!mailer.getMail(mail.getWorldGroup()).isEmpty())
-				new MailBoxMenu(mailer).open(player);
+			Tasks.wait(1, () -> {
+				if (!mailer.getMail(mail.getWorldGroup()).isEmpty())
+					new MailBoxMenu(mailer).open(player);
+			});
 		}
 	}
 
