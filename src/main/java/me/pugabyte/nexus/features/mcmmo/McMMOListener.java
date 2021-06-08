@@ -5,6 +5,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -48,9 +49,9 @@ public class McMMOListener implements Listener {
 	@EventHandler
 	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
 		if (event.getSkillLevel() == 100)
-			Koda.say(event.getPlayer().getName() + " reached level 100 in " + camelCase(event.getSkill().name()) + "! Congratulations!");
+			Koda.say(Nickname.of(event.getPlayer()) + " reached level 100 in " + camelCase(event.getSkill().name()) + "! Congratulations!");
 		if (UserManager.getOfflinePlayer(event.getPlayer()).getPowerLevel() == 1300)
-			Koda.say(event.getPlayer().getName() + " has mastered all their skills! Congratulations!");
+			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
 	}
 
 	void scheduler() {

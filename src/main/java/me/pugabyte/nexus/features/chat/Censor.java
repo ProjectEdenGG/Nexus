@@ -152,10 +152,10 @@ public class Censor {
 			else if (event.getChannel() instanceof PrivateChannel privateChannel)
 				channelNick = "[" + String.join(", ", privateChannel.getOthersNames(event.getChatter())) + "] ";
 
-			Nexus.fileLog("swears", channelNick + event.getChatter().getOfflinePlayer().getName() + ": " + event.getOriginalMessage());
+			Nexus.fileLog("swears", channelNick + event.getChatter().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
 				event.getChatter().sendMessage("&cPlease watch your language!");
-				Broadcast.staff().prefix("Censor").message("&c" + event.getChatter().getOfflinePlayer().getName() + " cursed too much: " + event.getMessage()).send();
+				Broadcast.staff().prefix("Censor").message("&c" + event.getChatter().getName() + " cursed too much: " + event.getMessage()).send();
 				event.setCancelled(true);
 			}
 		}

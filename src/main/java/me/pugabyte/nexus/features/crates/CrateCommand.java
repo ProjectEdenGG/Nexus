@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -53,7 +54,7 @@ public class CrateCommand extends CustomCommand {
 					" Crate Key" + (amount == 1 ? "" : "s"));
 		if (!isSelf(player))
 			send(Crates.PREFIX + "You gave &e" + amount + " " + StringUtils.camelCase(type.name()) + " Crate Key" +
-					(amount == 1 ? "" : "s") + "  &3to &e" + player.getName());
+					(amount == 1 ? "" : "s") + "  &3to &e" + Name.of(player));
 	}
 
 	@Path("animationAndSoundTest")

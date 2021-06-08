@@ -228,8 +228,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void prestigeAll(Player player) {
-		// TODO Koda Broadcasts
-		Koda.say(player.getName() + " has reset all of their McMMO skills!");
+		Koda.say(Nickname.of(player) + " has reset all of their McMMO skills!");
 
 		PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
 		new BankerService().deposit(player, 20000, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);

@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -98,8 +99,8 @@ public class WitherCommand extends CustomCommand {
 			error("You are not the host of the current party");
 		if (WitherChallenge.currentFight.isStarted())
 			error("You cannot invite players after the fight has started");
-		send(PREFIX + "You have invited &e" + player.getName() + " &3to fight the wither with you");
-		send(player, json(PREFIX + "&e" + player().getName() + " &3has invited you to challenge the wither in " +
+		send(PREFIX + "You have invited &e" + Nickname.of(player) + " &3to fight the wither with you");
+		send(player, json(PREFIX + "&e" + nickname() + " &3has invited you to challenge the wither in " +
 				WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode. ")
 				.next("&e&lClick here to join").command("/wither join").hover("&eYou will be added to the wither queue"));
 	}
@@ -117,7 +118,7 @@ public class WitherCommand extends CustomCommand {
 		if (WitherChallenge.currentFight.isStarted())
 			error("The party has already begun the fight!");
 		WitherChallenge.currentFight.getParty().add(uuid());
-		WitherChallenge.currentFight.broadcastToParty("&e" + player().getName() + " &3has joined the party");
+		WitherChallenge.currentFight.broadcastToParty("&e" + nickname() + " &3has joined the party");
 	}
 
 	@Path("abandon")
@@ -164,7 +165,7 @@ public class WitherCommand extends CustomCommand {
 		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
 		int partySize = WitherChallenge.currentFight.getParty().size();
 
-		String message = "&e" + WitherChallenge.currentFight.getHostPlayer().getName() +
+		String message = "&e" + Nickname.of(WitherChallenge.currentFight.getHostPlayer()) +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
 				" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode";
 

@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -66,9 +67,9 @@ public class PayDiscordCommand extends Command {
 				}
 
 				String formatted = prettyMoney(amount);
-				PlayerUtils.send(target, "&a" + formatted + " has been received from " + player.getName());
+				PlayerUtils.send(target, "&a" + formatted + " has been received from " + Nickname.of(player));
 
-				event.reply("Successfully sent " + formatted + " to " + target.getName());
+				event.reply("Successfully sent " + formatted + " to " + Nickname.of(target));
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof EdenException))

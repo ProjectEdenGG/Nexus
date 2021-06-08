@@ -20,17 +20,17 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Aliases({"randomtp", "rtp", "wild"})
 public class RandomTeleportCommand extends CustomCommand {
-	LWCProtectionService service = new LWCProtectionService();
-	AtomicInteger count = new AtomicInteger(0);
-	boolean running = false;
+	private static final LWCProtectionService service = new LWCProtectionService();
+	private final AtomicInteger count = new AtomicInteger(0);
+	private boolean running = false;
 
 	public RandomTeleportCommand(CommandEvent event) {
 		super(event);
@@ -44,7 +44,7 @@ public class RandomTeleportCommand extends CustomCommand {
 
 		if (world.getEnvironment() != Environment.NORMAL)
 			error("You must be in a survival overworld to run this command");
-		if (!Arrays.asList("world", "survival", "resource").contains(world.getName()))
+		if (!Set.of("survival", "resource").contains(world.getName()))
 			error("You must be in the survival world to run this command");
 
 		if (!running) {
@@ -81,7 +81,7 @@ public class RandomTeleportCommand extends CustomCommand {
 		});
 	}
 
-	public double getDensity(Location location, int range) {
+	public static double getDensity(Location location, int range) {
 		List<LWCProtection> protections = service.getProtectionsInRange(location, range);
 		return (protections.size() / Math.pow(range * 2.0, 2.0)) * 100;
 	}

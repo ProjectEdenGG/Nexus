@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -61,7 +62,7 @@ public class DeathMessagesDiscordCommand extends Command {
 
 				service.save(deathMessages);
 
-				String message = "Set " + player.getName() + "'s death message behavior to "
+				String message = "Set " + Nickname.of(player) + "'s death message behavior to "
 						+ camelCase(behavior) + (duration.isNull() ? "" : " for " + duration.format());
 
 				event.reply(StringUtils.getDiscordPrefix("DeathMessages") + message);

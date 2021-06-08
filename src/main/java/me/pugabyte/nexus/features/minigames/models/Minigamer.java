@@ -23,6 +23,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
@@ -93,7 +94,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	@Deprecated
 	@NotNull
 	public String getName() {
-		return player.getName();
+		return Name.of(player);
 	}
 
 	public @NotNull String getNickname() {

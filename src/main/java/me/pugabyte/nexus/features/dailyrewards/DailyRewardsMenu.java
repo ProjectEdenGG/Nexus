@@ -151,7 +151,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		private void applyReward(int day, int option) {
-			Player player = (Player) dailyReward.getOfflinePlayer();
+			Player player = dailyReward.getOfflinePlayer().getPlayer();
+			assert player != null;
 
 			Reward reward = DailyRewardsFeature.getReward(day, option);
 			List<ItemStack> items = reward.getItems();

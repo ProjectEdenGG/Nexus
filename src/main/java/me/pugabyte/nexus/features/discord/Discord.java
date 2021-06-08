@@ -215,7 +215,7 @@ public class Discord extends Feature {
 	private static String getBridgeTopic() {
 		List<Player> players = Bukkit.getOnlinePlayers().stream()
 				.filter(player -> !PlayerUtils.isVanished(player))
-				.sorted(Comparator.comparing(Player::getName))
+				.sorted(Comparator.comparing(Nickname::of))
 				.collect(Collectors.toList());
 
 		String topic = "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
@@ -246,7 +246,7 @@ public class Discord extends Feature {
 	private static String getStaffBridgeTopic() {
 		List<Player> players = Bukkit.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff())
-				.sorted(Comparator.comparing(Player::getName))
+				.sorted(Comparator.comparing(Nickname::of))
 				.collect(Collectors.toList());
 
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()

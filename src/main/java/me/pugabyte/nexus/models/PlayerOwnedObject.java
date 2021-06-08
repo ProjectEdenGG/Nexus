@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.audience.MessageType;
@@ -88,7 +89,7 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 
 	@Override
 	default @NotNull String getName() {
-		String name = getOfflinePlayer().getName();
+		String name = Name.of(this);
 		if (name == null)
 			name = Nerd.of(getUuid()).getName();
 		return name;

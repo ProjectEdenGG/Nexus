@@ -20,7 +20,7 @@ import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -164,7 +164,7 @@ public class RadioCommand extends CustomCommand {
 		send(PREFIX + "Players listening to " + radio.getId() + ":");
 		int ndx = 1;
 		for (UUID uuid : uuids) {
-			send("&3" + ndx++ + " &e" + PlayerUtils.getPlayer(uuid).getName());
+			send("&3" + ndx++ + " &e" + Name.of(uuid));
 		}
 	}
 
@@ -182,7 +182,7 @@ public class RadioCommand extends CustomCommand {
 		RadioUser user = userService.get(player);
 
 		send(PREFIX + "&3User Debug: ");
-		send("&3Player: &e" + player.getName());
+		send("&3Player: &e" + user.getNickname());
 		send("&3Is Mute: &e" + user.isMute());
 		send("&3ServerRadioId: &e" + user.getServerRadioId());
 		send("&3LastServerRadioId: &e" + user.getLastServerRadioId());

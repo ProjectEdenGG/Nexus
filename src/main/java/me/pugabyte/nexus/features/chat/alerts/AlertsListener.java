@@ -8,6 +8,7 @@ import me.pugabyte.nexus.models.alerts.AlertsService;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.Name;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,7 +54,7 @@ public class AlertsListener implements Listener {
 		Player player = event.getPlayer();
 		final AlertsService service = new AlertsService();
 		final Alerts alerts = service.get(player);
-		alerts.add(player.getName());
+		alerts.add(Name.of(player));
 		alerts.add(Nickname.of(player));
 		service.save(alerts);
 	}

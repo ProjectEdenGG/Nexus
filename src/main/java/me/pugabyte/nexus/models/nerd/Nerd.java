@@ -25,6 +25,7 @@ import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -86,12 +87,20 @@ public class Nerd extends eden.models.nerd.Nerd implements PlayerOwnedObject, Is
 
 	public void fromPlayer(OfflinePlayer player) {
 		uuid = player.getUniqueId();
-		name = player.getName();
+		name = Name.of(uuid);
 		if (player.getFirstPlayed() > 0) {
 			LocalDateTime newFirstJoin = Utils.epochMilli(player.getFirstPlayed());
 			if (firstJoin == null || firstJoin.isBefore(EARLIEST_JOIN) || newFirstJoin.isBefore(firstJoin))
 				firstJoin = newFirstJoin;
 		}
+	}
+
+	@Override
+	public @NotNull String getName() {
+		String name = super.getName();
+		if (name.length() <= 16) // ignore "api-<uuid>" names
+			Name.put(uuid, name);
+		return name;
 	}
 
 	public boolean hasMoved() {

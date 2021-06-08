@@ -9,9 +9,9 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundExcep
 import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeOwner;
 import me.pugabyte.nexus.models.home.HomeService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -158,7 +158,7 @@ public class HomesMenu {
 		String lore = "";
 		if (accessList.size() > 0) {
 			lore += "||&f&m                         ||&f||&eAccess List||&f";
-			Supplier<Stream<String>> names = () -> accessList.stream().map(uuid -> Bukkit.getOfflinePlayer(uuid).getName());
+			Supplier<Stream<String>> names = () -> accessList.stream().map(Nickname::of);
 			if (names.get().count() > 10)
 				lore += loreize(names.get().collect(Collectors.joining(", ")));
 			else

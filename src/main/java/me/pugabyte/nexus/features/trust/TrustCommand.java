@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.home.Home;
 import me.pugabyte.nexus.models.home.HomeService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.Trust.Type;
 import me.pugabyte.nexus.models.trust.TrustService;
@@ -129,7 +130,7 @@ public class TrustCommand extends CustomCommand {
 
 	@NotNull
 	private String names(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(OfflinePlayer::getName).collect(Collectors.joining(separator));
+		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
 	}
 
 }

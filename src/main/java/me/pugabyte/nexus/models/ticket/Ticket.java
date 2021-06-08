@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.Name;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.conversations.Conversable;
@@ -49,7 +50,7 @@ public class Ticket {
 
 	public String getOwnerName() {
 		try {
-			return Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
+			return Name.of(UUID.fromString(uuid));
 		} catch (Exception ex) {
 			return Bukkit.getConsoleSender().getName();
 		}

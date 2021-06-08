@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.models.vote.TopVoter;
 import me.pugabyte.nexus.models.vote.VoteService;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -132,7 +133,7 @@ public class EndOfMonth {
 						.map(topVoter -> {
 							OfflinePlayer player = PlayerUtils.getPlayer(topVoter.getUuid());
 							if (player != null)
-								return player.getName();
+								return Name.of(player);
 							return "Unknown";
 						})
 						.collect(Collectors.joining(", "));
@@ -196,7 +197,7 @@ public class EndOfMonth {
 
 				writer.write("  <tr>" + System.lineSeparator());
 				writer.write("    <th>" + index + "</th>" + System.lineSeparator());
-				writer.write("    <th>" + player.getName() + "</th>" + System.lineSeparator());
+				writer.write("    <th>" + Name.of(player) + "</th>" + System.lineSeparator());
 				writer.write("    <th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
 				writer.write("  <tr>" + System.lineSeparator());
 			}

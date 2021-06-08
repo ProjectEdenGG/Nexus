@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.models.banker.BankerService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -39,8 +40,8 @@ public class BalanceDiscordCommand extends Command {
 					shopGroup = ShopGroup.valueOf(args[1]);
 
 				String formatted = new BankerService().getBalanceFormatted(player, shopGroup);
-				boolean isSelf = user.getUuid().equals(player.getUniqueId().toString());
-				event.reply(camelCase(shopGroup) + " balance" + (isSelf ? "" : " of " + player.getName()) + ": " + formatted);
+				boolean isSelf = user.getUuid().equals(player.getUniqueId());
+				event.reply(camelCase(shopGroup) + " balance" + (isSelf ? "" : " of " + Nickname.of(player)) + ": " + formatted);
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof EdenException))

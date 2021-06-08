@@ -47,6 +47,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LuckPermsUtils;
 import me.pugabyte.nexus.utils.LuckPermsUtils.GroupChange;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -799,10 +800,10 @@ public enum Package {
 
 		String permissionGroup = getPermissionGroup();
 		if (!isNullOrEmpty(permissionGroup))
-			PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent add " + permissionGroup);
+			PlayerUtils.runCommandAsConsole("lp user " + player.getUniqueId() + " parent add " + permissionGroup);
 
 		getCommands().stream()
-				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(player.getName())))
+				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(player))))
 				.forEach(PlayerUtils::runCommandAsConsole);
 
 		handleApply(player);
@@ -825,7 +826,7 @@ public enum Package {
 
 		getExpirationCommands().stream()
 				.map(StringUtils::trimFirst)
-				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(player.getName())))
+				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(player))))
 				.forEach(command -> Tasks.sync(() -> PlayerUtils.runCommandAsConsole(command)));
 	}
 

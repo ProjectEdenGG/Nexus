@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.Trust.Type;
 import me.pugabyte.nexus.models.trust.TrustService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -70,7 +71,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 
 		trust.getAll().stream()
 				.map(PlayerUtils::getPlayer)
-				.sorted(Comparator.comparing(OfflinePlayer::getName))
+				.sorted(Comparator.comparing(Name::of))
 				.collect(Collectors.toList())
 				.forEach(_player -> {
 					if (filterType.get() != null)
@@ -79,7 +80,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 
 					ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
 							.skullOwner(_player)
-							.name("&e" + _player.getName());
+							.name("&e" + Name.of(_player));
 					for (Trust.Type type : Trust.Type.values())
 						if (trust.trusts(type, _player))
 							builder.lore("&a" + type.camelCase());

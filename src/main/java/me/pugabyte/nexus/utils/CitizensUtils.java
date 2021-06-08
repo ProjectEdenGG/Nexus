@@ -59,7 +59,7 @@ public class CitizensUtils {
 	 */
 	public static void updateNameAndSkin(NPC npc, HasOfflinePlayer player) {
 		updateName(npc, Nickname.of(player.getOfflinePlayer()));
-		updateSkin(npc, player.getOfflinePlayer().getName());
+		updateSkin(npc, Name.of(player.getOfflinePlayer()));
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class CitizensUtils {
 	 */
 	public static void updateNameAndSkin(NPC npc, Nerd nerd) {
 		updateName(npc, Nickname.of(nerd));
-		updateSkin(npc, nerd.getOfflinePlayer().getName());
+		updateSkin(npc, nerd.getName());
 	}
 
 	public static void updateName(int id, String name) {
@@ -116,7 +116,7 @@ public class CitizensUtils {
 		Owner npcOwner = new Owner();
 		npcOwner.setOwner(Nickname.of(owner.getOfflinePlayer()), owner.getOfflinePlayer().getUniqueId());
 		npc.addTrait(npcOwner);
-		updateSkin(npc, owner.getOfflinePlayer().getName(), true);
+		updateSkin(npc, Name.of(owner.getOfflinePlayer()), true);
 		return npc;
 	}
 

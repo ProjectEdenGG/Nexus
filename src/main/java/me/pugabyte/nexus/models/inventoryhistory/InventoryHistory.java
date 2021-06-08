@@ -17,6 +17,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -101,7 +102,7 @@ public class InventoryHistory implements PlayerOwnedObject {
 			if (!isInventoryEmpty(player.getInventory())) {
 				PlayerUtils.send(player, PREFIX + "&cYour inventory must be empty to apply this inventory snapshot");
 				if (!applier.equals(player))
-					PlayerUtils.send(applier, PREFIX + "&c" + player.getName() + "'s inventory must be empty to apply this inventory snapshot");
+					PlayerUtils.send(applier, PREFIX + "&c" + Nickname.of(player) + "'s inventory must be empty to apply this inventory snapshot");
 				return;
 			}
 
@@ -110,7 +111,7 @@ public class InventoryHistory implements PlayerOwnedObject {
 			player.getInventory().setContents(contents.toArray(ItemStack[]::new));
 			PlayerUtils.send(player, PREFIX + "Snapshot applied");
 			if (!applier.equals(player))
-				PlayerUtils.send(applier, PREFIX + "Snapshot applied to " + player.getName() + "'s inventory");
+				PlayerUtils.send(applier, PREFIX + "Snapshot applied to " + Nickname.of(player) + "'s inventory");
 		}
 
 	}

@@ -24,6 +24,7 @@ import me.pugabyte.nexus.models.contributor.ContributorService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -207,7 +208,7 @@ public class StoreCommand extends CustomCommand {
 				.basketType("both")
 				.discount(new Discount("amount", BigDecimal.ZERO, BigDecimal.valueOf(amount)))
 				.discountMethod(2)
-				.username(offlinePlayer.getName())
+				.username(Name.of(offlinePlayer))
 				.redeemUnlimited(false)
 				.redeemUnlimited(1)
 				.minimum(BigDecimal.ZERO)
@@ -225,14 +226,14 @@ public class StoreCommand extends CustomCommand {
 	@Permission("group.admin")
 	void apply(Package packageType, @Arg("self") OfflinePlayer player) {
 		packageType.apply(player);
-		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + player.getName());
+		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + Nickname.of(player));
 	}
 
 	@Path("(expire|remove) <package> [player]")
 	@Permission("group.admin")
 	void expire(Package packageType, @Arg("self") OfflinePlayer player) {
 		packageType.expire(player);
-		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + player.getName());
+		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + Nickname.of(player));
 	}
 
 }

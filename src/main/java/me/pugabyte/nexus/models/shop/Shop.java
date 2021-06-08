@@ -28,6 +28,7 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -267,7 +268,7 @@ public class Shop implements PlayerOwnedObject {
 				List<String> columns = new ArrayList<>(Arrays.asList(
 						DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
 						getUuid().toString(),
-						getShop().getOfflinePlayer().getName(),
+						Name.of(getShop().getOfflinePlayer()),
 						customer.getUniqueId().toString(),
 						customer.getName(),
 						getShopGroup().name(),

@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.Mute
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.wither.BeginningCutscene;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -133,8 +134,8 @@ public abstract class WitherFight implements Listener {
 			Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 			for (UUID uuid : alivePlayers) {
 				try {
-					OfflinePlayer player = PlayerUtils.getPlayer(uuid).getPlayer();
-					if (!player.isOnline()) continue;
+					Player player = PlayerUtils.getPlayer(uuid).getPlayer();
+					if (player == null) continue;
 					Team team = scoreboard.registerNewTeam("wither-" + uuid.toString().split("-")[0]);
 					team.addEntry(player.getName());
 					player.getPlayer().setScoreboard(scoreboard);
@@ -146,8 +147,8 @@ public abstract class WitherFight implements Listener {
 
 			tasks.add(Tasks.repeat(0, Time.SECOND.x(5), () -> {
 				for (UUID uuid : alivePlayers) {
-					OfflinePlayer player = PlayerUtils.getPlayer(uuid).getPlayer();
-					if (!player.isOnline()) continue;
+					Player player = PlayerUtils.getPlayer(uuid).getPlayer();
+					if (player == null) continue;
 					scoreboardTeams.get(uuid).setPrefix(colorize(((int) player.getPlayer().getHealth()) + " &c❤ &r"));
 				}
 			}));
@@ -322,7 +323,7 @@ public abstract class WitherFight implements Listener {
 			tasks.forEach(Tasks::cancel);
 			int partySize = party.size();
 
-			String message = "&e" + getHostOfflinePlayer().getName() +
+			String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
 
@@ -330,7 +331,7 @@ public abstract class WitherFight implements Listener {
 
 			WitherChallenge.reset();
 		} else {
-			WitherChallenge.currentFight.broadcastToParty("&e" + player.getName() + " &chas " + reason + " and is out of the fight!");
+			WitherChallenge.currentFight.broadcastToParty("&e" + Nickname.of(player) + " &chas " + reason + " and is out of the fight!");
 			wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
@@ -360,7 +361,7 @@ public abstract class WitherFight implements Listener {
 
 		int partySize = party.size();
 
-		String message = "&e" + getHostOfflinePlayer().getName() +
+		String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" successfully beaten the Wither in " +
 				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");

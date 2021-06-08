@@ -21,6 +21,7 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -226,14 +227,14 @@ public class Misc implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		if (toSpawn.contains(event.getPlayer().getUniqueId())) {
 			new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer());
-			Nexus.log("Teleporting resource world player " + event.getPlayer().getName() + " to spawn");
+			Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn");
 			toSpawn.remove(event.getPlayer().getUniqueId());
 		}
 
 		Tasks.wait(5, () -> {
 			if (toSpawn.contains(event.getPlayer().getUniqueId())) {
 				new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer());
-				Nexus.log("Teleporting resource world player " + event.getPlayer().getName() + " to spawn [2]");
+				Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn [2]");
 				toSpawn.remove(event.getPlayer().getUniqueId());
 			}
 

@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.crates.Crates;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -53,7 +54,7 @@ public class MysteryCrate extends Crate {
 	public void onSpawnItem(CrateSpawnItemEvent event) {
 		if (event.getCrateType() != getCrateType()) return;
 		if (!event.getCrateLoot().getItems().contains(new ItemStack(Material.BEACON))) return;
-		String message = "&e" + event.getPlayer().getName() + " &3has received a &eBeacon &3from the &eMystery Crate";
+		String message = "&e" + Nickname.of(event.getPlayer()) + " &3has received a &eBeacon &3from the &eMystery Crate";
 		Broadcast.all().prefix("Crates").message(message).muteMenuItem(MuteMenuItem.CRATES).send();
 	}
 

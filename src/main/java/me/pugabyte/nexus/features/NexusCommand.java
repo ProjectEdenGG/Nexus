@@ -66,6 +66,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.SoundUtils;
@@ -426,7 +427,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("listTest <player...>")
 	void listTest(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		send(players.stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
+		send(players.stream().map(Name::of).collect(Collectors.joining(", ")));
 	}
 
 	static {
@@ -515,7 +516,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("getPlayer [player]")
 	void getPlayer(@Arg("self") OfflinePlayer player) {
-		send(player.getName());
+		send(Name.of(player));
 	}
 
 	@Path("getClientBrandName <player>")
@@ -1113,7 +1114,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		return new HoursService().getActivePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff())
 				.map(PlayerUtils::getPlayer)
-				.map(OfflinePlayer::getName)
+				.map(Name::of)
 				.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}

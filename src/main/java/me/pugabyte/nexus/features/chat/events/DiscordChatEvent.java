@@ -64,7 +64,7 @@ public class DiscordChatEvent extends ChatEvent {
 	@Override
 	public String getOrigin() {
 		if (getChatter() != null)
-			return getChatter().getOfflinePlayer().getName();
+			return getChatter().getName();
 		return Discord.getName(member);
 	}
 

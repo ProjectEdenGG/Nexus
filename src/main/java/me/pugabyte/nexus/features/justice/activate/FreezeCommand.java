@@ -20,6 +20,7 @@ import me.pugabyte.nexus.models.freeze.Freeze;
 import me.pugabyte.nexus.models.freeze.FreezeService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -122,7 +123,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 		if (player.getVehicle() != null)
 			player.getVehicle().remove();
 
-		String message = "&e" + player.getName() + " &3has logged out while frozen.";
+		String message = "&e" + Nickname.of(player) + " &3has logged out while frozen.";
 		Broadcast.staff().prefix("Freeze").message(message).send();
 	}
 
@@ -143,7 +144,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 			get(event.getPlayer()).mount();
 
-			String message = "&e" + event.getPlayer().getName() + " &3has logged in while frozen.";
+			String message = "&e" + Nickname.of(event.getPlayer()) + " &3has logged in while frozen.";
 			Broadcast.staff().prefix("Freeze").message(message).send();
 		});
 	}

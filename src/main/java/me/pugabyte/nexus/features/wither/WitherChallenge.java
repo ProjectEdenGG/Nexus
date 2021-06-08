@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.wither.fights.HardFight;
 import me.pugabyte.nexus.features.wither.fights.MediumFight;
 import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -115,14 +116,14 @@ public class WitherChallenge extends Feature implements Listener {
 	public void onPlayerLogout(PlayerQuitEvent event) {
 		if (currentFight == null) return;
 		if (!currentFight.party.contains(event.getPlayer().getUniqueId())) return;
-		currentFight.broadcastToParty("&e" + event.getPlayer().getName() + " &3has logged out. They have one minute to return before they are automatically removed from the party.");
+		currentFight.broadcastToParty("&e" + Nickname.of(event.getPlayer()) + " &3has logged out. They have one minute to return before they are automatically removed from the party.");
 		Tasks.wait(Time.MINUTE, () -> {
 			if (currentFight == null) return;
 			if (event.getPlayer().isOnline()) return;
 			currentFight.party.remove(event.getPlayer().getUniqueId());
 			if (currentFight.alivePlayers != null)
 				currentFight.alivePlayers.remove(event.getPlayer().getUniqueId());
-			currentFight.broadcastToParty("&e" + event.getPlayer().getName() + " &ehas been removed from the party.");
+			currentFight.broadcastToParty("&e" + Nickname.of(event.getPlayer()) + " &ehas been removed from the party.");
 		});
 	}
 

@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.fakenpc;
 
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.Tasks;
 import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -73,7 +74,7 @@ public class FakeNPCManager {
 	}
 
 	public static FakeNPC createFakeNPC(Player player) {
-		FakeNPC fakeNPC = new FakeNPC(player.getLocation(), player.getName());
+		FakeNPC fakeNPC = new FakeNPC(player.getLocation(), Name.of(player));
 
 		EntityPlayer entityPlayer = NMSUtils.createEntityPlayer(UUID.randomUUID(), fakeNPC.getLocation(), fakeNPC.getName());
 		fakeNPC.setEntityPlayer(entityPlayer);

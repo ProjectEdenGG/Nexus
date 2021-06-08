@@ -7,6 +7,7 @@ import me.pugabyte.nexus.models.autosort.AutoSortUser;
 import me.pugabyte.nexus.models.autosort.AutoSortUser.AutoSortInventoryType;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
@@ -169,7 +170,7 @@ public class AutoSort extends Feature {
 		} else if (itemMeta instanceof FireworkMeta fireworkMeta)
 			signature += "." + fireworkMeta.getPower();
 		else if (itemMeta instanceof SkullMeta skullMeta && skullMeta.getOwningPlayer() != null)
-			signature += "." + (skullMeta.getOwningPlayer().getName() == null);
+			signature += "." + (Name.of(skullMeta.getOwningPlayer()) == null);
 
 		return signature;
 	}

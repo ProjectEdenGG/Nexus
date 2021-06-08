@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.discord.Bot;
 import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.punishments.Punishments;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
@@ -33,7 +34,7 @@ public class HistoryDiscordCommand extends Command {
 				OfflinePlayer player = PlayerUtils.getPlayer(args[0]);
 
 				if (Punishments.of(player).hasHistory())
-					event.reply("<https://justice.projecteden.gg/history/" + player.getName() + ">");
+					event.reply("<https://justice.projecteden.gg/history/" + Name.of(player) + ">");
 				else
 					event.reply("No history found");
 			} catch (Exception ex) {

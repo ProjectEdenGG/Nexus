@@ -6,6 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.mcmmo.McMMOPrestige;
 import me.pugabyte.nexus.models.mcmmo.McMMOService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import org.bukkit.OfflinePlayer;
 
 public class McMMOPrestigeCommand extends CustomCommand {
@@ -20,7 +21,7 @@ public class McMMOPrestigeCommand extends CustomCommand {
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 
 		line();
-		send("&ePrestige for " + player.getName());
+		send("&ePrestige for " + Nickname.of(player));
 		mcMMOPrestige.getPrestiges().forEach((type, count) -> send("&3" + camelCase(type) + ": &e" + count));
 
 	}

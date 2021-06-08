@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.IntegerListSerializer;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.OfflinePlayer;
 
@@ -40,7 +41,7 @@ public class DailyReward {
 	}
 
 	public void increaseStreak() {
-		Nexus.log("[DailyRewards] Increasing streak for " + getOfflinePlayer().getName());
+		Nexus.log("[DailyRewards] Increasing streak for " + Name.of(getOfflinePlayer()));
 		earnedToday = true;
 		++streak;
 		PlayerUtils.send(getOfflinePlayer(), new JsonBuilder()

@@ -24,6 +24,7 @@ import me.pugabyte.nexus.models.lwc.LWCProtectionService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.EnumUtils;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
@@ -34,7 +35,6 @@ import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -60,7 +60,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.stream.Collectors.joining;
 import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.TimeUtils.shortTimeFormat;
 import static org.reflections.ReflectionUtils.getMethods;
@@ -232,9 +231,10 @@ public class Nexus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		Locale.setDefault(Locale.US);
+		Bukkit.getOnlinePlayers().forEach(Name::of); // cache online usernames
 
 		new Timer("Enable", () -> {
-			String loadedWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(joining(", "));
+//			String loadedWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(joining(", "));
 //			Nexus.log("Loaded worlds: " + loadedWorlds);
 
 			new Timer(" Config", this::setupConfig);

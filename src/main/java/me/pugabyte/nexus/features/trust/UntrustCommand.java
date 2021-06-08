@@ -12,6 +12,7 @@ import me.pugabyte.nexus.models.home.HomeService;
 import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.Trust.Type;
 import me.pugabyte.nexus.models.trust.TrustService;
+import me.pugabyte.nexus.utils.Name;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +70,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin locks <owner> <players>")
 	void locks(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + owner.getName());
+		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
 		process(players, Type.LOCKS);
 	}
 
@@ -77,7 +78,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin homes <owner> <players>")
 	void homes(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + owner.getName());
+		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
 		process(players, Type.HOMES);
 	}
 
@@ -85,7 +86,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin teleports <owner> <players>")
 	void teleports(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + owner.getName());
+		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
 		process(players, Type.TELEPORTS);
 	}
 
@@ -93,7 +94,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin all <owner> <players>")
 	void all(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + owner.getName());
+		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
 		process(players, Type.values());
 	}
 
@@ -107,7 +108,7 @@ public class UntrustCommand extends CustomCommand {
 
 	@NotNull
 	private String names(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(OfflinePlayer::getName).collect(Collectors.joining(separator));
+		return players.stream().map(Name::of).collect(Collectors.joining(separator));
 	}
 
 }

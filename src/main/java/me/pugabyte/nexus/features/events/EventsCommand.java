@@ -52,13 +52,13 @@ public class EventsCommand extends CustomCommand {
 			send("&3Event tokens are currency earned by participating in server events");
 			send("&3You can spend them at the &c/event store &3in exchange for unique rewards");
 		} else
-			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s current balance: &e" + plural(user.getTokens()));
+			send(PREFIX + "&3" + user.getNickname() + "'s current balance: &e" + plural(user.getTokens()));
 	}
 
 	@Async
 	@Path("tokens top [page]")
 	public void tokensTop(@Arg("1") int page) {
-		paginate(service.getTopTokens(), (user, index) -> json("&3" + (index + 1) + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTokens()), "/event tokens top", page);
+		paginate(service.getTopTokens(), (user, index) -> json("&3" + (index + 1) + " &e" + user.getNickname() + " &7- " + user.getTokens()), "/event tokens top", page);
 	}
 
 	/* TODO
@@ -92,8 +92,8 @@ public class EventsCommand extends CustomCommand {
 		fromUser.takeTokens(tokens);
 		toUser.giveTokens(tokens);
 
-		fromUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been sent to &e" + toUser.getOfflinePlayer().getName());
-		toUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been received from &e" + fromUser.getOfflinePlayer().getName());
+		fromUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been sent to &e" + toUser.getNickname());
+		toUser.sendMessage(PREFIX + "&e" + tokens + " event tokens &3have been received from &e" + fromUser.getNickname());
 
 		service.save(fromUser);
 		service.save(toUser);
@@ -104,7 +104,7 @@ public class EventsCommand extends CustomCommand {
 	public void tokensGive(EventUser user, int tokens) {
 		user.giveTokens(tokens);
 		service.save(user);
-		send(PREFIX + "&e" + plural(tokens) + " &3given to &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + plural(tokens) + " &3given to &e" + user.getNickname());
 	}
 
 	@Path("tokens take <player> <tokens>")
@@ -112,7 +112,7 @@ public class EventsCommand extends CustomCommand {
 	public void tokensTake(EventUser user, int tokens) {
 		user.takeTokens(tokens);
 		service.save(user);
-		send(PREFIX + "&e" + plural(tokens) + " &3taken from &e" + user.getOfflinePlayer().getName());
+		send(PREFIX + "&e" + plural(tokens) + " &3taken from &e" + user.getNickname());
 	}
 
 	@Path("tokens set <player> <tokens>")
@@ -120,7 +120,7 @@ public class EventsCommand extends CustomCommand {
 	public void tokensSet(EventUser user, int tokens) {
 		user.setTokens(tokens);
 		service.save(user);
-		send(PREFIX + "&3Set &e" + user.getOfflinePlayer().getName() + "&3's balance to &e" + plural(tokens));
+		send(PREFIX + "&3Set &e" + user.getNickname() + "&3's balance to &e" + plural(tokens));
 	}
 
 	@Path("tokens reset <player>")

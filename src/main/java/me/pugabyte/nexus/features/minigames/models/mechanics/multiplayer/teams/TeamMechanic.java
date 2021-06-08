@@ -23,6 +23,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.Multipl
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.RandomUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -83,8 +84,8 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		if (member == null) {
 			// user has no linked account, find a disc account with matching (nick)name
 			Optional<Member> optionalMember = guild.getMembers().stream()
-					.filter(fmember -> (fmember.getNickname() != null && fmember.getNickname().equalsIgnoreCase(player.getName()))
-							|| fmember.getUser().getName().equalsIgnoreCase(player.getName()))
+					.filter(fmember -> (fmember.getNickname() != null && fmember.getNickname().equalsIgnoreCase(Name.of(player)))
+							|| fmember.getUser().getName().equalsIgnoreCase(Name.of(player)))
 					.findAny();
 			if (optionalMember.isPresent())
 				member = optionalMember.get();

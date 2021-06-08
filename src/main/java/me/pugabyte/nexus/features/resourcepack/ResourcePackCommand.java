@@ -16,6 +16,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUser;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
 import me.pugabyte.nexus.utils.HttpUtils;
@@ -96,7 +97,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Permission("group.staff")
 	@Path("getStatus [player]")
 	void getStatus(@Arg("self") Player player) {
-		send(PREFIX + "Resource pack status for " + player.getName() + ": &e" + statusOf(player));
+		send(PREFIX + "Resource pack status for " + Nickname.of(player) + ": &e" + statusOf(player));
 	}
 
 	@Permission("group.staff")
@@ -106,9 +107,9 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		new HashMap<String, List<String>>() {{
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String status = statusOf(player);
-				List<String> uuids = getOrDefault(status, new ArrayList<>());
-				uuids.add(player.getName());
-				put(status, uuids);
+				List<String> names = getOrDefault(status, new ArrayList<>());
+				names.add(Nickname.of(player));
+				put(status, names);
 			}
 		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
 	}

@@ -26,6 +26,7 @@ import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils;
@@ -125,7 +126,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 		SignData data = read(sign);
 		if (!isSelf(data.getPlayer()) && !isStaff())
-			error("This sign belongs to " + data.getPlayer().getName());
+			error("This sign belongs to " + Name.of(data.getPlayer()));
 
 		++signs;
 		Shop shop = service.get(data.getPlayer());

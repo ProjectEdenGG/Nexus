@@ -22,6 +22,7 @@ import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -261,7 +262,7 @@ public class BridgeCommand extends CustomCommand {
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 			int size = duplicates.get(uuid).size();
-			JsonBuilder json = json("&3" + index + " &e" + player.getName() + " &7- " + size + " roles")
+			JsonBuilder json = json("&3" + index + " &e" + Name.of(player) + " &7- " + size + " roles")
 					.newline();
 
 			for (String roleId : duplicates.get(uuid))

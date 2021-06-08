@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -70,8 +71,8 @@ public class NameBanConfig implements PlayerOwnedObject {
 		warn(executor, uuid, name);
 
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-		if (player.isOnline() && player.getPlayer() != null)
-			player.getPlayer().kick(Component.text("Your username '" + player.getName() + "' has been banned from this server, " +
+		if (player.getPlayer() != null)
+			player.getPlayer().kick(Component.text("Your username '" + Name.of(player) + "' has been banned from this server, " +
 					"please change it in order to join"));
 	}
 

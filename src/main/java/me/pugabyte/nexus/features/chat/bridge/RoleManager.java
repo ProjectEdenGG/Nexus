@@ -6,6 +6,7 @@ import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.OfflinePlayer;
@@ -32,7 +33,11 @@ public class RoleManager {
 		DiscordUserService service = new DiscordUserService();
 		OfflinePlayer player = user.getOfflinePlayer();
 
-		if (player == null || player.getName() == null)
+		if (player == null)
+			return;
+
+		String name = Name.of(player);
+		if (name == null)
 			return;
 
 		if (ignore.contains(player.getUniqueId()))
@@ -50,7 +55,7 @@ public class RoleManager {
 		debug("Updating role for " + user.getNickname());
 		if (user.getRoleId() == null) {
 			debug("  No role found, searching");
-			List<Role> rolesByName = Discord.getGuild().getRolesByName(player.getName(), true);
+			List<Role> rolesByName = Discord.getGuild().getRolesByName(name, true);
 			if (rolesByName.size() > 0) {
 				debug("    Found matching username role");
 				user.setRoleId(rolesByName.get(0).getId());

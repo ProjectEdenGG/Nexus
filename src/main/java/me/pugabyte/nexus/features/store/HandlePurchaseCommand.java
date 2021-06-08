@@ -19,6 +19,7 @@ import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -55,7 +56,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 
 				OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-				if (player == null || player.getName() == null) {
+				if (player == null || Name.of(player) == null) {
 					Nexus.severe("Tried to expire a package for a player that doesn't exist: UUID: " + uuid);
 					return;
 				}

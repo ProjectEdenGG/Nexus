@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.tickets.Tickets;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.models.ticket.TicketService;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -67,7 +68,7 @@ public class TicketsDiscordCommand extends Command {
 						ticket.setOpen(false);
 						service.save(ticket);
 
-						Tickets.broadcast(ticket, null, player.getName() + " closed ticket #" + ticket.getId());
+						Tickets.broadcast(ticket, null, Nickname.of(player) + " closed ticket #" + ticket.getId());
 					}
 					case "reopen" -> {
 						if (ticket.isOpen())
@@ -76,7 +77,7 @@ public class TicketsDiscordCommand extends Command {
 						ticket.setOpen(true);
 						service.save(ticket);
 
-						Tickets.broadcast(ticket, null, player.getName() + " reopened ticket #" + ticket.getId());
+						Tickets.broadcast(ticket, null, Nickname.of(player) + " reopened ticket #" + ticket.getId());
 					}
 				}
 			} catch (Exception ex) {

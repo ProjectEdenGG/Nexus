@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownExce
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.dailyreward.DailyReward;
 import me.pugabyte.nexus.models.dailyreward.DailyRewardService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -67,7 +68,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		if (!player().equals(player)) {
 			streak = ((DailyReward) service.get(player)).getStreak();
 		}
-		send(PREFIX + player.getName() + "'s streak: &e" + streak);
+		send(PREFIX + Nickname.of(player) + "'s streak: &e" + streak);
 	}
 
 	@Path("today [player]")
@@ -76,7 +77,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		if (!isSelf(player))
 			earnedToday = ((DailyReward) service.get(player)).isEarnedToday();
 
-		send(PREFIX + player.getName() + " has " + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
+		send(PREFIX + Nickname.of(player) + " has " + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
 	@Path("unclaim <player> <day>")
@@ -85,7 +86,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		dailyReward = service.get(player);
 		dailyReward.unclaim(day);
 		service.save(dailyReward);
-		send(PREFIX + "Unclaimed day " + day + " for player " + player.getName());
+		send(PREFIX + "Unclaimed day " + day + " for player " + Nickname.of(player));
 	}
 
 	@Path("set <player> <day>")
@@ -94,7 +95,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		dailyReward = service.get(player);
 		dailyReward.setStreak(day);
 		service.save(dailyReward);
-		send(PREFIX + "Streak set to " + dailyReward.getStreak() + " for player " + player.getName());
+		send(PREFIX + "Streak set to " + dailyReward.getStreak() + " for player " + Nickname.of(player));
 	}
 
 	private static final String resetCooldownType = "dailyRewards-reset";
@@ -128,7 +129,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		send(PREFIX + "Top streaks:");
 		int i = (page - 1) * 10 + 1;
 		for (DailyReward dailyReward : results) {
-			send("&3" + i + " &e" + dailyReward.getOfflinePlayer().getName() + " &7- " + dailyReward.getStreak());
+			send("&3" + i + " &e" + Nickname.of(dailyReward.getOfflinePlayer()) + " &7- " + dailyReward.getStreak());
 			++i;
 		}
 	}

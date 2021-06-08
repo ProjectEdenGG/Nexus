@@ -4,6 +4,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.Name;
 import org.bukkit.OfflinePlayer;
 
 public class ReportCommand extends CustomCommand {
@@ -14,7 +15,7 @@ public class ReportCommand extends CustomCommand {
 
 	@Path("<player> <reason...>")
 	void report(OfflinePlayer player, String reason) {
-		runCommand("ticket " + player.getName() + ": " + reason);
+		runCommand("ticket " + Name.of(player) + ": " + reason);
 	}
 
 }

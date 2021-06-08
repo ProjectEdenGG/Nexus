@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.discord.HandledBy;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -48,7 +49,7 @@ public class NewPlayersDiscordCommand extends Command {
 				StringBuilder response = new StringBuilder();
 				Utils.sortByValue(players).forEach((player, hours) ->
 						response
-								.append(player.getName())
+								.append(Nickname.of(player))
 								.append(" - ")
 								.append(Timespan.of(players.get(player)).format())
 								.append(System.lineSeparator()));

@@ -33,6 +33,7 @@ import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -73,6 +74,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
@@ -977,12 +979,12 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		public String format() {
 			boolean self = isSelf(this.self, target);
-			String targetName = (target.getName() == null ? "Unknown" : target.getName());
+			String name = Objects.requireNonNullElse(Name.of(target), "Unknown");
 
 			if (whoType == WhoType.POSSESSIVE_UPPER || whoType == WhoType.POSSESSIVE_LOWER)
-				return self ? (whoType == WhoType.POSSESSIVE_UPPER ? "Y" : "y") + "our" : targetName + "'" + (targetName.endsWith("s") ? "" : "s");
+				return self ? (whoType == WhoType.POSSESSIVE_UPPER ? "Y" : "y") + "our" : name + "'" + (name.endsWith("s") ? "" : "s");
 			else if (whoType == WhoType.ACTIONARY_UPPER || whoType == WhoType.ACTIONARY_LOWER)
-				return self ? (whoType == WhoType.ACTIONARY_UPPER ? "Y" : "y") + "ou do" : targetName + " does";
+				return self ? (whoType == WhoType.ACTIONARY_UPPER ? "Y" : "y") + "ou do" : name + " does";
 
 			throw new InvalidInputException("Unknown format action");
 		}

@@ -42,7 +42,7 @@ public class HomesCommand extends CustomCommand {
 		if (isPlayer())
 			filtered = filtered.stream().filter(home -> home.hasAccess(player())).collect(Collectors.toList());
 		if (filtered.isEmpty())
-			error(homeOwner.getOfflinePlayer().getName() + " has no available homes");
+			error(homeOwner.getNickname() + " has no available homes");
 
 		send(PREFIX + filtered.stream().map(home -> (home.isLocked() ? "&c" : "&3") + home.getName())
 				.collect(Collectors.joining("&e, ")));
@@ -160,7 +160,7 @@ public class HomesCommand extends CustomCommand {
 
 			fixed.getAndAdd(collect.size());
 
-			send(PREFIX + "Fixing " + collect.size() + " homes for " + homeOwner.getOfflinePlayer().getName());
+			send(PREFIX + "Fixing " + collect.size() + " homes for " + homeOwner.getNickname());
 
 			collect.forEach(home -> home.setUuid(homeOwner.getUuid()));
 			service.saveSync(homeOwner);

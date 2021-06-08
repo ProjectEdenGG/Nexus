@@ -15,6 +15,7 @@ import me.pugabyte.nexus.models.discord.DiscordCaptcha;
 import me.pugabyte.nexus.models.discord.DiscordCaptchaService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.setting.Setting;
 import me.pugabyte.nexus.models.setting.SettingService;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -61,11 +62,11 @@ public class DiscordCommand extends CustomCommand {
 		user = service.get(player);
 
 		if (isNullOrEmpty(user.getUserId()))
-			error(PREFIX + player.getName() + " has not linked their Discord account");
+			error(PREFIX + Nickname.of(player) + " has not linked their Discord account");
 
 		try {
 			String asMention = user.getMember().getAsMention();
-			String message = "Discord account for " + player.getName() + ": ";
+			String message = "Discord account for " + Nickname.of(player) + ": ";
 			send(json(PREFIX + message + user.getNameAndDiscrim()).hover("&eClick to copy").copy(user.getNameAndDiscrim()));
 			if (self.getUserId() != null) {
 				self.getMember().getUser().openPrivateChannel().complete()
@@ -115,7 +116,7 @@ public class DiscordCommand extends CustomCommand {
 		if (user.getUser() == null)
 			error("Could not find user from userId &e" + id);
 		service.save(user);
-		send("&3Force linked &e" + player.getName() + " &3to &e" + user.getNameAndDiscrim());
+		send("&3Force linked &e" + Nickname.of(player) + " &3to &e" + user.getNameAndDiscrim());
 		Discord.addRole(id, DiscordId.Role.VERIFIED);
 		Discord.staffLog("**" + user.getIngameName() + "** Discord account force linked to **" + user.getNameAndDiscrim() +  "** by " + name());
 	}

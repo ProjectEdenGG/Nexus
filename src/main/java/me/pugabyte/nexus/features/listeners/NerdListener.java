@@ -4,6 +4,7 @@ import dev.morphia.query.Sort;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,7 +48,7 @@ public class NerdListener implements Listener {
 		Nerd nerd = Nerd.of(event.getPlayer());
 
 		nerd.setLastQuit(LocalDateTime.now());
-		nerd.getPastNames().add(event.getPlayer().getName());
+		nerd.getPastNames().add(Name.of(event.getPlayer()));
 
 		service.save(nerd);
 	}

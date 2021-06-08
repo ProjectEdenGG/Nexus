@@ -24,6 +24,7 @@ import me.pugabyte.nexus.models.vote.Vote;
 import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
@@ -262,10 +263,11 @@ public class Votes extends Feature implements Listener {
 				YamlConfiguration config = new YamlConfiguration();
 				activeVotes.forEach(vote -> {
 					OfflinePlayer player = PlayerUtils.getPlayer(vote.getUuid());
-					if (player.getName() == null) return;
-					if (!config.isConfigurationSection(player.getName()))
-						config.createSection(player.getName());
-					config.getConfigurationSection(player.getName()).set(vote.getSite().name().toLowerCase(), true);
+					String name = Name.of(player);
+					if (name == null) return;
+					if (!config.isConfigurationSection(name))
+						config.createSection(name);
+					config.getConfigurationSection(name).set(vote.getSite().name().toLowerCase(), true);
 				});
 				config.save(file);
 			} catch (PlayerNotFoundException ignore) {

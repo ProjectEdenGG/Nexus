@@ -109,7 +109,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			RainbowBeaconService service = new RainbowBeaconService();
 			List<RainbowBeacon> beacons = service.getAll();
 			for (RainbowBeacon rainbowBeacon : beacons) {
-				Nexus.log("[RainbowBeacon] Starting task for " + rainbowBeacon.getOfflinePlayer().getName());
+				Nexus.log("[RainbowBeacon] Starting task for " + rainbowBeacon.getName());
 				startTask(rainbowBeacon);
 				service.cache(rainbowBeacon);
 			}

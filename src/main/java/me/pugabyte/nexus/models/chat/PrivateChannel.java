@@ -3,7 +3,7 @@ package me.pugabyte.nexus.models.chat;
 import lombok.Data;
 import lombok.ToString;
 import me.pugabyte.nexus.models.nickname.Nickname;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Name;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.Arrays;
@@ -43,7 +43,7 @@ public class PrivateChannel implements Channel {
 	@ToString.Include
 	public Set<String> getRecipientsNames() {
 		return recipients.stream()
-				.map(uuid -> PlayerUtils.getPlayer(uuid).getName())
+				.map(Name::of)
 				.collect(Collectors.toSet());
 	}
 

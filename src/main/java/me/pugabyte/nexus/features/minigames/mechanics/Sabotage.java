@@ -44,6 +44,7 @@ import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -95,7 +96,6 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 // TODO: color menu (on interact with lobby armor stand/item frame)
 // TODO: vent animation (open/close trapdoor)
 // TODO: doors
-// TODO: show count of all teams on start
 // TODO: show sabotage duration + progress on sidebar
 // TODO: crisis sfx
 // TODO: flash the red worldborder color during crisis??
@@ -205,6 +205,12 @@ public class Sabotage extends TeamMechanic {
 		SabotageTeam.IMPOSTOR.players(match).forEach(matchData::putKillCooldown);
 		match.showBossBar(matchData.getBossbar());
 		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, matchData.getGameChannel()));
+		match.getTasks().wait(1, () -> {
+			match.sendMessage(Component.empty());
+			match.sendMessage(new JsonBuilder("Players", NamedTextColor.YELLOW, TextDecoration.BOLD));
+			for (SabotageTeam team : SabotageTeam.values())
+				match.sendMessage(new JsonBuilder(team.players(match).size() + "x ", NamedTextColor.DARK_AQUA).next(team));
+		});
 		match.getTasks().wait(TimeUtils.Time.SECOND.x(1.5), () -> match.getMinigamers().forEach(matchData::initGlow));
 		match.getTasks().repeatAsync(0, 1, () -> {
 			if (matchData.isMeetingActive()) return;

@@ -15,6 +15,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.HttpUtils;
+import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.Utils.SerializedExclude;
 import org.jetbrains.annotations.NotNull;
 
@@ -203,9 +204,9 @@ public class GeoIP implements PlayerOwnedObject {
 
 		public static double distance(GeoIP from, GeoIP to) {
 			if (from.getLatitude() == null || from.getLongitude() == null)
-				throw new InvalidInputException("Could not find " + from.getOfflinePlayer().getName() + "'s location");
+				throw new InvalidInputException("Could not find " + Name.of(from.getOfflinePlayer()) + "'s location");
 			if (to.getLatitude() == null || to.getLongitude() == null)
-				throw new InvalidInputException("Could not find " + to.getOfflinePlayer().getName() + "'s location");
+				throw new InvalidInputException("Could not find " + Name.of(to.getOfflinePlayer()) + "'s location");
 
 			double latFrom = Math.toRadians(from.getLatitude()), longFrom = Math.toRadians(from.getLongitude()),
 					latTo = Math.toRadians(to.getLatitude()), longTo = Math.toRadians(to.getLongitude());

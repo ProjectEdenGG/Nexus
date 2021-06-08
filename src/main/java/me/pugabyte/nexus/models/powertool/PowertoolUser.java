@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +36,11 @@ public class PowertoolUser implements PlayerOwnedObject {
 	private Map<Material, String> powertools = new HashMap<>();
 
 	public void use(Material material) {
-		if (getOfflinePlayer().isOnline() && getOnlinePlayer() != null) {
+		Player player = getPlayer();
+		if (player != null) {
 			String command = powertools.get(material);
-			runCommand(getOnlinePlayer(), command);
-			Nexus.log("[PT] " + getOnlinePlayer().getName() + " issued server command: /" + command);
+			runCommand(player, command);
+			Nexus.log("[PT] " + player.getName() + " issued server command: /" + command);
 		}
 	}
 

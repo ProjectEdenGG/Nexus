@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.statistics;
 
 import fr.minuskube.inv.SmartInventory;
+import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class StatisticsMenu {
 		SmartInventory.builder()
 				.provider(new StatisticsMenuProvider(menu, targetPlayer))
 				.size(menu.getSize(), 9)
-				.title(StringUtils.colorize(targetPlayer.getName() + "'s Statistics - " + StringUtils.camelCase(menu.name())))
+				.title(StringUtils.colorize(Nickname.of(targetPlayer) + "'s Statistics - " + StringUtils.camelCase(menu.name())))
 				.build().open(player, page);
 	}
 
@@ -33,7 +34,7 @@ public class StatisticsMenu {
 		SmartInventory.builder()
 				.provider(new StatisticsMenuProvider(menu, targetPlayer, startIndex))
 				.size(menu.getSize(), 9)
-				.title(StringUtils.colorize(targetPlayer.getName() + "'s Statistics - " + StringUtils.camelCase(menu.name())))
+				.title(StringUtils.colorize(Nickname.of(targetPlayer) + "'s Statistics - " + StringUtils.camelCase(menu.name())))
 				.build().open(player);
 	}
 

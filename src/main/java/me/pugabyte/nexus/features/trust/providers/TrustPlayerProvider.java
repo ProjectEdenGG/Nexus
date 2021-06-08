@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.Trust.Type;
 import me.pugabyte.nexus.models.trust.TrustService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.Name;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 		SmartInventory.builder()
 				.provider(new TrustPlayerProvider(new TrustService().get(player), trusted))
 				.size(4, 9)
-				.title(trusted.getName())
+				.title(Name.of(trusted))
 				.build()
 				.open(player);
 	}
@@ -43,7 +44,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> TrustProvider.openMenu(player));
 
-		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + trusted.getName()).build()));
+		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + Name.of(trusted)).build()));
 
 		for (Trust.Type type : Trust.Type.values()) {
 			List<UUID> list = trust.get(type);
