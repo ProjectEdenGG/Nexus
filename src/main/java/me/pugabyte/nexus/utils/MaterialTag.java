@@ -127,6 +127,8 @@ public class MaterialTag implements Tag<Material> {
 			WARPED_FUNGUS, CRIMSON_FUNGUS, VINE)
 			.append(ALL_CORALS, FLOWERS);
 
+	public static final MaterialTag TULIPS = new MaterialTag("_TULIP", MatchMode.SUFFIX);
+
 	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, TALL_FLOWERS);
 
 	public static final MaterialTag ALL_STONE = new MaterialTag(STONE, STONE_STAIRS, STONE_SLAB, Material.STONE_BRICKS, SMOOTH_STONE, SMOOTH_STONE_SLAB)
@@ -194,6 +196,13 @@ public class MaterialTag implements Tag<Material> {
 			.append(SHULKER_BOXES)
 			.append(SHULKER_SHELL, ELYTRA, DRAGON_EGG, DRAGON_HEAD, OBSIDIAN, MAGENTA_STAINED_GLASS);
 
+	public static final MaterialTag RAW_FISH = new MaterialTag(SALMON, COD, TROPICAL_FISH, PUFFERFISH);
+	public static final MaterialTag COOKED_FISH = new MaterialTag(COOKED_SALMON, COOKED_COD);
+
+	public static final MaterialTag ALL_FISH = new MaterialTag(RAW_FISH, COOKED_FISH);
+
+	public static final MaterialTag FISH_BUCKETS = new MaterialTag(TROPICAL_FISH_BUCKET, PUFFERFISH_BUCKET);
+
 	public static final MaterialTag ALL_OCEAN = new MaterialTag(SOUL_SAND, MAGMA_BLOCK, TURTLE_EGG, CONDUIT, SCUTE,
 			PUFFERFISH_BUCKET, SALMON_BUCKET, COD_BUCKET, TROPICAL_FISH_BUCKET, NAUTILUS_SHELL, COD, SALMON, PUFFERFISH,
 			TROPICAL_FISH, COOKED_COD, COOKED_SALMON, LILY_PAD, TURTLE_HELMET, FISHING_ROD, INK_SAC, GRAVEL, Material.SAND)
@@ -201,7 +210,7 @@ public class MaterialTag implements Tag<Material> {
 			.append("KELP", MatchMode.CONTAINS)
 			.append("SEA", MatchMode.CONTAINS)
 			.append("BOAT", MatchMode.CONTAINS)
-			.append(ALL_CORALS);
+			.append(ALL_CORALS, ALL_FISH);
 
 	public static final MaterialTag MUSIC = new MaterialTag("DISC", MatchMode.CONTAINS).append(NOTE_BLOCK, JUKEBOX, BELL);
 
