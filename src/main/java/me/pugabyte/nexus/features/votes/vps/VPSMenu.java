@@ -500,7 +500,7 @@ public enum VPSMenu {
 								.name("+1 Plot")
 								.display(new ItemBuilder(Material.SANDSTONE_SLAB)
 										.lore("&3You may purchase up to")
-										.lore("&efour &3addition plots either")
+										.lore("&efour &3additional plots either")
 										.lore("&3from the VPS or the server &c/store")
 										.lore("")
 										.lore("&6Price: &e150vp"))
