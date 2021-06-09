@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import eden.utils.Utils;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -8,11 +9,14 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.Mai
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
@@ -211,7 +215,7 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItemBuilders(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
@@ -221,7 +225,7 @@ public class MainIsland implements Listener, BearFair21Island {
 							userService.save(user);
 							return script;
 						}
-						case STEP_ONE -> {
+						case STEP_ONE, STEP_TWO -> {
 							List<ItemBuilder> required = Arrays.asList(balloon_cyan.clone().amount(16), balloon_yellow.clone().amount(16));
 							if (!Quests.hasItemsLikeFrom(user, required)) {
 
@@ -229,17 +233,18 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItemBuilders(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 32 White Wool and 8 of each red, green, and blue dyes?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON);
-							user.setQuestStage_Main(QuestStage.STEP_TWO);
+							user.setQuestStage_Main(QuestStage.STEP_THREE);
 							userService.save(user);
 							return script;
 						}
-						case STEP_TWO -> {
+						case STEP_THREE -> {
+							// Require all items, not just some
 							List<ItemBuilder> required = Arrays.asList(new ItemBuilder(Material.WHITE_WOOL).amount(32),
 									new ItemBuilder(Material.RED_DYE).amount(8),
 									new ItemBuilder(Material.GREEN_DYE).amount(8),
@@ -250,24 +255,24 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItemBuilders(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you follow up with Maple the Pastry Chef about my cake order?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON);
-							user.setQuestStage_Main(QuestStage.STEP_THREE);
+							user.setQuestStage_Main(QuestStage.STEP_FOUR);
 							userService.save(user);
 							return script;
 						}
-						case STEP_THREE -> {
+						case STEP_FOUR -> {
 							List<ItemBuilder> required = Collections.singletonList(bf_cake);
 							if (!Quests.hasItemsLikeFrom(user, required)) {
 								script.add("For your next task, could you follow up with Maple the Pastry Chef about my cake order?");
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItemBuilders(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("That's almost everything, there's just one last task I need you to do, while I'm finishing up.");
@@ -276,15 +281,15 @@ public class MainIsland implements Listener, BearFair21Island {
 							Tasks.wait(80, () -> Quests.giveItem(user, invitation.clone().amount(invitees.size()).build()));
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FOOD);
-							user.setQuestStage_Main(QuestStage.STEP_FOUR);
+							user.setQuestStage_Main(QuestStage.STEP_FIVE);
 							userService.save(user);
 							return script;
 						}
-						case STEP_FOUR -> {
+						case STEP_FIVE -> {
 							script.add("I had those invitations custom made, could you go around the island and give one to each of the townspeople?");
 							return script;
 						}
-						case STEP_FIVE -> {
+						case STEP_SIX -> {
 							script.add("You're a life saver, thank you! And as a token of my gratitude, have this...");
 							Tasks.wait(40, () -> Quests.giveItem(user, Quests.getCrateKey()));
 
@@ -311,15 +316,36 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("TODO - Greeting");
+					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 
-				} else {
-					script.add("TODO");
+				} else if (user.getQuestStage_Main() == QuestStage.STEP_ONE) {
+					List<ItemBuilder> required = new ArrayList<>();
+					Arrays.stream(FishingLoot.values())
+							.filter(fishingLoot -> fishingLoot.getCategory().equals(FishingLootCategory.FISH))
+							.toList().forEach(fishingLoot -> required.add(fishingLoot.getItemBuilder()));
+
+					List<ItemStack> items = Quests.getItemsListFrom(user, required);
+					if (Utils.isNullOrEmpty(items)) {
+						script.add("TODO - gib fish to get balloons, ok?");
+						return script;
+					} else {
+						Quests.removeItem(user, RandomUtils.randomElement(items));
+						script.add("TODO - here ye are");
+
+						Quests.giveItem(user, balloon_cyan.clone().amount(16).build());
+						Quests.giveItem(user, balloon_yellow.clone().amount(16).build());
+
+						user.setQuestStage_Main(QuestStage.STEP_TWO);
+						userService.save(user);
+						return script;
+					}
 				}
 
+				script.add("TODO - Hello");
 				return script;
 			}
 		},

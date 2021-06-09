@@ -47,6 +47,8 @@ public class Merchants {
 
 	@AllArgsConstructor
 	public enum BFMerchant {
+		// Blue = Cheap, plenty of lapis ore
+		// Green = Expensive, requires travel to SDU island, and smelting
 		ARTIST(BearFair21NPC.ARTIST) {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
@@ -96,16 +98,16 @@ public class Merchants {
 							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemStack(Material.LEATHER)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1))
+							.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1)) // require wooden pickaxe as ingredient
 							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STONE_AXE).amount(1))
+							.result(new ItemBuilder(Material.STONE_AXE).amount(1))  // require wooden axe as ingredient
 							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.NETHERITE_PICKAXE).amount(1))
+							.result(new ItemBuilder(Material.NETHERITE_PICKAXE).amount(1))  // require iron pickaxe as ingredient
 							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.NETHERITE_AXE).amount(1))
+							.result(new ItemBuilder(Material.NETHERITE_AXE).amount(1)) // require iron axe as ingredient
 							.ingredient(goldNugget.clone().amount(1)));
 				}};
 			}
@@ -198,9 +200,6 @@ public class Merchants {
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.MILK_BUCKET)));
-					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.COCOA_BEANS)));
 				}};
 			}
 		},

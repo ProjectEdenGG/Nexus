@@ -72,6 +72,7 @@ public class Archery implements Listener {
 		}
 	}
 
+	// TODO BF21: Remove kit on exit kit region
 	@EventHandler
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRegion)) return;

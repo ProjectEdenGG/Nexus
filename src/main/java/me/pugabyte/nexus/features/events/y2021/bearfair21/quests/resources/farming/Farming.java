@@ -96,6 +96,7 @@ public class Farming implements Listener {
 				}
 			}
 
+			event.setCancelled(false);
 			return true;
 		}
 

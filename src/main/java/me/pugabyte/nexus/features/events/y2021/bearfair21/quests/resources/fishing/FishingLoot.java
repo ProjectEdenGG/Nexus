@@ -199,6 +199,10 @@ public enum FishingLoot {
 	}
 
 	public ItemStack getItem() {
+		return getItemBuilder().build();
+	}
+
+	public ItemBuilder getItemBuilder() {
 		Material material = this.getMaterial();
 		ItemBuilder result = new ItemBuilder(material);
 
@@ -221,7 +225,7 @@ public enum FishingLoot {
 				result.enchant(Enchant.LURE, 1);
 		}
 
-		return result.lore(getLore()).build();
+		return result.lore(getLore());
 	}
 
 	public String getLore() {

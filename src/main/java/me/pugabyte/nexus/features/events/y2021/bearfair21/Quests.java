@@ -39,6 +39,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
@@ -119,7 +120,7 @@ public class Quests implements Listener {
 		return sign.getLines();
 	}
 
-	public static boolean hasItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
+	public static List<ItemStack> getItemsListFrom(BearFair21User user, List<ItemBuilder> items) {
 		List<ItemStack> result = new ArrayList<>();
 		for (ItemBuilder item : items) {
 			if (ItemUtils.isNullOrAir(item.build()))
@@ -129,7 +130,11 @@ public class Quests implements Listener {
 			if (!ItemUtils.isNullOrAir(itemLike))
 				result.add(itemLike);
 		}
-		return result.size() > 0;
+		return result;
+	}
+
+	public static boolean hasItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
+		return getItemsListFrom(user, items).size() > 0;
 	}
 
 	public static ItemStack getItemLikeFrom(BearFair21User user, ItemBuilder itemBuilder) {
@@ -144,9 +149,22 @@ public class Quests implements Listener {
 		return null;
 	}
 
-	public static void removeItems(Player player, List<ItemBuilder> items) {
-		for (ItemBuilder itemBuilder : items) {
-			ItemStack item = itemBuilder.build();
+	public static void removeItemBuilders(Player player, List<ItemBuilder> items) {
+		List<ItemStack> result = new ArrayList<>();
+		items.forEach(itemBuilder -> result.add(itemBuilder.build()));
+		removeItems(player, result);
+	}
+
+	public static void removeItem(BearFair21User user, ItemStack item) {
+		removeItems(user.getPlayer(), Collections.singletonList(item));
+	}
+
+	public static void removeItem(Player player, ItemStack item) {
+		removeItems(player, Collections.singletonList(item));
+	}
+
+	public static void removeItems(Player player, List<ItemStack> items) {
+		for (ItemStack item : items) {
 			if (ItemUtils.isNullOrAir(item))
 				continue;
 
