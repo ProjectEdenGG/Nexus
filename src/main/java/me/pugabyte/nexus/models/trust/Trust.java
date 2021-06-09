@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.mobheads;
 
+import eden.utils.EnumUtils;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.mobheads.MobHeadType.MobHeadVariant;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -11,7 +12,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.utils.EnumUtils;
 
 import java.util.ArrayList;
 import java.util.List;

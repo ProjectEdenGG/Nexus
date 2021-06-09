@@ -1,12 +1,12 @@
 package me.pugabyte.nexus.features.shops;
 
+import eden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import me.pugabyte.nexus.features.shops.providers.SearchProductsProvider;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
-import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;

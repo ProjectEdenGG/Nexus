@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.models.achievement;
 
+import eden.utils.EnumUtils;
 import lombok.Getter;
-import me.pugabyte.nexus.utils.EnumUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

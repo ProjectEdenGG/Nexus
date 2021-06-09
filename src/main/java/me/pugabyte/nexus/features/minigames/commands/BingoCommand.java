@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.commands;
 
+import eden.utils.EnumUtils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -16,7 +17,6 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.utils.EnumUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

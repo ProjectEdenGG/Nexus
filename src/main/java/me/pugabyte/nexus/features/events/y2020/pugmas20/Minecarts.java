@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.events.y2020.pugmas20;
 
+import eden.utils.EnumUtils;
 import eden.utils.TimeUtils.Time;
-import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.nerd;
 
+import eden.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -9,7 +10,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
-import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.matcher.NodeMatcher;

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import eden.utils.EnumUtils;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -8,7 +9,6 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ColorType;
-import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.LocationUtils.CardinalDirection;
 import org.bukkit.Location;
 import org.bukkit.Sound;

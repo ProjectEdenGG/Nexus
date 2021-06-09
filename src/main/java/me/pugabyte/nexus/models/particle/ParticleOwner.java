@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.EnumUtils;
 import eden.utils.Utils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ColorConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
-import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Color;
 

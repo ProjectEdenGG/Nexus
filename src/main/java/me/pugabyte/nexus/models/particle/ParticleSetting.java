@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models.particle;
 
+import eden.utils.EnumUtils;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.particles.Particles;
@@ -11,7 +12,6 @@ import me.pugabyte.nexus.features.particles.providers.ParticleColorMenuProvider;
 import me.pugabyte.nexus.features.particles.providers.WingsTypeProvider;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
-import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;

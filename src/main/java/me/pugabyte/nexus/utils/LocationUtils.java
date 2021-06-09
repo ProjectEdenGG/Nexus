@@ -1,13 +1,13 @@
 package me.pugabyte.nexus.utils;
 
 import com.sk89q.worldedit.math.transform.AffineTransform;
+import eden.utils.EnumUtils.IteratableEnum;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.particles.MathUtils;
-import me.pugabyte.nexus.utils.EnumUtils.IteratableEnum;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

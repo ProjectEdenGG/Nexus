@@ -1,11 +1,11 @@
 package me.pugabyte.nexus.features.mobheads;
 
+import eden.utils.EnumUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.utils.ColorType;
-import me.pugabyte.nexus.utils.EnumUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
