@@ -17,13 +17,13 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.mail.Mailer;
 import me.pugabyte.nexus.models.mail.Mailer.Mail;
 import me.pugabyte.nexus.models.mail.MailerService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -175,14 +175,18 @@ public class MailCommand extends CustomCommand implements Listener {
 			this.worldGroup = mailer.getWorldGroup();
 		}
 
+		private final SmartInventory inventory = SmartInventory.builder()
+				.provider(this)
+				.size(6, 9)
+				.title(colorize("&3Your Deliveries"))
+				.build();
+
 		@Override
 		public void open(Player viewer, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.size(6, 9)
-					.title(colorize("&3Your Deliveries"))
-					.build()
-					.open(mailer.getOnlinePlayer(), page);
+			if (Utils.isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
+				viewer.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
+			else
+				inventory.open(mailer.getOnlinePlayer(), page);
 		}
 
 		@Override
@@ -199,8 +203,6 @@ public class MailCommand extends CustomCommand implements Listener {
 			List<ClickableItem> items = new ArrayList<>();
 
 			List<Mail> mails = mailer.getUnreadMail(worldGroup);
-			if (Utils.isNullOrEmpty(mails))
-				throw new InvalidInputException("There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox");
 
 			for (Mail mail : mails)
 				items.add(ClickableItem.from(mail.getDisplayItem().build(), e -> {

@@ -263,11 +263,34 @@ public class JsonBuilder implements ComponentLike {
 	/**
 	 * Creates a new builder with a prefix.
 	 * @param prefix prefix text
+	 * @param contents contents to append to the prefix
 	 * @return a new builder
 	 */
 	@Contract("_, _ -> new")
 	public static JsonBuilder fromPrefix(@NotNull String prefix, @Nullable ComponentLike contents) {
 		return new JsonBuilder(prefix, contents);
+	}
+
+	/**
+	 * Creates a new builder formatted as an error.
+	 * @param prefix prefix text
+	 * @param error error to display
+	 * @return a new builder
+	 */
+	@Contract("_, _ -> new")
+	public static JsonBuilder fromError(@NotNull String prefix, @NotNull ComponentLike error) {
+		return new JsonBuilder(prefix, error).color(NamedTextColor.RED);
+	}
+
+	/**
+	 * Creates a new builder formatted as an error.
+	 * @param prefix prefix text
+	 * @param error error to display
+	 * @return a new builder
+	 */
+	@Contract("_, _ -> new")
+	public static JsonBuilder fromError(@NotNull String prefix, @NotNull String error) {
+		return new JsonBuilder(prefix, Component.text(error)).color(NamedTextColor.RED);
 	}
 
 	/**
