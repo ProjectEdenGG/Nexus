@@ -87,7 +87,8 @@ public class Mailer implements PlayerOwnedObject {
 		if (!isOnline())
 			return;
 
-		List<String> groups = mail.keySet().stream()
+		List<String> groups = Arrays.stream(WorldGroup.values())
+				.filter(worldGroup -> !getUnreadMail(worldGroup).isEmpty())
 				.map(StringUtils::camelCase)
 				.collect(Collectors.toList());
 
