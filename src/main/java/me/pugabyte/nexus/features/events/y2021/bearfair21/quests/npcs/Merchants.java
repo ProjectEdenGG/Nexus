@@ -99,16 +99,20 @@ public class Merchants {
 							.ingredient(new ItemStack(Material.LEATHER)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1)) // require wooden pickaxe as ingredient
-							.ingredient(goldNugget.clone().amount(1)));
+							.ingredient(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.WOODEN_PICKAXE).amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.STONE_AXE).amount(1))  // require wooden axe as ingredient
-							.ingredient(goldNugget.clone().amount(1)));
+							.ingredient(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.WOODEN_AXE).amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.NETHERITE_PICKAXE).amount(1))  // require iron pickaxe as ingredient
-							.ingredient(goldNugget.clone().amount(1)));
+							.ingredient(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.DIAMOND_PICKAXE).amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.NETHERITE_AXE).amount(1)) // require iron axe as ingredient
-							.ingredient(goldNugget.clone().amount(1)));
+							.ingredient(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.DIAMOND_AXE).amount(1)));
 				}};
 			}
 		},
@@ -157,6 +161,9 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
+					add(new TradeBuilder()
+							.result(new ItemBuilder(Material.WOODEN_AXE).amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
 							.ingredient(BearFair21TreeType.OAK.getDrop().clone().amount(4)));

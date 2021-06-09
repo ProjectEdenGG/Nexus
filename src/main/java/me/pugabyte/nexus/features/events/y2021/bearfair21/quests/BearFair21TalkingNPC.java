@@ -3,7 +3,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests;
 import me.pugabyte.nexus.features.events.models.Talker.TalkingNPC;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
+import me.pugabyte.nexus.utils.ItemUtils;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -21,5 +23,9 @@ public interface BearFair21TalkingNPC extends TalkingNPC {
 	@Override
 	default List<String> getScript() {
 		return null;
+	}
+
+	default ItemStack getTool(Player player) {
+		return ItemUtils.getTool(player);
 	}
 }

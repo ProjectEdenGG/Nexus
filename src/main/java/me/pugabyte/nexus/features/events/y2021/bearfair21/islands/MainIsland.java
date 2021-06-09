@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
-import eden.utils.Utils;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -18,6 +17,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +48,15 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
+				ItemStack tool = getTool(user.getPlayer());
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("Hello there, my name is WakkaFlocka, and I am an admin on Project Eden and the organizer for this event. And...");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add("TODO - Thanks!");
+					invite(user, this.getNpcId(), tool);
+					return script;
+				}
 
 				script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
 				script.add("wait 80");
@@ -70,9 +79,13 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
-				if (isInviting(user, this.getNpcId(), tool)) {
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+					script.add("");
+					script.add("");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -86,15 +99,21 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
-				if (isInviting(user, this.getNpcId(), tool)) {
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+					script.add("");
+					script.add("");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
 				}
 
-				script.add("TODO - Greeting");
+				script.add("Hm, are you admiring the scenery as well?");
+				script.add("There is honestly nothing more stunning than an area bustling with life.");
+				script.add("Nice to meet you, my name is Zach and I love architecture with all my heart.");
 				return script;
 			}
 		},
@@ -102,16 +121,18 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
-
-				if (isInviting(user, this.getNpcId(), tool)) {
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("I swear, there is nothing like the smell of sawdust to wake you up in the morning.");
+					script.add("How do you do friend, the name is Ron and as this town's carpenter my job Is to create masterpieces everyday!");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
 				}
 
-				script.add("TODO - Greeting");
+				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -120,15 +141,20 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
-				if (isInviting(user, this.getNpcId(), tool)) {
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("Hm did you say something? Apologies, my hearing isn't quite what it used to be.");
+					script.add("Feel free to call me Harold, I'm the Beekeeper around these parts and I have been for many years.");
+					script.add("I honestly wouldn't have it any other way.");
+					script.add("Are you by chance a fan of honey?");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
 				}
 
-				script.add("TODO - Greeting");
+				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -136,17 +162,18 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
-				// TODO BF21: undo the greeting changes i made to certain NPCs, it worked fine
-
-				if (isInviting(user, this.getNpcId(), tool)) {
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - Greeting");
+					script.add("");
+					script.add("");
+				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
 				} else if (user.getQuestStage_Recycle() == QuestStage.NOT_STARTED) {
 					script.add("TODO - better dialog");
-					script.add("wait 20");
 					script.add("You can get useful materials from recycling");
 					script.add("wait 20");
 					script.add("The more trash you recycle, the less trash you will catch");
@@ -161,24 +188,28 @@ public class MainIsland implements Listener, BearFair21Island {
 					return script;
 				}
 
-				script.add("TODO - Greeting");
+
+				script.add("TODO - Hello");
 				return script;
 			}
 		},
 		LUMBERJACK(BearFair21NPC.LUMBERJACK) {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("I promise I really do love my job however chopping wood all day can be extremely tiring.");
+					script.add("This poor guy needs a break at some point too.");
+					script.add("Oh wait I don’t think we’ve met before, sorry about that, my name is flint and Im a lumberjack.");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
+					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
-				} else {
-					script.add("TODO");
 				}
 
+
+				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -304,6 +335,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					}
 				}
 
+				script.add("TODO - Hello");
 				return script;
 			}
 
@@ -312,10 +344,11 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Hey there land dweller how do you feel about exploring above the clouds?");
+					script.add("The names skye and I'm an explorer of well... the skies! They call me an Aeronaut, pretty cool right!");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -330,7 +363,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 					List<ItemStack> items = Quests.getItemsListFrom(user, required);
 					if (Utils.isNullOrEmpty(items)) {
-						script.add("TODO - gib fish to get balloons, ok?");
+						script.add("TODO - gib any fish to get balloons, ok?");
 						return script;
 					} else {
 						Quests.removeItem(user, RandomUtils.randomElement(items));
@@ -354,10 +387,11 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Ah, just the inspiration I was looking for. The name’s Sage and I'm your local artist!");
+					script.add("Feel free to browse as long as you’d like. I would love to get to paint- I mean know you.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -372,10 +406,11 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Oh hi, my name rye and you may know me as the baker around here.");
+					script.add("I just took this loaf out of the oven if you are at all interested.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -390,10 +425,11 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Hey friend, can I at all interest you in a nice refreshing beverage.");
+					script.add("My name is Cosmo and drinks are my specialty. It's quite hot out there, and I think I've got just what you need.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -408,10 +444,12 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Can I help you with something?");
+					script.add("Oh you must be new around here, Im alvor and Im a blacksmith that's pretty much all you need to know.");
+					script.add("If it needs a forge I'm probably selling it so take a look around I suppose.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -426,10 +464,12 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Oh hi there! I'm fern and I absolutely love plants, probably why I decided to become a botanist in the first place.");
+					script.add("I have got a ton of beautiful plants for purchase and a story for each and every one of them.");
+					script.add("However I can talk your ear off later please do feel free to come again.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -444,10 +484,13 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("I always say anything can be a treasure if your heart decides to give it value."); // rhyme
+					script.add("You can call me Pluto, I am a collector of many wondrous goods."); // rhyme
+					script.add("Trade with me whenever you like, but be aware, for I am a wandering trader.");
+					script.add("I may be here now, but I most certainly won't be later.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -462,10 +505,12 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Have you ever been fishing before? There is nothing quite as peaceful as sitting by the water and waiting for a fish to bite.");
+					script.add("There is nothing quite as peaceful as sitting by the water and waiting for a fish to bite.");
+					script.add("I'm Gage and I've been fishing for as long as I can remember, you should totally join me some time.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -480,10 +525,13 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("...AH! Apologies I didn't see you there.");
+					script.add("Guess I was lost in my own world again. Im joshua and I'm always trying to come up with awesome new gadgets for people to use.");
+					script.add("I suppose that's why the people around here call me an inventor.");
+					script.add("What can I help you with?");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -498,10 +546,11 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("I'd say a little sugar never hurt anyone. A lot of sugar you say? Well I'd certainly be willing to risk it.");
+					script.add("I'm Maple and sweet treats are my passion! Cookies, cakes, pies you name it I've probably made it at some point.");
 					script.add("wait 20");
 				} else if (user.getQuestStage_Main() == QuestStage.STEP_THREE) {
 					ItemStack item = Quests.getItemLikeFrom(user, new ItemBuilder(Material.CAKE));
@@ -510,7 +559,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 					script.add("Oh my goodness, I totally forgot! Nor do I have the necessary supplies for a cake that size.");
 					script.add("Would you mind baking the cake and gathering the cocoa beans for the frosting, and I'll decorate the cake to perfection?");
-					script.add("wait 20");
+					script.add("wait 80");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					script.add("<exit>");
@@ -524,10 +573,12 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = ItemUtils.getTool(user.getOnlinePlayer());
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("Hmm I can tell you come here seeking knowledge of the arcane.");
+					script.add("How do I know? Well that is simply not important right now, what is important is that I, as the great sorcerer Lucian, have knowledge of magic that far surpasses that of anyone else!");
+					script.add("So don’t just stand there, take a look around.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -545,7 +596,7 @@ public class MainIsland implements Listener, BearFair21Island {
 			user.getInvitees().add(npcId);
 			if (user.getInvitees().size() == invitees.size()) {
 				user.sendMessage("TODO - You've completed the task, return to Mayor John");
-				user.setQuestStage_Main(QuestStage.STEP_FIVE);
+				user.setQuestStage_Main(QuestStage.STEP_SIX);
 			}
 			userService.save(user);
 		}
