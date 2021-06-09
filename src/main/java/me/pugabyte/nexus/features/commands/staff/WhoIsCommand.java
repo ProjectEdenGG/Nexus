@@ -80,58 +80,58 @@ public class WhoIsCommand extends CustomCommand {
 		JsonBuilder json = json();
 
 		if (nerd.hasNickname())
-			json.newline().next("&3Nickname: &e" + nickname);
+			json.newline().next("&3Nickname: &e" + nickname).group();
 
-		json.newline().next("&3Rank: &e" + rank);
-		json.newline().next("&3First Join: &e" + firstJoin);
+		json.newline().next("&3Rank: &e" + rank).group();
+		json.newline().next("&3First Join: &e" + firstJoin).group();
 
 		if (lastJoinQuitDate != null)
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate).group();
 
 		if (hours.getTotal() > 0)
-			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
+			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format()).group();
 
 		if (history)
 			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history").group();
 
 		if (alts != null)
-			json.newline().next("&3Alts: &e").next(alts);
+			json.newline().next("&3Alts: &e").next(alts).group();
 
 		if (!pastNames.isEmpty())
-			json.newline().next("&3Past Names: &e" + String.join("&3, &e", pastNames));
+			json.newline().next("&3Past Names: &e" + String.join("&3, &e", pastNames)).group();
 
 		try {
 			GeoIP geoIp = geoIpService.get(nerd);
 			if (!isNullOrEmpty(geoIp.getIp()))
 				json.newline().next("&3GeoIP: &e" + geoIp.getFriendlyLocationString()).hover("&e" + geoIp.getIp()).suggest(geoIp.getIp()).group();
 		} catch (InvalidInputException ex) {
-			json.newline().next("&3GeoIP: &c" + ex.getMessage());
+			json.newline().next("&3GeoIP: &c" + ex.getMessage()).group();
 		}
 
 		try {
 			json.newline().next("&3Location: &e" + getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + offlinePlayer.getName()).group();
 		} catch (InvalidInputException ex) {
-			json.newline().next("&3Location: &c" + ex.getMessage());
+			json.newline().next("&3Location: &c" + ex.getMessage()).group();
 		}
 
 		json.newline().next("&3Balances:");
 		for (ShopGroup shopGroup : ShopGroup.values())
 			if (new BankerService().getBalance(offlinePlayer, shopGroup) != 500)
-				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup));
+				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup)).group();
 
 		if (offlinePlayer.isOnline() && player != null) {
-			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName());
+			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName()).group();
 
-			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode()));
+			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode())).group();
 
-			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw());
+			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw()).group();
 
-			json.newline().next("&3Fly mode: &e" + player.getAllowFlight() + " &3(" + (player.isFlying() ? "flying" : "not flying") + ")");
+			json.newline().next("&3Fly mode: &e" + player.getAllowFlight() + " &3(" + (player.isFlying() ? "flying" : "not flying") + ")").group();
 
-			json.newline().next("&3RP status: &e" + ResourcePackCommand.statusOf(player));
+			json.newline().next("&3RP status: &e" + ResourcePackCommand.statusOf(player)).group();
 		}
 
-		json.newline().next("&3OP: &e" + offlinePlayer.isOp());
+		json.newline().next("&3OP: &e" + offlinePlayer.isOp()).group();
 
 		send(json);
 	}
