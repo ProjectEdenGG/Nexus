@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.minigames.models.Lobby;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEvent;
 
-public class LobbyEvent extends MatchEvent {
+public abstract class LobbyEvent extends MatchEvent {
 	@NonNull
 	@Getter
 	private Lobby lobby;

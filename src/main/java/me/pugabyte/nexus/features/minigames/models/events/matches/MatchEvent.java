@@ -5,7 +5,7 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.events.MinigameEvent;
 
-public class MatchEvent extends MinigameEvent {
+public abstract class MatchEvent extends MinigameEvent {
 	@Getter
 	@NonNull
 	protected final Match match;

@@ -2,9 +2,11 @@ package me.pugabyte.nexus.features.minigames.models.events.matches.minigamers;
 
 import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
-public class MinigamerDamageEvent extends MinigamerEvent {
+public class MinigamerDamageEvent extends MinigamerEvent implements Cancellable {
 	@Getter
 	private Minigamer attacker;
 	@Getter
@@ -23,6 +25,29 @@ public class MinigamerDamageEvent extends MinigamerEvent {
 		super(victim);
 		this.attacker = attacker;
 		this.originalEvent = originalEvent;
+	}
+
+	protected boolean cancelled = false;
+
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
+
+	private static final HandlerList handlers = new HandlerList();
+
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
 	}
 
 }

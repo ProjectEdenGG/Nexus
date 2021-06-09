@@ -5,8 +5,10 @@ import lombok.NonNull;
 import lombok.Setter;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Team;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
 
-public class MatchBroadcastEvent extends MatchEvent {
+public class MatchBroadcastEvent extends MatchEvent implements Cancellable {
 	@Getter
 	@Setter
 	@NonNull
@@ -24,6 +26,29 @@ public class MatchBroadcastEvent extends MatchEvent {
 		super(match);
 		this.message = message;
 		this.team = team;
+	}
+
+	protected boolean cancelled = false;
+
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
+
+	private static final HandlerList handlers = new HandlerList();
+
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
 	}
 
 }
