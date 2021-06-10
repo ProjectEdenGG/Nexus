@@ -61,6 +61,24 @@ public class CompletableTask<T> {
 	 * normally, is executed with this stage's result as the argument
 	 * to the supplied action.
 	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * <p>See the {@link CompletionStage} documentation for rules
+	 * covering exceptional completion.
+	 *
+	 * @param consumer the action to perform before completing the
+	 * returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public CompletableTask<Void> thenAccept(Consumer<T> consumer) {
+		return newFuture(future.thenAccept(consumer));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, is executed with this stage's result as the argument
+	 * to the supplied action.
+	 *
 	 * <p>Executes on the main thread.
 	 *
 	 * <p>See the {@link CompletionStage} documentation for rules
@@ -94,6 +112,25 @@ public class CompletableTask<T> {
 
 	protected CompletableTask<Void> thenAcceptEither(CompletionStage<T> other, Consumer<T> consumer, Executor executor) {
 		return newFuture(future.acceptEitherAsync(other, consumer, executor));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when either this or the
+	 * other given stage complete normally, is executed with the
+	 * corresponding result as argument to the supplied action.
+	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * <p>See the {@link CompletionStage} documentation for rules
+	 * covering exceptional completion.
+	 *
+	 * @param other the other CompletionStage
+	 * @param consumer the action to perform before completing the
+	 * returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public CompletableTask<Void> thenAcceptEither(CompletionStage<T> other, Consumer<T> consumer) {
+		return newFuture(future.acceptEither(other, consumer));
 	}
 
 	/**
@@ -136,6 +173,28 @@ public class CompletableTask<T> {
 
 	protected <R> CompletableTask<R> thenApply(Function<T, R> function, Executor executor) {
 		return newFuture(future.thenApplyAsync(function, executor));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, is executed with this stage's result as the argument
+	 * to the supplied function.
+	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * <p>This method is analogous to
+	 * {@link java.util.Optional#map Optional.map} and
+	 * {@link java.util.stream.Stream#map Stream.map}.
+	 *
+	 * <p>See the {@link CompletionStage} documentation for rules
+	 * covering exceptional completion.
+	 *
+	 * @param function the function to use to compute the value of the
+	 * returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public <R> CompletableTask<R> thenApply(Function<T, R> function) {
+		return newFuture(future.thenApply(function));
 	}
 
 	/**
@@ -196,6 +255,26 @@ public class CompletableTask<T> {
 	 * {@code null} if none) of this stage as arguments, and the
 	 * function's result is used to complete the returned stage.
 	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * @param biFunction the function to use to compute the value of the
+	 * returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public <R> CompletableTask<R> thenHandle(BiFunction<T, Throwable, R> biFunction) {
+		return newFuture(future.handle(biFunction));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * either normally or exceptionally, is executed with this stage's
+	 * result and exception as arguments to the supplied function.
+	 *
+	 * <p>When this stage is complete, the given function is invoked
+	 * with the result (or {@code null} if none) and the exception (or
+	 * {@code null} if none) of this stage as arguments, and the
+	 * function's result is used to complete the returned stage.
+	 *
 	 * <p>Executes on the main thread.
 	 *
 	 * @param biFunction the function to use to compute the value of the
@@ -237,6 +316,24 @@ public class CompletableTask<T> {
 	 * completes normally, then the returned stage also completes
 	 * normally with the same value.
 	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * @param handler the function to use to compute the value of the
+	 * returned CompletableTask if this CompletableTask completed
+	 * exceptionally
+	 * @return the new CompletableTask
+	 */
+	public CompletableTask<T> exceptionally(Function<Throwable, T> handler) {
+		return newFuture(future.exceptionally(handler));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * exceptionally, is executed with this stage's exception as the
+	 * argument to the supplied function. Otherwise, if this stage
+	 * completes normally, then the returned stage also completes
+	 * normally with the same value.
+	 *
 	 * <p>Executes on the main thread.
 	 *
 	 * @param handler the function to use to compute the value of the
@@ -268,6 +365,21 @@ public class CompletableTask<T> {
 
 	protected CompletableTask<T> complete(Supplier<T> supplier, Executor executor) {
 		future.completeAsync(supplier, executor);
+		return this;
+	}
+
+	/**
+	 * Completes this CompletableTask with the result of
+	 * the given Supplier function.
+	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * @param supplier a function returning the value to be used
+	 * to complete this CompletableTask
+	 * @return this CompletableTask
+	 */
+	public CompletableTask<T> complete(Supplier<T> supplier) {
+		future.complete(supplier.get());
 		return this;
 	}
 
@@ -338,6 +450,34 @@ public class CompletableTask<T> {
 	 * and the supplied action throws an exception, then the returned
 	 * stage completes exceptionally with this stage's exception.
 	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * @param biConsumer the action to perform
+	 * @return the new CompletableTask
+	 */
+	public CompletableTask<T> whenComplete(BiConsumer<T, Throwable> biConsumer) {
+		return newFuture(future.whenComplete(biConsumer));
+	}
+
+	/**
+	 * Returns a new CompletableTask with the same result or exception as
+	 * this stage, that executes the given action when this stage completes.
+	 *
+	 * <p>When this stage is complete, the given action is invoked
+	 * with the result (or {@code null} if none) and the exception (or
+	 * {@code null} if none) of this stage as arguments. The returned
+	 * stage is completed when the action returns.
+	 *
+	 * <p>Unlike method {@link #thenHandleSync(BiFunction) #handle},
+	 * this method is not designed to translate completion outcomes,
+	 * so the supplied action should not throw an exception. However,
+	 * if it does, the following rules apply: if this stage completed
+	 * normally but the supplied action throws an exception, then the
+	 * returned stage completes exceptionally with the supplied
+	 * action's exception. Or, if this stage completed exceptionally
+	 * and the supplied action throws an exception, then the returned
+	 * stage completes exceptionally with this stage's exception.
+	 *
 	 * <p>Executes on the main thread.
 	 *
 	 * @param biConsumer the action to perform
@@ -375,8 +515,25 @@ public class CompletableTask<T> {
 		return whenComplete(biConsumer, asyncExecutor);
 	}
 
-	protected CompletableTask<Void> runnable(Runnable runnable, Executor executor) {
+	protected CompletableTask<Void> thenRun(Runnable runnable, Executor executor) {
 		return newFuture(future.thenRunAsync(runnable, executor));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, executes the given action.
+	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * <p>See the {@link CompletionStage} documentation for rules
+	 * covering exceptional completion.
+	 *
+	 * @param runnable the action to perform before completing the
+	 * returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public CompletableTask<Void> thenRun(Runnable runnable) {
+		return newFuture(future.thenRun(runnable));
 	}
 
 	/**
@@ -393,7 +550,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final CompletableTask<Void> thenSync(Runnable runnable) {
-		return runnable(runnable, MAIN_EXECUTOR);
+		return thenRun(runnable, MAIN_EXECUTOR);
 	}
 
 	/**
@@ -410,7 +567,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final CompletableTask<Void> thenAsync(Runnable runnable) {
-		return runnable(runnable, asyncExecutor);
+		return thenRun(runnable, asyncExecutor);
 	}
 
 	/**
@@ -462,6 +619,52 @@ public class CompletableTask<T> {
 	 */
 	public final CompletableTask<T> delay(long amount, TimeUtils.Time unit) {
 		return delay(unit.duration(amount));
+	}
+
+	protected <R> CompletableTask<R> thenSupply(Supplier<R> supplier, Executor executor) {
+		return thenApply(t -> supplier.get(), executor);
+	}
+
+	/**
+	 * Discards the result of the current CompletableTask and calls
+	 * the Supplier to provide a new result.
+	 *
+	 * <p>Executes on the current thread.
+	 *
+	 * @param supplier a function returning the value to be used
+	 * to complete the returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public <R> CompletableTask<R> thenSupply(Supplier<R> supplier) {
+		return thenApply(t -> supplier.get());
+	}
+
+	/**
+	 * Discards the result of the current CompletableTask and calls
+	 * the Supplier to provide a new result.
+	 *
+	 * <p>Executes on the main thread.
+	 *
+	 * @param supplier a function returning the value to be used
+	 * to complete the returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public <R> CompletableTask<R> thenSupplySync(Supplier<R> supplier) {
+		return thenSupply(supplier, MAIN_EXECUTOR);
+	}
+
+	/**
+	 * Discards the result of the current CompletableTask and calls
+	 * the Supplier to provide a new result.
+	 *
+	 * <p>Executes on an async thread.
+	 *
+	 * @param supplier a function returning the value to be used
+	 * to complete the returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public <R> CompletableTask<R> thenSupplyAsync(Supplier<R> supplier) {
+		return thenSupply(supplier, asyncExecutor);
 	}
 
 	// static creators
