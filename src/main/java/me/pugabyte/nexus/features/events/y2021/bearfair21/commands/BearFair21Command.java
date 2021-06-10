@@ -2,8 +2,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.Fairgrounds;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides.Ride;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
@@ -70,15 +71,15 @@ public class BearFair21Command extends CustomCommand {
 	@Permission("group.admin")
 	@Path("rides enable")
 	void ridesEnable() {
-		for (String ride : Fairgrounds.rides)
-			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " enable");
+		for (Ride ride : Rides.Ride.values())
+			PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
 	}
 
 	@Permission("group.admin")
 	@Path("rides disable")
 	void ridesDisable() {
-		for (String ride : Fairgrounds.rides)
-			PlayerUtils.runCommandAsConsole("rideadm bf21_" + ride + " disable");
+		for (Ride ride : Rides.Ride.values())
+			PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
 	}
 
 	@Path("toCollector")

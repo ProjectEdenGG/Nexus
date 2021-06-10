@@ -5,6 +5,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Archery;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Frogger;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.reflection.ReflectionGame;
@@ -28,11 +29,10 @@ import java.util.Map;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
 public class Fairgrounds {
-	public static List<String> rides = Arrays.asList("carousel", "chairswing", "droptower", "enterprise",
-			"ferriswheel", "jets", "pendulum", "swingship", "swingtower", "teacups");
 
 	public Fairgrounds() {
 		new Timer("      Interactables", Interactables::new);
+		new Timer("      Rides", Rides::new);
 		new Timer("      Minigolf", MiniGolf::new);
 		new Timer("      Archery", Archery::new);
 		new Timer("      Frogger", Frogger::new);
