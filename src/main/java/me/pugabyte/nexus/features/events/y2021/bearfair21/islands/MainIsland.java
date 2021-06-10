@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
+
 // TODO BF21: Quest + Dialog
 @Region("main")
 @NPCClass(MainNPCs.class)
@@ -38,10 +40,8 @@ public class MainIsland implements Listener, BearFair21Island {
 	static ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18);
 	public static ItemBuilder bf_cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake");
 	static ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation");
-	static List<BearFair21NPC> invitees = Arrays.asList(BearFair21NPC.ARCHITECT, BearFair21NPC.ARTIST, BearFair21NPC.BAKER,
-			BearFair21NPC.BARTENDER, BearFair21NPC.BLACKSMITH, BearFair21NPC.BOTANIST, BearFair21NPC.CARPENTER, BearFair21NPC.COLLECTOR,
-			BearFair21NPC.FISHERMAN1, BearFair21NPC.INVENTOR, BearFair21NPC.PASTRY_CHEF, BearFair21NPC.SORCERER, BearFair21NPC.LUMBERJACK,
-			BearFair21NPC.BEEKEEPER, BearFair21NPC.FISHERMAN2, BearFair21NPC.AERONAUT, BearFair21NPC.ADMIRAL);
+	static List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
+			FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER);
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
 		WAKKAFLOCKA(BearFair21NPC.ORGANIZER) {
@@ -487,9 +487,9 @@ public class MainIsland implements Listener, BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("I always say anything can be a treasure if your heart decides to give it value."); // rhyme
-					script.add("You can call me Pluto, I am a collector of many wondrous goods."); // rhyme
-					script.add("Trade with me whenever you like, but be aware, for I am a wandering trader.");
+					script.add("I always say anything can be a treasure if your heart decides to give it rarity."); // rhyme
+					script.add("You can call me Pluto, I am a collector of both wondrous goods and beauty."); // rhyme
+					script.add("Trade with me whenever you like, but be aware for I tend to wander.");
 					script.add("I may be here now, but I most certainly won't be later.");
 					script.add("wait 20");
 				} else if (isInviting(user, this.getNpcId(), tool)) {

@@ -24,7 +24,7 @@ public enum BearFair21NPC {
 	BLACKSMITH("Alvor", 2656),
 	BOTANIST("Fern", 2661),
 	CARPENTER("Ron", 4110),
-	COLLECTOR("Pluto", 2750),
+	COLLECTOR("Mercury", 2750),
 	FISHERMAN1("Gage", 2653),
 	INVENTOR("Joshua", 2660),
 	PASTRY_CHEF("Maple", 2654),
