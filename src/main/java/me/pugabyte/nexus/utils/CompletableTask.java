@@ -1,9 +1,13 @@
 package me.pugabyte.nexus.utils;
 
+import eden.utils.TimeUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -24,7 +28,7 @@ import static net.minecraft.server.v1_16_R3.MCUtil.asyncExecutor;
  */
 @RequiredArgsConstructor
 public class CompletableTask<T> {
-	private @NotNull @Getter final CompletableFuture<T> future;
+	protected @NotNull @Getter final CompletableFuture<T> future;
 
 	/**
 	 * Returns the result value when complete, or throws an
@@ -44,8 +48,12 @@ public class CompletableTask<T> {
 		return future.join();
 	}
 
-	private CompletableTask<Void> thenAccept(Consumer<T> consumer, Executor executor) {
-		return new CompletableTask<>(future.thenAcceptAsync(consumer, executor));
+	protected <R> CompletableTask<R> newFuture(CompletableFuture<R> future) {
+		return new CompletableTask<>(future);
+	}
+
+	protected CompletableTask<Void> thenAccept(Consumer<T> consumer, Executor executor) {
+		return newFuture(future.thenAcceptAsync(consumer, executor));
 	}
 
 	/**
@@ -62,7 +70,7 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<Void> thenAcceptSync(Consumer<T> consumer) {
+	public final CompletableTask<Void> thenAcceptSync(Consumer<T> consumer) {
 		return thenAccept(consumer, MAIN_EXECUTOR);
 	}
 
@@ -80,12 +88,12 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<Void> thenAcceptAsync(Consumer<T> consumer) {
+	public final CompletableTask<Void> thenAcceptAsync(Consumer<T> consumer) {
 		return thenAccept(consumer, asyncExecutor);
 	}
 
-	private CompletableTask<Void> thenAcceptEither(CompletionStage<T> other, Consumer<T> consumer, Executor executor) {
-		return new CompletableTask<>(future.acceptEitherAsync(other, consumer, executor));
+	protected CompletableTask<Void> thenAcceptEither(CompletionStage<T> other, Consumer<T> consumer, Executor executor) {
+		return newFuture(future.acceptEitherAsync(other, consumer, executor));
 	}
 
 	/**
@@ -103,7 +111,7 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<Void> thenAcceptEitherSync(CompletionStage<T> other, Consumer<T> consumer) {
+	public final CompletableTask<Void> thenAcceptEitherSync(CompletionStage<T> other, Consumer<T> consumer) {
 		return thenAcceptEither(other, consumer, MAIN_EXECUTOR);
 	}
 
@@ -122,12 +130,12 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<Void> thenAcceptEitherAsync(CompletionStage<T> other, Consumer<T> consumer) {
+	public final CompletableTask<Void> thenAcceptEitherAsync(CompletionStage<T> other, Consumer<T> consumer) {
 		return thenAcceptEither(other, consumer, asyncExecutor);
 	}
 
-	private <R> CompletableTask<R> thenApply(Function<T, R> function, Executor executor) {
-		return new CompletableTask<>(future.thenApplyAsync(function, executor));
+	protected <R> CompletableTask<R> thenApply(Function<T, R> function, Executor executor) {
+		return newFuture(future.thenApplyAsync(function, executor));
 	}
 
 	/**
@@ -148,7 +156,7 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public <R> CompletableTask<R> thenApplySync(Function<T, R> function) {
+	public final <R> CompletableTask<R> thenApplySync(Function<T, R> function) {
 		return thenApply(function, MAIN_EXECUTOR);
 	}
 
@@ -170,12 +178,12 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public <R> CompletableTask<R> thenApplyAsync(Function<T, R> function) {
+	public final <R> CompletableTask<R> thenApplyAsync(Function<T, R> function) {
 		return thenApply(function, asyncExecutor);
 	}
 
-	private <R> CompletableTask<R> thenHandle(BiFunction<T, Throwable, R> biFunction, Executor executor) {
-		return new CompletableTask<>(future.handleAsync(biFunction, executor));
+	protected <R> CompletableTask<R> thenHandle(BiFunction<T, Throwable, R> biFunction, Executor executor) {
+		return newFuture(future.handleAsync(biFunction, executor));
 	}
 
 	/**
@@ -194,7 +202,7 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public <R> CompletableTask<R> thenHandleSync(BiFunction<T, Throwable, R> biFunction) {
+	public final <R> CompletableTask<R> thenHandleSync(BiFunction<T, Throwable, R> biFunction) {
 		return thenHandle(biFunction, MAIN_EXECUTOR);
 	}
 
@@ -214,12 +222,12 @@ public class CompletableTask<T> {
 	 * returned CompletableTask
 	 * @return the new CompletableTask
 	 */
-	public <R> CompletableTask<R> thenHandleAsync(BiFunction<T, Throwable, R> biFunction) {
+	public final <R> CompletableTask<R> thenHandleAsync(BiFunction<T, Throwable, R> biFunction) {
 		return thenHandle(biFunction, asyncExecutor);
 	}
 
-	private CompletableTask<T> exceptionally(Function<Throwable, T> handler, Executor executor) {
-		return new CompletableTask<>(future.exceptionallyAsync(handler, executor));
+	protected CompletableTask<T> exceptionally(Function<Throwable, T> handler, Executor executor) {
+		return newFuture(future.exceptionallyAsync(handler, executor));
 	}
 
 	/**
@@ -236,7 +244,7 @@ public class CompletableTask<T> {
 	 * exceptionally
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<T> exceptionallySync(Function<Throwable, T> handler) {
+	public final CompletableTask<T> exceptionallySync(Function<Throwable, T> handler) {
 		return exceptionally(handler, MAIN_EXECUTOR);
 	}
 
@@ -254,11 +262,11 @@ public class CompletableTask<T> {
 	 * exceptionally
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<T> exceptionallyAsync(Function<Throwable, T> handler) {
+	public final CompletableTask<T> exceptionallyAsync(Function<Throwable, T> handler) {
 		return exceptionally(handler, asyncExecutor);
 	}
 
-	private CompletableTask<T> complete(Supplier<T> supplier, Executor executor) {
+	protected CompletableTask<T> complete(Supplier<T> supplier, Executor executor) {
 		future.completeAsync(supplier, executor);
 		return this;
 	}
@@ -273,7 +281,7 @@ public class CompletableTask<T> {
 	 * to complete this CompletableTask
 	 * @return this CompletableTask
 	 */
-	public CompletableTask<T> completeSync(Supplier<T> supplier) {
+	public final CompletableTask<T> completeSync(Supplier<T> supplier) {
 		return complete(supplier, MAIN_EXECUTOR);
 	}
 
@@ -287,7 +295,7 @@ public class CompletableTask<T> {
 	 * to complete this CompletableTask
 	 * @return this CompletableTask
 	 */
-	public CompletableTask<T> completeAsync(Supplier<T> supplier) {
+	public final CompletableTask<T> completeAsync(Supplier<T> supplier) {
 		return complete(supplier, asyncExecutor);
 	}
 
@@ -307,8 +315,8 @@ public class CompletableTask<T> {
 		return this;
 	}
 
-	private CompletableTask<T> whenComplete(BiConsumer<T, Throwable> biConsumer, Executor executor) {
-		return new CompletableTask<>(future.whenCompleteAsync(biConsumer, executor));
+	protected CompletableTask<T> whenComplete(BiConsumer<T, Throwable> biConsumer, Executor executor) {
+		return newFuture(future.whenCompleteAsync(biConsumer, executor));
 	}
 
 	/**
@@ -335,7 +343,7 @@ public class CompletableTask<T> {
 	 * @param biConsumer the action to perform
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<T> whenCompleteSync(BiConsumer<T, Throwable> biConsumer) {
+	public final CompletableTask<T> whenCompleteSync(BiConsumer<T, Throwable> biConsumer) {
 		return whenComplete(biConsumer, MAIN_EXECUTOR);
 	}
 
@@ -363,13 +371,102 @@ public class CompletableTask<T> {
 	 * @param biConsumer the action to perform
 	 * @return the new CompletableTask
 	 */
-	public CompletableTask<T> whenCompleteAsync(BiConsumer<T, Throwable> biConsumer) {
+	public final CompletableTask<T> whenCompleteAsync(BiConsumer<T, Throwable> biConsumer) {
 		return whenComplete(biConsumer, asyncExecutor);
+	}
+
+	protected CompletableTask<Void> runnable(Runnable runnable, Executor executor) {
+		return newFuture(future.thenRunAsync(runnable, executor));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, executes the given action.
+	 *
+	 * <p>Executes on the main thread.
+	 *
+	 * <p>See the {@link CompletionStage} documentation for rules
+	 * covering exceptional completion.
+	 *
+	 * @param runnable the action to perform before completing the
+	 * returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public final CompletableTask<Void> thenSync(Runnable runnable) {
+		return runnable(runnable, MAIN_EXECUTOR);
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, executes the given action.
+	 *
+	 * <p>Executes on an async thread.
+	 *
+	 * <p>See the {@link CompletionStage} documentation for rules
+	 * covering exceptional completion.
+	 *
+	 * @param runnable the action to perform before completing the
+	 * returned CompletableTask
+	 * @return the new CompletableTask
+	 */
+	public final CompletableTask<Void> thenAsync(Runnable runnable) {
+		return runnable(runnable, asyncExecutor);
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, asynchronously waits for the provided duration.
+	 *
+	 * @param duration how long to wait
+	 * @return the new CompletableTask
+	 */
+	public final CompletableTask<T> delay(Duration duration) {
+		return thenApplyAsync(t -> {
+			try {
+				Thread.sleep(duration.toMillis());
+			} catch (InterruptedException ignored) {}
+			return t;
+		});
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, asynchronously waits for the provided ticks.
+	 *
+	 * @param ticks how long to wait
+	 * @return the new CompletableTask
+	 */
+	public final CompletableTask<T> delay(long ticks) {
+		return delay(ChronoUnit.SECONDS.getDuration().dividedBy(20).multipliedBy(ticks));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, asynchronously waits for the provided duration.
+	 *
+	 * @param amount amount of time
+	 * @param unit unit of time
+	 * @return the new CompletableTask
+	 */
+	public final CompletableTask<T> delay(long amount, TemporalUnit unit) {
+		return delay(unit.getDuration().multipliedBy(amount));
+	}
+
+	/**
+	 * Returns a new CompletableTask that, when this stage completes
+	 * normally, asynchronously waits for the provided duration.
+	 *
+	 * @param amount amount of time
+	 * @param unit unit of time
+	 * @return the new CompletableTask
+	 */
+	public final CompletableTask<T> delay(long amount, TimeUtils.Time unit) {
+		return delay(unit.duration(amount));
 	}
 
 	// static creators
 
-	private static @NotNull <T> CompletableTask<T> supply(Supplier<T> supplier, Executor executor) {
+	protected static @NotNull <T> CompletableTask<T> supply(Supplier<T> supplier, Executor executor) {
 		return new CompletableTask<>(CompletableFuture.supplyAsync(supplier, executor));
 	}
 
@@ -397,7 +494,7 @@ public class CompletableTask<T> {
 		return supply(supplier, asyncExecutor);
 	}
 
-	private static @NotNull CompletableTask<Void> run(Runnable runnable, Executor executor) {
+	protected static @NotNull CompletableTask<Void> run(Runnable runnable, Executor executor) {
 		return new CompletableTask<>(CompletableFuture.runAsync(runnable, executor));
 	}
 
