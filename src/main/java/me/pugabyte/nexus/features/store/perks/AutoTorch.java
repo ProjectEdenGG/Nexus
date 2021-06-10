@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.commands.AutoTorchCommand;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.autotorch.AutoTorchService;
 import me.pugabyte.nexus.models.autotorch.AutoTorchUser;
+import me.pugabyte.nexus.utils.CompletableTask;
 import me.pugabyte.nexus.utils.GameModeWrapper;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -50,8 +51,9 @@ public class AutoTorch extends Feature {
 				AutoTorchUser autoTorchUser = service.get(player);
 				Block block = player.getLocation().getBlock();
 
-				Tasks.sync(() -> {
-					if (!autoTorchUser.applies(player, block)) return; // checks light level and if a torch can be placed here
+				CompletableTask.supplySync(() -> {
+					if (!autoTorchUser.applies(player, block)) // tests light level and for valid torch placing location
+						return false;
 
 					// copies current data to send in event and to restore if event is cancelled
 					BlockState currentState = block.getState();
@@ -61,12 +63,14 @@ public class AutoTorch extends Feature {
 					// ensure no plugins are blocking placing here
 					BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, currentState, block.getRelative(0, -1, 0), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
 					if (!placeEvent.callEvent() || !placeEvent.canBuild()) {
-						block.setBlockData(currentData);
-						return;
+						block.setBlockData(currentData); // revert block
+						return false;
 					}
 
+					return true;
+				}).thenAccept(success -> {
 					// remove a torch from player's inventory
-					if (gameMode.isSurvival())
+					if (success && gameMode.isSurvival())
 						item.setAmount(item.getAmount()-1);
 				});
 			});

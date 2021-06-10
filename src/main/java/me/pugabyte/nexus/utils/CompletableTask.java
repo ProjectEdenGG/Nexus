@@ -23,7 +23,7 @@ import static net.minecraft.server.v1_16_R3.MCUtil.MAIN_EXECUTOR;
 import static net.minecraft.server.v1_16_R3.MCUtil.asyncExecutor;
 
 /**
- * Chains together a series of {@link CompletableFuture}s and {@link CompletionStage}s using either
+ * Chains together a series of {@link CompletableFuture}s using either
  * Minecraft's main thread or Paper's pool of async threads
  */
 @RequiredArgsConstructor
