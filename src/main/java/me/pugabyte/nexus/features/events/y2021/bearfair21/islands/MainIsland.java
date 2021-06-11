@@ -82,7 +82,9 @@ public class MainIsland implements Listener, BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all yall people here safe.");
+					script.add("If you see anything suspicious simply let me know. I am more than capable of handling things myself.");
+					script.add("Now you just continue to have fun, got it?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -165,7 +167,10 @@ public class MainIsland implements Listener, BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - Greeting");
+					script.add("I swear there is nothing more beautiful than the open water.");
+					script.add("It's somehow both a symbol of dangerous adventure and complete calm.");
+					script.add("My name is Nate by the way and honestly I can see why the fish would be happy to live out there.");
+					script.add("However I suppose I can’t put too much thought into it, as a fisherman it is my job to pull them out of that paradise, isn't it?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
