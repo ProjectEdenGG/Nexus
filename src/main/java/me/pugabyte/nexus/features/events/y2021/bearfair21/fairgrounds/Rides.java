@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -18,8 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 public class Rides {
+	@Getter
+	@Setter
+	private static boolean enabled = true;
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
 
 	public Rides() {
@@ -31,6 +34,7 @@ public class Rides {
 
 		// Dynamic enable task
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+
 			for (Ride ride : Ride.values()) {
 				boolean oldStatus = rideMap.get(ride);
 				boolean curStatus = ride.getCurrentStatus();
@@ -38,7 +42,8 @@ public class Rides {
 
 				rideMap.put(ride, curStatus);
 				if (curStatus)
-					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
+					if(enabled)
+						PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
 				else
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
 			}
@@ -79,16 +84,16 @@ public class Rides {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public enum Ride {
-		CAROUSEL(loc(52, -29), 20),
-		CHAIRSWING(loc(12, -93), 20),
-		DROPTOWER(loc(147, -37), 20),
-		ENTERPRISE(loc(10, -43), 20),
-		FERRISWHEEL(loc(77, 22), 30),
-		JETS(loc(77, -146), 20),
-		PENDULUM(loc(-4, -113), 20),
-		SWINGSHIP(loc(13, -16), 20),
-		SWINGTOWER(loc(95, -116), 20),
-		TEACUPS(loc(80, -86), 20),
+		CAROUSEL(loc(52, -29), 50),
+		CHAIRSWING(loc(12, -93), 50),
+		DROPTOWER(loc(147, -37), 50),
+		ENTERPRISE(loc(10, -43), 50),
+		FERRISWHEEL(loc(77, 22), 50),
+		JETS(loc(77, -146), 50),
+		PENDULUM(loc(-4, -113), 50),
+		SWINGSHIP(loc(13, -16), 50),
+		SWINGTOWER(loc(95, -116), 50),
+		TEACUPS(loc(80, -86), 50),
 		;
 
 		@Getter

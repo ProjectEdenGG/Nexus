@@ -4,7 +4,6 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides.Ride;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
@@ -22,7 +21,6 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -69,17 +67,10 @@ public class BearFair21Command extends CustomCommand {
 
 
 	@Permission("group.admin")
-	@Path("rides enable")
-	void ridesEnable() {
-		for (Ride ride : Rides.Ride.values())
-			PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
-	}
-
-	@Permission("group.admin")
-	@Path("rides disable")
-	void ridesDisable() {
-		for (Ride ride : Rides.Ride.values())
-			PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
+	@Path("rides <boolean>")
+	void rides(boolean bool) {
+		Rides.setEnabled(bool);
+		send("Set rides enabled to: " + Rides.isEnabled());
 	}
 
 	@Path("toCollector")
