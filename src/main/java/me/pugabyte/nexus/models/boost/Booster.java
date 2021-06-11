@@ -112,7 +112,7 @@ public class Booster implements PlayerOwnedObject {
 			config().addBoost(this);
 			activated = LocalDateTime.now();
 			DiscordHandler.deleteHistoryAndSendMessage();
-			broadcast(getNickname() + " has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost&3!");
+			broadcast(getNickname() + " has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
 			save();
 		}
 
