@@ -19,6 +19,7 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.MastermindMatchData
 import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import me.pugabyte.nexus.features.minigames.models.perks.HideParticle;
+import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -588,6 +589,18 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission(value = "group.staff", absolute = true)
 	void modifierRandom() {
 		modifier(RandomUtils.randomElement(Arrays.stream(MinigameModifiers.values()).map(MinigameModifiers::getModifier).collect(Collectors.toList())));
+	}
+
+	@Path("refreshNameColors")
+	@Permission(value = "group.staff", absolute = true)
+	void refreshNameColors() {
+		MatchManager.getAll().forEach(match -> {
+			MinigameScoreboard sb = match.getScoreboard();
+			if (sb != null) {
+				sb.update();
+				send(PREFIX + "Refreshed " + match.getArena().getDisplayName());
+			}
+		});
 	}
 
 	private Match getRunningMatch(Arena arena) {

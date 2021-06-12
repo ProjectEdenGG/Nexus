@@ -294,7 +294,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 		}
 
 		if (match.getScoreboardTeams() != null)
-			match.getScoreboardTeams().update();
+			match.getTasks().wait(1, () -> match.getScoreboardTeams().update());
 	}
 
 	public void scored() {

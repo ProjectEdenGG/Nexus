@@ -97,9 +97,10 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 // TODO: vent animation (open/close trapdoor)
 // TODO: doors
 // TODO: show sabotage duration + progress on sidebar
-// TODO: crisis sfx
+// TODO: crisis sfx + bossbar
 // TODO: flash the red worldborder color during crisis??
 // TODO: let impostors fix sabotages
+// TODO: Killing is broken?
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;

@@ -170,12 +170,12 @@ public class Murder extends TeamMechanic {
 
 		JsonBuilder builder = new JsonBuilder();
 		if (!murderer.isAlive())
-			builder.next(murderer)
+			builder.next(murderer.getNickname(), NamedTextColor.RED)
 					.next(" has been stopped by ")
-					.next(hero)
+					.next(hero.getNickname(), NamedTextColor.BLUE)
 					.next(" on ");
 		else if (match.getTimer().getTime() != 0)
-			builder.next(murderer).next(" has won on ");
+			builder.next(murderer.getNickname(), NamedTextColor.RED).next(" has won on ");
 		else
 			builder.content("The ")
 					.next("innocents", NamedTextColor.BLUE)
