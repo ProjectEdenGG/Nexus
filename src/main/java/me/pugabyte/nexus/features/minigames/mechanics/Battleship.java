@@ -108,7 +108,7 @@ public class Battleship extends TeamMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "";
+		return "Locate your opponent's ships before they find yours";
 	}
 
 	@Override

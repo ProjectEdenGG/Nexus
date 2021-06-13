@@ -58,7 +58,7 @@ public class Archery extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Shoot the targets and score extra points for the farthest targets";
 	}
 
 	@Override

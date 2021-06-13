@@ -54,7 +54,7 @@ public final class Bingo extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Fill out your Bingo board from doing unique survival challenges";
 	}
 
 	@Override

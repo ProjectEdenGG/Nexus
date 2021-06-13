@@ -38,7 +38,7 @@ public final class Multimind extends SingleplayerMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Race with a friend to complete the crypic 4-color puzzle";
 	}
 
 	@Override

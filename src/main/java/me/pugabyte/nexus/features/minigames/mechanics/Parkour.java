@@ -15,7 +15,7 @@ public class Parkour extends CheckpointMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Hop your way to the finish";
 	}
 
 	@Override

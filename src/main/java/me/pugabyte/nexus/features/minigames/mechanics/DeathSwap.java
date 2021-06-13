@@ -49,7 +49,7 @@ public final class DeathSwap extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Trap players by swapping with them!";
+		return "Prepare traps to kill players as you randomly swap locations every 1-2 minutes after a 5 minute grace period";
 	}
 
 	@Override

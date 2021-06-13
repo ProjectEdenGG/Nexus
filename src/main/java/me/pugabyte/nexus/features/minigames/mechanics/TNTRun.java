@@ -26,7 +26,7 @@ public class TNTRun extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Try to survive as blocks break beneath your feet";
 	}
 
 	@Override

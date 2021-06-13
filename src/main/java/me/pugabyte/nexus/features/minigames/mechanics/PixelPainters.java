@@ -57,7 +57,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Re-create the designs in front of you as fast as you can";
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Fill in the holes of the incoming wall";
 	}
 
 	@Override

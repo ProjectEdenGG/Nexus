@@ -50,9 +50,9 @@ import static java.util.stream.Collectors.toSet;
 
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
-	private final int MAX_ROUNDS = 10;
-	private final int TIME_BETWEEN_ROUNDS = Time.SECOND.x(8);
-	private final int ROUND_COUNTDOWN = Time.SECOND.x(45);
+	private static final int MAX_ROUNDS = 10;
+	private static final int TIME_BETWEEN_ROUNDS = Time.SECOND.x(8);
+	private static final int ROUND_COUNTDOWN = Time.SECOND.x(45);
 
 	@Override
 	public @NotNull String getName() {
@@ -61,7 +61,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Try to guess the picture being drawn by the falling pixels by posting in chat";
 	}
 
 	@Override

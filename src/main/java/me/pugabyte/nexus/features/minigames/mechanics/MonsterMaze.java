@@ -51,7 +51,7 @@ public class MonsterMaze extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Get to the next beacon";
+		return "Get to the beacon without touching the monsters";
 	}
 
 	@Override

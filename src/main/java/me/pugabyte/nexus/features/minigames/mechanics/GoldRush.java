@@ -46,7 +46,7 @@ public final class GoldRush extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Mine all the blocks to the finish!";
+		return "Mine all the blocks to the finish";
 	}
 
 	@Override

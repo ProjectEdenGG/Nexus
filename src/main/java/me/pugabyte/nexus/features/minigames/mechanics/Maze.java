@@ -14,7 +14,7 @@ public class Maze extends CheckpointMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Navigate your way to the end of these twisting tunnels";
 	}
 
 	@Override

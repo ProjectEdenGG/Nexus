@@ -42,7 +42,7 @@ public final class Mastermind extends SingleplayerMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Try to crack the cryptic 4-color code with limited information";
 	}
 
 	@Override

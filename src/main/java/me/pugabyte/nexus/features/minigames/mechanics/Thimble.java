@@ -88,7 +88,7 @@ public final class Thimble extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Earn points by landing in the water-- but watch out, each successful drop fills in the pool a bit more";
 	}
 
 	@Override

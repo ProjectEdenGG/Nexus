@@ -44,7 +44,7 @@ public class AnvilDrop extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Survive the onslaught of falling anvils";
 	}
 
 	@Override

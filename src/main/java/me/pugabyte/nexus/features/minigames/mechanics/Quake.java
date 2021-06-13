@@ -17,7 +17,7 @@ public class Quake extends TeamlessMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "TODO";
+		return "Defeat your opponents with the powerful Railgun";
 	}
 
 	@Override

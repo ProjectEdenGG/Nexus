@@ -19,7 +19,7 @@ public final class Spleef extends SpleefMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Spleef other players off the map to win!";
+		return "Destroy the blocks underneath other players to make them fall to their death";
 	}
 
 	@Override

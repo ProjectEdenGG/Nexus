@@ -75,7 +75,7 @@ public class Murder extends TeamMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "One of these villagers is not who they claim to be...";
+		return "Try to find and stop the villager who is secretly murderering your fellow villagers";
 	}
 
 	@Override
