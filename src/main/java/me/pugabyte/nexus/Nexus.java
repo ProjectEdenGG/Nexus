@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.menus.SignMenuFactory;
@@ -251,7 +252,7 @@ public class Nexus extends JavaPlugin {
 				commands = new Commands(this, "me.pugabyte.nexus.features");
 				commands.registerAll();
 			});
-			new Timer(" BearFair Quests", Quests::startup);
+			new Timer(" BearFair21 ", BearFair21::startup);
 		});
 	}
 

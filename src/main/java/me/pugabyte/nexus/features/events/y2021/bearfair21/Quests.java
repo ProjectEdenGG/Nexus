@@ -133,6 +133,10 @@ public class Quests implements Listener {
 		return result;
 	}
 
+	public static boolean hasAllItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
+		return getItemsListFrom(user, items).size() > items.size();
+	}
+
 	public static boolean hasItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
 		return getItemsListFrom(user, items).size() > 0;
 	}
@@ -149,21 +153,17 @@ public class Quests implements Listener {
 		return null;
 	}
 
-	public static void removeItemBuilders(Player player, List<ItemBuilder> items) {
+	public static void removeItems(Player player, List<ItemBuilder> items) {
 		List<ItemStack> result = new ArrayList<>();
 		items.forEach(itemBuilder -> result.add(itemBuilder.build()));
-		removeItems(player, result);
+		removeItemStacks(player, result);
 	}
 
 	public static void removeItem(BearFair21User user, ItemStack item) {
-		removeItems(user.getPlayer(), Collections.singletonList(item));
+		removeItemStacks(user.getPlayer(), Collections.singletonList(item));
 	}
 
-	public static void removeItem(Player player, ItemStack item) {
-		removeItems(player, Collections.singletonList(item));
-	}
-
-	public static void removeItems(Player player, List<ItemStack> items) {
+	private static void removeItemStacks(Player player, List<ItemStack> items) {
 		for (ItemStack item : items) {
 			if (ItemUtils.isNullOrAir(item))
 				continue;

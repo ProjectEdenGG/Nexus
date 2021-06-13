@@ -44,8 +44,8 @@ public enum BearFair21NPC {
 	XAVIER("Xavier", 4127),
 	RYAN("Ryan", 4128),
 	HEATHER("Heather", 4134),
-	TRENT("Trent", 4135),
-	GARY("Gary", 4136),
+	MGN_CUSTOMER_1("Trent", 4135),
+	MGN_CUSTOMER_2("Mr. Fredrickson", 4136),
 	// PUGMAS
 	MAYOR_PUGMAS("Mayor", 4130),
 	GRINCH("Grinch", 4129),

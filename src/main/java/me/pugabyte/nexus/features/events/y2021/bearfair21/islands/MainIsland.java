@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -111,6 +112,29 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
+				} else if(user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
+					// phone conversation
+					script.add("<self> Thanks for calling GG! How can I help?");
+					script.add("Hey, this is Zach over in (town name). Me and my team are building a new house on the edge of town, " +
+							"ya know where an old shed burned down a while back? Yeah, well I’m in a bit of a bind here. See, I’m on a tight " +
+							"schedule and we’ve made some good progress but this morning my electrician bailed on me. Said he could find a better " +
+							"paying job in the city; and I promise you, he won’t. Anyways, it's just me and my carpenter, Ron. I know GG is a " +
+							"videogame company, but from what I’ve heard, y’all are pretty good with tech repair too. " +
+							"I know It’s a bit of an odd request, but could you spare some one over here to set up the internet? " +
+							"It’s the only electrical system left and shouldn’t take too long. I’ll pay double whatever your typical service " +
+							"fee is since this isn’t your normal repair job.");
+					script.add("<self> Uh, sure I could give it a look. Can’t be more complicated than a motherboard... ");
+					script.add("Great! We’ll have everything ready for you when you get here. ");
+
+					// player clicks npc after phone convo
+					script.add("Hey thanks for coming. All we need you to do is connect the cables and set up the router. " +
+							"You’ll find the cables under the house and the router station is upstairs.");
+
+					// player fixes thing
+					script.add("Awesome! That was some quick work, buddy. Here’s your pay, and yes, I’m paying you double. " +
+							"Tell your manager to consider it a donation. Take care now.");
+					script.add("<self> It was no problem, happy to help wherever I can!");
+					return script;
 				}
 
 				script.add("TODO - Hello");
@@ -130,6 +154,12 @@ public class MainIsland implements Listener, BearFair21Island {
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
+					return script;
+				} else if(user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
+					if(RandomUtils.chanceOf(50))
+						script.add("I only have two loves in life, woodworking, and steak.");
+					else
+						script.add("Give 100 percent. One-hundred-and-ten percent is impossible. Only idiots recommend that.");
 					return script;
 				}
 
@@ -224,58 +254,60 @@ public class MainIsland implements Listener, BearFair21Island {
 							return script;
 						}
 						case STARTED -> {
-							List<ItemBuilder> required = Arrays.asList(new ItemBuilder(Material.CYAN_BANNER).amount(4), new ItemBuilder(Material.YELLOW_BANNER).amount(4));
-							if (!Quests.hasItemsLikeFrom(user, required)) {
+							List<ItemBuilder> required = Arrays.asList(
+									new ItemBuilder(Material.CYAN_BANNER).amount(4),
+									new ItemBuilder(Material.YELLOW_BANNER).amount(4));
+							if (!Quests.hasAllItemsLikeFrom(user, required)) {
 								script.add("For your first task, could you gather the materials, and craft me 4 cyan & 4 yellow banners? I've seem to forgotten the recipe.");
 								return script;
 							}
 
-							Quests.removeItemBuilders(user.getPlayer(), required);
+							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
 
-							ClientsideContentManager.addCategory(user, ContentCategory.BANNER);
+							ClientsideContentManager.addCategory(user, ContentCategory.BANNER, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_ONE);
 							userService.save(user);
 							return script;
 						}
 						case STEP_ONE, STEP_TWO -> {
 							List<ItemBuilder> required = Arrays.asList(balloon_cyan.clone().amount(16), balloon_yellow.clone().amount(16));
-							if (!Quests.hasItemsLikeFrom(user, required)) {
+							if (!Quests.hasAllItemsLikeFrom(user, required)) {
 
 								script.add("For your next task, could you gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
 								return script;
 							}
 
-							Quests.removeItemBuilders(user.getPlayer(), required);
+							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 32 White Wool and 8 of each red, green, and blue dyes?");
 
-							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON);
+							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_THREE);
 							userService.save(user);
 							return script;
 						}
 						case STEP_THREE -> {
-							// Require all items, not just some
+							// TODO BF21: Require all items, not just some
 							List<ItemBuilder> required = Arrays.asList(new ItemBuilder(Material.WHITE_WOOL).amount(32),
 									new ItemBuilder(Material.RED_DYE).amount(8),
 									new ItemBuilder(Material.GREEN_DYE).amount(8),
 									new ItemBuilder(Material.BLUE_DYE).amount(8));
 
-							if (!Quests.hasItemsLikeFrom(user, required)) {
+							if (!Quests.hasAllItemsLikeFrom(user, required)) {
 								script.add("For your next task, could you gather me 32 White Wool and 8 of each red, green, and blue dyes?");
 								return script;
 							}
 
-							Quests.removeItemBuilders(user.getPlayer(), required);
+							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you follow up with Maple the Pastry Chef about my cake order?");
 
-							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON);
+							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FOUR);
 							userService.save(user);
 							return script;
@@ -287,7 +319,7 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItemBuilders(user.getPlayer(), required);
+							Quests.removeItems(user.getPlayer(), required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("That's almost everything, there's just one last task I need you to do, while I'm finishing up.");
@@ -295,7 +327,7 @@ public class MainIsland implements Listener, BearFair21Island {
 							script.add("I had these invitations custom made, could you go around the island and give one to each of the townspeople?");
 							Tasks.wait(80, () -> Quests.giveItem(user, invitation.clone().amount(invitees.size()).build()));
 
-							ClientsideContentManager.addCategory(user, ContentCategory.FOOD);
+							ClientsideContentManager.addCategory(user, ContentCategory.FOOD, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FIVE);
 							userService.save(user);
 							return script;
@@ -349,7 +381,6 @@ public class MainIsland implements Listener, BearFair21Island {
 					List<ItemStack> items = Quests.getItemsListFrom(user, required);
 					if (Utils.isNullOrEmpty(items)) {
 						script.add("TODO - gib any fish to get balloons, ok?");
-						return script;
 					} else {
 						Quests.removeItem(user, RandomUtils.randomElement(items));
 						script.add("TODO - here ye are");
@@ -359,8 +390,8 @@ public class MainIsland implements Listener, BearFair21Island {
 
 						user.setQuestStage_Main(QuestStage.STEP_TWO);
 						userService.save(user);
-						return script;
 					}
+					return script;
 				}
 
 				script.add("TODO - Hello");

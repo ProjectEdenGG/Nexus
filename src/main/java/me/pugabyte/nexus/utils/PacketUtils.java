@@ -16,14 +16,19 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutEntityLook
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
@@ -271,6 +276,27 @@ public class PacketUtils {
 	}
 	 */
 
+	// Falling Block
+
+	// needs more testing, seemed to only spawn an iron ore block
+	public static EntityFallingBlock spawnFallingBlock(@NonNull HasPlayer player, @NonNull Location location, Block block) {
+		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+		IBlockData blockData = ((CraftBlockData)block.getBlockData()).getState();
+
+		EntityFallingBlock fallingBlock = new EntityFallingBlock(nmsPlayer.world, location.getX(), location.getY(), location.getZ(), blockData);
+		fallingBlock.setInvulnerable(true);
+		fallingBlock.setNoGravity(true);
+		fallingBlock.setInvisible(true);
+		fallingBlock.getBukkitEntity().setGlowing(true);
+		fallingBlock.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
+
+		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(fallingBlock, getObjectId(fallingBlock));
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(fallingBlock.getId(), fallingBlock.getDataWatcher(), true);
+
+		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
+		return fallingBlock;
+	}
+
 	// Item Frame
 	public static EntityItemFrame spawnItemFrame(@NonNull HasPlayer player, @NonNull Location location, BlockFace blockFace, ItemStack content, int rotation, boolean makeSound, boolean invisible) {
 		if (content == null) content = new ItemStack(Material.AIR);
@@ -287,8 +313,7 @@ public class PacketUtils {
 
 		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(itemFrame, getObjectId(itemFrame));
 
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(
-				itemFrame.getId(), itemFrame.getDataWatcher(), true);
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(itemFrame.getId(), itemFrame.getDataWatcher(), true);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
 		return itemFrame;
@@ -532,5 +557,4 @@ public class PacketUtils {
 
 		return null;
 	}
-
 }

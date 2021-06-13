@@ -4,7 +4,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -20,40 +20,43 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Rides {
-	@Getter
-	@Setter
-	private static boolean enabled = true;
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
 
-	public Rides() {
+	public static void startup() {
+		// TODO BF21: i cant seem to get this working properly
+		if(true)
+			return;
+
 		// Disable all rides on startup
+		rideMap.clear();
 		for (Ride ride : Ride.values()) {
 			rideMap.put(ride, false);
 			PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
 		}
 
 		// Dynamic enable task
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
-
+		Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			for (Ride ride : Ride.values()) {
-				boolean oldStatus = rideMap.get(ride);
+				boolean oldStatus = rideMap.getOrDefault(ride, false);
 				boolean curStatus = ride.getCurrentStatus();
 				if (oldStatus == curStatus) continue;
 
-				rideMap.put(ride, curStatus);
-				if (curStatus)
-					if(enabled)
-						PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
-				else
+				if (!curStatus) {
+					if (!BearFair21.getConfig().isEnableRides())
+						continue;
+
+					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
+				} else
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
+
+				rideMap.put(ride, curStatus);
 			}
 		});
 
 		dropTowerTask();
-
 	}
 
-	private void dropTowerTask() {
+	private static void dropTowerTask() {
 		WorldGuardUtils WGUtils = BearFair21.getWGUtils();
 		String rg = BearFair21.getRegion();
 
@@ -98,6 +101,7 @@ public class Rides {
 
 		@Getter
 		Location location;
+
 		@Getter
 		int radius;
 

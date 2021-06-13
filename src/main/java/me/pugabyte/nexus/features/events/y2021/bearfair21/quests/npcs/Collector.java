@@ -39,7 +39,7 @@ public class Collector {
 
 	private static List<Location> loadLocations() {
 		World world = BearFair21.getWorld();
-		Location observatory = new Location(world, -108, 157, 12);
+		Location observatory = new Location(world, -113, 155, 16);
 		Location town1 = new Location(world, -105, 139, -104);
 		Location town2 = new Location(world, -125, 149, -26);
 		Location forest = new Location(world, -39, 140, 7);

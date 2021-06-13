@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
@@ -15,6 +14,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.bearfair21.BearFair21Config;
+import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
@@ -24,6 +25,7 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
@@ -34,11 +36,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import static me.pugabyte.nexus.utils.StringUtils.bool;
+
 @Aliases("bf21")
 public class BearFair21Command extends CustomCommand {
 	ClientsideContentService contentService = new ClientsideContentService();
-	BearFair21UserService userService = new BearFair21UserService();
 	ClientsideContent clientsideContent = contentService.get0();
+
+	BearFair21UserService userService = new BearFair21UserService();
+
+	BearFair21ConfigService configService = new BearFair21ConfigService();
+	BearFair21Config config = configService.get0();
+
 	List<Content> contentList = clientsideContent.getContentList();
 
 	public BearFair21Command(CommandEvent event) {
@@ -65,19 +74,13 @@ public class BearFair21Command extends CustomCommand {
 		Seeker.addPlayer(player());
 	}
 
-
-	@Permission("group.admin")
-	@Path("rides <boolean>")
-	void rides(boolean bool) {
-		Rides.setEnabled(bool);
-		send("Set rides enabled to: " + Rides.isEnabled());
-	}
-
 	@Path("toCollector")
 	@Permission("group.admin")
 	public void toCollector() {
 		player().teleportAsync(Collector.getCurrentLoc());
 	}
+
+	// Database
 
 	@Confirm
 	@Path("database delete [player]")
@@ -100,6 +103,39 @@ public class BearFair21Command extends CustomCommand {
 		send("Met NPCs: " + Arrays.toString(user.getMetNPCs().stream().map(id -> BearFair21NPC.of(id).getName()).toArray()));
 	}
 
+	// Config
+
+	@Permission("group.admin")
+	@Path("config enableWarp <boolean>")
+	void configQuests(boolean bool) {
+		config.setEnableWarp(bool);
+		configService.save(config);
+		send("Set enableWarp to: " + bool(config.isEnableWarp()));
+	}
+
+	@Permission("group.admin")
+	@Path("config enableRides <boolean>")
+	void configRides(boolean bool) {
+		config.setEnableRides(bool);
+		configService.save(config);
+		send("Set enableRides to: " + bool(config.isEnableRides()));
+	}
+
+	@Permission("group.admin")
+	@Path("config enableQuests <boolean>")
+	void configWarp(boolean bool) {
+		config.setEnableQuests(bool);
+		configService.save(config);
+		send("Set enableQuests to: " + bool(config.isEnableQuests()));
+	}
+
+	@Permission("group.admin")
+	@Path("config giveDailyPoints <boolean>")
+	void configDailyPoints(boolean bool) {
+		config.setGiveDailyPoints(bool);
+		configService.save(config);
+		send("Set giveDailyPoints to: " + bool(config.isGiveDailyPoints()));
+	}
 
 	// Command Blocks
 

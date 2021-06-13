@@ -2,6 +2,9 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
+import me.pugabyte.nexus.models.bearfair21.BearFair21Config;
+import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
@@ -30,22 +33,26 @@ import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
 
 public class BearFair21 {
+	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
+	@Getter
+	private static final BearFair21Config config = configService.get0();
+	/**
+	 * TODO BF21:
+	 *  When BearFair21 is over:
+	 *  - disable: enableRides, enableQuests, enableWarp, and giveDailyPoints
+	 *  - disable: region block break/place
+	 */
+
 	@Getter
 	private static final String PREFIX = "&8&l[&eBearFair&8&l] &3";
 	@Getter
 	private static final String region = "bearfair21";
-	@Getter
-	private static final boolean allowWarp = false;
-	//
-	// TODO BF21: When BF is over, disable these, and disable block break/place on regions
-	public static boolean enableQuests = true;
-	public static boolean giveDailyPoints = false;
 
 
 	public BearFair21() {
 		new Timer("    Restrictions", BearFair21Restrictions::new);
 		new Timer("    Fairgrounds", Fairgrounds::new);
-		if (enableQuests)
+		if (config.isEnableQuests())
 			new Timer("    Quests", Quests::new);
 
 		Arrays.stream(BF21PointSource.values()).forEach(source -> addTokenMax(source, 25));
@@ -145,7 +152,7 @@ public class BearFair21 {
 		}
 		//
 
-		if (!giveDailyPoints)
+		if (!config.isGiveDailyPoints())
 			return;
 
 		EventUserService service = new EventUserService();
@@ -172,6 +179,15 @@ public class BearFair21 {
 		service.save(user);
 
 		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Points");
+	}
+
+	public static boolean canWarp() {
+		return config.isEnableWarp();
+	}
+
+	public static void startup() {
+		Quests.startup();
+		Rides.startup();
 	}
 
 	public enum BF21PointSource {

@@ -1,12 +1,20 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
+import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.models.Talker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -18,48 +26,12 @@ import java.util.List;
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
 public class MinigameNightIsland implements Listener, BearFair21Island {
+	static BearFair21UserService userService = new BearFair21UserService();
+
 	private static final ItemStack hat = new ItemBuilder(Material.CYAN_STAINED_GLASS_PANE).customModelData(101).amount(1).build();
+	private static final Location phoneLoc = new Location(BearFair21.getWorld(), -191, 143, -194);
 
 	public enum MinigameNightNPCs implements BearFair21TalkingNPC {
-		AXEL(BearFair21NPC.AXEL) {
-			@Override
-			public List<String> getScript(BearFair21User user) {
-				List<String> script = new ArrayList<>();
-
-				script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! ...Hold up, <player>? Is that you?");
-				script.add("wait 80");
-				script.add("<self> Hey, Axel!");
-				script.add("wait 40");
-				script.add("Yooo how ya been dude? It'd be hard to forget the hero who saved last year's arcade tourney! Thanks again for that.");
-				script.add("wait 80");
-				script.add("<self> Always glad to help out where I can!");
-				script.add("wait 40");
-				script.add("Broo, its hard to find people as dope as you these days.");
-				script.add("wait 60");
-				script.add("<self> Aw, thanks! So how're things at GG?");
-				script.add("wait 40");
-				script.add("Pretty stressful, not gonna lie. Lots of good business, but its hard to keep up with it all, being self employed, " +
-						"especially during bearfair. Just barely found a few moments to come out here and help the bros get set up for our " +
-						"Bear Fair Band-sesh' tonight.");
-				script.add("wait 140");
-				script.add("<self> Anything I can do to help?");
-				script.add("wait 40");
-				script.add("Nah I couldn't keep you from the bear fair celebration...");
-				script.add("wait 40");
-				script.add("<self> No really, I wouldn't mind.");
-				script.add("wait 40");
-				script.add("Really? Well if you're sure, we all could actually use more practice… Would you mind running the store for me? Just till " +
-						"we close tonight; and I'll totally pay you. In fact, here.You're an official employee of GG! With your " +
-						"tech skills, it'll be a breeze.");
-				// TODO BF21: give hat
-				script.add("wait 140");
-				script.add("<self> I got you bro, practice all you need. I wanna hear an awesome song when I get back!");
-				script.add("wait 80");
-				script.add("Duude, you're a lifesaver!");
-
-				return script;
-			}
-		},
 		XAVIER(BearFair21NPC.XAVIER) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
@@ -88,37 +60,128 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 				return script;
 			}
 		},
-		TRENT(BearFair21NPC.TRENT) {
+		AXEL(BearFair21NPC.AXEL) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
-				script.add("Ayy yo dude. You the one I gotta talk to ‘bout fixin my xbox?");
-				script.add("<self> Yep! What seems to be the problem?");
-				script.add("So like, Its an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
-				script.add("<self> Yeah that’s not good… does the blue screen have an error message?");
-				script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on " +
-						"channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
-				script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I’ll be right back with you as soon as it's fixed. Shouldn’t be more than a few minutes. ");
-				script.add("A'ight, thanks dawg. I’ll be right here.");
-				//
-				script.add("Alright, here you are. Power supply was shot. Had to replace it. Pretty simple fix so the bill won’t be too bad.");
-				script.add("Yooo, sweet. Thank’s dawg! Here, you can keep the change. Peace.");
-				script.add("Thanks for choosing GG!");
+				switch(user.getQuestStage_MGN()) {
+					case NOT_STARTED -> {
+						int wait = 0;
+						script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! ...Hold up, <player>? Is that you?");
+						script.add("wait " + (wait += 80));
+						script.add("<self> Hey, Axel!");
+						script.add("wait " + (wait += 40));
+						script.add("Yooo how ya been dude? It'd be hard to forget the hero who saved last year's arcade tourney! Thanks again for that.");
+						script.add("wait " + (wait += 80));
+						script.add("<self> Always glad to help out where I can!");
+						script.add("wait " + (wait += 40));
+						script.add("Broo, its hard to find people as dope as you these days.");
+						script.add("wait " + (wait += 40));
+						script.add("<self> Aw, thanks! So how're things at GG?");
+						script.add("wait " + (wait += 40));
+						script.add("Pretty stressful, not gonna lie. Lots of good business, but its hard to keep up with it all, being self employed, especially during Bear Fair.");
+						script.add("wait " + (wait += 100));
+						script.add("Just barely found a few moments to come out here and help the bros get set up for our Bear Fair Band-sesh' tonight.");
+						script.add("wait " + (wait += 100));
+						script.add("<self> Anything I can do to help?");
+						script.add("wait " + (wait += 40));
+						script.add("Nah I couldn't keep you from the bear fair celebration...");
+						script.add("wait " + (wait += 50));
+						script.add("<self> No really, I wouldn't mind.");
+						script.add("wait " + (wait += 40));
+						script.add("Really? Well if you're sure, we all could actually use more practice... Would you mind running the store for me?");
+						script.add("wait " + (wait += 80));
+						script.add("Just till we close tonight; and I'll totally pay you. In fact, here...");
+						script.add("wait " + (wait += 60));
+						Tasks.wait(wait, () -> Quests.giveItem(user, hat));
+						script.add("You're an official employee of GG! With your tech skills, it'll be a breeze.");
+						script.add("wait 60");
+						script.add("<self> I got you bro, practice all you need. I wanna hear an awesome song when I get back!");
+						script.add("wait 60");
+						script.add("Duude, you're a lifesaver!");
+
+						user.setQuestStage_MGN(QuestStage.STARTED);
+						userService.save(user);
+						return script;
+					}
+
+					case STARTED -> {
+						script.add("TODO - Reminder");
+						return script;
+					}
+
+					case COMPLETE -> {
+						script.add("TODO - Completed");
+						return script;
+					}
+				}
+
+				script.add("TODO - Hello");
+				return script;
+			}
+		},
+		// TODO: UPDATE DIALOG
+		TRENT(BearFair21NPC.MGN_CUSTOMER_1) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if(user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
+					script.add("Ayy yo dude. You the one I gotta talk to ‘bout fixin my xbox?");
+					script.add("<self> Yep! What seems to be the problem?");
+					script.add("So like, Its an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
+					script.add("<self> Yeah that’s not good… does the blue screen have an error message?");
+					script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on " +
+							"channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
+					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I’ll be right back with you as soon as it's fixed. Shouldn’t be more than a few minutes. ");
+					script.add("A'ight, thanks dawg. I’ll be right here.");
+
+					return script;
+
+				} else if(user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
+					script.add("Alright, here you are. Power supply was shot. Had to replace it. Pretty simple fix so the bill won’t be too bad.");
+					script.add("Yooo, sweet. Thank’s dawg! Here, you can keep the change. Peace.");
+					script.add("Thanks for choosing GG!");
+
+					Tasks.wait(Time.SECOND.x(10), () -> Talker.sendScript(user.getPlayer(), FREDRICKSON));
+					return script;
+				}
+
+
 
 				return script;
 			}
 		},
-		GARY(BearFair21NPC.GARY) {
+		FREDRICKSON(BearFair21NPC.MGN_CUSTOMER_2) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
-				script.add("");
+				if(user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
+					script.add("<self> Thanks for calling the Game Gallery, how can I help?");
+					script.add("Hello, this is Ben Fredrickson. I’m calling about a laptop I recently purchased for my son. " +
+							"I travel a great deal and I intended it to be a birthday gift for him when I returned home. " +
+							"Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won’t boot up. " +
+							"I’m doing business in the area and had my assistant drop off the laptop in your mailbox earlier today. " +
+							"I was hoping you could find out what’s wrong with it and remedy the problem?");
+					script.add("<self> Of course sir, I’ll take a look at it.");
+					script.add("Wonderful, once it's fixed, if you could keep it in your back room, I’ll be back by in the next few days to pick it up.");
+					script.add("<self> No problem sir, I’ll call as soon as it's ready.");
+
+					return script;
+				}
+
+				// After player fixes thing
+				script.add("This is Fredrickson.");
+				script.add("<self> Ok Mr. Fredrickson, the laptop is ready. The motherboard and screen were cracked and had to be replaced but it works perfectly now.");
+				script.add("Thank you so much! I knew I could count on an establishment of your caliber! Expect me back by the fifth.");
+				script.add("<self> Glad to be of service! Thanks for choosing the Game Gallery!");
 
 				return script;
 			}
-		};
+		},
+		;
 
 		private final BearFair21NPC npc;
 		private final List<String> script;
@@ -143,4 +206,10 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 			this.script = new ArrayList<>();
 		}
 	}
+
+	/**
+	 * on player enter GG Store region, and mgn step == started, set step to 1, and spawn Trent.
+	 *
+	 * on player fix customer 1 problem, set step to 2.
+	 */
 }

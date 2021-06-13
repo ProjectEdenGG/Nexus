@@ -17,7 +17,7 @@ public class BearFair21WarpsCommand extends _WarpCommand {
 
 	@Path
 	public void bearfair() {
-		if (!BearFair21.isAllowWarp() && !isStaff())
+		if (!BearFair21.canWarp() && !isStaff())
 			error("Soon™");
 
 		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR21));
