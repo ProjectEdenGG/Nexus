@@ -14,6 +14,7 @@ import lombok.ToString;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.trust.Trust;
 import me.pugabyte.nexus.models.trust.Trust.Type;
 import me.pugabyte.nexus.models.trust.TrustService;
@@ -62,7 +63,10 @@ public class HomeOwner implements PlayerOwnedObject {
 
 	@ToString.Include
 	public int getHomesLimit() {
-		return getNerd().getRank().enabledOrdinal() + 3 + extraHomes;
+		Rank rank = getNerd().getRank();
+		if (rank.gte(Rank.ADMIN))
+			return 999;
+		return rank.enabledOrdinal() + 3 + extraHomes;
 	}
 
 	public void addExtraHomes(int extraHomes) {
