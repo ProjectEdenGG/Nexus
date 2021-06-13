@@ -4,7 +4,6 @@ import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -23,10 +22,6 @@ public class Rides {
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
 
 	public static void startup() {
-		// TODO BF21: i cant seem to get this working properly
-		if(true)
-			return;
-
 		// Disable all rides on startup
 		rideMap.clear();
 		for (Ride ride : Ride.values()) {
@@ -41,7 +36,7 @@ public class Rides {
 				boolean curStatus = ride.getCurrentStatus();
 				if (oldStatus == curStatus) continue;
 
-				if (!curStatus) {
+				if (curStatus) {
 					if (!BearFair21.getConfig().isEnableRides())
 						continue;
 
