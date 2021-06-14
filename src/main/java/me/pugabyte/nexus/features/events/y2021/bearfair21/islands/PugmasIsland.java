@@ -22,6 +22,8 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
+import net.minecraft.server.v1_16_R3.Entity;
+import net.minecraft.server.v1_16_R3.EntityTypes;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -46,21 +48,10 @@ public class PugmasIsland implements Listener, BearFair21Island {
 	private static final ClientsideContent contentList = contentService.get0();
 
 	private static final BearFair21UserService userService = new BearFair21UserService();
-	private static final List<Location> contentIndex = Arrays.asList(
-			loc(-45, 143, -325),
-			loc(-49, 139, -300),
-			loc(-76, 138, -305),
-			loc(-101, 139, -290),
-			loc(-111, 142, -321),
-			loc(-104, 154, -350),
-			loc(-72, 157, -364),
-			loc(-78, 152, -346),
-			loc(-79, 134, -322),
-			loc(-59, 145, -343),
-			loc(-40, 153, -353),
-			loc(-59, 166, -374),
-			loc(-78, 174, -384),
-			loc(-106, 174, -381),
+	private static final List<Location> contentIndex = Arrays.asList(loc(-45, 143, -325), loc(-49, 139, -300),
+			loc(-76, 138, -305), loc(-101, 139, -290), loc(-111, 142, -321), loc(-104, 154, -350),
+			loc(-72, 157, -364), loc(-78, 152, -346), loc(-79, 134, -322), loc(-59, 145, -343),
+			loc(-40, 153, -353), loc(-59, 166, -374), loc(-78, 174, -384), loc(-106, 174, -381),
 			loc(-67, 139, -308)
 	);
 
@@ -241,12 +232,14 @@ public class PugmasIsland implements Listener, BearFair21Island {
 	private static void startChallenge(BearFair21User user) {
 		if (user.getActiveTaskId() != -1) {
 			user.sendMessage("Error: You have an active task running");
+			user.setQuestStage_Pugmas(QuestStage.STARTED);
+			userService.save(user);
 			return;
 		}
 
 		Countdown countdown = Countdown.builder()
 				.duration(Time.MINUTE.x(3))
-				.onSecond(i -> ActionBarUtils.sendActionBar(user.getPlayer(), "&3Time Left: &e" + Timespan.of(i).format()))
+				.onSecond(i -> ActionBarUtils.sendActionBar(user.getPlayer(), "&3Time Left: &7" + Timespan.of(i).format()))
 				.onComplete(() -> endChallenge(user, false))
 				.start();
 
@@ -263,6 +256,8 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 		if (completed) {
 			Quests.sound_completeQuest(user.getPlayer());
+		} else {
+			removeContent(user);
 		}
 
 		user.sendMessage("End of challenge, completed: " + completed);
@@ -270,7 +265,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 	private void clickedPresent(BearFair21User user, Content content) {
 		if (content != null)
-			ClientsideContentManager.sendRemoveItemFrames(user.getOnlinePlayer(), Collections.singletonList(content));
+			removeContent(user, content);
 
 		int userNdx = user.getPresentNdx() + 1;
 		user.setPresentNdx(userNdx);
@@ -287,10 +282,8 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 	private static void showNext(BearFair21User user) {
 		Content next = contentList.from(contentIndex.get(user.getPresentNdx() - 1));
-		if (next != null) {
-			ClientsideContentManager.sendSpawnItemFrames(user.getPlayer(), Collections.singletonList(next), true);
-			// TODO BF21: Show a beacon or glowing invisible slime or something
-		}
+		if (next != null)
+			addContent(user, next);
 	}
 
 	@EventHandler
@@ -332,5 +325,42 @@ public class PugmasIsland implements Listener, BearFair21Island {
 		}
 
 		return -1;
+	}
+
+	private static void removeContent(BearFair21User user) {
+		for (Location location : contentIndex) {
+			Content content = contentList.from(location);
+			if (content == null) continue;
+
+			removeContent(user, content);
+		}
+
+	}
+
+	private static void addContent(BearFair21User user, Content content) {
+		ClientsideContentManager.sendSpawnContent(user.getPlayer(), Collections.singletonList(content), true);
+		ClientsideContentManager.sendSpawnArmorStand(user.getPlayer(), content.getLocation().getBlock().getRelative(0, 1, 0).getLocation());
+
+	}
+
+	private static void removeContent(BearFair21User user, Content content) {
+		ClientsideContentManager.sendRemoveContent(user.getOnlinePlayer(), Collections.singletonList(content));
+		ClientsideContentManager.sendRemoveEntityFrom(user.getOnlinePlayer(),
+				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityTypes.ARMOR_STAND);
+	}
+
+	public static Entity getBeaconEntity(Player player) {
+		for (Location location : contentIndex) {
+			Content content = contentList.from(location);
+			if (content == null) continue;
+
+			for (Entity entity : ClientsideContentManager.getPlayerEntities().get(player.getUniqueId())) {
+				if (entity.getEntityType() == EntityTypes.ARMOR_STAND) {
+					return entity;
+				}
+			}
+		}
+
+		return null;
 	}
 }

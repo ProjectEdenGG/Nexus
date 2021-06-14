@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
@@ -82,6 +83,15 @@ public class BearFair21Command extends CustomCommand {
 	@Permission("group.admin")
 	public void toCollector() {
 		player().teleportAsync(Collector.getCurrentLoc());
+	}
+
+	@Path("getEntity")
+	public void getEntitiy() {
+		net.minecraft.server.v1_16_R3.Entity entity = PugmasIsland.getBeaconEntity(player());
+		if (entity == null)
+			error("Entity is null");
+
+		send(entity.getBukkitEntity().getLocation().toString());
 	}
 
 	// Database
@@ -238,7 +248,7 @@ public class BearFair21Command extends CustomCommand {
 
 		send(player.getName() + " visible categories: " + Arrays.toString(user.getContentCategories().toArray()));
 
-		ClientsideContentManager.sendSpawnItemFrames(player, contentService.getList(category));
+		ClientsideContentManager.sendSpawnContent(player, contentService.getList(category));
 	}
 
 	@Permission("group.admin")

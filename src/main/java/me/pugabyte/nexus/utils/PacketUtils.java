@@ -18,7 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
@@ -26,11 +25,10 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -276,12 +274,30 @@ public class PacketUtils {
 	}
 	 */
 
-	// Falling Block
+	// Slime
+	public static EntitySlime spawnSlime(Player player, Location location, int size, boolean invisible, boolean glowing) {
+		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 
+		EntitySlime slime = new EntitySlime(EntityTypes.SLIME, nmsPlayer.getWorld());
+		slime.setLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
+		slime.setSize(size, true);
+		slime.setInvisible(invisible);
+		slime.getBukkitEntity().setGlowing(glowing);
+		slime.setNoGravity(true);
+		slime.setPersistent();
+
+		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(slime, getObjectId(slime));
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(slime.getId(), slime.getDataWatcher(), true);
+
+		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
+		return slime;
+	}
+
+	// Falling Block
 	// needs more testing, seemed to only spawn an iron ore block
 	public static EntityFallingBlock spawnFallingBlock(@NonNull HasPlayer player, @NonNull Location location, Block block) {
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		IBlockData blockData = ((CraftBlockData)block.getBlockData()).getState();
+		IBlockData blockData = ((CraftBlockData) block.getBlockData()).getState();
 
 		EntityFallingBlock fallingBlock = new EntityFallingBlock(nmsPlayer.world, location.getX(), location.getY(), location.getZ(), blockData);
 		fallingBlock.setInvulnerable(true);
@@ -312,7 +328,6 @@ public class PacketUtils {
 		itemFrame.setRotation(rotation);
 
 		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(itemFrame, getObjectId(itemFrame));
-
 		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(itemFrame.getId(), itemFrame.getDataWatcher(), true);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
@@ -334,22 +349,26 @@ public class PacketUtils {
 		sendPacket(player, rawMetadataPacket);
 	}
 
-	// Armor Stand
+	// Armor Stand -- TODO: Needs to be turned into a builder
 
 	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, boolean invisible) {
-		return spawnArmorStand(player, location, null, invisible);
+		return spawnArmorStand(player, location, invisible, null);
 	}
 
 	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, boolean invisible, String customName) {
 		return spawnArmorStand(player, location, null, invisible, customName);
 	}
 
-	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible) {
+	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location,
+												   List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment,
+												   boolean invisible) {
 		return spawnArmorStand(player, location, equipment, invisible, null);
 	}
 
-	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment, boolean invisible, String customName) {
-		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
+	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location,
+												   List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment,
+												   boolean invisible, String customName) {
+		if (equipment == null) equipment = getEquipmentList();
 
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
@@ -367,6 +386,27 @@ public class PacketUtils {
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
 		return armorStand;
 	}
+
+	public static EntityArmorStand spawnBeaconArmorStand(Player player, Location location) {
+		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+
+		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
+		location = location.toCenterLocation();
+		armorStand.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		armorStand.setInvisible(true);
+		armorStand.setBasePlate(true);
+		armorStand.setSmall(true);
+		armorStand.getBukkitEntity().setGlowing(true);
+
+		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(armorStand, getObjectId(armorStand));
+		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true);
+		PacketPlayOutEntityEquipment rawEquipmentPacket = new PacketPlayOutEntityEquipment(armorStand.getId(), getEquipmentList());
+
+		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
+
+		return armorStand;
+	}
+
 
 	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment) {
 		if (equipment == null) equipment = getEquipmentList(null, null, null, null);

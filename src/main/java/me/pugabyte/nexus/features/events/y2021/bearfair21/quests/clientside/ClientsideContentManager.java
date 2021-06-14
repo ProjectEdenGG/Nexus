@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside;
 
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
@@ -17,8 +18,11 @@ import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import net.minecraft.server.v1_16_R3.EntityItemFrame;
+import net.minecraft.server.v1_16_R3.EntitySlime;
+import net.minecraft.server.v1_16_R3.EntityTypes;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -37,7 +41,8 @@ public class ClientsideContentManager implements Listener {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
 	private static final BearFair21UserService userService = new BearFair21UserService();
 	//
-	private static final HashMap<UUID, List<EntityItemFrame>> playerItemFrames = new HashMap<>();
+	@Getter
+	private static final HashMap<UUID, List<Entity>> playerEntities = new HashMap<>();
 	private static final List<NPCNameTag> playerNPCNameTags = new ArrayList<>();
 
 
@@ -49,20 +54,20 @@ public class ClientsideContentManager implements Listener {
 
 	public static void startup() {
 		for (Player player : BearFair21.getPlayers())
-			sendSpawnItemFrames(player);
+			sendSpawnContent(player);
 	}
 
 	public static void shutdown() {
-		for (UUID uuid : playerItemFrames.keySet()) {
+		for (UUID uuid : playerEntities.keySet()) {
 			Player player = getPlayer(uuid);
 			if (player == null) continue;
 
-			List<EntityItemFrame> itemFrames = playerItemFrames.get(uuid);
-			for (EntityItemFrame itemFrame : itemFrames) {
-				PacketUtils.entityDestroy(player, itemFrame);
+			List<Entity> entities = playerEntities.get(uuid);
+			for (Entity entity : entities) {
+				PacketUtils.entityDestroy(player, entity);
 			}
 		}
-		playerItemFrames.clear();
+		playerEntities.clear();
 
 		for (NPCNameTag nameTag : playerNPCNameTags) {
 			Player player = getPlayer(nameTag.getPlayerUuid());
@@ -151,31 +156,58 @@ public class ClientsideContentManager implements Listener {
 			if (BearFair21.getPlayers().size() == 1)
 				Collector.spawn();
 
-			sendSpawnItemFrames(player);
+			sendSpawnContent(player);
 		});
 	}
 
-	public static void sendRemoveItemFrames(Player player, List<Content> contentList) {
-		List<EntityItemFrame> itemFrames = playerItemFrames.get(player.getUniqueId());
-		if (Utils.isNullOrEmpty(itemFrames))
+	public static void sendRemoveContent(Player player, List<Content> contentList) {
+		List<Entity> entities = new ArrayList<>(playerEntities.get(player.getUniqueId()));
+		if (Utils.isNullOrEmpty(entities))
 			return;
 
 		for (Content content : contentList) {
-			itemFrames.stream()
-					.filter(itemFrame -> LocationUtils.isFuzzyEqual(content.getLocation(), itemFrame.getBukkitEntity().getLocation())).toList()
-					.forEach(itemFrame -> PacketUtils.entityDestroy(player, itemFrame));
+			entities.stream()
+					.filter(entity -> LocationUtils.isFuzzyEqual(content.getLocation(), entity.getBukkitEntity().getLocation())).toList()
+					.forEach(entity -> {
+						PacketUtils.entityDestroy(player, entity);
+						playerEntities.get(player.getUniqueId()).remove(entity);
+					});
 		}
 	}
 
-	public static void sendSpawnItemFrames(Player player) {
-		sendSpawnItemFrames(player, contentService.getList(), false);
+	public static void sendRemoveEntityFrom(Player player, Location location, EntityTypes<?> entityType) {
+		List<Entity> entities = new ArrayList<>(playerEntities.get(player.getUniqueId()));
+		for (Entity entity : entities) {
+			if (!entity.getEntityType().equals(entityType))
+				continue;
+
+			if (LocationUtils.isFuzzyEqual(entity.getBukkitEntity().getLocation(), location)) {
+				PacketUtils.entityDestroy(player, entity);
+				playerEntities.get(player.getUniqueId()).remove(entity);
+			}
+		}
 	}
 
-	public static void sendSpawnItemFrames(Player player, List<Content> contentList) {
-		sendSpawnItemFrames(player, contentList, false);
+	// This spawns the entity, but the player cannot see the entity
+	public static void sendSpawnSlime(Player player, Location location) {
+		EntitySlime slime = PacketUtils.spawnSlime(player, location, 2, false, true);
+		addClientsideEntity(player, slime);
 	}
 
-	public static void sendSpawnItemFrames(Player player, List<Content> contentList, boolean bypassChecks) {
+	public static void sendSpawnArmorStand(Player player, Location location) {
+		EntityArmorStand armorStand = PacketUtils.spawnBeaconArmorStand(player, location);
+		addClientsideEntity(player, armorStand);
+	}
+
+	public static void sendSpawnContent(Player player) {
+		sendSpawnContent(player, contentService.getList(), false);
+	}
+
+	public static void sendSpawnContent(Player player, List<Content> contentList) {
+		sendSpawnContent(player, contentList, false);
+	}
+
+	public static void sendSpawnContent(Player player, List<Content> contentList, boolean bypassChecks) {
 		for (Content content : contentList) {
 			if (!content.isItemFrame()) continue;
 			if (!bypassChecks) {
@@ -187,12 +219,16 @@ public class ClientsideContentManager implements Listener {
 					content.getItemStack(), content.getRotation(), false, true);
 
 
-			UUID uuid = player.getUniqueId();
-			if (!playerItemFrames.containsKey(uuid))
-				playerItemFrames.put(uuid, new ArrayList<>());
-
-			playerItemFrames.get(uuid).add(itemFrame);
+			addClientsideEntity(player, itemFrame);
 		}
+	}
+
+	private static void addClientsideEntity(Player player, Entity entity) {
+		UUID uuid = player.getUniqueId();
+		if (!playerEntities.containsKey(uuid))
+			playerEntities.put(uuid, new ArrayList<>());
+
+		playerEntities.get(uuid).add(entity);
 	}
 
 	private static Player getPlayer(UUID uuid) {
@@ -236,6 +272,6 @@ public class ClientsideContentManager implements Listener {
 		user.getContentCategories().add(category);
 		userService.save(user);
 
-		Tasks.wait(delay, () -> ClientsideContentManager.sendSpawnItemFrames(user.getPlayer(), newContent));
+		Tasks.wait(delay, () -> ClientsideContentManager.sendSpawnContent(user.getPlayer(), newContent));
 	}
 }
