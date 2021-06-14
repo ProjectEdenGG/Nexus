@@ -25,6 +25,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -85,11 +86,7 @@ public class Quests implements Listener {
 
 	public static void giveItem(Player player, ItemStack itemStack) {
 		PlayerUtils.giveItem(player, itemStack);
-		chime(player);
-	}
-
-	public static void chime(Player player) {
-		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+		sound_obtainItem(player);
 	}
 
 	public static String[] getMenuBlockLines(PlayerInteractEvent event) {
@@ -170,6 +167,22 @@ public class Quests implements Listener {
 
 			player.getInventory().removeItemAnySlot(item);
 		}
+	}
+
+	public static void sound_obtainItem(Player player) {
+		SoundUtils.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 2F);
+	}
+
+	public static void sound_completeQuest(Player player) {
+		SoundUtils.playSound(player, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.5F, 1F);
+	}
+
+	public static void sound_villagerNo(Player player) {
+		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, 0.5F, 1F);
+	}
+
+	public static void sound_npcAlert(Player player) {
+		SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5F, 1F);
 	}
 
 	@EventHandler

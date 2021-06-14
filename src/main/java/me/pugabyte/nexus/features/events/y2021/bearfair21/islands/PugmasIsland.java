@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland.PugmasNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
@@ -260,6 +261,10 @@ public class PugmasIsland implements Listener, BearFair21Island {
 		user.setQuestStage_Pugmas(QuestStage.COMPLETE);
 		userService.save(user);
 
+		if (completed) {
+			Quests.sound_completeQuest(user.getPlayer());
+		}
+
 		user.sendMessage("End of challenge, completed: " + completed);
 	}
 
@@ -276,6 +281,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 			return;
 		}
 
+		Quests.sound_obtainItem(user.getPlayer());
 		showNext(user);
 	}
 
