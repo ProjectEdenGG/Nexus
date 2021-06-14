@@ -229,7 +229,8 @@ public class LocationUtils {
 	/**
 	 * Tests if two locations are equal to each other while avoiding false negatives from floating point issues
 	 */
-	public static boolean locationsEqual(Location location1, Location location2) {
+	public static boolean locationsEqual(@Nullable Location location1, @Nullable Location location2) {
+		if (location1 == null || location2 == null) return false;
 		if (!location1.getWorld().equals(location2.getWorld())) return false;
 		if (Math.abs(location1.getX() - location2.getX()) > MathUtils.FLOAT_ROUNDING_ERROR) return false;
 		if (Math.abs(location1.getY() - location2.getY()) > MathUtils.FLOAT_ROUNDING_ERROR) return false;
@@ -388,6 +389,13 @@ public class LocationUtils {
 				location1.getBlockX() == location2.getBlockX() &&
 				location1.getBlockY() == location2.getBlockY() &&
 				location1.getBlockZ() == location2.getBlockZ();
+	}
+
+	public static boolean isFuzzyEqual(@Nullable Location location1, @Nullable Location location2) {
+		if (locationsEqual(location1, location2))
+			return true;
+
+		return blockLocationsEqual(location1, location2);
 	}
 
 }

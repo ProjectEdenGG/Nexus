@@ -22,13 +22,17 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -87,6 +91,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission("group.admin")
 	public void databaseDelete(@Arg("self") Player player) {
 		BearFair21User user = userService.get(player);
+		user.cancelActiveTask();
 		userService.delete(user);
 		send("deleted bearfair21 user: " + player.getName());
 	}
@@ -101,6 +106,23 @@ public class BearFair21Command extends CustomCommand {
 		send("Junk Weight: " + user.getJunkWeight());
 		send("Recycled Items: " + user.getRecycledItems());
 		send("Met NPCs: " + Arrays.toString(user.getMetNPCs().stream().map(id -> BearFair21NPC.of(id).getName()).toArray()));
+		send("Next Step NPCs: " + Arrays.toString(user.getNextStepNPCs().stream().map(id -> BearFair21NPC.of(id).getName()).toArray()));
+		send("Active Task Id: " + user.getActiveTaskId());
+		send("Quests:");
+		send("  Main: " + user.getQuestStage_Main());
+		send("    Recycle: " + user.getQuestStage_Recycle());
+		send("    Bee: " + user.getQuestStage_BeeKeeper());
+		send("    LumberJack: " + user.getQuestStage_Lumberjack());
+		line();
+		send("  MGN: " + user.getQuestStage_MGN());
+		line();
+		send("  Pugmas: " + user.getQuestStage_Pugmas());
+		send("    Present Index: " + user.getPresentNdx());
+		line();
+		send("  Halloween: " + user.getQuestStage_Halloween());
+		line();
+		send("  SDU: " + user.getQuestStage_SDU());
+		line();
 	}
 
 	// Config
@@ -219,24 +241,24 @@ public class BearFair21Command extends CustomCommand {
 		ClientsideContentManager.sendSpawnItemFrames(player, contentService.getList(category));
 	}
 
-//	@Permission("group.admin")
-//	@Path("clientside new <category>")
-//	void clientsideSelect(ContentCategory category) {
-//		Entity entity = getTargetEntity();
-//		if (entity == null) {
-//			Block block = getTargetBlock();
-//			if (BlockUtils.isNullOrAir(block))
-//				error("Entity is null && Block is null or air");
-//
-//			setupBlockContent(block, category);
-//			send("Added block: " + block.getType());
-//		} else if (entity instanceof ItemFrame) {
-//			setupItemFrameContent((ItemFrame) entity, category);
-//			send("Added item frame");
-//		} else {
-//			error("That's not a supported entity type: " + entity.getType().name());
-//		}
-//	}
+	@Permission("group.admin")
+	@Path("clientside new <category>")
+	void clientsideSelect(ContentCategory category) {
+		Entity entity = getTargetEntity();
+		if (entity == null) {
+			Block block = getTargetBlock();
+			if (BlockUtils.isNullOrAir(block))
+				error("Entity is null && Block is null or air");
+
+			setupBlockContent(block, category);
+			send("Added block: " + block.getType());
+		} else if (entity instanceof ItemFrame) {
+			setupItemFrameContent((ItemFrame) entity, category);
+			send("Added item frame");
+		} else {
+			error("That's not a supported entity type: " + entity.getType().name());
+		}
+	}
 
 	@Permission("group.admin")
 	@Path("clientside list")
@@ -245,12 +267,21 @@ public class BearFair21Command extends CustomCommand {
 		List<Content> balloons = new ArrayList<>();
 		List<Content> festoon = new ArrayList<>();
 		List<Content> banners = new ArrayList<>();
+		List<Content> presents = new ArrayList<>();
+		List<Content> sawmill = new ArrayList<>();
+		List<Content> cable = new ArrayList<>();
+		List<Content> unlisted = new ArrayList<>();
+
 		for (Content content : contentList) {
 			switch (content.getCategory()) {
 				case FOOD -> food.add(content);
 				case BALLOON -> balloons.add(content);
 				case FESTOON -> festoon.add(content);
 				case BANNER -> banners.add(content);
+				case PRESENT -> presents.add(content);
+				case SAWMILL -> sawmill.add(content);
+				case CABLE -> cable.add(content);
+				default -> unlisted.add(content);
 			}
 		}
 
@@ -258,12 +289,20 @@ public class BearFair21Command extends CustomCommand {
 		send("Balloons: " + balloons.size());
 		send("Festoon: " + festoon.size());
 		send("Banner: " + banners.size());
+		send("Present: " + presents.size());
+		send("SawMill: " + sawmill.size());
+		send("Cable: " + cable.size());
+		send("Unlisted: " + unlisted.size());
 
 		List<Content> contentList = new ArrayList<>();
 		contentList.addAll(food);
 		contentList.addAll(balloons);
 		contentList.addAll(festoon);
 		contentList.addAll(banners);
+		contentList.addAll(presents);
+		contentList.addAll(sawmill);
+		contentList.addAll(cable);
+		contentList.addAll(unlisted);
 
 		StringBuilder string = new StringBuilder();
 		for (Content content : contentList) {
@@ -297,36 +336,36 @@ public class BearFair21Command extends CustomCommand {
 //		contentService.save(clientsideContent);
 //	}
 
-//	private void setupBlockContent(Block block, ContentCategory category) {
-//		ClientsideContent.Content content = new ClientsideContent.Content();
-//		content.setLocation(block.getLocation().toBlockLocation());
-//		content.setCategory(category);
-//		//
-//		content.setMaterial(block.getType());
-//		addContent(content);
-//	}
-//
-//	private void setupItemFrameContent(ItemFrame itemFrame, ContentCategory category) {
-//		ClientsideContent.Content content = new ClientsideContent.Content();
-//		content.setLocation(itemFrame.getLocation().toBlockLocation());
-//		content.setCategory(category);
-//		//
-//		content.setMaterial(Material.ITEM_FRAME);
-//		content.setItemStack(itemFrame.getItem());
-//		content.setBlockFace(itemFrame.getFacing());
-//		content.setRotation(itemFrame.getRotation());
-//		addContent(content);
-//
-//	}
+	private void setupBlockContent(Block block, ContentCategory category) {
+		ClientsideContent.Content content = new ClientsideContent.Content();
+		content.setLocation(block.getLocation().toBlockLocation());
+		content.setCategory(category);
+		//
+		content.setMaterial(block.getType());
+		addContent(content);
+	}
 
-//	private void addContent(ClientsideContent.Content content) {
-//		for (Content _content : contentList) {
-//			if (_content.getLocation().equals(content.getLocation()))
-//				error("Duplicate content location");
-//		}
-//
-//		contentList.add(content);
-//		clientsideContent.setContentList(contentList);
-//		contentService.save(clientsideContent);
-//	}
+	private void setupItemFrameContent(ItemFrame itemFrame, ContentCategory category) {
+		ClientsideContent.Content content = new ClientsideContent.Content();
+		content.setLocation(itemFrame.getLocation().toBlockLocation());
+		content.setCategory(category);
+		//
+		content.setMaterial(Material.ITEM_FRAME);
+		content.setItemStack(itemFrame.getItem());
+		content.setBlockFace(itemFrame.getFacing());
+		content.setRotation(itemFrame.getRotation());
+		addContent(content);
+
+	}
+
+	private void addContent(ClientsideContent.Content content) {
+		for (Content _content : contentList) {
+			if (_content.getLocation().equals(content.getLocation()))
+				error("Duplicate content location");
+		}
+
+		contentList.add(content);
+		clientsideContent.setContentList(contentList);
+		contentService.save(clientsideContent);
+	}
 }

@@ -13,6 +13,7 @@ import lombok.Setter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -37,12 +38,20 @@ public class ClientsideContent implements PlayerOwnedObject {
 	//
 	private List<Content> contentList = new ArrayList<>();
 
-	public @Nullable
-	Content from(Location location) {
-		for (Content content : contentList) {
-			if (location.equals(content.getLocation()))
+	@Nullable
+	public Content from(Location location) {
+		// Try exact locations
+		for (Content content : this.contentList) {
+			if (LocationUtils.locationsEqual(location, content.getLocation()))
 				return content;
 		}
+
+		// Try block locations
+		for (Content content : this.contentList) {
+			if (LocationUtils.blockLocationsEqual(location, content.getLocation()))
+				return content;
+		}
+
 		return null;
 	}
 
@@ -69,10 +78,14 @@ public class ClientsideContent implements PlayerOwnedObject {
 		}
 
 		public enum ContentCategory {
-			FOOD,
-			BALLOON,
-			FESTOON,
-			BANNER
+			FOOD,        // MAIN
+			BALLOON,    // MAIN
+			FESTOON,    // MAIN
+			BANNER,        // MAIN
+			//
+			PRESENT,    // PUGMAS
+			SAWMILL,    // SIDE
+			CABLE,        // MGN
 		}
 	}
 

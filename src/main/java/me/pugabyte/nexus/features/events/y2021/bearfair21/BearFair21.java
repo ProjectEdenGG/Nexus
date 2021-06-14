@@ -52,8 +52,7 @@ public class BearFair21 {
 	public BearFair21() {
 		new Timer("    Restrictions", BearFair21Restrictions::new);
 		new Timer("    Fairgrounds", Fairgrounds::new);
-		if (config.isEnableQuests())
-			new Timer("    Quests", Quests::new);
+		new Timer("    Quests", Quests::new);
 
 		Arrays.stream(BF21PointSource.values()).forEach(source -> addTokenMax(source, 25));
 	}
@@ -188,6 +187,10 @@ public class BearFair21 {
 	public static void startup() {
 		Quests.startup();
 		Rides.startup();
+	}
+
+	public static void shutdown() {
+		Quests.shutdown();
 	}
 
 	public enum BF21PointSource {

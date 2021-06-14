@@ -47,8 +47,22 @@ public enum BearFair21NPC {
 	MGN_CUSTOMER_1("Trent", 4135),
 	MGN_CUSTOMER_2("Mr. Fredrickson", 4136),
 	// PUGMAS
-	MAYOR_PUGMAS("Mayor", 4130),
+	PUGMAS_MAYOR("Mayor", 4130),
 	GRINCH("Grinch", 4129),
+	PUGMAS_VILLAGER_1("Villager", 4142),
+	PUGMAS_VILLAGER_2("Villager", 4143),
+	PUGMAS_VILLAGER_3("Villager", 4144),
+	PUGMAS_VILLAGER_4("Villager", 4145),
+	PUGMAS_VILLAGER_5("Villager", 4146),
+	PUGMAS_VILLAGER_6("Villager", 4147),
+	PUGMAS_VILLAGER_7("Villager", 4148),
+	PUGMAS_VILLAGER_8("Villager", 4149),
+	PUGMAS_VILLAGER_9("Villager", 4150),
+	PUGMAS_VILLAGER_10("Villager", 4151),
+	PUGMAS_VILLAGER_11("Villager", 4152),
+	PUGMAS_VILLAGER_12("Villager", 4153),
+	PUGMAS_VILLAGER_13("Villager", 4154),
+	PUGMAS_VILLAGER_14("Villager", 4155),
 	// HALLOWEEN
 	JOSE("Jose", 4131),
 	SANTIAGO("Santiago", 4132),
@@ -81,7 +95,10 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		String npcJob = StringUtils.camelCase(this).replaceAll("[0-9]+", "");
+		String npcJob = StringUtils.camelCase(this.name.toLowerCase()
+				.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
+				.replaceAll("[0-9]+", "")).trim();
+
 		if (npcJob.equalsIgnoreCase(name))
 			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), name));
 		else

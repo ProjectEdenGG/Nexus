@@ -174,6 +174,9 @@ public class Quests implements Listener {
 
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
+		if (!BearFair21.getConfig().isEnableQuests())
+			return;
+
 		Player player = event.getClicker();
 		if (!isAtBearFair(player))
 			return;

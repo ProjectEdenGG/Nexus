@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside;
 
 import eden.utils.TimeUtils.Time;
+import eden.utils.Utils;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
@@ -11,6 +12,7 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -153,14 +155,33 @@ public class ClientsideContentManager implements Listener {
 		});
 	}
 
+	public static void sendRemoveItemFrames(Player player, List<Content> contentList) {
+		List<EntityItemFrame> itemFrames = playerItemFrames.get(player.getUniqueId());
+		if (Utils.isNullOrEmpty(itemFrames))
+			return;
+
+		for (Content content : contentList) {
+			itemFrames.stream()
+					.filter(itemFrame -> LocationUtils.isFuzzyEqual(content.getLocation(), itemFrame.getBukkitEntity().getLocation())).toList()
+					.forEach(itemFrame -> PacketUtils.entityDestroy(player, itemFrame));
+		}
+	}
+
 	public static void sendSpawnItemFrames(Player player) {
-		sendSpawnItemFrames(player, contentService.getList());
+		sendSpawnItemFrames(player, contentService.getList(), false);
 	}
 
 	public static void sendSpawnItemFrames(Player player, List<Content> contentList) {
+		sendSpawnItemFrames(player, contentList, false);
+	}
+
+	public static void sendSpawnItemFrames(Player player, List<Content> contentList, boolean bypassChecks) {
 		for (Content content : contentList) {
 			if (!content.isItemFrame()) continue;
-			if (!canSee(player, content)) continue;
+			if (!bypassChecks) {
+				if (!canSee(player, content))
+					continue;
+			}
 
 			EntityItemFrame itemFrame = PacketUtils.spawnItemFrame(player, content.getLocation(), content.getBlockFace(),
 					content.getItemStack(), content.getRotation(), false, true);

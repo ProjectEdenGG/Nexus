@@ -14,6 +14,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishi
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
+import me.pugabyte.nexus.utils.Tasks;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,8 +26,8 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Bea
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.FISHERMAN2;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.JOSE;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.LUMBERJACK;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.MAYOR_PUGMAS;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.ORGANIZER;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.PUGMAS_MAYOR;
 
 @Data
 @Entity("bearfair21_user")
@@ -49,10 +50,11 @@ public class BearFair21User implements PlayerOwnedObject {
 			LUMBERJACK.getId(), // Side
 			FISHERMAN2.getId(), // Side
 			AXEL.getId(), // MGN
-			MAYOR_PUGMAS.getId(), // Pugmas
+			PUGMAS_MAYOR.getId(), // Pugmas
 			JOSE.getId() // HALLOWEEN
 			// SDU
 	));
+	private int activeTaskId = -1;
 
 	// Specific
 	QuestStage questStage_Main = QuestStage.NOT_STARTED;
@@ -67,6 +69,7 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	// Pugmas
 	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;
+	int presentNdx = 0;
 
 	// Halloween
 	QuestStage questStage_Halloween = QuestStage.NOT_STARTED;
@@ -83,4 +86,8 @@ public class BearFair21User implements PlayerOwnedObject {
 		return getMetNPCs().contains(npcId);
 	}
 
+	public void cancelActiveTask() {
+		Tasks.cancel(this.activeTaskId);
+		this.activeTaskId = -1;
+	}
 }
