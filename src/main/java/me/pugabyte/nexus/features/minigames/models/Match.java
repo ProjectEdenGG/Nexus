@@ -18,6 +18,7 @@ import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
+import me.pugabyte.nexus.features.minigames.models.annotations.TeamGlowing;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
@@ -43,12 +44,14 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,6 +66,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -72,24 +76,25 @@ public class Match implements ForwardingAudience {
 	@NonNull
 	private Arena arena;
 	@ToString.Exclude
-	private List<Minigamer> minigamers = new ArrayList<>();
+	private final List<Minigamer> minigamers = new ArrayList<>();
 	@ToString.Exclude
-	private List<Minigamer> allMinigamers = new ArrayList<>();
+	private final List<Minigamer> allMinigamers = new ArrayList<>();
 	private boolean initialized = false;
 	private boolean started = false;
 	private boolean begun = false;
 	private boolean ended = false;
-	private Map<Team, Integer> scores = new HashMap<>();
+	private final Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
 	private MinigameScoreboard.ITeams scoreboardTeams;
-	private ArrayList<Entity> entities = new ArrayList<>();
-	private ArrayList<Hologram> holograms = new ArrayList<>();
+	private final ArrayList<Entity> entities = new ArrayList<>();
+	private final ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
-	private Set<Location> usedSpawnpoints = new HashSet<>();
+	private final Set<Location> usedSpawnpoints = new HashSet<>();
 	@Nullable
 	private BossBar modifierBar;
+	private final Map<Team, Integer> glowUpdates = new HashMap<>();
 
 	public @Nullable Minigamer getMinigamer(@NotNull Player player) {
 		for (Minigamer minigamer : minigamers)
@@ -113,7 +118,7 @@ public class Match implements ForwardingAudience {
 	 */
 	public List<Team> getAliveTeams() {
 		// collects to a set first to remove duplicates
-		return new ArrayList<>(getAliveMinigamers().stream().map(Minigamer::getTeam).filter(Objects::nonNull).collect(Collectors.toSet()));
+		return getAliveMinigamers().stream().map(Minigamer::getTeam).filter(Objects::nonNull).distinct().collect(Collectors.toList());
 	}
 
 	public <T extends Arena> T getArena() {
@@ -141,7 +146,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		List<Class<?>> usesWorldEdit = Arrays.asList(UncivilEngineers.class);
+		List<Class<?>> usesWorldEdit = List.of(UncivilEngineers.class);
 		if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;
@@ -196,8 +201,9 @@ public class Match implements ForwardingAudience {
 		if (modifierBar != null) minigamer.getPlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
 		if (scoreboardTeams != null) scoreboardTeams.handleQuit(minigamer);
+		GlowAPI.setGlowing(getPlayers(), GlowAPI.Color.NONE, minigamer.getPlayer());
 
-		if (minigamers == null || minigamers.size() == 0)
+		if (minigamers.size() == 0)
 			end();
 	}
 
@@ -253,6 +259,9 @@ public class Match implements ForwardingAudience {
 
 		if (scoreboard != null) scoreboard.handleEnd();
 		if (scoreboardTeams != null) scoreboardTeams.handleEnd();
+
+		List<Player> players = getPlayers();
+		GlowAPI.setGlowing(players, GlowAPI.Color.NONE, players);
 
 		MatchManager.remove(this);
 	}
@@ -323,6 +332,21 @@ public class Match implements ForwardingAudience {
 	private void stopTimer() {
 		if (timer != null)
 			timer.stop();
+	}
+
+	public void handleGlow(Team team) {
+		if (team != null && getMechanic().getAnnotation(TeamGlowing.class) != null && !glowUpdates.containsKey(team)) {
+			AtomicInteger taskId = new AtomicInteger(-1);
+			taskId.set(tasks.wait(1, () -> {
+				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
+				List<Player> otherPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+				otherPlayers.removeAll(teamMembers);
+				GlowAPI.setGlowing(teamMembers, team.getColorType().getGlowColor(), teamMembers);
+				GlowAPI.setGlowing(otherPlayers, GlowAPI.Color.NONE, teamMembers);
+				glowUpdates.remove(team, taskId.get());
+			}));
+			glowUpdates.put(team, taskId.get());
+		}
 	}
 
 	private static List<EntityType> deletableTypes = Arrays.asList(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);

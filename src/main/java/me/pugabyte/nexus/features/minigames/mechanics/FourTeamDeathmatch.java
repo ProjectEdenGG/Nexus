@@ -1,10 +1,12 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import me.pugabyte.nexus.features.minigames.mechanics.common.DeathmatchMechanic;
+import me.pugabyte.nexus.features.minigames.models.annotations.TeamGlowing;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+@TeamGlowing
 public final class FourTeamDeathmatch extends DeathmatchMechanic {
 
 	@Override
