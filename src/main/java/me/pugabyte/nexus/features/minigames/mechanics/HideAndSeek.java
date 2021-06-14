@@ -22,10 +22,13 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -148,7 +151,7 @@ public class HideAndSeek extends Infection {
 				Map<Minigamer, Location> solidPlayers = matchData.getSolidPlayers();
 				int immobileTicks = minigamer.getImmobileTicks();
 				Material blockChoice = matchData.getBlockChoice(userId);
-				String blockName = camelCase(blockChoice);
+				Component blockName = Component.translatable(blockChoice.getTranslationKey());
 
 				// if player just moved, break their disguise
 				if (immobileTicks < SOLIDIFY_PLAYER_AT && solidPlayers.containsKey(minigamer)) {
@@ -163,7 +166,7 @@ public class HideAndSeek extends Infection {
 
 				// check how long they've been still
 				if (immobileTicks < Time.SECOND.x(2)) {
-					sendBarWithTimer(minigamer, "&bYou are currently partially disguised as a " + blockName);
+					sendBarWithTimer(minigamer, new JsonBuilder("&bYou are currently partially disguised as a ").next(blockName));
 				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification
 					int seconds = (int) Math.ceil((SOLIDIFY_PLAYER_AT - immobileTicks) / 20d);
@@ -206,14 +209,15 @@ public class HideAndSeek extends Infection {
 			if (block == null) return;
 			Material type = block.getType();
 			if (MaterialTag.ALL_AIR.isTagged(type)) return;
+			Component name = Component.translatable(type.getTranslationKey());
 
 			// this will create some grammatically weird messages ("Oak Planks is a possible hider")
 			// idk what to do about that though
-			String message;
+			JsonBuilder message = new JsonBuilder();
 			if (matchData.getMapMaterials().contains(type))
-				message = "&a" + camelCase(type) + " is a possible hider";
+				message.color(NamedTextColor.GREEN).next(name).next(" is a possible hider");
 			else
-				message = "&c" + camelCase(type) + " is not a possible hider";
+				message.color(NamedTextColor.RED).next(name).next(" is not a possible hider");
 			sendBarWithTimer(minigamer, message);
 		}));
 		match.getTasks().register(hunterTaskId);
@@ -225,11 +229,11 @@ public class HideAndSeek extends Infection {
 		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
 
 		// todo: use a localization string for proper block name
-		String message = "&aYou are currently fully disguised as a " + camelCase(blockChoice);
+		JsonBuilder message = new JsonBuilder("&aYou are currently fully disguised as a ").next(Component.translatable(blockChoice.getTranslationKey()));
 		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId())) {
 			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
 			if (!MaterialTag.ALL_AIR.isTagged(minigamer.getPlayer().getInventory().getItemInMainHand().getType()))
-				message = "&cWarning: Your weapon is visible!";
+				message = new JsonBuilder("&cWarning: Your weapon is visible!");
 		}
 		sendBarWithTimer(minigamer, message);
 	}
@@ -360,7 +364,7 @@ public class HideAndSeek extends Infection {
 				clickableItems.add(ClickableItem.from(itemStack, e -> {
 					matchData.getBlockChoices().put(player.getUniqueId(), material);
 					player.closeInventory();
-					PlayerUtils.send(player, "&3You have selected "+camelCase(material));
+					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey())));
 				}));
 			});
 			addPagination(player, contents, clickableItems);

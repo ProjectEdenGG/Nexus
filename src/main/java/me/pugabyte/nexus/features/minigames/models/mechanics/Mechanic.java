@@ -18,12 +18,14 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
 import me.pugabyte.nexus.framework.interfaces.HasDescription;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TitleUtils;
@@ -373,12 +375,18 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		match.end();
 	}
 
-	public void sendBarWithTimer(Minigamer minigamer, String message) {
+	public static void sendBarWithTimer(Minigamer minigamer, String message) {
 		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.of(minigamer.getMatch().getTimer().getTime()).format() + ")");
+	}
+
+	public static void sendBarWithTimer(Minigamer minigamer, ComponentLike message) {
+		minigamer.sendActionBar(new JsonBuilder(Timespan.of(minigamer.getMatch().getTimer().getTime()).format()).next(" | ").next(message));
 	}
 
 	public boolean showTeamOnDeath() {
 		return true;
 	}
+
+	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {}
 
 }

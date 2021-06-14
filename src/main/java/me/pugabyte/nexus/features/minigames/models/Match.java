@@ -25,6 +25,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
@@ -32,7 +33,6 @@ import me.pugabyte.nexus.features.minigames.models.modifiers.MinigameModifier;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BossBarBuilder;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
@@ -42,6 +42,7 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -481,7 +482,11 @@ public class Match implements ForwardingAudience {
 							broadcastTimeLeft();
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
-						match.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, Timespan.of(time).format(), 2, false));
+						match.getMinigamers().forEach(player -> {
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.of(time).format()));
+							if (event.callEvent())
+								player.sendActionBar(event.getContents());
+						});
 						MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
 						event.callEvent();
 					} else {

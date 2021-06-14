@@ -2,7 +2,10 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 
 import me.pugabyte.nexus.features.minigames.models.annotations.Railgun;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -32,4 +35,11 @@ public class Quake extends TeamlessMechanic {
 		super.onDeath(event);
 	}
 
+	@Override
+	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
+		event.setContents(new JsonBuilder(event.getContents())
+				.next(" | Use ")
+				.next(Component.keybind("key.use"))
+				.next(" to shoot"));
+	}
 }

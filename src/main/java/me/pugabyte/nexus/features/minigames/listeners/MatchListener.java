@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
@@ -384,5 +385,10 @@ public class MatchListener implements Listener {
 	@EventHandler
 	public void onLoadout(MinigamerLoadoutEvent event) {
 		Minigames.getModifier().afterLoadout(event.getMinigamer());
+	}
+
+	@EventHandler
+	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
+		event.getMatch().getMechanic().onDisplayTimer(event);
 	}
 }
