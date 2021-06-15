@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MerchantBuilder.TradeBuilder;
@@ -10,8 +11,6 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -144,15 +143,9 @@ public class Collector {
 		currentLoc = LocationUtils.getCenteredLocation(newLoc);
 		Location oldLoc = npc.getStoredLocation();
 
-		oldLoc.getWorld().playSound(oldLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
-		oldLoc.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, oldLoc, 500, 0.5, 1, 0.5, 0);
-		oldLoc.getWorld().spawnParticle(Particle.FLASH, oldLoc, 10, 0, 0, 0);
-
+		Quests.poof(oldLoc);
 		npc.teleport(currentLoc, TeleportCause.PLUGIN);
-
-		currentLoc.getWorld().playSound(currentLoc, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
-		currentLoc.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, currentLoc, 500, 0.5, 1, 0.5, 0);
-		currentLoc.getWorld().spawnParticle(Particle.FLASH, currentLoc, 10, 0, 0, 0);
+		Quests.poof(currentLoc);
 
 		newTrades();
 	}

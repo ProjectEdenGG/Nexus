@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
@@ -27,7 +28,9 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -69,6 +72,7 @@ public class Quests implements Listener {
 	public static void startup() {
 		Collector.startup();
 		ClientsideContentManager.startup();
+		PugmasIsland.startup();
 	}
 
 	public static void shutdown() {
@@ -183,6 +187,18 @@ public class Quests implements Listener {
 
 	public static void sound_npcAlert(Player player) {
 		SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5F, 1F);
+	}
+
+	public static void poof(Location location) {
+		location.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, 500, 0.5, 1, 0.5, 0);
+		location.getWorld().spawnParticle(Particle.FLASH, location, 10, 0, 0, 0);
+	}
+
+	public static void giveKey(BearFair21User user) {
+		Quests.sound_completeQuest(user.getPlayer());
+		giveItem(user, crateKey.clone());
+		user.sendMessage("TODO BF21: deliver actual key");
 	}
 
 	@EventHandler

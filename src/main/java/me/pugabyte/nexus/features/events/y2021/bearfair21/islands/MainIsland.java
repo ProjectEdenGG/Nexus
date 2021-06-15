@@ -338,7 +338,7 @@ public class MainIsland implements Listener, BearFair21Island {
 						}
 						case STEP_SIX -> {
 							script.add("You're a life saver, thank you! And as a token of my gratitude, have this...");
-							Tasks.wait(40, () -> Quests.giveItem(user, Quests.getCrateKey()));
+							Tasks.wait(40, () -> Quests.giveKey(user));
 
 							user.setQuestStage_Main(QuestStage.COMPLETE);
 							userService.save(user);

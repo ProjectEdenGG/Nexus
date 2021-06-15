@@ -90,6 +90,9 @@ public class Talker {
 				if (line.contains("<self> ")) {
 					npcName = "&b&lYOU&f";
 					line = line.replaceAll("<self> ", "");
+				} else if (line.contains("<name:")) {
+					npcName = line.substring(line.indexOf("<"), line.indexOf(">")).replaceAll("(<name:)|(>)", "");
+					line = line.replaceAll("<name:.*>", "");
 				} else
 					npcName = talker.getName();
 				String message = "&3" + npcName + " &7> &f" + line;

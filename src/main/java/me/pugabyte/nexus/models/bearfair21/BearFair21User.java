@@ -69,6 +69,7 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	// Pugmas
 	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;
+	boolean pugmasCompleted = false;
 	int presentNdx = 0;
 
 	// Halloween

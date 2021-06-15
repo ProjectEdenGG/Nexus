@@ -68,6 +68,7 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 				switch(user.getQuestStage_MGN()) {
 					case NOT_STARTED -> {
 						int wait = 0;
+						// TODO BF21: Fix waits, this will not work how i thought it would
 						script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! ...Hold up, <player>? Is that you?");
 						script.add("wait " + (wait += 80));
 						script.add("<self> Hey, Axel!");

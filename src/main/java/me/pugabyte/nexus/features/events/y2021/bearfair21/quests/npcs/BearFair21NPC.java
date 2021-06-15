@@ -49,6 +49,7 @@ public enum BearFair21NPC {
 	// PUGMAS
 	PUGMAS_MAYOR("Mayor", 4130),
 	GRINCH("Grinch", 4129),
+	GRINCH_1("Grinch", 4168),
 	PUGMAS_VILLAGER_1("Villager", 4142),
 	PUGMAS_VILLAGER_2("Villager", 4143),
 	PUGMAS_VILLAGER_3("Villager", 4144),
