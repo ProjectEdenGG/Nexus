@@ -14,8 +14,10 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -63,7 +65,7 @@ public class TrophyHolder implements PlayerOwnedObject {
 		if (!hasEarned(trophy))
 			throw new InvalidInputException("You have not earned that trophy");
 
-		PlayerUtils.giveItem(getOnlinePlayer(), trophy.getItem().build());
+		PlayerUtils.giveItemsAndMailExcess(this, Collections.singleton(trophy.getItem().build()), trophy.toString(), WorldGroup.SURVIVAL);
 		claimed.add(trophy);
 		return true;
 	}
