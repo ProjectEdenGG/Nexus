@@ -48,7 +48,6 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
-// TODO BF21: Testing
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
 public class PugmasIsland implements Listener, BearFair21Island {
