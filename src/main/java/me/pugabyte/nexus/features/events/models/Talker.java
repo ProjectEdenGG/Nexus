@@ -1,5 +1,8 @@
 package me.pugabyte.nexus.features.events.models;
 
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
+import me.pugabyte.nexus.models.chat.ChatService;
+import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -9,7 +12,9 @@ import org.bukkit.entity.Player;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class Talker {
 	/**
@@ -65,11 +70,20 @@ public class Talker {
 	 * @return CompletableFuture
 	 */
 	public static CompletableFuture<Boolean> runScript(Player player, TalkingNPC talker, List<String> script) {
+		AtomicBoolean leftGlobal = new AtomicBoolean(false);
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		if (script == null || script.isEmpty()) {
 			future.complete(true);
 			return future;
 		}
+
+		final Chatter chatter = new ChatService().get(player);
+		Consumer<Boolean> complete = bool -> {
+			if (leftGlobal.get())
+				chatter.join(StaticChannel.GLOBAL.getChannel());
+
+			future.complete(bool);
+		};
 
 		final String playerName = Nickname.of(player);
 		AtomicInteger wait = new AtomicInteger(0);
@@ -78,12 +92,17 @@ public class Talker {
 		while (iterator.hasNext()) {
 			String line = iterator.next();
 			if (line.toLowerCase().contains("<exit>")) {
-				Tasks.wait(wait.get(), () -> future.complete(false));
+				Tasks.wait(wait.get(), () -> complete.accept(false));
 			} else if (line.toLowerCase().matches("^wait \\d+$")) {
 				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 				if (!iterator.hasNext())
-					Tasks.wait(wait.get(), () -> future.complete(true));
+					Tasks.wait(wait.get(), () -> complete.accept(true));
 			} else {
+				if (!leftGlobal.get()) {
+					chatter.leave(StaticChannel.GLOBAL.getChannel());
+					leftGlobal.set(true);
+				}
+
 				line = line.replaceAll("<player>", playerName);
 				final String npcName;
 
@@ -103,7 +122,7 @@ public class Talker {
 				});
 
 				if (!iterator.hasNext())
-					Tasks.wait(wait.get(), () -> future.complete(true));
+					Tasks.wait(wait.get(), () -> complete.accept(true));
 			}
 		}
 
