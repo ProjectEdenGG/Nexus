@@ -68,39 +68,43 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 				switch(user.getQuestStage_MGN()) {
 					case NOT_STARTED -> {
 						int wait = 0;
-						// TODO BF21: Fix waits, this will not work how i thought it would
 						script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! ...Hold up, <player>? Is that you?");
-						script.add("wait " + (wait += 80));
+						script.add("wait 80");
 						script.add("<self> Hey, Axel!");
-						script.add("wait " + (wait += 40));
+						script.add("wait 40");
 						script.add("Yooo how ya been dude? It'd be hard to forget the hero who saved last year's arcade tourney! Thanks again for that.");
-						script.add("wait " + (wait += 80));
+						script.add("wait 80");
 						script.add("<self> Always glad to help out where I can!");
-						script.add("wait " + (wait += 40));
+						script.add("wait 40");
 						script.add("Broo, its hard to find people as dope as you these days.");
-						script.add("wait " + (wait += 40));
+						script.add("wait 40");
+						wait += (80 + 40 + 80 + 40 + 40);
 						script.add("<self> Aw, thanks! So how're things at GG?");
-						script.add("wait " + (wait += 40));
+						script.add("wait 40");
 						script.add("Pretty stressful, not gonna lie. Lots of good business, but its hard to keep up with it all, being self employed, especially during Bear Fair.");
-						script.add("wait " + (wait += 100));
+						script.add("wait 100");
 						script.add("Just barely found a few moments to come out here and help the bros get set up for our Bear Fair Band-sesh' tonight.");
-						script.add("wait " + (wait += 100));
+						script.add("wait 100");
 						script.add("<self> Anything I can do to help?");
-						script.add("wait " + (wait += 40));
+						script.add("wait 40");
+						wait += (40 + 100 + 100 + 40);
 						script.add("Nah I couldn't keep you from the bear fair celebration...");
-						script.add("wait " + (wait += 50));
+						script.add("wait 50");
 						script.add("<self> No really, I wouldn't mind.");
-						script.add("wait " + (wait += 40));
+						script.add("wait 40");
 						script.add("Really? Well if you're sure, we all could actually use more practice... Would you mind running the store for me?");
-						script.add("wait " + (wait += 80));
+						script.add("wait 80");
 						script.add("Just till we close tonight; and I'll totally pay you. In fact, here...");
-						script.add("wait " + (wait += 60));
+						script.add("wait 60");
+						wait += (50 + 40 + 80 + 60);
 						Tasks.wait(wait, () -> Quests.giveItem(user, hat));
+
 						script.add("You're an official employee of GG! With your tech skills, it'll be a breeze.");
 						script.add("wait 60");
 						script.add("<self> I got you bro, practice all you need. I wanna hear an awesome song when I get back!");
 						script.add("wait 60");
 						script.add("Duude, you're a lifesaver!");
+						wait += (60 + 60);
 
 						user.setQuestStage_MGN(QuestStage.STARTED);
 						userService.save(user);

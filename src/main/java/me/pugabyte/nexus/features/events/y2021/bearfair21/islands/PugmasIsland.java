@@ -14,6 +14,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talke
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import me.pugabyte.nexus.features.regionapi.events.common.EnteringRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
@@ -25,6 +26,7 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
+import me.pugabyte.nexus.utils.TitleUtils;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import org.bukkit.Location;
@@ -46,13 +48,12 @@ import java.util.UUID;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
-// TODO BF21: Dialog + Quest
+// TODO BF21: Testing
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
 public class PugmasIsland implements Listener, BearFair21Island {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
 	private static final ClientsideContent contentList = contentService.get0();
-
 	private static final BearFair21UserService userService = new BearFair21UserService();
 	private static final List<Location> contentIndex = Arrays.asList(loc(-45, 143, -325), loc(-49, 139, -300),
 			loc(-76, 138, -305), loc(-101, 139, -290), loc(-111, 142, -321), loc(-104, 154, -350),
@@ -60,19 +61,16 @@ public class PugmasIsland implements Listener, BearFair21Island {
 			loc(-40, 153, -353), loc(-59, 166, -374), loc(-78, 174, -384), loc(-106, 174, -381),
 			loc(-67, 139, -308)
 	);
-
 	private static final Location endLocation = new Location(BearFair21.getWorld(), -72.5, 138, -306.5, -26, 0);
-
 	private static final List<String> scaredVillager = Arrays.asList("Is he s-still here?", "Be careful.", "*shaking*", "I-I bet the M-mayor has e-everything under cont-t-trol...",
 			"That Grinch doesn't have any other way to spend his time? Ugh!", "He's so mean!", "Maybe the Mayor could use your help...",
 			"The Grinch stole everything! ...Again!", "I can't believe it!");
-
 	private static final List<String> thankfulVillager = Arrays.asList("Woo!", "Thank you <player>!", "Thank you so much!",
 			"I'm never letting my bike out of my sight ever again!", "I knew you could do it!", "Come back any time!", "Nice!",
 			"My new phone barely has a scratch on it thanks to you!", "Yay! My socks are back!",
 			"I'm so happy the Grinch didn't know I got my puppy for Christmas...");
-
 	private static final List<UUID> usingGrinch = new ArrayList<>();
+	private static final String grinchCaveRegion = "bearfair21_pugmas_grinchcave";
 
 	public PugmasIsland() {
 		Nexus.registerListener(this);
@@ -206,29 +204,31 @@ public class PugmasIsland implements Listener, BearFair21Island {
 					case NOT_STARTED, STARTED -> {
 						script.add("Thank goodness you're here <player>! That darn Grinch has done it again!");
 						script.add("wait 80");
-						script.add("Citizens have told me that he's stolen their gifts from *last Christmas*... Can you believe that?!");
-						script.add("wait 80");
+						script.add("The citizens have told me that he's stolen their gifts from *last Christmas*... Can you believe that?!");
+						script.add("wait 100");
 						script.add("I've never come across anyone with pride that fragile!");
 						script.add("wait 80");
 						script.add("<self> That's terrible!");
-						script.add("wait 40");
+						script.add("wait 50");
 						script.add("I know! There were so many presents too... My townsfolk are beside themselves...");
 						script.add("wait 80");
-						script.add("Is there anything I can do to help? Do you know where the Grinch may have gone?");
+						script.add("<self> Is there anything I can do to help? Do you know where the Grinch may have gone?");
 						script.add("wait 80");
 						script.add("There might be something you could do for us... although it'll be hard to negotiate with him...");
-						script.add("wait 80");
-						script.add("Citizens have insisted that the sheer weight of the presents he took was enough to cause his escape rocket to go haywire!");
+						script.add("wait 90");
+						script.add("The citizens have insisted that the sheer weight of the presents he took was enough to cause his escape rocket to go haywire!");
 						script.add("wait 100");
-						script.add("So he's sought refuge in the cave beneath us while he attempts to fix it, perhaps.");
+						script.add("So he sought refuge in the cave beneath us while he attempts to fix it, perhaps.");
 						script.add("wait 80");
 						script.add("We are all too shaken to even think about confronting him ourselves. Who knows what he might do!");
-						script.add("wait 80");
-						script.add("Would you be able to venture down there and talk to him?  The entrance to the cave to the east of the island.");
+						script.add("wait 90");
+						script.add("Would you be able to venture down there and talk to him?  The entrance to the cave is to the east of the island.");
 						script.add("wait 100");
 						script.add("Please be careful! As you may know, he's quite... temperamental.");
-						script.add("wait 60");
+						script.add("wait 80");
 						script.add("We can't waste any time <player>. I couldn't bear the thought of having another year ruined by that goof!");
+						script.add("wait 80");
+						script.add("<self> Leave it to me!");
 
 						user.setQuestStage_Pugmas(QuestStage.STARTED);
 						userService.save(user);
@@ -236,12 +236,12 @@ public class PugmasIsland implements Listener, BearFair21Island {
 					}
 
 					case COMPLETE -> {
-						script.add("TODO - Thanks!");
+						script.add("Thank you again <player>! Good luck on your adventures!");
 						return script;
 					}
 				}
 
-				script.add("TODO - Hello");
+				script.add("Hello!");
 				return script;
 			}
 		},
@@ -254,27 +254,27 @@ public class PugmasIsland implements Listener, BearFair21Island {
 					case STARTED -> {
 						int wait = 0;
 						script.add("Agh! Gosh darn it, blasted thing! I never should have- WHO GOES THERE?");
-						script.add("wait 60");
+						script.add("wait 100");
 						script.add("You dare to enter my cave unannounced! WHO DO YOU THINK YOU ARE?!");
-						script.add("wait 60");
+						script.add("wait 100");
 						script.add("<self> I'm <player> and this isn't your cave!");
-						script.add("wait 60");
+						script.add("wait 100");
 						script.add("Pshh! frivolous details...");
-						script.add("wait 20");
-						script.add("I wouldn't even be in this position if the Present Pincher 3000 hadn't malfunctioned!");
-						script.add("wait 80");
-						script.add("And I was so sure it was going to work this time... *sigh*");
 						script.add("wait 60");
-						wait += (60 + 60 + 60 + 20 + 80 + 60);
+						script.add("I wouldn't even be in this position if the Present Pincher 3000 hadn't malfunctioned!");
+						script.add("wait 100");
+						script.add("And I was so sure it was going to work this time... *sigh*");
+						script.add("wait 100");
+						wait += (100 + 100 + 100 + 60 + 100 + 100);
 						script.add("<self> How dare you try and steal from these kind citizens! What have they ever done to you?! " +
 								"You'll never get away with this...");
-						script.add("wait 120");
+						script.add("wait 140");
 						script.add("Oh boo hoo! You're already too late! I have devised an ingenious plan that is completely fool-proof " +
 								"and has no flaws what-so-ever!");
-						script.add("wait 120");
+						script.add("wait 140");
 						script.add("My make-shift Present Pincher 4000 will NEVER let me down! MUAHAHAHA!");
-						script.add("wait 80");
-						wait += (120 + 120 + 80);
+						script.add("wait 100");
+						wait += (140 + 140 + 100);
 
 						// Rocket rumbling sound
 						Tasks.wait(wait, () -> SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_MINECART_RIDING, 1F, 0.1F));
@@ -303,37 +303,39 @@ public class PugmasIsland implements Listener, BearFair21Island {
 						script.add("wait 20");
 						script.add("... oh no");
 						script.add("wait 60");
+						wait += (20 + 60);
 
 						//
 						script.add("<self> .... Soooo... how about that flawless plan hm?");
-						script.add("wait 60");
-						script.add("<self> There's no way you'll be able to steal those presents now.");
-						script.add("wait 60");
-						script.add("<self> I bet you'll still be stuck down here by the time I'm finished collecting them all! haha!");
 						script.add("wait 80");
+						script.add("<self> There's no way you'll be able to steal those presents now.");
+						script.add("wait 80");
+						script.add("<self> I bet you'll still be stuck down here by the time I'm finished collecting them all! haha!");
+						script.add("wait 100");
 						script.add("Alright then, TWERP! I'll take you up on that!");
-						script.add("wait 40");
-						script.add("<self> No wait, I wasn't serious-");
-						script.add("wait 20");
-						wait += (20 + 60 + 60 + 60 + 80 + 40 + 20);
-						script.add("You have &l4 MINUTES&f to pick up ALL &o15&f presents in the town.");
-						script.add("wait 100");
-						script.add("HOWEVER, Whichever ones you miss, I'LL STEAL FOR MYSELF!");
-						script.add("wait 100");
-						script.add("<self> I guess I don't have too much of a choice, do I?");
 						script.add("wait 60");
+						script.add("<self> No wait, I wasn't serious-");
+						script.add("wait 60");
+						script.add("You have &l4 MINUTES&f to pick up ALL &o15&f presents in the town.");
+						script.add("wait 80");
+						script.add("HOWEVER, Whichever ones you miss, I'LL STEAL FOR MYSELF!");
+						script.add("wait 80");
+						script.add("<self> I guess I don't have too much of a choice, do I?");
+						script.add("wait 100");
 						script.add("Nope! Absolutely Not!");
+						script.add("wait 60");
+						script.add("I'll start my timer once you leave my cave!");
 						script.add("wait 40");
-						script.add("Get ready!");
-						script.add("wait 20");
-						script.add("&lGo!");
-						script.add("wait 20");
-						wait += (100 + 100 + 60 + 40 + 20 + 20);
+						wait += (80 + 80 + 100 + 60 + 60 + 80 + 80 + 100 + 60 + 40);
 
 						user.setQuestStage_Pugmas(QuestStage.STEP_ONE);
 						userService.save(user);
 
-						Tasks.wait(wait, () -> startChallenge(user));
+						Tasks.wait(wait, () -> {
+							user.setQuestStage_Pugmas(QuestStage.STEP_TWO);
+							userService.save(user);
+						});
+
 						return script;
 					}
 
@@ -389,7 +391,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 					}
 				}
 
-				script.add("TODO - What do YOU want");
+				script.add("What do YOU want");
 				return script;
 			}
 		},
@@ -432,6 +434,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 	}
 
 	private static void startChallenge(BearFair21User user) {
+		TitleUtils.sendSubtitle(user.getPlayer(), "&cGo!");
 		if (user.getActiveTaskId() != -1) {
 			user.sendMessage("Error: You have an active task running");
 			user.setQuestStage_Pugmas(QuestStage.STARTED);
@@ -441,7 +444,8 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 		Countdown countdown = Countdown.builder()
 				.duration(Time.MINUTE.x(4))
-				.onSecond(i -> ActionBarUtils.sendActionBar(user.getPlayer(), "&3Time Left: &7" + Timespan.of(i).format()))
+				.onSecond(i -> ActionBarUtils.sendActionBar(user.getPlayer(),
+						"&3Time Left: &e" + Timespan.of(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)"))
 				.onComplete(() -> endChallenge(user, false))
 				.start();
 
@@ -518,7 +522,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 		if (BlockUtils.isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
-		if (user.getQuestStage_Pugmas() != QuestStage.STEP_ONE) return;
+		if (user.getQuestStage_Pugmas() != QuestStage.STEP_TWO) return;
 
 		event.setCancelled(true);
 
@@ -567,5 +571,19 @@ public class PugmasIsland implements Listener, BearFair21Island {
 		ClientsideContentManager.sendRemoveContent(user.getOnlinePlayer(), Collections.singletonList(content));
 		ClientsideContentManager.sendRemoveEntityFrom(user.getOnlinePlayer(),
 				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityTypes.ARMOR_STAND);
+	}
+
+	@EventHandler
+	public void onRegionEnter(EnteringRegionEvent event) {
+		if (!event.getRegion().getId().equalsIgnoreCase(grinchCaveRegion)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+
+		BearFair21User user = userService.get(player);
+		QuestStage questStage = user.getQuestStage_Pugmas();
+
+		if (questStage == QuestStage.STEP_ONE)
+			event.setCancelled(true);
+		else if (questStage == QuestStage.STEP_TWO)
+			startChallenge(user);
 	}
 }

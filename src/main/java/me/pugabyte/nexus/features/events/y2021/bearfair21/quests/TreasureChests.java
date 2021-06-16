@@ -11,6 +11,7 @@ public class TreasureChests {
 			-163, 110, -188 	- volcano in mgn island
 			-66, 150, -88		- ceiling of wood mill
 			-78, 195, -53		- in the hot air balloon, nearest the observatory
+			-67, 129, -344		- pugmas island, grinch cave
 
 	 */
 }
