@@ -20,6 +20,7 @@ import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -36,6 +37,7 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -48,14 +50,23 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -325,10 +336,40 @@ public class Misc implements Listener {
 		}
 	}
 
+	public static class LivingEntityDamageByPlayerEvent extends EntityEvent {
+		@NonNull
+		@Getter
+		final LivingEntity entity;
+		@NonNull
+		@Getter
+		final Player attacker;
+		@NonNull
+		@Getter
+		final EntityDamageByEntityEvent originalEvent;
+
+		@SneakyThrows
+		public LivingEntityDamageByPlayerEvent(@NotNull LivingEntity victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
+			super(victim);
+			this.entity = victim;
+			this.attacker = attacker;
+			this.originalEvent = event;
+		}
+
+		private static final HandlerList handlers = new HandlerList();
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		@NotNull
+		@Override
+		public HandlerList getHandlers() {
+			return handlers;
+		}
+	}
+
 	@EventHandler
 	public void onPlayerDamage(EntityDamageByEntityEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
-
 		Player attacker = null;
 		if (event.getDamager() instanceof Player) {
 			attacker = (Player) event.getDamager();
@@ -337,10 +378,13 @@ public class Misc implements Listener {
 				attacker = (Player) projectile.getShooter();
 		}
 
-		if (attacker == null) return;
+		if (attacker == null)
+			return;
 
-		PlayerDamageByPlayerEvent newEvent = new PlayerDamageByPlayerEvent((Player) event.getEntity(), attacker, event);
-		newEvent.callEvent();
+		if (event.getEntity() instanceof Player player)
+			new PlayerDamageByPlayerEvent(player, attacker, event).callEvent();
+		else if (event.getEntity() instanceof LivingEntity livingEntity)
+			new LivingEntityDamageByPlayerEvent(livingEntity, attacker, event).callEvent();
 	}
 
 	// ImageOnMap rotating frames on placement; rotate back one before placement to offset
@@ -368,6 +412,96 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
+	}
+
+	@Getter
+	public class FixedCraftItemEvent extends CraftItemEvent {
+		private final ItemStack resultItemStack;
+
+		public FixedCraftItemEvent(@NotNull ItemStack resultItemStack, @NotNull Recipe recipe, @NotNull InventoryView what, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action) {
+			super(recipe, what, type, slot, click, action);
+			this.resultItemStack = resultItemStack;
+		}
+
+		public FixedCraftItemEvent(@NotNull ItemStack resultItemStack, @NotNull Recipe recipe, @NotNull InventoryView what, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action, int key) {
+			super(recipe, what, type, slot, click, action, key);
+			this.resultItemStack = resultItemStack;
+		}
+	}
+
+
+	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
+	@EventHandler
+	public void onCraft(CraftItemEvent event) {
+		if (event instanceof FixedCraftItemEvent) return;
+
+		ItemStack item = event.getRecipe().getResult().clone();
+		ClickType click = event.getClick();
+
+		int recipeAmount = item.getAmount();
+
+		switch (click) {
+			case NUMBER_KEY:
+				if (event.getWhoClicked().getInventory().getItem(event.getHotbarButton()) != null)
+					recipeAmount = 0;
+				break;
+
+			case DROP:
+			case CONTROL_DROP:
+				ItemStack cursor = event.getCursor();
+				if (!ItemUtils.isNullOrAir(cursor))
+					recipeAmount = 0;
+				break;
+
+			case SHIFT_RIGHT:
+			case SHIFT_LEFT:
+				if (recipeAmount == 0)
+					break;
+
+				int maxCraftable = getMaxCraftAmount(event.getInventory());
+				int capacity = fits(item, event.getView().getBottomInventory());
+
+				if (capacity < maxCraftable)
+					maxCraftable = ((capacity + recipeAmount - 1) / recipeAmount) * recipeAmount;
+
+				recipeAmount = maxCraftable;
+				break;
+			default:
+		}
+
+		if (recipeAmount == 0)
+			return;
+
+		item.setAmount(recipeAmount);
+
+		new FixedCraftItemEvent(item, event.getRecipe(), event.getView(), event.getSlotType(), event.getSlot(), event.getClick(), event.getAction(), event.getHotbarButton()).callEvent();
+	}
+
+	public static int getMaxCraftAmount(CraftingInventory inv) {
+		if (inv.getResult() == null)
+			return 0;
+
+		int resultCount = inv.getResult().getAmount();
+		int materialCount = Integer.MAX_VALUE;
+
+		for (ItemStack item : inv.getMatrix())
+			if (item.getAmount() < materialCount)
+				materialCount = item.getAmount();
+
+		return resultCount * materialCount;
+	}
+
+	public static int fits(ItemStack stack, Inventory inv) {
+		ItemStack[] contents = inv.getContents();
+		int result = 0;
+
+		for (ItemStack item : contents)
+			if (item == null)
+				result += stack.getMaxStackSize();
+			else if (item.isSimilar(stack))
+				result += Math.max(stack.getMaxStackSize() - item.getAmount(), 0);
+
+		return result;
 	}
 
 }

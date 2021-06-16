@@ -5,7 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import lombok.Getter;
 import me.lexikiq.HasPlayer;
-import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;

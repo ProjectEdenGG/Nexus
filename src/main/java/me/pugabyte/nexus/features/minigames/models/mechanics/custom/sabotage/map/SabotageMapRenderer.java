@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.models.sabotage.map;
+package me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.map;
 
 import me.pugabyte.nexus.features.minigames.models.arenas.SabotageArena;
 import me.pugabyte.nexus.utils.Tasks;

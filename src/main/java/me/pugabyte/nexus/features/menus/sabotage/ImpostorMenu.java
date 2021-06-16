@@ -11,7 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.SabotageArena;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
-import me.pugabyte.nexus.features.minigames.models.sabotage.Tasks;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import org.bukkit.Material;

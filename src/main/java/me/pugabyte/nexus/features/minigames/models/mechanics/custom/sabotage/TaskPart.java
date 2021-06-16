@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.models.sabotage;
+package me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +10,9 @@ import me.pugabyte.nexus.features.menus.sabotage.tasks.LightsTask;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.MedicalScanTask;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.ReactorTask;
 import me.pugabyte.nexus.features.menus.sabotage.tasks.SwipeCardTask;
-import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.LightsTaskPartData;
-import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.ReactorTaskPartData;
-import me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata.TaskPartData;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.LightsTaskPartData;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.ReactorTaskPartData;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.TaskPartData;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

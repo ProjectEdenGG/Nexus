@@ -20,11 +20,11 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerCompleteTaskPartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
-import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
-import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageTeam;
-import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;

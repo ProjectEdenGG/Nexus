@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.models.sabotage.map;
+package me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.map;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;

@@ -1,7 +1,7 @@
-package me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata;
+package me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata;
 
 import lombok.Getter;
-import me.pugabyte.nexus.features.minigames.models.sabotage.TaskPart;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
 
 public class LightsTaskPartData extends SabotageTaskPartData {
 	@Getter

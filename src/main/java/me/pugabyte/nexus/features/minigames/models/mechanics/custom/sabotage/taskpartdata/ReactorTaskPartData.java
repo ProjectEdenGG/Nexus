@@ -1,9 +1,9 @@
-package me.pugabyte.nexus.features.minigames.models.sabotage.taskpartdata;
+package me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata;
 
 import me.pugabyte.nexus.features.menus.sabotage.tasks.ReactorTask;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
-import me.pugabyte.nexus.features.minigames.models.sabotage.TaskPart;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
 import org.bukkit.entity.Player;
 
 import java.util.List;

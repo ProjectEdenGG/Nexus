@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.minigames.models.arenas;
 import lombok.Data;
 import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.models.Arena;
-import me.pugabyte.nexus.features.minigames.models.sabotage.Tasks;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.HashSet;

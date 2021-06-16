@@ -6,7 +6,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.SlotPos;
 import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
-import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import org.bukkit.Material;

@@ -9,14 +9,16 @@ import lombok.NonNull;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.mechanics.Bingo;
-import me.pugabyte.nexus.features.minigames.mechanics.Bingo.Challenge;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -78,7 +80,14 @@ public class BingoCommand extends CustomCommand {
 
 			for (Challenge[] array : matchData.getChallenges()) {
 				for (Challenge challenge : array) {
-					contents.set(row, column, ClickableItem.empty(nameItem(Material.STONE, EnumUtils.prettyName(challenge.name()))));
+					final ItemBuilder builder = new ItemBuilder(Material.STONE).name(EnumUtils.prettyName(challenge.name()));
+					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge.getChallenge().getProgressClass());
+					if (progress.isCompleted(challenge.getChallenge())) {
+						builder.glow();
+						builder.lore("&aCompleted");
+					}
+
+					contents.set(row, column, ClickableItem.empty(builder.build()));
 					++column;
 				}
 

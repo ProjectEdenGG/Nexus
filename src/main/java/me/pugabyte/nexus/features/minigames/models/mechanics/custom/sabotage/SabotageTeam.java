@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.models.sabotage;
+package me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.arenas.SabotageArena;
-import me.pugabyte.nexus.features.minigames.models.sabotage.Tasks;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

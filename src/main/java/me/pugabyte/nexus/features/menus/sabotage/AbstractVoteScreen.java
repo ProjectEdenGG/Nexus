@@ -9,7 +9,7 @@ import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.matchdata.SabotageMatchData;
-import me.pugabyte.nexus.features.minigames.models.sabotage.SabotageColor;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.TextComponent;

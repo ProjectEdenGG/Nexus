@@ -5,7 +5,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.menus.MenuUtils;
-import me.pugabyte.nexus.features.minigames.models.sabotage.Task;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
