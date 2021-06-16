@@ -6,4 +6,25 @@ public interface IChallenge {
 
 	Class<? extends IChallengeProgress> getProgressClass();
 
+	// Breaking
+	// Placing
+	// Crafting
+	// Enchanting
+	// Brewing
+	// Cooking
+	// Obtaining
+	// Killing
+	// Eating
+	// Biome
+	// Distance
+	// Breeding
+	// Taming
+	// Advancement
+
+	// Villager trade
+	// Piglin trade
+	// Exp level
+	// Spawning
+	//
+
 }

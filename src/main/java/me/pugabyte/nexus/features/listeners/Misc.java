@@ -429,7 +429,6 @@ public class Misc implements Listener {
 		}
 	}
 
-
 	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
@@ -485,7 +484,8 @@ public class Misc implements Listener {
 		int materialCount = Integer.MAX_VALUE;
 
 		for (ItemStack item : inv.getMatrix())
-			if (item.getAmount() < materialCount)
+			// this can in fact be null
+			if (item != null && item.getAmount() < materialCount)
 				materialCount = item.getAmount();
 
 		return resultCount * materialCount;

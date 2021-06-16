@@ -208,34 +208,12 @@ public final class Bingo extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this)) return;
 
 		final LivingEntity entity = (LivingEntity) event.getOriginalEvent().getEntity();
-		if (entity.getHealth() - event.getOriginalEvent().getFinalDamage() > 0)
-			return;
+		if (entity.getHealth() - event.getOriginalEvent().getFinalDamage() > 0) return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final KillChallengeProgress progress = matchData.getProgress(minigamer, KillChallengeProgress.class);
 
 		progress.getKills().add(event.getEntity().getType());
 	}
-
-	// Breaking
-	// Placing
-	// Crafting
-	// Enchanting
-	// Brewing
-	// Cooking
-	// Obtaining
-	// Killing
-	// Eating
-	// Biome
-	// Distance
-	// Breeding
-	// Taming
-	// Advancement
-
-	// Villager trade
-	// Piglin trade
-	// Exp level
-	// Spawning
-	//
 
 }
