@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Cooldown.Part;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -15,66 +16,32 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static me.pugabyte.nexus.utils.PlayerUtils.canSee;
 
 @Description("Boop")
+@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
 public class BoopCommand extends CustomCommand {
 
 	public BoopCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@Path("all [message...]")
-	@Description("boop all players anonymously")
+	@Path("all [message...] [--anonymous]")
+	@Description("boop all players")
 	@Permission("group.admin")
-	void boopAllAnon(String message) {
-		message = "-a " + message;
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (!isSelf(player) && !Minigames.isMinigameWorld(player.getWorld()))
-				boopPlayer(player, message);
-		}
+	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (!isSelf(player) && !Minigames.isMinigameWorld(player.getWorld()) && canSee(player(), player))
+				run(player(), player, message, true);
 	}
 
-	@Path("<player> -a [message...]")
-	@Description("boop a player anonymously")
-	@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
-	void boopAnon(Player playerArg, String message) {
-		message = "-a " + message;
-		boopPlayer(playerArg, message);
-	}
-
-	@Path("<player> [message...]")
+	@Path("<player> [message...] [--anonymous]")
 	@Description("boop a player")
-	@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
-	void boopPlayer(Player playerArg, String message) {
-		if (message == null)
-			message = "";
-
-		if (message.equalsIgnoreCase("-s"))
-			error("The anon flag has been changed to -a");
-
-		if (message.contains("-a")) {
-			String[] messageSplit = message.split(" ");
-			List<String> list = new ArrayList<>(Arrays.asList(messageSplit));
-			if (list.get(0).equalsIgnoreCase("-a")) {
-				if (list.size() > 1) {
-					list.remove(0);
-					message = String.join(" ", list);
-				} else {
-					message = "";
-				}
-
-				boop(player(), playerArg, message, true);
-				return;
-			}
-		}
-
-		boop(player(), playerArg, message, false);
+	void boop(Player player, String message, @Switch(shorthand = 'a') boolean anonymous) {
+		run(player(), player, message, anonymous);
 	}
 
-	public void boop(Player booper, Player booped, String message, boolean anon) {
+	public void run(Player booper, Player booped, String message, boolean anonymous) {
 		if (message == null)
 			message = "";
 
@@ -92,7 +59,7 @@ public class BoopCommand extends CustomCommand {
 		if (!message.equalsIgnoreCase(""))
 			message = " &3and said &e" + message;
 
-		if (anon) {
+		if (anonymous) {
 			toBooper += "&3You anonymously booped &e" + Nickname.of(booped) + message;
 			toBooped += "&eSomebody &3booped you" + message;
 		} else {
@@ -102,7 +69,7 @@ public class BoopCommand extends CustomCommand {
 
 		send(toBooper);
 		JsonBuilder json = new JsonBuilder(toBooped);
-		if (!anon)
+		if (!anonymous)
 			json.next("&3. &eClick to boop back").suggest("/boop " + booper.getName() + " ");
 		send(booped, json);
 		booped.playSound(booped.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
