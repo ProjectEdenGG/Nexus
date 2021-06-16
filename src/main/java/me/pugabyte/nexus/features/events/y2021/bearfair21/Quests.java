@@ -220,9 +220,7 @@ public class Quests implements Listener {
 			return;
 
 		BearFair21User user = userService.get(player);
-		PlayerUtils.runCommand(user.getPlayer(), "ch leave g");
 		BearFair21Talker.runScript(user, id).thenAccept(bool -> {
-			PlayerUtils.runCommand(user.getPlayer(), "ch join g");
 			if (bool)
 				Merchants.openMerchant(player, id);
 		});
