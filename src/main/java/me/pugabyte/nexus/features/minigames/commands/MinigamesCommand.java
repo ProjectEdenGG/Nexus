@@ -44,6 +44,7 @@ import me.pugabyte.nexus.models.punishments.PunishmentType;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils.RelativeLocation;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -64,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,10 +94,26 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("list [filter]")
 	@Permission("use")
 	void list(String filter) {
-		send(PREFIX + ArenaManager.getAll(filter).stream()
-				.sorted(Comparator.comparing(Arena::getName))
-				.map(arena -> (MatchManager.find(arena) != null ? "&e" : "&3") + arena.getName())
-				.collect(Collectors.joining("&3, ")));
+		JsonBuilder json = json(PREFIX);
+		final List<Arena> arenas = ArenaManager.getAll(filter).stream()
+				.sorted(Comparator.comparing(Arena::getName).thenComparing(arena -> MatchManager.find(arena) != null))
+				.toList();
+
+		final Iterator<Arena> iterator = arenas.iterator();
+		while (iterator.hasNext()) {
+			Arena arena = iterator.next();
+
+			Match match = MatchManager.find(arena);
+			if (match == null)
+				json.next("&3" + arena.getName());
+			else
+				json.next("&e" + arena.getName()).hover(match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
+
+			if (iterator.hasNext())
+				json.group().next("&3, ").group();
+		}
+
+		send(json);
 	}
 
 	@Path("join <arena>")

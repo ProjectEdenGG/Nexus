@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
@@ -28,7 +27,6 @@ import me.pugabyte.nexus.models.minigamessetting.MinigamesSettingService;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -73,7 +71,6 @@ public class Minigames extends Feature {
 		registerMatchDatas();
 		ArenaManager.read();
 		registerListeners();
-		Tasks.repeat(Time.SECOND.x(5), 10, MatchManager::janitor);
 
 		new ActionBar();
 		new Basketball();
