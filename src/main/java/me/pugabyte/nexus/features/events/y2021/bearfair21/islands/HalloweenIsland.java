@@ -282,9 +282,11 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 		Entity clicked = event.getRightClicked();
 		if (!(clicked instanceof ItemFrame itemFrame)) return;
 
+		BearFair21User user = userService.get(event.getPlayer());
+		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
+
 		event.setCancelled(true);
 
-		BearFair21User user = userService.get(event.getPlayer());
 		checkLocation(user, itemFrame.getLocation());
 	}
 
