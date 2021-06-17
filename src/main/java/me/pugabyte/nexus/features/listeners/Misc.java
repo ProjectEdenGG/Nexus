@@ -415,7 +415,7 @@ public class Misc implements Listener {
 	}
 
 	@Getter
-	public class FixedCraftItemEvent extends CraftItemEvent {
+	public static class FixedCraftItemEvent extends CraftItemEvent {
 		private final ItemStack resultItemStack;
 
 		public FixedCraftItemEvent(@NotNull ItemStack resultItemStack, @NotNull Recipe recipe, @NotNull InventoryView what, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action) {

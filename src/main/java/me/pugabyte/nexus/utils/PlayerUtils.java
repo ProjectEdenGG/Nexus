@@ -135,7 +135,7 @@ public class PlayerUtils {
 	}
 
 	public static boolean isModeratorGroup(HasOfflinePlayer player) {
-		return Rank.of(player).gte(Rank.MODERATOR);
+		return Rank.of(player).isMod();
 	}
 
 	public static boolean isSeniorStaffGroup(HasOfflinePlayer player) {
@@ -143,7 +143,7 @@ public class PlayerUtils {
 	}
 
 	public static boolean isAdminGroup(HasOfflinePlayer player) {
-		return Rank.of(player).gte(Rank.ADMIN);
+		return Rank.of(player).isAdmin();
 	}
 
 	public static boolean isSelf(HasUniqueId player1, HasUniqueId player2) {
