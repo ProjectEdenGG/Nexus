@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.features.commands.staff.MultiCommandCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Fallback;
@@ -497,6 +498,14 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected void runCommand(CommandSender sender, String commandNoSlash) {
 		PlayerUtils.runCommand(sender, commandNoSlash);
+	}
+
+	protected void runMultiCommand(String... commands) {
+		runMultiCommand(sender(), commands);
+	}
+
+	protected void runMultiCommand(CommandSender sender, String... commands) {
+		MultiCommandCommand.run(sender, List.of(commands));
 	}
 
 	protected void runCommandAsOp(String commandNoSlash) {

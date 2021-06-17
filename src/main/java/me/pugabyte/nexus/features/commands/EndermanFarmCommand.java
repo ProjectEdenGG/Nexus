@@ -6,7 +6,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import me.pugabyte.nexus.features.commands.staff.MultiCommandCommand;
 import me.pugabyte.nexus.features.regionapi.MovementType;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import me.pugabyte.nexus.features.warps.Warps;
@@ -34,7 +33,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -99,10 +97,10 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 		final String regionId = getRegionId(player.getUniqueId());
 
-		MultiCommandCommand.run(player(), List.of(
+		runMultiCommand(
 				"rg define " + regionId,
 				"rg flag " + regionId + " passthrough allow"
-		));
+		);
 	}
 
 	@SneakyThrows
