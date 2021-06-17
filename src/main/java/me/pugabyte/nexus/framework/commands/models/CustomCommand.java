@@ -457,11 +457,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isStaff(Player player) {
-		return isPlayer(player) && Nerd.of(player).getRank().isStaff();
+		return isPlayer(player) && Rank.of(player).isStaff();
 	}
 
 	protected boolean isStaff(OfflinePlayer player) {
-		return isOfflinePlayer(player) && Nerd.of(player).getRank().isStaff();
+		return isOfflinePlayer(player) && Rank.of(player).isStaff();
 	}
 
 	protected boolean isSeniorStaff() {
@@ -469,11 +469,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isSeniorStaff(Player player) {
-		return isPlayer(player) && Nerd.of(player).getRank().isSeniorStaff();
+		return isPlayer(player) && Rank.of(player).isSeniorStaff();
 	}
 
 	protected boolean isSeniorStaff(OfflinePlayer player) {
-		return isOfflinePlayer(player) && Nerd.of(player).getRank().isSeniorStaff();
+		return isOfflinePlayer(player) && Rank.of(player).isSeniorStaff();
 	}
 
 	protected boolean isAdmin() {
@@ -481,11 +481,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected boolean isAdmin(Player player) {
-		return isPlayer(player) && (Nerd.of(player).getRank().equals(Rank.ADMIN) || Nerd.of(player).getRank().equals(Rank.OWNER));
+		return isPlayer(player) && Rank.of(player).isAdmin();
 	}
 
 	protected boolean isAdmin(OfflinePlayer player) {
-		return isOfflinePlayer(player) && (Nerd.of(player).getRank().equals(Rank.ADMIN) || Nerd.of(player).getRank().equals(Rank.OWNER));
+		return isOfflinePlayer(player) && Rank.of(player).isAdmin();
 	}
 
 	protected boolean isNullOrEmpty(String string) {

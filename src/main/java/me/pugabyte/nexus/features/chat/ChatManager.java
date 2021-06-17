@@ -63,7 +63,7 @@ public class ChatManager {
 
 		message = message.trim();
 
-		if (!PlayerUtils.isAdminGroup(chatter.getOnlinePlayer()))
+		if (!Rank.of(chatter.getOnlinePlayer()).isAdmin())
 			message = stripColor(message);
 
 		if (message.length() == 0)

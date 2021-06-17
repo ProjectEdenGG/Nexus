@@ -12,6 +12,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -37,7 +38,7 @@ public class WitherCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
-		if (!PlayerUtils.isStaffGroup(player()) && betaMode)
+		if (!isStaff() && betaMode)
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 		if (RebootCommand.isQueued())
 			error("Server reboot is queued, cannot start a new fight");
@@ -45,7 +46,7 @@ public class WitherCommand extends CustomCommand {
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 		if (WitherChallenge.currentFight != null)
 			error("The wither is currently being fought. Please wait!");
-		if (WitherChallenge.maintenance && !PlayerUtils.isStaffGroup(player()))
+		if (WitherChallenge.maintenance && !Rank.of(player()).isStaff())
 			error("The wither arena is currently under maintenance, please wait");
 		if (!checkHasItems()) return;
 		if (!WitherChallenge.queue.contains(uuid()))
@@ -107,7 +108,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("join")
 	void join() {
-		if (!PlayerUtils.isStaffGroup(player()) && betaMode)
+		if (!Rank.of(player()).isStaff() && betaMode)
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -194,7 +195,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("spectate")
 	void spectate() {
-		if (!PlayerUtils.isStaffGroup(player()) && betaMode)
+		if (!Rank.of(player()).isStaff() && betaMode)
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");

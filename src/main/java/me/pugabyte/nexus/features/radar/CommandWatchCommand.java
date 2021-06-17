@@ -10,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -62,7 +61,7 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 
 		watchMap.get(player).forEach(staff -> {
 			if (messageAliases.contains(command)) {
-				if (PlayerUtils.isAdminGroup(staff))
+				if (isAdmin(staff))
 					send(staff, PREFIX + player.getName() + ":&7 " + message);
 			} else
 				send(staff, PREFIX + player.getName() + ":&7 " + message);

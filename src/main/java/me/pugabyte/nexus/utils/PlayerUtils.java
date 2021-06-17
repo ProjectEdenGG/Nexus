@@ -23,7 +23,6 @@ import me.pugabyte.nexus.models.mail.Mailer.Mail;
 import me.pugabyte.nexus.models.mail.MailerService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.NerdService;
-import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
 import net.dv8tion.jda.annotations.ReplaceWith;
@@ -112,6 +111,10 @@ public class PlayerUtils {
 		public boolean is(HasUniqueId player) {
 			return uuid.equals(player.getUniqueId());
 		}
+
+		public boolean isNot(HasUniqueId player) {
+			return !is(player);
+		}
 	}
 
 	public static List<? extends Player> getOnlinePlayers() {
@@ -123,27 +126,6 @@ public class PlayerUtils {
 		for (MetadataValue meta : player.getPlayer().getMetadata("vanished"))
 			return (meta.asBoolean());
 		return false;
-	}
-
-	public static boolean isStaffGroup(HasOfflinePlayer player) {
-		return Rank.of(player).isStaff();
-	}
-
-	public static boolean isBuilderGroup(HasOfflinePlayer player) {
-		Rank rank = Rank.of(player);
-		return rank.gte(Rank.BUILDER) && rank.lt(Rank.MINIGAME_MODERATOR);
-	}
-
-	public static boolean isModeratorGroup(HasOfflinePlayer player) {
-		return Rank.of(player).isMod();
-	}
-
-	public static boolean isSeniorStaffGroup(HasOfflinePlayer player) {
-		return Rank.of(player).isSeniorStaff();
-	}
-
-	public static boolean isAdminGroup(HasOfflinePlayer player) {
-		return Rank.of(player).isAdmin();
 	}
 
 	public static boolean isSelf(HasUniqueId player1, HasUniqueId player2) {

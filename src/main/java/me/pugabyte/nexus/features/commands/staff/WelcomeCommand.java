@@ -14,7 +14,7 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -45,9 +45,9 @@ public class WelcomeCommand extends CustomCommand {
 	static {
 		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> {
 			if (Bukkit.getOnlinePlayers().stream().filter(player ->
-					PlayerUtils.isModeratorGroup(player) &&
-							!player.getName().equals("KodaBear") &&
-							!AFK.get(player).isAfk()
+					Rank.of(player).isMod() &&
+					Dev.KODA.isNot(player) &&
+					AFK.get(player).isNotAfk()
 			).count() < 4)
 				return;
 

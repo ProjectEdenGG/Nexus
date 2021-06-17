@@ -7,10 +7,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.powertool.PowertoolService;
 import me.pugabyte.nexus.models.powertool.PowertoolUser;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -86,7 +86,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(final PlayerInteractEvent event) {
-		if (!PlayerUtils.isStaffGroup(event.getPlayer())) return;
+		if (!Rank.of(event.getPlayer()).isStaff()) return;
 
 		if (Arrays.asList(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK).contains(event.getAction())) {
 			ItemStack item = ItemUtils.getTool(event.getPlayer());
@@ -105,7 +105,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 		if (!(event.getDamager() instanceof Player player)) return;
 		if (!DamageCause.ENTITY_ATTACK.equals(event.getCause())) return;
 
-		if (!PlayerUtils.isStaffGroup(player)) return;
+		if (!Rank.of(player).isStaff()) return;
 
 		ItemStack item = ItemUtils.getTool(player);
 		if (item == null) return;

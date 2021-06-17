@@ -7,10 +7,10 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.whereis.WhereIs;
 import me.pugabyte.nexus.models.whereis.WhereIsService;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -84,7 +84,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void process(Player viewer) {
-		if (!PlayerUtils.isStaffGroup(viewer)) {
+		if (!Rank.of(viewer).isStaff()) {
 			unglow(viewer);
 			return;
 		}

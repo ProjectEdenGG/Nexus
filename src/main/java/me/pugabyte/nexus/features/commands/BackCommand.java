@@ -11,9 +11,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.back.Back;
 import me.pugabyte.nexus.models.back.BackService;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -81,7 +81,7 @@ public class BackCommand extends CustomCommand implements Listener {
 		if (CitizensUtils.isNPC(player)) return;
 		if (TeleportCause.COMMAND != event.getCause()) return;
 
-		if (!PlayerUtils.isStaffGroup(player))
+		if (!Rank.of(player).isStaff())
 			if (Minigames.isMinigameWorld(player.getWorld()))
 				return;
 
@@ -93,7 +93,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onDeath(EntityDeathEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
-		if (!PlayerUtils.isStaffGroup(player)) return;
+		if (!Rank.of(player).isStaff()) return;
 		if (CitizensUtils.isNPC(player)) return;
 
 		Back back = new BackService().get(player);

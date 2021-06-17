@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.lava.InfiniteLava;
 import me.pugabyte.nexus.models.lava.InfiniteLavaService;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
@@ -47,7 +47,7 @@ public class LavaCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlaceLava(PlayerBucketEmptyEvent event) {
 		Player player = event.getPlayer();
-		if (!PlayerUtils.isStaffGroup(player))
+		if (!Rank.of(player).isStaff())
 			return;
 
 		Material material = event.getBucket();

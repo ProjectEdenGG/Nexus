@@ -14,6 +14,7 @@ import me.pugabyte.nexus.features.commands.SpeedCommand;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.tip.Tip;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.models.tip.TipService;
@@ -269,7 +270,7 @@ public class Misc implements Listener {
 
 		Tasks.wait(10, player::resetPlayerTime);
 
-		if (!PlayerUtils.isStaffGroup(player)) {
+		if (!Rank.of(player).isStaff()) {
 			SpeedCommand.resetSpeed(player);
 			player.setAllowFlight(false);
 			player.setFlying(false);

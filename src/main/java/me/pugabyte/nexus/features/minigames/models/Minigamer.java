@@ -22,9 +22,9 @@ import me.pugabyte.nexus.features.minigames.models.perks.Perk;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.Name;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
@@ -234,7 +234,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	}
 
 	public void toGamelobby() {
-		boolean staff = PlayerUtils.isStaffGroup(player);
+		boolean staff = Rank.of(player).isStaff();
 
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setFallDistance(0);

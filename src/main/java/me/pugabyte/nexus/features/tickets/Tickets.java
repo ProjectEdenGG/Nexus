@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.tickets;
 
 import me.pugabyte.nexus.features.discord.Discord;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -43,7 +44,7 @@ public class Tickets {
 
 		Set<UUID> uuids = new HashSet<>();
 		for (Player staff : Bukkit.getOnlinePlayers())
-			if (PlayerUtils.isModeratorGroup(staff))
+			if (Rank.of(staff).isMod())
 				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
 					uuids.add(staff.getUniqueId());
 

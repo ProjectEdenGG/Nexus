@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.listeners;
 
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,7 +18,7 @@ public class SlabBreak implements Listener {
 	@EventHandler
 	public void onSlabBreak(BlockBreakEvent event) {
 		if (event.isCancelled()) return;
-		if (!PlayerUtils.isStaffGroup(event.getPlayer())) return;
+		if (!Rank.of(event.getPlayer()).isStaff()) return;
 
 		Material type = event.getBlock().getType();
 		Material handType = event.getPlayer().getInventory().getItemInMainHand().getType();

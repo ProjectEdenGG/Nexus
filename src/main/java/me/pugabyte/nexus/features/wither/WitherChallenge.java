@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.wither.fights.HardFight;
 import me.pugabyte.nexus.features.wither.fights.MediumFight;
 import me.pugabyte.nexus.features.wither.models.WitherFight;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -130,7 +131,7 @@ public class WitherChallenge extends Feature implements Listener {
 	@EventHandler
 	public void onTeleportIntoArena(PlayerTeleportEvent event) {
 		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena")) return;
-		if (PlayerUtils.isStaffGroup(event.getPlayer())) return;
+		if (Rank.of(event.getPlayer()).isStaff()) return;
 		if (currentFight == null) {
 			cancelTeleport(event);
 			return;

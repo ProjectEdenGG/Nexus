@@ -13,6 +13,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -88,7 +89,7 @@ public class Home implements PlayerOwnedObject {
 	public boolean hasAccess(Player player) {
 		if (!locked)
 			return true;
-		if (PlayerUtils.isStaffGroup(player))
+		if (Rank.of(player).isStaff())
 			return true;
 		if (player.getUniqueId().equals(getOfflinePlayer().getUniqueId()))
 			return true;

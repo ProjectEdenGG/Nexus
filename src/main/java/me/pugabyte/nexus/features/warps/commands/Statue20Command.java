@@ -22,7 +22,6 @@ import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Material;
@@ -60,7 +59,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 		int found = statueHunt.getFound().size();
 		send(PREFIX + player.getName() + " has found &e" + found + " &3statue" + (found > 1 ? "s" : ""));
-		if (PlayerUtils.isStaffGroup(player()) && found > 0) {
+		if (isStaff() && found > 0) {
 			String foundString = "";
 			for (String s : statueHunt.getFound()) {
 				foundString += "&3" + s + "\n";

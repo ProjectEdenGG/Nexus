@@ -6,9 +6,9 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -49,7 +49,7 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onUseSchemBrush(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!PlayerUtils.isStaffGroup(player)) return;
+		if (!Rank.of(player).isStaff()) return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 

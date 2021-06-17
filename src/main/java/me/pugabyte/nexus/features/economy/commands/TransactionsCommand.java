@@ -16,6 +16,7 @@ import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
 import me.pugabyte.nexus.models.banker.Transactions;
 import me.pugabyte.nexus.models.banker.TransactionsService;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -149,7 +150,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 					fromPlayer + " &3→ " + toPlayer + "  " + amount + "  " + description)
 					.hover("&3Time since: &e" + Timespan.of(transaction.getTimestamp()).format());
 
-			if (PlayerUtils.isAdminGroup(player) && Nexus.isDebug())
+			if (Rank.of(player).isAdmin() && Nexus.isDebug())
 				jsonBuilder
 					.hover("")
 					.hover(transaction.toString());

@@ -5,7 +5,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.models.afk.events.NotAFKEvent;
-import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,7 +54,7 @@ public class StaffAlerts implements Listener {
 	}
 
 	private void readyToStalk(Player player, String type) {
-		if (PlayerUtils.isModeratorGroup(player)) {
+		if (Rank.of(player).isMod()) {
 			boolean alert = false;
 			Set<Player> trackedPlayers = tracking.keySet();
 			for (Player tracked : trackedPlayers) {

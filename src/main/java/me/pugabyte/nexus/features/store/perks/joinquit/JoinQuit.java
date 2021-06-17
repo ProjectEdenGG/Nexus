@@ -14,6 +14,7 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.discord.DiscordUser;
 import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -114,7 +115,7 @@ public class JoinQuit extends Feature implements Listener {
 
 		Bukkit.getOnlinePlayers().forEach(_player -> {
 			if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT)) {
-				if (reason != QuitReason.DISCONNECTED && PlayerUtils.isStaffGroup(_player))
+				if (reason != QuitReason.DISCONNECTED && Rank.of(_player).isStaff())
 					_player.sendMessage(player, staffComponent, MessageType.CHAT);
 				else
 					_player.sendMessage(player, component, MessageType.CHAT);
