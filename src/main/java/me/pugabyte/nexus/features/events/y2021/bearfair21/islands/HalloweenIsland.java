@@ -36,7 +36,7 @@ import java.util.List;
 import static me.pugabyte.nexus.features.events.models.QuestStage.STEP_ONE;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
-// TODO BF21: Quest + Dialog
+// TODO BF21: Testing
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
 public class HalloweenIsland implements Listener, BearFair21Island {
@@ -112,7 +112,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 						script.add("<self> For some reason that doesn't give me much confidence.");
 						script.add("wait 60");
 						script.add("Here, have this as a thank you for bringing me.. I mean us, these cookies!");
-						wait = (40 + 40 + 60);
+						wait = (60 + 60 + 60 + 80 + 60);
 						Tasks.wait(wait, () -> Quests.giveKey(user));
 
 						script.add("wait 60");
@@ -209,7 +209,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 						script.add("...");
 						script.add("wait 60");
 						script.add("Aaaand, done. Here, please bring these to my son, &oJosé&f.");
-						wait = (40 + 40 + 40 + 40);
+						wait = (40 + 40 + 60 + 60);
 						Tasks.wait(wait, () -> Quests.giveItem(user, cookies.clone().build()));
 
 						script.add("wait 40");
