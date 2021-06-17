@@ -50,6 +50,8 @@ public enum Rank implements IsColoredAndNamed {
 	private final GlowAPI.Color glowColor;
 
 	public Color getDiscordColor() {
+		if (lt(TRUSTED))
+			return null;
 		if (this == ADMIN)
 			return Color.decode("#1687d3");
 
