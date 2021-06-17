@@ -44,6 +44,7 @@ public class BearFair21User implements PlayerOwnedObject {
 	private JunkWeight junkWeight = JunkWeight.MAX;
 	private int recycledItems = 0;
 	private Set<Integer> metNPCs = new HashSet<>();
+	// TODO BF21: Set this system up
 	private Set<Integer> nextStepNPCs = new HashSet<>(Arrays.asList(
 			ORGANIZER.getId(), // Main
 			BEEKEEPER.getId(), // Side
@@ -74,6 +75,9 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	// Halloween
 	QuestStage questStage_Halloween = QuestStage.NOT_STARTED;
+	boolean chocolate = false;
+	boolean milk = false;
+	boolean flour = false;
 
 	// SDU
 	QuestStage questStage_SDU = QuestStage.NOT_STARTED;

@@ -12,6 +12,7 @@ public class TreasureChests {
 			-66, 150, -88		- ceiling of wood mill
 			-78, 195, -53		- in the hot air balloon, nearest the observatory
 			-67, 129, -344		- pugmas island, grinch cave
+			58, 143, -305		- halloween island, between wall and house
 
 	 */
 }

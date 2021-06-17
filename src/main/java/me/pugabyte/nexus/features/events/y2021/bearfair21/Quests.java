@@ -131,11 +131,12 @@ public class Quests implements Listener {
 			if (!ItemUtils.isNullOrAir(itemLike))
 				result.add(itemLike);
 		}
+
 		return result;
 	}
 
 	public static boolean hasAllItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
-		return getItemsListFrom(user, items).size() > items.size();
+		return getItemsListFrom(user, items).size() >= items.size();
 	}
 
 	public static boolean hasItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
@@ -148,10 +149,14 @@ public class Quests implements Listener {
 			if (ItemUtils.isNullOrAir(item))
 				continue;
 
-			if (ItemUtils.isFuzzyMatch(itemBuilder.build(), item) && item.getAmount() >= _item.getAmount())
-				return item;
+			if (ItemUtils.isFuzzyMatch(_item, item) && item.getAmount() >= _item.getAmount())
+				return _item;
 		}
 		return null;
+	}
+
+	public static void removeItems(BearFair21User user, List<ItemBuilder> items) {
+		removeItems(user.getPlayer(), items);
 	}
 
 	public static void removeItems(Player player, List<ItemBuilder> items) {

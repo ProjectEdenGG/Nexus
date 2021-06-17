@@ -262,7 +262,7 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItems(user, required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
@@ -280,7 +280,7 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItems(user, required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you gather me 32 White Wool and 8 of each red, green, and blue dyes?");
@@ -302,7 +302,7 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItems(user, required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("TODO - While im placing these around the town, could you follow up with Maple the Pastry Chef about my cake order?");
@@ -319,7 +319,7 @@ public class MainIsland implements Listener, BearFair21Island {
 								return script;
 							}
 
-							Quests.removeItems(user.getPlayer(), required);
+							Quests.removeItems(user, required);
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("That's almost everything, there's just one last task I need you to do, while I'm finishing up.");
