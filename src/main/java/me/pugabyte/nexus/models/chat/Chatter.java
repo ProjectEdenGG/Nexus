@@ -103,7 +103,7 @@ public class Chatter implements PlayerOwnedObject {
 
 	public void join(PublicChannel channel) {
 		if (!canJoin(channel))
-			throw new InvalidInputException("You do not have permission to join that channel");
+			throw new InvalidInputException("You do not have permission to join the " + channel.getName() + " channel");
 		fixChannelSets();
 		leftChannels.remove(channel);
 		joinedChannels.add(channel);
