@@ -132,7 +132,7 @@ public class PlayerUtils {
 	}
 
 	public static List<Player> getOnlinePlayers(Player player, World world) {
-		Stream<Player> stream = getOnlinePlayers().stream().filter(_player -> !CitizensUtils.isNPC(_player));
+		Stream<Player> stream = Bukkit.getOnlinePlayers().stream().filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer);
 
 		if (player != null)
 			stream = stream.filter(_player -> _player.getWorld().equals(world));
