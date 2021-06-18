@@ -3,10 +3,10 @@ package me.pugabyte.nexus.features.fakenpc;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.utils.Name;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -29,7 +29,7 @@ public class FakeNPCManager {
 
 	public FakeNPCManager() {
 		Tasks.repeat(0, Time.SECOND.x(1), () -> {
-			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+			Collection<? extends Player> players = PlayerUtils.getOnlinePlayers();
 			fakeNpcs.forEach(fakeNPC -> {
 				if (fakeNPC.isVisible()) {
 					List<Player> nearby = players.stream().filter(player -> isNear(player, fakeNPC)).collect(Collectors.toList());

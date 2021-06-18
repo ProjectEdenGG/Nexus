@@ -21,6 +21,7 @@ import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import net.kyori.adventure.audience.MessageType;
@@ -63,8 +64,8 @@ public class Chat extends Feature {
 	}
 
 	private void updateChannels() {
-		Bukkit.getOnlinePlayers().stream()
-				.map(player -> (Chatter) new ChatService().get(player))
+		PlayerUtils.getOnlinePlayers().stream()
+				.map(player -> new ChatService().get(player))
 				.forEach(Chatter::updateChannels);
 	}
 
@@ -236,8 +237,8 @@ public class Chat extends Feature {
 				void execute(Broadcast broadcast) {
 					final ComponentLike component = getMessage(broadcast);
 					Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
-					Bukkit.getOnlinePlayers().stream()
-							.map(player -> (Chatter) new ChatService().get(player))
+					PlayerUtils.getOnlinePlayers().stream()
+							.map(player -> new ChatService().get(player))
 							.filter(chatter -> chatter.hasJoined(broadcast.channel) && !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), broadcast.muteMenuItem))
 							.forEach(chatter -> chatter.sendMessage(broadcast.sender, component, broadcast.messageType));
 				}

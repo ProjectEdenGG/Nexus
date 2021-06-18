@@ -5,6 +5,7 @@ import com.mongodb.client.AggregateIterable;
 import dev.morphia.mapping.MappingException;
 import eden.utils.TimeUtils.Time;
 import lombok.SneakyThrows;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -99,7 +100,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends eden.mon
 
 	public List<T> getOnline() {
 		List<T> online = new ArrayList<>();
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			online.add(get(player));
 		return online;
 	}

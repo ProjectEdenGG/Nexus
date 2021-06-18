@@ -103,7 +103,7 @@ public abstract class SkullHuntEvent implements Listener {
 					if (Utils.isNullOrEmpty(skullLocations))
 						return;
 
-					Bukkit.getOnlinePlayers().forEach(player -> {
+					PlayerUtils.getOnlinePlayers().forEach(player -> {
 						if (!activeWorlds.contains(player.getWorld()))
 							return;
 

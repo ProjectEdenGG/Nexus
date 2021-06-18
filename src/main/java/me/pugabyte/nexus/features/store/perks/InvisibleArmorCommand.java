@@ -33,7 +33,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.EnumItemSlot;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -170,7 +169,7 @@ public class InvisibleArmorCommand extends CustomCommand {
 
 	private static void sendPackets() {
 		AtomicInteger wait = new AtomicInteger(0);
-		Bukkit.getOnlinePlayers().forEach(player -> Tasks.wait(wait.getAndIncrement(), () -> {
+		PlayerUtils.getOnlinePlayers().forEach(player -> Tasks.wait(wait.getAndIncrement(), () -> {
 			InvisibleArmorService service = new InvisibleArmorService();
 			InvisibleArmor invisibleArmor = service.get(player);
 
@@ -194,7 +193,7 @@ public class InvisibleArmorCommand extends CustomCommand {
 		packet.getIntegers().write(1, 9 - EnumItemSlot.fromName(slot.name().toLowerCase()).getSlotFlag());
 		packet.getItemModifier().write(0, invisibleArmor.isEnabled() ? new ItemStack(Material.AIR) : invisibleArmor.getItem(slot));
 
-		Bukkit.getOnlinePlayers().stream().filter(_player -> player.getWorld() == _player.getWorld()).forEach(_player -> {
+		PlayerUtils.getOnlinePlayers().stream().filter(_player -> player.getWorld() == _player.getWorld()).forEach(_player -> {
 			boolean self = player.getUniqueId() == _player.getUniqueId();
 
 			try {

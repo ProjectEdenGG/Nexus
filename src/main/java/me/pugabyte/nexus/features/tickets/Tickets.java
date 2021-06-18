@@ -6,7 +6,6 @@ import me.pugabyte.nexus.models.ticket.Ticket;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -43,7 +42,7 @@ public class Tickets {
 		Discord.log("**[Tickets]** " + message);
 
 		Set<UUID> uuids = new HashSet<>();
-		for (Player staff : Bukkit.getOnlinePlayers())
+		for (Player staff : PlayerUtils.getOnlinePlayers())
 			if (Rank.of(staff).isMod())
 				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
 					uuids.add(staff.getUniqueId());

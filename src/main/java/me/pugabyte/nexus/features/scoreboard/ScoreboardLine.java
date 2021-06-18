@@ -47,8 +47,7 @@ public enum ScoreboardLine {
 	ONLINE {
 		@Override
 		public String render(Player player) {
-			long count = Bukkit.getOnlinePlayers().stream().filter(_player -> PlayerUtils.canSee(player, _player)).count();
-			return "&3Online Nerds: &e" + count;
+			return "&3Online Nerds: &e" + PlayerUtils.getOnlinePlayers(player).size();
 		}
 	},
 

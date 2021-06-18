@@ -52,7 +52,6 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -128,7 +127,7 @@ public class MinigamesCommand extends CustomCommand {
 		if (Nexus.getEnv() == Env.PROD)
 			error("Cannot use this command on production server");
 
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			PlayerManager.get(player).join(arena);
 	}
 
@@ -502,7 +501,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("inviteAll")
 	void inviteAll() {
 		updateInvite();
-		sendInvite(Bukkit.getOnlinePlayers());
+		sendInvite(PlayerUtils.getOnlinePlayers());
 	}
 
 	@Path("accept")

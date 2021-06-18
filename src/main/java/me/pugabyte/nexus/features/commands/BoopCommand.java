@@ -12,11 +12,11 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.JsonBuilder;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import static me.pugabyte.nexus.utils.PlayerUtils.canSee;
+import java.util.List;
 
 @Description("Boop")
 @Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
@@ -30,9 +30,15 @@ public class BoopCommand extends CustomCommand {
 	@Description("boop all players")
 	@Permission("group.admin")
 	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
-		for (Player player : Bukkit.getOnlinePlayers())
-			if (!isSelf(player) && !Minigames.isMinigameWorld(player.getWorld()) && canSee(player(), player))
-				run(player(), player, message, true);
+		final List<Player> players = PlayerUtils.getOnlinePlayers(player()).stream()
+			.filter(player -> !isSelf(player) && !Minigames.isMinigameWorld(player.getWorld()))
+			.toList();
+
+		if (players.isEmpty())
+			error("No players to boop");
+
+		for (Player player : players)
+			run(player(), player, message, true);
 	}
 
 	@Path("<player> [message...] [--anonymous]")

@@ -24,6 +24,7 @@ import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LocationUtils.Axis;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -31,7 +32,6 @@ import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.Utils.MapRotation;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -144,11 +144,11 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	private static final int INTERVAL = 5;
 
 	static {
-		Tasks.repeat(INTERVAL, INTERVAL, () -> Bukkit.getOnlinePlayers().stream()
+		Tasks.repeat(INTERVAL, INTERVAL, () -> PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> player.getWorld().getName().equals(WORLD))
 				.filter(player -> !AFK.get(player).isAfk())
 				.filter(player -> new WorldGuardUtils(player).getRegionNamesAt(player.getLocation()).contains("jigsawjam"))
-				.map(player -> (JigsawJammer) new JigsawJamService().get(player))
+				.map(player -> new JigsawJamService().get(player))
 				.filter(JigsawJammer::isPlaying)
 				.forEach(jammer -> {
 					jammer.incrementTime(INTERVAL);

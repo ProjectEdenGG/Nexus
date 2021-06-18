@@ -49,7 +49,7 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 		if (!(event.getEntity() instanceof Arrow)) return;
 		if (!(event.getHitEntity() instanceof Player)) return;
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer victim = PlayerManager.get((Player) event.getHitEntity());
+		Minigamer victim = PlayerManager.get(event.getHitEntity());
 		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
 		if (victim.isPlaying(this) && attacker.isPlaying(this)) {
 			victim.getPlayer().damage(20, attacker.getPlayer());

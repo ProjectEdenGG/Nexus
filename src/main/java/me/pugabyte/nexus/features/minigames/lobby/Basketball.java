@@ -17,7 +17,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -133,25 +132,23 @@ public class Basketball extends CustomCommand implements Listener {
 		Tasks.repeat(0, Time.SECOND.x(20), () -> {
 			cleanupBasketballs();
 
-			Bukkit.getOnlinePlayers().stream()
-					.filter(player -> player.getWorld().equals(world))
-					.forEach(player -> {
-						if (wgUtils.isInRegion(player.getLocation(), region)) {
-							if (!hasBasketball(player)) {
-								boolean found = false;
-								for (Entity entity : getLobbyEntities())
-									if (wgUtils.isInRegion(entity.getLocation(), region)) {
-										found = true;
-										break;
-									}
-
-								if (!found)
-									giveBasketball(player);
+			for (Player player : PlayerUtils.getOnlinePlayers(world)) {
+				if (wgUtils.isInRegion(player.getLocation(), region)) {
+					if (!hasBasketball(player)) {
+						boolean found = false;
+						for (Entity entity : getLobbyEntities())
+							if (wgUtils.isInRegion(entity.getLocation(), region)) {
+								found = true;
+								break;
 							}
-						} else {
-							removeBasketball(player);
-						}
-					});
+
+						if (!found)
+							giveBasketball(player);
+					}
+				} else {
+					removeBasketball(player);
+				}
+			}
 		});
 	}
 

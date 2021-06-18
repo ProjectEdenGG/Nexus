@@ -8,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.snoweffect.SnowEffect;
 import me.pugabyte.nexus.models.snoweffect.SnowEffectService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags;
@@ -39,7 +40,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 						.forEach(snowEffect -> playSnowEffect(snowEffect.getOnlinePlayer()));
 			});
 
-			Bukkit.getOnlinePlayers().stream()
+			PlayerUtils.getOnlinePlayers().stream()
 					.filter(player -> WorldGuardFlagUtils.test(player, Flags.SNOW_EFFECT))
 					.forEach(SnowEffectCommand::playSnowEffect);
 		});

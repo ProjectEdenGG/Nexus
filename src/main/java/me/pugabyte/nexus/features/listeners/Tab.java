@@ -6,8 +6,8 @@ import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.scoreboard.ScoreboardLine;
 import me.pugabyte.nexus.models.afk.events.AFKEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +22,7 @@ public class Tab implements Listener {
 	}
 
 	public static void update() {
-		Bukkit.getOnlinePlayers().forEach(Tab::update);
+		PlayerUtils.getOnlinePlayers().forEach(Tab::update);
 	}
 
 	public static void update(Player player) {

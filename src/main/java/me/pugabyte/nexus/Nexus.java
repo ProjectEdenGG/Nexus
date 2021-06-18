@@ -233,7 +233,7 @@ public class Nexus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		Locale.setDefault(Locale.US);
-		Bukkit.getOnlinePlayers().forEach(Name::of); // cache online usernames
+		PlayerUtils.getOnlinePlayers().forEach(Name::of); // cache online usernames
 
 		new Timer("Enable", () -> {
 			String loadedWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(joining(", "));

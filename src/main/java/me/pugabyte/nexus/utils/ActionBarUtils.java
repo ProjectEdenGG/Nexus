@@ -3,7 +3,6 @@ package me.pugabyte.nexus.utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.lexikiq.HasPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -78,7 +77,7 @@ public class ActionBarUtils {
 	// All players
 
 	public static void sendActionBarToAllPlayers(ActionBar actionBar) {
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
 	}
 
@@ -91,7 +90,7 @@ public class ActionBarUtils {
 	}
 
 	public static void sendActionBarToAllPlayers(String message, int duration, boolean fade) {
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			sendActionBar(player, message, duration, fade);
 	}
 

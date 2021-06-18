@@ -7,7 +7,6 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import org.bukkit.Bukkit;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +24,7 @@ public class OnlineStaffCommand extends CustomCommand {
 		List<Rank> ranks = Rank.getStaff();
 		Collections.reverse(ranks);
 
-		long vanished = Bukkit.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
+		long vanished = PlayerUtils.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
 		long online = Rank.getOnlineStaff().size() - vanished;
 		boolean canSeeVanished = player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");

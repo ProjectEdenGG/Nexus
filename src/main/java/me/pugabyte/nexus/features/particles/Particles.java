@@ -3,8 +3,8 @@ package me.pugabyte.nexus.features.particles;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.particle.ParticleOwner;
 import me.pugabyte.nexus.models.particle.ParticleService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class Particles extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.async(() -> Bukkit.getOnlinePlayers().forEach(Particles::startParticles));
+		Tasks.async(() -> PlayerUtils.getOnlinePlayers().forEach(Particles::startParticles));
 	}
 
 	protected static void startParticles(Player player) {

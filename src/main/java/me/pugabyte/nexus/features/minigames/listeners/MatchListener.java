@@ -59,7 +59,7 @@ public class MatchListener implements Listener {
 
 	@EventHandler
 	public void onInventoryOpen(InventoryOpenEvent event) {
-		Minigamer minigamer = PlayerManager.get((Player) event.getPlayer());
+		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (minigamer.getMatch() == null) return;
 		if (event.getInventory().getLocation() == null) return;
 		if (minigamer.getMatch().getMechanic().canOpenInventoryBlocks()) return;
@@ -127,7 +127,7 @@ public class MatchListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player)) return;
-		Minigamer minigamer = PlayerManager.get((Player) event.getWhoClicked());
+		Minigamer minigamer = PlayerManager.get(event.getWhoClicked());
 		if (!minigamer.isPlaying()) return;
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
 		ItemStack item = event.getCurrentItem();
@@ -155,7 +155,7 @@ public class MatchListener implements Listener {
 		if (event.isCancelled()) return;
 		if (!(event.getEntity() instanceof Player)) return;
 
-		Minigamer victim = PlayerManager.get((Player) event.getEntity());
+		Minigamer victim = PlayerManager.get(event.getEntity());
 		// block damage while in lobby
 
 		if ((victim.isPlaying() && !victim.getMatch().isStarted()) || !victim.isAlive() || victim.isRespawning()) {
@@ -166,7 +166,7 @@ public class MatchListener implements Listener {
 		Minigamer attacker = null;
 		Projectile projectile = null;
 		if (event.getDamager() instanceof Player) {
-			attacker = PlayerManager.get((Player) event.getDamager());
+			attacker = PlayerManager.get(event.getDamager());
 		} else if (event.getDamager() instanceof Projectile) {
 			projectile = (Projectile) event.getDamager();
 			if (projectile.getShooter() instanceof Player) {
@@ -261,7 +261,7 @@ public class MatchListener implements Listener {
 
 		if (!(event.getEntity() instanceof Player)) return;
 
-		Minigamer victim = PlayerManager.get((Player) event.getEntity());
+		Minigamer victim = PlayerManager.get(event.getEntity());
 
 		if (!victim.isPlaying()) return;
 
@@ -332,7 +332,7 @@ public class MatchListener implements Listener {
 		if (regainReason != RegainReason.REGEN && regainReason != RegainReason.SATIATED)
 			return;
 
-		Minigamer minigamer = PlayerManager.get((Player) event.getEntity());
+		Minigamer minigamer = PlayerManager.get(event.getEntity());
 		if (!minigamer.isPlaying()) return;
 		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
@@ -368,7 +368,7 @@ public class MatchListener implements Listener {
 	public void onProjectileCollide(ProjectileCollideEvent event) {
 		if (!(event.getCollidedWith() instanceof Player)) return;
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer victim = PlayerManager.get((Player) event.getCollidedWith());
+		Minigamer victim = PlayerManager.get(event.getCollidedWith());
 		if (!victim.isPlaying()) return;
 		if (victim.isRespawning() || !victim.isAlive()) {
 			event.setCancelled(true);

@@ -111,7 +111,9 @@ public class Minigames extends Feature {
 	}
 
 	public static List<Player> getPlayers() {
-		return Bukkit.getOnlinePlayers().stream().filter(player -> isMinigameWorld(player.getWorld())).collect(Collectors.toList());
+		return PlayerUtils.getOnlinePlayers().stream()
+			.filter(player -> isMinigameWorld(player.getWorld()))
+			.collect(Collectors.toList());
 	}
 
 	public static List<Minigamer> getMinigamers() {

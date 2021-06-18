@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -21,7 +20,7 @@ public class SoundUtils {
 	private static final float defaultVolume = 0.5F;
 
 	public static void playSoundAll(Sound sound, float volume, float pitch) {
-		Bukkit.getOnlinePlayers().forEach(player -> playSound(player, sound, volume, pitch));
+		PlayerUtils.getOnlinePlayers().forEach(player -> playSound(player, sound, volume, pitch));
 	}
 
 	public static void playSound(HasPlayer player, Sound sound) {
@@ -334,7 +333,7 @@ public class SoundUtils {
 		}
 
 		public void playAll() {
-			play(Bukkit.getOnlinePlayers());
+			play(PlayerUtils.getOnlinePlayers());
 		}
 
 		void play(HasPlayer player, Sound intrument, int step) {

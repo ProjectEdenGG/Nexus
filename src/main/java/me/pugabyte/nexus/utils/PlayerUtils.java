@@ -33,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -59,6 +60,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eden.utils.StringUtils.isUuid;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -117,8 +119,27 @@ public class PlayerUtils {
 		}
 	}
 
-	public static List<? extends Player> getOnlinePlayers() {
-		return Bukkit.getOnlinePlayers().stream().filter(player -> !CitizensUtils.isNPC(player)).toList();
+	public static List<Player> getOnlinePlayers() {
+		return getOnlinePlayers(null, null);
+	}
+
+	public static List<Player> getOnlinePlayers(Player player) {
+		return getOnlinePlayers(player, null);
+	}
+
+	public static List<Player> getOnlinePlayers(World world) {
+		return getOnlinePlayers(null, world);
+	}
+
+	public static List<Player> getOnlinePlayers(Player player, World world) {
+		Stream<Player> stream = getOnlinePlayers().stream().filter(_player -> !CitizensUtils.isNPC(_player));
+
+		if (player != null)
+			stream = stream.filter(_player -> _player.getWorld().equals(world));
+		if (world != null)
+			stream = stream.filter(_player -> canSee(player, _player));
+
+		return stream.toList();
 	}
 
 	public static boolean isVanished(OptionalPlayer player) {
@@ -155,8 +176,8 @@ public class PlayerUtils {
 	}
 
 	public static List<String> getOnlineUuids() {
-		return Bukkit.getOnlinePlayers().stream()
-				.map(p -> p.getUniqueId().toString())
+		return PlayerUtils.getOnlinePlayers().stream()
+				.map(player -> player.getUniqueId().toString())
 				.collect(Collectors.toList());
 	}
 
@@ -197,24 +218,24 @@ public class PlayerUtils {
 		if (isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (player.getName().equalsIgnoreCase(partialName))
 				return player;
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
 				return player;
 
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (Nickname.of(player).toLowerCase().contains((partialName)))
 				return player;
 
@@ -240,16 +261,13 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin((Collection<Player>) Bukkit.getOnlinePlayers(), player -> {
-			if (!player.getWorld().equals(location.getWorld())) return null;
-			return player.getLocation().distance(location);
-		});
+		return getMin(PlayerUtils.getOnlinePlayers(location.getWorld()), player -> player.getLocation().distance(location));
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
 		Player _original = original.getPlayer();
-		return getMin((Collection<Player>) Bukkit.getOnlinePlayers(), player -> {
-			if (!player.getWorld().equals(_original.getWorld()) || isSelf(_original, player)) return null;
+		return getMin(PlayerUtils.getOnlinePlayers(_original.getWorld()), player -> {
+			if (isSelf(_original, player)) return null;
 			return player.getLocation().distance(_original.getLocation());
 		});
 	}

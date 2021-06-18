@@ -9,6 +9,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.matcher.NodeMatcher;
@@ -118,7 +119,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public List<Nerd> getOnlineNerds() {
-		return Bukkit.getOnlinePlayers().stream()
+		return PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank() == this)
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
@@ -130,7 +131,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public static List<Nerd> getOnlineStaff() {
-		return Bukkit.getOnlinePlayers().stream()
+		return PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff() && Nerd.of(player).getRank().isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
@@ -138,7 +139,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public static List<Nerd> getOnlineMods() {
-		return Bukkit.getOnlinePlayers().stream()
+		return PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))

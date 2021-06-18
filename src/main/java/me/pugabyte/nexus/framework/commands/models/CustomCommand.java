@@ -719,7 +719,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			if ("@p".equals(value))
 				return PlayerUtils.getNearestPlayer(location()).getObject();
 			if ("@r".equals(value))
-				return RandomUtils.randomElement(Bukkit.getOnlinePlayers());
+				return RandomUtils.randomElement(PlayerUtils.getOnlinePlayers(isPlayer() ? player() : null));
 			if ("@s".equals(value))
 				return player();
 		}
@@ -739,7 +739,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor({Player.class, OfflinePlayer.class})
 	public List<String> tabCompletePlayer(String filter) {
-		return Bukkit.getOnlinePlayers().stream()
+		return PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
 				.map(Nickname::of)
 				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))

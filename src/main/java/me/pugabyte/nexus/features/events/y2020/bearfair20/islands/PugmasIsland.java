@@ -18,7 +18,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -271,7 +270,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 	}
 
 	private void effectTasks() {
-		Tasks.repeat(0, Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream()
+		Tasks.repeat(0, Time.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
 					BearFair20UserService service = new BearFair20UserService();

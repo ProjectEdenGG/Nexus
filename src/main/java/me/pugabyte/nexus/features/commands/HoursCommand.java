@@ -27,7 +27,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -134,7 +133,7 @@ public class HoursCommand extends CustomCommand {
 
 	static {
 		Tasks.repeatAsync(10, Time.SECOND.x(INTERVAL), () -> {
-			for (Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				try {
 					if (AFK.get(player).isAfk()) continue;
 

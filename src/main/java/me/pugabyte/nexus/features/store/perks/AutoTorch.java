@@ -11,7 +11,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -28,7 +27,7 @@ public class AutoTorch extends Feature {
 	@Override
 	public void onStart() {
 		taskId = Tasks.repeatAsync(5, 5, () -> {
-			Bukkit.getOnlinePlayers().forEach(player -> {
+			PlayerUtils.getOnlinePlayers().forEach(player -> {
 				GameModeWrapper gameMode = GameModeWrapper.of(player);
 				// basic checks to ensure player can use the command and is in survival + the survival world.
 				// also checks world guard to avoid spam in player's chat of "hey! you can't do that here"

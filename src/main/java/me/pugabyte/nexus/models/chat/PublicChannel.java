@@ -6,8 +6,8 @@ import me.pugabyte.nexus.features.chat.Chat;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -55,12 +55,11 @@ public class PublicChannel implements Channel {
 	public Set<Chatter> getRecipients(Chatter chatter) {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
-			recipients.addAll(Bukkit.getOnlinePlayers().stream()
-					.filter(player -> player.getWorld().equals(chatter.getOnlinePlayer().getWorld()))
+			recipients.addAll(PlayerUtils.getOnlinePlayers(chatter.getOnlinePlayer().getWorld()).stream()
 					.filter(player -> player.getLocation().distance(chatter.getOnlinePlayer().getLocation()) <= Chat.getLocalRadius())
 					.collect(Collectors.toList()));
 		else if (crossWorld)
-			recipients.addAll(Bukkit.getOnlinePlayers());
+			recipients.addAll(PlayerUtils.getOnlinePlayers());
 		else
 			recipients.addAll(chatter.getOnlinePlayer().getWorld().getPlayers());
 

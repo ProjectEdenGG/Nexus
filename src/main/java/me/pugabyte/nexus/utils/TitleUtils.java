@@ -6,7 +6,6 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -86,7 +85,7 @@ public class TitleUtils {
 	}
 
 	public static void sendTitleToAllPlayers(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			sendTitle(player, title, subtitle, fadeIn, stay, fadeOut);
 		}
 	}

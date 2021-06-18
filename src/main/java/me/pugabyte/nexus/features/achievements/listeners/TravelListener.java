@@ -6,8 +6,8 @@ import me.pugabyte.nexus.features.regionapi.MovementType;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.models.achievement.Achievement;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,7 +57,7 @@ public class TravelListener implements Listener {
 	}
 
 	private static void check() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			checkWalk(player);
 			checkRide(player);
 			checkAviate(player);

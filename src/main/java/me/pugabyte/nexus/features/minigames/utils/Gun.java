@@ -7,8 +7,8 @@ import me.pugabyte.nexus.features.minigames.mechanics.Murder;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.matchdata.MurderMatchData;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -54,9 +54,8 @@ public class Gun {
 
 		for (int counter = 0; counter < blockDistance - 1; counter++) {
 			Location point = start.add(increase);
-			for (Player _player : Bukkit.getOnlinePlayers())
-				if (minigamer.getPlayer().getWorld() == _player.getWorld())
-					_player.spawnParticle(Particle.CRIT, point, 1, 0, 0, 0, 0.1);
+			for (Player _player : PlayerUtils.getOnlinePlayers(minigamer.getPlayer().getWorld()))
+				_player.spawnParticle(Particle.CRIT, point, 1, 0, 0, 0, 0.1);
 		}
 
 		minigamer.getPlayer().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 0.8F);

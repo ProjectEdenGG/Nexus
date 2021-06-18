@@ -20,10 +20,10 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUser;
 import me.pugabyte.nexus.models.resourcepack.LocalResourcePackUserService;
 import me.pugabyte.nexus.utils.HttpUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,7 +37,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.features.resourcepack.ResourcePack.*;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.URL;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.closeZip;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.file;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.fileName;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.hash;
+import static me.pugabyte.nexus.features.resourcepack.ResourcePack.openZip;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -105,7 +110,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	void getStatuses() {
 		send(PREFIX + "Statuses: ");
 		new HashMap<String, List<String>>() {{
-			for (Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				String status = statusOf(player);
 				List<String> names = getOrDefault(status, new ArrayList<>());
 				names.add(Nickname.of(player));
@@ -133,7 +138,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		menuReload();
 
 //		TODO: Figure out a solution that actually works, this just disables the active resource pack for all players who click it
-//		for (Player player : Bukkit.getOnlinePlayers())
+//		for (Player player : PlayerUtils.getOnlinePlayers())
 //			if (Arrays.asList(Status.ACCEPTED, Status.SUCCESSFULLY_LOADED).contains(player.getResourcePackStatus()))
 //				send(player, json(PREFIX + "There's an update to the resource pack available, click to update.").command("/rp"));
 	}

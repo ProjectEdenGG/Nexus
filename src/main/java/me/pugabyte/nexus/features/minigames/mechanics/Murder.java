@@ -341,7 +341,7 @@ public class Murder extends TeamMechanic {
 		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
 		Minigamer victim = null;
 		if (event.getHitEntity() != null && event.getHitEntity() instanceof Player)
-			victim = PlayerManager.get((Player) event.getHitEntity());
+			victim = PlayerManager.get(event.getHitEntity());
 
 		if (!attacker.isPlaying(this)) return;
 		if (!isMurderer(attacker)) return;

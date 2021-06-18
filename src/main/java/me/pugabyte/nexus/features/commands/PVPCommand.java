@@ -15,6 +15,7 @@ import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.models.pvp.PVP;
 import me.pugabyte.nexus.models.pvp.PVPService;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
@@ -55,7 +56,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 	static {
 		Tasks.repeatAsync(5, Time.SECOND.x(2), () -> {
 			PVPService service = new PVPService();
-			for (Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				PVP pvp = service.get(player);
 				if (pvp.isEnabled())
 					player.sendActionBar(colorize("&cPVP is enabled"));

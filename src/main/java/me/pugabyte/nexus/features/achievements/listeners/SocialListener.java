@@ -6,8 +6,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent
 import me.pugabyte.nexus.models.achievement.Achievement;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -62,7 +62,7 @@ public class SocialListener implements Listener {
 	}
 
 	private static void check() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			checkJoinDate(player);
 			checkHours(player);
 			checkRank(player);

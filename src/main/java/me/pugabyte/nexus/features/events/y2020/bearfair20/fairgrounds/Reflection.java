@@ -45,7 +45,14 @@ import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.give
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.send;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
-import static org.bukkit.block.BlockFace.*;
+import static org.bukkit.block.BlockFace.EAST;
+import static org.bukkit.block.BlockFace.NORTH;
+import static org.bukkit.block.BlockFace.NORTH_EAST;
+import static org.bukkit.block.BlockFace.NORTH_WEST;
+import static org.bukkit.block.BlockFace.SOUTH;
+import static org.bukkit.block.BlockFace.SOUTH_EAST;
+import static org.bukkit.block.BlockFace.SOUTH_WEST;
+import static org.bukkit.block.BlockFace.WEST;
 
 public class Reflection implements Listener {
 

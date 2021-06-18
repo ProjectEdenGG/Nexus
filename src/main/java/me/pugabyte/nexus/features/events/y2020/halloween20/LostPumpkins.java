@@ -7,10 +7,10 @@ import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEve
 import me.pugabyte.nexus.models.halloween20.Halloween20Service;
 import me.pugabyte.nexus.models.halloween20.Halloween20User;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,10 +32,7 @@ public class LostPumpkins implements Listener {
 
 	private void startParticleTask() {
 		Tasks.repeatAsync(0, 2 * 20, () -> {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (player.getWorld() != Halloween20.getWorld())
-					continue;
-
+			for (Player player : PlayerUtils.getOnlinePlayers(Halloween20.getWorld())) {
 				Halloween20User user = new Halloween20Service().get(player);
 				for (Pumpkin pumpkin : Pumpkin.values()) {
 					if (user.getFoundPumpkins().contains(pumpkin.getOriginal())) continue;

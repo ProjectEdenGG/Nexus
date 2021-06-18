@@ -39,8 +39,8 @@ public class OnlineCommand extends CustomCommand {
 		List<Rank> ranks = Arrays.asList(Rank.values());
 		Collections.reverse(ranks);
 
-		long vanished = Bukkit.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
-		long online = Bukkit.getOnlinePlayers().size() - vanished;
+		long vanished = PlayerUtils.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
+		long online = PlayerUtils.getOnlinePlayers().size() - vanished;
 		boolean canSeeVanished = !isPlayer() || player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");
 

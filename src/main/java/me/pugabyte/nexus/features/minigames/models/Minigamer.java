@@ -25,11 +25,11 @@ import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.Name;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -429,12 +429,12 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 
 	private void hideAll() {
 		if (respawning)
-			Bukkit.getOnlinePlayers().forEach(_player -> {
+			PlayerUtils.getOnlinePlayers().forEach(_player -> {
 				hidePlayer(_player).from(this);
 				hidePlayer(this).from(_player);
 			});
 		else if (!isAlive)
-			Bukkit.getOnlinePlayers().forEach(_player -> {
+			PlayerUtils.getOnlinePlayers().forEach(_player -> {
 				showPlayer(_player).to(this);
 
 				Minigamer minigamer = PlayerManager.get(_player);
@@ -446,7 +446,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	}
 
 	public void unhideAll() {
-		Bukkit.getOnlinePlayers().forEach(_player -> {
+		PlayerUtils.getOnlinePlayers().forEach(_player -> {
 			showPlayer(player).to(_player);
 			showPlayer(_player).to(player);
 		});

@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.compass.Compass;
 import me.pugabyte.nexus.models.compass.CompassService;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -53,7 +53,7 @@ public class CompassCommand extends CustomCommand implements Listener {
 
 	static {
 		CompassService service = new CompassService();
-		Bukkit.getOnlinePlayers().forEach(player -> {
+		PlayerUtils.getOnlinePlayers().forEach(player -> {
 			Compass compass = service.get(player);
 			compass.start();
 		});

@@ -27,7 +27,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.GameMode;
@@ -201,7 +200,7 @@ public class MiniGolf {
 	private void playerTasks() {
 		// Kit
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
-			for (Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				MiniGolf21User user = service.get(player);
 				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
 

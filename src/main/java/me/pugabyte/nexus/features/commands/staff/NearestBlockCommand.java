@@ -6,9 +6,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -77,9 +77,8 @@ public class NearestBlockCommand extends CustomCommand {
 							.viewers(Collections.singletonList(player()))
 							.onComplete(() -> {
 								fallingBlock.remove();
-								for (Player player : Bukkit.getOnlinePlayers())
-									if (player.getWorld() == blockWorld)
-										player.sendBlockChange(blockLoc, block.getType().createBlockData());
+								for (Player player : PlayerUtils.getOnlinePlayers(blockWorld))
+									player.sendBlockChange(blockLoc, block.getType().createBlockData());
 							})
 							.start();
 

@@ -12,10 +12,10 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputExcepti
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class NewPlayersDiscordCommand extends Command {
 		Tasks.async(() -> {
 			try {
 				HashMap<Player, Integer> players = new HashMap<>() {{
-					for (Player player : Bukkit.getOnlinePlayers()) {
+					for (Player player : PlayerUtils.getOnlinePlayers()) {
 						Hours hours = new HoursService().get(player);
 						if (hours.getTotal() < (Time.HOUR.get() / 20))
 							put(player, hours.getTotal());

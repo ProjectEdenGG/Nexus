@@ -18,11 +18,11 @@ import me.pugabyte.nexus.models.reminders.ReminderConfig;
 import me.pugabyte.nexus.models.reminders.ReminderConfig.Reminder;
 import me.pugabyte.nexus.models.reminders.ReminderConfig.Reminder.ReminderCondition;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
@@ -341,7 +341,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	public static void startTask() {
 		Tasks.cancel(taskId);
 		taskId = Tasks.repeatAsync(interval, interval, () -> {
-			for (Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				if (!Dev.GRIFFIN.is(player))
 					continue;
 

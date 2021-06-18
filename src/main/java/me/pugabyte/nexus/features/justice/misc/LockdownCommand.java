@@ -18,7 +18,6 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -73,7 +72,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 		String message = "&c" + name() + " initiated lockdown for &e" + (timespan.isNull() ? "" : timespan.format(FormatType.LONG) + "&c for &e") + timespan.getRest();
 		broadcast(message);
 
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (!canBypass(player.getUniqueId())) {
 				player.kick(getLockdownReason());
 				broadcast("Removed " + player.getName() + " from server");

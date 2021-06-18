@@ -19,7 +19,7 @@ import me.pugabyte.nexus.models.scoreboard.ScoreboardService;
 import me.pugabyte.nexus.models.scoreboard.ScoreboardUser;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Name;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,7 +36,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	private ScoreboardUser user;
 
 	static {
-		Bukkit.getOnlinePlayers().forEach(player -> {
+		PlayerUtils.getOnlinePlayers().forEach(player -> {
 			ScoreboardUser user = new ScoreboardService().get(player);
 			if (user.isActive())
 				user.on();
@@ -115,8 +115,8 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Permission("group.staff")
 	@Path("list")
 	void list() {
-		String collect = Bukkit.getOnlinePlayers().stream()
-				.map(player -> (ScoreboardUser) new ScoreboardService().get(player))
+		String collect = PlayerUtils.getOnlinePlayers().stream()
+				.map(player -> new ScoreboardService().get(player))
 				.filter(ScoreboardUser::isActive)
 				.map(Name::of)
 				.collect(Collectors.joining("&3, &e"));

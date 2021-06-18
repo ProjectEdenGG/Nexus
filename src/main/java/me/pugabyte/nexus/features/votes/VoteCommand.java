@@ -22,8 +22,8 @@ import me.pugabyte.nexus.models.vote.VoteService;
 import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.TimeUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -117,7 +117,7 @@ public class VoteCommand extends CustomCommand {
 	@Path("allCounts")
 	void allCounts() {
 		Map<Integer, List<Player>> activeVotes = new HashMap<>();
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			Voter voter = new VoteService().get(player);
 			int count = voter.getActiveVotes().size();
 

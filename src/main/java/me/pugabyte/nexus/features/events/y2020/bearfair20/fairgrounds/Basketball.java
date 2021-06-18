@@ -14,8 +14,8 @@ import me.pugabyte.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import me.pugabyte.nexus.models.bearfair20.BearFair20UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static me.pugabyte.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
@@ -167,9 +166,7 @@ public class Basketball implements Listener {
 		Tasks.repeat(0, 20 * 20, () -> {
 			cleanupBasketballs();
 
-			List<Player> players = Bukkit.getOnlinePlayers().stream()
-					.filter(player -> player.getWorld() == world)
-					.collect(Collectors.toList());
+			List<Player> players = PlayerUtils.getOnlinePlayers(world);
 
 			players.forEach(player -> {
 				if (getWGUtils().isInRegion(player.getLocation(), courtRg)) {

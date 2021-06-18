@@ -10,10 +10,10 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -34,7 +34,6 @@ import org.bukkit.material.Sapling;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
@@ -56,8 +55,7 @@ public class McMMOListener implements Listener {
 
 	void scheduler() {
 		Tasks.repeat(0, Time.SECOND.x(1), () -> {
-			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-			players.forEach(player -> {
+			PlayerUtils.getOnlinePlayers().forEach(player -> {
 				if (!canBootBonemeal(player))
 					return;
 

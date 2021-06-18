@@ -298,9 +298,8 @@ public class Pugmas20 implements Listener {
 					.viewers(Collections.singletonList(player))
 					.onComplete(() -> {
 						fallingBlock.remove();
-						for (Player _player : Bukkit.getOnlinePlayers())
-							if (_player.getWorld() == blockWorld)
-								_player.sendBlockChange(chestLoc, chest.getBlockData());
+						for (Player _player : PlayerUtils.getOnlinePlayers(blockWorld))
+							_player.sendBlockChange(chestLoc, chest.getBlockData());
 					})
 					.start();
 		}

@@ -118,11 +118,9 @@ public class Connect4Command extends CustomCommand {
 
 		public void win(Connect4Team team) {
 			won = true;
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (player.getWorld() == Minigames.getWorld()) {
-					String teamName = team.getColor() + "" + team.name().charAt(0) + team.name().substring(1).toLowerCase() + " Team";
-					PlayerUtils.send(player, PREFIX + teamName + ChatColor.WHITE + " has won Connect4!");
-				}
+			for (Player player : PlayerUtils.getOnlinePlayers(Minigames.getWorld())) {
+				String teamName = team.getColor() + "" + team.name().charAt(0) + team.name().substring(1).toLowerCase() + " Team";
+				PlayerUtils.send(player, PREFIX + teamName + ChatColor.WHITE + " has won Connect4!");
 			}
 		}
 

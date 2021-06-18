@@ -11,10 +11,10 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.whereis.WhereIs;
 import me.pugabyte.nexus.models.whereis.WhereIsService;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
@@ -72,7 +72,7 @@ public class WhereIsCommand extends CustomCommand {
 		service.save(whereIs);
 
 		if (!enable)
-			Bukkit.getOnlinePlayers().forEach(_player -> unglow(_player, player()));
+			PlayerUtils.getOnlinePlayers().forEach(_player -> unglow(_player, player()));
 		else
 			process(player());
 
@@ -80,7 +80,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().forEach(WhereIsCommand::process));
+		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().forEach(WhereIsCommand::process));
 	}
 
 	private static void process(Player viewer) {
@@ -105,7 +105,7 @@ public class WhereIsCommand extends CustomCommand {
 		if (threshold == null)
 			threshold = 30;
 
-		for (Player glower : Bukkit.getOnlinePlayers()) {
+		for (Player glower : PlayerUtils.getOnlinePlayers()) {
 			if (!viewer.getWorld().equals(glower.getWorld()))
 				continue;
 
@@ -118,7 +118,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void unglow(Player viewer) {
-		Bukkit.getOnlinePlayers().forEach(glower -> unglow(glower, viewer));
+		PlayerUtils.getOnlinePlayers().forEach(glower -> unglow(glower, viewer));
 	}
 
 	private static void glow(Player glower, Player viewer) {

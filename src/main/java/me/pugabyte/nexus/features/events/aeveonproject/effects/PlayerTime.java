@@ -3,14 +3,12 @@ package me.pugabyte.nexus.features.events.aeveonproject.effects;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.aeveonproject.APUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-
-import java.util.Collection;
 
 import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getWorld;
 
@@ -20,8 +18,7 @@ public class PlayerTime implements Listener {
 		Nexus.registerListener(this);
 
 		Tasks.repeat(0, Time.TICK.x(10), () -> {
-			Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-			for (Player player : players) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				if (!APUtils.isInWorld(player)) continue;
 
 				if (APUtils.isInSpace(player)) {

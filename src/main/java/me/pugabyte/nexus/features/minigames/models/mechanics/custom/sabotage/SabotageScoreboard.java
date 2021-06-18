@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.ChatColor;
 
 import java.util.Arrays;
@@ -64,7 +64,7 @@ public class SabotageScoreboard implements MinigameScoreboard.ITeams {
 	public void handleEnd() {
 		scoreboards.forEach(($, scoreboardTeam) -> {
 			scoreboardTeam.getPlayers().forEach(scoreboardTeam::removePlayer);
-			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
+			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
 			Minigames.getScoreboard().removeTeam(scoreboardTeam.getId());
 		});
 	}

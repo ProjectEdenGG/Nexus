@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.achievements.listeners;
 
 import me.pugabyte.nexus.models.achievement.Achievement;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ public class BiomeListener implements Listener {
 	}
 
 	public static void check() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			checkBiome(player);
 			checkWorld(player);
 		}

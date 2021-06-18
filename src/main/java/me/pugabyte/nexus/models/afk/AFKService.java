@@ -4,7 +4,6 @@ import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.models.MySQLService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -16,7 +15,7 @@ import java.util.UUID;
 public class AFKService extends MySQLService {
 
 	public void saveAll() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			AFKPlayer afkPlayer = AFK.get(player);
 			if (afkPlayer.isAfk())
 				database.upsert(afkPlayer);

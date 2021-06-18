@@ -7,8 +7,8 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.afk.AFKPlayer;
 import me.pugabyte.nexus.models.afk.AFKService;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,7 @@ public class AFK extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> Bukkit.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
+		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().stream().map(AFK::get).forEach(player -> {
 			try {
 				if (!isSameLocation(player.getLocation(), player.getPlayer().getLocation()) && player.getPlayer().getVehicle() == null)
 					if (player.isAfk() && !player.isForceAfk())
@@ -69,7 +69,7 @@ public class AFK extends Feature {
 	}
 
 	public static int getActivePlayers() {
-		return (int) Bukkit.getOnlinePlayers().stream().filter(player -> !get(player).isAfk()).count();
+		return (int) PlayerUtils.getOnlinePlayers().stream().filter(player -> !get(player).isAfk()).count();
 	}
 
 	public static int getActiveStaff() {

@@ -17,9 +17,9 @@ import me.pugabyte.nexus.models.radio.RadioSong;
 import me.pugabyte.nexus.models.radio.RadioType;
 import me.pugabyte.nexus.models.radio.RadioUser;
 import me.pugabyte.nexus.models.radio.RadioUserService;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -83,7 +83,7 @@ public class RadioFeature extends Feature {
 				if (!(radio.getSongPlayer() instanceof PositionSongPlayer))
 					continue;
 
-				for (Player player : Bukkit.getOnlinePlayers()) {
+				for (Player player : PlayerUtils.getOnlinePlayers()) {
 					RadioUser user = service.get(player);
 
 					if (user.isMute()) continue;

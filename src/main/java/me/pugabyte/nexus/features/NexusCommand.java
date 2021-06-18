@@ -178,7 +178,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 			error(json.next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player))
 				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 
@@ -213,7 +213,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("There are " + matchCount + " active matches");
 		}),
 		SMARTINVS(() -> {
-			long invCount = Bukkit.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
+			long invCount = PlayerUtils.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
 			if (invCount > 0)
 				throw new InvalidInputException(new JsonBuilder("There are " + invCount + " SmartInvs menus open").command("/nexus smartInvs").hover("&eClick to view"));
 		}),
@@ -308,7 +308,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("smartInvs")
 	void smartInvs() {
 		Map<String, String> playerInventoryMap = new HashMap<>();
-		Bukkit.getOnlinePlayers().stream()
+		PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
 				.forEach(player -> playerInventoryMap.put(player.getName(),
 						SmartInvsPlugin.manager().getInventory(player).get().getTitle()));

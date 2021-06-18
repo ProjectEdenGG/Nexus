@@ -8,8 +8,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -65,7 +65,7 @@ public class EntitiesCommand extends CustomCommand {
 	@Path("report [radius] [type]")
 	void report(@Arg("200") int radius, EntityType type) {
 		sortByValue(new HashMap<Player, Integer>() {{
-			for (Player player : Bukkit.getOnlinePlayers())
+			for (Player player : PlayerUtils.getOnlinePlayers())
 				put(player, player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius, entity -> type == null || type == entity.getType()).size());
 		}}).forEach((player, count) -> {
 			if (count > 0)

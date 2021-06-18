@@ -12,9 +12,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -58,7 +58,7 @@ public class RebootCommand extends CustomCommand {
 		Tasks.wait(Time.SECOND.x(10), () -> {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
-			for (Player player : Bukkit.getOnlinePlayers())
+			for (Player player : PlayerUtils.getOnlinePlayers())
 				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about 60 seconds"));
 			BashCommand.execute("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
 		});

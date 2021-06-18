@@ -3,7 +3,7 @@ package me.pugabyte.nexus.features.minigames.models.scoreboards;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.utils.EdenScoreboard;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
 public class MatchSidebar implements MinigameScoreboard {
@@ -20,7 +20,7 @@ public class MatchSidebar implements MinigameScoreboard {
 		scoreboard.setTitle(match.getMechanic().getScoreboardTitle(match));
 		scoreboard.setLines(match.getMechanic().getScoreboardLines(match));
 
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (!match.getPlayers().contains(player))
 				scoreboard.unsubscribe(player);
 

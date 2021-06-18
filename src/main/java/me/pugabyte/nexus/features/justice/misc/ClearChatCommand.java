@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
 @Aliases("cc")
@@ -20,7 +20,7 @@ public class ClearChatCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (!isStaff(player))
 				line(player, 40);
 

@@ -9,7 +9,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.Team;
 import me.pugabyte.nexus.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.nexus.utils.ColorType;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,7 +111,7 @@ public interface MinigameScoreboard {
 					getScoreboardTeam(minigamer.getTeam()).addPlayer(minigamer.getPlayer());
 			});
 
-			scoreboardTeams.values().forEach(scoreboardTeam -> Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe));
+			scoreboardTeams.values().forEach(scoreboardTeam -> PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe));
 		}
 
 		@Override
@@ -119,7 +119,7 @@ public interface MinigameScoreboard {
 			if (minigamer.getTeam() == null) return;
 			ScoreboardTeam scoreboardTeam = getScoreboardTeam(minigamer.getTeam());
 			scoreboardTeam.addPlayer(minigamer.getPlayer());
-			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
@@ -127,14 +127,14 @@ public interface MinigameScoreboard {
 			if (minigamer.getTeam() == null) return;
 			ScoreboardTeam scoreboardTeam = getScoreboardTeam(minigamer.getTeam());
 			scoreboardTeam.removePlayer(minigamer.getPlayer());
-			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleEnd() {
 			scoreboardTeams.forEach((team, scoreboardTeam) -> {
 				scoreboardTeam.getPlayers().forEach(scoreboardTeam::removePlayer);
-				Bukkit.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
+				PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
 				Minigames.getScoreboard().removeTeam(scoreboardTeam.getId());
 			});
 		}
@@ -166,24 +166,24 @@ public interface MinigameScoreboard {
 				else
 					scoreboardTeam.addPlayer(minigamer.getPlayer());
 			});
-			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleJoin(Minigamer minigamer) {
 			scoreboardTeam.addPlayer(minigamer.getPlayer());
-			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleQuit(Minigamer minigamer) {
 			scoreboardTeam.removePlayer(minigamer.getPlayer());
-			Bukkit.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleEnd() {
-			Bukkit.getOnlinePlayers().forEach(player -> {
+			PlayerUtils.getOnlinePlayers().forEach(player -> {
 				scoreboardTeam.removePlayer(player);
 				scoreboardTeam.unsubscribe(player);
 			});

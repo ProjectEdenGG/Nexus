@@ -24,7 +24,6 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -75,7 +74,7 @@ public class JoinQuit extends Feature implements Listener {
 			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + Nickname.of(player) + "&5");
 			final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 
-			Bukkit.getOnlinePlayers().forEach(_player -> {
+			PlayerUtils.getOnlinePlayers().forEach(_player -> {
 				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT))
 					_player.sendMessage(player, component, MessageType.CHAT);
 			});
@@ -113,7 +112,7 @@ public class JoinQuit extends Feature implements Listener {
 		final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 		final Component staffComponent = AdventureUtils.fromLegacyAmpersandText(ingame + " (" + StringUtils.camelCase(reason.name()) + ")");
 
-		Bukkit.getOnlinePlayers().forEach(_player -> {
+		PlayerUtils.getOnlinePlayers().forEach(_player -> {
 			if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT)) {
 				if (reason != QuitReason.DISCONNECTED && Rank.of(_player).isStaff())
 					_player.sendMessage(player, staffComponent, MessageType.CHAT);
@@ -166,7 +165,7 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	public static void updateVanished() {
-		Bukkit.getOnlinePlayers().forEach(player -> {
+		PlayerUtils.getOnlinePlayers().forEach(player -> {
 			if (PlayerUtils.isVanished(player))
 				vanished.add(player);
 			else

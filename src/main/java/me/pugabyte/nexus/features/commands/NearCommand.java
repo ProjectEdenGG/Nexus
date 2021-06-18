@@ -10,7 +10,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -26,9 +25,8 @@ public class NearCommand extends CustomCommand {
 
 	@Path("[player]")
 	void run(@Arg(value = "self", permission = "group.staff") Player player) {
-		List<Player> nearby = Bukkit.getOnlinePlayers().stream()
-				.filter(_player -> player.getUniqueId() != _player.getUniqueId()
-						 && player.getWorld() == _player.getWorld()
+		List<Player> nearby = PlayerUtils.getOnlinePlayers(player.getWorld()).stream()
+				.filter(_player -> !isSelf(_player)
 						 && getDistance(player, _player) <= Chat.getLocalRadius()
 						 && (!isPlayer() || PlayerUtils.canSee(player(), _player)))
 				.collect(Collectors.toList());

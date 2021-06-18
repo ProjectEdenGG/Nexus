@@ -25,7 +25,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,7 +212,7 @@ public class Discord extends Feature {
 	}
 
 	private static String getBridgeTopic() {
-		List<Player> players = Bukkit.getOnlinePlayers().stream()
+		List<Player> players = PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> !PlayerUtils.isVanished(player))
 				.sorted(Comparator.comparing(Nickname::of))
 				.collect(Collectors.toList());
@@ -244,7 +243,7 @@ public class Discord extends Feature {
 	}
 
 	private static String getStaffBridgeTopic() {
-		List<Player> players = Bukkit.getOnlinePlayers().stream()
+		List<Player> players = PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> Nerd.of(player).getRank().isStaff())
 				.sorted(Comparator.comparing(Nickname::of))
 				.collect(Collectors.toList());

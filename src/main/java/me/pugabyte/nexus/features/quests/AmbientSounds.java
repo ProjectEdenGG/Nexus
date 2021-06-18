@@ -2,11 +2,11 @@ package me.pugabyte.nexus.features.quests;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.framework.features.Feature;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -46,7 +46,7 @@ public class AmbientSounds extends Feature {
 
 		// Looping Sound Management
 		Tasks.repeat(startDelay, Time.SECOND.x(1), () -> {
-			for (Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 
 				boolean inArea;
 				boolean onList;

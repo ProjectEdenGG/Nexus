@@ -10,8 +10,8 @@ import me.pugabyte.nexus.models.dailyreward.Reward;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
 
@@ -21,7 +21,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
-import static org.bukkit.enchantments.Enchantment.*;
+import static org.bukkit.enchantments.Enchantment.ARROW_DAMAGE;
+import static org.bukkit.enchantments.Enchantment.ARROW_INFINITE;
+import static org.bukkit.enchantments.Enchantment.ARROW_KNOCKBACK;
+import static org.bukkit.enchantments.Enchantment.DAMAGE_ALL;
+import static org.bukkit.enchantments.Enchantment.DIG_SPEED;
+import static org.bukkit.enchantments.Enchantment.DURABILITY;
+import static org.bukkit.enchantments.Enchantment.FIRE_ASPECT;
+import static org.bukkit.enchantments.Enchantment.KNOCKBACK;
+import static org.bukkit.enchantments.Enchantment.LUCK;
+import static org.bukkit.enchantments.Enchantment.LURE;
+import static org.bukkit.enchantments.Enchantment.MENDING;
+import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
 
 public class DailyRewardsFeature extends Feature {
 	private static final List<Reward> rewards1 = setupDailyRewards(1);
@@ -42,7 +53,7 @@ public class DailyRewardsFeature extends Feature {
 			lastTaskTime = LocalDateTime.now();
 
 			DailyRewardService service = new DailyRewardService();
-			for (Player player : Bukkit.getOnlinePlayers()) {
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				try {
 					if (new HoursService().get(player.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
 						continue;

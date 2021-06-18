@@ -224,7 +224,7 @@ public class Justice extends Feature implements Listener {
 			};
 
 			if (Nerd.of(player).getRank().isMod())
-				for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+				for (Player onlinePlayer : PlayerUtils.getOnlinePlayers())
 					Punishments.of(onlinePlayer).getActiveWatchlist().ifPresent(watchlist ->
 							PlayerUtils.send(player, new JsonBuilder(PREFIX).next(notification.apply(watchlist))));
 

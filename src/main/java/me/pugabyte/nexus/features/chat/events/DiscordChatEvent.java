@@ -11,7 +11,6 @@ import me.pugabyte.nexus.models.discord.DiscordUserService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.bukkit.Bukkit;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -74,9 +73,9 @@ public class DiscordChatEvent extends ChatEvent {
 
 	@Override
 	public Set<Chatter> getRecipients() {
-		return Bukkit.getOnlinePlayers().stream()
+		return PlayerUtils.getOnlinePlayers().stream()
 						.filter(player -> player.hasPermission(permission))
-						.map(player -> (Chatter) new ChatService().get(player))
+						.map(player -> new ChatService().get(player))
 						.collect(Collectors.toSet());
 	}
 

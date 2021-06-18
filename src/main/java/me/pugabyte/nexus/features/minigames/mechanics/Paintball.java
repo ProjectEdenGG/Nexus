@@ -55,7 +55,7 @@ public final class Paintball extends TeamMechanic {
 		if (!(event.getEntity() instanceof Snowball)) return;
 		if (!(event.getHitEntity() instanceof Player)) return;
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer victim = PlayerManager.get((Player) event.getHitEntity());
+		Minigamer victim = PlayerManager.get(event.getHitEntity());
 		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
 		if (victim.equals(attacker)) return;
 		if (victim.isPlaying(this) && attacker.isPlaying(this) && !victim.getTeam().equals(attacker.getTeam()))

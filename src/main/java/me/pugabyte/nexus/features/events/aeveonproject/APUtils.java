@@ -2,7 +2,7 @@ package me.pugabyte.nexus.features.events.aeveonproject;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.pugabyte.nexus.features.events.aeveonproject.sets.APSet;
-import org.bukkit.Bukkit;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -19,8 +19,7 @@ import static me.pugabyte.nexus.features.events.aeveonproject.AeveonProject.getW
 public class APUtils {
 
 	public static int getPlayersInAPWorld() {
-		Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-		return (int) players.stream().filter(APUtils::isInWorld).count();
+		return (int) PlayerUtils.getOnlinePlayers().stream().filter(APUtils::isInWorld).count();
 	}
 
 	public static Collection<Player> getPlayersInSet(APSet set) {

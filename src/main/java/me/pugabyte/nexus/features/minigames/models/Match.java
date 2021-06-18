@@ -35,6 +35,7 @@ import me.pugabyte.nexus.features.minigames.models.scoreboards.MinigameScoreboar
 import me.pugabyte.nexus.features.minigames.modifiers.NoModifier;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.BossBarBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
@@ -44,7 +45,6 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -339,7 +339,7 @@ public class Match implements ForwardingAudience {
 			AtomicInteger taskId = new AtomicInteger(-1);
 			taskId.set(tasks.wait(1, () -> {
 				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
-				List<Player> otherPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+				List<Player> otherPlayers = new ArrayList<>(PlayerUtils.getOnlinePlayers());
 				otherPlayers.removeAll(teamMembers);
 				GlowAPI.setGlowing(teamMembers, team.getColorType().getGlowColor(), teamMembers);
 				GlowAPI.setGlowing(otherPlayers, GlowAPI.Color.NONE, teamMembers);
