@@ -57,7 +57,7 @@ public class Chatter implements PlayerOwnedObject {
 			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + "You are no longer speaking in a channel");
 		else {
 			if (channel instanceof PublicChannel publicChannel)
-				join(publicChannel);
+				joinSilent(publicChannel);
 
 			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + channel.getAssignMessage(this));
 		}
