@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.wither;
 
 import eden.utils.TimeUtils.Time;
-import fr.minuskube.inv.SmartInventory;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.features.chat.Chat.Broadcast;
 import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -27,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.wither.WitherChallenge.currentFight;
+import static me.pugabyte.nexus.features.wither.WitherChallenge.maintenance;
+import static me.pugabyte.nexus.features.wither.WitherChallenge.queue;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -48,22 +49,24 @@ public class WitherCommand extends CustomCommand {
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 		if (currentFight != null)
 			error("The wither is currently being fought. Please wait!");
-		if (WitherChallenge.maintenance && !Rank.of(player()).isStaff())
+		if (maintenance && !Rank.of(player()).isStaff())
 			error("The wither arena is currently under maintenance, please wait");
-		if (!checkHasItems()) return;
-		if (!WitherChallenge.queue.contains(uuid()))
-			WitherChallenge.queue.add(uuid());
-		else if (WitherChallenge.queue.indexOf(uuid()) > 0)
-			error("You are already in the queue. You are spot #" + (WitherChallenge.queue.indexOf(uuid()) + 1));
-		if (WitherChallenge.queue.indexOf(uuid()) == 0) {
-			SmartInventory.builder()
-					.size(3, 9)
-					.provider(new DifficultySelectionMenu())
-					.title("Select Difficulty")
-					.build().open(player());
+
+		if (!checkHasItems())
 			return;
-		} else
-			send(PREFIX + "You have been added to the queue. You are #" + WitherChallenge.queue.size() + " in line. " +
+
+		final int index = queue.indexOf(uuid());
+
+		if (index > 0)
+			error("You are already in the queue. You are spot #" + (index + 1));
+
+		if (index == -1)
+			queue.add(uuid());
+
+		if (index == 0)
+			new DifficultySelectionMenu().open(player());
+		else
+			send(PREFIX + "You have been added to the queue. You are #" + queue.size() + " in line. " +
 					"You will be prompted when it is your time to challenge the wither. Please keep the necessary items on you to spawn the Wither");
 	}
 
@@ -216,7 +219,7 @@ public class WitherCommand extends CustomCommand {
 	void reset() {
 		WitherChallenge.reset(false);
 		send(PREFIX + "Arena successfully reset");
-		if (WitherChallenge.queue.size() > 0)
+		if (queue.size() > 0)
 			send(json(PREFIX + "&eThere are players queued to fight the wither. Click here to process the queue.").command("/wither processQueue"));
 	}
 
@@ -230,8 +233,8 @@ public class WitherCommand extends CustomCommand {
 	@Path("maintenance")
 	@Permission("group.staff")
 	void maintenance() {
-		WitherChallenge.maintenance = !WitherChallenge.maintenance;
-		send(PREFIX + "Wither arena maintenance mode " + (WitherChallenge.maintenance ? "&aenabled" : "&cdisabled"));
+		maintenance = !maintenance;
+		send(PREFIX + "Wither arena maintenance mode " + (maintenance ? "&aenabled" : "&cdisabled"));
 	}
 
 }

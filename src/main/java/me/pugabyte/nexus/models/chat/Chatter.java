@@ -56,8 +56,9 @@ public class Chatter implements PlayerOwnedObject {
 		if (channel == null)
 			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + "You are no longer speaking in a channel");
 		else {
-			if (channel instanceof PublicChannel)
-				join((PublicChannel) channel);
+			if (channel instanceof PublicChannel publicChannel)
+				join(publicChannel);
+
 			Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + channel.getAssignMessage(this));
 		}
 		this.activeChannel = channel;
@@ -104,6 +105,11 @@ public class Chatter implements PlayerOwnedObject {
 	}
 
 	public void join(PublicChannel channel) {
+		joinSilent(channel);
+		sendMessage(PREFIX + "Joined " + channel.getColor() + channel.getName() + " &3channel");
+	}
+
+	public void joinSilent(PublicChannel channel) {
 		if (!canJoin(channel))
 			throw new InvalidInputException("You do not have permission to join the " + channel.getName() + " channel");
 		fixChannelSets();
@@ -145,7 +151,7 @@ public class Chatter implements PlayerOwnedObject {
 			ChatManager.getChannels().forEach(channel -> {
 				if (canJoin(channel)) {
 					if (!hasJoined(channel) && !hasLeft(channel))
-						join(channel);
+						joinSilent(channel);
 				} else if (hasJoined(channel)) {
 					leave(channel);
 				}

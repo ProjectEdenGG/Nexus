@@ -60,7 +60,6 @@ public class ChannelCommand extends CustomCommand {
 	@Path("join <channel>")
 	void join(PublicChannel channel) {
 		chatter.join(channel);
-		send(PREFIX + "Joined " + channel.getColor() + channel.getName() + " &3channel");
 	}
 
 	@Path("leave <channel>")

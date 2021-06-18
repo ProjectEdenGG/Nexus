@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.wither;
 
 import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import me.pugabyte.nexus.features.menus.MenuUtils;
@@ -15,6 +16,15 @@ import java.util.ArrayList;
 
 public class DifficultySelectionMenu extends MenuUtils implements InventoryProvider {
 
+	@Override
+	public void open(Player player) {
+		SmartInventory.builder()
+			.size(3, 9)
+			.provider(this)
+			.title("Select Difficulty")
+			.build()
+			.open(player);
+	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
