@@ -180,7 +180,7 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 						script.add("wait 80");
 						script.add("The recipe? Jajaja, that recipe is my little secret. But you know what, if you get me the ingredients I will make some for you.");
 						script.add("wait 120");
-						script.add("Awesome! Ingredients coming right up...");
+						script.add("<self> Awesome! Ingredients coming right up...");
 						script.add("wait 40");
 						script.add("I'll need a carton of milk, a bar of chocolate and a bag of flour, por favor. Look around in the houses down here.");
 
