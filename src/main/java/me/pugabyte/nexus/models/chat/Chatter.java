@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.ChatManager;
 import me.pugabyte.nexus.features.chat.translator.Language;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -63,11 +64,12 @@ public class Chatter implements PlayerOwnedObject {
 	}
 
 	public boolean canJoin(PublicChannel channel) {
-		if (channel.getPermission().isEmpty()) return true;
+		if (channel.getPermission().isEmpty() && channel.getRank() == null)
+			return true;
 
 		boolean hasPerm;
 		if (isOnline())
-			hasPerm = getPlayer().hasPermission(channel.getPermission());
+			hasPerm = getOnlinePlayer().hasPermission(channel.getPermission());
 		else
 			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
 
@@ -114,11 +116,28 @@ public class Chatter implements PlayerOwnedObject {
 		joinedChannels.remove(channel);
 		leftChannels.add(channel);
 		sendMessage(PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
+
 		if (channel.equals(activeChannel))
-			if (!joinedChannels.isEmpty())
-				setActiveChannel(joinedChannels.iterator().next());
-			else
-				setActiveChannel(null);
+			findNewActiveChannel();
+	}
+
+	private void findNewActiveChannel() {
+		if (!joinedChannels.isEmpty()) {
+			for (StaticChannel staticChannel : StaticChannel.values()) {
+				final PublicChannel channel = staticChannel.getChannel();
+
+				if (!joinedChannels.contains(channel))
+					continue;
+
+				if (!canJoin(channel))
+					continue;
+
+				setActiveChannel(channel);
+				return;
+			}
+		}
+
+		setActiveChannel(null);
 	}
 
 	public void updateChannels() {
