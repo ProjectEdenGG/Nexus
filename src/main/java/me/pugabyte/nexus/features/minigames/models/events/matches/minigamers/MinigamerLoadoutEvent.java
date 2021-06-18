@@ -8,20 +8,21 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class MinigamerLoadoutEvent extends MinigamerEvent {
-    private final @NotNull Loadout loadout;
-    public MinigamerLoadoutEvent(@NotNull Minigamer minigamer, @NotNull Loadout loadout) {
-        super(minigamer);
-        this.loadout = loadout;
-    }
+	private final @NotNull Loadout loadout;
 
-    private static final HandlerList handlers = new HandlerList();
+	public MinigamerLoadoutEvent(@NotNull Minigamer minigamer, @NotNull Loadout loadout) {
+		super(minigamer);
+		this.loadout = loadout;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	private static final HandlerList handlers = new HandlerList();
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
 }
