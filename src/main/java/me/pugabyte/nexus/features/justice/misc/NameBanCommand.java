@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.punishments.NameBanConfig;
 import me.pugabyte.nexus.models.punishments.NameBanConfigService;
-import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.Name;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +16,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
-import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 // TODO All messaging
 
@@ -87,8 +86,7 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 			if (!config.playerIsBanned(event.getUniqueId(), event.getName()))
 				config.ban(event.getUniqueId(), event.getName());
 
-			event.disallow(Result.KICK_BANNED, AdventureUtils.fromLegacyText(colorize("&cYour username &e" + event.getName() + " &chas been banned from " +
-					"this server," + System.lineSeparator() + "&cplease change it in order to join")));
+			event.disallow(Result.KICK_BANNED, NameBanConfig.getBanMessage(Name.put(event.getUniqueId(), event.getName())));
 		}
 
 	}

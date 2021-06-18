@@ -206,7 +206,7 @@ public class Punishments implements PlayerOwnedObject {
 
 			String message = "&e" + getName() + " &chas received their warning for &7" + warning.getReason();
 
-			JsonBuilder ingame = json(PREFIX + message)
+			JsonBuilder ingame = json(message)
 					.hover("&eClick for more information")
 					.command("/history " + getName());
 

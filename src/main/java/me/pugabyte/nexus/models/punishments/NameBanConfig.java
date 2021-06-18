@@ -10,8 +10,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.kyori.adventure.text.Component;
@@ -59,6 +61,15 @@ public class NameBanConfig implements PlayerOwnedObject {
 		return false;
 	}
 
+	public static Component getBanMessage(String name) {
+		return new JsonBuilder("&cYour username &e" + name + "&c has been banned from this server,")
+				.line().next("&cplease change it in order to join.").asComponent();
+	}
+
+	public static Component getBanMessage(HasOfflinePlayer player) {
+		return getBanMessage(Name.of(player));
+	}
+
 	public void ban(UUID uuid, String name) {
 		ban(StringUtils.getUUID0(), uuid, name);
 	}
@@ -72,8 +83,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 		if (player.getPlayer() != null)
-			player.getPlayer().kick(Component.text("Your username '" + Name.of(player) + "' has been banned from this server, " +
-					"please change it in order to join"));
+			player.getPlayer().kick(getBanMessage(player));
 	}
 
 	private void addToBanList(UUID uuid, String name) {

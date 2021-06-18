@@ -46,6 +46,9 @@ public class Name {
 	}
 
 	public @Nullable String of(@NotNull HasOfflinePlayer hasPlayer) {
+		if (hasPlayer instanceof Player online)
+			return of(online);
+
 		return of(hasPlayer.getOfflinePlayer());
 	}
 
@@ -60,9 +63,9 @@ public class Name {
 	public @Nullable String of(@NotNull OptionalPlayerLike playerLike) {
 		Player player = playerLike.getPlayer();
 		if (player != null)
-			return of((HasPlayer) player);
+			return of(player);
 		else
-			return of((HasOfflinePlayer) playerLike.getOfflinePlayer());
+			return of(playerLike.getOfflinePlayer());
 	}
 
 	public @NotNull String put(@NotNull UUID uuid, @NotNull String name) {
