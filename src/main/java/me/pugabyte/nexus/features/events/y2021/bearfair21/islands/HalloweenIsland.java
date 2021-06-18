@@ -42,11 +42,11 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAt
 public class HalloweenIsland implements Listener, BearFair21Island {
 	static BearFair21UserService userService = new BearFair21UserService();
 
-	private static final ItemBuilder cookies = new ItemBuilder(Material.COOKIE).name("Grandma's Homemade Cookies").customModelData(0).amount(16);
+	private static final ItemBuilder cookies = new ItemBuilder(Material.COOKIE).name("Grandma's Homemade Cookies").customModelData(1).amount(16);
 	//
-	private static final ItemBuilder chocolate = new ItemBuilder(Material.COCOA_BEANS).name("Chocolate Bar").customModelData(0);
-	private static final ItemBuilder milk = new ItemBuilder(Material.MILK_BUCKET).name("Milk Carton").customModelData(0);
-	private static final ItemBuilder flour = new ItemBuilder(Material.WHEAT).name("Bag of Flour").customModelData(0);
+	private static final ItemBuilder chocolate = new ItemBuilder(Material.COCOA_BEANS).name("Chocolate Bar").customModelData(1);
+	private static final ItemBuilder milk = new ItemBuilder(Material.MILK_BUCKET).name("Milk Carton").customModelData(1);
+	private static final ItemBuilder flour = new ItemBuilder(Material.WHEAT).name("Bag of Flour").customModelData(1);
 	//
 	private static final Location location_chocolate = new Location(BearFair21.getWorld(), 101, 105, -332);
 	private static final Location location_milk = new Location(BearFair21.getWorld(), 100, 105, -332);
