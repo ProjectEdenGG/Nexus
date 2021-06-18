@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 import com.destroystokyo.paper.ParticleBuilder;
 import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
+import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
@@ -16,6 +17,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.m
 import me.pugabyte.nexus.features.particles.ParticleUtils;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21UserService;
+import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.FireworkLauncher;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -38,8 +40,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -50,6 +55,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -84,6 +90,7 @@ public class MiniGolf {
 		ballTask();
 		playerTasks();
 		redstoneTask();
+		extrasTasks();
 	}
 
 	public static void shutdown() {
@@ -110,6 +117,65 @@ public class MiniGolf {
 		inventory.remove(getWhistle());
 		inventory.remove(getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
 		inventory.remove(getScoreBook());
+	}
+
+	private void extrasTasks() {
+		// Golf Ball Color
+		Location golfBallLoc = new Location(BearFair21.getWorld(), 111, 138, -27);
+		ArmorStand armorStand = (ArmorStand) EntityUtils.getNearestEntityType(golfBallLoc, EntityType.ARMOR_STAND, 1.5);
+
+		List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
+				.filter(Objects::nonNull)
+				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
+				.toList();
+
+		if (armorStand != null && !Utils.isNullOrEmpty(golfBalls)) {
+			armorStand.setSilent(true);
+
+			AtomicInteger index = new AtomicInteger();
+			Tasks.repeat(0, Time.SECOND.x(2), () -> {
+				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+					return;
+
+				ItemStack golfBall = golfBalls.get(index.get());
+				if (!ItemUtils.isNullOrAir(golfBall))
+					armorStand.setItem(EquipmentSlot.HAND, golfBall);
+
+				index.getAndIncrement();
+				if (index.get() >= golfBalls.size())
+					index.set(0);
+			});
+		}
+
+		// Particles
+		Location particleLoc = new Location(BearFair21.getWorld(), 114, 139, -27).toCenterLocation();
+		List<Particle> particles = Arrays.stream(MiniGolfParticle.values())
+				.map(MiniGolfParticle::getParticle)
+				.filter(Objects::nonNull)
+				.toList();
+
+		if (!Utils.isNullOrEmpty(particles)) {
+			AtomicInteger index = new AtomicInteger(0);
+			Tasks.repeat(0, Time.SECOND.x(2), () -> {
+				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+					return;
+
+				Particle particle = particles.get(index.get());
+				if (particle != null) {
+					ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(particleLoc)
+							.count(50).extra(0.01).offset(0.2, 0.2, 0.2);
+					if (particle.equals(Particle.REDSTONE))
+						particleBuilder.color(Color.RED);
+
+					particleBuilder.spawn();
+					Tasks.wait(Time.SECOND, particleBuilder::spawn);
+				}
+
+				index.getAndIncrement();
+				if (index.get() >= particles.size())
+					index.set(0);
+			});
+		}
 	}
 
 	private void redstoneTask() {

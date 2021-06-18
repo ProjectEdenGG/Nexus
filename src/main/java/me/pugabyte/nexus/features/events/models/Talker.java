@@ -93,10 +93,12 @@ public class Talker {
 			String line = iterator.next();
 			if (line.toLowerCase().contains("<exit>")) {
 				Tasks.wait(wait.get(), () -> complete.accept(false));
+
 			} else if (line.toLowerCase().matches("^wait \\d+$")) {
 				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 				if (!iterator.hasNext())
 					Tasks.wait(wait.get(), () -> complete.accept(true));
+
 			} else {
 				if (!leftGlobal.get()) {
 					chatter.leave(StaticChannel.GLOBAL.getChannel());
@@ -114,6 +116,7 @@ public class Talker {
 					line = line.replaceAll("<name:.*>", "");
 				} else
 					npcName = talker.getName();
+
 				String message = "&3" + npcName + " &7> &f" + line;
 
 				Tasks.wait(wait.get(), () -> {
