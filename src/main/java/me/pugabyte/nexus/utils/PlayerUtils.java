@@ -135,9 +135,9 @@ public class PlayerUtils {
 		Stream<Player> stream = Bukkit.getOnlinePlayers().stream().filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer);
 
 		if (player != null)
-			stream = stream.filter(_player -> _player.getWorld().equals(world));
-		if (world != null)
 			stream = stream.filter(_player -> canSee(player, _player));
+		if (world != null)
+			stream = stream.filter(_player -> _player.getWorld().equals(world));
 
 		return stream.toList();
 	}
