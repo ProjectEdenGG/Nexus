@@ -310,7 +310,8 @@ public class RadioCommand extends CustomCommand {
 	@Permission("group.admin")
 	void configAddSong(Radio radio, @Arg(type = RadioSong.class) List<RadioSong> radioSongs) {
 		for (RadioSong radioSong : radioSongs)
-			radio.getSongs().add(radioSong.getName());
+			config.addSong(radio, radioSong);
+
 		configService.save(config);
 
 		send(PREFIX + "Added " + radioSongs.stream().map(RadioSong::getName).collect(Collectors.joining(", ")) + " to " + radio.getId());
@@ -320,9 +321,9 @@ public class RadioCommand extends CustomCommand {
 	@Description("Remove a song from a radio")
 	@Permission("group.admin")
 	void configRemoveSong(Radio radio, @Arg(context = 1) RadioSong radioSong) {
-		radio.getSongs().remove(radioSong.getName());
-		configService.save(config);
+		config.removeSong(radio, radioSong);
 
+		configService.save(config);
 		send(PREFIX + "Removed " + radioSong.getName() + " from " + radio.getId());
 	}
 

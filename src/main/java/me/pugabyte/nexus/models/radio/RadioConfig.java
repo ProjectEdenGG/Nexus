@@ -56,6 +56,24 @@ public class RadioConfig implements PlayerOwnedObject {
 		radios.add(radio);
 	}
 
+	public void addSong(Radio radio, RadioSong song) {
+		Radio _radio = getById(radio.getId());
+//		radios.remove(_radio);
+		Set<String> songs = _radio.getSongs();
+		songs.add(song.getName());
+		_radio.setSongs(songs);
+//		radios.add(_radio);
+	}
+
+	public void removeSong(Radio radio, RadioSong song) {
+		Radio _radio = getById(radio.getId());
+//		radios.remove(_radio);
+		Set<String> songs = _radio.getSongs();
+		songs.add(song.getName());
+		_radio.setSongs(songs);
+//		radios.add(_radio);
+	}
+
 	@Data
 	@Builder
 	@NoArgsConstructor

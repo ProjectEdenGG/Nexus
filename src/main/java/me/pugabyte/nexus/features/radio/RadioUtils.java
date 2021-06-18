@@ -197,7 +197,12 @@ public class RadioUtils {
 
 	public static List<String> getPlaylistHover(Radio radio) {
 		AtomicInteger ndx = new AtomicInteger(1);
-		List<Song> songList = radio.getSongPlayer().getPlaylist().getSongList();
-		return songList.stream().map(song -> "&3" + ndx.getAndIncrement() + " &e" + song.getTitle()).collect(Collectors.toList());
+		List<String> songList;
+		if (radio.getSongPlayer() == null)
+			songList = radio.getSongs().stream().toList();
+		else
+			songList = radio.getSongPlayer().getPlaylist().getSongList().stream().map(Song::getTitle).toList();
+
+		return songList.stream().map(song -> "&3" + ndx.getAndIncrement() + " &e" + song).collect(Collectors.toList());
 	}
 }

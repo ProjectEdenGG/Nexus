@@ -84,7 +84,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all yall people here safe.");
+					script.add("wait 80");
 					script.add("If you see anything suspicious simply let me know. I am more than capable of handling things myself.");
+					script.add("wait 90");
 					script.add("Now you just continue to have fun, got it?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -105,7 +107,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Hm, are you admiring the scenery as well?");
+					script.add("wait 60");
 					script.add("There is honestly nothing more stunning than an area bustling with life.");
+					script.add("wait 80");
 					script.add("Nice to meet you, my name is Zach and I love architecture with all my heart.");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -115,24 +119,28 @@ public class MainIsland implements Listener, BearFair21Island {
 				} else if(user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
 					// phone conversation
 					script.add("<self> Thanks for calling GG! How can I help?");
+					script.add("wait 60");
+					// TODO BF21: Split this up into multiple lines
 					script.add("Hey, this is Zach over in (town name). Me and my team are building a new house on the edge of town, " +
-							"ya know where an old shed burned down a while back? Yeah, well I’m in a bit of a bind here. See, I’m on a tight " +
-							"schedule and we’ve made some good progress but this morning my electrician bailed on me. Said he could find a better " +
-							"paying job in the city; and I promise you, he won’t. Anyways, it's just me and my carpenter, Ron. I know GG is a " +
-							"videogame company, but from what I’ve heard, y’all are pretty good with tech repair too. " +
-							"I know It’s a bit of an odd request, but could you spare some one over here to set up the internet? " +
-							"It’s the only electrical system left and shouldn’t take too long. I’ll pay double whatever your typical service " +
-							"fee is since this isn’t your normal repair job.");
+						"ya know where an old shed burned down a while back? Yeah, well I’m in a bit of a bind here. See, I’m on a tight " +
+						"schedule and we’ve made some good progress but this morning my electrician bailed on me. Said he could find a better " +
+						"paying job in the city; and I promise you, he won’t. Anyways, it's just me and my carpenter, Ron. I know GG is a " +
+						"videogame company, but from what I’ve heard, y’all are pretty good with tech repair too. " +
+						"I know It’s a bit of an odd request, but could you spare some one over here to set up the internet? " +
+						"It’s the only electrical system left and shouldn’t take too long. I’ll pay double whatever your typical service " +
+						"fee is since this isn’t your normal repair job.");
+					script.add("wait 20");
 					script.add("<self> Uh, sure I could give it a look. Can’t be more complicated than a motherboard... ");
+					script.add("wait 80");
 					script.add("Great! We’ll have everything ready for you when you get here. ");
 
 					// player clicks npc after phone convo
 					script.add("Hey thanks for coming. All we need you to do is connect the cables and set up the router. " +
-							"You’ll find the cables under the house and the router station is upstairs.");
+						"You’ll find the cables under the house and the router station is upstairs.");
 
 					// player fixes thing
 					script.add("Awesome! That was some quick work, buddy. Here’s your pay, and yes, I’m paying you double. " +
-							"Tell your manager to consider it a donation. Take care now.");
+						"Tell your manager to consider it a donation. Take care now.");
 					script.add("<self> It was no problem, happy to help wherever I can!");
 					return script;
 				}
@@ -149,6 +157,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("I swear, there is nothing like the smell of sawdust to wake you up in the morning.");
+					script.add("wait 80");
 					script.add("How do you do friend, the name is Ron and as this town's carpenter, my job is to create masterpieces everyday!");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -176,8 +185,11 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Hm did you say something? Apologies, my hearing isn't quite what it used to be.");
+					script.add("wait 80");
 					script.add("Feel free to call me Harold, I'm the Beekeeper around these parts and I have been for many years.");
+					script.add("wait 100");
 					script.add("I honestly wouldn't have it any other way.");
+					script.add("wait 60");
 					script.add("Are you by chance a fan of honey?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -198,8 +210,11 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("I swear there is nothing more beautiful than the open water.");
+					script.add("wait 80");
 					script.add("It's somehow both a symbol of dangerous adventure and complete calm.");
+					script.add("wait 80");
 					script.add("My name is Nate by the way and honestly I can see why the fish would be happy to live out there.");
+					script.add("wait 100");
 					script.add("However I suppose I can’t put too much thought into it, as a fisherman it is my job to pull them out of that paradise, isn't it?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -247,7 +262,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					switch (user.getQuestStage_Main()) {
 						case NOT_STARTED -> {
 							script.add("Oh splendid, I could really use some help gathering the necessary decorations, I've got a few tasks for you.");
-							script.add("wait 80");
+							script.add("wait 100");
 							script.add("For your first task, could you gather the materials, and craft me 4 cyan & 4 yellow banners? I've seem to forgotten the recipe.");
 							user.setQuestStage_Main(QuestStage.STARTED);
 							userService.save(user);
@@ -323,7 +338,7 @@ public class MainIsland implements Listener, BearFair21Island {
 							script.add("TODO - Thanks");
 							script.add("wait 20");
 							script.add("That's almost everything, there's just one last task I need you to do, while I'm finishing up.");
-							script.add("wait 40");
+							script.add("wait 100");
 							script.add("I had these invitations custom made, could you go around the island and give one to each of the townspeople?");
 							Tasks.wait(80, () -> Quests.giveItem(user, invitation.clone().amount(invitees.size()).build()));
 
@@ -364,6 +379,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Hey there land dweller, how do you feel about exploring above the clouds?");
+					script.add("wait 60");
 					script.add("The names Skye and I'm an explorer of well... the skies! They call me an aeronaut, pretty cool right?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -407,8 +423,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Ah, just the inspiration I was looking for. The name’s Sage and I'm your local artist!");
+					script.add("wait 60");
 					script.add("Feel free to browse as long as you’d like. I would love to get to paint- I mean know you.");
-					script.add("wait 20");
+					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -428,8 +445,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Oh hi, my name is Rye and you may know me as the baker guy.");
+					script.add("wait 60");
 					script.add("I just took this loaf of bread out of the oven, if you are interested.");
-					script.add("wait 20");
+					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -449,8 +467,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Hey friend, can I interest you in a nice refreshing beverage.");
+					script.add("wait 60");
 					script.add("My name is Cosmo and drinks are my specialty. It's quite hot out there, and I think I've got just what you need.");
-					script.add("wait 20");
+					script.add("wait 100");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -470,9 +489,11 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Can I help you with something?");
+					script.add("wait 40");
 					script.add("Oh you must be new around here, I'm Alvor and I'm a blacksmith that's pretty much all you need to know.");
+					script.add("wait 100");
 					script.add("If it needs a forge, I'm probably selling it, so take a look around I suppose.");
-					script.add("wait 20");
+					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -492,8 +513,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Oh hi there! I'm Fern and I absolutely love plants, probably why I decided to become a botanist in the first place.");
+					script.add("wait 100");
 					script.add("I have got a ton of beautiful plants for purchase and a story for each and every one of them.");
-					script.add("wait 20");
+					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -513,10 +535,13 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("I'm Mercury, I'm a collector of many wondrous goods, old and new.");
+					script.add("wait 60");
 					script.add("Anything can be a treasure if your heart decides to give it value.");
+					script.add("wait 60");
 					script.add("Trade with me whenever you like, but be aware, I tend to wander.");
+					script.add("wait 60");
 					script.add("I may be here now, but I certainly won't be much longer.");
-					script.add("wait 20");
+					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -536,8 +561,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Have you ever been fishing before? There is nothing quite as peaceful as sitting by the water and waiting for a fish to bite.");
+					script.add("wait 100");
 					script.add("I'm Gage and I've been fishing for as long as I can remember. You should join me some time.");
-					script.add("wait 20");
+					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -557,10 +583,13 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("...AH! Apologies I didn't see you there.");
+					script.add("wait 40");
 					script.add("Guess I was lost in my own world again. I'm Joshua and I'm always trying to come up with awesome new gadgets for people to use.");
+					script.add("wait 100");
 					script.add("I suppose that's why the people around here call me an inventor.");
+					script.add("wait 60");
 					script.add("What can I help you with?");
-					script.add("wait 20");
+					script.add("wait 40");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -580,8 +609,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("I'd say a little sugar never hurt anyone. A lot of sugar you say? Well I'd certainly be willing to risk it.");
+					script.add("wait 100");
 					script.add("I'm Maple and sweet treats are my passion! Cookies, cakes, pies, you name it, I've probably made it at some point.");
-					script.add("wait 20");
+					script.add("wait 100");
 					return script;
 				} else if (user.getQuestStage_Main() == QuestStage.STEP_THREE) {
 					ItemStack item = Quests.getItemLikeFrom(user, new ItemBuilder(Material.CAKE));
@@ -589,8 +619,9 @@ public class MainIsland implements Listener, BearFair21Island {
 						return script;
 
 					script.add("Oh my goodness, I totally forgot! Nor do I have the necessary supplies for a cake that size.");
-					script.add("Would you mind baking the cake and gathering the cocoa beans for the frosting, and I'll decorate the cake to perfection?");
 					script.add("wait 80");
+					script.add("Would you mind baking the cake and gathering the cocoa beans for the frosting, and I'll decorate the cake to perfection?");
+					script.add("wait 100");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -609,7 +640,9 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("I promise I really do love my job however chopping wood all day can be extremely tiring.");
+					script.add("wait 80");
 					script.add("This poor guy needs a break at some point too.");
+					script.add("wait 40");
 					script.add("Oh wait I don’t think we’ve met before, sorry about that. My name is Flint and I'm a lumberjack.");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -630,9 +663,11 @@ public class MainIsland implements Listener, BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Hmm I can tell you come here seeking knowledge of the arcane.");
+					script.add("wait 60");
 					script.add("How do I know? Well that is simply not important right now, what is important is that I, as the great sorcerer Lucian, have knowledge of magic that far surpasses that of anyone else!");
+					script.add("wait 100");
 					script.add("So don’t just stand there, take a look around.");
-					script.add("wait 20");
+					script.add("wait 40");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
