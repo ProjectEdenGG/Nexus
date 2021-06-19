@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
+import eden.utils.RandomUtils;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
@@ -18,6 +19,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farmi
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.RegenCrops;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
+import me.pugabyte.nexus.features.regionapi.events.common.EnteringRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
@@ -34,6 +36,8 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Bee;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,10 +46,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
 public class Quests implements Listener {
@@ -198,6 +204,32 @@ public class Quests implements Listener {
 		Quests.sound_completeQuest(user.getPlayer());
 		giveItem(user, crateKey.clone());
 		user.sendMessage("TODO BF21: deliver actual key");
+	}
+
+	@EventHandler
+	public void onRegionEnter(EnteringRegionEvent event) {
+		Entity entity = event.getEntity();
+		if (isNotAtBearFair(entity))
+			return;
+
+		String id = event.getRegion().getId();
+		if (id.equalsIgnoreCase("bearfair21_main_bee_exit")) {
+			if (entity instanceof Bee bee) {
+				List<Location> beeLocs = Arrays.asList(
+					new Location(BearFair21.getWorld(), -32, 96, -72).toCenterLocation(),
+					new Location(BearFair21.getWorld(), -33, 107, -34).toCenterLocation(),
+					new Location(BearFair21.getWorld(), -60, 114, -7).toCenterLocation()
+				);
+
+				bee.teleport(RandomUtils.randomElement(beeLocs));
+			} else if (entity instanceof Player player) {
+				player.teleport(new Location(BearFair21.getWorld(), -96.5, 136, 14.5, 60, -3));
+			}
+		} else if (id.equalsIgnoreCase("bearfair21_main_bee_enter")) {
+			if (entity instanceof Player player) {
+				player.teleport(new Location(BearFair21.getWorld(), -94.5, 136, 14.5, -110, 17));
+			}
+		}
 	}
 
 	@EventHandler
