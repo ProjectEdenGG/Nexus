@@ -77,15 +77,15 @@ public class BearFair21 {
 	}
 
 	public static boolean isNotAtBearFair(Block block) {
-		return !isNotAtBearFair(block.getLocation());
+		return isNotAtBearFair(block.getLocation());
 	}
 
 	public static boolean isNotAtBearFair(Entity entity) {
-		return !isNotAtBearFair(entity.getLocation());
+		return isNotAtBearFair(entity.getLocation());
 	}
 
 	public static boolean isNotAtBearFair(Player player) {
-		return !isNotAtBearFair(player.getLocation());
+		return isNotAtBearFair(player.getLocation());
 	}
 
 	public static boolean isNotAtBearFair(Location location) {
@@ -103,7 +103,7 @@ public class BearFair21 {
 	private static boolean isNotAtBearFair(EquipmentSlot slot, Player player) {
 		if (!EquipmentSlot.HAND.equals(slot)) return true;
 
-		return !BearFair21.isNotAtBearFair(player);
+		return BearFair21.isNotAtBearFair(player);
 	}
 
 	public static boolean isInRegion(Block block, String region) {
