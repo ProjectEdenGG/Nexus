@@ -15,7 +15,6 @@ import org.bukkit.block.data.Rotatable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
@@ -34,14 +33,13 @@ public class Listeners implements Listener {
 
 	@EventHandler
 	public void onButtonPress(PlayerInteractEvent event) {
+		if (BearFair21.isNotAtBearFair(event))
+			return;
+
 		if (event.getClickedBlock() == null) return;
-		if (event.getHand() == null) return;
-		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 		if (!MaterialTag.BUTTONS.isTagged(event.getClickedBlock().getType())) return;
 
 		Block button = event.getClickedBlock();
-		if (!BearFair21.isAtBearFair(button.getLocation())) return;
-
 		BlockData blockData = button.getBlockData();
 		Directional directional = (Directional) blockData;
 		Block block = button.getRelative(0, -1, 0).getRelative(directional.getFacing().getOppositeFace());

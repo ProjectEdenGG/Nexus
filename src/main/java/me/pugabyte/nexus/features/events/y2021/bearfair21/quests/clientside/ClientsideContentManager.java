@@ -150,7 +150,7 @@ public class ClientsideContentManager implements Listener {
 
 	private void check(Player player) {
 		Tasks.wait(1, () -> {
-			if (!BearFair21.isAtBearFair(player))
+			if (BearFair21.isNotAtBearFair(player))
 				return;
 
 			if (BearFair21.getPlayers().size() == 1)

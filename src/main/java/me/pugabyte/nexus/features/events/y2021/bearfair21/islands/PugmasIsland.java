@@ -38,15 +38,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
@@ -511,11 +508,10 @@ public class PugmasIsland implements Listener, BearFair21Island {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onClickPresent(PlayerInteractEvent event) {
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
+		if (BearFair21.isNotAtBearFair(event))
+			return;
 
-		Player player = event.getPlayer();
-		if (!isAtBearFair(player)) return;
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
 		Block block = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(block)) return;

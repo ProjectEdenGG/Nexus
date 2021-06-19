@@ -73,7 +73,7 @@ public class Seeker implements Listener {
 					continue;
 
 				Player player = offlinePlayer.getPlayer();
-				if (!BearFair21.isAtBearFair(player))
+				if (BearFair21.isNotAtBearFair(player))
 					continue;
 
 				Location location = playersMap.get(uuid);
@@ -91,9 +91,10 @@ public class Seeker implements Listener {
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(player)) return;
+		if (BearFair21.isNotAtBearFair(event))
+			return;
 
+		Player player = event.getPlayer();
 		UUID uuid = player.getUniqueId();
 		if (!playersMap.containsKey(uuid)) return;
 		if (event.getClickedBlock() == null) return;

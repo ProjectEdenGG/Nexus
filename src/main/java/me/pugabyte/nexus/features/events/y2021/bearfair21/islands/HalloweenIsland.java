@@ -20,13 +20,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.events.models.QuestStage.STEP_ONE;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 
 // TODO BF21: Testing
 @Region("halloween")
@@ -255,10 +252,8 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) {
-		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
-
-		Player player = event.getPlayer();
-		if (!isAtBearFair(player)) return;
+		if (BearFair21.isNotAtBearFair(event))
+			return;
 
 		Block block = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(block)) return;
@@ -274,10 +269,8 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 
 	@EventHandler
 	public void onInteractItemFrame(PlayerInteractEntityEvent event) {
-		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
-
-		Player player = event.getPlayer();
-		if (!isAtBearFair(player)) return;
+		if (BearFair21.isNotAtBearFair(event))
+			return;
 
 		Entity clicked = event.getRightClicked();
 		if (!(clicked instanceof ItemFrame itemFrame)) return;

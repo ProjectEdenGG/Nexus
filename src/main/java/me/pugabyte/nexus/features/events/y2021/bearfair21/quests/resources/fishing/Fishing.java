@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing;
 
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
@@ -16,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 import static me.pugabyte.nexus.utils.ItemUtils.getTool;
 
 public class Fishing implements Listener {
@@ -67,7 +67,7 @@ public class Fishing implements Listener {
 	@EventHandler
 	public void onFishCatch(PlayerFishEvent event) {
 		Player player = event.getPlayer();
-		if (!isAtBearFair(player)) return;
+		if (BearFair21.isNotAtBearFair(player)) return;
 
 		ItemStack rod = getTool(player);
 		if (rod == null) return;

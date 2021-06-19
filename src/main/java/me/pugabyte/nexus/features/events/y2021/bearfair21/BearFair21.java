@@ -21,6 +21,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -73,20 +76,34 @@ public class BearFair21 {
 		return getWGUtils().getProtectedRegion(region);
 	}
 
-	public static boolean isAtBearFair(Block block) {
-		return isAtBearFair(block.getLocation());
+	public static boolean isNotAtBearFair(Block block) {
+		return !isNotAtBearFair(block.getLocation());
 	}
 
-	public static boolean isAtBearFair(Entity entity) {
-		return isAtBearFair(entity.getLocation());
+	public static boolean isNotAtBearFair(Entity entity) {
+		return !isNotAtBearFair(entity.getLocation());
 	}
 
-	public static boolean isAtBearFair(Player player) {
-		return isAtBearFair(player.getLocation());
+	public static boolean isNotAtBearFair(Player player) {
+		return !isNotAtBearFair(player.getLocation());
 	}
 
-	public static boolean isAtBearFair(Location location) {
-		return location.getWorld().equals(getWorld());
+	public static boolean isNotAtBearFair(Location location) {
+		return !location.getWorld().equals(getWorld());
+	}
+
+	public static boolean isNotAtBearFair(PlayerInteractEvent event) {
+		return isNotAtBearFair(event.getHand(), event.getPlayer());
+	}
+
+	public static boolean isNotAtBearFair(PlayerInteractEntityEvent event) {
+		return isNotAtBearFair(event.getHand(), event.getPlayer());
+	}
+
+	private static boolean isNotAtBearFair(EquipmentSlot slot, Player player) {
+		if (!EquipmentSlot.HAND.equals(slot)) return true;
+
+		return !BearFair21.isNotAtBearFair(player);
 	}
 
 	public static boolean isInRegion(Block block, String region) {
@@ -98,11 +115,11 @@ public class BearFair21 {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return isAtBearFair(location) && getWGUtils().isInRegion(location, region);
+		return !isNotAtBearFair(location) && getWGUtils().isInRegion(location, region);
 	}
 
 	public static boolean isInRegionRegex(Location location, String regex) {
-		return isAtBearFair(location) && getWGUtils().getRegionsLikeAt(regex, location).size() > 0;
+		return !isNotAtBearFair(location) && getWGUtils().getRegionsLikeAt(regex, location).size() > 0;
 	}
 
 	public static void send(String message, Player to) {
@@ -120,12 +137,7 @@ public class BearFair21 {
 	}
 
 	public static Set<Player> getPlayers() {
-		Set<Player> result = new HashSet<>();
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
-			if (isAtBearFair(player))
-				result.add(player);
-		}
-		return result;
+		return new HashSet<>(PlayerUtils.getOnlinePlayers(getWorld()));
 	}
 
 	// point stuff

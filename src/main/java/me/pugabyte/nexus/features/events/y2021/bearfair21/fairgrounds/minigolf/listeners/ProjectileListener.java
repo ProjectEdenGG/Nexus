@@ -34,7 +34,7 @@ public class ProjectileListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onProjectileHit(ProjectileHitEvent event) {
 		Entity entity = event.getEntity();
-		if (!BearFair21.isAtBearFair(entity)) return;
+		if (BearFair21.isNotAtBearFair(entity)) return;
 		if (!MiniGolfUtils.isInMiniGolf(entity.getLocation())) return;
 
 		// Check if golf ball

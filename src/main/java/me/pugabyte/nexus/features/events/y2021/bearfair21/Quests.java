@@ -39,7 +39,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
 public class Quests implements Listener {
@@ -94,11 +92,7 @@ public class Quests implements Listener {
 	}
 
 	public static String[] getMenuBlockLines(PlayerInteractEvent event) {
-		if (!EquipmentSlot.HAND.equals(event.getHand()))
-			return null;
-
-		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(player))
+		if (BearFair21.isNotAtBearFair(event))
 			return null;
 
 		Block block = event.getClickedBlock();
@@ -212,7 +206,7 @@ public class Quests implements Listener {
 			return;
 
 		Player player = event.getClicker();
-		if (!isAtBearFair(player))
+		if (BearFair21.isNotAtBearFair(player))
 			return;
 
 		CooldownService cooldownService = new CooldownService();
@@ -240,7 +234,7 @@ public class Quests implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
-		if (!isAtBearFair(block)) return;
+		if (BearFair21.isNotAtBearFair(block)) return;
 		if (canWorldGuardEdit(player)) return;
 
 		event.setCancelled(true);

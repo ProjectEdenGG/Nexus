@@ -22,7 +22,7 @@ public class RegionListener implements Listener {
 	@EventHandler
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(player))
+		if (BearFair21.isNotAtBearFair(player))
 			return;
 
 		if (event.getRegion().getId().equals(hole14_return))

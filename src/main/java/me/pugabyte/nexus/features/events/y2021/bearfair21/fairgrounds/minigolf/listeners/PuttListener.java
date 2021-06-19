@@ -26,7 +26,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -42,14 +41,10 @@ public class PuttListener implements Listener {
 
 	@EventHandler
 	public void onPutt(PlayerInteractEvent event) {
-		if (!EquipmentSlot.HAND.equals(event.getHand()))
+		if (BearFair21.isNotAtBearFair(event))
 			return;
 
 		Player player = event.getPlayer();
-		if (!BearFair21.isAtBearFair(event.getPlayer())) {
-			return;
-		}
-
 		MiniGolf21User user = MiniGolfUtils.getUser(player.getUniqueId());
 		if (!MiniGolfUtils.isInMiniGolf(player.getLocation())) {
 			user.debug("PuttListener > user is not in minigolf");

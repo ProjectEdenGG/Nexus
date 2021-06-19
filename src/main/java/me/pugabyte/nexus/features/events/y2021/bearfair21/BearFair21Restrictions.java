@@ -24,8 +24,6 @@ import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isAtBearFair;
-
 public class BearFair21Restrictions implements Listener {
 
 	public BearFair21Restrictions() {
@@ -34,7 +32,7 @@ public class BearFair21Restrictions implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onItemFrameBreak(EntityDamageByEntityEvent event) {
-		if (!isAtBearFair(event.getEntity()))
+		if (BearFair21.isNotAtBearFair(event.getEntity()))
 			return;
 
 		EntityType breakType = event.getEntityType();
@@ -62,7 +60,7 @@ public class BearFair21Restrictions implements Listener {
 	@EventHandler
 	public void onInteractWithVillager(PlayerInteractEntityEvent event) {
 		Entity entity = event.getRightClicked();
-		if (!isAtBearFair(entity)) return;
+		if (BearFair21.isNotAtBearFair(entity)) return;
 		if (!(entity instanceof Villager)) return;
 		if (CitizensAPI.getNPCRegistry().isNPC(entity)) return;
 
@@ -71,21 +69,21 @@ public class BearFair21Restrictions implements Listener {
 
 	@EventHandler
 	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
-		if (!isAtBearFair(event.getPlayer())) return;
+		if (BearFair21.isNotAtBearFair(event.getPlayer())) return;
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onTameEntity(EntityTameEvent event) {
-		if (!isAtBearFair(event.getEntity())) return;
+		if (BearFair21.isNotAtBearFair(event.getEntity())) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onLecternTakeBook(PlayerTakeLecternBookEvent event) {
 		Location loc = event.getLectern().getBlock().getLocation();
-		if (!isAtBearFair(loc)) return;
+		if (BearFair21.isNotAtBearFair(loc)) return;
 
 		event.setCancelled(true);
 		event.getPlayer().closeInventory();
@@ -93,13 +91,13 @@ public class BearFair21Restrictions implements Listener {
 
 	@EventHandler
 	public void onMcMMOFishing(McMMOPlayerFishingEvent event) {
-		if (!isAtBearFair(event.getPlayer())) return;
+		if (BearFair21.isNotAtBearFair(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onBlockDropItemEvent(BlockDropItemEvent event) {
-		if (!BearFair21.isAtBearFair(event.getBlock()))
+		if (BearFair21.isNotAtBearFair(event.getBlock()))
 			return;
 
 		event.getItems().forEach(item -> {
@@ -111,7 +109,7 @@ public class BearFair21Restrictions implements Listener {
 
 	@EventHandler
 	public void onWitherRoseDamageEvent(EntityDamageEvent event) {
-		if (!BearFair21.isAtBearFair(event.getEntity()))
+		if (BearFair21.isNotAtBearFair(event.getEntity()))
 			return;
 
 		if (event.getCause().equals(DamageCause.WITHER))
