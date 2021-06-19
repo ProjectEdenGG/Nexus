@@ -223,11 +223,11 @@ public class Quests implements Listener {
 
 				bee.teleport(RandomUtils.randomElement(beeLocs));
 			} else if (entity instanceof Player player) {
-				player.teleport(new Location(BearFair21.getWorld(), -96.5, 136, 14.5, 60, -3));
+				player.teleport(new Location(BearFair21.getWorld(), -97.5, 136, 14.5, 60, -3));
 			}
 		} else if (id.equalsIgnoreCase("bearfair21_main_bee_enter")) {
 			if (entity instanceof Player player) {
-				player.teleport(new Location(BearFair21.getWorld(), -94.5, 136, 14.5, -110, 17));
+				player.teleport(new Location(BearFair21.getWorld(), -93.5, 135, 14.5, -110, 17));
 			}
 		}
 	}
