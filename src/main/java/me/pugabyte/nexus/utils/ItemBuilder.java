@@ -122,6 +122,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder setLore(String... lore) {
+		return setLore(List.of(lore));
+	}
+
 	public ItemBuilder setLore(List<String> lore) {
 		this.lore.clear();
 		if (lore != null)
