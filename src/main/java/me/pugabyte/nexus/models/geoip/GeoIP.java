@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -54,7 +55,8 @@ public class GeoIP implements PlayerOwnedObject {
 	private String zip;
 	private Double latitude;
 	private Double longitude;
-	private Location geoLocation;
+	@Accessors(fluent = true)
+	private Location location;
 	@SerializedName("time_zone")
 	private Timezone timezone;
 	private Currency currency;
