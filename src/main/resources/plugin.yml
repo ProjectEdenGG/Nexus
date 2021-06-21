@@ -1,7 +1,7 @@
 name: Nexus
 main: me.pugabyte.nexus.Nexus
 version: ${project.version}
-api-version: 1.16
+api-version: 1.17
 load: POSTWORLD
 depend:
   - helper
