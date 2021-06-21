@@ -64,11 +64,10 @@ public enum BearFair21NPC {
 	PUGMAS_VILLAGER_12("Villager", 4153),
 	PUGMAS_VILLAGER_13("Villager", 4154),
 	PUGMAS_VILLAGER_14("Villager", 4155),
-	// HALLOWEEN - MAIN
+	// HALLOWEEN
 	JOSE("Jose", 4131),
 	SANTIAGO("Santiago", 4132),
 	ANA("Ana", 4133),
-	// HALLOWEEN - MISC
 	FRANCISCO("Franciso", 4171),
 	ADRIAN("Adrian", 4174),
 	MAXIM("Maxim", 4173),
@@ -80,6 +79,16 @@ public enum BearFair21NPC {
 	LUIS("Luis", 4180),
 	MARIANA("Mariana", 4181),
 	HALLOWEEN_MAYOR("Mayor", 4172),
+	RODRIGO("Rodrigo", 4185),
+	DANIEL("Daniel", 4187),
+	SANDRA("Sandra", 4188),
+	MARTHA("Martha", 4189),
+	PATRICIA("Patricia", 4190),
+	NINA("Nina", 4191),
+	RUBEN("Ruben", 4192),
+	CLARENCE("Clarence", 4193),
+	CARLA("Carla", 4194),
+	ANTONIO("Antonio", 4195),
 	// SDU
 	;
 

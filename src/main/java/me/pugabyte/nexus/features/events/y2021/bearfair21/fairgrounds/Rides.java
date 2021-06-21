@@ -26,11 +26,10 @@ public class Rides {
 		rideMap.clear();
 		for (Ride ride : Ride.values()) {
 			rideMap.put(ride, false);
-//			PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
 		}
 
 		// Dynamic enable task
-		Tasks.repeat(0, Time.SECOND.x(5), () -> {
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			for (Ride ride : Ride.values()) {
 				boolean oldStatus = rideMap.getOrDefault(ride, false);
 				boolean curStatus = ride.getCurrentStatus();

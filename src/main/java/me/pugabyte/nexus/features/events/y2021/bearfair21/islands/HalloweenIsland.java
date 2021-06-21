@@ -223,6 +223,15 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 				script.add("TODO BF21 - Greeting");
 				return script;
 			}
+
+		},
+		ADRIAN(BearFair21NPC.ADRIAN) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
 		},
 		;
 
@@ -248,7 +257,31 @@ public class HalloweenIsland implements Listener, BearFair21Island {
 			this.npc = npc;
 			this.script = new ArrayList<>();
 		}
+
+		private boolean isAlive() {
+			return switch (this.npc) {
+				case JOSE, SANTIAGO, FRANCISCO, ADRIAN, MAXIM, ISABELLA, JUAN, LOLA, JENNA, RICARDO, LUIS, MARIANA, HALLOWEEN_MAYOR -> true;
+				default -> false;
+			};
+		}
+
+		public List<String> getAnaResponse() {
+			if (this.isAlive()) {
+				// have you talked to santiago? He probably is the best person to talk to about matters like that.
+			} else {
+				// make a list of half of the NPCs that
+				// know where to find ANA - "She's on x side of the underworld, near xyz"
+				// and some that don't. - "I'm sorry, I don't know who that is." "Who?"
+			}
+			return null;
+		}
+
+		public static List<String> getGreeting() {
+			// generic greeting used for both the living and death npcs
+			return null;
+		}
 	}
+
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) {
