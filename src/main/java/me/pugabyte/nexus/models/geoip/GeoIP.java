@@ -54,7 +54,7 @@ public class GeoIP implements PlayerOwnedObject {
 	private String zip;
 	private Double latitude;
 	private Double longitude;
-	private Location location;
+	private Location geoLocation;
 	@SerializedName("time_zone")
 	private Timezone timezone;
 	private Currency currency;

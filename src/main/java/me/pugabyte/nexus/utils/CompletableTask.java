@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import eden.utils.TimeUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -19,9 +20,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static net.minecraft.server.v1_16_R3.MCUtil.MAIN_EXECUTOR;
-import static net.minecraft.server.v1_16_R3.MCUtil.asyncExecutor;
-
 /**
  * Chains together a series of {@link CompletableFuture}s using either
  * Minecraft's main thread or Paper's pool of async threads
@@ -29,6 +27,8 @@ import static net.minecraft.server.v1_16_R3.MCUtil.asyncExecutor;
 @RequiredArgsConstructor
 public class CompletableTask<T> {
 	protected @NotNull @Getter final CompletableFuture<T> future;
+	protected final Executor asyncExecutor = Bukkit.getServer().getAsyncExecutor();
+	protected final Executor mainExecutor = Bukkit.getServer().getMainExecutor();
 
 	/**
 	 * Returns the result value when complete, or throws an
@@ -89,7 +89,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final CompletableTask<Void> thenAcceptSync(Consumer<T> consumer) {
-		return thenAccept(consumer, MAIN_EXECUTOR);
+		return thenAccept(consumer, mainExecutor);
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final CompletableTask<Void> thenAcceptEitherSync(CompletionStage<T> other, Consumer<T> consumer) {
-		return thenAcceptEither(other, consumer, MAIN_EXECUTOR);
+		return thenAcceptEither(other, consumer, mainExecutor);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final <R> CompletableTask<R> thenApplySync(Function<T, R> function) {
-		return thenApply(function, MAIN_EXECUTOR);
+		return thenApply(function, mainExecutor);
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final <R> CompletableTask<R> thenHandleSync(BiFunction<T, Throwable, R> biFunction) {
-		return thenHandle(biFunction, MAIN_EXECUTOR);
+		return thenHandle(biFunction, mainExecutor);
 	}
 
 	/**
@@ -342,7 +342,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final CompletableTask<T> exceptionallySync(Function<Throwable, T> handler) {
-		return exceptionally(handler, MAIN_EXECUTOR);
+		return exceptionally(handler, mainExecutor);
 	}
 
 	/**
@@ -394,7 +394,7 @@ public class CompletableTask<T> {
 	 * @return this CompletableTask
 	 */
 	public final CompletableTask<T> completeSync(Supplier<T> supplier) {
-		return complete(supplier, MAIN_EXECUTOR);
+		return complete(supplier, mainExecutor);
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final CompletableTask<T> whenCompleteSync(BiConsumer<T, Throwable> biConsumer) {
-		return whenComplete(biConsumer, MAIN_EXECUTOR);
+		return whenComplete(biConsumer, mainExecutor);
 	}
 
 	/**
@@ -550,7 +550,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public final CompletableTask<Void> thenSync(Runnable runnable) {
-		return thenRun(runnable, MAIN_EXECUTOR);
+		return thenRun(runnable, mainExecutor);
 	}
 
 	/**
@@ -650,7 +650,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public <R> CompletableTask<R> thenSupplySync(Supplier<R> supplier) {
-		return thenSupply(supplier, MAIN_EXECUTOR);
+		return thenSupply(supplier, mainExecutor);
 	}
 
 	/**
@@ -682,7 +682,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull <T> CompletableTask<T> supplySync(Supplier<T> supplier) {
-		return supply(supplier, MAIN_EXECUTOR);
+		return supply(supplier, Bukkit.getServer().getMainExecutor());
 	}
 
 	/**
@@ -694,7 +694,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull <T> CompletableTask<T> supplyAsync(Supplier<T> supplier) {
-		return supply(supplier, asyncExecutor);
+		return supply(supplier, Bukkit.getServer().getAsyncExecutor());
 	}
 
 	protected static @NotNull CompletableTask<Void> run(Runnable runnable, Executor executor) {
@@ -710,7 +710,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull CompletableTask<Void> runSync(Runnable runnable) {
-		return run(runnable, MAIN_EXECUTOR);
+		return run(runnable, Bukkit.getServer().getMainExecutor());
 	}
 
 	/**
@@ -722,7 +722,7 @@ public class CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull CompletableTask<Void> runAsync(Runnable runnable) {
-		return run(runnable, asyncExecutor);
+		return run(runnable, Bukkit.getServer().getAsyncExecutor());
 	}
 
 	/**

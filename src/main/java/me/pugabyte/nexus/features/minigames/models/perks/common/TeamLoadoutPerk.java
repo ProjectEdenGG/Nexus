@@ -1,8 +1,8 @@
 package me.pugabyte.nexus.features.minigames.models.perks.common;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -14,13 +14,13 @@ import java.util.Map;
  */
 public interface TeamLoadoutPerk extends LoadoutPerk {
 	@Override
-	default Map<EnumItemSlot, ItemStack> getLoadout() {
+	default Map<EnumWrappers.ItemSlot, ItemStack> getLoadout() {
 		return getLoadout(ChatColor.DARK_AQUA);
 	}
 
-	Map<ChatColor, Map<EnumItemSlot, ItemStack>> getColorLoadouts();
+	Map<ChatColor, Map<EnumWrappers.ItemSlot, ItemStack>> getColorLoadouts();
 
-	default Map<EnumItemSlot, ItemStack> getLoadout(ChatColor chatColor) {
+	default Map<EnumWrappers.ItemSlot, ItemStack> getLoadout(ChatColor chatColor) {
 		return getColorLoadouts().getOrDefault(chatColor, new HashMap<>());
 	}
 

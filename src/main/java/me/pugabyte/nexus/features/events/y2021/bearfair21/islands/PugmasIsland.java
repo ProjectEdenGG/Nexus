@@ -28,7 +28,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TitleUtils;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -565,7 +565,7 @@ public class PugmasIsland implements Listener, BearFair21Island {
 	private static void removeContent(BearFair21User user, Content content) {
 		ClientsideContentManager.sendRemoveContent(user.getOnlinePlayer(), Collections.singletonList(content));
 		ClientsideContentManager.sendRemoveEntityFrom(user.getOnlinePlayer(),
-				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityTypes.ARMOR_STAND);
+				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityTypes.c);
 	}
 
 	@EventHandler

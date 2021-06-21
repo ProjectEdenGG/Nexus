@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.minigames.models.perks.common;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
 import me.pugabyte.nexus.utils.ColorType;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,12 +20,12 @@ public interface TeamHatPerk extends TeamLoadoutPerk, HatPerk {
 		return PerkCategory.TEAM_HAT;
 	}
 
-	default Map<ChatColor, Map<EnumItemSlot, ItemStack>> getColorLoadouts() {
-		Map<ChatColor, Map<EnumItemSlot, ItemStack>> loadout = new HashMap<>();
+	default Map<ChatColor, Map<EnumWrappers.ItemSlot, ItemStack>> getColorLoadouts() {
+		Map<ChatColor, Map<EnumWrappers.ItemSlot, ItemStack>> loadout = new HashMap<>();
 		Arrays.stream(ColorType.values()).forEach(colorType -> {
 			try {
 				loadout.put(colorType.getChatColor(), Map.of(
-					EnumItemSlot.HEAD, getColorItem(colorType)
+					EnumWrappers.ItemSlot.HEAD, getColorItem(colorType)
 				));
 			} catch (IllegalArgumentException ignored){}
 		});
@@ -62,7 +62,7 @@ public interface TeamHatPerk extends TeamLoadoutPerk, HatPerk {
 	}
 
 	@Override
-	default @NotNull Map<EnumItemSlot, ItemStack> getLoadout() {
+	default @NotNull Map<EnumWrappers.ItemSlot, ItemStack> getLoadout() {
 		return TeamLoadoutPerk.super.getLoadout();
 	}
 }

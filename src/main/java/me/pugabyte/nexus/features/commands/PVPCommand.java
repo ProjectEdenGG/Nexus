@@ -212,7 +212,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onAnchorExplode(PlayerUseRespawnAnchorEvent event) {
-		if (event.getRespawnAnchorResult() != PlayerUseRespawnAnchorEvent.RespawnAnchorResult.EXPLODE)
+		if (event.getResult() != PlayerUseRespawnAnchorEvent.RespawnAnchorResult.EXPLODE)
 			return;
 		if (!WorldGroup.SURVIVAL.contains(event.getRespawnAnchor().getWorld())) {
 			event.setCancelled(true);

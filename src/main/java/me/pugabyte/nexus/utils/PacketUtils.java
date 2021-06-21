@@ -11,21 +11,42 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
-import net.minecraft.server.v1_16_R3.*;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutEntityLook;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
+import net.minecraft.core.EnumDirection;
+import net.minecraft.network.chat.ChatComponentText;
+import net.minecraft.network.protocol.game.PacketPlayOutEntity;
+import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook;
+import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
+import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.network.syncher.DataWatcher;
+import net.minecraft.network.syncher.DataWatcherRegistry;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EnumItemSlot;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.world.entity.decoration.EntityItemFrame;
+import net.minecraft.world.entity.item.EntityFallingBlock;
+import net.minecraft.world.entity.monster.EntitySlime;
+import net.minecraft.world.level.block.state.IBlockData;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftItemFrame;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -36,9 +57,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @UtilityClass
@@ -70,18 +89,20 @@ public class PacketUtils {
 	}
 
 	/**
-	 * Gets the slot int corresponding to an {@link EnumItemSlot}. Returns -1 for {@link EnumItemSlot#MAINHAND MAINHAND}.
+	 * Gets the slot int corresponding to an {@link EnumItemSlot}. Returns -1 for {@link EnumItemSlot#a MAINHAND}.
 	 * @param slot an item slot
 	 * @return integer slot
+	 * @deprecated enum fields are now obfuscated, use {@link #getSlotInt(EnumWrappers.ItemSlot)}
 	 */
+	@Deprecated
 	public int getSlotInt(EnumItemSlot slot) {
 		return switch (slot) {
-			case MAINHAND -> -1;
-			case OFFHAND -> 45;
-			case FEET -> 8;
-			case LEGS -> 7;
-			case CHEST -> 6;
-			case HEAD -> 5;
+			case a -> -1;
+			case b -> 45;
+			case c -> 8;
+			case d -> 7;
+			case e -> 6;
+			case f -> 5;
 		};
 	}
 
@@ -118,7 +139,9 @@ public class PacketUtils {
 	 * @param recipients packet recipients
 	 * @param item item to "give"
 	 * @param slot slot to "set"
+	 * @deprecated enum names are now obfuscated, use {@link #sendFakeItem(org.bukkit.entity.Entity, HasPlayer, ItemStack, EnumWrappers.ItemSlot)}
 	 */
+	@Deprecated
 	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumItemSlot slot) {
 		// self packet avoids playing the armor equip sound effect
 		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
@@ -130,7 +153,7 @@ public class PacketUtils {
 		selfPacket.getItemModifier().write(0, item);
 
 		// other packet is sent to all other players to show the armor piece
-		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipmentList = new ArrayList<>();
+		List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> equipmentList = new ArrayList<>();
 		equipmentList.add(new Pair<>(slot, CraftItemStack.asNMSCopy(item)));
 		PacketPlayOutEntityEquipment rawPacket = new PacketPlayOutEntityEquipment(owner.getEntityId(), equipmentList);
 		PacketContainer otherPacket = PacketContainer.fromPacket(rawPacket);
@@ -150,7 +173,9 @@ public class PacketUtils {
 	 * @param recipient packet recipient
 	 * @param item item to "give"
 	 * @param slot slot to "set"
+	 * @deprecated enum names are now obfuscated, use {@link #sendFakeItem(org.bukkit.entity.Entity, HasPlayer, ItemStack, EnumWrappers.ItemSlot)}
 	 */
+	@Deprecated
 	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EnumItemSlot slot) {
 		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
 	}
@@ -208,7 +233,7 @@ public class PacketUtils {
 		EntityPlayer entityPlayer = ((CraftPlayer) entity).getHandle();
 		GameProfile profile = new GameProfile(UUID.randomUUID(), name);
 //		entityPlayer.setCustomName(new ChatComponentText(name));
-		PacketPlayOutEntityMetadata entityMetadataPacket = new PacketPlayOutEntityMetadata();
+//		PacketPlayOutEntityMetadata entityMetadataPacket = new PacketPlayOutEntityMetadata();
 
 //		DataWatcher dataWatcher = entityPlayer.getDataWatcher();
 //		dataWatcher.set(DataWatcherRegistry. );
@@ -242,7 +267,7 @@ public class PacketUtils {
 
 	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
+		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.c, nmsPlayer.getWorld());
 		Location loc = bukkitEntity.getLocation();
 		double y = (loc.getY() + 1.8) + (distance * index);
 
@@ -278,7 +303,7 @@ public class PacketUtils {
 	public static EntitySlime spawnSlime(Player player, Location location, int size, boolean invisible, boolean glowing) {
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 
-		EntitySlime slime = new EntitySlime(EntityTypes.SLIME, nmsPlayer.getWorld());
+		EntitySlime slime = new EntitySlime(EntityTypes.aD, nmsPlayer.getWorld());
 		slime.setLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		slime.setSize(size, true);
 		slime.setInvisible(invisible);
@@ -299,7 +324,7 @@ public class PacketUtils {
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		IBlockData blockData = ((CraftBlockData) block.getBlockData()).getState();
 
-		EntityFallingBlock fallingBlock = new EntityFallingBlock(nmsPlayer.world, location.getX(), location.getY(), location.getZ(), blockData);
+		EntityFallingBlock fallingBlock = new EntityFallingBlock(nmsPlayer.getWorld(), location.getX(), location.getY(), location.getZ(), blockData);
 		fallingBlock.setInvulnerable(true);
 		fallingBlock.setNoGravity(true);
 		fallingBlock.setInvisible(true);
@@ -320,7 +345,7 @@ public class PacketUtils {
 
 		EnumDirection direction = CraftBlock.blockFaceToNotch(blockFace);
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		EntityItemFrame itemFrame = new EntityItemFrame(EntityTypes.ITEM_FRAME, nmsPlayer.world);
+		EntityItemFrame itemFrame = new EntityItemFrame(EntityTypes.R, nmsPlayer.getWorld());
 		itemFrame.setLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		itemFrame.setItem(CraftItemStack.asNMSCopy(content), true, makeSound);
 		itemFrame.setDirection(direction);
@@ -360,18 +385,18 @@ public class PacketUtils {
 	}
 
 	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location,
-												   List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment,
+												   List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> equipment,
 												   boolean invisible) {
 		return spawnArmorStand(player, location, equipment, invisible, null);
 	}
 
 	public static EntityArmorStand spawnArmorStand(HasPlayer player, Location location,
-												   List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment,
+												   List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> equipment,
 												   boolean invisible, String customName) {
 		if (equipment == null) equipment = getEquipmentList();
 
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
+		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.c, nmsPlayer.getWorld());
 		armorStand.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		armorStand.setInvisible(invisible);
 		if (customName != null) {
@@ -390,7 +415,7 @@ public class PacketUtils {
 	public static EntityArmorStand spawnBeaconArmorStand(Player player, Location location) {
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 
-		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.world);
+		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.c, nmsPlayer.getWorld());
 		location = location.toCenterLocation();
 		armorStand.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		armorStand.setInvisible(true);
@@ -408,7 +433,7 @@ public class PacketUtils {
 	}
 
 
-	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipment) {
+	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> equipment) {
 		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
 		EntityArmorStand armorStand = ((CraftArmorStand) entity).getHandle();
 
@@ -418,16 +443,16 @@ public class PacketUtils {
 	}
 
 
-	public static List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> getEquipmentList() {
+	public static List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> getEquipmentList() {
 		return getEquipmentList(null, null, null, null);
 	}
 
-	public static List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> getEquipmentList(ItemStack head, ItemStack chest, ItemStack legs, ItemStack feet) {
-		List<Pair<EnumItemSlot, net.minecraft.server.v1_16_R3.ItemStack>> equipmentList = new ArrayList<>();
-		equipmentList.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(head)));
-		equipmentList.add(new Pair<>(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(chest)));
-		equipmentList.add(new Pair<>(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(legs)));
-		equipmentList.add(new Pair<>(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(feet)));
+	public static List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> getEquipmentList(ItemStack head, ItemStack chest, ItemStack legs, ItemStack feet) {
+		List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> equipmentList = new ArrayList<>();
+		equipmentList.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(head)));
+		equipmentList.add(new Pair<>(EnumItemSlot.e, CraftItemStack.asNMSCopy(chest)));
+		equipmentList.add(new Pair<>(EnumItemSlot.d, CraftItemStack.asNMSCopy(legs)));
+		equipmentList.add(new Pair<>(EnumItemSlot.c, CraftItemStack.asNMSCopy(feet)));
 		return equipmentList;
 	}
 
@@ -469,132 +494,21 @@ public class PacketUtils {
 		return (short) (d * 4096D);
 	}
 
-	// TODO 1.17: Update object and living ids
+	public static Integer getObjectId(EntityType entity) {
+		if (entity == null)
+			return null;
+		return Bukkit.getUnsafe().entityID(entity);
+	}
+
+	public static Integer getObjectId(org.bukkit.entity.Entity entity) {
+		if (entity == null)
+			return null;
+		return getObjectId(entity.getType());
+	}
+
 	public static Integer getObjectId(Entity entity) {
 		if (entity == null)
 			return null;
-
-		EntityTypes<?> type = entity.getEntityType();
-
-		// Prioritize these ID's first
-		Map<EntityTypes<?>, Integer> objectIds = new HashMap<>() {{
-			put(EntityTypes.BOAT, 1);
-			put(EntityTypes.ITEM, 2);
-			put(EntityTypes.AREA_EFFECT_CLOUD, 3);
-			put(EntityTypes.MINECART, 10);
-			put(EntityTypes.CHEST_MINECART, 10);
-			put(EntityTypes.COMMAND_BLOCK_MINECART, 10);
-			put(EntityTypes.FURNACE_MINECART, 10);
-			put(EntityTypes.HOPPER_MINECART, 10);
-			put(EntityTypes.SPAWNER_MINECART, 10);
-			put(EntityTypes.TNT_MINECART, 10);
-			put(EntityTypes.TNT, 50);
-			put(EntityTypes.END_CRYSTAL, 51);
-			put(EntityTypes.ARROW, 60);
-			put(EntityTypes.SNOWBALL, 61);
-			put(EntityTypes.EGG, 62);
-			put(EntityTypes.FIREBALL, 63);
-			put(EntityTypes.SMALL_FIREBALL, 64);
-			put(EntityTypes.ENDER_PEARL, 65);
-			put(EntityTypes.WITHER_SKULL, 66);
-			put(EntityTypes.SHULKER_BULLET, 67);
-			put(EntityTypes.LLAMA_SPIT, 68);
-			put(EntityTypes.FALLING_BLOCK, 70);
-			put(EntityTypes.ITEM_FRAME, 71);
-			put(EntityTypes.EYE_OF_ENDER, 72);
-			put(EntityTypes.POTION, 73);
-			put(EntityTypes.EXPERIENCE_BOTTLE, 75);
-			put(EntityTypes.FIREWORK_ROCKET, 76);
-			put(EntityTypes.LEASH_KNOT, 77);
-			put(EntityTypes.ARMOR_STAND, 78);
-			put(EntityTypes.EVOKER_FANGS, 79);
-			put(EntityTypes.FISHING_BOBBER, 90);
-			put(EntityTypes.SPECTRAL_ARROW, 91);
-			put(EntityTypes.DRAGON_FIREBALL, 93);
-			put(EntityTypes.TRIDENT, 94);
-		}};
-
-		if (objectIds.containsKey(type))
-			return objectIds.get(type);
-
-		Map<EntityTypes<?>, Integer> livingIds = new HashMap<>() {{
-			put(EntityTypes.BAT, 3);
-			put(EntityTypes.BEE, 4);
-			put(EntityTypes.BLAZE, 5);
-			put(EntityTypes.CAT, 7);
-			put(EntityTypes.CAVE_SPIDER, 8);
-			put(EntityTypes.CHICKEN, 9);
-			put(EntityTypes.COD, 10);
-			put(EntityTypes.COW, 11);
-			put(EntityTypes.CREEPER, 12);
-			put(EntityTypes.DOLPHIN, 13);
-			put(EntityTypes.DONKEY, 14);
-			put(EntityTypes.DROWNED, 16);
-			put(EntityTypes.ELDER_GUARDIAN, 17);
-			put(EntityTypes.ENDER_DRAGON, 19);
-			put(EntityTypes.ENDERMAN, 20);
-			put(EntityTypes.ENDERMITE, 21);
-			put(EntityTypes.EVOKER, 22);
-			put(EntityTypes.EXPERIENCE_ORB, 24);
-			put(EntityTypes.FOX, 28);
-			put(EntityTypes.GHAST, 29);
-			put(EntityTypes.GIANT, 30);
-			put(EntityTypes.GUARDIAN, 31);
-			put(EntityTypes.HOGLIN, 32);
-			put(EntityTypes.HORSE, 33);
-			put(EntityTypes.HUSK, 34);
-			put(EntityTypes.ILLUSIONER, 35);
-			put(EntityTypes.LLAMA, 42);
-			put(EntityTypes.MAGMA_CUBE, 44);
-			put(EntityTypes.MULE, 52);
-			put(EntityTypes.MOOSHROOM, 53);
-			put(EntityTypes.OCELOT, 54);
-			put(EntityTypes.PAINTING, 55);
-			put(EntityTypes.PANDA, 56);
-			put(EntityTypes.PARROT, 57);
-			put(EntityTypes.PHANTOM, 58);
-			put(EntityTypes.PIG, 59);
-			put(EntityTypes.PIGLIN, 60);
-			put(EntityTypes.PIGLIN_BRUTE, 61);
-			put(EntityTypes.PILLAGER, 62);
-			put(EntityTypes.POLAR_BEAR, 63);
-			put(EntityTypes.PUFFERFISH, 65);
-			put(EntityTypes.RABBIT, 66);
-			put(EntityTypes.RAVAGER, 67);
-			put(EntityTypes.SALMON, 68);
-			put(EntityTypes.SHEEP, 69);
-			put(EntityTypes.SHULKER, 70);
-			put(EntityTypes.SILVERFISH, 72);
-			put(EntityTypes.SKELETON, 73);
-			put(EntityTypes.SKELETON_HORSE, 74);
-			put(EntityTypes.SLIME, 75);
-			put(EntityTypes.SNOW_GOLEM, 77);
-			put(EntityTypes.SPIDER, 80);
-			put(EntityTypes.SQUID, 81);
-			put(EntityTypes.STRAY, 82);
-			put(EntityTypes.STRIDER, 83);
-			put(EntityTypes.TRADER_LLAMA, 89);
-			put(EntityTypes.TROPICAL_FISH, 90);
-			put(EntityTypes.TURTLE, 91);
-			put(EntityTypes.VEX, 92);
-			put(EntityTypes.VILLAGER, 93);
-			put(EntityTypes.VINDICATOR, 94);
-			put(EntityTypes.WANDERING_TRADER, 95);
-			put(EntityTypes.WITCH, 96);
-			put(EntityTypes.WITHER, 97);
-			put(EntityTypes.WITHER_SKELETON, 98);
-			put(EntityTypes.WOLF, 100);
-			put(EntityTypes.ZOGLIN, 101);
-			put(EntityTypes.ZOMBIE, 102);
-			put(EntityTypes.ZOMBIE_HORSE, 103);
-			put(EntityTypes.ZOMBIE_VILLAGER, 104);
-			put(EntityTypes.ZOMBIFIED_PIGLIN, 105);
-			put(EntityTypes.PLAYER, 106);
-		}};
-
-		if (livingIds.containsKey(type))
-			return livingIds.get(type);
-
-		return null;
+		return getObjectId(entity.getBukkitEntity());
 	}
 }

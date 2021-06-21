@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import eden.utils.TimeUtils;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
 import me.pugabyte.nexus.Nexus;
@@ -45,7 +46,6 @@ import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -157,7 +157,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onInventoryEvent(InventoryClickEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getWhoClicked().getPlayer());
+		Minigamer minigamer = PlayerManager.get(event.getWhoClicked());
 		if (minigamer.isPlaying(this) && event.getClickedInventory() != null && (event.getClickedInventory().getType() == InventoryType.CRAFTING || event.getClickedInventory() instanceof PlayerInventory || !event.isLeftClick()))
 			event.setCancelled(true);
 	}
@@ -222,7 +222,7 @@ public class Sabotage extends TeamMechanic {
 				PlayerInventory inventory = player.getInventory();
 				List<Minigamer> otherPlayers = new ArrayList<>(match.getAliveMinigamers());
 				Utils.removeEntityFrom(minigamer, otherPlayers);
-				PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), EnumItemSlot.MAINHAND);
+				PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), EnumWrappers.ItemSlot.MAINHAND);
 				SabotageTeam team = SabotageTeam.of(minigamer);
 				if (team != SabotageTeam.IMPOSTOR) {
 					Tasks.sync(() -> {

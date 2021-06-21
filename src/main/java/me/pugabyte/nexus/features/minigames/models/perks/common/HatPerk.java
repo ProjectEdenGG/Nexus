@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.perks.common;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import me.pugabyte.nexus.features.minigames.models.perks.PerkCategory;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +17,9 @@ public interface HatPerk extends LoadoutPerk {
 		return PerkCategory.HAT;
 	}
 
-	default @NotNull Map<EnumItemSlot, ItemStack> getLoadout() {
-		Map<EnumItemSlot, ItemStack> loadout = new HashMap<>();
-		loadout.put(EnumItemSlot.HEAD, getItem());
+	default @NotNull Map<EnumWrappers.ItemSlot, ItemStack> getLoadout() {
+		Map<EnumWrappers.ItemSlot, ItemStack> loadout = new HashMap<>();
+		loadout.put(EnumWrappers.ItemSlot.HEAD, getItem());
 		return loadout;
 	}
 

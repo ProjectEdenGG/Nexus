@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.matchdata;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import eden.utils.TimeUtils;
@@ -48,7 +49,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -541,10 +541,10 @@ public class SabotageMatchData extends MatchData {
 				enable.add(entity);
 				ItemStack item = armorStandTask.part.getInteractionItem();
 				if (item.getType() == Material.BARRIER)
-					match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, EXCLAMATION_ITEM.get(), EnumItemSlot.HEAD));
+					match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, EXCLAMATION_ITEM.get(), EnumWrappers.ItemSlot.HEAD));
 			} else {
 				disable.add(entity);
-				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumItemSlot.HEAD));
+				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumWrappers.ItemSlot.HEAD));
 			}
 		});
 		GlowAPI.setGlowing(disable, null, player);

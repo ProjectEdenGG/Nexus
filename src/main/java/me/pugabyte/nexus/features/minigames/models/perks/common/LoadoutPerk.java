@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.features.minigames.models.perks.common;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PacketUtils;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @see HatPerk
  */
 public interface LoadoutPerk extends TickablePerk {
-	Map<EnumItemSlot, ItemStack> getLoadout();
+	Map<EnumWrappers.ItemSlot, ItemStack> getLoadout();
 
 	@Override
 	default void tick(Minigamer minigamer) {
@@ -34,18 +34,18 @@ public interface LoadoutPerk extends TickablePerk {
 	}
 
 	/**
-	 * Same as {@link #sendPackets(Player, List, ItemStack, EnumItemSlot)} but uses {@link #isColorable(ItemStack)} to
+	 * Same as {@link #sendPackets(Player, List, ItemStack, EnumWrappers.ItemSlot)} but uses {@link #isColorable(ItemStack)} to
 	 * allow overriding
 	 */
-	default void sendColorablePackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
+	default void sendColorablePackets(Player player, List<Player> players, ItemStack item, EnumWrappers.ItemSlot slot) {
 		sendPackets(player, players, item, slot, isColorable(item));
 	}
 
-	static void sendPackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot) {
+	static void sendPackets(Player player, List<Player> players, ItemStack item, EnumWrappers.ItemSlot slot) {
 		sendPackets(player, players, item, slot, MaterialTag.COLORABLE.isTagged(item.getType()));
 	}
 
-	static void sendPackets(Player player, List<Player> players, ItemStack item, EnumItemSlot slot, boolean overrideColorables) {
+	static void sendPackets(Player player, List<Player> players, ItemStack item, EnumWrappers.ItemSlot slot, boolean overrideColorables) {
 		PlayerInventory inventory = player.getInventory();
 
 		ItemStack currentStack;

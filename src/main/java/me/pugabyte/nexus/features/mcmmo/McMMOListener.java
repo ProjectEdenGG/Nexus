@@ -143,7 +143,7 @@ public class McMMOListener implements Listener {
 				for (BlockFace cardinal : cardinals) {
 					Block cardinalBlock = block.getRelative(cardinal);
 					Material below = cardinalBlock.getRelative(0, -1, 0).getType();
-					MaterialTag growBlocks = new MaterialTag(MaterialTag.ALL_DIRT).exclude(Material.GRASS_PATH);
+					MaterialTag growBlocks = new MaterialTag(MaterialTag.ALL_DIRT).exclude(Material.DIRT_PATH);
 					if (growBlocks.isTagged(below) && cardinalBlock.getType().equals(Material.AIR))
 						possibleFaces.add(cardinal);
 				}

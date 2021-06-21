@@ -7,10 +7,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.minecraft.server.v1_16_R3.EntityArmorStand;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
+import me.pugabyte.nexus.Nexus;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,7 +56,12 @@ public class FakeNPC {
 		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
 		profile.getProperties().put("textures", skinProperty);
 
-		entityPlayer.setProfile(profile);
+		try {
+			EntityPlayer.class.getMethod("setProfile", GameProfile.class).invoke(entityPlayer, profile);
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException err) {
+			Nexus.warn("Could not set profile of FakeNPC " + name + " (" + uuid + ")");
+			err.printStackTrace();
+		}
 		this.setEntityPlayer(entityPlayer);
 	}
 

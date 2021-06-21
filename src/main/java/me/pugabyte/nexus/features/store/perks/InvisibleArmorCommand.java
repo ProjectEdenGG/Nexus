@@ -1,11 +1,9 @@
 package me.pugabyte.nexus.features.store.perks;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Client;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import eden.annotations.Environments;
@@ -32,7 +30,6 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,9 +38,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -188,31 +183,7 @@ public class InvisibleArmorCommand extends CustomCommand {
 		if (player == null)
 			return;
 
-		PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
-		packet.getIntegers().write(0, 0);
-		packet.getIntegers().write(1, 9 - EnumItemSlot.fromName(slot.name().toLowerCase()).getSlotFlag());
-		packet.getItemModifier().write(0, invisibleArmor.isEnabled() ? new ItemStack(Material.AIR) : invisibleArmor.getItem(slot));
-
-		PlayerUtils.getOnlinePlayers().stream().filter(_player -> player.getWorld() == _player.getWorld()).forEach(_player -> {
-			boolean self = player.getUniqueId() == _player.getUniqueId();
-
-			try {
-				PacketContainer clone = packet.deepClone();
-
-				if (self) {
-					if (invisibleArmor.showSelf(slot))
-						clone.getItemModifier().write(0, invisibleArmor.getItem(slot));
-				} else {
-					if (invisibleArmor.show(slot))
-						clone.getItemModifier().write(0, invisibleArmor.getItem(slot));
-				}
-
-				ProtocolLibrary.getProtocolManager().sendServerPacket(_player, clone);
-			} catch (InvocationTargetException ex) {
-				Nexus.log("Error trying to send invisible armour packets from " + player.getName() + " to " + _player.getName());
-				ex.printStackTrace();
-			}
-		});
+		// TODO
 	}
 
 	private class InvisibleArmorProvider extends MenuUtils implements InventoryProvider {

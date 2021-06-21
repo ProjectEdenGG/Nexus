@@ -1,7 +1,8 @@
 package me.pugabyte.nexus.utils;
 
 import lombok.experimental.UtilityClass;
-import net.minecraft.server.v1_16_R3.LocaleLanguage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,12 +13,21 @@ import org.jetbrains.annotations.NotNull;
 @UtilityClass
 public class LanguageUtils {
 	/**
+	 * Gets the default English translation for a specified translatable component
+	 * @param component Adventure TranslatableComponent
+	 * @return English translation
+	 */
+	public String translate(@NotNull TranslatableComponent component) {
+		return Bukkit.getUnsafe().plainComponentSerializer().serialize(component);
+	}
+
+	/**
 	 * Gets the default English translation for a specified key
 	 * @param key Minecraft key
 	 * @return English translation
 	 */
 	public String translate(@NotNull String key) {
-		return LocaleLanguage.getInstance().translateKey(key);
+		return translate(Component.translatable(key));
 	}
 
 	/**

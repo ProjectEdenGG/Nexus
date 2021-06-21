@@ -148,7 +148,7 @@ public class MaterialTag implements Tag<Material> {
 			.append(ALL_QUARTZ);
 	public static final MaterialTag ALL_MINERALS = new MaterialTag(MINERAL_ORES, MINERAL_NUGGETS, MINERAL_INGOTS, MINERAL_BLOCKS);
 
-	public static final MaterialTag ALL_DIRT = new MaterialTag(DIRT, GRASS_BLOCK, FARMLAND, PODZOL, COARSE_DIRT, GRASS_PATH, MYCELIUM);
+	public static final MaterialTag ALL_DIRT = new MaterialTag(Tag.DIRT).append(DIRT_PATH, FARMLAND);
 	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, RED_SAND);
 
 	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(BLAST_FURNACE, SMOKER,
@@ -233,7 +233,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag FLORA = new MaterialTag(SAPLINGS, FLOWERS, PLANTS, SEEDS, LEAVES);
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, VINE, LILY_PAD, TURTLE_EGG,
-			REPEATER, COMPARATOR, ITEM_FRAME, BELL, SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER, SOUL_LANTERN)
+			REPEATER, COMPARATOR, ITEM_FRAME, BELL, Material.SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER, SOUL_LANTERN)
 			.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 					PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 

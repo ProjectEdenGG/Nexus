@@ -11,10 +11,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasHumanEntity;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
@@ -50,6 +50,6 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	public boolean applies(HasHumanEntity player, Block block) {
 		return applies(block.getLightFromBlocks()) &&
 				!block.isLiquid() &&
-				CraftItemStack.asCraftCopy(new ItemStack(Material.TORCH)).canPlaceOn(player, block.getRelative(BlockFace.DOWN), BlockFace.UP);
+				Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(Material.TORCH), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join();
 	}
 }

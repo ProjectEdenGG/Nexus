@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.lobby;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import me.lexikiq.HasUniqueId;
@@ -19,7 +20,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -124,11 +124,11 @@ public class TickPerks implements Listener {
 					if (item == null)
 						item = new ItemStack(Material.AIR);
 
-					EnumItemSlot slot = switch (i) {
-						case 3 -> EnumItemSlot.HEAD;
-						case 2 -> EnumItemSlot.CHEST;
-						case 1 -> EnumItemSlot.LEGS;
-						case 0 -> EnumItemSlot.FEET;
+					EnumWrappers.ItemSlot slot = switch (i) {
+						case 3 -> EnumWrappers.ItemSlot.HEAD;
+						case 2 -> EnumWrappers.ItemSlot.CHEST;
+						case 1 -> EnumWrappers.ItemSlot.LEGS;
+						case 0 -> EnumWrappers.ItemSlot.FEET;
 						default -> throw new IllegalStateException("Unexpected value: " + i);
 					};
 					LoadoutPerk.sendPackets(player, player.getWorld().getPlayers(), item, slot);

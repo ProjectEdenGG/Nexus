@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.store.perks.emojihats;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.dbassett.skullcreator.SkullCreator;
 import kotlin.Pair;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
-import net.minecraft.server.v1_16_R3.EnumItemSlot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -715,7 +715,7 @@ public enum EmojiHat {
 	}
 
 	private void packet(Player player, Collection<Player> receivers, ItemStack item) {
-		PacketUtils.sendFakeItem(player, receivers, item, EnumItemSlot.HEAD);
+		PacketUtils.sendFakeItem(player, receivers, item, EnumWrappers.ItemSlot.HEAD);
 	}
 
 	public List<ItemStack> getFrameItems() {

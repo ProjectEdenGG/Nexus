@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -8,9 +9,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
-
-import static net.minecraft.server.v1_16_R3.MCUtil.MAIN_EXECUTOR;
-import static net.minecraft.server.v1_16_R3.MCUtil.asyncExecutor;
 
 /**
  * An expansion of {@link CompletableTask} which allows sharing builders to easily create tasks
@@ -66,7 +64,7 @@ public class SharedCompletableTask<T> extends CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull <T> CompletableTask<T> supplySync(String name, Supplier<T> supplier) {
-		return supply(name, supplier, MAIN_EXECUTOR);
+		return supply(name, supplier, Bukkit.getServer().getMainExecutor());
 	}
 
 	/**
@@ -78,7 +76,7 @@ public class SharedCompletableTask<T> extends CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull <T> CompletableTask<T> supplyAsync(String name, Supplier<T> supplier) {
-		return supply(name, supplier, asyncExecutor);
+		return supply(name, supplier, Bukkit.getServer().getAsyncExecutor());
 	}
 
 	protected static @NotNull CompletableTask<Void> run(String name, Runnable runnable, Executor executor) {
@@ -94,7 +92,7 @@ public class SharedCompletableTask<T> extends CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull CompletableTask<Void> runSync(String name, Runnable runnable) {
-		return run(name, runnable, MAIN_EXECUTOR);
+		return run(name, runnable, Bukkit.getServer().getMainExecutor());
 	}
 
 	/**
@@ -106,7 +104,7 @@ public class SharedCompletableTask<T> extends CompletableTask<T> {
 	 * @return the new CompletableTask
 	 */
 	public static @NotNull CompletableTask<Void> runAsync(String name, Runnable runnable) {
-		return run(name, runnable, asyncExecutor);
+		return run(name, runnable, Bukkit.getServer().getAsyncExecutor());
 	}
 
 	/**

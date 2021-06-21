@@ -6,7 +6,7 @@ import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.v1_16_R3.EntityArmorStand;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
