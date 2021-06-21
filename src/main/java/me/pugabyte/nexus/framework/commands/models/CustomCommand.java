@@ -202,6 +202,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return (Player) targetEntity;
 	}
 
+	protected Rank rank() {
+		return Rank.of(player());
+	}
+
 	protected Location location() {
 		if (isCommandBlock())
 			return commandBlock().getBlock().getLocation();
