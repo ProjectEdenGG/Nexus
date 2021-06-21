@@ -157,7 +157,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("menu [folder]")
-	@Permission("ladder.builder")
+	@Permission("group.staff")
 	void menu(CustomModelFolder folder) {
 		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)
 			permissionError();
