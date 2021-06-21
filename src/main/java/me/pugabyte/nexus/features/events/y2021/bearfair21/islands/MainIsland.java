@@ -20,7 +20,6 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.Material;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Bea
 // TODO BF21: Quest + Dialog
 @Region("main")
 @NPCClass(MainNPCs.class)
-public class MainIsland implements Listener, BearFair21Island {
+public class MainIsland implements BearFair21Island {
 
 	static BearFair21UserService userService = new BearFair21UserService();
 	//

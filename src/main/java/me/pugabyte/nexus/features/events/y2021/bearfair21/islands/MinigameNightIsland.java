@@ -1,6 +1,14 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.SlotPos;
+import lombok.Getter;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -10,26 +18,49 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.event.Listener;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.ItemUtils.isTypeAndNameEqual;
+
 // TODO BF21: Quest + Dialog
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
-public class MinigameNightIsland implements Listener, BearFair21Island {
+public class MinigameNightIsland implements BearFair21Island {
 	static BearFair21UserService userService = new BearFair21UserService();
 
 	private static final ItemStack hat = new ItemBuilder(Material.CYAN_STAINED_GLASS_PANE).customModelData(101).amount(1).build();
 	private static final Location phoneLoc = new Location(BearFair21.getWorld(), -191, 143, -194);
+
+	public MinigameNightIsland() {
+		Nexus.registerListener(this);
+	}
 
 	public enum MinigameNightNPCs implements BearFair21TalkingNPC {
 		XAVIER(BearFair21NPC.XAVIER) {
@@ -65,7 +96,7 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
-				switch(user.getQuestStage_MGN()) {
+				switch (user.getQuestStage_MGN()) {
 					case NOT_STARTED -> {
 						int wait = 0;
 						script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! ...Hold up, <player>? Is that you?");
@@ -132,28 +163,29 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
-				if(user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
 					script.add("Ayy yo dude. You the one I gotta talk to ‘bout fixin my xbox?");
 					script.add("<self> Yep! What seems to be the problem?");
 					script.add("So like, Its an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
 					script.add("<self> Yeah that’s not good… does the blue screen have an error message?");
 					script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on " +
-							"channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
+						"channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
 					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I’ll be right back with you as soon as it's fixed. Shouldn’t be more than a few minutes. ");
 					script.add("A'ight, thanks dawg. I’ll be right here.");
 
+					PlayerUtils.giveItem(user.getOnlinePlayer(), brokenXBox);
+					user.setQuestStage_MGN(QuestStage.STEP_TWO);
+					userService.save(user);
 					return script;
 
-				} else if(user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
-					script.add("Alright, here you are. Power supply was shot. Had to replace it. Pretty simple fix so the bill won’t be too bad.");
+				} else if (user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
+					script.add("<self> Alright, here you are. Power supply was shot. Had to replace it. Pretty simple fix so the bill won’t be too bad.");
 					script.add("Yooo, sweet. Thank’s dawg! Here, you can keep the change. Peace.");
-					script.add("Thanks for choosing GG!");
+					script.add("<self> Thanks for choosing GG!");
 
 					Tasks.wait(Time.SECOND.x(10), () -> Talker.sendScript(user.getPlayer(), FREDRICKSON));
 					return script;
 				}
-
-
 
 				return script;
 			}
@@ -163,13 +195,13 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
-				if(user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
 					script.add("<self> Thanks for calling the Game Gallery, how can I help?");
 					script.add("Hello, this is Ben Fredrickson. I’m calling about a laptop I recently purchased for my son. " +
-							"I travel a great deal and I intended it to be a birthday gift for him when I returned home. " +
-							"Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won’t boot up. " +
-							"I’m doing business in the area and had my assistant drop off the laptop in your mailbox earlier today. " +
-							"I was hoping you could find out what’s wrong with it and remedy the problem?");
+						"I travel a great deal and I intended it to be a birthday gift for him when I returned home. " +
+						"Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won’t boot up. " +
+						"I’m doing business in the area and had my assistant drop off the laptop in your mailbox earlier today. " +
+						"I was hoping you could find out what’s wrong with it and remedy the problem?");
 					script.add("<self> Of course sir, I’ll take a look at it.");
 					script.add("Wonderful, once it's fixed, if you could keep it in your back room, I’ll be back by in the next few days to pick it up.");
 					script.add("<self> No problem sir, I’ll call as soon as it's ready.");
@@ -214,7 +246,141 @@ public class MinigameNightIsland implements Listener, BearFair21Island {
 
 	/**
 	 * on player enter GG Store region, and mgn step == started, set step to 1, and spawn Trent.
-	 *
+	 * <p>
 	 * on player fix customer 1 problem, set step to 2.
 	 */
+
+	@Getter private static final ItemStack brokenXBox = new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&cTrent's Broken XBox One").build();
+	@Getter private static final ItemStack fixedXBox = new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&aTrent's Fixed XBox One").build();
+	@Getter private static final ItemStack brokenPowerSupply = new ItemBuilder(Material.NETHERITE_INGOT).name("&cTrent's Broken XBox One Power Supply").build();
+	@Getter private static final ItemStack fixedPowerSupply = new ItemBuilder(Material.NETHERITE_INGOT).name("&aTrent's Fixed XBox One Power Supply").build();
+
+	@EventHandler
+	public void onRightClickXBox(PlayerInteractEvent event) {
+		if (BearFair21.isNotAtBearFair(event)) return;
+		if (!ActionGroup.CLICK.applies(event) || isNullOrAir(event.getItem())) return;
+		if (!isTypeAndNameEqual(brokenXBox, event.getItem())) return;
+
+		new XBoxMenu().open(event.getPlayer());
+	}
+
+	public static class XBoxMenu extends MenuUtils implements InventoryProvider {
+
+		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("XBox Parts")
+				.size(3, 9)
+				.build()
+				.open(viewer, page);
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			addCloseItem(contents);
+			contents.set(1, 1, ClickableItem.empty(nameItem(Material.GREEN_CARPET, "&fMotherboard")));
+			contents.set(1, 5, ClickableItem.empty(nameItem(Material.FIREWORK_STAR, "&fCPU")));
+			contents.set(1, 7, ClickableItem.empty(nameItem(Material.DAYLIGHT_DETECTOR, "&fHard Drive")));
+
+			final SlotPos slot = SlotPos.of(1, 3);
+
+			final PlayerInventory inv = player.getInventory();
+			final ItemStack missing = nameItem(Material.BARRIER, "&fPower Supply");
+
+			if (inv.containsAtLeast(brokenPowerSupply, 1) || inv.containsAtLeast(fixedPowerSupply, 1)) {
+				contents.set(slot, ClickableItem.from(missing, e -> {
+					if (fixedPowerSupply.equals(player.getItemOnCursor())) {
+						player.setItemOnCursor(new ItemStack(Material.AIR));
+						contents.set(slot, ClickableItem.empty(fixedPowerSupply));
+
+						Tasks.wait(Time.SECOND, () -> {
+							player.closeInventory();
+							inv.removeItem(brokenXBox);
+							PlayerUtils.giveItem(player, fixedXBox);
+						});
+					}
+				}));
+			} else {
+				contents.set(slot, ClickableItem.empty(brokenPowerSupply));
+				contents.setEditable(slot, true);
+			}
+		}
+	}
+
+	private final String solderRegion = getRegion() + "_solder";
+	private static boolean activeSolder = false;
+
+	@EventHandler
+	public void onClickSolder(PlayerInteractEvent event) {
+		System.out.println("1");
+		if (BearFair21.isNotAtBearFair(event)) return;
+		System.out.println("2");
+		Block clicked = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(clicked)) return;
+		System.out.println("3");
+		ProtectedRegion region = getWGUtils().getProtectedRegion(solderRegion);
+		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
+		System.out.println("4");
+
+		if (!BearFair21.getConfig().isEnableQuests()) return;
+		System.out.println("5");
+
+		event.setCancelled(true);
+		Player player = event.getPlayer();
+		BearFair21User user = new BearFair21UserService().get(player);
+
+//		if (user.getQuestStage_MGN() != QuestStage.STEP_TWO) return;
+		System.out.println("6");
+
+		if (!isTypeAndNameEqual(brokenPowerSupply, event.getItem())) return;
+		System.out.println("7");
+
+		if (activeSolder) return;
+		System.out.println("8");
+		activeSolder = true;
+		player.getInventory().remove(brokenPowerSupply);
+
+		ArmorStand armorStand = null;
+		for (Entity nearbyEntity : player.getNearbyEntities(7, 7, 7)) {
+			if (nearbyEntity instanceof ArmorStand && getWGUtils().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
+				armorStand = (ArmorStand) nearbyEntity;
+				break;
+			}
+		}
+
+		if (armorStand == null) return;
+		System.out.println("9");
+		solderItem(armorStand, player);
+	}
+
+	private void solderItem(ArmorStand armorStand, Player player) {
+		ItemStack air = new ItemStack(Material.AIR);
+
+		armorStand.setItem(EquipmentSlot.HAND, brokenPowerSupply);
+		Location loc = new Location(BearFair21.getWorld(), -192, 137, -194);
+		loc = LocationUtils.getCenteredLocation(loc);
+		loc.setY(loc.getBlockY() + 0.5);
+		Location finalLoc = loc;
+		World world = loc.getWorld();
+
+		Tasks.wait(5, () -> {
+			world.playSound(finalLoc, Sound.BLOCK_ANVIL_USE, 0.3F, 0.1F);
+			world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
+			Tasks.wait(20, () -> world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F));
+		});
+
+		for (int i = 0; i < 10; i++) {
+			Tasks.wait(i * 5, () -> world.spawnParticle(Particle.LAVA, finalLoc, 5, 0, 0, 0));
+		}
+
+		Tasks.wait(Time.SECOND.x(5), () -> {
+			armorStand.setItem(EquipmentSlot.HAND, air);
+			PlayerUtils.giveItem(player, fixedPowerSupply);
+			Tasks.wait(10, () -> activeSolder = false);
+			new BearFair21UserService().edit(player, user -> user.setQuestStage_MGN(QuestStage.STEP_THREE));
+			world.playSound(finalLoc, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+		});
+	}
+
 }

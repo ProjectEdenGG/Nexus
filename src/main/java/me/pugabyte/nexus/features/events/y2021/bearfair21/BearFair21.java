@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.IslandType;
 import me.pugabyte.nexus.models.bearfair21.BearFair21Config;
 import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
@@ -55,6 +56,7 @@ public class BearFair21 {
 	public BearFair21() {
 		new Timer("    Restrictions", BearFair21Restrictions::new);
 		new Timer("    Fairgrounds", Fairgrounds::new);
+		new Timer("    Islands", IslandType::values);
 		new Timer("    Quests", Quests::new);
 
 		Arrays.stream(BF21PointSource.values()).forEach(source -> addTokenMax(source, 25));

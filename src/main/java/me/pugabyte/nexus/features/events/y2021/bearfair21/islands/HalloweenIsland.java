@@ -22,7 +22,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -36,7 +35,7 @@ import static me.pugabyte.nexus.features.events.models.QuestStage.STEP_ONE;
 // TODO BF21: Testing
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
-public class HalloweenIsland implements Listener, BearFair21Island {
+public class HalloweenIsland implements BearFair21Island {
 	static BearFair21UserService userService = new BearFair21UserService();
 
 	private static final ItemBuilder cookies = new ItemBuilder(Material.COOKIE).name("Grandma's Homemade Cookies").customModelData(1).amount(16);

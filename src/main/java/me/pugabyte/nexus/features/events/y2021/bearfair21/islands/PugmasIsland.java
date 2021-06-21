@@ -35,7 +35,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -47,7 +46,7 @@ import java.util.UUID;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
-public class PugmasIsland implements Listener, BearFair21Island {
+public class PugmasIsland implements BearFair21Island {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
 	private static final ClientsideContent contentList = contentService.get0();
 	private static final BearFair21UserService userService = new BearFair21UserService();

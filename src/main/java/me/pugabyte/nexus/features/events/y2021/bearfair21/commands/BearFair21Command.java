@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
@@ -258,6 +259,15 @@ public class BearFair21Command extends CustomCommand {
 		} else {
 			error("That's not a supported entity type: " + entity.getType().name());
 		}
+	}
+
+	@Permission("group.admin")
+	@Path("kit minigamenight")
+	void kit_minigameNight() {
+		giveItem(MinigameNightIsland.getBrokenXBox());
+		giveItem(MinigameNightIsland.getFixedXBox());
+		giveItem(MinigameNightIsland.getBrokenPowerSupply());
+		giveItem(MinigameNightIsland.getFixedPowerSupply());
 	}
 
 	@Permission("group.admin")
