@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -286,6 +287,10 @@ public class ItemUtils {
 		}
 
 		return true;
+	}
+
+	public static ItemStack getItem(Block block) {
+		return block.getDrops().iterator().next();
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {
