@@ -789,10 +789,10 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		final Player player = event.getPlayer();
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
-		event.setCancelled(true);
 
 		Entity entity = event.getRightClicked();
 		if (entity.getType() != EntityType.ITEM_FRAME) return;
+		event.setCancelled(true);
 
 		final BearFair21User user = new BearFair21UserService().get(player);
 		if (user.getQuestStage_MGN() != QuestStage.STEP_FOUR) return;
