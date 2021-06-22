@@ -257,6 +257,10 @@ public class ClientsideContentManager implements Listener {
 		return null;
 	}
 
+	public static void addCategory(BearFair21User user, ContentCategory category) {
+		addCategory(user, category, 0);
+	}
+
 	public static void addCategory(BearFair21User user, ContentCategory category, long delay) {
 		BearFair21UserService userService = new BearFair21UserService();
 		ClientsideContent clientsideContent = contentService.get0();
@@ -272,6 +276,10 @@ public class ClientsideContentManager implements Listener {
 		user.getContentCategories().add(category);
 		userService.save(user);
 
-		Tasks.wait(delay, () -> ClientsideContentManager.sendSpawnContent(user.getPlayer(), newContent));
+		final Runnable runnable = () -> ClientsideContentManager.sendSpawnContent(user.getPlayer(), newContent);
+		if (delay > 0)
+			Tasks.wait(delay, runnable);
+		else
+			runnable.run();
 	}
 }

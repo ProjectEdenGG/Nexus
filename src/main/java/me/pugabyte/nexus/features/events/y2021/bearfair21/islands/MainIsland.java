@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
@@ -14,11 +15,13 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishi
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -104,47 +107,52 @@ public class MainIsland implements BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = getTool(user.getPlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
+					// TODO Wakka Fix (town name), add wait
+					if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
+						script.add("<self> Thanks for calling GG! How can I help?");
+						script.add("Hey, this is Zach over in (town name). Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back?");
+						script.add("We're in a bit of a bind now since my electrician bailed on me this morning.");
+						script.add("<self> Well that wasn't very professional of them.");
+						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too.");
+						script.add("It's a bit of an odd request, but could you spare some one over here to set up the internet?");
+						script.add("I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
+						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard... ");
+						script.add("Great! We'll have everything ready for you when you get here.");
+					} else {
+						List<Component> tasks = new ArrayList<>();
+						if (!user.isMgn_connectWiring())
+							tasks.add(Component.text("connect the fiber cable"));
+						if (!user.isMgn_unscrambledWiring())
+							tasks.add(Component.text("unscramble the wiring"));
+						if (!user.isMgn_setupRouter())
+							tasks.add(Component.text("set up the router"));
+
+						if (tasks.isEmpty()) {
+							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double. " +
+								"Tell your manager to consider it a donation. Take care now.");
+							script.add("<self> It was no problem, happy to help wherever I can!");
+							user.setQuestStage_MGN(QuestStage.STEP_SIX);
+							userService.save(user);
+						} else {
+							script.add("Hey thanks for coming. All we need you to do is " + AdventureUtils.asPlainText(AdventureUtils.commaJoinText(tasks)) + ".");
+							script.add("You'll find the main cable over by the tree, the wires are under the house- watch your step btw");
+							script.add("And the router station is right there on the table.");
+						}
+					}
+				}
+
+				// TODO Wakka
+				/*else if (!user.hasMet(this.getNpcId())) {
 					script.add("Hm, are you admiring the scenery as well?");
 					script.add("wait 60");
 					script.add("There is honestly nothing more stunning than an area bustling with life.");
 					script.add("wait 80");
 					script.add("Nice to meet you, my name is Zach and I love architecture with all my heart.");
-					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-					return script;
-				} else if(user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
-					// phone conversation
-					script.add("<self> Thanks for calling GG! How can I help?");
-					script.add("wait 60");
-					// TODO BF21: Split this up into multiple lines
-					script.add("Hey, this is Zach over in (town name). Me and my team are building a new house on the edge of town, " +
-						"ya know where an old shed burned down a while back? Yeah, well I’m in a bit of a bind here. See, I’m on a tight " +
-						"schedule and we’ve made some good progress but this morning my electrician bailed on me. Said he could find a better " +
-						"paying job in the city; and I promise you, he won’t. Anyways, it's just me and my carpenter, Ron. I know GG is a " +
-						"videogame company, but from what I’ve heard, y’all are pretty good with tech repair too. " +
-						"I know It’s a bit of an odd request, but could you spare some one over here to set up the internet? " +
-						"It’s the only electrical system left and shouldn’t take too long. I’ll pay double whatever your typical service " +
-						"fee is since this isn’t your normal repair job.");
-					script.add("wait 20");
-					script.add("<self> Uh, sure I could give it a look. Can’t be more complicated than a motherboard... ");
-					script.add("wait 80");
-					script.add("Great! We’ll have everything ready for you when you get here. ");
-
-					// player clicks npc after phone convo
-					script.add("Hey thanks for coming. All we need you to do is connect the cables and set up the router. " +
-						"You’ll find the cables under the house and the router station is upstairs.");
-
-					// player fixes thing
-					script.add("Awesome! That was some quick work, buddy. Here’s your pay, and yes, I’m paying you double. " +
-						"Tell your manager to consider it a donation. Take care now.");
-					script.add("<self> It was no problem, happy to help wherever I can!");
-					return script;
-				}
-
-				script.add("TODO - Hello");
+				}*/
 				return script;
 			}
 		},
@@ -214,7 +222,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 80");
 					script.add("My name is Nate by the way and honestly I can see why the fish would be happy to live out there.");
 					script.add("wait 100");
-					script.add("However I suppose I can’t put too much thought into it, as a fisherman it is my job to pull them out of that paradise, isn't it?");
+					script.add("However I suppose I can't put too much thought into it, as a fisherman it is my job to pull them out of that paradise, isn't it?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -250,7 +258,7 @@ public class MainIsland implements BearFair21Island {
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Welcome to the village!");
 					script.add("wait 40");
-					script.add("I would love to give you a tour, but I’m swamped in preparation work for the upcoming anniversary event.");
+					script.add("I would love to give you a tour, but I'm swamped in preparation work for the upcoming anniversary event.");
 					script.add("wait 80");
 					script.add("You know, if you want to give a good first impression, helping me out would certainly do the trick.");
 					script.add("wait 80");
@@ -421,9 +429,9 @@ public class MainIsland implements BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("Ah, just the inspiration I was looking for. The name’s Sage and I'm your local artist!");
+					script.add("Ah, just the inspiration I was looking for. The name's Sage and I'm your local artist!");
 					script.add("wait 60");
-					script.add("Feel free to browse as long as you’d like. I would love to get to paint- I mean know you.");
+					script.add("Feel free to browse as long as you'd like. I would love to get to paint- I mean know you.");
 					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -642,7 +650,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 80");
 					script.add("This poor guy needs a break at some point too.");
 					script.add("wait 40");
-					script.add("Oh wait I don’t think we’ve met before, sorry about that. My name is Flint and I'm a lumberjack.");
+					script.add("Oh wait I don't think we've met before, sorry about that. My name is Flint and I'm a lumberjack.");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -665,7 +673,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 60");
 					script.add("How do I know? Well that is simply not important right now, what is important is that I, as the great sorcerer Lucian, have knowledge of magic that far surpasses that of anyone else!");
 					script.add("wait 100");
-					script.add("So don’t just stand there, take a look around.");
+					script.add("So don't just stand there, take a look around.");
 					script.add("wait 40");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {

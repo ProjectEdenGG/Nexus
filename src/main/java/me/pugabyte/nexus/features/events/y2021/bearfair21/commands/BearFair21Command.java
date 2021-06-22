@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.RouterMenu;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.ScrambledCablesMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
@@ -210,6 +212,43 @@ public class BearFair21Command extends CustomCommand {
 		send("cleared met NPCs");
 	}
 
+	@Getter
+	@AllArgsConstructor
+	@Accessors(fluent = true)
+	public enum BearFair21UserQuestStageHelper {
+		MAIN(BearFair21User::getQuestStage_Main, BearFair21User::setQuestStage_Main),
+		RECYCLE(BearFair21User::getQuestStage_Recycle, BearFair21User::setQuestStage_Recycle),
+		BEEKEEPER(BearFair21User::getQuestStage_BeeKeeper, BearFair21User::setQuestStage_BeeKeeper),
+		LUMBERJACK(BearFair21User::getQuestStage_Lumberjack, BearFair21User::setQuestStage_Lumberjack),
+		MINIGAME_NIGHT(BearFair21User::getQuestStage_MGN, BearFair21User::setQuestStage_MGN),
+		PUGMAS(BearFair21User::getQuestStage_Pugmas, BearFair21User::setQuestStage_Pugmas),
+		HALLOWEEN(BearFair21User::getQuestStage_Halloween, BearFair21User::setQuestStage_Halloween),
+		SUMMER_DOWN_UNDER(BearFair21User::getQuestStage_SDU, BearFair21User::setQuestStage_SDU),
+		;
+
+		private final Function<BearFair21User, QuestStage> getter;
+		private final BiConsumer<BearFair21User, QuestStage> setter;
+	}
+
+	@Permission("group.admin")
+	@Path("setQuestStage <quest> <stage> [player]")
+	void setQuestStage(BearFair21UserQuestStageHelper quest, QuestStage stage, @Arg("self") BearFair21User player) {
+		userService.edit(player, user -> quest.setter.accept(user, stage));
+		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " " + camelCase(quest) + " quest stage to set to " + camelCase(stage));
+	}
+
+	@Permission("group.admin")
+	@Path("mgn scrambledCables")
+	void scrambledCables() {
+		new ScrambledCablesMenu().open(player());
+	}
+
+	@Permission("group.admin")
+	@Path("mgn router")
+	void router() {
+		new RouterMenu().open(player());
+	}
+
 	@Confirm
 	@Permission("group.admin")
 	@Path("clientside clearUser [category]")
@@ -247,6 +286,14 @@ public class BearFair21Command extends CustomCommand {
 		ClientsideContentManager.sendSpawnContent(player, contentService.getList(category));
 	}
 
+	@Confirm
+	@Permission("group.admin")
+	@Path("clientside clear <category>")
+	void clientsideClearCategory(ContentCategory category) {
+		clientsideContent.getContentList().removeIf(content -> content.getCategory() == category);
+		send("Cleared category");
+	}
+
 	@Permission("group.admin")
 	@Path("clientside new <category>")
 	void clientsideSelect(ContentCategory category) {
@@ -264,31 +311,6 @@ public class BearFair21Command extends CustomCommand {
 		} else {
 			error("That's not a supported entity type: " + entity.getType().name());
 		}
-	}
-
-	@Getter
-	@AllArgsConstructor
-	@Accessors(fluent = true)
-	public enum BearFair21UserQuestStageHelper {
-		MAIN(BearFair21User::getQuestStage_Main, BearFair21User::setQuestStage_Main),
-		RECYCLE(BearFair21User::getQuestStage_Recycle, BearFair21User::setQuestStage_Recycle),
-		BEEKEEPER(BearFair21User::getQuestStage_BeeKeeper, BearFair21User::setQuestStage_BeeKeeper),
-		LUMBERJACK(BearFair21User::getQuestStage_Lumberjack, BearFair21User::setQuestStage_Lumberjack),
-		MINIGAME_NIGHT(BearFair21User::getQuestStage_MGN, BearFair21User::setQuestStage_MGN),
-		PUGMAS(BearFair21User::getQuestStage_Pugmas, BearFair21User::setQuestStage_Pugmas),
-		HALLOWEEN(BearFair21User::getQuestStage_Halloween, BearFair21User::setQuestStage_Halloween),
-		SUMMER_DOWN_UNDER(BearFair21User::getQuestStage_SDU, BearFair21User::setQuestStage_SDU),
-		;
-
-		private final Function<BearFair21User, QuestStage> getter;
-		private final BiConsumer<BearFair21User, QuestStage> setter;
-	}
-
-	@Permission("group.admin")
-	@Path("setQuestStage <quest> <stage> [player]")
-	void kit_minigameNight(BearFair21UserQuestStageHelper quest, QuestStage stage, @Arg("self") BearFair21User player) {
-		userService.edit(player, user -> quest.setter.accept(user, stage));
-		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " " + camelCase(quest) + " quest stage to set to " + camelCase(stage));
 	}
 
 	@Permission("group.admin")

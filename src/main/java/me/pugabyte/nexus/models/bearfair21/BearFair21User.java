@@ -70,6 +70,10 @@ public class BearFair21User implements PlayerOwnedObject {
 	boolean mgn_laptopScreen = false;
 	boolean mgn_laptopMotherboard = false;
 
+	boolean mgn_connectWiring = false;
+	boolean mgn_unscrambledWiring = false;
+	boolean mgn_setupRouter = false;
+
 	// Pugmas
 	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;
 	boolean pugmasCompleted = false;

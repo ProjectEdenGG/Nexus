@@ -72,7 +72,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("wait 60");
 						script.add("My son is having a birthday and he really looked forward to &oAna&f's, his grandmother's homemade cookies.");
 						script.add("wait 100");
-						script.add("It won’t feel like a real birthday without them..");
+						script.add("It won't feel like a real birthday without them..");
 						script.add("wait 80");
 						script.add("Hmmm... I know you just came here. But, can you help us get the recipe, so we can bake some?");
 						script.add("wait 80");
@@ -99,11 +99,11 @@ public class HalloweenIsland implements BearFair21Island {
 						int wait;
 						script.add("Aaah madres cookies!! I see you got them, mucho gracias!");
 						script.add("wait 60");
-						script.add("These smell so good. I can’t wait to eat them all!");
+						script.add("These smell so good. I can't wait to eat them all!");
 						script.add("wait 60");
 						script.add("<self> Wait a second, aren't those for the birthday party?");
 						script.add("wait 60");
-						script.add("Oh yes.. My son’s birthday party. I will share these cookies with him.. Yes..");
+						script.add("Oh yes.. My son's birthday party. I will share these cookies with him.. Yes..");
 						script.add("wait 80");
 						script.add("<self> For some reason that doesn't give me much confidence.");
 						script.add("wait 60");
@@ -112,7 +112,7 @@ public class HalloweenIsland implements BearFair21Island {
 						Tasks.wait(wait, () -> Quests.giveKey(user));
 
 						script.add("wait 60");
-						script.add("You’re always welcome here again, amigo!");
+						script.add("You're always welcome here again, amigo!");
 
 						user.setQuestStage_Halloween(QuestStage.COMPLETE);
 						userService.save(user);
@@ -131,7 +131,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 				switch (user.getQuestStage_Halloween()) {
 					case STARTED, STEP_ONE -> {
-						script.add("Welcome. What’s your name, child?");
+						script.add("Welcome. What's your name, child?");
 						script.add("wait 60");
 						script.add("Nice to meet you, <player>. How may I help you?");
 						script.add("wait 80");
@@ -164,7 +164,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 				switch (user.getQuestStage_Halloween()) {
 					case STEP_ONE, STEP_TWO -> {
-						script.add("Ohohoho. I haven’t felt this alive in so long. My body feels so light and young.");
+						script.add("Ohohoho. I haven't felt this alive in so long. My body feels so light and young.");
 						script.add("wait 80");
 						script.add("Hmm? Oh hello little one.");
 						script.add("wait 40");

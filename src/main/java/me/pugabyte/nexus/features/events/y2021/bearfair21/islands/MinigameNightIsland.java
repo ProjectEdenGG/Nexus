@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
+import eden.utils.Utils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -10,24 +11,32 @@ import fr.minuskube.inv.content.SlotPos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.models.Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.MinigameNightNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.menus.MenuUtils;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
+import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -42,12 +51,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -62,8 +79,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isTypeAndNameEqual;
 public class MinigameNightIsland implements BearFair21Island {
 	static BearFair21UserService userService = new BearFair21UserService();
 
-	private static final ItemStack hat = new ItemBuilder(Material.CYAN_STAINED_GLASS_PANE).customModelData(101).amount(1).build();
-	private static final Location phoneLoc = new Location(BearFair21.getWorld(), -191, 143, -194);
+	private static final ItemStack hat = new ItemBuilder(Material.CYAN_STAINED_GLASS_PANE).customModelData(101).build();
 
 	public MinigameNightIsland() {
 		Nexus.registerListener(this);
@@ -173,21 +189,22 @@ public class MinigameNightIsland implements BearFair21Island {
 					script.add("Ayy yo dude. You the one I gotta talk to ‘bout fixin my xbox?");
 					script.add("<self> Yep! What seems to be the problem?");
 					script.add("So like, Its an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
-					script.add("<self> Yeah that’s not good… does the blue screen have an error message?");
+					script.add("<self> Yeah that's not good… does the blue screen have an error message?");
 					script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on " +
 						"channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
-					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I’ll be right back with you as soon as it's fixed. Shouldn’t be more than a few minutes. ");
-					script.add("A'ight, thanks dawg. I’ll be right here.");
+					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I'll be right back with you as soon as it's fixed. Shouldn't be more than a few minutes. ");
+					script.add("A'ight, thanks dawg. I'll be right here.");
 
 					if (!user.getOnlinePlayer().getInventory().containsAtLeast(FixableDevice.XBOX.getBroken(), 1))
 						PlayerUtils.giveItem(user.getOnlinePlayer(), FixableDevice.XBOX.getBroken());
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
-					script.add("<self> Alright, here you are. Battery was shot. Had to replace it. Pretty simple fix so the bill won’t be too bad.");
-					script.add("Yooo, sweet. Thank’s dawg! Here, you can keep the change. Peace.");
+					script.add("<self> Alright, here you are. Battery was shot. Had to replace it. Pretty simple fix so the bill won't be too bad.");
+					script.add("Yooo, sweet. Thank's dawg! Here, you can keep the change. Peace.");
 					script.add("<self> Thanks for choosing GG!");
 
 					user.setQuestStage_MGN(QuestStage.STEP_TWO);
 					userService.save(user);
+					startPhoneRinging(user.getOnlinePlayer());
 				}
 
 				return script;
@@ -200,14 +217,14 @@ public class MinigameNightIsland implements BearFair21Island {
 
 				if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
 					script.add("<self> Thanks for calling the Game Gallery, how can I help?");
-					script.add("Hello, this is Ben Fredrickson. I’m calling about a laptop I recently purchased for my son. " +
+					script.add("Hello, this is Ben Fredrickson. I'm calling about a laptop I recently purchased for my son. " +
 						"I travel a great deal and I intended it to be a birthday gift for him when I returned home. " +
-						"Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won’t boot up. " +
-						"I’m doing business in the area and had my assistant drop off the laptop in your mailbox earlier today. " +
-						"I was hoping you could find out what’s wrong with it and remedy the problem?");
-					script.add("<self> Of course sir, I’ll take a look at it.");
-					script.add("Wonderful, once it's fixed, if you could keep it in your back room, I’ll be back by in the next few days to pick it up.");
-					script.add("<self> No problem sir, I’ll call as soon as it's ready.");
+						"Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won't boot up. " +
+						"I'm doing business in the area and had my assistant drop off the laptop in your mailbox earlier today. " +
+						"I was hoping you could find out what's wrong with it and remedy the problem?");
+					script.add("<self> Of course sir, I'll take a look at it.");
+					script.add("Wonderful, once it's fixed, if you could keep it in your back room, I'll be back by in the next few days to pick it up.");
+					script.add("<self> No problem sir, I'll call as soon as it's ready.");
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
 					script.add("This is Fredrickson.");
 					script.add("<self> Ok Mr. Fredrickson, the laptop is ready. The motherboard and screen were cracked and had to be replaced but it works perfectly now.");
@@ -216,6 +233,7 @@ public class MinigameNightIsland implements BearFair21Island {
 					user.getOnlinePlayer().getInventory().removeItem(FixableDevice.LAPTOP.getFixed());
 					user.setQuestStage_MGN(QuestStage.STEP_FOUR);
 					userService.save(user);
+					startPhoneRinging(user.getOnlinePlayer());
 				}
 
 				return script;
@@ -255,6 +273,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	// Solderer
 
+	private final String galleryRegion = getRegion("gamegallery");
 	private final String solderRegion = getRegion("solder");
 	private static boolean activeSolder = false;
 
@@ -335,21 +354,13 @@ public class MinigameNightIsland implements BearFair21Island {
 	// Laptop
 
 	@EventHandler
-	public void onClickPhone(PlayerInteractEntityEvent event) {
-		if (BearFair21.isNotAtBearFair(event)) return;
-		if (EquipmentSlot.HAND != event.getHand()) return;
-		Entity entity = event.getRightClicked();
-		if (entity.getType() != EntityType.ITEM_FRAME) return;
-		if (!getWGUtils().isInRegion(entity.getLocation(), phoneRegion)) return;
+	public void onEnterGG(PlayerEnteredRegionEvent event) {
+		if (!BearFair21.canDoBearFairQuest(event.getPlayer())) return;
+		if (!event.getRegion().getId().equals(galleryRegion)) return;
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
-		if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
-			// TODO Stop phone ringing
-			Talker.sendScript(event.getPlayer(), MinigameNightNPCs.FREDRICKSON);
-		} else if (user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
-			// TODO Ring phone
-			Talker.sendScript(event.getPlayer(), MinigameNightNPCs.FREDRICKSON);
-		}
+		if (user.getQuestStage_MGN() == QuestStage.STEP_TWO || user.getQuestStage_MGN() == QuestStage.STEP_FOUR)
+			startPhoneRinging(user.getOnlinePlayer());
 	}
 
 	@EventHandler
@@ -371,6 +382,52 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!isTypeAndNameEqual(FixableDevice.LAPTOP.getBroken(), event.getItem())) return;
 
 		new LaptopMenu().open(event.getPlayer());
+	}
+
+	// Phone
+
+	// TODO Wakka - Phone sound
+	private static final Consumer<Player> ringingSound = player -> PlayerUtils.send(player, "ring ring");
+	private static final Map<UUID, List<Integer>> taskIds = new HashMap<>();
+
+	public static void addTaskId(Player player, int taskId) {
+		taskIds.computeIfAbsent(player.getUniqueId(), $ -> new ArrayList<>()).add(taskId);
+	}
+
+	public static void startPhoneRinging(Player player) {
+		for (int i = 0; i < 5; i++)
+			addTaskId(player, Tasks.wait(Time.SECOND.x(i), () -> ringingSound.accept(player)));
+	}
+
+	public static void startOutgoingPhoneCall(Player player, Runnable pickup) {
+		ringingSound.accept(player);
+		Tasks.wait(Time.SECOND, () -> ringingSound.accept(player));
+		Tasks.wait(Time.SECOND.x(2), pickup);
+	}
+
+	public static void stopPhoneRinging(Player player) {
+		taskIds.computeIfAbsent(player.getUniqueId(), $ -> new ArrayList<>()).forEach(Tasks::cancel);
+		// TODO Wakka - Stop phone sound
+	}
+
+	@EventHandler
+	public void onClickPhone(PlayerInteractEntityEvent event) {
+		if (!BearFair21.canDoBearFairQuest(event)) return;
+		Entity entity = event.getRightClicked();
+		if (entity.getType() != EntityType.ITEM_FRAME) return;
+		event.setCancelled(true);
+		if (!getWGUtils().isInRegion(entity.getLocation(), phoneRegion)) return;
+
+		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
+		if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
+			stopPhoneRinging(event.getPlayer());
+			Talker.sendScript(event.getPlayer(), MinigameNightNPCs.FREDRICKSON);
+		} else if (user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
+			startOutgoingPhoneCall(event.getPlayer(), () -> Talker.sendScript(event.getPlayer(), MinigameNightNPCs.FREDRICKSON));
+		} else if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
+			stopPhoneRinging(event.getPlayer());
+			Talker.sendScript(event.getPlayer(), MainNPCs.ARCHITECT);
+		}
 	}
 
 	// Menus
@@ -423,6 +480,207 @@ public class MinigameNightIsland implements BearFair21Island {
 			fixableItemSlot(player, contents, SlotPos.of(1, 1), FixableItem.MOTHERBOARD);
 		}
 
+	}
+
+	public static class ScrambledCablesMenu extends MenuUtils implements InventoryProvider {
+
+		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("Scrambled Cables")
+				.size(3, 9)
+				.build()
+				.open(viewer, page);
+		}
+
+		@Getter
+		@AllArgsConstructor
+		private enum Cable {
+			GREEN, YELLOW, RED, BLUE, WHITE;
+
+			private ItemStack getDisplayItem() {
+				return new ItemBuilder(ColorType.of(name()).switchColor(Material.WHITE_CONCRETE)).name(camelCase(name()) + " Cable").build();
+			}
+
+			private static List<Cable> randomized() {
+				final ArrayList<Cable> cables = new ArrayList<>(List.of(values()));
+				Collections.shuffle(cables);
+				return cables;
+			}
+		}
+
+		private static final List<Integer> allowedColumns = List.of(2, 3, 4, 5, 6);
+
+		public boolean choose(AtomicInteger column, List<Integer> choices, List<Integer> exclude) {
+			ArrayList<Integer> _choices = new ArrayList<>(choices);
+
+			_choices.removeAll(exclude);
+			if (_choices.isEmpty())
+				return false;
+
+			column.set(RandomUtils.randomElement(_choices));
+
+			if (!allowedColumns.contains(column.get()))
+				column.set(0);
+
+			choices.remove(Integer.valueOf(column.get()));
+			exclude.add(column.get());
+			return true;
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			addCloseItem(contents);
+
+			Runnable validate = () -> Tasks.wait(2, () -> {
+				final Inventory inventory = player.getOpenInventory().getTopInventory();
+
+				for (Integer checking : allowedColumns) {
+					List<Material> items = new ArrayList<>();
+					for (int i = 0; i < 3; i++) {
+						final ItemStack item = inventory.getItem(i * 9 + checking);
+						if (isNullOrAir(item)) return;
+						items.add(item.getType());
+					}
+
+					if (!(items.get(0) == items.get(1) && items.get(1) == items.get(2)))
+						return;
+				}
+
+				Tasks.wait(Time.SECOND, () -> {
+					player.closeInventory();
+					userService.edit(player, user -> user.setMgn_unscrambledWiring(true));
+					// TODO Wakka Some feedback that they completed it (particles/sounds)
+				});
+			});
+
+			Utils.attempt(100, () -> {
+				final List<List<Integer>> rows = List.of(new ArrayList<>(allowedColumns), new ArrayList<>(allowedColumns), new ArrayList<>(allowedColumns));
+				for (Cable cable : Cable.randomized()) {
+					final ItemStack item = cable.getDisplayItem();
+					final List<AtomicInteger> columns = List.of(new AtomicInteger(), new AtomicInteger(), new AtomicInteger());
+
+					Utils.attempt(100, () -> {
+						try {
+							final List<Integer> exclude = new ArrayList<>();
+							if (!choose(columns.get(0), rows.get(0), exclude)) return false;
+							if (!choose(columns.get(1), rows.get(1), exclude)) return false;
+							if (!choose(columns.get(2), rows.get(2), exclude)) return false;
+							return true;
+						} catch (Exception ex) {
+							return false;
+						}
+					});
+
+					final Iterator<AtomicInteger> iterator = columns.iterator();
+
+					for (int row = 0; row < 3; row++) {
+						final int column = iterator.next().get();
+						if (!allowedColumns.contains(column))
+							return false;
+
+						final SlotPos slot = SlotPos.of(row, column);
+						contents.set(slot, ClickableItem.from(item, e -> validate.run()));
+						contents.setEditable(slot, true);
+					}
+				}
+				return true;
+			});
+		}
+
+	}
+
+	public static class RouterMenu extends MenuUtils implements InventoryProvider {
+
+		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("Router Parts")
+				.size(3, 9)
+				.build()
+				.open(viewer, page);
+		}
+
+		@Getter
+		@AllArgsConstructor
+		private enum RouterParts {
+			POWER_CORD(Material.REDSTONE, 0, SlotPos.of(2, 3), SlotPos.of(1, 1)),
+			ETHERNET_CABLE(Material.END_ROD, 0, SlotPos.of(2, 4), SlotPos.of(0, 4)),
+			FIBER_OPTIC_CABLE(Material.TRIPWIRE_HOOK, 0, SlotPos.of(2, 5), SlotPos.of(1, 7)),
+			;
+
+			private final Material material;
+			private final int customModelData;
+			private final SlotPos from, to;
+
+			private ItemStack getDisplayItem() {
+				return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name())).build();
+			}
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			addCloseItem(contents);
+
+			for (RouterParts part : RouterParts.values()) {
+				ItemStack item = part.getDisplayItem();
+				contents.set(part.getFrom(), ClickableItem.empty(item));
+				contents.setEditable(part.getFrom(), true);
+
+				contents.set(part.getTo(), ClickableItem.from(new ItemStack(Material.BARRIER), e -> {
+					if (item.equals(player.getItemOnCursor())) {
+						player.setItemOnCursor(new ItemStack(Material.AIR));
+						contents.set(part.getTo(), ClickableItem.empty(item));
+
+						for (RouterParts checking : RouterParts.values()) {
+							final Optional<ClickableItem> destination = contents.get(checking.getTo());
+							if (destination.isPresent())
+								if (!destination.get().getItem().equals(checking.getDisplayItem()))
+									return;
+						}
+
+						Tasks.wait(Time.SECOND, () -> {
+							player.closeInventory();
+							userService.edit(player, user -> user.setMgn_setupRouter(true));
+							// TODO Wakka Some feedback that they completed it (particles/sounds)
+						});
+					}
+				}));
+			}
+		}
+
+	}
+
+	// Main island
+
+	private static final String routerRegion = "bearfair21_main_router";
+	private static final String fiberCableRegion = "bearfair21_main_fibercable";
+	private static final String scrambledCablesRegion = "bearfair21_main_scrambledcables";
+
+	@EventHandler
+	public void onMainIslandItemFrameInteract(PlayerInteractEntityEvent event) {
+		if (!BearFair21.canDoBearFairQuest(event)) return;
+		Entity entity = event.getRightClicked();
+		if (entity.getType() != EntityType.ITEM_FRAME) return;
+
+		event.setCancelled(true);
+		final Player player = event.getPlayer();
+		final BearFair21User user = new BearFair21UserService().get(player);
+		if (user.getQuestStage_MGN() != QuestStage.STEP_FOUR) return;
+
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+
+		final WorldGuardUtils WGUtils = getWGUtils();
+		if (WGUtils.isInRegion(entity.getLocation(), fiberCableRegion)) {
+			ClientsideContentManager.addCategory(user, ContentCategory.CABLE);
+			user.setMgn_connectWiring(true);
+			userService.save(user);
+		} else if (WGUtils.isInRegion(entity.getLocation(), scrambledCablesRegion))
+			new ScrambledCablesMenu().open(player);
+		else if (WGUtils.isInRegion(entity.getLocation(), routerRegion))
+			new RouterMenu().open(player);
 	}
 
 	// Common
