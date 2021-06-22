@@ -286,7 +286,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(1, 5, ClickableItem.empty(nameItem(Material.FIREWORK_STAR, "&fCPU")));
 			contents.set(1, 7, ClickableItem.empty(nameItem(Material.DAYLIGHT_DETECTOR, "&fHard Drive")));
 
-			fixableItem(player, contents, SlotPos.of(1, 3), "Power Supply", brokenPowerSupply, fixedPowerSupply);
+			fixableItem(player, contents, SlotPos.of(1, 3), "XBox", "Power Supply", brokenPowerSupply, fixedPowerSupply);
 		}
 	}
 
@@ -418,22 +418,18 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			final BearFair21UserService userService = new BearFair21UserService();
-			final BearFair21User user = userService.get(player);
-			final PlayerInventory inv = player.getInventory();
-
 			addCloseItem(contents);
 			contents.set(0, 3, ClickableItem.empty(nameItem(Material.NETHERITE_INGOT, "Power Supply")));
 			contents.set(1, 7, ClickableItem.empty(nameItem(Material.FIREWORK_STAR, "CPU")));
 			contents.set(2, 3, ClickableItem.empty(nameItem(Material.LIGHT_GRAY_CARPET, "Keyboard")));
 			contents.set(2, 5, ClickableItem.empty(nameItem(Material.IRON_TRAPDOOR, "Optical Drive")));
 
-			fixableItem(player, contents, SlotPos.of(0, 5), "Screen", brokenScreen, fixedScreen);
-			fixableItem(player, contents, SlotPos.of(1, 1), "Motherboard", brokenMotherboard, fixedMotherboard);
+			fixableItem(player, contents, SlotPos.of(0, 5), "Laptop", "Screen", brokenScreen, fixedScreen);
+			fixableItem(player, contents, SlotPos.of(1, 1), "Laptop", "Motherboard", brokenMotherboard, fixedMotherboard);
 		}
 	}
 
-	protected static void fixableItem(Player player, InventoryContents contents, SlotPos slot, String name, ItemStack broken, ItemStack fixed) {
+	protected static void fixableItem(Player player, InventoryContents contents, SlotPos slot, String fixing, String name, ItemStack broken, ItemStack fixed) {
 		final BearFair21UserService userService = new BearFair21UserService();
 		final BearFair21User user = userService.get(player);
 		final PlayerInventory inv = player.getInventory();
@@ -443,15 +439,25 @@ public class MinigameNightIsland implements BearFair21Island {
 				if (fixed.equals(player.getItemOnCursor())) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
 					contents.set(slot, ClickableItem.empty(fixed));
-					user.setMgn_laptopScreen(true);
-					userService.save(user);
 
-					if (user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard())
-						Tasks.wait(Time.SECOND, () -> {
-							player.closeInventory();
-							inv.removeItem(broken);
-							Quests.giveItem(player, fixed);
-						});
+					Runnable finalize = () -> Tasks.wait(Time.SECOND, () -> {
+						player.closeInventory();
+						inv.removeItem(broken);
+						Quests.giveItem(player, fixed);
+					});
+
+					if ("Laptop".equals(fixing)) {
+						if ("Screen".equals(name))
+							user.setMgn_laptopScreen(true);
+						else if ("Motherboard".equals(name))
+							user.setMgn_laptopMotherboard(true);
+
+						userService.save(user);
+
+						if (user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard())
+							finalize.run();
+					} else
+						finalize.run();
 				}
 			}));
 		} else {
