@@ -286,28 +286,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(1, 5, ClickableItem.empty(nameItem(Material.FIREWORK_STAR, "&fCPU")));
 			contents.set(1, 7, ClickableItem.empty(nameItem(Material.DAYLIGHT_DETECTOR, "&fHard Drive")));
 
-			final SlotPos slot = SlotPos.of(1, 3);
-
-			final PlayerInventory inv = player.getInventory();
-			final ItemStack missing = nameItem(Material.BARRIER, "&fPower Supply");
-
-			if (inv.containsAtLeast(brokenPowerSupply, 1) || inv.containsAtLeast(fixedPowerSupply, 1)) {
-				contents.set(slot, ClickableItem.from(missing, e -> {
-					if (fixedPowerSupply.equals(player.getItemOnCursor())) {
-						player.setItemOnCursor(new ItemStack(Material.AIR));
-						contents.set(slot, ClickableItem.empty(fixedPowerSupply));
-
-						Tasks.wait(Time.SECOND, () -> {
-							player.closeInventory();
-							inv.removeItem(brokenXBox);
-							Quests.giveItem(player, fixedXBox);
-						});
-					}
-				}));
-			} else {
-				contents.set(slot, ClickableItem.empty(brokenPowerSupply));
-				contents.setEditable(slot, true);
-			}
+			fixableItem(player, contents, SlotPos.of(1, 3), "Power Supply", brokenPowerSupply, fixedPowerSupply);
 		}
 	}
 
@@ -442,7 +421,6 @@ public class MinigameNightIsland implements BearFair21Island {
 			final BearFair21UserService userService = new BearFair21UserService();
 			final BearFair21User user = userService.get(player);
 			final PlayerInventory inv = player.getInventory();
-			final ItemStack air = new ItemStack(Material.AIR);
 
 			addCloseItem(contents);
 			contents.set(0, 3, ClickableItem.empty(nameItem(Material.NETHERITE_INGOT, "Power Supply")));
@@ -450,52 +428,35 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(2, 3, ClickableItem.empty(nameItem(Material.LIGHT_GRAY_CARPET, "Keyboard")));
 			contents.set(2, 5, ClickableItem.empty(nameItem(Material.IRON_TRAPDOOR, "Optical Drive")));
 
-			final SlotPos screenSlot = SlotPos.of(0, 5);
-			final SlotPos motherboardSlot = SlotPos.of(1, 1);
+			fixableItem(player, contents, SlotPos.of(0, 5), "Screen", brokenScreen, fixedScreen);
+			fixableItem(player, contents, SlotPos.of(1, 1), "Motherboard", brokenMotherboard, fixedMotherboard);
+		}
+	}
 
-			final ItemStack missingScreen = nameItem(Material.BARRIER, "&fScreen");
-			if (inv.containsAtLeast(brokenScreen, 1) || inv.containsAtLeast(fixedScreen, 1)) {
-				contents.set(screenSlot, ClickableItem.from(missingScreen, e -> {
-					if (fixedScreen.equals(player.getItemOnCursor())) {
-						player.setItemOnCursor(air);
-						contents.set(screenSlot, ClickableItem.empty(fixedScreen));
-						user.setMgn_laptopScreen(true);
-						userService.save(user);
+	protected static void fixableItem(Player player, InventoryContents contents, SlotPos slot, String name, ItemStack broken, ItemStack fixed) {
+		final BearFair21UserService userService = new BearFair21UserService();
+		final BearFair21User user = userService.get(player);
+		final PlayerInventory inv = player.getInventory();
 
-						if (user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard())
-							Tasks.wait(Time.SECOND, () -> {
-								player.closeInventory();
-								inv.removeItem(brokenLaptop);
-								Quests.giveItem(player, fixedLaptop);
-							});
-					}
-				}));
-			} else {
-				contents.set(screenSlot, ClickableItem.empty(brokenScreen));
-				contents.setEditable(screenSlot, true);
-			}
+		if (inv.containsAtLeast(broken, 1) || inv.containsAtLeast(fixed, 1)) {
+			contents.set(slot, ClickableItem.from(new ItemBuilder(Material.BARRIER).name("&f" + name).build(), e -> {
+				if (fixed.equals(player.getItemOnCursor())) {
+					player.setItemOnCursor(new ItemStack(Material.AIR));
+					contents.set(slot, ClickableItem.empty(fixed));
+					user.setMgn_laptopScreen(true);
+					userService.save(user);
 
-			final ItemStack missingMotherboard = nameItem(Material.BARRIER, "&fMotherboard");
-			if (inv.containsAtLeast(brokenMotherboard, 1) || inv.containsAtLeast(fixedMotherboard, 1)) {
-				contents.set(motherboardSlot, ClickableItem.from(missingMotherboard, e -> {
-					if (fixedMotherboard.equals(player.getItemOnCursor())) {
-						player.setItemOnCursor(air);
-						contents.set(motherboardSlot, ClickableItem.empty(fixedMotherboard));
-						user.setMgn_laptopMotherboard(true);
-						userService.save(user);
-
-						if (user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard())
-							Tasks.wait(Time.SECOND, () -> {
-								player.closeInventory();
-								inv.removeItem(brokenLaptop);
-								Quests.giveItem(player, fixedLaptop);
-							});
-					}
-				}));
-			} else {
-				contents.set(motherboardSlot, ClickableItem.empty(brokenMotherboard));
-				contents.setEditable(motherboardSlot, true);
-			}
+					if (user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard())
+						Tasks.wait(Time.SECOND, () -> {
+							player.closeInventory();
+							inv.removeItem(broken);
+							Quests.giveItem(player, fixed);
+						});
+				}
+			}));
+		} else {
+			contents.set(slot, ClickableItem.empty(broken));
+			contents.setEditable(slot, true);
 		}
 	}
 
