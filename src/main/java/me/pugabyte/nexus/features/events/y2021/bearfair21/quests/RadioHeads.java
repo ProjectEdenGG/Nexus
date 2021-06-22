@@ -28,6 +28,8 @@ public class RadioHeads implements Listener {
 		if (BlockUtils.isNullOrAir(block) || !block.getType().equals(Material.PLAYER_HEAD)) return;
 
 		if (ItemUtils.getItem(block).equals(Nexus.getHeadAPI().getItemHead("17150"))) {
+			event.setCancelled(true);
+
 			RadioUserService userService = new RadioUserService();
 			RadioUser radioUser = userService.get(event.getPlayer());
 

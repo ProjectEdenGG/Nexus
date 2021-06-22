@@ -45,7 +45,7 @@ public class HalloweenIsland implements BearFair21Island {
 	private static final ItemBuilder milk = new ItemBuilder(Material.MILK_BUCKET).name("Milk Carton").customModelData(1);
 	private static final ItemBuilder flour = new ItemBuilder(Material.WHEAT).name("Bag of Flour").customModelData(1);
 	//
-	private static final Location location_chocolate = new Location(BearFair21.getWorld(), 85, 107, -367);
+	private static final Location location_chocolate = new Location(BearFair21.getWorld(), 85, 110, -367);
 	private static final Location location_milk = new Location(BearFair21.getWorld(), 66, 107, -345);
 	private static final Location location_flour = new Location(BearFair21.getWorld(), 42, 111, -310);
 
@@ -428,6 +428,8 @@ public class HalloweenIsland implements BearFair21Island {
 		public List<String> getAnaResponse() {
 			List<String> result = new ArrayList<>();
 
+			result.add("<self> Hi, I'm looking for Ana. Do you know where she is?");
+			result.add("wait 40");
 			if (this.isAlive()) {
 				result.add(RandomUtils.randomElement(Arrays.asList(
 					"Bless her soul. I suggest talking to Santiago, he could probably help you.",
