@@ -75,17 +75,17 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.GRASS_BLOCK);
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
 	@Override
-	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
 		return isZombie(minigamer);
 	}
 
@@ -95,7 +95,7 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public void onJoin(MatchJoinEvent event) {
+	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getPlayer();
@@ -123,7 +123,7 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		HideAndSeekMatchData matchData = match.getMatchData();
@@ -174,7 +174,7 @@ public class HideAndSeek extends Infection {
 					sendBarWithTimer(minigamer, display);
 				} else {
 					if (!solidPlayers.containsKey(minigamer)) {
-						Location location = minigamer.getPlayerLocation();
+						Location location = minigamer.getPlayer().getLocation();
 						if (immobileTicks == SOLIDIFY_PLAYER_AT && MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) {
 							// save fake block location
 							solidPlayers.put(minigamer, location);
@@ -246,7 +246,7 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public Map<String, Integer> getScoreboardLines(Match match) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
 		if (!match.isStarted() || match.getTimer().getTime() > match.getArena().getSeconds()/2)
 			return super.getScoreboardLines(match);
 		HideAndSeekMatchData matchData = match.getMatchData();
@@ -277,19 +277,19 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
 		cleanup(event.getMinigamer());
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		cleanup(event.getMatch());
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		super.onDeath(event);
 		cleanup(event.getMinigamer());
 	}
@@ -333,7 +333,7 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public boolean canUseBlock(Minigamer minigamer, Block block) {
+	public boolean canUseBlock(@NotNull Minigamer minigamer, @NotNull Block block) {
 		return false;
 	}
 

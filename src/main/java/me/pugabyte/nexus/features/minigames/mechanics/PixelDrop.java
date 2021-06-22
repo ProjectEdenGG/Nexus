@@ -36,6 +36,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,12 +66,12 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.LIGHT_BLUE_CONCRETE);
 	}
 
 	@Override
-	public void onJoin(MatchJoinEvent event) {
+	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
@@ -81,7 +82,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
@@ -90,7 +91,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
@@ -102,12 +103,12 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void kill(Minigamer minigamer) {
-		minigamer.spawn();
+	public void kill(@NotNull Minigamer victim, @Nullable Minigamer attacker) {
+		victim.spawn();
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
 		matchData.clearFloor(match);

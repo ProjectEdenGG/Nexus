@@ -53,22 +53,22 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.WOODEN_PICKAXE);
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
 	@Override
-	public boolean canDropItem(ItemStack item) {
+	public boolean canDropItem(@NotNull ItemStack item) {
 		return true;
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		separatePlayers(event.getMatch());
 	}
@@ -84,7 +84,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		((UncivilEngineersMatchData) event.getMatch().getMatchData()).getEntities().forEach(Entity::remove);
 		resetStrips(event.getMatch());
 		super.onEnd(event);

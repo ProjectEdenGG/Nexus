@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
@@ -25,14 +26,14 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		super.onDeath(event);
 
 		getMatchData(event.getMinigamer()).toCheckpoint(event.getMinigamer());
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
 
 		getMatchData(event.getMinigamer()).clearData(event.getMinigamer());

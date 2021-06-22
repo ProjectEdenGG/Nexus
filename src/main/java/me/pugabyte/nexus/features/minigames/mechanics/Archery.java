@@ -62,7 +62,7 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.BOW);
 	}
 
@@ -72,13 +72,13 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onInitialize(MatchInitializeEvent event) {
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
 		clearRanges(event.getMatch());
 	}
 
 	@Override
-	public void onJoin(MatchJoinEvent event) {
+	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Match match = event.getMatch();
 		ArcheryMatchData matchData = match.getMatchData();
@@ -89,7 +89,7 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
 		Match match = event.getMatch();
 		ArcheryMatchData matchData = match.getMatchData();
@@ -99,7 +99,7 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		ArcheryMatchData matchData = match.getMatchData();
@@ -109,13 +109,13 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		clearRanges(event.getMatch());
 	}
 
 	@Override
-	public Map<String, Integer> getScoreboardLines(Minigamer minigamer) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		Map<String, Integer> lines = new HashMap<>();
 		Match match = minigamer.getMatch();
 		ArcheryMatchData matchData = match.getMatchData();

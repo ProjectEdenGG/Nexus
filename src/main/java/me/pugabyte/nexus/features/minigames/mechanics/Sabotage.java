@@ -119,7 +119,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return Nexus.getHeadAPI().getItemHead("40042");
 	}
 
@@ -144,7 +144,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
 		return super.usesPerk(perk, minigamer);
 	}
 
@@ -170,7 +170,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public boolean shouldBeOver(Match match) {
+	public boolean shouldBeOver(@NotNull Match match) {
 		if (super.shouldBeOver(match))
 			return true;
 
@@ -198,7 +198,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
@@ -301,7 +301,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public void onQuit(MatchQuitEvent event) {
+	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
 		UUID uuid = event.getMinigamer().getUniqueId();
 		SabotageMatchData matchData = event.getMatch().getMatchData();
@@ -314,7 +314,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		Match match = event.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
@@ -324,7 +324,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		Match match = minigamer.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
@@ -470,7 +470,7 @@ public class Sabotage extends TeamMechanic {
 		} else {
 			if (USE_ITEM.get().isSimilar(item)) {
 				if (team == SabotageTeam.IMPOSTOR) {
-					Block block = minigamer.getPlayerLocation().getBlock();
+					Block block = minigamer.getPlayer().getLocation().getBlock();
 					Container container = getVentContainer(block);
 					if (block.getType() == Material.IRON_TRAPDOOR && block.getRelative(0, -1, 0).getType() == Material.COAL_BLOCK && container != null) {
 						giveVentItems(minigamer, block, container);
@@ -520,7 +520,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public void announceWinners(Match match) {
+	public void announceWinners(@NotNull Match match) {
 		if (false) {
 			List<Minigamer> winners = match.getMinigamers().stream().filter(minigamer -> minigamer.getScore() > 0).collect(Collectors.toList());
 			JsonBuilder builder = new JsonBuilder();
@@ -547,7 +547,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public void onDamage(MinigamerDamageEvent event) {
+	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		SabotageMatchData matchData = event.getMatch().getMatchData();
 		if (event.getAttacker() != null && event.getAttacker().isAlive() && SabotageTeam.of(event.getAttacker()) == SabotageTeam.IMPOSTOR && SabotageTeam.of(event.getMinigamer()) != SabotageTeam.IMPOSTOR
 				&& event.getAttacker().getPlayer().getInventory().getItemInMainHand().isSimilar(KILL_ITEM.get()) && matchData.getKillCooldown(event.getMinigamer()) <= 0) {
@@ -561,7 +561,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public Map<String, Integer> getScoreboardLines(Minigamer minigamer) {
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		Map<String, Integer> lines = new HashMap<>();
 		if (!minigamer.getMatch().isStarted())
 			return lines;
