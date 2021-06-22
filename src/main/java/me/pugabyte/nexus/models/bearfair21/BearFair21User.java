@@ -41,7 +41,12 @@ public class BearFair21User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	// General Quest Stuff
-	private Set<ContentCategory> contentCategories = new HashSet<>();
+	private Set<ContentCategory> contentCategories = new HashSet<>(Set.of(
+		ContentCategory.SPEAKER_PART_SUBWOOFER,
+		ContentCategory.SPEAKER_PART_AUX_PORT,
+		ContentCategory.SPEAKER_PART_TANGLED_WIRE,
+		ContentCategory.SPEAKER_PART_SPEAKER_HEAD)
+	);
 	private JunkWeight junkWeight = JunkWeight.MAX;
 	private int recycledItems = 0;
 	private Set<Integer> metNPCs = new HashSet<>();
@@ -76,6 +81,7 @@ public class BearFair21User implements PlayerOwnedObject {
 	boolean mgn_setupRouter = false;
 
 	Set<Location> mgn_beaconsActivated = new HashSet<>();
+	Set<Location> mgn_speakersFixed = new HashSet<>();
 
 	// Pugmas
 	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;

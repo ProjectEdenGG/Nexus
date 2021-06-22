@@ -296,7 +296,7 @@ public class BearFair21Command extends CustomCommand {
 
 	@Permission("group.admin")
 	@Path("clientside new <category>")
-	void clientsideSelect(ContentCategory category) {
+	void clientsideNew(ContentCategory category) {
 		Entity entity = getTargetEntity();
 		if (entity == null) {
 			Block block = getTargetBlock();

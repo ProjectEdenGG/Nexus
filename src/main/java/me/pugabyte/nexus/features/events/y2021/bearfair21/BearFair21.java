@@ -66,6 +66,10 @@ public class BearFair21 {
 		return Bukkit.getWorld("bearfair21");
 	}
 
+	public static Location locationOf(double x, double y, double z) {
+		return new Location(getWorld(), x, y, z);
+	}
+
 	public static WorldGuardUtils getWGUtils() {
 		return new WorldGuardUtils(getWorld());
 	}

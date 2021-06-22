@@ -120,7 +120,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("Get as close to the magma core as you can, and place this down. It will hold the island together until we can get some professionals out here. On top of that, the magnetic field this device generates should boost the beacons' signal and solve the interference issue.");
 							script.add("<self> Aye Aye, Admiral!");
 						} else {
-							script.add("TODO Thunder - Didn't activate all 3 beacons");
+							script.add("Any luck with those nav-beacons? Make sure to check all three for damage and reboot them.");
 						}
 					}
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {

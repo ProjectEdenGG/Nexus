@@ -388,9 +388,10 @@ public class MinigameNightIsland implements BearFair21Island {
 	// Beacons
 
 	private static final List<Location> beaconButtons = new ArrayList<>(List.of(
-		new Location(BearFair21.getWorld(), -9, 154, -218),
-		new Location(BearFair21.getWorld(), 151, 139, -20),
-		new Location(BearFair21.getWorld(), -108, 158, 13)));
+		BearFair21.locationOf(-9, 154, -218),
+		BearFair21.locationOf(151, 139, -20),
+		BearFair21.locationOf(-108, 158, 13)
+	));
 
 	@EventHandler
 	public void onRightClickBeaconButton(PlayerInteractEvent event) {
@@ -429,6 +430,79 @@ public class MinigameNightIsland implements BearFair21Island {
 		user.sendMessage("TODO Wakka - Feedback");
 	}
 
+	// Speakers
+
+	private static final List<Location> speakerLocations = new ArrayList<>(List.of(
+		BearFair21.locationOf(-182, 142, -156),
+		BearFair21.locationOf(-178, 142, -156),
+		BearFair21.locationOf(-177, 144, -150),
+		BearFair21.locationOf(-183, 144, -150)
+	));
+
+	@Getter
+	@AllArgsConstructor
+	private enum AxelSpeakerPart {
+		SUBWOOFER(BearFair21.locationOf(-165, 149, -215), Material.CONDUIT),
+		TANGLED_WIRE(BearFair21.locationOf(-167, 148, -214), Material.CRIMSON_ROOTS),
+		SPEAKER_HEAD(BearFair21.locationOf(-169, 148, -218), Material.HOPPER),
+		AUX_PORT(BearFair21.locationOf(-167, 146, -214), Material.LODESTONE),
+		;
+
+		private final Location location;
+		private final Material material;
+
+		private static AxelSpeakerPart of(Location location) {
+			for (AxelSpeakerPart part : values())
+				if (part.getLocation().equals(location))
+					return part;
+			return null;
+		}
+
+		private ItemStack getDisplayItem() {
+			return new ItemBuilder(material).name(camelCase(name())).build();
+		}
+	}
+
+	private static final ItemBuilder speaker = new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker");
+
+	@EventHandler
+	public void onClickSpeaker(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (!BearFair21.canDoBearFairQuest(player)) return;
+		if (!ActionGroup.CLICK.applies(event) || isNullOrAir(event.getItem())) return;
+		final Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block)) return;
+		if (block.getType() != Material.PLAYER_HEAD) return;
+		final Location location = block.getLocation();
+		if (!speakerLocations.contains(location)) return;
+		event.setCancelled(true);
+
+		if (!event.getItem().equals(speaker.build())) return;
+
+		final BearFair21User user = userService.get(player);
+		if (user.getMgn_speakersFixed().contains(location)) return;
+		user.getMgn_speakersFixed().add(location);
+	}
+
+	@EventHandler
+	public void onClickSpeakerPart(PlayerInteractEntityEvent event) {
+		if (!BearFair21.canDoBearFairQuest(event)) return;
+		final Player player = event.getPlayer();
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		Entity entity = event.getRightClicked();
+		if (entity.getType() != EntityType.ITEM_FRAME) return;
+		event.setCancelled(true);
+
+		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
+		if (user.getQuestStage_MGN() != QuestStage.STEP_SEVEN) return;
+
+		final AxelSpeakerPart part = AxelSpeakerPart.of(entity.getLocation().getBlock().getLocation());
+		if (part == null) return;
+
+		Quests.giveItem(player, part.getDisplayItem());
+		ClientsideContentManager.removeCategory(user, ContentCategory.valueOf("SPEAKER_PART_" + part.name()));
+	}
+
 	// Phone
 
 	// TODO Wakka - Phone sound
@@ -459,8 +533,10 @@ public class MinigameNightIsland implements BearFair21Island {
 	public void onClickPhone(PlayerInteractEntityEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		Entity entity = event.getRightClicked();
-		if (!getWGUtils().isInRegion(entity.getLocation(), phoneRegion)) return;
+		final Player player = event.getPlayer();
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 		if (entity.getType() != EntityType.ITEM_FRAME) return;
+		if (!getWGUtils().isInRegion(entity.getLocation(), phoneRegion)) return;
 		event.setCancelled(true);
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
@@ -710,17 +786,16 @@ public class MinigameNightIsland implements BearFair21Island {
 	@EventHandler
 	public void onMainIslandItemFrameInteract(PlayerInteractEntityEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
+
+		final Player player = event.getPlayer();
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		event.setCancelled(true);
+
 		Entity entity = event.getRightClicked();
 		if (entity.getType() != EntityType.ITEM_FRAME) return;
 
-		final Player player = event.getPlayer();
 		final BearFair21User user = new BearFair21UserService().get(player);
 		if (user.getQuestStage_MGN() != QuestStage.STEP_FOUR) return;
-
-		if (!WorldGuardEditCommand.canWorldGuardEdit(player)) {
-			event.setCancelled(true);
-			return;
-		}
 
 		final WorldGuardUtils WGUtils = getWGUtils();
 		if (WGUtils.isInRegion(entity.getLocation(), fiberCableRegion)) {
