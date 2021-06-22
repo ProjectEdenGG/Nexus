@@ -108,6 +108,11 @@ public class BearFair21 {
 		return BearFair21.isNotAtBearFair(player);
 	}
 
+	public static boolean canDoBearFairQuest(Player player) {
+		if (!BearFair21.getConfig().isEnableQuests()) return false;
+		return !isNotAtBearFair(player);
+	}
+
 	public static boolean isInRegion(Block block, String region) {
 		return isInRegion(block.getLocation(), region);
 	}

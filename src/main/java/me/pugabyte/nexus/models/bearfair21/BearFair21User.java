@@ -67,6 +67,8 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	// MGN
 	QuestStage questStage_MGN = QuestStage.NOT_STARTED;
+	boolean mgn_laptopScreen = false;
+	boolean mgn_laptopMotherboard = false;
 
 	// Pugmas
 	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;
