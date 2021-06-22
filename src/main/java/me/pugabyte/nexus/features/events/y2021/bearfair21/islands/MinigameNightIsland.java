@@ -48,6 +48,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -359,7 +360,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!event.getRegion().getId().equals(galleryRegion)) return;
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
-		if (user.getQuestStage_MGN() == QuestStage.STEP_TWO || user.getQuestStage_MGN() == QuestStage.STEP_FOUR)
+		if (List.of(QuestStage.STEP_TWO, QuestStage.STEP_FOUR, QuestStage.STEP_FIVE).contains(user.getQuestStage_MGN()))
 			startPhoneRinging(user.getOnlinePlayer());
 	}
 
@@ -382,6 +383,50 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!isTypeAndNameEqual(FixableDevice.LAPTOP.getBroken(), event.getItem())) return;
 
 		new LaptopMenu().open(event.getPlayer());
+	}
+
+	// Beacons
+
+	private static final List<Location> beaconButtons = new ArrayList<>(List.of(
+		new Location(BearFair21.getWorld(), -9, 154, -218),
+		new Location(BearFair21.getWorld(), 151, 139, -20),
+		new Location(BearFair21.getWorld(), -108, 158, 13)));
+
+	@EventHandler
+	public void onRightClickBeaconButton(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (!BearFair21.canDoBearFairQuest(player)) return;
+		if (!ActionGroup.CLICK.applies(event)) return;
+		final Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block)) return;
+		if (block.getType() != Material.STONE_BUTTON) return;
+		final Location location = block.getLocation();
+		if (!beaconButtons.contains(location)) return;
+		event.setCancelled(true);
+
+		final BearFair21User user = userService.get(player);
+		if (user.getMgn_beaconsActivated().contains(location)) return;
+		user.getMgn_beaconsActivated().add(location);
+		user.sendMessage("TODO Wakka - Feedback");
+		userService.save(user);
+	}
+
+	private final String gravwellRegion = "bearfair21_main_gravwell";
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		final Player player = event.getPlayer();
+		final Block block = event.getBlock();
+		if (!BearFair21.canDoBearFairQuest(player)) return;
+		if (block.getType() != Material.LODESTONE) return;
+		if (!getWGUtils().isInRegion(block.getLocation(), gravwellRegion)) return;
+		event.setCancelled(true);
+
+		final BearFair21User user = userService.get(player);
+		ClientsideContentManager.addCategory(user, ContentCategory.GRAVWELL);
+		user.setQuestStage_MGN(QuestStage.STEP_SIX);
+		userService.save(user);
+		user.sendMessage("TODO Wakka - Feedback");
 	}
 
 	// Phone
@@ -414,9 +459,9 @@ public class MinigameNightIsland implements BearFair21Island {
 	public void onClickPhone(PlayerInteractEntityEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		Entity entity = event.getRightClicked();
+		if (!getWGUtils().isInRegion(entity.getLocation(), phoneRegion)) return;
 		if (entity.getType() != EntityType.ITEM_FRAME) return;
 		event.setCancelled(true);
-		if (!getWGUtils().isInRegion(entity.getLocation(), phoneRegion)) return;
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
 		if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
@@ -427,6 +472,9 @@ public class MinigameNightIsland implements BearFair21Island {
 		} else if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
 			stopPhoneRinging(event.getPlayer());
 			Talker.sendScript(event.getPlayer(), MainNPCs.ARCHITECT);
+		} else if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
+			stopPhoneRinging(event.getPlayer());
+			Talker.sendScript(event.getPlayer(), MainNPCs.ADMIRAL);
 		}
 	}
 
@@ -665,12 +713,14 @@ public class MinigameNightIsland implements BearFair21Island {
 		Entity entity = event.getRightClicked();
 		if (entity.getType() != EntityType.ITEM_FRAME) return;
 
-		event.setCancelled(true);
 		final Player player = event.getPlayer();
 		final BearFair21User user = new BearFair21UserService().get(player);
 		if (user.getQuestStage_MGN() != QuestStage.STEP_FOUR) return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (!WorldGuardEditCommand.canWorldGuardEdit(player)) {
+			event.setCancelled(true);
+			return;
+		}
 
 		final WorldGuardUtils WGUtils = getWGUtils();
 		if (WGUtils.isInRegion(entity.getLocation(), fiberCableRegion)) {

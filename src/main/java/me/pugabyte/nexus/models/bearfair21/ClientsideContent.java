@@ -89,6 +89,7 @@ public class ClientsideContent implements PlayerOwnedObject {
 			SAWMILL,
 			// MGN
 			CABLE,
+			GRAVWELL
 		}
 	}
 

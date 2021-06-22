@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConver
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.Location;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -73,6 +74,8 @@ public class BearFair21User implements PlayerOwnedObject {
 	boolean mgn_connectWiring = false;
 	boolean mgn_unscrambledWiring = false;
 	boolean mgn_setupRouter = false;
+
+	Set<Location> mgn_beaconsActivated = new HashSet<>();
 
 	// Pugmas
 	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;

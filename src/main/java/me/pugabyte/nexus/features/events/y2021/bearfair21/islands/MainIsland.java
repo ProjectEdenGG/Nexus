@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
 import eden.utils.TimeUtils.Time;
+import lombok.Getter;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -23,6 +24,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -37,13 +39,20 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Bea
 @NPCClass(MainNPCs.class)
 public class MainIsland implements BearFair21Island {
 
-	static BearFair21UserService userService = new BearFair21UserService();
+	private static BearFair21UserService userService = new BearFair21UserService();
 	//
-	static ItemBuilder balloon_cyan = new ItemBuilder(Material.STICK).customModelData(21);
-	static ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18);
-	public static ItemBuilder bf_cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake");
-	static ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation");
-	static List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
+	@Getter
+	private static final ItemBuilder balloon_cyan = new ItemBuilder(Material.STICK).customModelData(21);
+	@Getter
+	private static final ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18);
+	@Getter
+	private static final ItemBuilder cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake");
+	@Getter
+	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well");
+	@Getter
+	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation");
+	@Getter
+	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
 			FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER);
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
@@ -82,22 +91,56 @@ public class MainIsland implements BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = getTool(user.getPlayer());
+				final Player player = user.getOnlinePlayer();
+				ItemStack tool = getTool(player);
 
-				if (!user.hasMet(this.getNpcId())) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
+					if (BearFair21.isInRegion(player, "bearfair21_minigamenight_gamegallery")) {
+						script.add("<self> This is <player> at the Game Gallery?");
+						script.add("Hello, this is Admiral Phoenix on the F.S.S Stellar Tides. I was wondering if I might request your assistance on a pressing matter?");
+						script.add("<self> How might I be of service, Sir?");
+						script.add("I ferry travelers to and from Bear Fair Island and on my last voyage I noticed my nav computer no longer detected the island on the star map. I suspect something may have happened to the nav beacons.");
+						script.add("<self> Oh no… What are nav beacons exactly?");
+						script.add("They are broadcasting stations that triangulate their position to any ship's nav computer so they can find Bear Fair. I need someone to check on the beacons, inspect for damage, and reboot them.");
+						script.add("<self> Sounds easy enough, where can I find them?");
+						script.add("There are three of them located at each corner of the main island.");
+						script.add("<self> Alright I'll see what I can find.");
+						script.add("Good, report back as soon as possible. I'll be on the deck of the Stellar Tides.");
+					} else {
+						if (user.getMgn_beaconsActivated().size() == 3) {
+							script.add("Welcome aboard.");
+							script.add("<self> All beacons are in good condition and fully operational.");
+							script.add("Hmmm. I'm still not getting the nav data. Perhaps there's some kind of interference… Scans indicate there is some significant geothermal activity currently on the island… That could be worse than just nav beacon interference…");
+							script.add("<self> Oh no… is the island becoming unstable?");
+							script.add("It appears to be trending that way… Here, take this. It's a portable grav-well.");
+
+							if (!player.getInventory().containsAtLeast(gravwell.build(), 1))
+								Quests.giveItem(player, gravwell.build());
+							script.add("<self> Whoa… This is a little heavy.");
+							script.add("Get as close to the magma core as you can, and place this down. It will hold the island together until we can get some professionals out here. On top of that, the magnetic field this device generates should boost the beacons' signal and solve the interference issue.");
+							script.add("<self> Aye Aye, Admiral!");
+						} else {
+							script.add("TODO Thunder - Didn't activate all 3 beacons");
+						}
+					}
+				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {
+					script.add("<self> Mission complete!");
+					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and restabilize the island. Thank you for your help [player name], You’ve saved Bear Fair and definitely earned your pay.");
+					script.add("<self> Thank You Sir!");
+					user.setQuestStage_MGN(QuestStage.STEP_SEVEN);
+				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all yall people here safe.");
 					script.add("wait 80");
 					script.add("If you see anything suspicious simply let me know. I am more than capable of handling things myself.");
 					script.add("wait 90");
 					script.add("Now you just continue to have fun, got it?");
-					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-					return script;
+				} else {
+					script.add("TODO - Hello");
 				}
 
-				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -132,7 +175,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double. " +
 								"Tell your manager to consider it a donation. Take care now.");
 							script.add("<self> It was no problem, happy to help wherever I can!");
-							user.setQuestStage_MGN(QuestStage.STEP_SIX);
+							user.setQuestStage_MGN(QuestStage.STEP_FIVE);
 							userService.save(user);
 						} else {
 							script.add("Hey thanks for coming. All we need you to do is " + AdventureUtils.asPlainText(AdventureUtils.commaJoinText(tasks)) + ".");
@@ -335,7 +378,7 @@ public class MainIsland implements BearFair21Island {
 							return script;
 						}
 						case STEP_FOUR -> {
-							List<ItemBuilder> required = Collections.singletonList(bf_cake);
+							List<ItemBuilder> required = Collections.singletonList(cake);
 							if (!Quests.hasItemsLikeFrom(user, required)) {
 								script.add("For your next task, could you follow up with Maple the Pastry Chef about my cake order?");
 								return script;
