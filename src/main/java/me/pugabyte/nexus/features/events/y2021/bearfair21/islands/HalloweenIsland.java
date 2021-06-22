@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import eden.utils.RandomUtils;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
@@ -44,9 +45,9 @@ public class HalloweenIsland implements BearFair21Island {
 	private static final ItemBuilder milk = new ItemBuilder(Material.MILK_BUCKET).name("Milk Carton").customModelData(1);
 	private static final ItemBuilder flour = new ItemBuilder(Material.WHEAT).name("Bag of Flour").customModelData(1);
 	//
-	private static final Location location_chocolate = new Location(BearFair21.getWorld(), 101, 105, -332);
-	private static final Location location_milk = new Location(BearFair21.getWorld(), 100, 105, -332);
-	private static final Location location_flour = new Location(BearFair21.getWorld(), 99, 105, -332);
+	private static final Location location_chocolate = new Location(BearFair21.getWorld(), 85, 107, -367);
+	private static final Location location_milk = new Location(BearFair21.getWorld(), 66, 107, -345);
+	private static final Location location_flour = new Location(BearFair21.getWorld(), 42, 111, -310);
 
 	public HalloweenIsland() {
 		Nexus.registerListener(this);
@@ -224,7 +225,167 @@ public class HalloweenIsland implements BearFair21Island {
 			}
 
 		},
+		FRANCISCO(BearFair21NPC.FRANCISCO) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
 		ADRIAN(BearFair21NPC.ADRIAN) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		MAXIM(BearFair21NPC.MAXIM) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		ISABELLA(BearFair21NPC.ISABELLA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		JUAN(BearFair21NPC.JUAN) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		LOLA(BearFair21NPC.LOLA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		JENNA(BearFair21NPC.JENNA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		RICARDO(BearFair21NPC.RICARDO) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		LUIS(BearFair21NPC.LUIS) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		MARIANA(BearFair21NPC.MARIANA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		HALLOWEEN_MAYOR(BearFair21NPC.HALLOWEEN_MAYOR) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		RODRIGO(BearFair21NPC.RODRIGO) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		DANIEL(BearFair21NPC.DANIEL) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		SANDRA(BearFair21NPC.SANDRA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		MARTHA(BearFair21NPC.MARTHA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		PATRICIA(BearFair21NPC.PATRICIA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		NINA(BearFair21NPC.NINA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		RUBEN(BearFair21NPC.RUBEN) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		CLARENCE(BearFair21NPC.CLARENCE) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		CARLA(BearFair21NPC.CARLA) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				if (user.getQuestStage_Halloween() == STEP_ONE)
+					return getAnaResponse();
+				return getGreeting();
+			}
+		},
+		ANTONIO(BearFair21NPC.ANTONIO) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				if (user.getQuestStage_Halloween() == STEP_ONE)
@@ -265,19 +426,32 @@ public class HalloweenIsland implements BearFair21Island {
 		}
 
 		public List<String> getAnaResponse() {
+			List<String> result = new ArrayList<>();
+
 			if (this.isAlive()) {
-				// have you talked to santiago? He probably is the best person to talk to about matters like that.
+				result.add(RandomUtils.randomElement(Arrays.asList(
+					"Bless her soul. I suggest talking to Santiago, he could probably help you.",
+					"You should talk with Santiago about that.",
+					"Santiago is probably the best person to talk to about matters like that.")));
 			} else {
-				// make a list of half of the NPCs that
-				// know where to find ANA - "She's on x side of the underworld, near xyz"
-				// and some that don't. - "I'm sorry, I don't know who that is." "Who?"
+				switch (this) {
+					case ANTONIO -> result.add("Hmm.. I think I last saw her on the other side of the island. Be careful now, don't want to accidentally become a permanent resident!");
+					case CLARENCE -> result.add("Of course I know where Ana lives, she lives right next door! She's such a delight.");
+					case PATRICIA -> result.add("Oh Ana? I think she's on the north-east side of the island, good luck!");
+					case DANIEL -> result.add("Beware, she'll kill you with kindness! But I've not seen her over here lately, sorry!");
+					default -> result.add(RandomUtils.randomElement(Arrays.asList(
+						"I'm sorry, I don't know who that is.",
+						"Who?",
+						"I don't know an Ana.")));
+				}
 			}
-			return null;
+			return result;
 		}
 
 		public static List<String> getGreeting() {
-			// generic greeting used for both the living and death npcs
-			return null;
+			List<String> result = new ArrayList<>();
+			result.add(RandomUtils.randomElement(Arrays.asList("Hello.", "Hi there.", "Hola.", "¿Hola, cómo estás?")));
+			return result;
 		}
 	}
 
