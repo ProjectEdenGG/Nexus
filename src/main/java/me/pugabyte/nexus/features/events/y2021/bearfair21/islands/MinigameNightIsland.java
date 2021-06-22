@@ -46,6 +46,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -286,7 +288,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(1, 5, ClickableItem.empty(nameItem(Material.FIREWORK_STAR, "&fCPU")));
 			contents.set(1, 7, ClickableItem.empty(nameItem(Material.DAYLIGHT_DETECTOR, "&fHard Drive")));
 
-			fixableItem(player, contents, SlotPos.of(1, 3), "XBox", "Power Supply", brokenPowerSupply, fixedPowerSupply);
+			fixableItem(player, contents, SlotPos.of(1, 3), "XBox", "Power Supply", brokenPowerSupply, fixedPowerSupply, null, null);
 		}
 	}
 
@@ -424,12 +426,13 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(2, 3, ClickableItem.empty(nameItem(Material.LIGHT_GRAY_CARPET, "Keyboard")));
 			contents.set(2, 5, ClickableItem.empty(nameItem(Material.IRON_TRAPDOOR, "Optical Drive")));
 
-			fixableItem(player, contents, SlotPos.of(0, 5), "Laptop", "Screen", brokenScreen, fixedScreen);
-			fixableItem(player, contents, SlotPos.of(1, 1), "Laptop", "Motherboard", brokenMotherboard, fixedMotherboard);
+			Predicate<BearFair21User> predicate = user -> user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard();
+			fixableItem(player, contents, SlotPos.of(0, 5), "Laptop", "Screen", brokenScreen, fixedScreen, user -> user.setMgn_laptopScreen(true), predicate);
+			fixableItem(player, contents, SlotPos.of(1, 1), "Laptop", "Motherboard", brokenMotherboard, fixedMotherboard, user -> user.setMgn_laptopMotherboard(true), predicate);
 		}
 	}
 
-	protected static void fixableItem(Player player, InventoryContents contents, SlotPos slot, String fixing, String name, ItemStack broken, ItemStack fixed) {
+	protected static void fixableItem(Player player, InventoryContents contents, SlotPos slot, String fixing, String name, ItemStack broken, ItemStack fixed, Consumer<BearFair21User> onFix, Predicate<BearFair21User> finalizePredicate) {
 		final BearFair21UserService userService = new BearFair21UserService();
 		final BearFair21User user = userService.get(player);
 		final PlayerInventory inv = player.getInventory();
@@ -446,15 +449,11 @@ public class MinigameNightIsland implements BearFair21Island {
 						Quests.giveItem(player, fixed);
 					});
 
-					if ("Laptop".equals(fixing)) {
-						if ("Screen".equals(name))
-							user.setMgn_laptopScreen(true);
-						else if ("Motherboard".equals(name))
-							user.setMgn_laptopMotherboard(true);
+					if (onFix != null)
+						onFix.accept(user);
 
-						userService.save(user);
-
-						if (user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard())
+					if (finalizePredicate != null) {
+						if (finalizePredicate.test(user))
 							finalize.run();
 					} else
 						finalize.run();
