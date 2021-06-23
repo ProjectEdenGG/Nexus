@@ -94,7 +94,7 @@ public class MainIsland implements BearFair21Island {
 				final Player player = user.getOnlinePlayer();
 				ItemStack tool = getTool(player);
 
-				if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {
 					if (BearFair21.isInRegion(player, "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> This is <player> at the Game Gallery?");
 						script.add("Hello, this is Admiral Phoenix on the F.S.S Stellar Tides. I was wondering if I might request your assistance on a pressing matter?");
@@ -123,11 +123,11 @@ public class MainIsland implements BearFair21Island {
 							script.add("Any luck with those nav-beacons? Make sure to check all three for damage and reboot them.");
 						}
 					}
-				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {
+				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SEVEN) {
 					script.add("<self> Mission complete!");
-					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and restabilize the island. Thank you for your help [player name], You’ve saved Bear Fair and definitely earned your pay.");
+					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and restabilize the island. Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
 					script.add("<self> Thank You Sir!");
-					user.setQuestStage_MGN(QuestStage.STEP_SEVEN);
+					user.setQuestStage_MGN(QuestStage.STEP_EIGHT);
 				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all yall people here safe.");
 					script.add("wait 80");
@@ -150,7 +150,7 @@ public class MainIsland implements BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = getTool(user.getPlayer());
 
-				if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
 					// TODO Wakka Fix (town name), add wait
 					if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> Thanks for calling GG! How can I help?");
@@ -175,7 +175,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double. " +
 								"Tell your manager to consider it a donation. Take care now.");
 							script.add("<self> It was no problem, happy to help wherever I can!");
-							user.setQuestStage_MGN(QuestStage.STEP_FIVE);
+							user.setQuestStage_MGN(QuestStage.STEP_SIX);
 							userService.save(user);
 						} else {
 							script.add("Hey thanks for coming. All we need you to do is " + AdventureUtils.asPlainText(AdventureUtils.commaJoinText(tasks)) + ".");
@@ -205,7 +205,13 @@ public class MainIsland implements BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = getTool(user.getPlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
+				if(user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
+					if(RandomUtils.chanceOf(50))
+						script.add("I only have two loves in life, woodworking, and steak.");
+					else
+						script.add("Give 100 percent. One-hundred-and-ten percent is impossible. Only idiots recommend that.");
+					return script;
+				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("I swear, there is nothing like the smell of sawdust to wake you up in the morning.");
 					script.add("wait 80");
 					script.add("How do you do friend, the name is Ron and as this town's carpenter, my job is to create masterpieces everyday!");
@@ -213,12 +219,6 @@ public class MainIsland implements BearFair21Island {
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-					return script;
-				} else if(user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
-					if(RandomUtils.chanceOf(50))
-						script.add("I only have two loves in life, woodworking, and steak.");
-					else
-						script.add("Give 100 percent. One-hundred-and-ten percent is impossible. Only idiots recommend that.");
 					return script;
 				}
 

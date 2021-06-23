@@ -29,6 +29,7 @@ import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEve
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -178,21 +179,32 @@ public class MinigameNightIsland implements BearFair21Island {
 
 						user.setQuestStage_MGN(QuestStage.STARTED);
 						userService.save(user);
-						return script;
+					}
+
+					case STEP_EIGHT -> {
+						script.add("<self> Hello?");
+						script.add("Hey dude, we got a problem. You busy?");
+						script.add("<self> Nope, just finished up a service call, what's wrong?");
+						script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers! The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
+						script.add("<self> Oh no! What can I do?");
+						script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more… You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
+						script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
+						script.add("Thanks for the optimism dude… Don't worry about the Game Gallery, I'll close up for you.");
 					}
 
 					case STARTED -> {
 						script.add("TODO - Reminder");
-						return script;
 					}
 
 					case COMPLETE -> {
 						script.add("TODO - Completed");
-						return script;
+					}
+
+					default -> {
+						script.add("TODO - Hello");
 					}
 				}
 
-				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -218,9 +230,10 @@ public class MinigameNightIsland implements BearFair21Island {
 					script.add("Yooo, sweet. Thank's dawg! Here, you can keep the change. Peace.");
 					script.add("<self> Thanks for choosing GG!");
 
+					user.getOnlinePlayer().getInventory().removeItem(FixableDevice.XBOX.getFixed());
 					user.setQuestStage_MGN(QuestStage.STEP_TWO);
 					userService.save(user);
-					startPhoneRinging(user.getOnlinePlayer());
+					Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
 				}
 
 				return script;
@@ -241,15 +254,15 @@ public class MinigameNightIsland implements BearFair21Island {
 					script.add("<self> Of course sir, I'll take a look at it.");
 					script.add("Wonderful, once it's fixed, if you could keep it in your back room, I'll be back by in the next few days to pick it up.");
 					script.add("<self> No problem sir, I'll call as soon as it's ready.");
-				} else if (user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
+				} else if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
 					script.add("This is Fredrickson.");
 					script.add("<self> Ok Mr. Fredrickson, the laptop is ready. The motherboard and screen were cracked and had to be replaced but it works perfectly now.");
 					script.add("Thank you so much! I knew I could count on an establishment of your caliber! Expect me back by the fifth.");
 					script.add("<self> Glad to be of service! Thanks for choosing the Game Gallery!");
 					user.getOnlinePlayer().getInventory().removeItem(FixableDevice.LAPTOP.getFixed());
-					user.setQuestStage_MGN(QuestStage.STEP_FOUR);
+					user.setQuestStage_MGN(QuestStage.STEP_FIVE);
 					userService.save(user);
-					startPhoneRinging(user.getOnlinePlayer());
+					Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
 				}
 
 				return script;
@@ -302,22 +315,12 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!getWGUtils().isInRegion(clicked.getLocation(), region)) return;
 
 		event.setCancelled(true);
-		Player player = event.getPlayer();
-		BearFair21User user = new BearFair21UserService().get(player);
-
-		final FixableItem fixableItem = FixableItem.ofBroken(event.getItem());
-		if (fixableItem == null) return;
-
-		boolean fixingXBox = user.getQuestStage_MGN() == QuestStage.STARTED && FixableDevice.XBOX == fixableItem.getDevice();
-		boolean fixingLaptop = user.getQuestStage_MGN() == QuestStage.STEP_TWO && FixableDevice.LAPTOP == fixableItem.getDevice();
-		if (!(fixingLaptop || fixingXBox)) return;
 
 		if (activeSolder) return;
 		activeSolder = true;
-		player.getInventory().removeItem(event.getItem());
 
 		ArmorStand armorStand = null;
-		for (Entity nearbyEntity : player.getNearbyEntities(7, 7, 7)) {
+		for (Entity nearbyEntity : event.getPlayer().getNearbyEntities(7, 7, 7)) {
 			if (nearbyEntity instanceof ArmorStand && getWGUtils().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
 				armorStand = (ArmorStand) nearbyEntity;
 				break;
@@ -325,13 +328,45 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 
 		if (armorStand == null) return;
-		solderItem(armorStand, player, fixableItem);
+
+		solder(event, armorStand);
 	}
 
-	private void solderItem(ArmorStand armorStand, Player player, FixableItem item) {
+	private void solder(PlayerInteractEvent event, ArmorStand armorStand) {
+		Player player = event.getPlayer();
+		BearFair21User user = new BearFair21UserService().get(player);
+
+		final FixableItem fixableItem = FixableItem.ofBroken(event.getItem());
+		boolean fixingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAllItems(player);
+		if (fixingSpeaker) {
+			double wait = 0;
+			for (AxelSpeakerPart part : AxelSpeakerPart.values()) {
+				Tasks.wait(Time.SECOND.x(wait), () -> {
+					final ItemStack item = part.getDisplayItem();
+					PlayerUtils.removeItem(player, item);
+					solderItem(armorStand, player, item, null);
+				});
+				wait += 5.6;
+			}
+			Tasks.wait(Time.SECOND.x(wait), () -> {
+				for (AxelSpeakerPart part : AxelSpeakerPart.values())
+					PlayerUtils.removeItem(player, part.getDisplayItem());
+				Quests.giveItem(player, speaker.build());
+			});
+		} else if (fixableItem != null) {
+			player.getInventory().removeItem(event.getItem());
+
+			boolean fixingXbox = user.getQuestStage_MGN() == QuestStage.STARTED && FixableDevice.XBOX == fixableItem.getDevice();
+			boolean fixingLaptop = user.getQuestStage_MGN() == QuestStage.STEP_THREE && FixableDevice.LAPTOP == fixableItem.getDevice();
+			if (!(fixingLaptop || fixingXbox)) return;
+			solderItem(armorStand, player, fixableItem.getBroken(), fixableItem.getFixed());
+		}
+	}
+
+	private void solderItem(ArmorStand armorStand, Player player, ItemStack broken, ItemStack fixed) {
 		ItemStack air = new ItemStack(Material.AIR);
 
-		armorStand.setItem(EquipmentSlot.HAND, item.getBroken());
+		armorStand.setItem(EquipmentSlot.HAND, broken);
 		Location loc = new Location(BearFair21.getWorld(), -192, 137, -194);
 		loc = LocationUtils.getCenteredLocation(loc);
 		loc.setY(loc.getBlockY() + 0.5);
@@ -342,29 +377,29 @@ public class MinigameNightIsland implements BearFair21Island {
 			world.playSound(finalLoc, Sound.BLOCK_ANVIL_USE, 0.3F, 0.1F);
 			world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
 			Tasks.wait(20, () -> world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F));
+			// TODO Wakka - Beacon sound?
 		});
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++)
 			Tasks.wait(i * 5, () -> world.spawnParticle(Particle.LAVA, finalLoc, 5, 0, 0, 0));
-		}
 
 		Tasks.wait(Time.SECOND.x(5), () -> {
 			armorStand.setItem(EquipmentSlot.HAND, air);
-			PlayerUtils.giveItem(player, item.getFixed());
+			if (fixed != null)
+				Quests.giveItem(player, fixed);
 			Tasks.wait(10, () -> activeSolder = false);
-			world.playSound(finalLoc, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
 		});
 	}
 
-	// XBox
+	// Xbox
 
 	@EventHandler
-	public void onRightClickXBox(PlayerInteractEvent event) {
+	public void onRightClickXbox(PlayerInteractEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event.getPlayer())) return;
 		if (!ActionGroup.CLICK.applies(event) || isNullOrAir(event.getItem())) return;
 		if (!isTypeAndNameEqual(FixableDevice.XBOX.getBroken(), event.getItem())) return;
 
-		new XBoxMenu().open(event.getPlayer());
+		new XboxMenu().open(event.getPlayer());
 	}
 
 	// Laptop
@@ -375,7 +410,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!event.getRegion().getId().equals(galleryRegion)) return;
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
-		if (List.of(QuestStage.STEP_TWO, QuestStage.STEP_FOUR, QuestStage.STEP_FIVE).contains(user.getQuestStage_MGN()))
+		if (List.of(QuestStage.STEP_TWO, QuestStage.STEP_FIVE, QuestStage.STEP_EIGHT).contains(user.getQuestStage_MGN()))
 			startPhoneRinging(user.getOnlinePlayer());
 	}
 
@@ -387,8 +422,10 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (BlockUtils.isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
 		if (!getWGUtils().isInRegion(clicked.getLocation(), mailboxRegion)) return;
 
-		if (!event.getPlayer().getInventory().containsAtLeast(FixableDevice.LAPTOP.getBroken(), 1))
+		if (!event.getPlayer().getInventory().containsAtLeast(FixableDevice.LAPTOP.getBroken(), 1)) {
+			userService.edit(event.getPlayer(), user -> user.setQuestStage_MGN(QuestStage.STEP_THREE));
 			Quests.giveItem(event.getPlayer(), FixableDevice.LAPTOP.getBroken());
+		}
 	}
 
 	@EventHandler
@@ -427,7 +464,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		userService.save(user);
 	}
 
-	private final String gravwellRegion = "bearfair21_main_gravwell";
+	private static final String gravwellRegion = "bearfair21_main_gravwell";
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
@@ -440,27 +477,22 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		final BearFair21User user = userService.get(player);
 		ClientsideContentManager.addCategory(user, ContentCategory.GRAVWELL);
-		user.setQuestStage_MGN(QuestStage.STEP_SIX);
+		player.getInventory().removeItem(MainIsland.getGravwell().build());
+		// TODO Griffin - Spawn grav well structure
+		user.setQuestStage_MGN(QuestStage.STEP_SEVEN);
 		userService.save(user);
 		user.sendMessage("TODO Wakka - Feedback");
 	}
 
 	// Speakers
 
-	private static final List<Location> speakerLocations = new ArrayList<>(List.of(
-		BearFair21.locationOf(-182, 142, -156),
-		BearFair21.locationOf(-178, 142, -156),
-		BearFair21.locationOf(-177, 144, -150),
-		BearFair21.locationOf(-183, 144, -150)
-	));
-
 	@Getter
 	@AllArgsConstructor
 	private enum AxelSpeakerPart {
-		SUBWOOFER(BearFair21.locationOf(-165, 149, -215), Material.CONDUIT),
+		SUBWOOFER(BearFair21.locationOf(-165, 149, -215), Material.LODESTONE),
 		TANGLED_WIRE(BearFair21.locationOf(-167, 148, -214), Material.CRIMSON_ROOTS),
 		SPEAKER_HEAD(BearFair21.locationOf(-169, 148, -218), Material.HOPPER),
-		AUX_PORT(BearFair21.locationOf(-167, 146, -214), Material.LODESTONE),
+		AUX_PORT(BearFair21.locationOf(-167, 146, -214), Material.CONDUIT),
 		;
 
 		private final Location location;
@@ -473,12 +505,26 @@ public class MinigameNightIsland implements BearFair21Island {
 			return null;
 		}
 
+		public static boolean hasAllItems(Player player) {
+			for (AxelSpeakerPart part : values())
+				if (!player.getInventory().containsAtLeast(part.getDisplayItem(), 1))
+					return false;
+			return true;
+		}
+
 		private ItemStack getDisplayItem() {
-			return new ItemBuilder(material).name(camelCase(name())).build();
+			return new ItemBuilder(material).name(camelCase(name())).undroppable().build();
 		}
 	}
 
-	private static final ItemBuilder speaker = new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker");
+	private static final ItemBuilder speaker = new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker").undroppable();
+
+	private static final List<Location> speakerLocations = new ArrayList<>(List.of(
+		BearFair21.locationOf(-182, 142, -156),
+		BearFair21.locationOf(-178, 142, -156),
+		BearFair21.locationOf(-177, 144, -150),
+		BearFair21.locationOf(-183, 144, -150)
+	));
 
 	@EventHandler
 	public void onClickSpeaker(PlayerInteractEvent event) {
@@ -492,30 +538,53 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!speakerLocations.contains(location)) return;
 		event.setCancelled(true);
 
-		if (!event.getItem().equals(speaker.build())) return;
+		if (!Nexus.getHeadAPI().getItemID(event.getItem()).equals(Nexus.getHeadAPI().getItemID(speaker.build()))) return;
 
 		final BearFair21User user = userService.get(player);
 		if (user.getMgn_speakersFixed().contains(location)) return;
 		user.getMgn_speakersFixed().add(location);
+		userService.save(user);
+		player.getInventory().remove(event.getItem());
+	}
+
+	private static final Location basementSpeakerLocation = BearFair21.locationOf(-188, 137, -188);
+
+	@EventHandler
+	public void onClickBasementSpeaker(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (!BearFair21.canDoBearFairQuest(player)) return;
+		if (!ActionGroup.CLICK.applies(event)) return;
+		final Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block)) return;
+		if (block.getType() != Material.PLAYER_HEAD) return;
+		final Location location = block.getLocation();
+		if (!basementSpeakerLocation.equals(location)) return;
+		event.setCancelled(true);
+
+		final BearFair21User user = userService.get(player);
+		ClientsideContentManager.addCategory(user, ContentCategory.SPEAKER);
+		Quests.giveItem(player, speaker.build());
 	}
 
 	@EventHandler
-	public void onClickSpeakerPart(PlayerInteractEntityEvent event) {
+	public void onClickSpeakerPart(PlayerInteractEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		final Player player = event.getPlayer();
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
-		Entity entity = event.getRightClicked();
-		if (entity.getType() != EntityType.ITEM_FRAME) return;
-		event.setCancelled(true);
+		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
+		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
-		if (user.getQuestStage_MGN() != QuestStage.STEP_SEVEN) return;
+		if (user.getQuestStage_MGN() != QuestStage.STEP_EIGHT) return;
 
-		final AxelSpeakerPart part = AxelSpeakerPart.of(entity.getLocation().getBlock().getLocation());
+		final Location location = block.getLocation();
+		final AxelSpeakerPart part = AxelSpeakerPart.of(location);
 		if (part == null) return;
 
-		Quests.giveItem(player, part.getDisplayItem());
 		ClientsideContentManager.removeCategory(user, ContentCategory.valueOf("SPEAKER_PART_" + part.name()));
+		final ItemStack item = part.getDisplayItem();
+		if (!player.getInventory().containsAtLeast(item, 1))
+			Quests.giveItem(player, item);
 	}
 
 	// Phone
@@ -542,15 +611,15 @@ public class MinigameNightIsland implements BearFair21Island {
 	}
 
 	public static void startPhoneRinging(Player player) {
-		for (int i = 0; i < 5; i++) {
-			addTaskId(player, Tasks.wait(Time.SECOND.x(i * 2), () -> ringingSound.accept(player)));
-		}
+		if (new CooldownService().check(player, "bf21-phone", Time.SECOND.x(15)))
+			for (int i = 0; i < 5; i++)
+				addTaskId(player, Tasks.wait(Time.SECOND.x(i * 2), () -> ringingSound.accept(player)));
 	}
 
 	public static void startOutgoingPhoneCall(Player player, Runnable pickup) {
 		ringingSound.accept(player);
-		Tasks.wait(Time.SECOND, () -> ringingSound.accept(player));
-		Tasks.wait(Time.SECOND.x(2), pickup);
+		Tasks.wait(Time.SECOND.x(2), () -> ringingSound.accept(player));
+		Tasks.wait(Time.SECOND.x(4), pickup);
 	}
 
 	public static void stopPhoneRinging(Player player) {
@@ -572,26 +641,29 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
 			stopPhoneRinging(event.getPlayer());
 			Talker.sendScript(event.getPlayer(), MinigameNightNPCs.FREDRICKSON);
-		} else if (user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
-			startOutgoingPhoneCall(event.getPlayer(), () -> Talker.sendScript(event.getPlayer(), MinigameNightNPCs.FREDRICKSON));
 		} else if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
-			stopPhoneRinging(event.getPlayer());
-			Talker.sendScript(event.getPlayer(), MainNPCs.ARCHITECT);
+			startOutgoingPhoneCall(event.getPlayer(), () -> Talker.sendScript(event.getPlayer(), MinigameNightNPCs.FREDRICKSON));
 		} else if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
 			stopPhoneRinging(event.getPlayer());
+			Talker.sendScript(event.getPlayer(), MainNPCs.ARCHITECT);
+		} else if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {
+			stopPhoneRinging(event.getPlayer());
 			Talker.sendScript(event.getPlayer(), MainNPCs.ADMIRAL);
+		}else if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
+			stopPhoneRinging(event.getPlayer());
+			Talker.sendScript(event.getPlayer(), MinigameNightNPCs.AXEL);
 		}
 	}
 
 	// Menus
 
-	public static class XBoxMenu extends MenuUtils implements InventoryProvider {
+	public static class XboxMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
 		public void open(Player viewer, int page) {
 			SmartInventory.builder()
 				.provider(this)
-				.title("XBox Parts")
+				.title("Xbox Parts")
 				.size(3, 9)
 				.build()
 				.open(viewer, page);
@@ -600,9 +672,9 @@ public class MinigameNightIsland implements BearFair21Island {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
-			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(Material.GREEN_CARPET).name("Motherboard").customModelData(1).build()));
-			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).build()));
-			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).build()));
+			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(Material.GREEN_CARPET).name("Motherboard").customModelData(1).undroppable().build()));
+			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().build()));
+			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().build()));
 
 			fixableItemSlot(player, contents, SlotPos.of(1, 3), FixableItem.BATTERY);
 		}
@@ -624,10 +696,10 @@ public class MinigameNightIsland implements BearFair21Island {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
-			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(Material.NETHERITE_INGOT).name("Battery").customModelData(1).build()));
-			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).build()));
-			contents.set(2, 3, ClickableItem.empty(nameItem(Material.IRON_TRAPDOOR, "Keyboard")));
-			contents.set(2, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).build()));
+			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(Material.NETHERITE_INGOT).name("Battery").customModelData(1).undroppable().build()));
+			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().build()));
+			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.IRON_TRAPDOOR).name("Keyboard").customModelData(0).undroppable().build()));
+			contents.set(2, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().build()));
 
 			fixableItemSlot(player, contents, SlotPos.of(0, 5), FixableItem.SCREEN);
 			fixableItemSlot(player, contents, SlotPos.of(1, 1), FixableItem.MOTHERBOARD);
@@ -653,7 +725,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			GREEN, YELLOW, RED, BLUE, WHITE;
 
 			private ItemStack getDisplayItem() {
-				return new ItemBuilder(ColorType.of(name()).switchColor(Material.WHITE_CONCRETE)).name(camelCase(name()) + " Cable").build();
+				return new ItemBuilder(ColorType.of(name()).switchColor(Material.WHITE_CONCRETE)).name(camelCase(name()) + " Cable").undroppable().build();
 			}
 
 			private static List<Cable> randomized() {
@@ -769,7 +841,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			private final SlotPos from, to;
 
 			private ItemStack getDisplayItem() {
-				return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name())).build();
+				return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name())).undroppable().build();
 			}
 		}
 
@@ -824,17 +896,22 @@ public class MinigameNightIsland implements BearFair21Island {
 		event.setCancelled(true);
 
 		final BearFair21User user = new BearFair21UserService().get(player);
-		if (user.getQuestStage_MGN() != QuestStage.STEP_FOUR) return;
+		if (user.getQuestStage_MGN() != QuestStage.STEP_FIVE) return;
 
 		final WorldGuardUtils WGUtils = getWGUtils();
 		if (WGUtils.isInRegion(entity.getLocation(), fiberCableRegion)) {
-			ClientsideContentManager.addCategory(user, ContentCategory.CABLE);
-			user.setMgn_connectWiring(true);
-			userService.save(user);
+			if (!user.isMgn_connectWiring()) {
+				ClientsideContentManager.addCategory(user, ContentCategory.CABLE);
+				user.setMgn_connectWiring(true);
+				Quests.sound_obtainItem(player);
+				userService.save(user);
+			}
 		} else if (WGUtils.isInRegion(entity.getLocation(), scrambledCablesRegion))
-			new ScrambledCablesMenu().open(player);
+			if (!user.isMgn_unscrambledWiring())
+				new ScrambledCablesMenu().open(player);
 		else if (WGUtils.isInRegion(entity.getLocation(), routerRegion))
-			new RouterMenu().open(player);
+			if (!user.isMgn_setupRouter())
+				new RouterMenu().open(player);
 	}
 
 	// Common
@@ -846,16 +923,16 @@ public class MinigameNightIsland implements BearFair21Island {
 	@AllArgsConstructor
 	private enum FixableDevice {
 		XBOX(
-			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&cTrent's Broken XBox One").build(),
-			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&aTrent's Fixed XBox One").build(),
+			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&cTrent's Broken Xbox One").undroppable().build(),
+			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&aTrent's Fixed Xbox One").undroppable().build(),
 			null,
 			user -> user.setQuestStage_MGN(QuestStage.STEP_ONE)
 		),
 		LAPTOP(
-			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&cFredrickson's Broken Laptop").build(),
-			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&aFredrickson's Fixed Laptop").build(),
+			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&cFredrickson's Broken Laptop").undroppable().build(),
+			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&aFredrickson's Fixed Laptop").undroppable().build(),
 			user -> user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard(),
-			user -> user.setQuestStage_MGN(QuestStage.STEP_THREE)
+			user -> user.setQuestStage_MGN(QuestStage.STEP_FOUR)
 		),
 		;
 
@@ -869,22 +946,22 @@ public class MinigameNightIsland implements BearFair21Island {
 	private enum FixableItem {
 		BATTERY(
 			FixableDevice.XBOX,
-			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&cTrent's Broken XBox One Battery").build(),
-			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&aTrent's Fixed XBox One Battery").build(),
+			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&cTrent's Broken Xbox One Battery").undroppable().build(),
+			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&aTrent's Fixed Xbox One Battery").undroppable().build(),
 			null,
 			null
 		),
 		SCREEN(
 			FixableDevice.LAPTOP,
-			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&cFredrickson's Broken Laptop Screen").build(),
-			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&aFredrickson's Fixed Laptop Screen").build(),
+			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&cFredrickson's Broken Laptop Screen").undroppable().build(),
+			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&aFredrickson's Fixed Laptop Screen").undroppable().build(),
 			user -> user.setMgn_laptopScreen(true),
 			BearFair21User::isMgn_laptopScreen
 		),
 		MOTHERBOARD(
 			FixableDevice.LAPTOP,
-			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&cFredrickson's Broken Laptop Motherboard").build(),
-			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&aFredrickson's Fixed Laptop Motherboard").build(),
+			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&cFredrickson's Broken Laptop Motherboard").undroppable().build(),
+			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&aFredrickson's Fixed Laptop Motherboard").undroppable().build(),
 			user -> user.setMgn_laptopMotherboard(true),
 			BearFair21User::isMgn_laptopMotherboard
 		),

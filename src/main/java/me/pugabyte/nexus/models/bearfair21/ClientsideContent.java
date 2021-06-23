@@ -90,11 +90,11 @@ public class ClientsideContent implements PlayerOwnedObject {
 			// MGN
 			CABLE,
 			GRAVWELL,
+			SPEAKER,
 			SPEAKER_PART_SUBWOOFER,
 			SPEAKER_PART_TANGLED_WIRE,
 			SPEAKER_PART_SPEAKER_HEAD,
 			SPEAKER_PART_AUX_PORT,
-			;
 		}
 	}
 

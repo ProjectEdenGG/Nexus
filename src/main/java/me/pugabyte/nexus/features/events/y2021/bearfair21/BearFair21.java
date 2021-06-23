@@ -117,6 +117,11 @@ public class BearFair21 {
 		return !isNotAtBearFair(player);
 	}
 
+	public static boolean canDoBearFairQuest(PlayerInteractEvent event) {
+		if (!canDoBearFairQuest(event.getPlayer())) return false;
+		return !isNotAtBearFair(event);
+	}
+
 	public static boolean canDoBearFairQuest(PlayerInteractEntityEvent event) {
 		if (!canDoBearFairQuest(event.getPlayer())) return false;
 		return !isNotAtBearFair(event);

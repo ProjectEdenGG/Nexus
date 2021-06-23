@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
+import eden.annotations.Disabled;
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -167,6 +168,14 @@ public class BearFair21Command extends CustomCommand {
 		send("Set giveDailyPoints to: " + bool(config.isGiveDailyPoints()));
 	}
 
+	@Permission("group.admin")
+	@Path("config skipWaits <boolean>")
+	void configSkipWaits(boolean bool) {
+		config.setSkipWaits(bool);
+		configService.save(config);
+		send("Set skipWaits to: " + bool(config.isSkipWaits()));
+	}
+
 	// Command Blocks
 
 	@Path("moveCollector")
@@ -251,7 +260,7 @@ public class BearFair21Command extends CustomCommand {
 
 	@Confirm
 	@Permission("group.admin")
-	@Path("clientside clearUser [category]")
+	@Path("clientside category remove [category]")
 	void clientsideClear(ContentCategory category) {
 		BearFair21User user = userService.get(uuid());
 		if (category == null) {
@@ -271,9 +280,8 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Permission("group.admin")
-	@Path("clientside add <category> [player]")
+	@Path("clientside category add <category> [player]")
 	void clientsideAddAll(ContentCategory category, @Arg("self") Player player) {
-
 		BearFair21User user = userService.get(player);
 		Set<ContentCategory> categories = user.getContentCategories();
 
@@ -286,6 +294,7 @@ public class BearFair21Command extends CustomCommand {
 		ClientsideContentManager.sendSpawnContent(player, contentService.getList(category));
 	}
 
+	@Disabled
 	@Confirm
 	@Permission("group.admin")
 	@Path("clientside clear <category>")
@@ -311,6 +320,13 @@ public class BearFair21Command extends CustomCommand {
 		} else {
 			error("That's not a supported entity type: " + entity.getType().name());
 		}
+	}
+
+	@Permission("group.admin")
+	@Path("clientside new current <category>")
+	void clientsideNewCurrent(ContentCategory category) {
+		setupBlockContent(block(), category);
+		send("Added block: " + block().getType());
 	}
 
 	@Permission("group.admin")

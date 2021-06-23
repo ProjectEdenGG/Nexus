@@ -212,6 +212,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return player().getLocation();
 	}
 
+	protected Block block() {
+		return location().getBlock();
+	}
+
 	protected World world() {
 		return location().getWorld();
 	}
