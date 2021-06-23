@@ -42,18 +42,18 @@ public class MainIsland implements BearFair21Island {
 	private static BearFair21UserService userService = new BearFair21UserService();
 	//
 	@Getter
-	private static final ItemBuilder balloon_cyan = new ItemBuilder(Material.STICK).customModelData(21);
+	private static final ItemBuilder balloon_cyan = new ItemBuilder(Material.STICK).customModelData(21).undroppable();
 	@Getter
-	private static final ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18);
+	private static final ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18).undroppable();
 	@Getter
-	private static final ItemBuilder cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake");
+	private static final ItemBuilder cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake").undroppable();
 	@Getter
-	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well");
+	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
-	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation");
+	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").undroppable();
 	@Getter
 	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
-			FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER);
+		FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER);
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
 		WAKKAFLOCKA(BearFair21NPC.ORGANIZER) {
