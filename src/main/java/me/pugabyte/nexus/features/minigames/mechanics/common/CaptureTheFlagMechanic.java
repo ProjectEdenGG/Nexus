@@ -24,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@Override
-	public boolean usesPerk(Class<? extends Perk> perk, Minigamer minigamer) {
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
 		return !(PlayerParticlePerk.class.isAssignableFrom(perk)) || (
 				minigamer.getMatch().getMatchData() instanceof CaptureTheFlagMatchData ?
 						((CaptureTheFlagMatchData) minigamer.getMatch().getMatchData()).getFlagByCarrier(minigamer) != null

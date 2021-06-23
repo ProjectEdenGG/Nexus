@@ -78,14 +78,23 @@ public class ClientsideContent implements PlayerOwnedObject {
 		}
 
 		public enum ContentCategory {
-			FOOD,        // MAIN
-			BALLOON,    // MAIN
-			FESTOON,    // MAIN
-			BANNER,        // MAIN
-			//
-			PRESENT,    // PUGMAS
-			SAWMILL,    // SIDE
-			CABLE,        // MGN
+			// MAIN
+			FOOD,
+			BALLOON,
+			FESTOON,
+			BANNER,
+			// PUGMAS
+			PRESENT,
+			// SIDE
+			SAWMILL,
+			// MGN
+			CABLE,
+			GRAVWELL,
+			SPEAKER,
+			SPEAKER_PART_SUBWOOFER,
+			SPEAKER_PART_TANGLED_WIRE,
+			SPEAKER_PART_SPEAKER_HEAD,
+			SPEAKER_PART_AUX_PORT,
 		}
 	}
 

@@ -53,12 +53,12 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.ENDER_PEARL);
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
@@ -68,7 +68,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public boolean canDropItem(ItemStack item) {
+	public boolean canDropItem(@NotNull ItemStack item) {
 		return true;
 	}
 
@@ -76,7 +76,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	public String world = "deathswap";
 
 	@Override
-	public void onInitialize(MatchInitializeEvent event) {
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
 		if (getWorld() == null)
 			throw new MinigameException("DeathSwap world not created");
@@ -84,7 +84,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
 		getWorld().setTime(0);
@@ -97,7 +97,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		if (!event.getMinigamer().isAlive()) return;
 		event.getMinigamer().setAlive(false);
 
@@ -116,7 +116,7 @@ public final class DeathSwap extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		getWorld().getWorldBorder().reset();
 	}

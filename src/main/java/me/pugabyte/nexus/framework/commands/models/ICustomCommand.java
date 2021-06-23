@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.framework.commands.models;
 
+import eden.annotations.Disabled;
 import eden.interfaces.PlayerOwnedObject;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
@@ -484,7 +485,11 @@ public abstract class ICustomCommand {
 								.filter(path -> !isNullOrEmpty(path))
 								.count()));
 
-		List<Method> filtered = methods.stream().filter(method -> hasPermission(event.getSender(), method)).collect(Collectors.toList());
+		List<Method> filtered = methods.stream()
+			.filter(method -> method.getAnnotation(Disabled.class) == null)
+			.filter(method -> hasPermission(event.getSender(), method))
+			.collect(Collectors.toList());
+
 		if (methods.size() > 0 && filtered.size() == 0)
 			throw new NoPermissionException();
 

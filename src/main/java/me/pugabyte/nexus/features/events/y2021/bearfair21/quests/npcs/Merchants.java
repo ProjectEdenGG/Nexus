@@ -4,6 +4,8 @@ import eden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
@@ -30,6 +32,7 @@ public class Merchants {
 	public static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET);
 	public static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT);
 	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK);
+	public static ItemBuilder traderCoupon = new ItemBuilder(Material.PAPER).name("&eEvent Token Coupon").lore("&3Amount: &e50");
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
@@ -40,9 +43,9 @@ public class Merchants {
 		if (Utils.isNullOrEmpty(trades))
 			return;
 
-		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().getName()))
-				.trades(trades)
-				.open(player);
+		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().name() + " " + bfMerchant.getBearFair21NPC().getNpcName()))
+			.trades(trades)
+			.open(player);
 	}
 
 	@AllArgsConstructor
@@ -189,7 +192,7 @@ public class Merchants {
 
 					if (user.getQuestStage_Main() == QuestStage.STEP_THREE) {
 						add(new TradeBuilder()
-								.result(MainIsland.bf_cake.clone())
+								.result(MainIsland.getCake().clone())
 								.ingredient(new ItemBuilder(Material.CAKE).build())
 								.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
 					} else {
@@ -218,17 +221,31 @@ public class Merchants {
 							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3))
 							.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5))
+						.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3))
+						.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3))
+						.ingredient(goldNugget.clone().amount(1)));
 				}};
 			}
-		};
+		},
+		TRADER(BearFair21NPC.TRADER) {
+			@Override
+			public List<TradeBuilder> getTrades(BearFair21User user) {
+				return new ArrayList<>() {{
+					if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.TRADER, 50) <= 0) {
+						add(new TradeBuilder()
+							.maxUses(1)
+							.result(traderCoupon.clone().amount(1))
+							.ingredient(goldNugget.clone().amount(1)));
+					}
+				}};
+			}
+		},
+		;
 
 		@Getter
 		private final BearFair21NPC bearFair21NPC;

@@ -31,13 +31,12 @@ public class ChannelCommand extends CustomCommand {
 
 	@Path("<channel> [message...]")
 	void changeChannel(PublicChannel channel, String message) {
-		if (channel.equals(chatter.getActiveChannel()))
-			error("You are already in that channel");
-
-		if (isNullOrEmpty(message))
-			chatter.setActiveChannel(channel);
-		else
+		if (!isNullOrEmpty(message))
 			quickMessage(channel, message);
+		else if (channel.equals(chatter.getActiveChannel()))
+			error("You are already in that channel");
+		else
+			chatter.setActiveChannel(channel);
 	}
 
 	@Path("list [filter]")

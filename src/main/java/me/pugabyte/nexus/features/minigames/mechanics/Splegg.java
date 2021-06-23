@@ -35,7 +35,7 @@ public final class Splegg extends SpleefMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.EGG);
 	}
 

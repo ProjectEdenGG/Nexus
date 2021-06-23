@@ -7,6 +7,7 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.RadioHeads;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.SellCrates;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
@@ -71,6 +72,7 @@ public class Quests implements Listener {
 		new SellCrates();
 		new Recycler();
 		new ClientsideContentManager();
+		new RadioHeads();
 	}
 
 	public static void startup() {
@@ -163,6 +165,12 @@ public class Quests implements Listener {
 		List<ItemStack> result = new ArrayList<>();
 		items.forEach(itemBuilder -> result.add(itemBuilder.build()));
 		removeItemStacks(player, result);
+	}
+
+	public static void removeItemStacks(BearFair21User user, List<ItemStack> items) {
+		for (ItemStack item : items) {
+			removeItem(user, item);
+		}
 	}
 
 	public static void removeItem(BearFair21User user, ItemStack item) {

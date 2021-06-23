@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics;
 
 import me.pugabyte.nexus.features.minigames.mechanics.*;
+import org.jetbrains.annotations.NotNull;
 
 public enum MechanicType {
 	ANVIL_DROP(new AnvilDrop()),
@@ -42,13 +43,13 @@ public enum MechanicType {
 	UNCIVIL_ENGINEERS(new UncivilEngineers()),
 	XRUN(new XRun());
 
-	private final Mechanic mechanic;
+	private final @NotNull Mechanic mechanic;
 
-	MechanicType(Mechanic mechanic) {
+	MechanicType(@NotNull Mechanic mechanic) {
 		this.mechanic = mechanic;
 	}
 
-	public Mechanic get() {
+	public @NotNull Mechanic get() {
 		return mechanic;
 	}
 

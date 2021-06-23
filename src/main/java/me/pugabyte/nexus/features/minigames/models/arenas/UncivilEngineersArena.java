@@ -5,6 +5,7 @@ import lombok.ToString;
 import me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -26,7 +27,7 @@ public class UncivilEngineersArena extends CheckpointArena {
 	}
 
 	@Override
-	public Map<String, Object> serialize() {
+	public @NotNull Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
 		map.put("origins", origins);
 		map.put("mobPoints", mobPoints);

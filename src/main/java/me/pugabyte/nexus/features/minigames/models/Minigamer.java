@@ -5,7 +5,6 @@ import de.myzelyam.api.vanish.VanishAPI;
 import eden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.lexikiq.PlayerLike;
@@ -38,6 +37,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,8 +52,8 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(exclude = "match")
-public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
-	@NonNull
+public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
+	@NotNull
 	private Player player;
 	@ToString.Exclude
 	private Match match;
@@ -72,6 +72,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	private int lives;
 	private int immobileTicks = 0;
 	private int lastStruckTicks = 0;
+	@MonotonicNonNull
 	private Location lastLocation = null;
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
 	private static final double HEALTH_PER_TICK = (1d/2d)/ Time.SECOND.x(2);
@@ -107,11 +108,11 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 		return team.getColor();
 	}
 
-	public void join(String name) {
+	public void join(@NotNull String name) {
 		join(ArenaManager.find(name));
 	}
 
-	public void join(Arena arena) {
+	public void join(@NotNull Arena arena) {
 		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(player.getWorld()))) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
@@ -140,43 +141,43 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 		return match != null;
 	}
 
-	public boolean isIn(Match match) {
+	public boolean isIn(@NotNull Match match) {
 		return isIn(match.getMechanic()) && match.equals(this.match);
 	}
 
-	public boolean isInLobby(Match match) {
+	public boolean isInLobby(@NotNull Match match) {
 		return isInLobby(match.getMechanic()) && match.equals(this.match);
 	}
 
-	public boolean isPlaying(Match match) {
+	public boolean isPlaying(@NotNull Match match) {
 		return isPlaying(match.getMechanic()) && match.equals(this.match);
 	}
 
-	public boolean isIn(Mechanic mechanic) {
+	public boolean isIn(@NotNull Mechanic mechanic) {
 		return isIn(mechanic.getClass());
 	}
 
-	public boolean isPlaying(Mechanic mechanic) {
+	public boolean isPlaying(@NotNull Mechanic mechanic) {
 		return isPlaying(mechanic.getClass());
 	}
 
-	public boolean isInLobby(Mechanic mechanic) {
+	public boolean isInLobby(@NotNull Mechanic mechanic) {
 		return isInLobby(mechanic.getClass());
 	}
 
-	public boolean isIn(Class<? extends Mechanic> mechanic) {
+	public boolean isIn(@NotNull Class<? extends Mechanic> mechanic) {
 		if (match != null)
 			return mechanic.isInstance(match.getMechanic());
 		return false;
 	}
 
-	public boolean isPlaying(Class<? extends Mechanic> mechanic) {
+	public boolean isPlaying(@NotNull Class<? extends Mechanic> mechanic) {
 		if (match != null)
 			return mechanic.isInstance(match.getMechanic()) && match.isStarted() && isAlive();
 		return false;
 	}
 
-	public boolean isInLobby(Class<? extends Mechanic> mechanic) {
+	public boolean isInLobby(@NotNull Class<? extends Mechanic> mechanic) {
 		if (match != null)
 			return mechanic.isInstance(match.getMechanic()) && !match.isStarted();
 		return false;
@@ -186,7 +187,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 		return isInMatchRegion(null);
 	}
 
-	public boolean isInMatchRegion(String type) {
+	public boolean isInMatchRegion(@Nullable String type) {
 		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
 				.anyMatch(region -> {
 					if (!Strings.isNullOrEmpty(type))
@@ -196,7 +197,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 				});
 	}
 
-	public boolean isInRegion(String type) {
+	public boolean isInRegion(@NotNull String type) {
 		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
 				.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
 	}
@@ -207,7 +208,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	 * This method will automatically {@link me.pugabyte.nexus.utils.StringUtils#colorize(String)} the input.
 	 * @param noPrefix a message
 	 */
-	public void sendMessage(String noPrefix) {
+	public void sendMessage(@NotNull String noPrefix) {
 		tell(noPrefix, false);
 	}
 
@@ -217,7 +218,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	 * This method will automatically {@link me.pugabyte.nexus.utils.StringUtils#colorize(String)} the input.
 	 * @param withPrefix a message
 	 */
-	public void tell(String withPrefix) {
+	public void tell(@NotNull String withPrefix) {
 		tell(withPrefix, true);
 	}
 
@@ -229,7 +230,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	 * @param message a message
 	 * @param prefix whether or not to display the minigames prefix
 	 */
-	public void tell(String message, boolean prefix) {
+	public void tell(@NotNull String message, boolean prefix) {
 		player.sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
 	}
 
@@ -254,11 +255,11 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 		});
 	}
 
-	public void teleport(Location location) {
+	public void teleport(@NotNull Location location) {
 		teleport(location, false);
 	}
 
-	public void teleport(Location location, boolean withSlowness) {
+	public void teleport(@NotNull Location location, boolean withSlowness) {
 		if (location == null)
 			throw new InvalidInputException("Tried to teleport " + getName() + " to a null location");
 
@@ -373,7 +374,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	 * Calculates the current player's location without yaw or pitch
 	 * @return player's {@link org.bukkit.Location} without yaw or pitch
 	 */
-	public Location getPlayerLocation() {
+	private @NotNull Location getRotationlessLocation() {
 		Location location = player.getLocation();
 		location.setYaw(0);
 		location.setPitch(0);
@@ -381,7 +382,7 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	}
 
 	public void tick() {
-		Location playerLocation = getPlayerLocation();
+		Location playerLocation = getRotationlessLocation();
 		if (lastLocation == null || !blockLocationsEqual(playerLocation, lastLocation))
 			immobileTicks = 0;
 		else
@@ -488,16 +489,16 @@ public class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 			player.removePotionEffect(effect.getType());
 	}
 
-	public boolean usesPerk(Class<? extends Perk> perk) {
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk) {
 		return match.getMechanic().usesPerk(perk, this);
 	}
 
-	public boolean usesPerk(Perk perk) {
+	public boolean usesPerk(@NotNull Perk perk) {
 		return match.getMechanic().usesPerk(perk, this);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(@Nullable Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Minigamer minigamer = (Minigamer) o;

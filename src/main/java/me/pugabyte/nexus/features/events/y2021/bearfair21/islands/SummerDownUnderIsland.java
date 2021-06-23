@@ -6,7 +6,6 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.SummerDownUnde
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
-import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 // TODO BF21: Quest + Dialog
 @Region("summerdownunder")
 @NPCClass(SummerDownUnderNPCs.class)
-public class SummerDownUnderIsland implements Listener, BearFair21Island {
+public class SummerDownUnderIsland implements BearFair21Island {
 
 	public enum SummerDownUnderNPCs implements BearFair21TalkingNPC {
 		;
@@ -29,7 +28,7 @@ public class SummerDownUnderIsland implements Listener, BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.npc.getName();
+			return this.npc.getNpcName();
 		}
 
 		@Override

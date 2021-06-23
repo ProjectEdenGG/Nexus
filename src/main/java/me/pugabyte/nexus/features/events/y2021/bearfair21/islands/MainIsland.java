@@ -1,10 +1,13 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
 import eden.utils.TimeUtils.Time;
+import lombok.Getter;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
@@ -14,13 +17,15 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishi
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.event.Listener;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -33,16 +38,23 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Bea
 // TODO BF21: Quest + Dialog
 @Region("main")
 @NPCClass(MainNPCs.class)
-public class MainIsland implements Listener, BearFair21Island {
+public class MainIsland implements BearFair21Island {
 
-	static BearFair21UserService userService = new BearFair21UserService();
+	private static BearFair21UserService userService = new BearFair21UserService();
 	//
-	static ItemBuilder balloon_cyan = new ItemBuilder(Material.STICK).customModelData(21);
-	static ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18);
-	public static ItemBuilder bf_cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake");
-	static ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation");
-	static List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
-			FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER);
+	@Getter
+	private static final ItemBuilder balloon_cyan = new ItemBuilder(Material.STICK).customModelData(21).undroppable();
+	@Getter
+	private static final ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18).undroppable();
+	@Getter
+	private static final ItemBuilder cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake").undroppable();
+	@Getter
+	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
+	@Getter
+	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").undroppable();
+	@Getter
+	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
+		CURATOR, FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER, TRADER);
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
 		WAKKAFLOCKA(BearFair21NPC.ORGANIZER) {
@@ -80,22 +92,56 @@ public class MainIsland implements Listener, BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
-				ItemStack tool = getTool(user.getPlayer());
+				final Player player = user.getOnlinePlayer();
+				ItemStack tool = getTool(player);
 
-				if (!user.hasMet(this.getNpcId())) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {
+					if (BearFair21.isInRegion(player, "bearfair21_minigamenight_gamegallery")) {
+						script.add("<self> This is <player> at the Game Gallery?");
+						script.add("Hello, this is Admiral Phoenix on the F.S.S Stellar Tides. I was wondering if I might request your assistance on a pressing matter?");
+						script.add("<self> How might I be of service, Sir?");
+						script.add("I ferry travelers to and from Bear Fair Island and on my last voyage I noticed my nav computer no longer detected the island on the star map. I suspect something may have happened to the nav beacons.");
+						script.add("<self> Oh no… What are nav beacons exactly?");
+						script.add("They are broadcasting stations that triangulate their position to any ship's nav computer so they can find Bear Fair. I need someone to check on the beacons, inspect for damage, and reboot them.");
+						script.add("<self> Sounds easy enough, where can I find them?");
+						script.add("There are three of them located at each corner of the main island.");
+						script.add("<self> Alright I'll see what I can find.");
+						script.add("Good, report back as soon as possible. I'll be on the deck of the Stellar Tides.");
+					} else {
+						if (user.getMgn_beaconsActivated().size() == 3) {
+							script.add("Welcome aboard.");
+							script.add("<self> All beacons are in good condition and fully operational.");
+							script.add("Hmmm. I'm still not getting the nav data. Perhaps there's some kind of interference… Scans indicate there is some significant geothermal activity currently on the island… That could be worse than just nav beacon interference…");
+							script.add("<self> Oh no… is the island becoming unstable?");
+							script.add("It appears to be trending that way… Here, take this. It's a portable grav-well.");
+
+							if (!player.getInventory().containsAtLeast(gravwell.build(), 1))
+								Quests.giveItem(player, gravwell.build());
+							script.add("<self> Whoa… This is a little heavy.");
+							script.add("Get as close to the magma core as you can, and place this down. It will hold the island together until we can get some professionals out here. On top of that, the magnetic field this device generates should boost the beacons' signal and solve the interference issue.");
+							script.add("<self> Aye Aye, Admiral!");
+						} else {
+							script.add("Any luck with those nav-beacons? Make sure to check all three for damage and reboot them.");
+						}
+					}
+				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SEVEN) {
+					script.add("<self> Mission complete!");
+					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and restabilize the island. Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
+					script.add("<self> Thank You Sir!");
+					user.setQuestStage_MGN(QuestStage.STEP_EIGHT);
+				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all yall people here safe.");
 					script.add("wait 80");
 					script.add("If you see anything suspicious simply let me know. I am more than capable of handling things myself.");
 					script.add("wait 90");
 					script.add("Now you just continue to have fun, got it?");
-					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-					return script;
+				} else {
+					script.add("TODO - Hello");
 				}
 
-				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -105,47 +151,49 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = getTool(user.getPlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
+				if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
+					// TODO Wakka Fix (town name), add wait
+					if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
+						script.add("<self> Thanks for calling GG! How can I help?");
+						script.add("Hey, this is Zach over in (town name). Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back?");
+						script.add("We're in a bit of a bind now since my electrician bailed on me this morning.");
+						script.add("<self> Well that wasn't very professional of them.");
+						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too.");
+						script.add("It's a bit of an odd request, but could you spare some one over here to set up the internet?");
+						script.add("I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
+						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard... ");
+						script.add("Great! We'll have everything ready for you when you get here.");
+					} else {
+						List<Component> tasks = new ArrayList<>();
+						if (!user.isMgn_connectWiring())
+							tasks.add(Component.text("connect the fiber cable"));
+						if (!user.isMgn_unscrambledWiring())
+							tasks.add(Component.text("unscramble the wiring"));
+						if (!user.isMgn_setupRouter())
+							tasks.add(Component.text("set up the router"));
+
+						if (tasks.isEmpty()) {
+							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double. " +
+								"Tell your manager to consider it a donation. Take care now.");
+							script.add("<self> It was no problem, happy to help wherever I can!");
+							user.setQuestStage_MGN(QuestStage.STEP_SIX);
+							userService.save(user);
+						} else {
+							script.add("Hey thanks for coming. All we need you to do is " + AdventureUtils.asPlainText(AdventureUtils.commaJoinText(tasks)) + ".");
+							script.add("You'll find the main cable over by the tree, the wires are under the house- watch your step btw");
+							script.add("And the router station is right there on the table.");
+						}
+					}
+				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("Hm, are you admiring the scenery as well?");
 					script.add("wait 60");
 					script.add("There is honestly nothing more stunning than an area bustling with life.");
 					script.add("wait 80");
 					script.add("Nice to meet you, my name is Zach and I love architecture with all my heart.");
-					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-					return script;
-				} else if(user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
-					// phone conversation
-					script.add("<self> Thanks for calling GG! How can I help?");
-					script.add("wait 60");
-					// TODO BF21: Split this up into multiple lines
-					script.add("Hey, this is Zach over in (town name). Me and my team are building a new house on the edge of town, " +
-						"ya know where an old shed burned down a while back? Yeah, well I’m in a bit of a bind here. See, I’m on a tight " +
-						"schedule and we’ve made some good progress but this morning my electrician bailed on me. Said he could find a better " +
-						"paying job in the city; and I promise you, he won’t. Anyways, it's just me and my carpenter, Ron. I know GG is a " +
-						"videogame company, but from what I’ve heard, y’all are pretty good with tech repair too. " +
-						"I know It’s a bit of an odd request, but could you spare some one over here to set up the internet? " +
-						"It’s the only electrical system left and shouldn’t take too long. I’ll pay double whatever your typical service " +
-						"fee is since this isn’t your normal repair job.");
-					script.add("wait 20");
-					script.add("<self> Uh, sure I could give it a look. Can’t be more complicated than a motherboard... ");
-					script.add("wait 80");
-					script.add("Great! We’ll have everything ready for you when you get here. ");
-
-					// player clicks npc after phone convo
-					script.add("Hey thanks for coming. All we need you to do is connect the cables and set up the router. " +
-						"You’ll find the cables under the house and the router station is upstairs.");
-
-					// player fixes thing
-					script.add("Awesome! That was some quick work, buddy. Here’s your pay, and yes, I’m paying you double. " +
-						"Tell your manager to consider it a donation. Take care now.");
-					script.add("<self> It was no problem, happy to help wherever I can!");
-					return script;
 				}
-
-				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -155,7 +203,13 @@ public class MainIsland implements Listener, BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = getTool(user.getPlayer());
 
-				if (!user.hasMet(this.getNpcId())) {
+				if(user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
+					if(RandomUtils.chanceOf(50))
+						script.add("I only have two loves in life, woodworking, and steak.");
+					else
+						script.add("Give 100 percent. One-hundred-and-ten percent is impossible. Only idiots recommend that.");
+					return script;
+				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("I swear, there is nothing like the smell of sawdust to wake you up in the morning.");
 					script.add("wait 80");
 					script.add("How do you do friend, the name is Ron and as this town's carpenter, my job is to create masterpieces everyday!");
@@ -164,15 +218,30 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
-				} else if(user.getQuestStage_MGN() == QuestStage.STEP_THREE) {
-					if(RandomUtils.chanceOf(50))
-						script.add("I only have two loves in life, woodworking, and steak.");
-					else
-						script.add("Give 100 percent. One-hundred-and-ten percent is impossible. Only idiots recommend that.");
-					return script;
 				}
 
 				script.add("TODO - Hello");
+				return script;
+			}
+		},
+		CURATOR(BearFair21NPC.CURATOR) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+				ItemStack tool = getTool(user.getPlayer());
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - INTRO TO SEEKER");
+					return script;
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add("TODO - Thanks!");
+					script.add("<exit>");
+					invite(user, this.getNpcId(), tool);
+					return script;
+				}
+
+				script.add("TODO - FIND THE BUTTON.");
+				Seeker.addPlayer(user.getOnlinePlayer());
 				return script;
 			}
 		},
@@ -215,7 +284,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 80");
 					script.add("My name is Nate by the way and honestly I can see why the fish would be happy to live out there.");
 					script.add("wait 100");
-					script.add("However I suppose I can’t put too much thought into it, as a fisherman it is my job to pull them out of that paradise, isn't it?");
+					script.add("However I suppose I can't put too much thought into it, as a fisherman it is my job to pull them out of that paradise, isn't it?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -251,7 +320,7 @@ public class MainIsland implements Listener, BearFair21Island {
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Welcome to the village!");
 					script.add("wait 40");
-					script.add("I would love to give you a tour, but I’m swamped in preparation work for the upcoming anniversary event.");
+					script.add("I would love to give you a tour, but I'm swamped in preparation work for the upcoming anniversary event.");
 					script.add("wait 80");
 					script.add("You know, if you want to give a good first impression, helping me out would certainly do the trick.");
 					script.add("wait 80");
@@ -328,7 +397,7 @@ public class MainIsland implements Listener, BearFair21Island {
 							return script;
 						}
 						case STEP_FOUR -> {
-							List<ItemBuilder> required = Collections.singletonList(bf_cake);
+							List<ItemBuilder> required = Collections.singletonList(cake);
 							if (!Quests.hasItemsLikeFrom(user, required)) {
 								script.add("For your next task, could you follow up with Maple the Pastry Chef about my cake order?");
 								return script;
@@ -422,9 +491,9 @@ public class MainIsland implements Listener, BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("Ah, just the inspiration I was looking for. The name’s Sage and I'm your local artist!");
+					script.add("Ah, just the inspiration I was looking for. The name's Sage and I'm your local artist!");
 					script.add("wait 60");
-					script.add("Feel free to browse as long as you’d like. I would love to get to paint- I mean know you.");
+					script.add("Feel free to browse as long as you'd like. I would love to get to paint- I mean know you.");
 					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -643,7 +712,7 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 80");
 					script.add("This poor guy needs a break at some point too.");
 					script.add("wait 40");
-					script.add("Oh wait I don’t think we’ve met before, sorry about that. My name is Flint and I'm a lumberjack.");
+					script.add("Oh wait I don't think we've met before, sorry about that. My name is Flint and I'm a lumberjack.");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -666,8 +735,27 @@ public class MainIsland implements Listener, BearFair21Island {
 					script.add("wait 60");
 					script.add("How do I know? Well that is simply not important right now, what is important is that I, as the great sorcerer Lucian, have knowledge of magic that far surpasses that of anyone else!");
 					script.add("wait 100");
-					script.add("So don’t just stand there, take a look around.");
+					script.add("So don't just stand there, take a look around.");
 					script.add("wait 40");
+					return script;
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add("TODO - Thanks!");
+					script.add("<exit>");
+					invite(user, this.getNpcId(), tool);
+					return script;
+				}
+
+				return script;
+			}
+		},
+		TRADER(BearFair21NPC.TRADER) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+				ItemStack tool = getTool(user.getPlayer());
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - GREETING");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
@@ -708,7 +796,7 @@ public class MainIsland implements Listener, BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.npc.getName();
+			return this.npc.getNpcName();
 		}
 
 		@Override

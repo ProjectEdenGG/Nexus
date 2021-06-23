@@ -9,7 +9,6 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
-import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
@@ -132,6 +131,10 @@ public class ClientsideContentManager implements Listener {
 
 	private static boolean canSee(Player player, Content content) {
 		return userService.get(player).getContentCategories().contains(content.getCategory());
+	}
+
+	public static boolean canSee(Player player, ContentCategory category) {
+		return userService.get(player).getContentCategories().contains(category);
 	}
 
 	private static boolean canSee(Player player, BearFair21NPC npc) {
@@ -257,21 +260,45 @@ public class ClientsideContentManager implements Listener {
 		return null;
 	}
 
+	public static void addCategory(BearFair21User user, ContentCategory category) {
+		addCategory(user, category, 0);
+	}
+
 	public static void addCategory(BearFair21User user, ContentCategory category, long delay) {
-		BearFair21UserService userService = new BearFair21UserService();
-		ClientsideContent clientsideContent = contentService.get0();
-		List<Content> contentList = clientsideContent.getContentList();
+		List<Content> contentList = contentService.get0().getContentList();
 
 		List<Content> newContent = new ArrayList<>();
-		for (Content content : contentList) {
-			if (content.getCategory().equals(category)) {
+		for (Content content : contentList)
+			if (content.getCategory().equals(category))
 				newContent.add(content);
-			}
-		}
 
-		user.getContentCategories().add(category);
-		userService.save(user);
+		new BearFair21UserService().edit(user, $ -> user.getContentCategories().add(category));
 
-		Tasks.wait(delay, () -> ClientsideContentManager.sendSpawnContent(user.getPlayer(), newContent));
+		final Runnable runnable = () -> ClientsideContentManager.sendSpawnContent(user.getOnlinePlayer(), newContent);
+		if (delay > 0)
+			Tasks.wait(delay, runnable);
+		else
+			runnable.run();
+	}
+
+	public static void removeCategory(BearFair21User user, ContentCategory category) {
+		removeCategory(user, category, 0);
+	}
+
+	public static void removeCategory(BearFair21User user, ContentCategory category, long delay) {
+		List<Content> contentList = contentService.get0().getContentList();
+
+		List<Content> oldContent = new ArrayList<>();
+		for (Content content : contentList)
+			if (content.getCategory().equals(category))
+				oldContent.add(content);
+
+		new BearFair21UserService().edit(user, $ -> user.getContentCategories().remove(category));
+
+		final Runnable runnable = () -> ClientsideContentManager.sendRemoveContent(user.getOnlinePlayer(), oldContent);
+		if (delay > 0)
+			Tasks.wait(delay, runnable);
+		else
+			runnable.run();
 	}
 }

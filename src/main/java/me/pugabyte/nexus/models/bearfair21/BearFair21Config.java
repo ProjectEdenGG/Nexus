@@ -30,5 +30,6 @@ public class BearFair21Config implements PlayerOwnedObject {
 	private boolean enableRides = false;
 	private boolean enableQuests = false;
 	private boolean giveDailyPoints = false;
+	private boolean skipWaits = false;
 
 }

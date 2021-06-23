@@ -15,6 +15,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConver
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.Location;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,7 +41,12 @@ public class BearFair21User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	// General Quest Stuff
-	private Set<ContentCategory> contentCategories = new HashSet<>();
+	private Set<ContentCategory> contentCategories = new HashSet<>(Set.of(
+		ContentCategory.SPEAKER_PART_SUBWOOFER,
+		ContentCategory.SPEAKER_PART_AUX_PORT,
+		ContentCategory.SPEAKER_PART_TANGLED_WIRE,
+		ContentCategory.SPEAKER_PART_SPEAKER_HEAD)
+	);
 	private JunkWeight junkWeight = JunkWeight.MAX;
 	private int recycledItems = 0;
 	private Set<Integer> metNPCs = new HashSet<>();
@@ -67,6 +73,15 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	// MGN
 	QuestStage questStage_MGN = QuestStage.NOT_STARTED;
+	boolean mgn_laptopScreen = false;
+	boolean mgn_laptopMotherboard = false;
+
+	boolean mgn_connectWiring = false;
+	boolean mgn_unscrambledWiring = false;
+	boolean mgn_setupRouter = false;
+
+	Set<Location> mgn_beaconsActivated = new HashSet<>();
+	Set<Location> mgn_speakersFixed = new HashSet<>();
 
 	// Pugmas
 	QuestStage questStage_Pugmas = QuestStage.NOT_STARTED;

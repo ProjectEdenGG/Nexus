@@ -29,12 +29,14 @@ public enum BearFair21NPC {
 	INVENTOR("Joshua", 2660),
 	PASTRY_CHEF("Maple", 2654),
 	SORCERER("Lucian", 2658),
+	TRADER("Joe", 4206),
 	// Quest Givers
 	MAYOR("John", 3838),
 	LUMBERJACK("Flint", 3845),
 	BEEKEEPER("Harold", 3844),
 	FISHERMAN2("Nate", 3841),
 	AERONAUT("Skye", 4111),
+	CURATOR("Curator", 4207),
 	// Misc
 	ADMIRAL("Phoenix", 3839),
 	ORGANIZER("Wakka", 3798),
@@ -64,11 +66,10 @@ public enum BearFair21NPC {
 	PUGMAS_VILLAGER_12("Villager", 4153),
 	PUGMAS_VILLAGER_13("Villager", 4154),
 	PUGMAS_VILLAGER_14("Villager", 4155),
-	// HALLOWEEN - MAIN
+	// HALLOWEEN
 	JOSE("Jose", 4131),
 	SANTIAGO("Santiago", 4132),
 	ANA("Ana", 4133),
-	// HALLOWEEN - MISC
 	FRANCISCO("Franciso", 4171),
 	ADRIAN("Adrian", 4174),
 	MAXIM("Maxim", 4173),
@@ -80,11 +81,21 @@ public enum BearFair21NPC {
 	LUIS("Luis", 4180),
 	MARIANA("Mariana", 4181),
 	HALLOWEEN_MAYOR("Mayor", 4172),
+	RODRIGO("Rodrigo", 4185),
+	DANIEL("Daniel", 4187),
+	SANDRA("Sandra", 4188),
+	MARTHA("Martha", 4189),
+	PATRICIA("Patricia", 4190),
+	NINA("Nina", 4191),
+	RUBEN("Ruben", 4192),
+	CLARENCE("Clarence", 4193),
+	CARLA("Carla", 4194),
+	ANTONIO("Antonio", 4195),
 	// SDU
 	;
 
 	@Getter
-	private final String name;
+	private final String npcName;
 	@Getter
 	private final int id;
 
@@ -108,13 +119,13 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		String npcJob = StringUtils.camelCase(this.name.toLowerCase()
-				.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
-				.replaceAll("[0-9]+", "")).trim();
+		String npcJob = StringUtils.camelCase(this.name().toLowerCase()
+			.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
+			.replaceAll("[0-9]+", "")).trim();
 
-		if (npcJob.equalsIgnoreCase(name))
-			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), name));
+		if (npcJob.equalsIgnoreCase(npcName))
+			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), npcName));
 		else
-			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, name);
+			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, npcName);
 	}
 }

@@ -57,12 +57,12 @@ public final class Bingo extends TeamlessMechanic {
 	}
 
 	@Override
-	public ItemStack getMenuItem() {
+	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(CRAFTING_TABLE);
 	}
 
 	@Override
-	public GameMode getGameMode() {
+	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
 
@@ -72,7 +72,7 @@ public final class Bingo extends TeamlessMechanic {
 	}
 
 	@Override
-	public boolean canDropItem(ItemStack item) {
+	public boolean canDropItem(@NotNull ItemStack item) {
 		return true;
 	}
 
@@ -85,7 +85,7 @@ public final class Bingo extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onInitialize(MatchInitializeEvent event) {
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
 		if (getWorld() == null)
 			throw new MinigameException("Bingo world not created");
@@ -93,7 +93,7 @@ public final class Bingo extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onStart(MatchStartEvent event) {
+	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
 		getWorld().setTime(0);
@@ -104,13 +104,13 @@ public final class Bingo extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onEnd(MatchEndEvent event) {
+	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		getWorld().getWorldBorder().reset();
 	}
 
 	@Override
-	public void onDeath(MinigamerDeathEvent event) {
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		final Player player = event.getMinigamer().getPlayer();
 
 		for (ItemStack itemStack : player.getInventory())
@@ -121,7 +121,7 @@ public final class Bingo extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDeath(Minigamer victim) {
+	public void onDeath(@NotNull Minigamer victim) {
 		victim.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 10, false, false));
 		TitleUtils.sendTitle(victim.getPlayer(), "&cYou died!");
 

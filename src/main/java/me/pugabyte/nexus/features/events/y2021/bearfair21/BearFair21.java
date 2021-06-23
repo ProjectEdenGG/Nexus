@@ -1,10 +1,16 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.Utils;
 import lombok.Getter;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.IslandType;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.models.bearfair21.BearFair21Config;
 import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
+import me.pugabyte.nexus.models.bearfair21.BearFair21User;
+import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
@@ -21,13 +27,19 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,15 +47,15 @@ import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.ca
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
 
-public class BearFair21 {
+public class BearFair21 implements Listener {
 	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
 	@Getter
 	private static final BearFair21Config config = configService.get0();
 	/**
 	 * TODO BF21:
-	 *  When BearFair21 is over:
-	 *  - disable: enableRides, enableQuests, enableWarp, and giveDailyPoints
-	 *  - disable: region block break/place
+	 * When BearFair21 is over:
+	 * - disable: enableRides, enableQuests, enableWarp, and giveDailyPoints
+	 * - disable: region block break/place
 	 */
 
 	@Getter
@@ -53,15 +65,27 @@ public class BearFair21 {
 
 
 	public BearFair21() {
+		Nexus.registerListener(this);
+
 		new Timer("    Restrictions", BearFair21Restrictions::new);
 		new Timer("    Fairgrounds", Fairgrounds::new);
+		new Timer("    Islands", IslandType::values);
 		new Timer("    Quests", Quests::new);
 
-		Arrays.stream(BF21PointSource.values()).forEach(source -> addTokenMax(source, 25));
+		addTokenMax(BF21PointSource.ARCHERY, 25);
+		addTokenMax(BF21PointSource.MINIGOLF, 25);
+		addTokenMax(BF21PointSource.FROGGER, 25);
+		addTokenMax(BF21PointSource.SEEKER, 25);
+		addTokenMax(BF21PointSource.REFLECTION, 25);
+		addTokenMax(BF21PointSource.TRADER, 50);
 	}
 
 	public static World getWorld() {
 		return Bukkit.getWorld("bearfair21");
+	}
+
+	public static Location locationOf(double x, double y, double z) {
+		return new Location(getWorld(), x, y, z);
 	}
 
 	public static WorldGuardUtils getWGUtils() {
@@ -104,6 +128,21 @@ public class BearFair21 {
 		if (!EquipmentSlot.HAND.equals(slot)) return true;
 
 		return BearFair21.isNotAtBearFair(player);
+	}
+
+	public static boolean canDoBearFairQuest(Player player) {
+		if (!BearFair21.getConfig().isEnableQuests()) return false;
+		return !isNotAtBearFair(player);
+	}
+
+	public static boolean canDoBearFairQuest(PlayerInteractEvent event) {
+		if (!canDoBearFairQuest(event.getPlayer())) return false;
+		return !isNotAtBearFair(event);
+	}
+
+	public static boolean canDoBearFairQuest(PlayerInteractEntityEvent event) {
+		if (!canDoBearFairQuest(event.getPlayer())) return false;
+		return !isNotAtBearFair(event);
 	}
 
 	public static boolean isInRegion(Block block, String region) {
@@ -210,6 +249,25 @@ public class BearFair21 {
 		MINIGOLF,
 		FROGGER,
 		SEEKER,
-		REFLECTION
+		REFLECTION,
+		TRADER
 	}
+
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
+		if (!(event.getPlayer() instanceof Player player)) return;
+		if (isNotAtBearFair(player)) return;
+
+		BearFair21UserService userService = new BearFair21UserService();
+		BearFair21User user = userService.get(player);
+		List<ItemStack> items = Quests.getItemsListFrom(user, Collections.singletonList(Merchants.traderCoupon));
+		if (Utils.isNullOrEmpty(items))
+			return;
+
+		Quests.removeItemStacks(user, items);
+		giveDailyPoints(player, BF21PointSource.TRADER, 50);
+		Quests.sound_obtainItem(player);
+	}
+
 }

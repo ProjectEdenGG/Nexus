@@ -92,7 +92,7 @@ public class ShowEnchantsCommand extends CustomCommand {
 				.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
 				.hover(item);
 
-		Broadcast.all().channel(channel).sender(chatter).message(json).messageType(MessageType.CHAT).send();
+		Broadcast.ingame().channel(channel).sender(chatter).message(json).messageType(MessageType.CHAT).send();
 
 		// Discord
 		if (channel.getDiscordTextChannel() != null) {

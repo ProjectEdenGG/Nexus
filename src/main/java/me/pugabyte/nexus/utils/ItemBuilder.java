@@ -122,6 +122,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder setLore(String... lore) {
+		return setLore(List.of(lore));
+	}
+
 	public ItemBuilder setLore(List<String> lore) {
 		this.lore.clear();
 		if (lore != null)
@@ -383,6 +387,24 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder tradeable(boolean tradeable) {
 		nbt(item -> item.setBoolean("tradeable", tradeable));
+		return this;
+	}
+
+	public ItemBuilder undroppable() {
+		return droppable(false);
+	}
+
+	public ItemBuilder droppable(boolean droppable) {
+		nbt(item -> item.setBoolean("droppable", droppable));
+		return this;
+	}
+
+	public ItemBuilder unplaceable() {
+		return placeable(false);
+	}
+
+	public ItemBuilder placeable(boolean placeable) {
+		nbt(item -> item.setBoolean("placeable", placeable));
 		return this;
 	}
 
