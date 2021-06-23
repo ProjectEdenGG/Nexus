@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
@@ -34,6 +35,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -84,6 +86,19 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	public MinigameNightIsland() {
 		Nexus.registerListener(this);
+
+		Location gravWellLoc = BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion(gravwellRegion).getMinimumPoint());
+		Tasks.repeat(0, Time.SECOND.x(5), () -> {
+			for (Player player : BearFair21.getPlayers()) {
+				for (Location soundLoc : userService.get(player).getMgn_beaconsActivated()) {
+					if (player.getLocation().distance(soundLoc) <= 20)
+						player.playSound(soundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
+				}
+
+				if (ClientsideContentManager.canSee(player, ContentCategory.GRAVWELL))
+					player.playSound(gravWellLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
+			}
+		});
 	}
 
 	public enum MinigameNightNPCs implements BearFair21TalkingNPC {
@@ -505,8 +520,21 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	// Phone
 
-	// TODO Wakka - Phone sound
-	private static final Consumer<Player> ringingSound = player -> PlayerUtils.send(player, "ring ring");
+	private static final Consumer<Player> ringingSound = player -> {
+		PlayerUtils.send(player, "ring ring");
+
+		Location location = BearFair21.getWGUtils().toLocation(
+			BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
+		ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location)
+			.offset(0.25, 0.25, 0.25).count(15).extra(0.01);
+		int wait = 0;
+		for (int i = 0; i < 5; i++) {
+			addTaskId(player, Tasks.wait(wait += 2, () -> {
+				SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, 0.5F, SoundUtils.getPitch(0));
+				particles.spawn();
+			}));
+		}
+	};
 	private static final Map<UUID, List<Integer>> taskIds = new HashMap<>();
 
 	public static void addTaskId(Player player, int taskId) {
@@ -514,8 +542,9 @@ public class MinigameNightIsland implements BearFair21Island {
 	}
 
 	public static void startPhoneRinging(Player player) {
-		for (int i = 0; i < 5; i++)
-			addTaskId(player, Tasks.wait(Time.SECOND.x(i), () -> ringingSound.accept(player)));
+		for (int i = 0; i < 5; i++) {
+			addTaskId(player, Tasks.wait(Time.SECOND.x(i * 2), () -> ringingSound.accept(player)));
+		}
 	}
 
 	public static void startOutgoingPhoneCall(Player player, Runnable pickup) {
@@ -526,7 +555,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	public static void stopPhoneRinging(Player player) {
 		taskIds.computeIfAbsent(player.getUniqueId(), $ -> new ArrayList<>()).forEach(Tasks::cancel);
-		// TODO Wakka - Stop phone sound
+		SoundUtils.stopSound(player, Sound.BLOCK_NOTE_BLOCK_BELL);
 	}
 
 	@EventHandler
@@ -675,7 +704,7 @@ public class MinigameNightIsland implements BearFair21Island {
 				Tasks.wait(Time.SECOND, () -> {
 					player.closeInventory();
 					userService.edit(player, user -> user.setMgn_unscrambledWiring(true));
-					// TODO Wakka Some feedback that they completed it (particles/sounds)
+					Quests.sound_obtainItem(player);
 				});
 			});
 
@@ -768,7 +797,7 @@ public class MinigameNightIsland implements BearFair21Island {
 						Tasks.wait(Time.SECOND, () -> {
 							player.closeInventory();
 							userService.edit(player, user -> user.setMgn_setupRouter(true));
-							// TODO Wakka Some feedback that they completed it (particles/sounds)
+							Quests.sound_obtainItem(player);
 						});
 					}
 				}));

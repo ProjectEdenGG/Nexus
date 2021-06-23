@@ -134,6 +134,10 @@ public class ClientsideContentManager implements Listener {
 		return userService.get(player).getContentCategories().contains(content.getCategory());
 	}
 
+	public static boolean canSee(Player player, ContentCategory category) {
+		return userService.get(player).getContentCategories().contains(category);
+	}
+
 	private static boolean canSee(Player player, BearFair21NPC npc) {
 		return getNPCNameTag(player, npc.getId()) != null;
 	}
