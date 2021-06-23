@@ -329,9 +329,9 @@
         <dependency>
             <groupId>com.github.IntellectualSites</groupId>
             <artifactId>FastAsyncWorldEdit</artifactId>
-            <version>1.16-688</version>
+            <version>1.17-10</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.16-591.jar</systemPath>
+            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.17-10.jar</systemPath>
         </dependency>
         <!-- BuycraftX -->
         <dependency>

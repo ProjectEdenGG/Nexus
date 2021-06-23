@@ -1,9 +1,9 @@
 package me.pugabyte.nexus.utils;
 
-import com.boydti.fawe.FaweAPI;
-import com.boydti.fawe.object.RegionWrapper;
-import com.boydti.fawe.object.RelightMode;
-import com.boydti.fawe.util.EditSessionBuilder;
+import com.fastasyncworldedit.core.FaweAPI;
+import com.fastasyncworldedit.core.object.RegionWrapper;
+import com.fastasyncworldedit.core.object.RelightMode;
+import com.fastasyncworldedit.core.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEditException;
