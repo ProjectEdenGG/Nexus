@@ -167,6 +167,12 @@ public class Quests implements Listener {
 		removeItemStacks(player, result);
 	}
 
+	public static void removeItemStacks(BearFair21User user, List<ItemStack> items) {
+		for (ItemStack item : items) {
+			removeItem(user, item);
+		}
+	}
+
 	public static void removeItem(BearFair21User user, ItemStack item) {
 		removeItemStacks(user.getPlayer(), Collections.singletonList(item));
 	}

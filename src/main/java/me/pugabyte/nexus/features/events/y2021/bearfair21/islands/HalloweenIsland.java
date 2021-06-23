@@ -33,7 +33,6 @@ import java.util.List;
 
 import static me.pugabyte.nexus.features.events.models.QuestStage.STEP_ONE;
 
-// TODO BF21: Testing
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
 public class HalloweenIsland implements BearFair21Island {
@@ -121,8 +120,7 @@ public class HalloweenIsland implements BearFair21Island {
 					}
 				}
 
-				script.add("TODO BF21 - Greeting");
-				return script;
+				return getGreeting();
 			}
 		},
 		SANTIAGO(BearFair21NPC.SANTIAGO) {
@@ -154,8 +152,7 @@ public class HalloweenIsland implements BearFair21Island {
 					}
 				}
 
-				script.add("TODO BF21 - Greeting");
-				return script;
+				return getGreeting();
 			}
 		},
 		ANA(BearFair21NPC.ANA) {
@@ -220,8 +217,7 @@ public class HalloweenIsland implements BearFair21Island {
 					}
 				}
 
-				script.add("TODO BF21 - Greeting");
-				return script;
+				return getGreeting();
 			}
 
 		},
@@ -405,7 +401,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.npc.getName();
+			return this.npc.getNpcName();
 		}
 
 		@Override

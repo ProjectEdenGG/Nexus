@@ -93,11 +93,11 @@ public class MinigameNightIsland implements BearFair21Island {
 			for (Player player : BearFair21.getPlayers()) {
 				for (Location soundLoc : userService.get(player).getMgn_beaconsActivated()) {
 					if (player.getLocation().distance(soundLoc) <= 20)
-						player.playSound(soundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
+						player.playSound(soundLoc, Sound.BLOCK_BEACON_AMBIENT, 2F, 1F);
 				}
 
 				if (ClientsideContentManager.canSee(player, ContentCategory.GRAVWELL))
-					player.playSound(gravWellLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
+					player.playSound(gravWellLoc, Sound.BLOCK_BEACON_AMBIENT, 2F, 1F);
 			}
 		});
 	}
@@ -280,7 +280,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.npc.getName();
+			return this.npc.getNpcName();
 		}
 
 		@Override
@@ -376,8 +376,10 @@ public class MinigameNightIsland implements BearFair21Island {
 		Tasks.wait(5, () -> {
 			world.playSound(finalLoc, Sound.BLOCK_ANVIL_USE, 0.3F, 0.1F);
 			world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
-			Tasks.wait(20, () -> world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F));
-			// TODO Wakka - Beacon sound?
+			Tasks.wait(20, () -> {
+				world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
+				world.playSound(finalLoc, Sound.BLOCK_BEACON_POWER_SELECT, 0.5F, 1F);
+			});
 		});
 
 		for (int i = 0; i < 10; i++)
@@ -459,9 +461,10 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		final BearFair21User user = userService.get(player);
 		if (user.getMgn_beaconsActivated().contains(location)) return;
+
 		user.getMgn_beaconsActivated().add(location);
-		user.sendMessage("TODO Wakka - Feedback");
 		userService.save(user);
+		SoundUtils.playSound(user.getPlayer(), Sound.BLOCK_BEACON_ACTIVATE);
 	}
 
 	private static final String gravwellRegion = "bearfair21_main_gravwell";
@@ -481,7 +484,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		// TODO Griffin - Spawn grav well structure
 		user.setQuestStage_MGN(QuestStage.STEP_SEVEN);
 		userService.save(user);
-		user.sendMessage("TODO Wakka - Feedback");
+		SoundUtils.playSound(user.getPlayer(), Sound.BLOCK_BEACON_ACTIVATE);
 	}
 
 	// Speakers
@@ -590,12 +593,12 @@ public class MinigameNightIsland implements BearFair21Island {
 	// Phone
 
 	private static final Consumer<Player> ringingSound = player -> {
-		PlayerUtils.send(player, "ring ring");
+		PlayerUtils.send(player, "&o*ring ring*");
 
 		Location location = BearFair21.getWGUtils().toLocation(
 			BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
 		ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location.toCenterLocation())
-			.offset(0.25, 0.25, 0.25).count(5).extra(0.01);
+			.offset(0.25, 0.25, 0.25).count(2).extra(0.01);
 		int wait = 0;
 		for (int i = 0; i < 5; i++) {
 			addTaskId(player, Tasks.wait(wait += 2, () -> {

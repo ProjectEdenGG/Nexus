@@ -29,12 +29,14 @@ public enum BearFair21NPC {
 	INVENTOR("Joshua", 2660),
 	PASTRY_CHEF("Maple", 2654),
 	SORCERER("Lucian", 2658),
+	TRADER("Joe", 4206),
 	// Quest Givers
 	MAYOR("John", 3838),
 	LUMBERJACK("Flint", 3845),
 	BEEKEEPER("Harold", 3844),
 	FISHERMAN2("Nate", 3841),
 	AERONAUT("Skye", 4111),
+	CURATOR("Curator", 4207),
 	// Misc
 	ADMIRAL("Phoenix", 3839),
 	ORGANIZER("Wakka", 3798),
@@ -93,7 +95,7 @@ public enum BearFair21NPC {
 	;
 
 	@Getter
-	private final String name;
+	private final String npcName;
 	@Getter
 	private final int id;
 
@@ -117,13 +119,13 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		String npcJob = StringUtils.camelCase(this.name.toLowerCase()
-				.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
-				.replaceAll("[0-9]+", "")).trim();
+		String npcJob = StringUtils.camelCase(this.name().toLowerCase()
+			.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
+			.replaceAll("[0-9]+", "")).trim();
 
-		if (npcJob.equalsIgnoreCase(name))
-			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), name));
+		if (npcJob.equalsIgnoreCase(npcName))
+			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), npcName));
 		else
-			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, name);
+			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, npcName);
 	}
 }

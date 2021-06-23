@@ -114,8 +114,8 @@ public class BearFair21Command extends CustomCommand {
 		send("Visible Categories: " + Arrays.toString(user.getContentCategories().toArray()));
 		send("Junk Weight: " + user.getJunkWeight());
 		send("Recycled Items: " + user.getRecycledItems());
-		send("Met NPCs: " + Arrays.toString(user.getMetNPCs().stream().map(id -> BearFair21NPC.of(id).getName()).toArray()));
-		send("Next Step NPCs: " + Arrays.toString(user.getNextStepNPCs().stream().map(id -> BearFair21NPC.of(id).getName()).toArray()));
+		send("Met NPCs: " + Arrays.toString(user.getMetNPCs().stream().map(id -> BearFair21NPC.of(id).getNpcName()).toArray()));
+		send("Next Step NPCs: " + Arrays.toString(user.getNextStepNPCs().stream().map(id -> BearFair21NPC.of(id).getNpcName()).toArray()));
 		send("Active Task Id: " + user.getActiveTaskId());
 		send("Quests:");
 		send("  Main: " + user.getQuestStage_Main());

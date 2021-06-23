@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
@@ -53,7 +54,7 @@ public class MainIsland implements BearFair21Island {
 	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").undroppable();
 	@Getter
 	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
-		FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER);
+		CURATOR, FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER, TRADER);
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
 		WAKKAFLOCKA(BearFair21NPC.ORGANIZER) {
@@ -183,10 +184,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("And the router station is right there on the table.");
 						}
 					}
-				}
-
-				// TODO Wakka
-				/*else if (!user.hasMet(this.getNpcId())) {
+				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("Hm, are you admiring the scenery as well?");
 					script.add("wait 60");
 					script.add("There is honestly nothing more stunning than an area bustling with life.");
@@ -195,7 +193,7 @@ public class MainIsland implements BearFair21Island {
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
-				}*/
+				}
 				return script;
 			}
 		},
@@ -223,6 +221,27 @@ public class MainIsland implements BearFair21Island {
 				}
 
 				script.add("TODO - Hello");
+				return script;
+			}
+		},
+		CURATOR(BearFair21NPC.CURATOR) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+				ItemStack tool = getTool(user.getPlayer());
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - INTRO TO SEEKER");
+					return script;
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add("TODO - Thanks!");
+					script.add("<exit>");
+					invite(user, this.getNpcId(), tool);
+					return script;
+				}
+
+				script.add("TODO - FIND THE BUTTON.");
+				Seeker.addPlayer(user.getOnlinePlayer());
 				return script;
 			}
 		},
@@ -729,6 +748,25 @@ public class MainIsland implements BearFair21Island {
 				return script;
 			}
 		},
+		TRADER(BearFair21NPC.TRADER) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+				ItemStack tool = getTool(user.getPlayer());
+
+				if (!user.hasMet(this.getNpcId())) {
+					script.add("TODO - GREETING");
+					return script;
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add("TODO - Thanks!");
+					script.add("<exit>");
+					invite(user, this.getNpcId(), tool);
+					return script;
+				}
+
+				return script;
+			}
+		},
 		;
 
 		private static void invite(BearFair21User user, int npcId, ItemStack tool) {
@@ -758,7 +796,7 @@ public class MainIsland implements BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.npc.getName();
+			return this.npc.getNpcName();
 		}
 
 		@Override

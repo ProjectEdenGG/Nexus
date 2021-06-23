@@ -402,7 +402,7 @@ public class PugmasIsland implements BearFair21Island {
 
 		@Override
 		public String getName() {
-			return this.npc.getName();
+			return this.npc.getNpcName();
 		}
 
 		@Override
