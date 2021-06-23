@@ -8,11 +8,13 @@ import me.pugabyte.nexus.models.radio.RadioUserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 
 public class RadioHeads implements Listener {
@@ -27,7 +29,10 @@ public class RadioHeads implements Listener {
 		Block block = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(block) || !block.getType().equals(Material.PLAYER_HEAD)) return;
 
-		if (ItemUtils.getItem(block).equals(Nexus.getHeadAPI().getItemHead("17150"))) {
+		Location radioHeadLoc = new Location(BearFair21.getWorld(), 16, 119, -19);
+		ItemStack item = ItemUtils.getItem(block);
+		// item.equals(Nexus.getHeadAPI().getItemHead("17150"))
+		if (item.equals(ItemUtils.getItem(radioHeadLoc.getBlock()))) {
 			event.setCancelled(true);
 
 			RadioUserService userService = new RadioUserService();
