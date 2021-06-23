@@ -59,6 +59,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -91,6 +92,15 @@ public class Misc implements Listener {
 
 			world.setKeepSpawnInMemory(false);
 		}
+	}
+
+	@EventHandler
+	public void onPlayerDropItem(PlayerDropItemEvent event) {
+		final ItemStack item = event.getItemDrop().getItemStack();
+		if (isNullOrAir(item)) return;
+		final NBTItem nbtItem = new NBTItem(item);
+		if (nbtItem.hasKey("droppable") && !nbtItem.getBoolean("droppable"))
+			event.setCancelled(true);
 	}
 
 	@EventHandler

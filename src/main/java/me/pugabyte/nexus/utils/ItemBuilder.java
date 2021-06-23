@@ -390,6 +390,15 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder undroppable() {
+		return droppable(false);
+	}
+
+	public ItemBuilder droppable(boolean droppable) {
+		nbt(item -> item.setBoolean("droppable", droppable));
+		return this;
+	}
+
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
 		NBTItem nbtItem = new NBTItem(build());
 		consumer.accept(nbtItem);
