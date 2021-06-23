@@ -525,8 +525,8 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		Location location = BearFair21.getWGUtils().toLocation(
 			BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
-		ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location)
-			.offset(0.25, 0.25, 0.25).count(15).extra(0.01);
+		ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location.toCenterLocation())
+			.offset(0.25, 0.25, 0.25).count(5).extra(0.01);
 		int wait = 0;
 		for (int i = 0; i < 5; i++) {
 			addTaskId(player, Tasks.wait(wait += 2, () -> {
