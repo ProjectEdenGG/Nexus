@@ -399,6 +399,15 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder unplaceable() {
+		return placeable(false);
+	}
+
+	public ItemBuilder placeable(boolean placeable) {
+		nbt(item -> item.setBoolean("placeable", placeable));
+		return this;
+	}
+
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
 		NBTItem nbtItem = new NBTItem(build());
 		consumer.accept(nbtItem);

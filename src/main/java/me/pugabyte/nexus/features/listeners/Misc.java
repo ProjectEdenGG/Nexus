@@ -95,11 +95,20 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerDropItem(PlayerDropItemEvent event) {
+	public void nbt_onDropItem(PlayerDropItemEvent event) {
 		final ItemStack item = event.getItemDrop().getItemStack();
 		if (isNullOrAir(item)) return;
 		final NBTItem nbtItem = new NBTItem(item);
 		if (nbtItem.hasKey("droppable") && !nbtItem.getBoolean("droppable"))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void nbt_onPlaceBlock(BlockPlaceEvent event) {
+		final ItemStack item = event.getItemInHand();
+		if (isNullOrAir(item)) return;
+		final NBTItem nbtItem = new NBTItem(item);
+		if (nbtItem.hasKey("placeable") && !nbtItem.getBoolean("placeable"))
 			event.setCancelled(true);
 	}
 

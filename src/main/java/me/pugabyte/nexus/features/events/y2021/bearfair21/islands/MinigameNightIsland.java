@@ -516,11 +516,11 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 
 		private ItemStack getDisplayItem() {
-			return new ItemBuilder(material).name(camelCase(name())).undroppable().build();
+			return new ItemBuilder(material).name(camelCase(name())).undroppable().unplaceable().build();
 		}
 	}
 
-	private static final ItemBuilder speaker = new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker").undroppable();
+	private static final ItemBuilder speaker = new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker").undroppable().unplaceable();
 
 	private static final List<Location> speakerLocations = new ArrayList<>(List.of(
 		BearFair21.locationOf(-182, 142, -156),
@@ -675,9 +675,9 @@ public class MinigameNightIsland implements BearFair21Island {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
-			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(Material.GREEN_CARPET).name("Motherboard").customModelData(1).undroppable().build()));
-			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().build()));
-			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().build()));
+			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(Material.GREEN_CARPET).name("Motherboard").customModelData(1).undroppable().unplaceable().build()));
+			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().unplaceable().build()));
+			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().unplaceable().build()));
 
 			fixableItemSlot(player, contents, SlotPos.of(1, 3), FixableItem.BATTERY);
 		}
@@ -699,10 +699,10 @@ public class MinigameNightIsland implements BearFair21Island {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
-			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(Material.NETHERITE_INGOT).name("Battery").customModelData(1).undroppable().build()));
-			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().build()));
-			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.IRON_TRAPDOOR).name("Keyboard").customModelData(0).undroppable().build()));
-			contents.set(2, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().build()));
+			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(Material.NETHERITE_INGOT).name("Battery").customModelData(1).undroppable().unplaceable().build()));
+			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().unplaceable().build()));
+			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.IRON_TRAPDOOR).name("Keyboard").customModelData(0).undroppable().unplaceable().build()));
+			contents.set(2, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().unplaceable().build()));
 
 			fixableItemSlot(player, contents, SlotPos.of(0, 5), FixableItem.SCREEN);
 			fixableItemSlot(player, contents, SlotPos.of(1, 1), FixableItem.MOTHERBOARD);
@@ -728,7 +728,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			GREEN, YELLOW, RED, BLUE, WHITE;
 
 			private ItemStack getDisplayItem() {
-				return new ItemBuilder(ColorType.of(name()).switchColor(Material.WHITE_CONCRETE)).name(camelCase(name()) + " Cable").undroppable().build();
+				return new ItemBuilder(ColorType.of(name()).switchColor(Material.WHITE_CONCRETE)).name(camelCase(name()) + " Cable").undroppable().unplaceable().build();
 			}
 
 			private static List<Cable> randomized() {
@@ -844,7 +844,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			private final SlotPos from, to;
 
 			private ItemStack getDisplayItem() {
-				return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name())).undroppable().build();
+				return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name())).undroppable().unplaceable().build();
 			}
 		}
 
@@ -926,14 +926,14 @@ public class MinigameNightIsland implements BearFair21Island {
 	@AllArgsConstructor
 	private enum FixableDevice {
 		XBOX(
-			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&cTrent's Broken Xbox One").undroppable().build(),
-			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&aTrent's Fixed Xbox One").undroppable().build(),
+			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&cTrent's Broken Xbox One").undroppable().unplaceable().build(),
+			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&aTrent's Fixed Xbox One").undroppable().unplaceable().build(),
 			null,
 			user -> user.setQuestStage_MGN(QuestStage.STEP_ONE)
 		),
 		LAPTOP(
-			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&cFredrickson's Broken Laptop").undroppable().build(),
-			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&aFredrickson's Fixed Laptop").undroppable().build(),
+			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&cFredrickson's Broken Laptop").undroppable().unplaceable().build(),
+			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&aFredrickson's Fixed Laptop").undroppable().unplaceable().build(),
 			user -> user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard(),
 			user -> user.setQuestStage_MGN(QuestStage.STEP_FOUR)
 		),
@@ -949,22 +949,22 @@ public class MinigameNightIsland implements BearFair21Island {
 	private enum FixableItem {
 		BATTERY(
 			FixableDevice.XBOX,
-			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&cTrent's Broken Xbox One Battery").undroppable().build(),
-			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&aTrent's Fixed Xbox One Battery").undroppable().build(),
+			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&cTrent's Broken Xbox One Battery").undroppable().unplaceable().build(),
+			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&aTrent's Fixed Xbox One Battery").undroppable().unplaceable().build(),
 			null,
 			null
 		),
 		SCREEN(
 			FixableDevice.LAPTOP,
-			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&cFredrickson's Broken Laptop Screen").undroppable().build(),
-			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&aFredrickson's Fixed Laptop Screen").undroppable().build(),
+			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&cFredrickson's Broken Laptop Screen").undroppable().unplaceable().build(),
+			new ItemBuilder(Material.GLASS_PANE).customModelData(1).name("&aFredrickson's Fixed Laptop Screen").undroppable().unplaceable().build(),
 			user -> user.setMgn_laptopScreen(true),
 			BearFair21User::isMgn_laptopScreen
 		),
 		MOTHERBOARD(
 			FixableDevice.LAPTOP,
-			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&cFredrickson's Broken Laptop Motherboard").undroppable().build(),
-			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&aFredrickson's Fixed Laptop Motherboard").undroppable().build(),
+			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&cFredrickson's Broken Laptop Motherboard").undroppable().unplaceable().build(),
+			new ItemBuilder(Material.GREEN_CARPET).customModelData(1).name("&aFredrickson's Fixed Laptop Motherboard").undroppable().unplaceable().build(),
 			user -> user.setMgn_laptopMotherboard(true),
 			BearFair21User::isMgn_laptopMotherboard
 		),
