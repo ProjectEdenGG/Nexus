@@ -131,10 +131,10 @@ public class VoteCommand extends CustomCommand {
 				send("&e" + count + " &7- " + players.stream().map(Nickname::of).collect(Collectors.joining(", "))));
 	}
 
-	@Path("reminders [enable]")
-	void reminders(Boolean enable) {
+	@Path("reminders [enable] [player]")
+	void reminders(Boolean enable, @Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		SettingService settingService = new SettingService();
-		Setting reminders = settingService.get(uuid().toString(), "vote-reminders");
+		Setting reminders = settingService.get(player.getUniqueId().toString(), "vote-reminders");
 		if (enable == null)
 			if (reminders.getValue() != null)
 				enable = !reminders.getBoolean();

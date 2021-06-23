@@ -296,8 +296,6 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	/**
 	 * on player enter GG Store region, and mgn step == started, set step to 1, and spawn Trent.
-	 * <p>
-	 * on player fix customer 1 problem, set step to 2.
 	 */
 
 	// Solderer
@@ -412,7 +410,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!event.getRegion().getId().equals(galleryRegion)) return;
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
-		if (List.of(QuestStage.STEP_TWO, QuestStage.STEP_FIVE, QuestStage.STEP_EIGHT).contains(user.getQuestStage_MGN()))
+		if (List.of(QuestStage.STEP_TWO, QuestStage.STEP_SIX, QuestStage.STEP_EIGHT).contains(user.getQuestStage_MGN()))
 			startPhoneRinging(user.getOnlinePlayer());
 	}
 
@@ -562,10 +560,13 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (block.getType() != Material.PLAYER_HEAD) return;
 		final Location location = block.getLocation();
 		if (!basementSpeakerLocation.equals(location)) return;
-		event.setCancelled(true);
 
 		final BearFair21User user = userService.get(player);
+		if (user.getQuestStage_MGN() != QuestStage.STEP_EIGHT) return;
+		if (user.isMgn_foundSpeaker()) return;
 		ClientsideContentManager.addCategory(user, ContentCategory.SPEAKER);
+		user.setMgn_foundSpeaker(true);
+		userService.save(user);
 		Quests.giveItem(player, speaker.build());
 	}
 
@@ -834,9 +835,9 @@ public class MinigameNightIsland implements BearFair21Island {
 		@Getter
 		@AllArgsConstructor
 		private enum RouterParts {
-			POWER_CORD(Material.REDSTONE, 0, SlotPos.of(2, 3), SlotPos.of(1, 1)),
-			ETHERNET_CABLE(Material.END_ROD, 0, SlotPos.of(2, 4), SlotPos.of(0, 4)),
-			FIBER_OPTIC_CABLE(Material.TRIPWIRE_HOOK, 0, SlotPos.of(2, 5), SlotPos.of(1, 7)),
+			POWER_CORD(Material.REDSTONE, 0, SlotPos.of(2, 3), SlotPos.of(1, 7)),
+			ETHERNET_CABLE(Material.END_ROD, 0, SlotPos.of(2, 4), SlotPos.of(1, 1)),
+			FIBER_OPTIC_CABLE(Material.TRIPWIRE_HOOK, 0, SlotPos.of(2, 5), SlotPos.of(0, 4)),
 			;
 
 			private final Material material;
@@ -909,10 +910,10 @@ public class MinigameNightIsland implements BearFair21Island {
 				Quests.sound_obtainItem(player);
 				userService.save(user);
 			}
-		} else if (WGUtils.isInRegion(entity.getLocation(), scrambledCablesRegion))
+		} else if (WGUtils.isInRegion(entity.getLocation(), scrambledCablesRegion)) {
 			if (!user.isMgn_unscrambledWiring())
 				new ScrambledCablesMenu().open(player);
-		else if (WGUtils.isInRegion(entity.getLocation(), routerRegion))
+		} else if (WGUtils.isInRegion(entity.getLocation(), routerRegion))
 			if (!user.isMgn_setupRouter())
 				new RouterMenu().open(player);
 	}

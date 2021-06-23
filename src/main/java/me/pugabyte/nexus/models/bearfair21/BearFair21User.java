@@ -80,6 +80,8 @@ public class BearFair21User implements PlayerOwnedObject {
 	boolean mgn_unscrambledWiring = false;
 	boolean mgn_setupRouter = false;
 
+	boolean mgn_foundSpeaker = false;
+
 	Set<Location> mgn_beaconsActivated = new HashSet<>();
 	Set<Location> mgn_speakersFixed = new HashSet<>();
 
