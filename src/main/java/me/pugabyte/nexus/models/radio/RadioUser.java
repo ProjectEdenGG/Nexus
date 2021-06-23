@@ -29,7 +29,7 @@ public class RadioUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private byte volume = 100;
+	private byte volume = 25;
 	private boolean mute = false;
 
 	private String serverRadioId;

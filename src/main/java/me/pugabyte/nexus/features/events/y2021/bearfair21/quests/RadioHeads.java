@@ -39,6 +39,11 @@ public class RadioHeads implements Listener {
 			RadioUser radioUser = userService.get(event.getPlayer());
 
 			Radio radio = radioUser.getServerRadio();
+			if (radioUser.getVolume() == 100) {
+				radioUser.setVolume((byte) 25);
+				userService.save(radioUser);
+			}
+
 			if (radio == null || !radio.getId().equalsIgnoreCase("bearfair"))
 				PlayerUtils.runCommand(event.getPlayer(), "radio join bearfair");
 			else if (radio.getId().equalsIgnoreCase("bearfair"))
