@@ -69,7 +69,7 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils.Jingle;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
@@ -180,7 +180,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player))
-				SoundUtils.playSound(player, Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
+				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).reciever(player).play();
 
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(StringUtils.getUUID0(), "reload", Time.SECOND.x(15)))

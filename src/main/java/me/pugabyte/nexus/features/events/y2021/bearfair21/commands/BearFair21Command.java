@@ -30,6 +30,7 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -195,8 +196,9 @@ public class BearFair21Command extends CustomCommand {
 		if (world == null)
 			return;
 
-		world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F);
-		Tasks.wait(Time.SECOND.x(2), () -> world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F));
+		new SoundBuilder(Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED).location(loc).volume(4).pitch(0.1).play();
+		Tasks.wait(Time.SECOND.x(2), () ->
+			new SoundBuilder(Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED).location(loc).volume(4).pitch(0.1).play());
 	}
 
 	@Path("metNPCs")

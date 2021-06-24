@@ -29,7 +29,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -187,23 +187,23 @@ public class Quests implements Listener {
 	}
 
 	public static void sound_obtainItem(Player player) {
-		SoundUtils.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 2F);
+		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).reciever(player).volume(0.5).pitch(2.0).play();
 	}
 
 	public static void sound_completeQuest(Player player) {
-		SoundUtils.playSound(player, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.5F, 1F);
+		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).reciever(player).volume(0.5).play();
 	}
 
 	public static void sound_villagerNo(Player player) {
-		SoundUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, 0.5F, 1F);
+		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).reciever(player).volume(0.5).play();
 	}
 
 	public static void sound_npcAlert(Player player) {
-		SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5F, 1F);
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(player).volume(0.5).play();
 	}
 
 	public static void poof(Location location) {
-		location.getWorld().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1F, 1F);
+		new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).location(location).play();
 		location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, 500, 0.5, 1, 0.5, 0);
 		location.getWorld().spawnParticle(Particle.FLASH, location, 10, 0, 0, 0);
 	}
@@ -285,7 +285,7 @@ public class Quests implements Listener {
 
 		if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
 			send(Errors.cantBreak, player);
-			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+			sound_villagerNo(player);
 		}
 	}
 }

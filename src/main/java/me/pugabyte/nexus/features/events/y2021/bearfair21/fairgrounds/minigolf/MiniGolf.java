@@ -24,7 +24,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Color;
@@ -488,7 +488,7 @@ public class MiniGolf {
 								Vector newVel = getDirection(facing.getOppositeFace(), power);
 
 								ball.setVelocity(ball.getVelocity().multiply(9.3).add(newVel).setY(height));
-								SoundUtils.playSound(ball.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 3, 1);
+								new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(ball.getLocation()).volume(3.0).play();
 								new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(ball.getLocation()).count(25).spawn();
 							} catch (Exception ignored) {
 

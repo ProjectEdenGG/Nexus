@@ -10,6 +10,7 @@ import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -97,7 +98,7 @@ public class Archery implements Listener {
 		projectile.remove();
 		--activeTargets;
 		removeTarget(hitBlock);
-		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
+		new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).reciever(player).volume(0.3).pitch(0.1).play();
 
 		BearFair21.giveDailyPoints(player, BF21PointSource.ARCHERY, 1);
 	}

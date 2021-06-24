@@ -8,7 +8,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.m
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -93,7 +93,7 @@ public class MiniGolfUtils {
 		ball.setTicksLived(1);
 
 		sendActionBar(user, "&cOut of bounds!");
-		SoundUtils.playSound(user.getOnlinePlayer(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, SoundUtils.getPitch(0));
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).reciever(user.getOnlinePlayer()).pitchStep(0).play();
 	}
 
 	public static MiniGolf21User getUser(Snowball ball) {

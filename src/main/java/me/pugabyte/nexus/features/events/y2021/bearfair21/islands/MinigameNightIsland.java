@@ -36,6 +36,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
@@ -96,7 +97,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			for (Player player : BearFair21.getPlayers()) {
 				for (Location soundLoc : userService.get(player).getMgn_beaconsActivated()) {
 					if (player.getLocation().distance(soundLoc) <= 20) {
-						player.playSound(soundLoc, Sound.BLOCK_BEACON_AMBIENT, 2F, 1F);
+						new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).reciever(player).location(soundLoc).volume(2.0).play();
 
 						Block block = soundLoc.getBlock();
 						if (block.getBlockData() instanceof Directional directional) {
@@ -110,7 +111,7 @@ public class MinigameNightIsland implements BearFair21Island {
 				}
 
 				if (ClientsideContentManager.canSee(player, ContentCategory.GRAVWELL))
-					player.playSound(gravWellLoc, Sound.BLOCK_BEACON_AMBIENT, 2F, 1F);
+					new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).reciever(player).location(gravWellLoc).volume(2.0).play();
 			}
 		});
 	}
@@ -385,11 +386,11 @@ public class MinigameNightIsland implements BearFair21Island {
 		World world = loc.getWorld();
 
 		Tasks.wait(5, () -> {
-			world.playSound(finalLoc, Sound.BLOCK_ANVIL_USE, 0.3F, 0.1F);
-			world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
+			new SoundBuilder(Sound.BLOCK_ANVIL_USE).location(finalLoc).volume(0.3).pitch(0.1).play();
+			new SoundBuilder(Sound.BLOCK_REDSTONE_TORCH_BURNOUT).location(finalLoc).volume(0.5).play();
 			Tasks.wait(20, () -> {
-				world.playSound(finalLoc, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 0.5F, 1F);
-				world.playSound(finalLoc, Sound.BLOCK_BEACON_POWER_SELECT, 0.5F, 1F);
+				new SoundBuilder(Sound.BLOCK_REDSTONE_TORCH_BURNOUT).location(finalLoc).volume(0.5).play();
+				new SoundBuilder(Sound.BLOCK_BEACON_POWER_SELECT).location(finalLoc).volume(0.5).play();
 			});
 		});
 
@@ -475,7 +476,8 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		user.getMgn_beaconsActivated().add(location);
 		userService.save(user);
-		SoundUtils.playSound(user.getPlayer(), Sound.BLOCK_BEACON_ACTIVATE);
+
+		new SoundBuilder(Sound.BLOCK_BEACON_ACTIVATE).reciever(player).location(location).play();
 	}
 
 	private static final String gravwellRegion = "bearfair21_main_gravwell";
@@ -495,7 +497,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		// TODO Griffin - Spawn grav well structure
 		user.setQuestStage_MGN(QuestStage.STEP_SEVEN);
 		userService.save(user);
-		SoundUtils.playSound(user.getPlayer(), Sound.BLOCK_BEACON_ACTIVATE);
+
+		new SoundBuilder(Sound.BLOCK_BEACON_ACTIVATE).reciever(player).location(block).play();
 	}
 
 	// Speakers
@@ -616,7 +619,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		int wait = 0;
 		for (int i = 0; i < 5; i++) {
 			addTaskId(player, Tasks.wait(wait += 2, () -> {
-				SoundUtils.playSound(location, Sound.BLOCK_NOTE_BLOCK_BELL, 0.5F, SoundUtils.getPitch(0));
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).location(location).volume(0.5).pitchStep(0).play();
 				particles.spawn();
 			}));
 		}

@@ -23,7 +23,7 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.TitleUtils;
@@ -262,37 +262,41 @@ public class PugmasIsland implements BearFair21Island {
 						script.add("wait 100");
 						wait += (100 + 100 + 100 + 60 + 100 + 100);
 						script.add("<self> How dare you try and steal from these kind citizens! What have they ever done to you?! " +
-								"You'll never get away with this...");
+							"You'll never get away with this...");
 						script.add("wait 140");
 						script.add("Oh boo hoo! You're already too late! I have devised an ingenious plan that is completely fool-proof " +
-								"and has no flaws what-so-ever!");
+							"and has no flaws what-so-ever!");
 						script.add("wait 140");
 						script.add("My make-shift Present Pincher 4000 will NEVER let me down! MUAHAHAHA!");
 						script.add("wait 100");
 						wait += (140 + 140 + 100);
 
 						// Rocket rumbling sound
-						Tasks.wait(wait, () -> SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_MINECART_RIDING, 1F, 0.1F));
+						;
+						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_MINECART_RIDING).reciever(user.getPlayer()).pitch(0.1).play());
 						script.add("<self> No please! Don't do it!");
 						script.add("wait 70");
 						wait += (70);
 
 						// Rocket launching sound
-						Tasks.wait(wait, () -> SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1F, 0.2F));
+						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH).reciever(user.getPlayer()).pitch(0.1).play());
 						script.add("MUAHAHAHA-");
 						script.add("wait 60");
 						wait += (60);
 
 						// Rocket exploding
 						Tasks.wait(wait, () -> {
-							SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_BLAST, 2F, 0.1F);
-							SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_GENERIC_EXPLODE, 2F, 0.1F);
-							SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 2F, 1F);
+							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).reciever(user.getPlayer()).volume(2.0).pitch(0.1).play();
+
+							new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(user.getPlayer()).volume(2.0).pitch(0.1).play();
+
+							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).reciever(user.getPlayer()).volume(2.0).play();
 							Tasks.wait(8, () -> {
-								SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 2F, 0.1F);
-								SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1F, 0.1F);
-								Tasks.wait(8, () ->
-										SoundUtils.playSound(user.getPlayer(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR, 1F, 0.1F));
+								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST).reciever(user.getPlayer()).volume(2.0).pitch(0.1).play();
+								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).reciever(user.getPlayer()).pitch(0.1).play();
+								Tasks.wait(8, () -> {
+									new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR).reciever(user.getPlayer()).pitch(0.1).play();
+								});
 							});
 						});
 						script.add("wait 20");

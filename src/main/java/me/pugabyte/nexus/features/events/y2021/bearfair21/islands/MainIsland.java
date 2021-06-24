@@ -40,7 +40,7 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Bea
 @NPCClass(MainNPCs.class)
 public class MainIsland implements BearFair21Island {
 
-	private static BearFair21UserService userService = new BearFair21UserService();
+	private static final BearFair21UserService userService = new BearFair21UserService();
 	//
 	@Getter
 	private static final ItemBuilder balloon_cyan = new ItemBuilder(Material.STICK).customModelData(21).undroppable();
@@ -51,7 +51,7 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
-	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").undroppable();
+	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").customModelData(3).undroppable();
 	@Getter
 	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
 		CURATOR, FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER, TRADER);
@@ -152,10 +152,10 @@ public class MainIsland implements BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
-					// TODO Wakka Fix (town name), add wait
+					// TODO Wakka add wait
 					if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> Thanks for calling GG! How can I help?");
-						script.add("Hey, this is Zach over in (town name). Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back?");
+						script.add("Hey, this is Zach over in Honeywood. Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back?");
 						script.add("We're in a bit of a bind now since my electrician bailed on me this morning.");
 						script.add("<self> Well that wasn't very professional of them.");
 						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too.");
@@ -183,6 +183,8 @@ public class MainIsland implements BearFair21Island {
 							script.add("You'll find the main cable over by the tree, the wires are under the house- watch your step btw");
 							script.add("And the router station is right there on the table.");
 						}
+
+						return script;
 					}
 				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("Hm, are you admiring the scenery as well?");
@@ -190,10 +192,14 @@ public class MainIsland implements BearFair21Island {
 					script.add("There is honestly nothing more stunning than an area bustling with life.");
 					script.add("wait 80");
 					script.add("Nice to meet you, my name is Zach and I love architecture with all my heart.");
+					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
+					return script;
 				}
+
+				script.add("TODO - Hello");
 				return script;
 			}
 		},
@@ -267,7 +273,15 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				}
 
-				script.add("TODO - Hello");
+				List<String> facts = Arrays.asList(
+					"Did you know, honey bees fly at up to 15 miles per hour?",
+					"Did you know, bees have an exceptional sense of smell.",
+					"Did you know, Bombus Dahlbomii are the world’s largest bumblebees",
+					"Did you know, it takes one ounce of honey to fuel a bee’s flight around the world, they're quite efficient.",
+					"Did you know, the honey bee’s wings stroke 11,400 times per minute, thus making their distinctive buzz.",
+					"Did you know, the honey bee is the only insect that produces food eaten by man."
+				);
+				script.add(RandomUtils.randomElement(facts));
 				return script;
 			}
 		},
@@ -318,7 +332,7 @@ public class MainIsland implements BearFair21Island {
 				List<String> script = new ArrayList<>();
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("Welcome to the village!");
+					script.add("Welcome to Honeywood!");
 					script.add("wait 40");
 					script.add("I would love to give you a tour, but I'm swamped in preparation work for the upcoming anniversary event.");
 					script.add("wait 80");

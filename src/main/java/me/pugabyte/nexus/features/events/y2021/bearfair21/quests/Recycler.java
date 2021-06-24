@@ -11,7 +11,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -127,7 +127,7 @@ public class Recycler implements Listener {
 			Tasks.wait(wait.addAndGet(5), () -> {
 				levelled.setLevel(finalI);
 				composter.setBlockData(levelled);
-				SoundUtils.playSound(composterLoc, Sound.BLOCK_COMPOSTER_FILL);
+				new SoundBuilder(Sound.BLOCK_COMPOSTER_FILL).location(composter).play();
 			});
 		}
 
@@ -135,7 +135,7 @@ public class Recycler implements Listener {
 		Tasks.wait(wait.addAndGet(10), () -> {
 			openable.setOpen(false);
 			above.setBlockData(openable);
-			SoundUtils.playSound(composterLoc, Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE);
+			new SoundBuilder(Sound.BLOCK_WOODEN_TRAPDOOR_CLOSE).location(composter).play();
 
 		});
 
@@ -146,7 +146,7 @@ public class Recycler implements Listener {
 		// Play composter sounds and effects
 		for (int i = 0; i < count; i++) {
 			Tasks.wait(wait.addAndGet(5), () -> {
-				SoundUtils.playSound(composterLoc, Sound.BLOCK_COMPOSTER_READY);
+				new SoundBuilder(Sound.BLOCK_COMPOSTER_READY).location(composter).play();
 				ParticleUtils.display(Particle.VILLAGER_HAPPY, LocationUtils.getCenteredLocation(above.getLocation()), 15, 0.5, 0.5, 0.5, 0.1);
 			});
 		}
@@ -155,7 +155,7 @@ public class Recycler implements Listener {
 
 		// Play done sound
 		Tasks.wait(wait.addAndGet(10), () -> {
-			SoundUtils.playSound(composterLoc, Sound.BLOCK_NOTE_BLOCK_BELL);
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(composterLoc).play();
 			levelled.setLevel(0);
 			composter.setBlockData(levelled);
 		});
@@ -166,7 +166,7 @@ public class Recycler implements Listener {
 		Tasks.wait(wait.addAndGet(10), () -> {
 			openable.setOpen(true);
 			above.setBlockData(openable);
-			SoundUtils.playSound(composterLoc, Sound.BLOCK_WOODEN_TRAPDOOR_OPEN);
+			new SoundBuilder(Sound.BLOCK_WOODEN_TRAPDOOR_OPEN).location(composterLoc).play();
 		});
 
 		Tasks.wait(wait.addAndGet(10), () -> {

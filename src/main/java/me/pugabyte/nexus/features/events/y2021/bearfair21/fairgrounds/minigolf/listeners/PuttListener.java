@@ -13,6 +13,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -157,7 +158,7 @@ public class PuttListener implements Listener {
 
 							ball.setTicksLived(1);
 							ball.setVelocity(dir);
-							world.playSound(entityLoc, Sound.BLOCK_METAL_HIT, 0.75f, 1.25f);
+							new SoundBuilder(Sound.BLOCK_METAL_HIT).location(entityLoc).volume(0.75).pitch(1.25).play();
 
 							ActionBarUtils.sendActionBar(player, "&6Power: " + getPowerDisplay(power), Time.SECOND.x(3));
 							user.setSnowball(ball);
@@ -233,7 +234,7 @@ public class PuttListener implements Listener {
 				ball.teleport(user.getBallLocation().add(0, MiniGolf.getFloorOffset(), 0));
 
 				// Sound
-				world.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 0.9f, 1.9f);
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).location(player.getLocation()).volume(0.9).pitch(1.9).play();
 			}
 		} else if (ItemUtils.isFuzzyMatch(item, MiniGolf.getScoreBook())) {
 			user.debug("PuttListener > Using score book");

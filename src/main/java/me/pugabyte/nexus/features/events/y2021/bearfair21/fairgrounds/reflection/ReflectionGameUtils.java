@@ -5,6 +5,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -88,7 +89,7 @@ public class ReflectionGameUtils {
 	}
 
 	public static void win(int count) {
-		BearFair21.getWorld().playSound(ReflectionGame.getCenter(), Sound.BLOCK_NOTE_BLOCK_BELL, 2F, 1F);
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(ReflectionGame.getCenter()).volume(2.0).play();
 
 		String type = ReflectionGame.getLamp().getChatColor() + StringUtils.camelCase(ReflectionGame.getLamp().getType());
 		Collection<Player> players = getWGUtils().getPlayersInRegion(ReflectionGame.getGameRg());

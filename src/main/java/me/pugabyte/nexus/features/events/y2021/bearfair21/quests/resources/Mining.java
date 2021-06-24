@@ -10,6 +10,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,8 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static me.pugabyte.nexus.utils.SoundUtils.playSound;
 
 public class Mining implements Listener {
 	public static String taskId = "bearfair21-ore-regen";
@@ -69,7 +68,7 @@ public class Mining implements Listener {
 		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType()))
 			return false;
 
-		playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, SoundCategory.BLOCKS);
+		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack());
 
 		scheduleRegen(block);
