@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.crates.models;
 import fr.minuskube.inv.SmartInventory;
 import lombok.Getter;
 import me.pugabyte.nexus.features.crates.Crates;
+import me.pugabyte.nexus.features.crates.crates.BearFair21Crate;
 import me.pugabyte.nexus.features.crates.crates.BossCrate;
 import me.pugabyte.nexus.features.crates.crates.FebVoteRewardCrate;
 import me.pugabyte.nexus.features.crates.crates.MysteryCrate;
@@ -29,8 +30,9 @@ public enum CrateType {
 	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8.00, 15.00, 11.00, .00F, .00F)),
 	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11.00, 15.00, 8.00, .00F, .00F)),
 	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15.00, 15.00, -8.00, .00F, .00F)),
-	FEB_VOTE_REWARD(new FebVoteRewardCrate(), new Location(Bukkit.getWorld("survival"), -12.00, 15.00, 9.00, .00F, .00F)),
-	BOSS(new BossCrate(), new Location(Bukkit.getWorld("survival"), -9.00, 15.00, 12.00, .00F, .00F));
+	FEB_VOTE_REWARD(new FebVoteRewardCrate(), null),
+	BOSS(new BossCrate(), new Location(Bukkit.getWorld("survival"), -9.00, 15.00, 12.00, .00F, .00F)),
+	BEAR_FAIR_21(new BearFair21Crate(), new Location(Bukkit.getWorld("survival"), -12.00, 15.00, 9.00, .00F, .00F));
 
 	Crate crateClass;
 	Location location;
