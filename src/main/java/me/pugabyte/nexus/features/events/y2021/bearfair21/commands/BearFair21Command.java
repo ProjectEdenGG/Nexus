@@ -102,6 +102,7 @@ public class BearFair21Command extends CustomCommand {
 	public void databaseDelete(@Arg("self") Player player) {
 		BearFair21User user = userService.get(player);
 		user.cancelActiveTask();
+		Arrays.stream(ContentCategory.values()).forEach(category -> ClientsideContentManager.removeCategory(user, category));
 		userService.delete(user);
 		send("deleted bearfair21 user: " + player.getName());
 	}
