@@ -207,7 +207,7 @@ public class Justice extends Feature implements Listener {
 	public void warning_onNotAFK(NotAFKEvent event) {
 		Tasks.wait(Time.SECOND.x(2), () -> {
 			final Player player = event.getPlayer().getPlayer();
-			if (player.isOnline())
+			if (player != null && player.isOnline())
 				Punishments.of(player).tryShowWarns();
 		});
 	}
