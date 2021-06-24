@@ -261,7 +261,7 @@ public class BearFair21 implements Listener {
 
 		BearFair21UserService userService = new BearFair21UserService();
 		BearFair21User user = userService.get(player);
-		List<ItemStack> items = Quests.getItemsListFrom(user, Collections.singletonList(Merchants.traderCoupon));
+		List<ItemStack> items = Quests.getItemsListFrom(user, Collections.singletonList(Merchants.traderCoupon.clone()));
 		if (Utils.isNullOrEmpty(items))
 			return;
 
