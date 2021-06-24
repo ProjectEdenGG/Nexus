@@ -60,11 +60,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MiniGolf {
 	// @formatter:off
-	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
-	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).build();
+	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable();
+	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
 	//
 	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
 	@Getter private static final List<ItemStack> items = Arrays.asList(putter, wedge, whistle, golfBall.build(), scoreBook);
@@ -96,6 +96,7 @@ public class MiniGolf {
 		for (MiniGolf21User user : service.getUsers()) {
 			Snowball snowball = user.getSnowball();
 			if (snowball != null) {
+				user.debug("shutdown, removing golfball");
 				user.removeBall();
 				MiniGolfUtils.giveBall(user);
 			}
@@ -276,6 +277,7 @@ public class MiniGolf {
 					continue;
 
 				if (!ball.isValid()) {
+					user.debug("golfball is not valid, removing");
 					user.removeBall();
 					continue;
 				}
@@ -341,16 +343,17 @@ public class MiniGolf {
 						ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
 
 						// Remove ball
+						user.debug("golfball has hit cauldron, removing");
 						user.removeBall();
 
 						// Spawn firework
 						Tasks.wait(Time.TICK, () -> new FireworkLauncher(loc)
-								.power(0)
-								.detonateAfter(Time.TICK.x(2))
-								.type(Type.BURST)
-								.colors(user.getFireworkColor())
-								.fadeColors(Collections.singletonList(Color.WHITE))
-								.launch());
+							.power(0)
+							.detonateAfter(Time.TICK.x(2))
+							.type(Type.BURST)
+							.colors(user.getFireworkColor())
+							.fadeColors(Collections.singletonList(Color.WHITE))
+							.launch());
 
 						// Send message
 						int wait = Time.SECOND.x(2);

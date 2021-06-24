@@ -163,6 +163,7 @@ public class PuttListener implements Listener {
 							user.setSnowball(ball);
 						} else if (ball.isValid()) {
 							// Give golf ball
+							user.debug("picking up golfball, removing");
 							user.removeBall();
 							MiniGolfUtils.giveBall(user);
 						}

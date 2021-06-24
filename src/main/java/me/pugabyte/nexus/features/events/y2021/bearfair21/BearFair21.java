@@ -46,14 +46,13 @@ import java.util.Set;
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 
-
 public class BearFair21 implements Listener {
 	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
 	@Getter
 	private static final BearFair21Config config = configService.get0();
 	/**
-	 * TODO BF21:
-	 * When BearFair21 is over:
+	 * TODO BF21: on first visit, clear inventory of player
+	 * TODO BF21: When BearFair21 is over:
 	 * - disable: enableRides, enableQuests, enableWarp, and giveDailyPoints
 	 * - disable: region block break/place
 	 */

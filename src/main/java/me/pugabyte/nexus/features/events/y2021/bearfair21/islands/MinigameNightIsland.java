@@ -40,12 +40,14 @@ import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -88,12 +90,23 @@ public class MinigameNightIsland implements BearFair21Island {
 	public MinigameNightIsland() {
 		Nexus.registerListener(this);
 
+		ParticleBuilder particles = new ParticleBuilder(Particle.REDSTONE).color(Color.RED).count(15).offset(0.3, 0.3, 0.3);
 		Location gravWellLoc = BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion(gravwellRegion).getMinimumPoint());
 		Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			for (Player player : BearFair21.getPlayers()) {
 				for (Location soundLoc : userService.get(player).getMgn_beaconsActivated()) {
-					if (player.getLocation().distance(soundLoc) <= 20)
+					if (player.getLocation().distance(soundLoc) <= 20) {
 						player.playSound(soundLoc, Sound.BLOCK_BEACON_AMBIENT, 2F, 1F);
+
+						Block block = soundLoc.getBlock();
+						if (block.getBlockData() instanceof Directional directional) {
+							Location particleLoc = soundLoc.getBlock().getRelative(directional.getFacing().getOppositeFace()).getLocation().toCenterLocation();
+							int wait = 0;
+							for (int i = 0; i < 5; i++) {
+								Tasks.wait(wait += 20, () -> particles.location(particleLoc).receivers(player).spawn());
+							}
+						}
+					}
 				}
 
 				if (ClientsideContentManager.canSee(player, ContentCategory.GRAVWELL))
@@ -598,12 +611,12 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		Location location = BearFair21.getWGUtils().toLocation(
 			BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
-		ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location.toCenterLocation())
+		ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location.toCenterLocation()).receivers(player)
 			.offset(0.25, 0.25, 0.25).count(2).extra(0.01);
 		int wait = 0;
 		for (int i = 0; i < 5; i++) {
 			addTaskId(player, Tasks.wait(wait += 2, () -> {
-				SoundUtils.playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, 0.5F, SoundUtils.getPitch(0));
+				SoundUtils.playSound(location, Sound.BLOCK_NOTE_BLOCK_BELL, 0.5F, SoundUtils.getPitch(0));
 				particles.spawn();
 			}));
 		}

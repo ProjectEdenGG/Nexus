@@ -102,6 +102,7 @@ public class MiniGolfUtils {
 				continue;
 
 			if (!user.isOnline()) {
+				user.debug("user is not online, removing golfball");
 				user.removeBall();
 				continue;
 			}
