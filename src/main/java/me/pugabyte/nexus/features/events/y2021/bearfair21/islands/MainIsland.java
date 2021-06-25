@@ -14,6 +14,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.Clie
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
+import me.pugabyte.nexus.features.resourcepack.ResourcePack;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
@@ -65,7 +66,7 @@ public class MainIsland implements BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("Hello there, my name is WakkaFlocka, and I am an admin on Project Eden and the organizer for this event. And...");
+					script.add("Hello there, my name is WakkaFlocka, and I am an admin on Project Eden and the organizer for this event.");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
@@ -76,6 +77,14 @@ public class MainIsland implements BearFair21Island {
 				script.add("wait 80");
 				script.add("There are several islands to explore, find easter eggs, and quests to complete!");
 				script.add("wait 80");
+
+				if (!ResourcePack.isEnabledFor(user.getOnlinePlayer())) {
+					script.add("I notice you don't have our custom resource pack enabled.");
+					script.add("wait 60");
+					script.add("I highly recommend enabling it, as there are dozens of custom models and textures used within the event.");
+					script.add("wait 100");
+				}
+
 				script.add("At the carnival, you can play daily minigames in which you can play to gain Event Points.");
 				script.add("wait 80");
 				script.add("At any point you can buy unique prizes and perks using those points.");
@@ -439,7 +448,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("You're a life saver, thank you! And as a token of my gratitude, have this...");
 							Tasks.wait(40, () -> {
 								Quests.giveKey(user);
-								Trophy.BEAR_FAIR_2021_COMPLETION_MAIN.give(user.getPlayer());
+								Trophy.BEAR_FAIR_2021.give(user.getPlayer());
 							});
 
 							user.setQuestStage_Main(QuestStage.COMPLETE);

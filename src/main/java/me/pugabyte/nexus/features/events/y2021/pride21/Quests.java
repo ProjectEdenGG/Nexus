@@ -122,7 +122,7 @@ public class Quests implements Listener {
 				player.resetPlayerTime();
 				viewFloat(player, true);
 				if (!user.isBonusTokenRewardClaimed()) {
-					Trophy.PRIDE_2021_COMPLETION.give(player);
+					Trophy.PRIDE_2021.give(player);
 
 					user.setBonusTokenRewardClaimed(true);
 					service.save(user);

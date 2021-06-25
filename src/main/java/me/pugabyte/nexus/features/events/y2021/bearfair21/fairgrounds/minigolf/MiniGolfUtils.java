@@ -60,7 +60,7 @@ public class MiniGolfUtils {
 	public static void checkCompleted(MiniGolf21User user) {
 		Set<MiniGolfHole> userCompleted = user.getCompleted();
 		if (userCompleted.size() == MiniGolfHole.getHoles().size())
-			Trophy.BEAR_FAIR_2021_COMPLETION_MINIGOLF.give(user.getPlayer());
+			Trophy.BEAR_FAIR_2021_MINIGOLF.give(user.getPlayer());
 	}
 
 
