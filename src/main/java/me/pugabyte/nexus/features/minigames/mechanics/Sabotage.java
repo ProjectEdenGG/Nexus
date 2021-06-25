@@ -39,7 +39,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -226,7 +225,7 @@ public class Sabotage extends TeamMechanic {
 				PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), EnumItemSlot.MAINHAND);
 				SabotageTeam team = SabotageTeam.of(minigamer);
 				if (team != SabotageTeam.IMPOSTOR) {
-					Tasks.sync(() -> {
+					match.getTasks().sync(() -> {
 						List<Minigamer> nearby = new ArrayList<>();
 						location.getNearbyEntitiesByType(Player.class, lightLevel).forEach(_player -> {
 							Minigamer other = PlayerManager.get(_player);
