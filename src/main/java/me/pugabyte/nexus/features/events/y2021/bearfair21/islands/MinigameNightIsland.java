@@ -144,7 +144,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 
-				script.add("Hey! After learning 504 bass lines, I still can't decide what style I love the most… maybe all of them...");
+				script.add("Hey! After learning 504 bass lines, I still can't decide what style I love the most... maybe all of them...");
 
 				return script;
 			}
@@ -205,9 +205,9 @@ public class MinigameNightIsland implements BearFair21Island {
 						script.add("<self> Nope, just finished up a service call, what's wrong?");
 						script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers! The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
 						script.add("<self> Oh no! What can I do?");
-						script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more… You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
+						script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
 						script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
-						script.add("Thanks for the optimism dude… Don't worry about the Game Gallery, I'll close up for you.");
+						script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
 					}
 
 					case STARTED -> {
@@ -234,7 +234,7 @@ public class MinigameNightIsland implements BearFair21Island {
 					script.add("Ayy yo dude. You the one I gotta talk to ‘bout fixin my xbox?");
 					script.add("<self> Yep! What seems to be the problem?");
 					script.add("So like, Its an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
-					script.add("<self> Yeah that's not good… does the blue screen have an error message?");
+					script.add("<self> Yeah that's not good... does the blue screen have an error message?");
 					script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on " +
 						"channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
 					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I'll be right back with you as soon as it's fixed. Shouldn't be more than a few minutes. ");
@@ -281,6 +281,29 @@ public class MinigameNightIsland implements BearFair21Island {
 					userService.save(user);
 					Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
 				}
+
+				return script;
+			}
+		},
+		JAMES(BearFair21NPC.JAMES) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
+					if (!user.isMgn_boughtCar()) {
+						script.add("Hey, interested in the car? Well I gotta warn you there's no posted price because it's been totaled.");
+						script.add("I'm just sellin' it for salvage so if you see any parts you'd like, we can talk price.");
+						script.add("<self> Actually... how's the sound-system?");
+						script.add("Well it was totaled by water damage so the front speakers are toast.");
+						script.add("The rear speakers actually managed to survive though so if you're cool with half a sound-system, I'd say <TODO Wakka Fix cost> aughta' cover it.");
+						// TODO Wakka script if you don't have enough money
+						script.add("<self> I'll take it!");
+						return script;
+					}
+				}
+
+				// TODO Wakka rest of the script
 
 				return script;
 			}
@@ -513,7 +536,6 @@ public class MinigameNightIsland implements BearFair21Island {
 		final BearFair21User user = userService.get(player);
 		ClientsideContentManager.addCategory(user, ContentCategory.GRAVWELL);
 		player.getInventory().removeItem(MainIsland.getGravwell().build());
-		// TODO Griffin - Spawn grav well structure
 		user.setQuestStage_MGN(QuestStage.STEP_SEVEN);
 		userService.save(user);
 
@@ -553,7 +575,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 	}
 
-	private static final Supplier<ItemBuilder> speaker = () -> new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker").undroppable().unplaceable();
+	private static final Supplier<ItemBuilder> speaker = () -> ItemBuilder.fromHeadId("2126").name("Speaker").undroppable().unplaceable();
 
 	private static final List<Location> speakerLocations = new ArrayList<>(List.of(
 		BearFair21.locationOf(-182, 142, -156),
@@ -978,8 +1000,8 @@ public class MinigameNightIsland implements BearFair21Island {
 	@AllArgsConstructor
 	private enum FixableDevice implements Fixable {
 		XBOX(
-			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&cTrent's Broken Xbox One").undroppable().unplaceable().build(),
-			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&aTrent's Fixed Xbox One").undroppable().unplaceable().build(),
+			ItemBuilder.fromHeadId("43417").name("&cTrent's Broken Xbox One").undroppable().unplaceable().build(),
+			ItemBuilder.fromHeadId("43417").name("&aTrent's Fixed Xbox One").undroppable().unplaceable().build(),
 			null,
 			user -> user.setQuestStage_MGN(QuestStage.STEP_ONE)
 		),

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -281,6 +282,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder skullOwnerActual(HasOfflinePlayer offlinePlayer) {
 		((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer.getOfflinePlayer());
 		return this;
+	}
+
+	public static ItemBuilder fromHeadId(String id) {
+		return new ItemBuilder(Nexus.getHeadAPI().getItemHead(id));
 	}
 
 	// Banners
