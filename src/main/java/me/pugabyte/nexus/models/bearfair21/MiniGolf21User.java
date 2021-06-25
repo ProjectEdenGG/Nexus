@@ -49,6 +49,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	private boolean debug = false;
 	//
 	private Set<MiniGolfHole> holeInOne = new HashSet<>();
+	private Set<MiniGolfHole> completed = new HashSet<>();
 	private Map<MiniGolfHole, Integer> score = new HashMap<>();
 	private MiniGolfHole currentHole = null;
 	private int currentStrokes = 0;

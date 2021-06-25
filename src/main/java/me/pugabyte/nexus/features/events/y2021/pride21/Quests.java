@@ -10,8 +10,6 @@ import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.pride21.Pride21User;
 import me.pugabyte.nexus.models.pride21.Pride21UserService;
 import me.pugabyte.nexus.models.trophy.Trophy;
-import me.pugabyte.nexus.models.trophy.TrophyHolder;
-import me.pugabyte.nexus.models.trophy.TrophyHolderService;
 import me.pugabyte.nexus.utils.DescParseTickFormat;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -124,10 +122,7 @@ public class Quests implements Listener {
 				player.resetPlayerTime();
 				viewFloat(player, true);
 				if (!user.isBonusTokenRewardClaimed()) {
-					TrophyHolderService trophyService = new TrophyHolderService();
-					TrophyHolder holder = trophyService.get(player);
-					holder.earnAndMessage(Trophy.PRIDE_2021);
-					trophyService.save(holder);
+					Trophy.PRIDE_2021_COMPLETION.give(player);
 
 					user.setBonusTokenRewardClaimed(true);
 					service.save(user);

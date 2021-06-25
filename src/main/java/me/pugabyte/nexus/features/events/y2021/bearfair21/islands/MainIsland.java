@@ -17,6 +17,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishi
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
+import me.pugabyte.nexus.models.trophy.Trophy;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -436,7 +437,10 @@ public class MainIsland implements BearFair21Island {
 						}
 						case STEP_SIX -> {
 							script.add("You're a life saver, thank you! And as a token of my gratitude, have this...");
-							Tasks.wait(40, () -> Quests.giveKey(user));
+							Tasks.wait(40, () -> {
+								Quests.giveKey(user);
+								Trophy.BEAR_FAIR_2021_COMPLETION_MAIN.give(user.getPlayer());
+							});
 
 							user.setQuestStage_Main(QuestStage.COMPLETE);
 							userService.save(user);

@@ -2,8 +2,8 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import eden.utils.RandomUtils;
 import eden.utils.TimeUtils.Time;
-import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
@@ -57,9 +57,6 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
-
-	@Getter
-	private static final ItemStack crateKey = new ItemBuilder(Material.TRIPWIRE_HOOK).amount(1).name("Bear Fair Crate Key").build();
 
 	public Quests() {
 		Nexus.registerListener(this);
@@ -209,9 +206,8 @@ public class Quests implements Listener {
 	}
 
 	public static void giveKey(BearFair21User user) {
+		CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), 1);
 		Quests.sound_completeQuest(user.getPlayer());
-		giveItem(user, crateKey.clone());
-		user.sendMessage("TODO BF21: deliver actual key");
 	}
 
 	@EventHandler

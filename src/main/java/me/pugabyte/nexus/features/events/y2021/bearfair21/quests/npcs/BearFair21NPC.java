@@ -48,6 +48,7 @@ public enum BearFair21NPC {
 	HEATHER("Heather", 4134),
 	MGN_CUSTOMER_1("Trent", 4135),
 	MGN_CUSTOMER_2("Mr. Fredrickson", 4136),
+	JAMES("James", 4167),
 	// PUGMAS
 	PUGMAS_MAYOR("Mayor", 4130),
 	GRINCH("Grinch", 4129),
@@ -70,7 +71,7 @@ public enum BearFair21NPC {
 	JOSE("Jose", 4131),
 	SANTIAGO("Santiago", 4132),
 	ANA("Ana", 4133),
-	FRANCISCO("Franciso", 4171),
+	FRANCISCO("Francisco", 4171),
 	ADRIAN("Adrian", 4174),
 	MAXIM("Maxim", 4173),
 	ISABELLA("Isabella", 4175),

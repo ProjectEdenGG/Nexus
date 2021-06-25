@@ -364,9 +364,12 @@ public class MiniGolf {
 						int strokes = user.getCurrentStrokes();
 						String userScore = MiniGolfUtils.getScore(user);
 						Tasks.wait(wait, () ->
-								MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + userScore + ")"));
+							MiniGolfUtils.sendActionBar(user, "&6Stroke: " + strokes + " (" + userScore + ")"));
 
 						MiniGolfUtils.giveBall(user);
+
+						user.getCompleted().add(ballHole);
+						MiniGolfUtils.checkCompleted(user);
 
 						if (strokes == 1 && !user.isRainbow()) {
 							user.getHoleInOne().add(ballHole);

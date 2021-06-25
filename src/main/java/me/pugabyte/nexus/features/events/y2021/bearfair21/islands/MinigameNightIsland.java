@@ -81,6 +81,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.ItemUtils.isTypeAndNameEqual;
 
 // TODO BF21: Quest + Dialog
+// TODO GRIFFIN: Update all dialogs & on quest complete: make sure to Quests.giveKey(user) + Trophy.BEAR_FAIR_2021_COMPLETION_MGN.give(player)
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
 public class MinigameNightIsland implements BearFair21Island {
@@ -222,7 +223,6 @@ public class MinigameNightIsland implements BearFair21Island {
 				return script;
 			}
 		},
-		// TODO: UPDATE DIALOG
 		TRENT(BearFair21NPC.MGN_CUSTOMER_1) {
 			@Override
 			public List<String> getScript(BearFair21User user) {

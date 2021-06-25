@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
+import me.pugabyte.nexus.models.trophy.Trophy;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
@@ -44,7 +45,7 @@ public class MiniGolfUtils {
 		return user.getCurrentHole().equals(getHole(location));
 	}
 
-	static void checkHoleInOnes(MiniGolf21User user) {
+	public static void checkHoleInOnes(MiniGolf21User user) {
 		Set<MiniGolfHole> userHoles = user.getHoleInOne();
 		for (MiniGolfHole hole : MiniGolfHole.getHoles()) {
 			if (!userHoles.contains(hole))
@@ -55,6 +56,13 @@ public class MiniGolfUtils {
 		user.setRainbow(true);
 		MiniGolf.getService().save(user);
 	}
+
+	public static void checkCompleted(MiniGolf21User user) {
+		Set<MiniGolfHole> userCompleted = user.getCompleted();
+		if (userCompleted.size() == MiniGolfHole.getHoles().size())
+			Trophy.BEAR_FAIR_2021_COMPLETION_MINIGOLF.give(user.getPlayer());
+	}
+
 
 	public static MiniGolfHole getHole(Location location) {
 		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLikeAt(MiniGolf.getRegionHole() + ".*", location);
