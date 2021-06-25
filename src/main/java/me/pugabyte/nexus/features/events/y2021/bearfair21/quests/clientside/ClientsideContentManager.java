@@ -50,6 +50,7 @@ public class ClientsideContentManager implements Listener {
 	public ClientsideContentManager() {
 		Nexus.registerListener(this);
 		blockTask();
+		schematicTask();
 		npcTask();
 	}
 
@@ -83,10 +84,10 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private void blockTask() {
-		Tasks.repeat(0, Time.TICK.x(10), () -> {
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Content content : contentService.getList()) {
-				if (content.isItemFrame()) continue;
+				if (!content.isBlock()) continue;
 
 				for (Player player : players) {
 					if (!isNear(player, content.getLocation(), 75)) continue;
@@ -96,6 +97,25 @@ public class ClientsideContentManager implements Listener {
 					if (content.getBlockFace() != null)
 						((Directional) blockData).setFacing(content.getBlockFace());
 					player.sendBlockChange(content.getLocation(), blockData);
+				}
+			}
+		});
+	}
+
+	private void schematicTask() {
+		Tasks.repeat(0, Time.TICK.x(10), () -> {
+			Set<Player> players = BearFair21.getPlayers();
+			for (Content content : contentService.getList()) {
+				if (!content.isSchematic()) continue;
+
+				for (Player player : players) {
+					if (!isNear(player, content.getLocation(), 75)) continue;
+					if (!canSee(player, content)) continue;
+
+					BearFair21.getWEUtils().paster()
+						.file(content.getSchematic())
+						.at(content.getLocation())
+						.buildClientSide(player);
 				}
 			}
 		});

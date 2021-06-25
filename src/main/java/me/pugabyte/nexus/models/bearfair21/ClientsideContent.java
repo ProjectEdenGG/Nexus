@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static eden.utils.StringUtils.isNullOrEmpty;
+
 @Data
 @Entity("bearfair21_clientside_content")
 @NoArgsConstructor
@@ -63,6 +65,8 @@ public class ClientsideContent implements PlayerOwnedObject {
 		private Location location;
 		private ContentCategory category;
 		//
+		private String schematic;
+		//
 		private Material material;
 		private ItemStack itemStack;
 		private BlockFace blockFace;
@@ -73,7 +77,15 @@ public class ClientsideContent implements PlayerOwnedObject {
 			this.rotation = rotation.ordinal();
 		}
 
-		public Boolean isItemFrame() {
+		public boolean isBlock() {
+			return !isSchematic() && !isItemFrame();
+		}
+
+		public boolean isSchematic() {
+			return !isNullOrEmpty(schematic);
+		}
+
+		public boolean isItemFrame() {
 			return this.material.equals(Material.ITEM_FRAME);
 		}
 

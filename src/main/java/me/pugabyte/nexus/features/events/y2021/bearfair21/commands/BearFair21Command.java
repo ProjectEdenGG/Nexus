@@ -327,6 +327,13 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Permission("group.admin")
+	@Path("clientside new schematic <category> <schematic>")
+	void clientsideNew(ContentCategory category, String schematic) {
+		setupSchematicContent(location(), schematic, category);
+		send("Added schematic " + schematic);
+	}
+
+	@Permission("group.admin")
 	@Path("clientside new current <category>")
 	void clientsideNewCurrent(ContentCategory category) {
 		setupBlockContent(block(), category);
@@ -410,21 +417,27 @@ public class BearFair21Command extends CustomCommand {
 //	}
 
 	private void setupBlockContent(Block block, ContentCategory category) {
-		ClientsideContent.Content content = new ClientsideContent.Content();
+		ClientsideContent.Content content = new Content();
 		content.setLocation(block.getLocation().toBlockLocation());
 		content.setCategory(category);
-		//
 		content.setMaterial(block.getType());
 		if (block.getBlockData() instanceof Directional)
 			content.setBlockFace(((Directional) block.getBlockData()).getFacing());
 		addContent(content);
 	}
 
+	private void setupSchematicContent(Location location, String schematic, ContentCategory category) {
+		ClientsideContent.Content content = new Content();
+		content.setLocation(location.toBlockLocation());
+		content.setCategory(category);
+		content.setSchematic(schematic);
+		addContent(content);
+	}
+
 	private void setupItemFrameContent(ItemFrame itemFrame, ContentCategory category) {
-		ClientsideContent.Content content = new ClientsideContent.Content();
+		ClientsideContent.Content content = new Content();
 		content.setLocation(itemFrame.getLocation().toBlockLocation());
 		content.setCategory(category);
-		//
 		content.setMaterial(Material.ITEM_FRAME);
 		content.setItemStack(itemFrame.getItem());
 		content.setBlockFace(itemFrame.getFacing());
