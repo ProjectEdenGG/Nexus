@@ -18,7 +18,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.*;
-import org.bukkit.entity.Cat.Type;
 import org.bukkit.entity.Llama.Color;
 import org.bukkit.entity.MushroomCow.Variant;
 import org.bukkit.entity.Panda.Gene;
@@ -38,7 +37,7 @@ import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 @Getter
 public enum MobHeadType {
-	AXOLOTL,
+	AXOLOTL(EntityType.AXOLOTL, AxolotlVariant.class, entity -> AxolotlVariant.of((Axolotl) entity)),
 	BAT(EntityType.BAT),
 	BEE(EntityType.BEE),
 	BLAZE(EntityType.BLAZE),
@@ -58,8 +57,8 @@ public enum MobHeadType {
 	EVOKER(EntityType.EVOKER),
 	FOX(EntityType.FOX, FoxType.class, entity -> FoxType.of((Fox) entity)),
 	GHAST(EntityType.GHAST),
-	GLOW_SQUID,
-	GOAT,
+	GLOW_SQUID(EntityType.GLOW_SQUID),
+	GOAT(EntityType.GOAT),
 	GUARDIAN(EntityType.GUARDIAN),
 	HOGLIN(EntityType.HOGLIN),
 	HORSE(EntityType.HORSE, HorseColor.class, entity -> HorseColor.of((Horse) entity)),
@@ -246,17 +245,17 @@ public enum MobHeadType {
 	@RequiredArgsConstructor
 	private enum CatType implements MobHeadVariant {
 		NONE(null),
-		BLACK(Type.BLACK),
-		WHITE(Type.WHITE),
-		ALL_BLACK(Type.ALL_BLACK),
-		RED(Type.RED),
-		BRITISH_SHORTHAIR(Type.BRITISH_SHORTHAIR),
-		CALICO(Type.CALICO),
-		JELLIE(Type.JELLIE),
-		PERSIAN(Type.PERSIAN),
-		RAGDOLL(Type.RAGDOLL),
-		SIAMESE(Type.SIAMESE),
-		TABBY(Type.TABBY),
+		BLACK(Cat.Type.BLACK),
+		WHITE(Cat.Type.WHITE),
+		ALL_BLACK(Cat.Type.ALL_BLACK),
+		RED(Cat.Type.RED),
+		BRITISH_SHORTHAIR(Cat.Type.BRITISH_SHORTHAIR),
+		CALICO(Cat.Type.CALICO),
+		JELLIE(Cat.Type.JELLIE),
+		PERSIAN(Cat.Type.PERSIAN),
+		RAGDOLL(Cat.Type.RAGDOLL),
+		SIAMESE(Cat.Type.SIAMESE),
+		TABBY(Cat.Type.TABBY),
 		;
 
 		@Override
@@ -296,6 +295,31 @@ public enum MobHeadType {
 
 		public static RabbitType of(Rabbit rabbit) {
 			return Arrays.stream(values()).filter(entry -> rabbit.getRabbitType() == entry.getType()).findFirst().orElse(NONE);
+		}
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	private enum AxolotlVariant implements MobHeadVariant {
+		NONE(null),
+		LUCY(Axolotl.Variant.LUCY),
+		WILD(Axolotl.Variant.WILD),
+		GOLD(Axolotl.Variant.GOLD),
+		CYAN(Axolotl.Variant.CYAN),
+		BLUE(Axolotl.Variant.BLUE),
+		;
+
+		private final Axolotl.Variant type;
+		@Setter
+		private ItemStack itemStack;
+
+		@Override
+		public EntityType getEntityType() {
+			return EntityType.AXOLOTL;
+		}
+
+		public static AxolotlVariant of(Axolotl axolotl) {
+			return Arrays.stream(values()).filter(entry -> axolotl.getVariant() == entry.getType()).findFirst().orElse(NONE);
 		}
 	}
 
