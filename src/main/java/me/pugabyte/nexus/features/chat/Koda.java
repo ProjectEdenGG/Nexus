@@ -227,7 +227,7 @@ public class Koda {
 				if ("Pugabyte".equals(event.getOrigin()))
 					respond(event, "You're the one who decided to make a potato do important things.");
 				else
-					respond(event, "Puga is the one who decided to make a potato do important things.");
+					respond(event, "Griffin is the one who decided to make a potato do important things.");
 				break;
 			case "griefing":
 				if (event.getChatter() != null)
