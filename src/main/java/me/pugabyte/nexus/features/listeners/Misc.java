@@ -26,15 +26,20 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Beehive;
 import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -69,6 +74,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,6 +116,31 @@ public class Misc implements Listener {
 		final NBTItem nbtItem = new NBTItem(item);
 		if (nbtItem.hasKey("placeable") && !nbtItem.getBoolean("placeable"))
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onBeeCatch(PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof Bee bee))
+			return;
+
+		final ItemStack tool = getTool(event.getPlayer());
+		if (isNullOrAir(tool))
+			return;
+		if (!MaterialTag.ALL_BEEHIVES.isTagged(tool.getType()))
+			return;
+
+		final BlockStateMeta meta = (BlockStateMeta) tool.getItemMeta();
+		final Beehive beehive = (Beehive) meta.getBlockState();
+		int max = beehive.getMaxEntities();
+		int current = beehive.getEntityCount();
+
+		if (current < max) {
+			beehive.addEntity(bee);
+			new SoundBuilder(Sound.BLOCK_BEEHIVE_ENTER)
+				.location(event.getPlayer().getLocation())
+				.category(SoundCategory.NEUTRAL)
+				.play();
+		}
 	}
 
 	@EventHandler
