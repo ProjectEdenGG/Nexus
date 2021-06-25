@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.utils;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -54,10 +55,11 @@ public class MaterialUtils {
 	}
 
 	@Getter
+	@AllArgsConstructor
 	@RequiredArgsConstructor
 	@EqualsAndHashCode
 	@Builder
-	public class Mineral {
+	public static class Mineral {
 		private final @NotNull Material mineral;
 		private @Nullable String prefix;
 		private @Nullable String oreName;
