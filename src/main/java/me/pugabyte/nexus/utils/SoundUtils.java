@@ -192,10 +192,6 @@ public class SoundUtils {
 				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(defaultVolume).play());
 				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).reciever(player).volume(defaultVolume).play());
 			}
-
-			@Override
-			public void play(Location location) {
-			}
 		},
 
 		BATTLESHIP_HIT {

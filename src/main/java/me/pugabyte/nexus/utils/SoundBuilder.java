@@ -21,7 +21,7 @@ public class SoundBuilder implements Cloneable {
 	private Location location;
 	private Sound sound;
 	private SoundCategory category = SoundCategory.MASTER;
-	private float volume = 0.5F;
+	private float volume = 1.0F;
 	private float pitch = 1F;
 	private int delay = 0;
 
