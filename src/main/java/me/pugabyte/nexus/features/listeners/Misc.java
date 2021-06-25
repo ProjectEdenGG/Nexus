@@ -143,7 +143,7 @@ public class Misc implements Listener {
 			tool.setItemMeta(meta);
 			new SoundBuilder(Sound.BLOCK_BEEHIVE_ENTER)
 				.location(event.getPlayer().getLocation())
-				.category(SoundCategory.NEUTRAL)
+				.category(SoundCategory.BLOCKS)
 				.play();
 		}
 	}
