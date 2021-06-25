@@ -6,54 +6,11 @@ import me.pugabyte.nexus.models.mutemenu.MuteMenuUser;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
-@SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
+@SuppressWarnings({"UnusedAssignment"})
 public class SoundUtils {
-	private static final float defaultVolume = 0.5F;
-
-	@Deprecated
-	public static void playSound(HasPlayer player, Sound sound) {
-		playSound(player, sound, SoundCategory.MASTER);
-	}
-
-	@Deprecated
-	public static void playSound(HasPlayer player, Sound sound, SoundCategory category) {
-		playSound(player, sound, category, defaultVolume, 1);
-	}
-
-	@Deprecated
-	public static void playSound(HasPlayer player, Sound sound, float volume, float pitch) {
-		playSound(player, sound, SoundCategory.MASTER, volume, pitch);
-	}
-
-	@Deprecated
-	public static void playSound(HasPlayer player, Sound sound, SoundCategory category, float volume, float pitch) {
-		Player _player = player.getPlayer();
-		_player.playSound(_player.getLocation(), sound, category, volume, pitch);
-	}
-
-	@Deprecated
-	public static void playSound(Location location, Sound sound) {
-		playSound(location, sound, SoundCategory.MASTER);
-	}
-
-	@Deprecated
-	public static void playSound(Location location, Sound sound, SoundCategory category) {
-		playSound(location, sound, category, defaultVolume, 1);
-	}
-
-	@Deprecated
-	public static void playSound(Location location, Sound sound, float volume, float pitch) {
-		playSound(location, sound, SoundCategory.MASTER, volume, pitch);
-	}
-
-	@Deprecated
-	public static void playSound(Location location, Sound sound, SoundCategory category, float volume, float pitch) {
-		location.getWorld().playSound(location, sound, category, volume, pitch);
-	}
 
 	public static void stopSound(HasPlayer player, Sound sound) {
 		stopSound(player, sound, null);
@@ -187,10 +144,8 @@ public class SoundUtils {
 			@Override
 			public void play(HasPlayer player) {
 				int wait = 0;
-
-
-				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(defaultVolume).play());
-				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).reciever(player).volume(defaultVolume).play());
+				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(.5).play());
+				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).reciever(player).volume(.5).play());
 			}
 		},
 
@@ -198,18 +153,18 @@ public class SoundUtils {
 			@Override
 			public void play(HasPlayer player) {
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(defaultVolume).play());
-				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(player).volume(defaultVolume).play());
-				Tasks.wait(wait += 8, () -> new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).reciever(player).volume(defaultVolume).play());
+				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(.5).play());
+				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(player).volume(.5).play());
+				Tasks.wait(wait += 8, () -> new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).reciever(player).volume(.5).play());
 			}
 		},
 
 		BATTLESHIP_SINK {
 			@Override
 			public void play(HasPlayer player) {
-				SoundBuilder explode = new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(player).volume(defaultVolume);
-				SoundBuilder splash = new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).reciever(player).volume(defaultVolume);
-				SoundBuilder fire = new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).reciever(player).volume(defaultVolume).pitch(0.1);
+				SoundBuilder explode = new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(player).volume(.5);
+				SoundBuilder splash = new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).reciever(player).volume(.5);
+				SoundBuilder fire = new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).reciever(player).volume(.5).pitch(.1);
 
 				int wait = 0;
 				Tasks.wait(wait, () -> {
@@ -233,22 +188,22 @@ public class SoundUtils {
 		TREE_FELLER {
 			@Override
 			public void play(HasPlayer player) {
-				SoundBuilder armorStandBreak = new SoundBuilder(Sound.ENTITY_ARMOR_STAND_BREAK).reciever(player).volume(defaultVolume);
+				SoundBuilder armorStandBreak = new SoundBuilder(Sound.ENTITY_ARMOR_STAND_BREAK).reciever(player).volume(.5);
 
 				Tasks.wait(0, () -> armorStandBreak.pitch(randomPitch()).play());
 				Tasks.wait(1, () -> armorStandBreak.pitch(randomPitch()).play());
 				Tasks.wait(2, () -> armorStandBreak.pitch(randomPitch()).play());
 				Tasks.wait(3, () -> {
 					armorStandBreak.pitch(randomPitch()).play();
-					new SoundBuilder(Sound.BLOCK_CROP_BREAK).reciever(player).volume(defaultVolume).pitch(0.1).play();
+					new SoundBuilder(Sound.BLOCK_CROP_BREAK).reciever(player).volume(.5).pitch(.1).play();
 				});
 				Tasks.wait(4, () -> {
 					armorStandBreak.pitch(randomPitch()).play();
-					new SoundBuilder(Sound.BLOCK_SHROOMLIGHT_STEP).reciever(player).volume(defaultVolume).pitch(0.1).play();
+					new SoundBuilder(Sound.BLOCK_SHROOMLIGHT_STEP).reciever(player).volume(.5).pitch(.1).play();
 				});
 				Tasks.wait(5, () -> {
 					armorStandBreak.pitch(randomPitch()).play();
-					new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).reciever(player).volume(defaultVolume).pitch(0.1).play();
+					new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).reciever(player).volume(.5).pitch(.1).play();
 				});
 				Tasks.wait(6, () -> armorStandBreak.pitch(2).play());
 			}
@@ -256,8 +211,8 @@ public class SoundUtils {
 		CRATE_OPEN {
 			@Override
 			public void play(Location location) {
-				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).volume(0.6).location(location);
-				SoundBuilder snare = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_SNARE).volume(0.5).location(location);
+				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).volume(.6).location(location);
+				SoundBuilder snare = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_SNARE).volume(.5).location(location);
 
 				int wait = 3;
 				Tasks.wait(wait += 0, () -> {
@@ -321,20 +276,20 @@ public class SoundUtils {
 		SABOTAGE_VOTE {
 			@Override
 			public void play(HasPlayer player) {
-				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(0.8).pitch(1.7).play();
-				Tasks.wait(3, () -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(0.8).pitch(2.0).play());
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(.8).pitch(1.7).play();
+				Tasks.wait(3, () -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(.8).pitch(2).play());
 			}
 		},
 		SABOTAGE_MEETING {
 			@Override
 			public void play(HasPlayer player) {
-				new SoundBuilder(Sound.BLOCK_BELL_USE).reciever(player).pitch(0.8).play();
-				new SoundBuilder(Sound.BLOCK_BELL_RESONATE).reciever(player).volume(0.25).play();
+				new SoundBuilder(Sound.BLOCK_BELL_USE).reciever(player).pitch(.8).play();
+				new SoundBuilder(Sound.BLOCK_BELL_RESONATE).reciever(player).volume(.25).play();
 
-				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).volume(0.6);
-				Tasks.wait(7, () -> bell.pitch(0.2).play());
-				Tasks.wait(12, () -> bell.pitch(0.6).play());
-				Tasks.wait(17, () -> bell.pitch(0.8).play());
+				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).volume(.6);
+				Tasks.wait(7, () -> bell.pitch(.2).play());
+				Tasks.wait(12, () -> bell.pitch(.6).play());
+				Tasks.wait(17, () -> bell.pitch(.8).play());
 			}
 
 			@Override
@@ -363,7 +318,7 @@ public class SoundUtils {
 	}
 
 	private static float getMuteMenuVolume(HasPlayer player, MuteMenuItem item) {
-		float volume = SoundUtils.defaultVolume;
+		float volume = .5f;
 		Integer customVolume = MuteMenuUser.getVolume(player.getPlayer(), item);
 		if (customVolume != null)
 			volume = customVolume / 50.0F;
@@ -371,11 +326,11 @@ public class SoundUtils {
 	}
 
 	public static float randomPitch() {
-		return (float) RandomUtils.randomDouble(0.1, 2);
+		return (float) RandomUtils.randomDouble(.1, 2);
 	}
 
 	public static float getPitch(int step) {
-		return (float) Math.pow(2, ((-12 + step) / 12.0));
+		return (float) Math.pow(2, ((-12 + step) / 12));
 	}
 
 }

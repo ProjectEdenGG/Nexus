@@ -14,7 +14,7 @@ import me.pugabyte.nexus.utils.DescParseTickFormat;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils;
@@ -81,7 +81,7 @@ public class Quests implements Listener {
 			else
 				addLeftToFind(json.next("You've already found this decoration!"), user);
 		} else {
-			SoundUtils.playSound(event, Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 2F);
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(event).pitch(2F).play();
 			user.getDecorationsCollected().add(decoration);
 			service.save(user);
 			int tokens = 5;
