@@ -21,7 +21,7 @@ public class SoundBuilder implements Cloneable {
 	private Location location;
 	private Sound sound;
 	private SoundCategory category = SoundCategory.MASTER;
-	private float volume = 1F;
+	private float volume = 0.5F;
 	private float pitch = 1F;
 	private int delay = 0;
 
@@ -107,19 +107,20 @@ public class SoundBuilder implements Cloneable {
 			// play sound in world
 			Tasks.wait(delay, () -> location.getWorld().playSound(location, sound, category, volume, pitch));
 
-
 		else {
 			// Play sound to receivers
 			for (HasPlayer receiver : receivers) {
 				if (location != null && receiver.getPlayer().getWorld() != location.getWorld())
 					continue;
 
-				Location origin = location;
-				if (origin == null)
-					origin = receiver.getPlayer().getLocation();
+				Tasks.wait(delay, () -> {
+					Location origin = location;
+					if (origin == null)
+						origin = receiver.getPlayer().getLocation();
 
-				Location finalOrigin = origin;
-				Tasks.wait(delay, () -> receiver.getPlayer().playSound(finalOrigin, sound, category, volume, pitch));
+					Location finalOrigin = origin;
+					receiver.getPlayer().playSound(finalOrigin, sound, category, volume, pitch);
+				});
 			}
 		}
 	}

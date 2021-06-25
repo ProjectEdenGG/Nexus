@@ -74,10 +74,6 @@ public class SoundUtils {
 
 				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).reciever(player).volume(volume).play();
 			}
-
-			@Override
-			public void play(Location location) {
-			}
 		},
 
 		RANKUP {
@@ -94,33 +90,29 @@ public class SoundUtils {
 
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
-					harp.pitch(0.749154F).play();
-					bell.pitch(0.749154F).play();
+					harp.pitchStep(7).play();
+					bell.pitchStep(7).play();
 				});
 				Tasks.wait(wait += 4, () -> {
-					harp.pitch(0.561231F).play();
-					bell.pitch(0.561231F).play();
+					harp.pitchStep(2).play();
+					bell.pitchStep(2).play();
 				});
 				Tasks.wait(wait += 4, () -> {
-					harp.pitch(0.629961F).play();
-					bell.pitch(0.629961F).play();
+					harp.pitchStep(4).play();
+					bell.pitchStep(4).play();
 				});
 				Tasks.wait(wait += 2, () -> {
-					harp.pitch(0.707107F).play();
-					bell.pitch(0.707107F).play();
+					harp.pitchStep(6).play();
+					bell.pitchStep(6).play();
 				});
 				Tasks.wait(wait += 2, () -> {
-					harp.pitch(0.840896F).play();
-					bell.pitch(0.840896F).play();
+					harp.pitchStep(9).play();
+					bell.pitchStep(9).play();
 				});
 				Tasks.wait(wait += 2, () -> {
-					flute.pitch(1.122462F).play();
-					bell.pitch(1.122462F).play();
+					flute.pitchStep(14).play();
+					bell.pitchStep(14).play();
 				});
-			}
-
-			@Override
-			public void play(Location location) {
 			}
 		},
 
@@ -137,25 +129,21 @@ public class SoundUtils {
 
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
-					chime.pitch(0.561231F).play();
-					bell.pitch(0.561231F).play();
+					chime.pitchStep(2).play();
+					bell.pitchStep(2).play();
 				});
 				Tasks.wait(wait += 2, () -> {
-					chime.pitch(0.629961F).play();
-					bell.pitch(0.629961F).play();
+					chime.pitchStep(4).play();
+					bell.pitchStep(4).play();
 				});
 				Tasks.wait(wait += 2, () -> {
-					chime.pitch(0.561231F).play();
-					bell.pitch(0.561231F).play();
+					chime.pitchStep(2).play();
+					bell.pitchStep(2).play();
 				});
 				Tasks.wait(wait += 2, () -> {
-					chime.pitch(0.840896F).play();
-					bell.pitch(0.840896F).play();
+					chime.pitchStep(9).play();
+					bell.pitchStep(9).play();
 				});
-			}
-
-			@Override
-			public void play(Location location) {
 			}
 		},
 
@@ -170,14 +158,10 @@ public class SoundUtils {
 				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).reciever(player).category(SoundCategory.RECORDS).volume(volume);
 
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> harp.pitch(0.5F).play());
-				Tasks.wait(wait += 2, () -> harp.pitch(0.667420F).play());
-				Tasks.wait(wait += 2, () -> harp.pitch(0.749154F).play());
-				Tasks.wait(wait += 2, () -> harp.pitch(1.0F).play());
-			}
-
-			@Override
-			public void play(Location location) {
+				Tasks.wait(wait += 0, () -> harp.pitchStep(0).play());
+				Tasks.wait(wait += 2, () -> harp.pitchStep(5).play());
+				Tasks.wait(wait += 2, () -> harp.pitchStep(7).play());
+				Tasks.wait(wait += 2, () -> harp.pitchStep(12).play());
 			}
 		},
 
@@ -192,14 +176,10 @@ public class SoundUtils {
 				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).reciever(player).category(SoundCategory.RECORDS).volume(volume);
 
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> harp.pitch(0.707107F).play());
-				Tasks.wait(wait += 4, () -> harp.pitch(0.629961F).play());
-				Tasks.wait(wait += 4, () -> harp.pitch(0.707107F).play());
-				Tasks.wait(wait += 4, () -> harp.pitch(0.529732F).play());
-			}
-
-			@Override
-			public void play(Location location) {
+				Tasks.wait(wait += 0, () -> harp.pitchStep(6).play());
+				Tasks.wait(wait += 4, () -> harp.pitchStep(4).play());
+				Tasks.wait(wait += 4, () -> harp.pitchStep(6).play());
+				Tasks.wait(wait += 4, () -> harp.pitchStep(1).play());
 			}
 		},
 
@@ -225,10 +205,6 @@ public class SoundUtils {
 				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(defaultVolume).play());
 				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(player).volume(defaultVolume).play());
 				Tasks.wait(wait += 8, () -> new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).reciever(player).volume(defaultVolume).play());
-			}
-
-			@Override
-			public void play(Location location) {
 			}
 		},
 
@@ -256,10 +232,6 @@ public class SoundUtils {
 				Tasks.wait(wait += RandomUtils.randomInt(1, 3), explode::play);
 				Tasks.wait(wait += RandomUtils.randomInt(1, 4), splash::play);
 			}
-
-			@Override
-			public void play(Location location) {
-			}
 		},
 
 		TREE_FELLER {
@@ -283,10 +255,6 @@ public class SoundUtils {
 					new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).reciever(player).volume(defaultVolume).pitch(0.1).play();
 				});
 				Tasks.wait(6, () -> armorStandBreak.pitch(2).play());
-			}
-
-			@Override
-			public void play(Location location) {
 			}
 		},
 		CRATE_OPEN {
@@ -360,10 +328,6 @@ public class SoundUtils {
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(0.8).pitch(1.7).play();
 				Tasks.wait(3, () -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(0.8).pitch(2.0).play());
 			}
-
-			@Override
-			public void play(Location location) {
-			}
 		},
 		SABOTAGE_MEETING {
 			@Override
@@ -372,9 +336,9 @@ public class SoundUtils {
 				new SoundBuilder(Sound.BLOCK_BELL_RESONATE).reciever(player).volume(0.25).play();
 
 				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).volume(0.6);
-				Tasks.wait(7, () -> bell.pitch(0.2F).play());
-				Tasks.wait(12, () -> bell.pitch(0.6F).play());
-				Tasks.wait(17, () -> bell.pitch(0.8F).play());
+				Tasks.wait(7, () -> bell.pitch(0.2).play());
+				Tasks.wait(12, () -> bell.pitch(0.6).play());
+				Tasks.wait(17, () -> bell.pitch(0.8).play());
 			}
 
 			@Override
@@ -388,7 +352,8 @@ public class SoundUtils {
 			return location;
 		}
 
-		public abstract void play(Location location);
+		public void play(Location location) {
+		}
 
 		public abstract void play(HasPlayer player);
 
