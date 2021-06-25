@@ -86,7 +86,7 @@ public class ClientsideContent implements PlayerOwnedObject {
 		}
 
 		public boolean isItemFrame() {
-			return this.material.equals(Material.ITEM_FRAME);
+			return Material.ITEM_FRAME.equals(material);
 		}
 
 		public enum ContentCategory {
