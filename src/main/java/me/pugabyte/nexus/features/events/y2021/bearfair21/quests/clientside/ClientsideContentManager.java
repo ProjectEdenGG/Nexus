@@ -189,6 +189,8 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	public static void sendRemoveContent(Player player, List<Content> contentList) {
+		if (!playerEntities.containsKey(player.getUniqueId()))
+			return;
 		List<Entity> entities = new ArrayList<>(playerEntities.get(player.getUniqueId()));
 		if (Utils.isNullOrEmpty(entities))
 			return;
