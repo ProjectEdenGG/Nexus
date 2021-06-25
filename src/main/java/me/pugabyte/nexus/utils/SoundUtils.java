@@ -329,7 +329,7 @@ public class SoundUtils {
 	}
 
 	public static float getPitch(int step) {
-		return (float) Math.pow(2, ((-12 + step) / 12));
+		return (float) Math.pow(2, ((-12 + step) / 12f));
 	}
 
 }
