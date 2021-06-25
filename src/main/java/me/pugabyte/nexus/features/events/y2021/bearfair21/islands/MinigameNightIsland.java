@@ -74,6 +74,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
@@ -363,7 +364,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			Tasks.wait(Time.SECOND.x(wait), () -> {
 				for (AxelSpeakerPart part : AxelSpeakerPart.values())
 					PlayerUtils.removeItem(player, part.getDisplayItem());
-				Quests.giveItem(player, speaker.build());
+				Quests.giveItem(player, speaker.get().build());
 			});
 		} else if (fixableItem != null) {
 			player.getInventory().removeItem(event.getItem());
@@ -534,7 +535,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 	}
 
-	private static final ItemBuilder speaker = new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker").undroppable().unplaceable();
+	private static final Supplier<ItemBuilder> speaker = () -> new ItemBuilder(Nexus.getHeadAPI().getItemHead("2126")).name("Speaker").undroppable().unplaceable();
 
 	private static final List<Location> speakerLocations = new ArrayList<>(List.of(
 		BearFair21.locationOf(-182, 142, -156),
@@ -555,7 +556,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!speakerLocations.contains(location)) return;
 		event.setCancelled(true);
 
-		if (!Nexus.getHeadAPI().getItemID(event.getItem()).equals(Nexus.getHeadAPI().getItemID(speaker.build()))) return;
+		if (!Nexus.getHeadAPI().getItemID(event.getItem()).equals(Nexus.getHeadAPI().getItemID(speaker.get().build()))) return;
 
 		final BearFair21User user = userService.get(player);
 		if (user.getMgn_speakersFixed().contains(location)) return;
@@ -583,7 +584,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		ClientsideContentManager.addCategory(user, ContentCategory.SPEAKER);
 		user.setMgn_foundSpeaker(true);
 		userService.save(user);
-		Quests.giveItem(player, speaker.build());
+		Quests.giveItem(player, speaker.get().build());
 	}
 
 	@EventHandler

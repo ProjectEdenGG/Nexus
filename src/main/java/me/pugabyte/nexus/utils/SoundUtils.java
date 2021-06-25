@@ -303,10 +303,9 @@ public class SoundUtils {
 			return location;
 		}
 
-		public void play(Location location) {
-		}
+		public void play(Location location) {}
 
-		public abstract void play(HasPlayer player);
+		public void play(HasPlayer player) {}
 
 		public void play(Collection<? extends HasPlayer> players) {
 			players.stream().map(HasPlayer::getPlayer).forEach(this::play);
@@ -321,7 +320,7 @@ public class SoundUtils {
 		float volume = .5f;
 		Integer customVolume = MuteMenuUser.getVolume(player.getPlayer(), item);
 		if (customVolume != null)
-			volume = customVolume / 50.0F;
+			volume = customVolume / 50f;
 		return volume;
 	}
 
