@@ -14,8 +14,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBeginEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
@@ -195,7 +195,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		tellMapAndMechanic(minigamer);
 	}
 
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit");
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
@@ -240,9 +240,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {
 		Arena arena = minigamer.getMatch().getArena();
 		String mechanicName = arena.getMechanic().getName();
-		String description = arena.getMechanic().getDescription();
 		String arenaName = arena.getDisplayName();
 		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equals(arenaName) ? "" : " &3on &e" + arenaName));
+		tellDescriptionAndModifier(minigamer);
+	}
+
+	protected final void tellDescriptionAndModifier(@NotNull Minigamer minigamer) {
+		String description = minigamer.getMatch().getArena().getMechanic().getDescription();
 		if (!description.isEmpty() && !description.toLowerCase().startsWith("todo"))
 			minigamer.tell("Objective: &e" + description);
 		MinigameModifier modifier = Minigames.getModifier();

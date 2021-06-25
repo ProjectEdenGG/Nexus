@@ -455,8 +455,6 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	public void clearState() {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
-		// TODO: Unvanish
-		clearGameModeState();
 		player.setGameMode(match.getMechanic().getGameMode());
 		clearGameModeState();
 

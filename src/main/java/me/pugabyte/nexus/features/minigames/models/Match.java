@@ -23,9 +23,9 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBroadcast
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
@@ -188,12 +188,12 @@ public class Match implements ForwardingAudience {
 	void quit(Minigamer minigamer) {
 		if (!minigamers.contains(minigamer)) return;
 
-		MatchQuitEvent event = new MatchQuitEvent(this, minigamer);
+		MinigamerQuitEvent event = new MinigamerQuitEvent(minigamer);
 		event.callEvent();
+		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
-		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
 		minigamer.clearState();
 		minigamer.toGamelobby();
 		minigamer.unhideAll();

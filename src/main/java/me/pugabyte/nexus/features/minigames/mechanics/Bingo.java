@@ -1,32 +1,22 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import de.tr7zw.nbtapi.NBTItem;
 import eden.utils.TimeUtils.Time;
+import lombok.Getter;
 import me.pugabyte.nexus.features.listeners.Misc.FixedCraftItemEvent;
 import me.pugabyte.nexus.features.listeners.Misc.LivingEntityDamageByPlayerEvent;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
-import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.BreakChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.CraftChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.KillChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.ObtainChallengeProgress;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.nexus.utils.RandomUtils;
-import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import me.pugabyte.nexus.utils.TitleUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldBorder;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,14 +25,12 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.WorldUtils.getRandomLocationInBorder;
 import static org.bukkit.Material.CRAFTING_TABLE;
 
-public final class Bingo extends TeamlessMechanic {
+public final class Bingo extends TeamlessVanillaMechanic {
 
 	private static final String NBT_KEY = "nexus.bingo.obtained";
 
@@ -61,53 +49,11 @@ public final class Bingo extends TeamlessMechanic {
 		return new ItemStack(CRAFTING_TABLE);
 	}
 
-	@Override
-	public @NotNull GameMode getGameMode() {
-		return GameMode.SURVIVAL;
-	}
-
-	@Override
-	public boolean canOpenInventoryBlocks() {
-		return true;
-	}
-
-	@Override
-	public boolean canDropItem(@NotNull ItemStack item) {
-		return true;
-	}
-
-	public int matchRadius = 3000;
-	public int worldRadius = 7000;
-	public String world = "bingo";
-
-	public World getWorld() {
-		return Bukkit.getWorld(world);
-	}
-
-	@Override
-	public void onInitialize(@NotNull MatchInitializeEvent event) {
-		super.onInitialize(event);
-		if (getWorld() == null)
-			throw new MinigameException("Bingo world not created");
-		getWorld().getWorldBorder().reset();
-	}
-
-	@Override
-	public void onStart(@NotNull MatchStartEvent event) {
-		super.onStart(event);
-
-		getWorld().setTime(0);
-
-		setWorldBorder(getWorld().getHighestBlockAt(RandomUtils.randomInt(-worldRadius, worldRadius), RandomUtils.randomInt(-worldRadius, worldRadius)).getLocation());
-
-		event.getMatch().getTasks().wait(1, () -> spreadPlayers(event.getMatch()));
-	}
-
-	@Override
-	public void onEnd(@NotNull MatchEndEvent event) {
-		super.onEnd(event);
-		getWorld().getWorldBorder().reset();
-	}
+	public final int matchRadius = 3000;
+	@Getter
+	public final int worldRadius = 7000;
+	@Getter
+	public final String worldName = "bingo";
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
@@ -132,33 +78,9 @@ public final class Bingo extends TeamlessMechanic {
 			victim.teleport(victim.getMatch().<BingoMatchData>getMatchData().getSpawnpoints().get(victim.getUniqueId()));
 	}
 
-	private void spreadPlayers(Match match) {
-		for (Minigamer minigamer : match.getMinigamers()) {
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Time.SECOND.x(20), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(5), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, Time.SECOND.x(5), 255, false, false));
-			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
-			Tasks.async(() -> randomTeleport(minigamer));
-		}
-	}
-
-	private void randomTeleport(Minigamer minigamer) {
-		Location random = getRandomLocationInBorder(getWorld());
-		PaperLib.getChunkAtAsync(random, true).thenRun(() -> {
-			Location location = getWorld().getHighestBlockAt(random).getLocation();
-			if (location.getBlock().getType().isSolid())
-				minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
-			else
-				randomTeleport(minigamer);
-		});
-	}
-
-	private void setWorldBorder(Location center) {
-		WorldBorder border = getWorld().getWorldBorder();
-		border.setCenter(center);
-		border.setSize(matchRadius);
-		border.setDamageAmount(0);
-		border.setWarningDistance(1);
+	@Override
+	public void onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+		minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
 	}
 
 	@EventHandler

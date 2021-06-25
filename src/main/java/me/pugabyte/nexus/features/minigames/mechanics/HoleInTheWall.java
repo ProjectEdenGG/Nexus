@@ -8,8 +8,8 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.HoleInTheWallArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData.Track;
@@ -124,7 +124,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		HoleInTheWallMatchData matchData = event.getMatch().getMatchData();
 
 		Track track = matchData.getTrack(event.getMinigamer());

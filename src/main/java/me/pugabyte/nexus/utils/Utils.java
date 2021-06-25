@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.entity.EntityType;
@@ -162,5 +163,11 @@ public class Utils extends eden.utils.Utils {
 		from.removeIf(player -> player.getUniqueId().equals(entity.getUniqueId()));
 	}
 
+	@Contract(value = "null, _ -> fail; _, _ -> param1", pure = true)
+	public static <T> T notNull(T object, String error) {
+		if (object == null)
+			throw new InvalidInputException(error);
+		return object;
+	}
 
 }
