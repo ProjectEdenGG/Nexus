@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +52,11 @@ public class SoundBuilder implements Cloneable {
 
 	public SoundBuilder location(Block block) {
 		this.location = block.getLocation();
+		return this;
+	}
+
+	public SoundBuilder location(Entity entity) {
+		this.location = entity.getLocation();
 		return this;
 	}
 

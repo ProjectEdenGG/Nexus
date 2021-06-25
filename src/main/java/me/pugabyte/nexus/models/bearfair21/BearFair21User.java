@@ -47,28 +47,34 @@ public class BearFair21User implements PlayerOwnedObject {
 		ContentCategory.SPEAKER_PART_TANGLED_WIRE,
 		ContentCategory.SPEAKER_PART_SPEAKER_HEAD)
 	);
-	private JunkWeight junkWeight = JunkWeight.MAX;
-	private int recycledItems = 0;
 	private Set<Integer> metNPCs = new HashSet<>();
 	// TODO BF21: Set this system up
 	private Set<Integer> nextStepNPCs = new HashSet<>(Arrays.asList(
 			ORGANIZER.getId(), // Main
-			BEEKEEPER.getId(), // Side
-			LUMBERJACK.getId(), // Side
-			FISHERMAN2.getId(), // Side
-			AXEL.getId(), // MGN
-			PUGMAS_MAYOR.getId(), // Pugmas
-			JOSE.getId() // HALLOWEEN
-			// SDU
+		BEEKEEPER.getId(), // Side
+		LUMBERJACK.getId(), // Side
+		FISHERMAN2.getId(), // Side
+		AXEL.getId(), // MGN
+		PUGMAS_MAYOR.getId(), // Pugmas
+		JOSE.getId() // HALLOWEEN
+		// SDU
 	));
 	private int activeTaskId = -1;
 
-	// Specific
+	// MAIN
 	QuestStage questStage_Main = QuestStage.NOT_STARTED;
 	Set<Integer> invitees = new HashSet<>();
 
+	// MAIN - RECYCLE
 	QuestStage questStage_Recycle = QuestStage.NOT_STARTED;
+	JunkWeight junkWeight = JunkWeight.MAX;
+	int recycledItems = 0;
+
+	// MAIN - BEE KEEPER
 	QuestStage questStage_BeeKeeper = QuestStage.NOT_STARTED;
+	boolean hiveAccess = false;
+
+	// MAIN - LUMBERJACK
 	QuestStage questStage_Lumberjack = QuestStage.NOT_STARTED;
 
 	// MGN
@@ -102,7 +108,7 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	public void addRecycledItems(int count) {
 		this.recycledItems += count;
-		// TODO BF21: Decrease user junkWeight depending on their recycled items
+		this.junkWeight = junkWeight.update(this.recycledItems);
 	}
 
 	public boolean hasMet(int npcId) {

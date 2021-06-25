@@ -53,6 +53,8 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
+	private static final ItemBuilder queenLarvae = ItemBuilder.fromHeadId("33827");
+	@Getter
 	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").customModelData(3).undroppable();
 	@Getter
 	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
@@ -281,6 +283,20 @@ public class MainIsland implements BearFair21Island {
 					script.add("TODO - Thanks!");
 					invite(user, this.getNpcId(), tool);
 					return script;
+				} else if (user.getQuestStage_BeeKeeper() == QuestStage.NOT_STARTED || user.getQuestStage_BeeKeeper() == QuestStage.STARTED) {
+					script.add("Would you mind doing me a favor actually? I need a queen bee larvae to jump start my colony here.");
+					script.add("wait 20");
+					script.add("I would look myself, but my body isn't as young as it once was.");
+					script.add("wait 20");
+					script.add("You should be able obtain one in the beehive on the island.");
+
+					user.setQuestStage_BeeKeeper(QuestStage.STARTED);
+					userService.save(user);
+					return script;
+				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
+					// TODO: CHECK IF USER HAS LARVAE
+					script.add("TODO - Thanks");
+					return script;
 				}
 
 				List<String> facts = Arrays.asList(
@@ -292,6 +308,33 @@ public class MainIsland implements BearFair21Island {
 					"Did you know, the honey bee is the only insect that produces food eaten by man."
 				);
 				script.add(RandomUtils.randomElement(facts));
+				return script;
+			}
+		},
+		QUEEN_BEE(BearFair21NPC.QUEEN_BEE) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (!user.isHiveAccess()) {
+					script.add("Now that you have disturbed our peace, if you wish to gain entry into my hive, you must provide a gift.");
+					script.add("Come back with 1 of each small flower, and then I'll call it even.");
+					script.add("TODO - Better Dialog");
+
+					return script;
+				} else if (user.isHiveAccess() && user.getQuestStage_BeeKeeper() != QuestStage.STEPS_DONE) {
+					int wait = 0;
+					script.add("What brings you to my grand halls, traveler?");
+					script.add("I humbly request a queen bee larvae.");
+					script.add("TODO - Better Dialog");
+
+					Tasks.wait(wait, () -> Quests.giveItem(user, queenLarvae.clone().build()));
+
+					user.setQuestStage_BeeKeeper(QuestStage.STEPS_DONE);
+					userService.save(user);
+					return script;
+				}
+
 				return script;
 			}
 		},
@@ -315,21 +358,19 @@ public class MainIsland implements BearFair21Island {
 					invite(user, this.getNpcId(), tool);
 					return script;
 				} else if (user.getQuestStage_Recycle() == QuestStage.NOT_STARTED) {
-					script.add("TODO - better dialog");
-					script.add("You can get useful materials from recycling");
-					script.add("wait 20");
-					script.add("The more trash you recycle, the less trash you will catch");
-					script.add("wait 20");
-					script.add("You've recycled: " + user.getRecycledItems() + " trash");
+					script.add("Local kids have been throwing trash into the waters here, ruining the ecosystem.");
+					script.add("wait 80");
+					script.add("While fishing, would you mind throwing the trash you catch into this recycler?");
+					script.add("wait 80");
+					script.add("Recycling trash can get you more useful materials, and will decrease the chance of catching more trash.");
 
 					user.setQuestStage_Recycle(QuestStage.STARTED);
 					userService.save(user);
 					return script;
 				} else if (user.getQuestStage_Recycle() == QuestStage.STARTED) {
-					script.add("You've recycled: " + user.getRecycledItems() + " trash");
+					script.add("You've recycled " + user.getRecycledItems() + " trash so far.");
 					return script;
 				}
-
 
 				script.add("TODO - Hello");
 				return script;

@@ -20,6 +20,10 @@ public class BearFair21Talker extends BearFairTalker {
 		return sendScript(player, talker);
 	}
 
+	public static CompletableFuture<Boolean> runScript(BearFair21User user, BearFair21TalkingNPC talker) {
+		return runScript(user, talker.getNpcId());
+	}
+
 	public static CompletableFuture<Boolean> runScript(BearFair21User user, int id) {
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		Player player = user.getPlayer();

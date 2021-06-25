@@ -1,11 +1,13 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import eden.utils.RandomUtils;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Beehive;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.RadioHeads;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
@@ -25,12 +27,15 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
+import me.pugabyte.nexus.utils.Tasks;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -49,7 +54,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
@@ -70,6 +77,9 @@ public class Quests implements Listener {
 		new Recycler();
 		new ClientsideContentManager();
 		new RadioHeads();
+		new Beehive();
+		//
+		nextStepNPCTask();
 	}
 
 	public static void startup() {
@@ -81,6 +91,44 @@ public class Quests implements Listener {
 	public static void shutdown() {
 		RegenCrops.shutdown();
 		ClientsideContentManager.shutdown();
+	}
+
+	private void nextStepNPCTask() {
+		List<Integer> excludeNPCs = Arrays.asList(BearFair21NPC.GRINCH_1.getId(),
+			BearFair21NPC.MGN_CUSTOMER_2.getId(), BearFair21NPC.QUEEN_BEE.getId());
+
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+			Set<Player> players = BearFair21.getPlayers();
+			for (Player player : players) {
+				BearFair21User user = userService.get(player);
+				Set<Integer> npcs = new HashSet<>();
+
+				// add all next step npcs
+				npcs.addAll(user.getNextStepNPCs());
+
+				// add npcs that the player has not met, excluding specific ones
+				npcs.addAll(Arrays.stream(BearFair21NPC.values())
+					.map(BearFair21NPC::getId)
+					.filter(id -> !user.hasMet(id))
+					.filter(id -> !excludeNPCs.contains(id))
+					.toList());
+
+				for (Integer npcId : npcs) {
+					NPC npc = CitizensUtils.getNPC(npcId);
+					if (!npc.isSpawned())
+						continue;
+
+					Location loc = npc.getEntity().getLocation().add(0, 1, 0);
+					new ParticleBuilder(Particle.VILLAGER_HAPPY)
+						.location(loc)
+						.count(10)
+						.receivers(player)
+						.offset(.25, .5, .25)
+						.spawn();
+
+				}
+			}
+		});
 	}
 
 	public static ItemStack getBackPack(Player player) {
@@ -217,7 +265,7 @@ public class Quests implements Listener {
 			return;
 
 		String id = event.getRegion().getId();
-		if (id.equalsIgnoreCase("bearfair21_main_bee_exit")) {
+		if (id.equalsIgnoreCase(Beehive.getExitRg())) {
 			if (entity instanceof Bee bee) {
 				List<Location> beeLocs = Arrays.asList(
 					new Location(BearFair21.getWorld(), -32, 96, -72).toCenterLocation(),
@@ -226,12 +274,6 @@ public class Quests implements Listener {
 				);
 
 				bee.teleport(RandomUtils.randomElement(beeLocs));
-			} else if (entity instanceof Player player) {
-				player.teleport(new Location(BearFair21.getWorld(), -97.5, 136, 14.5, 60, -3));
-			}
-		} else if (id.equalsIgnoreCase("bearfair21_main_bee_enter")) {
-			if (entity instanceof Player player) {
-				player.teleport(new Location(BearFair21.getWorld(), -93.5, 135, 14.5, -110, 17));
 			}
 		}
 	}

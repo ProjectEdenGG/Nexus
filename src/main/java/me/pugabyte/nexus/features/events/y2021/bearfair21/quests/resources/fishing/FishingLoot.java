@@ -276,13 +276,26 @@ public enum FishingLoot {
 	@Getter
 	@AllArgsConstructor
 	public enum JunkWeight {
-		MAX(25.0),
-		EIGHTY_PERCENT(20.0),
-		SIXTY_PERCENT(15.0),
-		MIN(10.0);
+		MAX(25.0, 0),
+		EIGHTY_PERCENT(20.0, 25),    // +25
+		SIXTY_PERCENT(15.0, 100),    // +75
+		MIN(10.0, 225);            // +125
 
 		double weight;
+		int amount;
 
+		public JunkWeight update(int amount) {
+			if (amount >= MIN.getAmount())
+				return MIN;
+			else if (amount >= SIXTY_PERCENT.getAmount())
+				return SIXTY_PERCENT;
+			else if (amount >= EIGHTY_PERCENT.getAmount())
+				return SIXTY_PERCENT;
+			else if (amount >= MAX.getAmount())
+				return MAX;
+
+			return this;
+		}
 	}
 
 }

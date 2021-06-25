@@ -16,7 +16,8 @@ import java.util.List;
 
 @AllArgsConstructor
 public enum BearFair21NPC {
-	// Merchants
+	// MAIN
+	//   MERCHANTS
 	ARCHITECT("Zach", 4109),
 	ARTIST("Sage", 2657),
 	BAKER("Rye", 2659),
@@ -30,14 +31,15 @@ public enum BearFair21NPC {
 	PASTRY_CHEF("Maple", 2654),
 	SORCERER("Lucian", 2658),
 	TRADER("Joe", 4206),
-	// Quest Givers
+	//   QUEST GIVERS
 	MAYOR("John", 3838),
 	LUMBERJACK("Flint", 3845),
 	BEEKEEPER("Harold", 3844),
 	FISHERMAN2("Nate", 3841),
 	AERONAUT("Skye", 4111),
 	CURATOR("Curator", 4207),
-	// Misc
+	QUEEN_BEE("Queen Bee", 4208),
+	//   MISC
 	ADMIRAL("Phoenix", 3839),
 	ORGANIZER("Wakka", 3798),
 
@@ -49,6 +51,7 @@ public enum BearFair21NPC {
 	MGN_CUSTOMER_1("Trent", 4135),
 	MGN_CUSTOMER_2("Mr. Fredrickson", 4136),
 	JAMES("James", 4167),
+
 	// PUGMAS
 	PUGMAS_MAYOR("Mayor", 4130),
 	GRINCH("Grinch", 4129),
@@ -67,6 +70,7 @@ public enum BearFair21NPC {
 	PUGMAS_VILLAGER_12("Villager", 4153),
 	PUGMAS_VILLAGER_13("Villager", 4154),
 	PUGMAS_VILLAGER_14("Villager", 4155),
+
 	// HALLOWEEN
 	JOSE("Jose", 4131),
 	SANTIAGO("Santiago", 4132),
@@ -92,6 +96,7 @@ public enum BearFair21NPC {
 	CLARENCE("Clarence", 4193),
 	CARLA("Carla", 4194),
 	ANTONIO("Antonio", 4195),
+
 	// SDU
 	;
 
