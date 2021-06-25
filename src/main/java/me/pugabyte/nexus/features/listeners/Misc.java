@@ -126,7 +126,8 @@ public class Misc implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		final ItemStack tool = getTool(event.getPlayer());
+		final Player player = event.getPlayer();
+		ItemStack tool = getTool(player);
 		if (isNullOrAir(tool))
 			return;
 		if (!MaterialTag.ALL_BEEHIVES.isTagged(tool.getType()))
@@ -140,9 +141,19 @@ public class Misc implements Listener {
 		if (current < max) {
 			beehive.addEntity(bee);
 			meta.setBlockState(beehive);
-			tool.setItemMeta(meta);
+
+			if (tool.getAmount() == 1)
+				tool.setItemMeta(meta);
+			else {
+				player.getInventory().removeItem(new ItemStack(tool.getType()));
+				tool = tool.clone();
+				tool.setItemMeta(meta);
+				tool.setAmount(1);
+				PlayerUtils.giveItem(player, tool);
+			}
+
 			new SoundBuilder(Sound.BLOCK_BEEHIVE_ENTER)
-				.location(event.getPlayer().getLocation())
+				.location(player.getLocation())
 				.category(SoundCategory.BLOCKS)
 				.play();
 		}
