@@ -123,6 +123,9 @@ public class Misc implements Listener {
 		if (!(event.getRightClicked() instanceof Bee bee))
 			return;
 
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
 		final ItemStack tool = getTool(event.getPlayer());
 		if (isNullOrAir(tool))
 			return;
@@ -136,6 +139,8 @@ public class Misc implements Listener {
 
 		if (current < max) {
 			beehive.addEntity(bee);
+			meta.setBlockState(beehive);
+			tool.setItemMeta(meta);
 			new SoundBuilder(Sound.BLOCK_BEEHIVE_ENTER)
 				.location(event.getPlayer().getLocation())
 				.category(SoundCategory.NEUTRAL)
