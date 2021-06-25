@@ -38,6 +38,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Directional;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -414,6 +415,8 @@ public class BearFair21Command extends CustomCommand {
 		content.setCategory(category);
 		//
 		content.setMaterial(block.getType());
+		if (block.getBlockData() instanceof Directional)
+			content.setBlockFace(((Directional) block.getBlockData()).getFacing());
 		addContent(content);
 	}
 

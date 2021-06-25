@@ -11,6 +11,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
 import me.pugabyte.nexus.features.events.annotations.Region;
@@ -33,6 +34,7 @@ import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -238,7 +240,7 @@ public class MinigameNightIsland implements BearFair21Island {
 					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I'll be right back with you as soon as it's fixed. Shouldn't be more than a few minutes. ");
 					script.add("A'ight, thanks dawg. I'll be right here.");
 
-					if (!user.getOnlinePlayer().getInventory().containsAtLeast(FixableDevice.XBOX.getBroken(), 1))
+					if (!FixableDevice.XBOX.hasBroken(user.getOnlinePlayer()))
 						PlayerUtils.giveItem(user.getOnlinePlayer(), FixableDevice.XBOX.getBroken());
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
 					script.add("<self> Alright, here you are. Battery was shot. Had to replace it. Pretty simple fix so the bill won't be too bad.");
@@ -342,22 +344,38 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		if (armorStand == null) return;
 
-		solder(event, armorStand);
+		solder(event.getPlayer(), event.getItem(), armorStand);
 	}
 
-	private void solder(PlayerInteractEvent event, ArmorStand armorStand) {
-		Player player = event.getPlayer();
+	@EventHandler
+	public void onClickSolder(PlayerInteractEntityEvent event) {
+		final Player player = event.getPlayer();
+		if (!BearFair21.canDoBearFairQuest(player)) return;
+		Entity clicked = event.getRightClicked();
+		if (!(clicked instanceof ArmorStand armorStand)) return;
+		ProtectedRegion region = getWGUtils().getProtectedRegion(solderRegion);
+		if (!getWGUtils().isInRegion(clicked.getLocation(), region)) return;
+
+		event.setCancelled(true);
+
+		if (activeSolder) return;
+		activeSolder = true;
+
+		solder(player, ItemUtils.getTool(player), armorStand);
+	}
+
+	private void solder(Player player, ItemStack item, ArmorStand armorStand) {
 		BearFair21User user = new BearFair21UserService().get(player);
 
-		final FixableItem fixableItem = FixableItem.ofBroken(event.getItem());
+		final FixableItem fixableItem = FixableItem.ofBroken(item);
 		boolean fixingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAllItems(player);
 		if (fixingSpeaker) {
 			double wait = 0;
 			for (AxelSpeakerPart part : AxelSpeakerPart.values()) {
 				Tasks.wait(Time.SECOND.x(wait), () -> {
-					final ItemStack item = part.getDisplayItem();
-					PlayerUtils.removeItem(player, item);
-					solderItem(armorStand, player, item, null);
+					final ItemStack displayItem = part.getDisplayItem();
+					PlayerUtils.removeItem(player, displayItem);
+					solderItem(armorStand, player, displayItem, null);
 				});
 				wait += 5.6;
 			}
@@ -367,7 +385,7 @@ public class MinigameNightIsland implements BearFair21Island {
 				Quests.giveItem(player, speaker.get().build());
 			});
 		} else if (fixableItem != null) {
-			player.getInventory().removeItem(event.getItem());
+			player.getInventory().removeItem(item);
 
 			boolean fixingXbox = user.getQuestStage_MGN() == QuestStage.STARTED && FixableDevice.XBOX == fixableItem.getDevice();
 			boolean fixingLaptop = user.getQuestStage_MGN() == QuestStage.STEP_THREE && FixableDevice.LAPTOP == fixableItem.getDevice();
@@ -437,7 +455,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (BlockUtils.isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
 		if (!getWGUtils().isInRegion(clicked.getLocation(), mailboxRegion)) return;
 
-		if (!event.getPlayer().getInventory().containsAtLeast(FixableDevice.LAPTOP.getBroken(), 1)) {
+		if (!FixableDevice.LAPTOP.hasBroken(event.getPlayer()) && !FixableDevice.LAPTOP.hasFixed(event.getPlayer())) {
 			userService.edit(event.getPlayer(), user -> user.setQuestStage_MGN(QuestStage.STEP_THREE));
 			Quests.giveItem(event.getPlayer(), FixableDevice.LAPTOP.getBroken());
 		}
@@ -562,7 +580,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (user.getMgn_speakersFixed().contains(location)) return;
 		user.getMgn_speakersFixed().add(location);
 		userService.save(user);
-		player.getInventory().remove(event.getItem());
+		player.getInventory().removeItem(new ItemBuilder(event.getItem()).amount(1).build());
 	}
 
 	private static final Location basementSpeakerLocation = BearFair21.locationOf(-188, 137, -188);
@@ -940,9 +958,25 @@ public class MinigameNightIsland implements BearFair21Island {
 	private final String phoneRegion = getRegion("phone");
 	private final String mailboxRegion = getRegion("mailbox");
 
+	private interface Fixable {
+
+		default boolean hasBroken(HasPlayer player) {
+			return player.getPlayer().getInventory().containsAtLeast(getBroken(), 1);
+		}
+
+		default boolean hasFixed(HasPlayer player) {
+			return player.getPlayer().getInventory().containsAtLeast(getFixed(), 1);
+		}
+
+		ItemStack getBroken();
+
+		ItemStack getFixed();
+
+	}
+
 	@Getter
 	@AllArgsConstructor
-	private enum FixableDevice {
+	private enum FixableDevice implements Fixable {
 		XBOX(
 			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&cTrent's Broken Xbox One").undroppable().unplaceable().build(),
 			new ItemBuilder(Nexus.getHeadAPI().getItemHead("43417")).name("&aTrent's Fixed Xbox One").undroppable().unplaceable().build(),
@@ -964,7 +998,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	@Getter
 	@AllArgsConstructor
-	private enum FixableItem {
+	private enum FixableItem implements Fixable {
 		BATTERY(
 			FixableDevice.XBOX,
 			new ItemBuilder(Material.NETHERITE_INGOT).customModelData(1).name("&cTrent's Broken Xbox One Battery").undroppable().unplaceable().build(),
@@ -1012,7 +1046,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		final ItemStack fixed = item.getFixed();
 		if (item.getAlreadyFixedPredicate() != null && item.getAlreadyFixedPredicate().test(user))
 			contents.set(slot, ClickableItem.empty(fixed));
-		else if (inv.containsAtLeast(broken, 1) || inv.containsAtLeast(fixed, 1)) {
+		else if (item.hasBroken(player) || item.hasFixed(player)) {
 			contents.set(slot, ClickableItem.from(new ItemBuilder(Material.BARRIER).name("&f" + camelCase(item)).build(), e -> {
 				if (fixed.equals(player.getItemOnCursor())) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));

@@ -65,8 +65,8 @@ public class ClientsideContent implements PlayerOwnedObject {
 		//
 		private Material material;
 		private ItemStack itemStack;
-		// item frame specific
 		private BlockFace blockFace;
+		// item frame specific
 		private Integer rotation;
 
 		public void setRotation(Rotation rotation) {

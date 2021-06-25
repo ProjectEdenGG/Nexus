@@ -24,6 +24,8 @@ import net.minecraft.server.v1_16_R3.EntitySlime;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -90,7 +92,10 @@ public class ClientsideContentManager implements Listener {
 					if (!isNear(player, content.getLocation(), 75)) continue;
 					if (!canSee(player, content)) continue;
 
-					player.sendBlockChange(content.getLocation(), content.getMaterial().createBlockData());
+					final BlockData blockData = content.getMaterial().createBlockData();
+					if (content.getBlockFace() != null)
+						((Directional) blockData).setFacing(content.getBlockFace());
+					player.sendBlockChange(content.getLocation(), blockData);
 				}
 			}
 		});
