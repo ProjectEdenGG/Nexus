@@ -34,6 +34,12 @@ public class BearFair21WarpsCommand extends _WarpCommand {
 	}
 
 	@Override
+	public void teleportNearest() {
+		player().setFallDistance(0);
+		super.teleportNearest();
+	}
+
+	@Override
 	public WarpType getWarpType() {
 		return WarpType.BEAR_FAIR21;
 	}

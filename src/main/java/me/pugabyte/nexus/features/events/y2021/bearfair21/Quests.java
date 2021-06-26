@@ -331,7 +331,7 @@ public class Quests implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerDeath(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (BearFair21.isNotAtBearFair(player)) return;
@@ -341,9 +341,8 @@ public class Quests implements Listener {
 
 		event.setCancelled(true);
 
-		player.addPotionEffects(Collections.singletonList
-			(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
-		TitleUtils.sendSubtitle(player, "&cYou died.");
+		player.addPotionEffects(Collections.singletonList(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
+		TitleUtils.sendSubtitle(player, "&cYou died.", 40);
 
 		player.setHealth(20);
 		player.teleport(BearFair21.getShipSpawnLoc());

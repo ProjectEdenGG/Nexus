@@ -814,6 +814,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		}else if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
 			stopPhoneRinging(event.getPlayer());
 			Talker.sendScript(event.getPlayer(), MinigameNightNPCs.AXEL);
+			user.setMgn_receivedAxelCall(true);
+			userService.save(user);
 		}
 	}
 
