@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -22,6 +23,7 @@ import me.pugabyte.nexus.models.trophy.Trophy;
 import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -53,7 +55,7 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
-	private static final ItemBuilder queenLarvae = ItemBuilder.fromHeadId("33827").undroppable();
+	private static final ItemBuilder queenLarvae = ItemBuilder.fromHeadId("33827").name("Queen Larva").undroppable();
 	@Getter
 	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").customModelData(3).undroppable();
 	@Getter
@@ -297,13 +299,24 @@ public class MainIsland implements BearFair21Island {
 					userService.save(user);
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
-					List<ItemBuilder> required = Collections.singletonList(queenLarvae.clone());
-					if (!Quests.hasAllItemsLikeFrom(user, required)) {
+					ItemStack item = null;
+					String queenLarvaeId = Nexus.getHeadAPI().getItemID(queenLarvae.get());
+					for (ItemStack itemStack : PlayerUtils.getAllInventoryContents(user.getOnlinePlayer())) {
+						if (ItemUtils.isNullOrAir(itemStack)) continue;
+						if (!Material.PLAYER_HEAD.equals(itemStack.getType())) continue;
+
+						if (queenLarvaeId.equals(Nexus.getHeadAPI().getItemID(itemStack))) {
+							item = itemStack;
+							break;
+						}
+					}
+
+					if (item == null) {
 						script.add("TODO - Reminder");
 						return script;
 					}
 
-					Quests.removeItems(user, required);
+					Quests.removeItemStacks(user, Collections.singletonList(item));
 					script.add("TODO - Thanks");
 					Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(user));
 					return script;
