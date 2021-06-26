@@ -360,7 +360,7 @@ public class MiniGolf {
 						if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
 							wait = 0;
 
-						BearFair21.giveDailyPoints(user.getPlayer(), BF21PointSource.MINIGOLF, 5);
+						BearFair21.giveDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5);
 						int strokes = user.getCurrentStrokes();
 						String userScore = MiniGolfUtils.getScore(user);
 						Tasks.wait(wait, () ->

@@ -221,16 +221,16 @@ public class BearFair21 implements Listener {
 		return user.checkDaily("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
 	}
 
-	public static void giveDailyPoints(Player player, BF21PointSource source, int amount) {
+	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
+		if (!config.isGiveTokens())
+			return;
+
 		// TODO BF21: Remove me
 		if (true) {
-			player.sendMessage("Give +" + amount + " points");
+			player.sendMessage("Give +" + amount + " tokens");
 			return;
 		}
 		//
-
-		if (!config.isGiveDailyPoints())
-			return;
 
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
@@ -238,13 +238,20 @@ public class BearFair21 implements Listener {
 		user.giveTokens("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
 		service.save(user);
 
-		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Points");
+		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Tokens");
 	}
 
-	public static void givePoints(Player player, int amount) {
+	public static void giveTokens(BearFair21User user, int amount) {
+		giveTokens(user.getPlayer(), amount);
+	}
+
+	public static void giveTokens(Player player, int amount) {
+		if (!config.isGiveTokens())
+			return;
+
 		// TODO BF21: Remove me
 		if (true) {
-			player.sendMessage("Give +" + amount + " points");
+			player.sendMessage("Give +" + amount + " tokens");
 			return;
 		}
 		//
@@ -255,7 +262,7 @@ public class BearFair21 implements Listener {
 		user.giveTokens(amount);
 		service.save(user);
 
-		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Points");
+		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Tokens");
 	}
 
 	public static boolean canWarp() {
@@ -300,7 +307,7 @@ public class BearFair21 implements Listener {
 			return;
 
 		Quests.removeItemStacks(user, items);
-		giveDailyPoints(player, BF21PointSource.TRADER, 50);
+		giveDailyTokens(player, BF21PointSource.TRADER, 50);
 		Quests.sound_obtainItem(player);
 	}
 

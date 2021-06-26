@@ -107,6 +107,6 @@ public class Seeker implements Listener {
 		removePlayer(player);
 		player.sendBlockChange(blockLocation, blockLocation.getBlock().getBlockData());
 
-		BearFair21.giveDailyPoints(player, BF21PointSource.SEEKER, 5);
+		BearFair21.giveDailyTokens(player, BF21PointSource.SEEKER, 5);
 	}
 }

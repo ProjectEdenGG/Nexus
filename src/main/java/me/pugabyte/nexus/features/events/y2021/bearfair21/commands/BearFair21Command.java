@@ -142,9 +142,9 @@ public class BearFair21Command extends CustomCommand {
 	@Permission("group.admin")
 	@Path("config giveDailyPoints <boolean>")
 	void configDailyPoints(boolean bool) {
-		config.setGiveDailyPoints(bool);
+		config.setGiveDailyTokens(bool);
 		configService.save(config);
-		send("Set giveDailyPoints to: " + bool(config.isGiveDailyPoints()));
+		send("Set giveDailyPoints to: " + bool(config.isGiveDailyTokens()));
 	}
 
 	@Permission("group.admin")

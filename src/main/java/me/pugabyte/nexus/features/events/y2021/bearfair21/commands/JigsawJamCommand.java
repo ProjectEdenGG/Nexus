@@ -409,7 +409,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 
 			if (!jammer.hasPlayed()) {
-				BearFair21.givePoints(jammer.getPlayer(), 50);
+				BearFair21.giveTokens(jammer.getPlayer(), 50);
 				jammer.hasPlayed(true);
 				new JigsawJamService().save(jammer);
 			}

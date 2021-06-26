@@ -96,7 +96,7 @@ public class ReflectionGameUtils {
 		for (Player player : players)
 			send(ReflectionGame.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
 
-		BearFair21.giveDailyPoints(ReflectionGame.getButtonPresser(), BF21PointSource.REFLECTION, 5);
+		BearFair21.giveDailyTokens(ReflectionGame.getButtonPresser(), BF21PointSource.REFLECTION, 5);
 
 		Tasks.wait(Time.SECOND.x(3), () -> {
 			randomizeBanners();

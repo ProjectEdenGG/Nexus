@@ -102,7 +102,7 @@ public class Archery implements Listener {
 		removeTarget(hitBlock);
 		new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).receiver(player).volume(0.3).pitch(0.1).play();
 
-		BearFair21.giveDailyPoints(player, BF21PointSource.ARCHERY, 1);
+		BearFair21.giveDailyTokens(player, BF21PointSource.ARCHERY, 1);
 	}
 
 	private List<Location> getTargetLocs() {

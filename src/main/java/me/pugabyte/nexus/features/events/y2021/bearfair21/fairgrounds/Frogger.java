@@ -338,7 +338,7 @@ public class Frogger implements Listener {
 			player.teleport(respawnLoc);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).pitch(2.0).play();
 
-			BearFair21.giveDailyPoints(player, BF21PointSource.FROGGER, 5);
+			BearFair21.giveDailyTokens(player, BF21PointSource.FROGGER, 5);
 		}
 	}
 
