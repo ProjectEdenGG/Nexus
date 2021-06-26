@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
-import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -38,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
+import static me.pugabyte.nexus.utils.ItemUtils.isSameHead;
 
 // TODO BF21: Quest + Dialog
 @Region("main")
@@ -217,6 +217,33 @@ public class MainIsland implements BearFair21Island {
 				return script;
 			}
 		},
+		JAMES(BearFair21NPC.JAMES) {
+			@Override
+			public List<String> getScript(BearFair21User user) {
+				List<String> script = new ArrayList<>();
+
+				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
+					if (!user.isMgn_boughtCar()) {
+						script.add("Hey, interested in the car? Well I gotta warn you there's no posted price because it's been totaled.");
+						script.add("I'm just sellin' it for salvage so if you see any parts you'd like, we can talk price.");
+						script.add("<self> Actually... how's the sound-system?");
+						script.add("Well it was totaled by water damage so the front speakers are toast.");
+						script.add("The rear speakers actually managed to survive though so if you're cool with half a sound-system, I'd say <TODO Wakka Fix cost> aughta' cover it.");
+						// TODO Wakka script if you don't have enough money
+						script.add("<self> I'll take it!");
+						user.setMgn_boughtCar(true);
+						Quests.giveItem(user, MinigameNightIsland.getCarKey().build());
+
+						return script;
+					}
+				}
+
+				// TODO Wakka rest of the script
+				script.add("TODO - Hello");
+
+				return script;
+			}
+		},
 		CARPENTER(BearFair21NPC.CARPENTER) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
@@ -300,12 +327,11 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
 					ItemStack item = null;
-					String queenLarvaeId = Nexus.getHeadAPI().getItemID(queenLarvae.get());
 					for (ItemStack itemStack : PlayerUtils.getAllInventoryContents(user.getOnlinePlayer())) {
 						if (ItemUtils.isNullOrAir(itemStack)) continue;
 						if (!Material.PLAYER_HEAD.equals(itemStack.getType())) continue;
 
-						if (queenLarvaeId.equals(Nexus.getHeadAPI().getItemID(itemStack))) {
+						if (isSameHead(queenLarvae.build(), itemStack)) {
 							item = itemStack;
 							break;
 						}

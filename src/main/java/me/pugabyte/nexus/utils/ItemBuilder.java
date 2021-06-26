@@ -468,6 +468,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	/** Static helpers */
 
+	public static ItemBuilder oneOf(ItemStack item) {
+		return new ItemBuilder(item).amount(1);
+	}
+
 	public static ItemStack setName(ItemStack item, String name) {
 		ItemMeta meta = item.getItemMeta();
 		if (name == null)

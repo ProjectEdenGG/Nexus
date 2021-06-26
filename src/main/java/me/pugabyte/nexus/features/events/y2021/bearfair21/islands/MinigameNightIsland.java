@@ -6,6 +6,7 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.SmartInvsPlugin;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
@@ -25,18 +26,21 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightI
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.trophy.Trophy;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
@@ -57,7 +61,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -83,6 +89,7 @@ import java.util.function.Supplier;
 import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.ItemUtils.isSameHead;
 import static me.pugabyte.nexus.utils.ItemUtils.isTypeAndNameEqual;
 
 // TODO BF21: Quest + Dialog
@@ -101,7 +108,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		Location gravWellLoc = BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion(gravwellRegion).getMinimumPoint());
 		Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			for (Player player : BearFair21.getPlayers()) {
-				for (Location soundLoc : userService.get(player).getMgn_beaconsActivated()) {
+				final BearFair21User user = userService.get(player);
+				for (Location soundLoc : user.getMgn_beaconsActivated()) {
 					if (player.getLocation().distance(soundLoc) <= 20) {
 						new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).reciever(player).location(soundLoc).volume(2.0).play();
 
@@ -129,6 +137,27 @@ public class MinigameNightIsland implements BearFair21Island {
 						.count(10)
 						.offset(.25, .25, .25)
 						.spawn();
+				}
+			}
+		});
+
+		Tasks.repeat(0, 5, () -> {
+			for (Player player : BearFair21.getPlayers()) {
+				final BearFair21User user = userService.get(player);
+				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
+					if (user.getMgn_speakersFixed().size() < speakerLocations.size()) {
+						for (Location location : speakerLocations) {
+							if (user.getMgn_speakersFixed().contains(location)) continue;
+
+							new ParticleBuilder(Particle.CAMPFIRE_COSY_SMOKE)
+								.receivers(player)
+								.location(location.toCenterLocation())
+								.count(0)
+								.offset(0, 1, 0)
+								.extra(.04)
+								.spawn();
+						}
+					}
 				}
 			}
 		});
@@ -214,14 +243,26 @@ public class MinigameNightIsland implements BearFair21Island {
 					}
 
 					case STEP_EIGHT -> {
-						script.add("<self> Hello?");
-						script.add("Hey dude, we got a problem. You busy?");
-						script.add("<self> Nope, just finished up a service call, what's wrong?");
-						script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers! The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
-						script.add("<self> Oh no! What can I do?");
-						script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
-						script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
-						script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
+						if (user.getMgn_speakersFixed().size() < speakerLocations.size()) {
+							script.add("<self> Hello?");
+							script.add("Hey dude, we got a problem. You busy?");
+							script.add("<self> Nope, just finished up a service call, what's wrong?");
+							script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers! The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
+							script.add("<self> Oh no! What can I do?");
+							script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
+							script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
+							script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
+						} else {
+							script.add("There, all the speakers are replaced… just don’t play too loud. Some of them are in various states of quality, haha.");
+							script.add("Yoo! Dude! I’m stoked! You really pulled through for us! And just in time too! The show starts in just a sec! Take one of the front row seats!");
+							script.add("Sup everyone! Happy Bear Fair! We are Chiptune and we’re happy to celebrate Bear Fair by bringing you some awesome music tonight so grab some snacks and get ready to groove!");
+							Quests.giveKey(user);
+							PermissionChange.set().permission("powder.powder.dk_jungle_64").player(user).run();
+							Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST.give(user.getOnlinePlayer());
+							user.setQuestStage_MGN(QuestStage.COMPLETE);
+							userService.save(user);
+							Tasks.wait(Time.SECOND, () -> new SoundBuilder(Sound.valueOf("minecraft:custom.dk_jungle_64")).reciever(user.getOnlinePlayer()).volume(.25).play());
+						}
 					}
 
 					case STARTED -> {
@@ -245,7 +286,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
 				if (user.getQuestStage_MGN() == QuestStage.STARTED) {
-					script.add("Ayy yo dude. You the one I gotta talk to ‘bout fixin my xbox?");
+					script.add("Ayy yo dude. You the one I gotta talk to 'bout fixin my xbox?");
 					script.add("<self> Yep! What seems to be the problem?");
 					script.add("So like, Its an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
 					script.add("<self> Yeah that's not good... does the blue screen have an error message?");
@@ -295,29 +336,6 @@ public class MinigameNightIsland implements BearFair21Island {
 					userService.save(user);
 					Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
 				}
-
-				return script;
-			}
-		},
-		JAMES(BearFair21NPC.JAMES) {
-			@Override
-			public List<String> getScript(BearFair21User user) {
-				List<String> script = new ArrayList<>();
-
-				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
-					if (!user.isMgn_boughtCar()) {
-						script.add("Hey, interested in the car? Well I gotta warn you there's no posted price because it's been totaled.");
-						script.add("I'm just sellin' it for salvage so if you see any parts you'd like, we can talk price.");
-						script.add("<self> Actually... how's the sound-system?");
-						script.add("Well it was totaled by water damage so the front speakers are toast.");
-						script.add("The rear speakers actually managed to survive though so if you're cool with half a sound-system, I'd say <TODO Wakka Fix cost> aughta' cover it.");
-						// TODO Wakka script if you don't have enough money
-						script.add("<self> I'll take it!");
-						return script;
-					}
-				}
-
-				// TODO Wakka rest of the script
 
 				return script;
 			}
@@ -405,8 +423,9 @@ public class MinigameNightIsland implements BearFair21Island {
 		BearFair21User user = new BearFair21UserService().get(player);
 
 		final FixableItem fixableItem = FixableItem.ofBroken(item);
-		boolean fixingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAllItems(player);
-		if (fixingSpeaker) {
+		boolean assemblingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAllItems(player);
+		boolean fixingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && isSameHead(slightlyDamagedSpeaker.build(), item);
+		if (assemblingSpeaker) {
 			double wait = 0;
 			for (AxelSpeakerPart part : AxelSpeakerPart.values()) {
 				Tasks.wait(Time.SECOND.x(wait), () -> {
@@ -421,12 +440,14 @@ public class MinigameNightIsland implements BearFair21Island {
 					PlayerUtils.removeItem(player, part.getDisplayItem());
 				Quests.giveItem(player, speaker.get().build());
 			});
-		} else if (fixableItem != null) {
-			player.getInventory().removeItem(item);
-
+		} else if (fixingSpeaker) {
+			PlayerUtils.removeItem(player, ItemBuilder.oneOf(item).build());
+			solderItem(armorStand, player, slightlyDamagedSpeaker.build(), speaker.get().build());
+		} if (fixableItem != null) {
 			boolean fixingXbox = user.getQuestStage_MGN() == QuestStage.STARTED && FixableDevice.XBOX == fixableItem.getDevice();
 			boolean fixingLaptop = user.getQuestStage_MGN() == QuestStage.STEP_THREE && FixableDevice.LAPTOP == fixableItem.getDevice();
 			if (!(fixingLaptop || fixingXbox)) return;
+			PlayerUtils.removeItem(player, item);
 			solderItem(armorStand, player, fixableItem.getBroken(), fixableItem.getFixed());
 		}
 	}
@@ -480,7 +501,9 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!event.getRegion().getId().equals(galleryRegion)) return;
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
-		if (List.of(QuestStage.STEP_TWO, QuestStage.STEP_SIX, QuestStage.STEP_EIGHT).contains(user.getQuestStage_MGN()))
+		if (List.of(QuestStage.STEP_TWO, QuestStage.STEP_SIX).contains(user.getQuestStage_MGN()))
+			startPhoneRinging(user.getOnlinePlayer());
+		else if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && !user.isMgn_receivedAxelCall())
 			startPhoneRinging(user.getOnlinePlayer());
 	}
 
@@ -610,7 +633,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!speakerLocations.contains(location)) return;
 		event.setCancelled(true);
 
-		if (!Nexus.getHeadAPI().getItemID(event.getItem()).equals(Nexus.getHeadAPI().getItemID(speaker.get().build()))) return;
+		if (!isSameHead(event.getItem(), speaker.get().build())) return;
 
 		final BearFair21User user = userService.get(player);
 		if (user.getMgn_speakersFixed().contains(location)) return;
@@ -660,6 +683,70 @@ public class MinigameNightIsland implements BearFair21Island {
 		final ItemStack item = part.getDisplayItem();
 		if (!player.getInventory().containsAtLeast(item, 1))
 			Quests.giveItem(player, item);
+	}
+
+	@Getter
+	private static final ItemBuilder carKey = new ItemBuilder(Material.TRIPWIRE_HOOK).name("Car Key").undroppable().unplaceable();
+	private static final String trunkRegion = "bearfair21_main_trunk";
+
+	@EventHandler
+	public void onClickTrunk(PlayerInteractEvent event) {
+		if (!BearFair21.canDoBearFairQuest(event)) return;
+		final Player player = event.getPlayer();
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		final Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block)) return;
+		if (!getWGUtils().isInRegion(block.getLocation(), trunkRegion)) return;
+		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
+		if (user.getQuestStage_MGN() != QuestStage.STEP_EIGHT) return;
+		if (user.isMgn_openedTrunk()) return;
+		if (!player.getInventory().containsAtLeast(carKey.build(), 1)) return;
+
+		player.getInventory().removeItem(carKey.build());
+		new TrunkMenu().open(player);
+	}
+
+	private static final ItemBuilder slightlyDamagedSpeaker = ItemBuilder.fromHeadId("2126").name("&cSlightly Damaged Speaker").undroppable().unplaceable();
+
+	private static class TrunkMenu extends MenuUtils implements InventoryProvider {
+
+		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("Car Trunk")
+				.size(3, 9)
+				.build()
+				.open(viewer, page);
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			contents.set(0, 3, ClickableItem.empty(slightlyDamagedSpeaker.build()));
+			contents.set(2, 5, ClickableItem.empty(slightlyDamagedSpeaker.build()));
+			contents.set(1, 2, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
+			contents.set(0, 8, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
+			contents.set(1, 6, ClickableItem.empty(FishingLoot.OLD_BOOTS.getItem()));
+			contents.setEditable(SlotPos.of(0, 3), true);
+			contents.setEditable(SlotPos.of(2, 5), true);
+			contents.setEditable(SlotPos.of(1, 2), true);
+			contents.setEditable(SlotPos.of(0, 8), true);
+			contents.setEditable(SlotPos.of(1, 6), true);
+			new BearFair21UserService().edit(player, user -> user.setMgn_openedTrunk(true));
+		}
+
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onInvClose(InventoryCloseEvent event) {
+		Player player = (Player) event.getPlayer();
+		Optional<SmartInventory> inv = SmartInvsPlugin.manager().getInventory(player);
+		if (inv.isEmpty()) return;
+		if (!(inv.get().getProvider() instanceof TrunkMenu)) return;
+
+		ItemStack[] menuContents = event.getInventory().getContents();
+		for (ItemStack item : menuContents)
+			PlayerUtils.giveItem(player, item);
 	}
 
 	// Phone

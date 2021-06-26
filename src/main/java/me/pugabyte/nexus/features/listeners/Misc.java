@@ -21,6 +21,7 @@ import me.pugabyte.nexus.models.tip.TipService;
 import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
@@ -145,10 +146,9 @@ public class Misc implements Listener {
 			if (tool.getAmount() == 1)
 				tool.setItemMeta(meta);
 			else {
-				player.getInventory().removeItem(new ItemStack(tool.getType()));
-				tool = tool.clone();
+				tool = ItemBuilder.oneOf(tool).build();
+				player.getInventory().removeItem(tool);
 				tool.setItemMeta(meta);
-				tool.setAmount(1);
 				PlayerUtils.giveItem(player, tool);
 			}
 
