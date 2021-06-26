@@ -12,7 +12,6 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.RouterMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.ScrambledCablesMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -103,7 +102,7 @@ public class BearFair21Command extends CustomCommand {
 	public void databaseDelete(@Arg("self") Player player) {
 		BearFair21User user = userService.get(player);
 		user.cancelActiveTask();
-		Arrays.stream(ContentCategory.values()).forEach(category -> ClientsideContentManager.removeCategory(user, category));
+//		Arrays.stream(ContentCategory.values()).forEach(category -> ClientsideContentManager.removeCategory(user, category));
 		userService.delete(user);
 		send("deleted bearfair21 user: " + player.getName());
 	}
@@ -111,30 +110,7 @@ public class BearFair21Command extends CustomCommand {
 	@Path("database debug [player]")
 	@Permission("group.admin")
 	public void databaseDebug(@Arg("self") Player player) {
-		BearFair21User user = userService.get(player);
-
-		send("BearFair21 User: " + user.getName());
-		send("Visible Categories: " + Arrays.toString(user.getContentCategories().toArray()));
-		send("Junk Weight: " + user.getJunkWeight());
-		send("Recycled Items: " + user.getRecycledItems());
-		send("Met NPCs: " + Arrays.toString(user.getMetNPCs().stream().map(id -> BearFair21NPC.of(id).getNpcName()).toArray()));
-		send("Next Step NPCs: " + Arrays.toString(user.getNextStepNPCs().stream().map(id -> BearFair21NPC.of(id).getNpcName()).toArray()));
-		send("Active Task Id: " + user.getActiveTaskId());
-		send("Quests:");
-		send("  Main: " + user.getQuestStage_Main());
-		send("    Recycle: " + user.getQuestStage_Recycle());
-		send("    Bee: " + user.getQuestStage_BeeKeeper());
-		send("    LumberJack: " + user.getQuestStage_Lumberjack());
-		line();
-		send("  MGN: " + user.getQuestStage_MGN());
-		line();
-		send("  Pugmas: " + user.getQuestStage_Pugmas());
-		send("    Present Index: " + user.getPresentNdx());
-		line();
-		send("  Halloween: " + user.getQuestStage_Halloween());
-		line();
-		send("  SDU: " + user.getQuestStage_SDU());
-		line();
+		send(userService.get(player).toPrettyString());
 	}
 
 	// Config

@@ -84,7 +84,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private void blockTask() {
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		Tasks.repeat(0, Time.TICK.x(10), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Content content : contentService.getList()) {
 				if (!content.isBlock()) continue;
@@ -103,7 +103,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private void schematicTask() {
-		Tasks.repeat(0, Time.TICK.x(10), () -> {
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Content content : contentService.getList()) {
 				if (!content.isSchematic()) continue;
