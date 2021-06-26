@@ -65,6 +65,8 @@ import java.util.Set;
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.EDIT;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -288,7 +290,7 @@ public class Quests implements Listener {
 
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
-		if (!BearFair21.getConfig().isEnableQuests())
+		if (!BearFair21.getConfig().isEnabled(QUESTS))
 			return;
 
 		Player player = event.getClicker();
@@ -323,7 +325,7 @@ public class Quests implements Listener {
 		if (BearFair21.isNotAtBearFair(block)) return;
 		if (canWorldGuardEdit(player)) return;
 
-		if (!BearFair21.getConfig().isEnableEdit()) {
+		if (!BearFair21.getConfig().isEnabled(EDIT)) {
 			event.setCancelled(true);
 			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
 				send(Errors.cantBreak, player);

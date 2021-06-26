@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.RIDES;
+
 public class Rides {
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
 
@@ -36,7 +38,7 @@ public class Rides {
 				if (oldStatus == curStatus) continue;
 
 				if (curStatus) {
-					if (!BearFair21.getConfig().isEnableRides())
+					if (!BearFair21.getConfig().isEnabled(RIDES))
 						continue;
 
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");

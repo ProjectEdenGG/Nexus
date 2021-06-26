@@ -21,6 +21,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21Config;
+import me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
 import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
@@ -49,8 +50,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static me.pugabyte.nexus.utils.StringUtils.bool;
 
 @Aliases("bf21")
 public class BearFair21Command extends CustomCommand {
@@ -113,46 +112,12 @@ public class BearFair21Command extends CustomCommand {
 		send(userService.get(player).toPrettyString());
 	}
 
-	// Config
-
 	@Permission("group.admin")
-	@Path("config enableWarp <boolean>")
-	void configQuests(boolean bool) {
-		config.setEnableWarp(bool);
+	@Path("config <option> <boolean>")
+	void config(BearFair21ConfigOption option, boolean enabled) {
+		config.setEnabled(option, enabled);
 		configService.save(config);
-		send("Set enableWarp to: " + bool(config.isEnableWarp()));
-	}
-
-	@Permission("group.admin")
-	@Path("config enableRides <boolean>")
-	void configRides(boolean bool) {
-		config.setEnableRides(bool);
-		configService.save(config);
-		send("Set enableRides to: " + bool(config.isEnableRides()));
-	}
-
-	@Permission("group.admin")
-	@Path("config enableQuests <boolean>")
-	void configWarp(boolean bool) {
-		config.setEnableQuests(bool);
-		configService.save(config);
-		send("Set enableQuests to: " + bool(config.isEnableQuests()));
-	}
-
-	@Permission("group.admin")
-	@Path("config giveDailyPoints <boolean>")
-	void configDailyPoints(boolean bool) {
-		config.setGiveDailyTokens(bool);
-		configService.save(config);
-		send("Set giveDailyPoints to: " + bool(config.isGiveDailyTokens()));
-	}
-
-	@Permission("group.admin")
-	@Path("config skipWaits <boolean>")
-	void configSkipWaits(boolean bool) {
-		config.setSkipWaits(bool);
-		configService.save(config);
-		send("Set skipWaits to: " + bool(config.isSkipWaits()));
+		send(PREFIX + (enabled ? "&aEnabled" : "&cDisabled") + " &3config option &e" + camelCase(option));
 	}
 
 	// Command Blocks

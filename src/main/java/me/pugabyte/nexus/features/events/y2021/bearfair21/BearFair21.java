@@ -50,6 +50,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_TOKENS;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
@@ -143,7 +146,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static boolean canDoBearFairQuest(Player player) {
-		if (!BearFair21.getConfig().isEnableQuests()) return false;
+		if (!BearFair21.getConfig().isEnabled(QUESTS)) return false;
 		return !isNotAtBearFair(player);
 	}
 
@@ -222,7 +225,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
-		if (!config.isGiveTokens())
+		if (!config.isEnabled(GIVE_TOKENS))
 			return;
 
 		// TODO BF21: Remove me
@@ -246,7 +249,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveTokens(Player player, int amount) {
-		if (!config.isGiveTokens())
+		if (!config.isEnabled(GIVE_TOKENS))
 			return;
 
 		// TODO BF21: Remove me
@@ -266,7 +269,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static boolean canWarp() {
-		return config.isEnableWarp();
+		return config.isEnabled(WARP);
 	}
 
 	public static void startup() {
@@ -313,7 +316,7 @@ public class BearFair21 implements Listener {
 
 	@EventHandler
 	public void onRegionEnterYacht(PlayerEnteredRegionEvent event) {
-		if (!config.isEnableWarp()) return;
+		if (!config.isEnabled(WARP)) return;
 		if (!event.getRegion().getId().equalsIgnoreCase("spawn_spaceyacht")) return;
 		Player player = event.getPlayer();
 		send("", player);
@@ -323,7 +326,7 @@ public class BearFair21 implements Listener {
 
 	@EventHandler
 	public void onRegionEnterQuarters(PlayerEnteredRegionEvent event) {
-		if (!config.isEnableWarp()) return;
+		if (!config.isEnabled(WARP)) return;
 		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
 
 		Location spawnTransition = new Location(Bukkit.getWorld("survival"), 9.5, 100, -180.5);

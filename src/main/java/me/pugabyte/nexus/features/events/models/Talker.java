@@ -18,6 +18,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.SKIP_WAITS;
+
 public class Talker {
 	/**
 	 * Sends a script to a player from a talking NPC. Uses the NPC's default script(s).
@@ -44,7 +46,7 @@ public class Talker {
 		AtomicInteger wait = new AtomicInteger(0);
 		script.forEach(line -> {
 			if (line.toLowerCase().matches("^wait \\d+$")) {
-				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isSkipWaits())
+				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(SKIP_WAITS))
 					wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 			} else {
 				line = line.replaceAll("<player>", playerName);
@@ -98,7 +100,7 @@ public class Talker {
 				Tasks.wait(wait.get(), () -> complete.accept(false));
 
 			} else if (line.toLowerCase().matches("^wait \\d+$")) {
-				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isSkipWaits())
+				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(SKIP_WAITS))
 					wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 				if (!iterator.hasNext())
 					Tasks.wait(wait.get(), () -> complete.accept(true));
