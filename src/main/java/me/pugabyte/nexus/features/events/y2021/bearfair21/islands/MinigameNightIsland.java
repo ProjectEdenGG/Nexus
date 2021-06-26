@@ -268,7 +268,7 @@ public class MinigameNightIsland implements BearFair21Island {
 							script.add("Sup everyone! Happy Bear Fair! We are Chiptune and we're happy to celebrate Bear Fair by bringing you some awesome music tonight so grab some snacks and get ready to groove!");
 							Quests.giveKey(user);
 							// TODO tell them about the powder
-							PermissionChange.set().permission("powder.powder.dk_jungle_64").player(user).run();
+							PermissionChange.set().permission("powder.powder.DK_Jungle_64").player(user).run();
 							Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST.give(user.getOnlinePlayer());
 							user.setQuestStage_MGN(QuestStage.COMPLETE);
 							userService.save(user);

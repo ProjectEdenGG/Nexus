@@ -244,6 +244,7 @@ public class MainIsland implements BearFair21Island {
 						script.add("<self> I'll take it!");
 						user.setMgn_boughtCar(true);
 						user.getNextStepNPCs().remove(getNpcId());
+						userService.save(user);
 						Quests.giveItem(user, MinigameNightIsland.getCarKey().build());
 
 						return script;
