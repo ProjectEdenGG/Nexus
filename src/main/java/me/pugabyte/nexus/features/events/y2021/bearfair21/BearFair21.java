@@ -60,10 +60,8 @@ public class BearFair21 implements Listener {
 	private static final BearFair21UserService userService = new BearFair21UserService();
 
 	/**
-	 * TODO BF21: on first visit, clear inventory of player
 	 * TODO BF21: When BearFair21 is over:
-	 * - disable: enableRides, enableQuests, enableWarp, and giveDailyPoints
-	 * - disable: region block break/place
+	 * - disable: enableRides, enableQuests, enableWarp, enableEdit and giveDailyPoints
 	 */
 
 	@Getter
@@ -338,6 +336,7 @@ public class BearFair21 implements Listener {
 				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
 				send("", player);
 				if (user.isFirstVisit()) {
+					user.getOnlinePlayer().getInventory().setContents(new ItemStack[0]);
 					user.setFirstVisit(false);
 					userService.save(user);
 

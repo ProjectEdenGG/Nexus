@@ -191,23 +191,23 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.EGG))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.EGG))
+						.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.EGG)));
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.EGG)));
 
-					if (user.getQuestStage_Main() == QuestStage.STEP_THREE) {
+					if (user.getQuestStage_Main() == QuestStage.STEP_FOUR) {
 						add(new TradeBuilder()
-								.result(MainIsland.getCake().clone())
-								.ingredient(new ItemBuilder(Material.CAKE).build())
-								.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
+							.result(MainIsland.getCake().clone())
+							.ingredient(new ItemBuilder(Material.CAKE).build())
+							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
 					} else {
 						add(new TradeBuilder()
-								.result(goldNugget.clone().amount(1))
-								.ingredient(new ItemBuilder(Material.CAKE)));
+							.result(goldNugget.clone().amount(1))
+							.ingredient(new ItemBuilder(Material.CAKE)));
 						add(new TradeBuilder()
-								.result(goldNugget.clone().amount(1))
+							.result(goldNugget.clone().amount(1))
 								.ingredient(new ItemBuilder(Material.COCOA_BEANS)));
 					}
 

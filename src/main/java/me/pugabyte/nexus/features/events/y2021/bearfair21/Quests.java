@@ -316,8 +316,18 @@ public class Quests implements Listener {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		Block block = event.getBlock();
 		Player player = event.getPlayer();
+
+		if (!BearFair21.getConfig().isEnableEdit()) {
+			event.setCancelled(true);
+			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+				send(Errors.cantBreak, player);
+				sound_villagerNo(player);
+			}
+			return;
+		}
+
+		Block block = event.getBlock();
 
 		if (event.isCancelled()) return;
 		if (BearFair21.isNotAtBearFair(block)) return;

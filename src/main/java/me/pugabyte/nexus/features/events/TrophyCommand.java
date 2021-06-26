@@ -55,6 +55,16 @@ public class TrophyCommand extends CustomCommand {
 
 	@Confirm
 	@Permission("group.admin")
+	@Path("remove <player> <trophy>")
+	void remove(TrophyHolder holder, Trophy trophy) {
+		holder.getEarned().remove(trophy);
+		holder.getClaimed().remove(trophy);
+		service.save(holder);
+		send(PREFIX + "Reset " + holder.getNickname() + "'s trophies");
+	}
+
+	@Confirm
+	@Permission("group.admin")
 	@Path("reset <player>")
 	void reward(TrophyHolder holder) {
 		holder.getEarned().clear();

@@ -27,6 +27,7 @@ public class BearFair21Config implements PlayerOwnedObject {
 	private UUID uuid;
 	//
 	private boolean enableWarp = false;
+	private boolean enableEdit = false;
 	private boolean enableRides = false;
 	private boolean enableQuests = false;
 	private boolean giveDailyPoints = false;

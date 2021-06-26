@@ -21,15 +21,20 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.trophy.Trophy;
 import me.pugabyte.nexus.utils.AdventureUtils;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
 
@@ -347,12 +352,15 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.NOT_STARTED || user.getQuestStage_BeeKeeper() == QuestStage.STARTED) {
 					script.add("Would you mind doing me a favor actually? I've been looking to get myself a queen bee larvae to jump start my colony here.");
-					script.add("wait 20");
+					script.add("wait 120");
 					script.add("I would look myself, but my body cetainly isn't as young and energetic as it once was.");
+					script.add("wait 80");
 					script.add("And a quest like this, why its not exactly easy on ones self now is it?");
+					script.add("wait 80");
 					script.add("Haha, don't be worried, a young, strong adventurer like you will have no trouble at all.");
-					script.add("wait 20");
+					script.add("wait 80");
 					script.add("You should be able to grab one in the beehive on the island.");
+					script.add("wait 60");
 					script.add("Good luck!");
 
 					user.setQuestStage_BeeKeeper(QuestStage.STARTED);
@@ -400,41 +408,38 @@ public class MainIsland implements BearFair21Island {
 
 				if (!user.isHiveAccess()) {
 					script.add("Now where do you think you're going?");
-					script.add("wait 20");
+					script.add("wait 40");
 					script.add("Do you really think after coming here and disturbing our peace you can just waltz in here?");
-					script.add("wait 20");
+					script.add("wait 100");
 					script.add("You people never fail to amaze me.");
-					script.add("wait 20");
+					script.add("wait 40");
 					script.add("Maybe if you bring us a gift to make up for the stress you've caused here, I will consider letting you inside.");
-					script.add("wait 20");
+					script.add("wait 100");
 					script.add("It's honestly the least you could do.");
-					script.add("wait 20");
+					script.add("wait 40");
 					script.add("Come back with 1 of each small flower, and then I'll call it even.");
 
 					return script;
 				} else if (user.isHiveAccess() && user.getQuestStage_BeeKeeper() != QuestStage.STEPS_DONE) {
-					int wait = 0;
 					script.add("What brings you here to my grand halls, traveler?");
-					script.add("wait 20");
+					script.add("wait 60");
 					script.add("<self> Hello your majesty, I humbly request a queen bee larvae, for Harold.");
-					script.add("wait 20");
+					script.add("wait 80");
 					script.add("Hmm I see, that I may be able to do.");
-					script.add("wait 20");
+					script.add("wait 40");
 					script.add("You're gift has not gone unnoticed by my bees here.");
-					script.add("wait 20");
+					script.add("wait 40");
 					script.add("So while I usually wouldn't give a queen bee larvae to a random visitor, compensation for your hard work seems appropriate.");
-					script.add("wait 20");
+					script.add("wait 120");
 					script.add("Do me a favor and tell Harold that I expect him to take good care of his colony.");
-					script.add("wait 20");
+					script.add("wait 80");
 					script.add("If it wasn't for his kind reputation when it comes caring for his bees I would not have been so willing to allow your request.");
-					script.add("wait 20");
+					script.add("wait 120");
 					script.add("Head down into the nursery once you are ready to do so and take one.");
-					script.add("wait 20");
+					script.add("wait 80");
 					script.add("I wish you safe travels.");
 
-					Tasks.wait(wait, () -> Quests.giveItem(user, queenLarvae.clone().build()));
-
-					user.setQuestStage_BeeKeeper(QuestStage.STEPS_DONE);
+					user.setQuestStage_BeeKeeper(QuestStage.STEP_ONE);
 					userService.save(user);
 					return script;
 				}
@@ -544,7 +549,6 @@ public class MainIsland implements BearFair21Island {
 							return script;
 						}
 						case STEP_THREE -> {
-							// TODO BF21: Require all items, not just some
 							List<ItemBuilder> required = Arrays.asList(new ItemBuilder(Material.WHITE_WOOL).amount(32),
 									new ItemBuilder(Material.RED_DYE).amount(8),
 									new ItemBuilder(Material.GREEN_DYE).amount(8),
@@ -1008,6 +1012,24 @@ public class MainIsland implements BearFair21Island {
 		MainNPCs(BearFair21NPC npc) {
 			this.npc = npc;
 			this.script = Collections.emptyList();
+		}
+	}
+
+	@EventHandler
+	public void onClickHead(PlayerInteractEvent event) {
+		if (BearFair21.isNotAtBearFair(event)) return;
+
+		Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block)) return;
+		if (!MaterialTag.PLAYER_SKULLS.isTagged(block)) return;
+
+		BearFair21User user = userService.get(event.getPlayer());
+		if (user.getQuestStage_BeeKeeper() != QuestStage.STEP_ONE) return;
+
+		if (BearFair21.getWGUtils().isInRegion(block.getLocation(), "bearfair21_main_beehive_nursery")) {
+			Quests.giveItem(event.getPlayer(), queenLarvae.clone().build());
+			user.setQuestStage_BeeKeeper(QuestStage.STEPS_DONE);
+			userService.save(user);
 		}
 	}
 }
