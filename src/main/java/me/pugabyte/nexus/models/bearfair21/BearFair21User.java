@@ -4,12 +4,14 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -108,6 +110,10 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	public void addRecycledItems(int count) {
 		this.recycledItems += count;
+
+		if (this.recycledItems == JunkWeight.MIN.getAmount())
+			Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(this));
+
 		this.junkWeight = junkWeight.update(this.recycledItems);
 	}
 

@@ -114,8 +114,20 @@ public class MinigameNightIsland implements BearFair21Island {
 					}
 				}
 
-				if (ClientsideContentManager.canSee(player, ContentCategory.GRAVWELL))
-					new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).reciever(player).location(gravWellLoc).volume(2.0).play();
+				if (ClientsideContentManager.canSee(player, ContentCategory.GRAVWELL)) {
+					new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT)
+						.reciever(player)
+						.location(gravWellLoc)
+						.volume(2.0)
+						.play();
+				} else {
+					new ParticleBuilder(Particle.VILLAGER_HAPPY)
+						.receivers(player)
+						.location(gravWellLoc)
+						.count(10)
+						.offset(.25, .25, .25)
+						.spawn();
+				}
 			}
 		});
 	}

@@ -390,7 +390,7 @@ public class PugmasIsland implements BearFair21Island {
 					}
 				}
 
-				script.add("What do YOU want");
+				script.add("What do YOU want?");
 				return script;
 			}
 		},

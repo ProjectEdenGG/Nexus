@@ -53,7 +53,7 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
-	private static final ItemBuilder queenLarvae = ItemBuilder.fromHeadId("33827");
+	private static final ItemBuilder queenLarvae = ItemBuilder.fromHeadId("33827").undroppable();
 	@Getter
 	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").customModelData(3).undroppable();
 	@Getter
@@ -284,18 +284,28 @@ public class MainIsland implements BearFair21Island {
 					invite(user, this.getNpcId(), tool);
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.NOT_STARTED || user.getQuestStage_BeeKeeper() == QuestStage.STARTED) {
-					script.add("Would you mind doing me a favor actually? I need a queen bee larvae to jump start my colony here.");
+					script.add("Would you mind doing me a favor actually? I've been looking to get myself a queen bee larvae to jump start my colony here.");
 					script.add("wait 20");
-					script.add("I would look myself, but my body isn't as young as it once was.");
+					script.add("I would look myself, but my body cetainly isn't as young and energetic as it once was.");
+					script.add("And a quest like this, why its not exactly easy on ones self now is it?");
+					script.add("Haha, don't be worried, a young, strong adventurer like you will have no trouble at all.");
 					script.add("wait 20");
-					script.add("You should be able obtain one in the beehive on the island.");
+					script.add("You should be able to grab one in the beehive on the island.");
+					script.add("Good luck!");
 
 					user.setQuestStage_BeeKeeper(QuestStage.STARTED);
 					userService.save(user);
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
-					// TODO: CHECK IF USER HAS LARVAE
+					List<ItemBuilder> required = Collections.singletonList(queenLarvae.clone());
+					if (!Quests.hasAllItemsLikeFrom(user, required)) {
+						script.add("TODO - Reminder");
+						return script;
+					}
+
+					Quests.removeItems(user, required);
 					script.add("TODO - Thanks");
+					Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(user));
 					return script;
 				}
 
@@ -317,16 +327,38 @@ public class MainIsland implements BearFair21Island {
 				List<String> script = new ArrayList<>();
 
 				if (!user.isHiveAccess()) {
-					script.add("Now that you have disturbed our peace, if you wish to gain entry into my hive, you must provide a gift.");
+					script.add("Now where do you think you're going?");
+					script.add("wait 20");
+					script.add("Do you really think after coming here and disturbing our peace you can just waltz in here?");
+					script.add("wait 20");
+					script.add("You people never fail to amaze me.");
+					script.add("wait 20");
+					script.add("Maybe if you bring us a gift to make up for the stress you've caused here, I will consider letting you inside.");
+					script.add("wait 20");
+					script.add("It's honestly the least you could do.");
+					script.add("wait 20");
 					script.add("Come back with 1 of each small flower, and then I'll call it even.");
-					script.add("TODO - Better Dialog");
 
 					return script;
 				} else if (user.isHiveAccess() && user.getQuestStage_BeeKeeper() != QuestStage.STEPS_DONE) {
 					int wait = 0;
-					script.add("What brings you to my grand halls, traveler?");
-					script.add("I humbly request a queen bee larvae.");
-					script.add("TODO - Better Dialog");
+					script.add("What brings you here to my grand halls, traveler?");
+					script.add("wait 20");
+					script.add("<self> Hello your majesty, I humbly request a queen bee larvae, for Harold.");
+					script.add("wait 20");
+					script.add("Hmm I see, that I may be able to do.");
+					script.add("wait 20");
+					script.add("You're gift has not gone unnoticed by my bees here.");
+					script.add("wait 20");
+					script.add("So while I usually wouldn't give a queen bee larvae to a random visitor, compensation for your hard work seems appropriate.");
+					script.add("wait 20");
+					script.add("Do me a favor and tell Harold that I expect him to take good care of his colony.");
+					script.add("wait 20");
+					script.add("If it wasn't for his kind reputation when it comes caring for his bees I would not have been so willing to allow your request.");
+					script.add("wait 20");
+					script.add("Head down into the nursery once you are ready to do so and take one.");
+					script.add("wait 20");
+					script.add("I wish you safe travels.");
 
 					Tasks.wait(wait, () -> Quests.giveItem(user, queenLarvae.clone().build()));
 
