@@ -111,8 +111,10 @@ public class BearFair21User implements PlayerOwnedObject {
 	public void addRecycledItems(int count) {
 		this.recycledItems += count;
 
-		if (this.recycledItems == JunkWeight.MIN.getAmount())
+		if (this.recycledItems >= JunkWeight.MIN.getAmount() && questStage_Recycle != QuestStage.COMPLETE) {
+			questStage_Recycle = QuestStage.COMPLETE;
 			Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(this));
+		}
 
 		this.junkWeight = junkWeight.update(this.recycledItems);
 	}

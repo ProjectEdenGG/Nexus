@@ -109,11 +109,7 @@ public class Recycler implements Listener {
 	private void recycle(BearFair21User user, List<ItemStack> trash) {
 		active = true;
 		int count = getCount(trash);
-		user.addRecycledItems(count);
-
-		count = Math.min(count, 128);
-		userService.save(user);
-
+		int loops = Math.min(count, 128);
 
 		AtomicInteger wait = new AtomicInteger(0);
 		Block composter = composterLoc.getBlock();
@@ -146,7 +142,7 @@ public class Recycler implements Listener {
 		wait.addAndGet(40);
 
 		// Play composter sounds and effects
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < loops; i++) {
 			Tasks.wait(wait.addAndGet(5), () -> {
 				new SoundBuilder(Sound.BLOCK_COMPOSTER_READY).location(composter).play();
 				ParticleUtils.display(Particle.VILLAGER_HAPPY, LocationUtils.getCenteredLocation(above.getLocation()), 15, 0.5, 0.5, 0.5, 0.1);
@@ -180,6 +176,8 @@ public class Recycler implements Listener {
 			}
 
 			PlayerUtils.giveItems(user.getPlayer(), rewards);
+			user.addRecycledItems(count);
+			userService.save(user);
 
 			active = false;
 		});
