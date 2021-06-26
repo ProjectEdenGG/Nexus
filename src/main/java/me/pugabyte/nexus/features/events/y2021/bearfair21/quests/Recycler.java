@@ -109,9 +109,11 @@ public class Recycler implements Listener {
 	private void recycle(BearFair21User user, List<ItemStack> trash) {
 		active = true;
 		int count = getCount(trash);
-
 		user.addRecycledItems(count);
+
+		count = Math.min(count, 128);
 		userService.save(user);
+
 
 		AtomicInteger wait = new AtomicInteger(0);
 		Block composter = composterLoc.getBlock();
@@ -187,10 +189,6 @@ public class Recycler implements Listener {
 		int result = 0;
 		for (ItemStack item : items)
 			result += item.getAmount();
-
-		if (result > 128)
-			result = 128;
-
 		return result;
 
 	}
