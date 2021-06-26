@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
-import eden.annotations.Disabled;
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -274,12 +273,12 @@ public class BearFair21Command extends CustomCommand {
 		ClientsideContentManager.sendSpawnContent(player, contentService.getList(category));
 	}
 
-	@Disabled
 	@Confirm
 	@Permission("group.admin")
 	@Path("clientside clear <category>")
 	void clientsideClearCategory(ContentCategory category) {
 		clientsideContent.getContentList().removeIf(content -> content.getCategory() == category);
+		contentService.save(clientsideContent);
 		send("Cleared category");
 	}
 

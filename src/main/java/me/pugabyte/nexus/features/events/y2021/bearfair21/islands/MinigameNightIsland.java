@@ -31,6 +31,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -57,6 +58,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -383,7 +385,7 @@ public class MinigameNightIsland implements BearFair21Island {
 	}
 
 	@EventHandler
-	public void onClickSolder(PlayerInteractEntityEvent event) {
+	public void onClickSolder(PlayerInteractAtEntityEvent event) {
 		final Player player = event.getPlayer();
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		Entity clicked = event.getRightClicked();
@@ -663,7 +665,7 @@ public class MinigameNightIsland implements BearFair21Island {
 	// Phone
 
 	private static final Consumer<Player> ringingSound = player -> {
-		PlayerUtils.send(player, "&o*ring ring*");
+		ActionBarUtils.sendActionBar(player, "&c*ring ring*");
 
 		Location location = BearFair21.getWGUtils().toLocation(
 			BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
