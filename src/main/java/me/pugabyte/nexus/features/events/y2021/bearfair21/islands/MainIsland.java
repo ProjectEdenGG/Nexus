@@ -29,6 +29,7 @@ import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -76,18 +77,28 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				}
 
+				if (!ResourcePack.isEnabledFor(user.getOnlinePlayer())) {
+					if (user.getOnlinePlayer().getResourcePackStatus() == Status.DECLINED) {
+						script.add("\nI notice you declined our custom resource pack.");
+						script.add("wait 60");
+						script.add("I highly recommend enabling it, as there are dozens of custom models and textures used within the event.");
+						script.add("wait 100");
+						script.add("To enable the pack you must: &oEdit the server in your server list and change the \"Server Resource Packs\" option to either \"enabled\" or \"prompt\" \n");
+						script.add("wait 160");
+					} else {
+						script.add("\nI notice you don't have our custom resource pack enabled.");
+						script.add("wait 60");
+						script.add("I highly recommend enabling it, as there are dozens of custom models and textures used within the event.");
+						script.add("wait 100");
+						script.add("To enable the resource pack, type: &o/rp \n");
+						script.add("wait 60");
+					}
+				}
+
 				script.add("Welcome to Bear Fair, Project Eden's anniversary event!");
 				script.add("wait 80");
 				script.add("There are several islands to explore, find easter eggs, and quests to complete!");
 				script.add("wait 80");
-
-				if (!ResourcePack.isEnabledFor(user.getOnlinePlayer())) {
-					script.add("I notice you don't have our custom resource pack enabled.");
-					script.add("wait 60");
-					script.add("I highly recommend enabling it, as there are dozens of custom models and textures used within the event.");
-					script.add("wait 100");
-				}
-
 				script.add("At the carnival, you can play daily minigames in which you can play to gain Event Points.");
 				script.add("wait 80");
 				script.add("At any point you can buy unique prizes and perks using those points.");
