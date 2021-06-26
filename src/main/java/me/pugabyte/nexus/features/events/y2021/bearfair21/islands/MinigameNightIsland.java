@@ -272,7 +272,6 @@ public class MinigameNightIsland implements BearFair21Island {
 							Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST.give(user.getOnlinePlayer());
 							user.setQuestStage_MGN(QuestStage.COMPLETE);
 							userService.save(user);
-							// TODO tell them to have sounds on
 							Tasks.wait(Time.SECOND, () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());
 						}
 					}

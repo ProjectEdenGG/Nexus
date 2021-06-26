@@ -34,6 +34,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -279,6 +280,12 @@ public class BearFair21 implements Listener {
 		SEEKER,
 		REFLECTION,
 		TRADER
+	}
+
+	@EventHandler
+	public void onWorldChange(PlayerChangedWorldEvent event) {
+		if (event.getPlayer().hasPermission("group.staff"))
+			event.getPlayer().chat("/cheats off");
 	}
 
 	@EventHandler
