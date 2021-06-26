@@ -94,15 +94,22 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
+					if (user.getQuestStage_Lumberjack() == QuestStage.STARTED) {
+						add(new TradeBuilder()
+							.result(MainIsland.getReplacementSaw().clone())
+							.ingredient(new ItemBuilder(Material.IRON_BLOCK).amount(9))
+							.ingredient(goldBlock.clone().amount(1)));
+					}
+
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
-							.ingredient(goldNugget.clone().amount(1)));
+						.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
+						.ingredient(goldNugget.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemStack(Material.LEATHER)));
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemStack(Material.LEATHER)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1)) // require wooden pickaxe as ingredient
-							.ingredient(goldNugget.clone().amount(1))
+						.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1)) // require wooden pickaxe as ingredient
+						.ingredient(goldNugget.clone().amount(1))
 							.ingredient(new ItemBuilder(Material.WOODEN_PICKAXE).amount(1)));
 					add(new TradeBuilder()
 							.result(new ItemBuilder(Material.STONE_AXE).amount(1))  // require wooden axe as ingredient

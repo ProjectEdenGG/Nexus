@@ -139,6 +139,10 @@ public class Quests implements Listener {
 		return Backpacks.getBackpack(null, player);
 	}
 
+	public static void pay(BearFair21User user, ItemStack itemStack) {
+		giveItem(user, itemStack);
+	}
+
 	public static void giveItem(BearFair21User user, ItemStack itemStack) {
 		giveItem(user.getOnlinePlayer(), itemStack);
 	}

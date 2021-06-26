@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.Mai
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import me.pugabyte.nexus.features.resourcepack.ResourcePack;
@@ -56,6 +57,8 @@ public class MainIsland implements BearFair21Island {
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
 	private static final ItemBuilder queenLarvae = ItemBuilder.fromHeadId("33827").name("Queen Larva").undroppable();
+	@Getter
+	private static final ItemBuilder replacementSaw = new ItemBuilder(Material.STONECUTTER).name("Replacement Saw").customModelData(2);
 	@Getter
 	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").customModelData(3).undroppable();
 	@Getter
@@ -158,7 +161,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("<self> Mission complete!");
 					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and re-stabilize the island.");
 					script.add("Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
-					// TODO pay
+					Quests.pay(user, Merchants.goldIngot.clone().amount(6).build());
 					script.add("<self> Thank You Sir!");
 					user.getNextStepNPCs().remove(getNpcId());
 					user.setQuestStage_MGN(QuestStage.STEP_EIGHT);
@@ -211,7 +214,8 @@ public class MainIsland implements BearFair21Island {
 
 						if (tasks.isEmpty()) {
 							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double.");
-							// TODO pay
+							Quests.pay(user, Merchants.goldIngot.clone().amount(4).build());
+
 							script.add("Tell your manager to consider it a donation. Take care now.");
 							script.add("<self> It was no problem, happy to help wherever I can!");
 							user.setQuestStage_MGN(QuestStage.STEP_SIX);
@@ -879,11 +883,40 @@ public class MainIsland implements BearFair21Island {
 					script.add("This poor guy needs a break at some point too.");
 					script.add("wait 40");
 					script.add("Oh wait I don't think we've met before, sorry about that. My name is Flint and I'm a lumberjack.");
+					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
+					return script;
+				} else if (user.getQuestStage_Lumberjack() == QuestStage.NOT_STARTED) {
+					script.add("Be careful around that broken saw mill, as you can see in the wall there.");
+					script.add("wait 60");
+					script.add("The mechanism can go haywire, nearly took my head off!");
+					script.add("wait 60");
+					script.add("Would you mind finding me a replacement saw? I'll pay handsomely.");
+					script.add("wait 80");
+
+					user.setQuestStage_Lumberjack(QuestStage.STARTED);
+					userService.save(user);
+					return script;
+				} else if (user.getQuestStage_Lumberjack() == QuestStage.STARTED) {
+					List<ItemBuilder> required = Collections.singletonList(replacementSaw.clone());
+					if (!Quests.hasAllItemsLikeFrom(user, required)) {
+						script.add("Would you mind finding me a replacement saw? I'll pay handsomely.");
+						script.add("wait 80");
+						return script;
+					}
+
+					script.add("Thanks! Here you are. I'll set this sawmill up soon.");
+					script.add("<exit>");
+					Quests.removeItems(user, required);
+					Quests.pay(user, Merchants.goldIngot.clone().amount(2).build());
+					ClientsideContentManager.addCategory(user, ContentCategory.SAWMILL, Time.SECOND.x(10));
+
+					user.setQuestStage_Lumberjack(QuestStage.COMPLETE);
+					userService.save(user);
 					return script;
 				}
 
