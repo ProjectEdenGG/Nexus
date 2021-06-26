@@ -34,6 +34,7 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.TitleUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -51,6 +52,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -337,7 +340,13 @@ public class Quests implements Listener {
 		if (newHealth > 0) return;
 
 		event.setCancelled(true);
+
+		player.addPotionEffects(Collections.singletonList
+			(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
+		TitleUtils.sendSubtitle(player, "&cYou died.");
+
 		player.setHealth(20);
 		player.teleport(BearFair21.getShipSpawnLoc());
+
 	}
 }
