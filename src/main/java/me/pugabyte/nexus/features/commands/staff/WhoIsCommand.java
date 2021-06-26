@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import com.destroystokyo.paper.ClientOption;
+import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
@@ -131,7 +132,9 @@ public class WhoIsCommand extends CustomCommand {
 
 			json.newline().next("&3RP status: &e" + ResourcePackCommand.statusOf(player)).group();
 
-			json.newline().next("&3Chat Visibility: &e" + camelCase(player.getClientOption(ClientOption.CHAT_VISIBILITY)));
+			final ChatVisibility chatVisibility = player.getClientOption(ClientOption.CHAT_VISIBILITY);
+			if (chatVisibility != ChatVisibility.FULL)
+				json.newline().next("&3Chat Visibility: &e" + camelCase(chatVisibility));
 		}
 
 		json.newline().next("&3OP: &e" + offlinePlayer.isOp()).group();
