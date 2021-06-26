@@ -99,7 +99,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isTypeAndNameEqual;
 public class MinigameNightIsland implements BearFair21Island {
 	static BearFair21UserService userService = new BearFair21UserService();
 
-	private static final ItemStack hat = new ItemBuilder(Material.CYAN_STAINED_GLASS_PANE).customModelData(101).build();
+	private static final ItemStack hat = new ItemBuilder(Material.CYAN_STAINED_GLASS_PANE).name("GG Hat").customModelData(101).build();
 
 	public MinigameNightIsland() {
 		Nexus.registerListener(this);
@@ -1123,8 +1123,8 @@ public class MinigameNightIsland implements BearFair21Island {
 	@AllArgsConstructor
 	private enum FixableDevice implements Fixable {
 		XBOX(
-			ItemBuilder.fromHeadId("43417").name("&cTrent's Broken Xbox One").undroppable().unplaceable().build(),
-			ItemBuilder.fromHeadId("43417").name("&aTrent's Fixed Xbox One").undroppable().unplaceable().build(),
+			ItemBuilder.fromHeadId("43417").name("&cTrent's Broken Xbox One").lore("&eClick to open").undroppable().unplaceable().build(),
+			ItemBuilder.fromHeadId("43417").name("&aTrent's Fixed Xbox One").lore("&eClick to open").undroppable().unplaceable().build(),
 			null,
 			user -> {
 				user.getNextStepNPCs().add(MinigameNightNPCs.TRENT.getNpcId());
@@ -1132,8 +1132,8 @@ public class MinigameNightIsland implements BearFair21Island {
 			}
 		),
 		LAPTOP(
-			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&cFredrickson's Broken Laptop").undroppable().unplaceable().build(),
-			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&aFredrickson's Fixed Laptop").undroppable().unplaceable().build(),
+			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&cFredrickson's Broken Laptop").lore("&eClick to open").undroppable().unplaceable().build(),
+			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&aFredrickson's Fixed Laptop").lore("&eClick to open").undroppable().unplaceable().build(),
 			user -> user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard(),
 			user -> user.setQuestStage_MGN(QuestStage.STEP_FOUR)
 		),

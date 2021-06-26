@@ -189,9 +189,12 @@ public class MainIsland implements BearFair21Island {
 					// TODO Wakka add wait
 					if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> Thanks for calling GG! How can I help?");
-						script.add("Hey, this is Zach over in Honeywood. Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back? Yeah, well we're in a bit of a bind now since my electrician bailed on me this morning.");
+						script.add("Hey, this is Zach over in Honeywood, on the main island. Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back?");
+						script.add("Well we're in a bit of a bind now since my electrician bailed on me this morning.");
 						script.add("<self> Well that wasn't very professional of them.");
-						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too. It's a bit of an odd request, but could you spare some one over here to set up the internet? I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
+						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too.");
+						script.add("It's a bit of an odd request, but could you spare some one over here to set up the internet?");
+						script.add("I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
 						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard...");
 						script.add("Great! It shouldn't take too long. We'll have everything ready for you when you get here.");
 						user.getNextStepNPCs().add(getNpcId());

@@ -50,6 +50,7 @@ import java.util.Set;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
+import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
 public class BearFair21 implements Listener {
 	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
@@ -185,6 +186,21 @@ public class BearFair21 implements Listener {
 		if (new GodmodeService().get(player).isEnabled()) return "godmode";
 
 		return null;
+	}
+
+	static {
+		Tasks.repeat(Time.SECOND, Time.SECOND, () -> {
+			for (Player player : BearFair21.getPlayers()) {
+				if (PlayerUtils.isVanished(player)) continue;
+
+				if (player.isFlying()) {
+					player.setFallDistance(0);
+					player.setAllowFlight(false);
+					player.setFlying(false);
+					player.sendMessage(colorize("&cNo cheating!"));
+				}
+			}
+		});
 	}
 
 	public static Set<Player> getPlayers() {

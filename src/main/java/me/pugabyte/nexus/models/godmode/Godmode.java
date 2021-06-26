@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,11 +40,14 @@ public class Godmode implements PlayerOwnedObject {
 	}};
 
 	public boolean isEnabled() {
+		final Player player = getOnlinePlayer();
 		if (!Nerd.of(this).hasMoved())
 			return true;
-		if (isOnline() && !Rank.of(getOnlinePlayer()).isStaff())
+		if (isOnline() && !PlayerUtils.isVanished(player) && player.getWorld().getName().equals("bearfair21"))
 			return false;
-		if (isOnline() && disabledWorlds.contains(getOnlinePlayer().getWorld().getName()))
+		if (isOnline() && !Rank.of(player).isStaff())
+			return false;
+		if (isOnline() && disabledWorlds.contains(player.getWorld().getName()))
 			return false;
 		return enabled;
 	}
