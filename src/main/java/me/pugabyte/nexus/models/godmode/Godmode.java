@@ -40,14 +40,17 @@ public class Godmode implements PlayerOwnedObject {
 	}};
 
 	public boolean isEnabled() {
+		if (!isOnline())
+			return false;
+
 		final Player player = getOnlinePlayer();
 		if (!Nerd.of(this).hasMoved())
 			return true;
-		if (isOnline() && !PlayerUtils.isVanished(player) && player.getWorld().getName().equals("bearfair21"))
+		if (!PlayerUtils.isVanished(player) && player.getWorld().getName().equals("bearfair21"))
 			return false;
-		if (isOnline() && !Rank.of(player).isStaff())
+		if (!Rank.of(player).isStaff())
 			return false;
-		if (isOnline() && disabledWorlds.contains(player.getWorld().getName()))
+		if (disabledWorlds.contains(player.getWorld().getName()))
 			return false;
 		return enabled;
 	}

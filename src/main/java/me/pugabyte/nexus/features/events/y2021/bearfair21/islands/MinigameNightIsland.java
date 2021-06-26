@@ -433,8 +433,11 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		final FixableItem fixableItem = FixableItem.ofBroken(item);
 		boolean assemblingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAllItems(player);
+		boolean willBeAssemblingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAnyItems(player);
 		boolean fixingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && isSameHead(slightlyDamagedSpeaker.build(), item);
-		if (assemblingSpeaker) {
+		if (willBeAssemblingSpeaker) {
+			user.sendMessage("&cHmm, it seems I don't have all the parts to assemble a speaker...");
+		} else if (assemblingSpeaker) {
 			double wait = 0;
 			for (AxelSpeakerPart part : AxelSpeakerPart.values()) {
 				Tasks.wait(Time.SECOND.x(wait), () -> {
@@ -614,6 +617,13 @@ public class MinigameNightIsland implements BearFair21Island {
 				if (!player.getInventory().containsAtLeast(part.getDisplayItem(), 1))
 					return false;
 			return true;
+		}
+
+		public static boolean hasAnyItems(Player player) {
+			for (AxelSpeakerPart part : values())
+				if (!player.getInventory().containsAtLeast(part.getDisplayItem(), 1))
+					return true;
+			return false;
 		}
 
 		private ItemStack getDisplayItem() {
