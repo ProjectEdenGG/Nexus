@@ -52,8 +52,10 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -213,6 +215,7 @@ public class MiniGolf {
 		});
 
 		// Power
+		Map<MiniGolf21User, Float> powerMap = new HashMap<>();
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
 				if (!user.isOnline())
@@ -241,13 +244,16 @@ public class MiniGolf {
 				if (player.getLevel() != 0)
 					player.setLevel(0);
 
-				double amount = player.spigot().getPing() < 200 ? 0.04 : 0.02;
-				double exp = player.getExp() + amount;
-				if (exp > 1.00) {
-					exp = 0.00;
-				}
+				float amount = player.spigot().getPing() < 200 ? 0.04F : 0.02F;
 
-				player.setExp((float) exp);
+				float exp = powerMap.getOrDefault(user, .0F);
+				exp += amount;
+				if (exp > 1.00) {
+					exp = 0.0F;
+				}
+				powerMap.put(user, exp);
+
+				player.sendExperienceChange(exp, 0);
 			}
 		});
 	}
