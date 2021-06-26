@@ -112,11 +112,13 @@ public class MainIsland implements BearFair21Island {
 				if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {
 					if (BearFair21.isInRegion(player, "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> This is <player> at the Game Gallery?");
-						script.add("Hello, this is Admiral Phoenix on the F.S.S Stellar Tides. I was wondering if I might request your assistance on a pressing matter?");
+						script.add("Hello, this is Admiral Phoenix aboard the F.S.S Stellar Tides. I was wondering if I might request your assistance on a pressing matter?");
 						script.add("<self> How might I be of service, Sir?");
-						script.add("I ferry travelers to and from Bear Fair Island and on my last voyage I noticed my nav computer no longer detected the island on the star map. I suspect something may have happened to the nav beacons.");
-						script.add("<self> Oh no… What are nav beacons exactly?");
-						script.add("They are broadcasting stations that triangulate their position to any ship's nav computer so they can find Bear Fair. I need someone to check on the beacons, inspect for damage, and reboot them.");
+						script.add("I ferry travelers to and from Bear Fair Island and on my last voyage I noticed my nav computer no longer detected the island on the star map.");
+						script.add("I suspect something may have happened to the nav beacons.");
+						script.add("<self> Oh no... What are nav beacons exactly?");
+						script.add("They are broadcasting stations that triangulate their position to any ship's nav computer so they can find Bear Fair.");
+						script.add("I need someone to check on the beacons, inspect for damage, and reboot them.");
 						script.add("<self> Sounds easy enough, where can I find them?");
 						script.add("There are three of them located at each corner of the main island.");
 						script.add("<self> Alright I'll see what I can find.");
@@ -125,14 +127,16 @@ public class MainIsland implements BearFair21Island {
 						if (user.getMgn_beaconsActivated().size() == 3) {
 							script.add("Welcome aboard.");
 							script.add("<self> All beacons are in good condition and fully operational.");
-							script.add("Hmmm. I'm still not getting the nav data. Perhaps there's some kind of interference… Scans indicate there is some significant geothermal activity currently on the island… That could be worse than just nav beacon interference…");
-							script.add("<self> Oh no… is the island becoming unstable?");
-							script.add("It appears to be trending that way… Here, take this. It's a portable grav-well.");
-
+							script.add("Hmmm. I'm still not getting the nav data. Perhaps there's some kind of interference...");
+							script.add("Scans indicate there is some significant geothermal activity currently on the island...");
+							script.add("That could be worse than just nav beacon interference...");
+							script.add("<self> Oh no... is the island becoming unstable?");
+							script.add("It appears to be trending that way... Here, take this. It's a portable grav-well.");
 							if (!player.getInventory().containsAtLeast(gravwell.build(), 1))
 								Quests.giveItem(player, gravwell.build());
-							script.add("<self> Whoa… This is a little heavy.");
-							script.add("Get as close to the magma core as you can, and place this down. It will hold the island together until we can get some professionals out here. On top of that, the magnetic field this device generates should boost the beacons' signal and solve the interference issue.");
+							script.add("<self> Whoa... This is a little heavy.");
+							script.add("Get as close to the magma core as you can, and place this down. It will hold the island together until we can get some professionals out here.");
+							script.add("On top of that, the magnetic field this device generates should boost the beacons' signal and solve the interference issue.");
 							script.add("<self> Aye Aye, Admiral!");
 						} else {
 							script.add("Any luck with those nav-beacons? Make sure to check all three for damage and reboot them.");
@@ -140,11 +144,13 @@ public class MainIsland implements BearFair21Island {
 					}
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SEVEN) {
 					script.add("<self> Mission complete!");
-					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and restabilize the island. Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
+					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and re-stabilize the island.");
+					script.add("Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
+					// TODO pay
 					script.add("<self> Thank You Sir!");
 					user.setQuestStage_MGN(QuestStage.STEP_EIGHT);
 				} else if (!user.hasMet(this.getNpcId())) {
-					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all yall people here safe.");
+					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all y'all people here safe.");
 					script.add("wait 80");
 					script.add("If you see anything suspicious simply let me know. I am more than capable of handling things myself.");
 					script.add("wait 90");
@@ -169,14 +175,11 @@ public class MainIsland implements BearFair21Island {
 					// TODO Wakka add wait
 					if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> Thanks for calling GG! How can I help?");
-						script.add("Hey, this is Zach over in Honeywood. Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back?");
-						script.add("We're in a bit of a bind now since my electrician bailed on me this morning.");
+						script.add("Hey, this is Zach over in Honeywood. Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back? Yeah, well we're in a bit of a bind now since my electrician bailed on me this morning.");
 						script.add("<self> Well that wasn't very professional of them.");
-						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too.");
-						script.add("It's a bit of an odd request, but could you spare some one over here to set up the internet?");
-						script.add("I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
-						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard... ");
-						script.add("Great! We'll have everything ready for you when you get here.");
+						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too. It's a bit of an odd request, but could you spare some one over here to set up the internet? I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
+						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard...");
+						script.add("Great! It shouldn't take too long. We'll have everything ready for you when you get here.");
 					} else {
 						List<Component> tasks = new ArrayList<>();
 						if (!user.isMgn_connectWiring())
@@ -187,8 +190,9 @@ public class MainIsland implements BearFair21Island {
 							tasks.add(Component.text("set up the router"));
 
 						if (tasks.isEmpty()) {
-							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double. " +
-								"Tell your manager to consider it a donation. Take care now.");
+							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double.");
+							// TODO pay
+							script.add("Tell your manager to consider it a donation. Take care now.");
 							script.add("<self> It was no problem, happy to help wherever I can!");
 							user.setQuestStage_MGN(QuestStage.STEP_SIX);
 							userService.save(user);
