@@ -527,9 +527,12 @@ public class MinigameNightIsland implements BearFair21Island {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
 		if (!getWGUtils().isInRegion(clicked.getLocation(), mailboxRegion)) return;
+		final BearFair21User user = userService.get(event.getPlayer());
+		if (user.getQuestStage_MGN() != QuestStage.STEP_TWO) return;
 
 		if (!FixableDevice.LAPTOP.hasBroken(event.getPlayer()) && !FixableDevice.LAPTOP.hasFixed(event.getPlayer())) {
-			userService.edit(event.getPlayer(), user -> user.setQuestStage_MGN(QuestStage.STEP_THREE));
+			user.setQuestStage_MGN(QuestStage.STEP_THREE);
+			userService.save(user);
 			Quests.giveItem(event.getPlayer(), FixableDevice.LAPTOP.getBroken());
 		}
 	}
