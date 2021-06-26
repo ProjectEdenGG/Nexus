@@ -128,8 +128,8 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 		if (chat && !minigamers.isEmpty())
 			minigamers.get(0).getMatch().broadcast(message);
 		minigamers.forEach(enemy -> {
-			new SoundBuilder(sound).reciever(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(volume).pitch(1.2).play();
-			new SoundBuilder(Sound.ENTITY_ENDER_DRAGON_FLAP).reciever(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(0.9).play();
+			new SoundBuilder(sound).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(volume).pitch(1.2).play();
+			new SoundBuilder(Sound.ENTITY_ENDER_DRAGON_FLAP).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(0.9).play();
 			TitleUtils.sendSubtitle(enemy.getPlayer(), message, 7, Time.SECOND.x(3), 7);
 		});
 	}

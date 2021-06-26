@@ -168,7 +168,7 @@ public class LightTheTree implements Listener {
 			return;
 		} else if (torch == user.getTorchesLit() + 1) {
 			user.sendMessage(PREFIX + "Torch &e#" + torch + " &3of " + torches + " lit");
-			new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).reciever(player).volume(0.5F).pitch(0.1F).play();
+			new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).receiver(player).volume(0.5F).pitch(0.1F).play();
 			user.setTorchesLit(torch);
 			service.save(user);
 		}
@@ -190,12 +190,12 @@ public class LightTheTree implements Listener {
 				Location location = getLocation("treetorch", i);
 				Tasks.wait(wait += Time.SECOND.get(), () -> {
 					fire(player, location);
-					new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).reciever(player).volume(0.5F).pitch(0.1F).play();
+					new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).receiver(player).volume(0.5F).pitch(0.1F).play();
 				});
 			}
 
 			Tasks.wait(wait + 1, () -> {
-				new SoundBuilder(Sound.ENTITY_ILLUSIONER_CAST_SPELL).reciever(player).pitch(0.1F).play();
+				new SoundBuilder(Sound.ENTITY_ILLUSIONER_CAST_SPELL).receiver(player).pitch(0.1F).play();
 				user.setLightTreeStage(QuestStage.COMPLETE);
 				user.setMinesStage(QuestStage.NOT_STARTED);
 				user.getNextStepNPCs().remove(QuestNPC.CINNAMON.getId());

@@ -240,19 +240,19 @@ public class Quests implements Listener {
 	}
 
 	public static void sound_obtainItem(Player player) {
-		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).reciever(player).volume(0.5).pitch(2.0).play();
+		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5).pitch(2.0).play();
 	}
 
 	public static void sound_completeQuest(Player player) {
-		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).reciever(player).volume(0.5).play();
+		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
 	}
 
 	public static void sound_villagerNo(Player player) {
-		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).reciever(player).volume(0.5).play();
+		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(0.5).play();
 	}
 
 	public static void sound_npcAlert(Player player) {
-		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(player).volume(0.5).play();
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(0.5).play();
 	}
 
 	public static void poof(Location location) {

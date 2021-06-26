@@ -330,10 +330,10 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = match.getMatchData();
 		Chat.setActiveChannel(minigamer, matchData.getSpectatorChannel());
 		event.setDeathMessage(null);
-		new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).reciever(minigamer).volume(1).pitch(0.9).play();
+		new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(minigamer).volume(1).pitch(0.9).play();
 		JsonBuilder builder = new JsonBuilder();
 		if (event.getAttacker() != null) {
-			new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).reciever(event.getAttacker()).volume(.5).pitch(1.2).play();
+			new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(event.getAttacker()).volume(.5).pitch(1.2).play();
 			builder.next("You were killed by ").next(event.getAttacker().getNickname(), matchData.getColor(event.getAttacker()).colored());
 		} else
 			builder.next("You have been ejected");
@@ -385,14 +385,14 @@ public class Sabotage extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this)) return;
 		if (event.isCancelled() || !event.getMinigamer().isAlive() || (event.getTarget() != null && !event.getTarget().isAlive())) {
 			event.setCancelled(true);
-			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).reciever(event.getMinigamer()).category(SoundCategory.VOICE).volume(0.8).play();
+			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(event.getMinigamer()).category(SoundCategory.VOICE).volume(0.8).play();
 			return;
 		}
 		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMatch().getMinigamers());
 	}
 
 	private void giveVentItems(Minigamer minigamer, Block vent, Container container) {
-		new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_OPEN).reciever(minigamer).play();
+		new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_OPEN).receiver(minigamer).play();
 		PlayerInventory inventory = minigamer.getPlayer().getInventory();
 		inventory.clear();
 		Location currentLoc = vent.getLocation();
@@ -430,7 +430,7 @@ public class Sabotage extends TeamMechanic {
 		if (event.isSneaking() && minigamer.isPlaying(this)) {
 			SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 			if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
-				new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_CLOSE).reciever(minigamer).play();
+				new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_CLOSE).receiver(minigamer).play();
 				matchData.exitVent(minigamer);
 			}
 		}

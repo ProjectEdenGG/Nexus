@@ -324,8 +324,8 @@ public class HideAndSeek extends Infection {
 
 					minigamer.getPlayer().attack(target.getPlayer());
 					target.setImmobileTicks(0);
-					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).reciever(minigamer.getPlayer()).category(SoundCategory.PLAYERS).play();
-					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).reciever(target.getPlayer()).category(SoundCategory.PLAYERS).play();
+					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).receiver(minigamer.getPlayer()).category(SoundCategory.PLAYERS).play();
+					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).receiver(target.getPlayer()).category(SoundCategory.PLAYERS).play();
 					return;
 				}
 			}

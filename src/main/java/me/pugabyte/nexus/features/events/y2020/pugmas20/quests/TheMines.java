@@ -258,11 +258,11 @@ public class TheMines implements Listener {
 		if (block.getType() != Material.GRAVEL)
 			return;
 
-		new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).reciever(player).volume(.5F).pitch(.5F).play();
-		new SoundBuilder(Sound.UI_STONECUTTER_TAKE_RESULT).reciever(player).volume(.5F).pitch(.5F).play();
+		new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).receiver(player).volume(.5F).pitch(.5F).play();
+		new SoundBuilder(Sound.UI_STONECUTTER_TAKE_RESULT).receiver(player).volume(.5F).pitch(.5F).play();
 		Tasks.wait(5, () -> {
-			new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).reciever(player).volume(.5F).pitch(.5F).play();
-			new SoundBuilder(Sound.UI_STONECUTTER_TAKE_RESULT).reciever(player).volume(.5F).pitch(.5F).play();
+			new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).receiver(player).volume(.5F).pitch(.5F).play();
+			new SoundBuilder(Sound.UI_STONECUTTER_TAKE_RESULT).receiver(player).volume(.5F).pitch(.5F).play();
 		});
 
 		if (RandomUtils.chanceOf(20))

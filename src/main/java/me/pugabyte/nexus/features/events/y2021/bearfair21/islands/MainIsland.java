@@ -108,7 +108,9 @@ public class MainIsland implements BearFair21Island {
 				script.add("wait 80");
 				script.add("There are many ways to acquire the currency here, you should talk to the local merchants.");
 				script.add("wait 80");
-				script.add("And if you need help figuring out where you are, check out this map to my side.");
+				script.add("If you need help figuring out where you are, check out this map to my side.");
+				script.add("wait 80");
+				script.add("And lastly, make sure you have sounds and particles enabled!");
 
 				user.getNextStepNPCs().remove(this.getNpcId());
 				userService.save(user);

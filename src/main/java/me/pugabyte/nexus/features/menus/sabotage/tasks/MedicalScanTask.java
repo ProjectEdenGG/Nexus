@@ -60,7 +60,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 			double prog = progress.addAndGet(0.01);
 			double rawSecondsLeft = 10 - (prog * 10);
 			if (((prog * 10) % 1) < MathUtils.FLOAT_ROUNDING_ERROR)
-				tasks.sync(() -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(minigamer).play());
+				tasks.sync(() -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(minigamer).play());
 
 			if (rawSecondsLeft <= 0)
 				tasks.sync(() -> {

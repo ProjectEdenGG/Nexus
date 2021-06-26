@@ -29,7 +29,7 @@ public class SoundUtils {
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.ALERTS);
 
-				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).reciever(player).volume(volume).play();
+				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).receiver(player).volume(volume).play();
 			}
 		},
 
@@ -41,9 +41,9 @@ public class SoundUtils {
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.RANK_UP);
 
-				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).reciever(player).category(SoundCategory.RECORDS).volume(volume);
-				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).category(SoundCategory.RECORDS).volume(volume);
-				SoundBuilder flute = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_FLUTE).reciever(player).category(SoundCategory.RECORDS).volume(volume);
+				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).receiver(player).category(SoundCategory.RECORDS).volume(volume);
+				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(player).category(SoundCategory.RECORDS).volume(volume);
+				SoundBuilder flute = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_FLUTE).receiver(player).category(SoundCategory.RECORDS).volume(volume);
 
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
@@ -81,8 +81,8 @@ public class SoundUtils {
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.FIRST_JOIN_SOUND);
 
-				SoundBuilder chime = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).category(SoundCategory.RECORDS).volume(volume);
-				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).category(SoundCategory.RECORDS).volume(volume);
+				SoundBuilder chime = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).receiver(player).category(SoundCategory.RECORDS).volume(volume);
+				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(player).category(SoundCategory.RECORDS).volume(volume);
 
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> {
@@ -112,7 +112,7 @@ public class SoundUtils {
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.JOIN_QUIT_SOUNDS);
 
-				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).reciever(player).category(SoundCategory.RECORDS).volume(volume);
+				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).receiver(player).category(SoundCategory.RECORDS).volume(volume);
 
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> harp.pitchStep(0).play());
@@ -130,7 +130,7 @@ public class SoundUtils {
 
 				float volume = getMuteMenuVolume(player, MuteMenuItem.JOIN_QUIT_SOUNDS);
 
-				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).reciever(player).category(SoundCategory.RECORDS).volume(volume);
+				SoundBuilder harp = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_HARP).receiver(player).category(SoundCategory.RECORDS).volume(volume);
 
 				int wait = 0;
 				Tasks.wait(wait += 0, () -> harp.pitchStep(6).play());
@@ -144,8 +144,8 @@ public class SoundUtils {
 			@Override
 			public void play(HasPlayer player) {
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(.5).play());
-				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).reciever(player).volume(.5).play());
+				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).receiver(player).volume(.5).play());
+				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).receiver(player).volume(.5).play());
 			}
 		},
 
@@ -153,18 +153,18 @@ public class SoundUtils {
 			@Override
 			public void play(HasPlayer player) {
 				int wait = 0;
-				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).reciever(player).volume(.5).play());
-				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(player).volume(.5).play());
-				Tasks.wait(wait += 8, () -> new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).reciever(player).volume(.5).play());
+				Tasks.wait(wait += 0, () -> new SoundBuilder(Sound.UI_TOAST_IN).receiver(player).volume(.5).play());
+				Tasks.wait(wait += 9, () -> new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).receiver(player).volume(.5).play());
+				Tasks.wait(wait += 8, () -> new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).receiver(player).volume(.5).play());
 			}
 		},
 
 		BATTLESHIP_SINK {
 			@Override
 			public void play(HasPlayer player) {
-				SoundBuilder explode = new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(player).volume(.5);
-				SoundBuilder splash = new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).reciever(player).volume(.5);
-				SoundBuilder fire = new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).reciever(player).volume(.5).pitch(.1);
+				SoundBuilder explode = new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).receiver(player).volume(.5);
+				SoundBuilder splash = new SoundBuilder(Sound.ENTITY_GENERIC_SPLASH).receiver(player).volume(.5);
+				SoundBuilder fire = new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).receiver(player).volume(.5).pitch(.1);
 
 				int wait = 0;
 				Tasks.wait(wait, () -> {
@@ -188,22 +188,22 @@ public class SoundUtils {
 		TREE_FELLER {
 			@Override
 			public void play(HasPlayer player) {
-				SoundBuilder armorStandBreak = new SoundBuilder(Sound.ENTITY_ARMOR_STAND_BREAK).reciever(player).volume(.5);
+				SoundBuilder armorStandBreak = new SoundBuilder(Sound.ENTITY_ARMOR_STAND_BREAK).receiver(player).volume(.5);
 
 				Tasks.wait(0, () -> armorStandBreak.pitch(randomPitch()).play());
 				Tasks.wait(1, () -> armorStandBreak.pitch(randomPitch()).play());
 				Tasks.wait(2, () -> armorStandBreak.pitch(randomPitch()).play());
 				Tasks.wait(3, () -> {
 					armorStandBreak.pitch(randomPitch()).play();
-					new SoundBuilder(Sound.BLOCK_CROP_BREAK).reciever(player).volume(.5).pitch(.1).play();
+					new SoundBuilder(Sound.BLOCK_CROP_BREAK).receiver(player).volume(.5).pitch(.1).play();
 				});
 				Tasks.wait(4, () -> {
 					armorStandBreak.pitch(randomPitch()).play();
-					new SoundBuilder(Sound.BLOCK_SHROOMLIGHT_STEP).reciever(player).volume(.5).pitch(.1).play();
+					new SoundBuilder(Sound.BLOCK_SHROOMLIGHT_STEP).receiver(player).volume(.5).pitch(.1).play();
 				});
 				Tasks.wait(5, () -> {
 					armorStandBreak.pitch(randomPitch()).play();
-					new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).reciever(player).volume(.5).pitch(.1).play();
+					new SoundBuilder(Sound.ENTITY_HORSE_SADDLE).receiver(player).volume(.5).pitch(.1).play();
 				});
 				Tasks.wait(6, () -> armorStandBreak.pitch(2).play());
 			}
@@ -276,17 +276,17 @@ public class SoundUtils {
 		SABOTAGE_VOTE {
 			@Override
 			public void play(HasPlayer player) {
-				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(.8).pitch(1.7).play();
-				Tasks.wait(3, () -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).reciever(player).volume(.8).pitch(2).play());
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).receiver(player).volume(.8).pitch(1.7).play();
+				Tasks.wait(3, () -> new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).receiver(player).volume(.8).pitch(2).play());
 			}
 		},
 		SABOTAGE_MEETING {
 			@Override
 			public void play(HasPlayer player) {
-				new SoundBuilder(Sound.BLOCK_BELL_USE).reciever(player).pitch(.8).play();
-				new SoundBuilder(Sound.BLOCK_BELL_RESONATE).reciever(player).volume(.25).play();
+				new SoundBuilder(Sound.BLOCK_BELL_USE).receiver(player).pitch(.8).play();
+				new SoundBuilder(Sound.BLOCK_BELL_RESONATE).receiver(player).volume(.25).play();
 
-				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).volume(.6);
+				SoundBuilder bell = new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(player).volume(.6);
 				Tasks.wait(7, () -> bell.pitch(.2).play());
 				Tasks.wait(12, () -> bell.pitch(.6).play());
 				Tasks.wait(17, () -> bell.pitch(.8).play());

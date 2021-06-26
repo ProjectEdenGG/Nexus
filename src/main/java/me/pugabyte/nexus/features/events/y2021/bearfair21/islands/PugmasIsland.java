@@ -273,29 +273,29 @@ public class PugmasIsland implements BearFair21Island {
 
 						// Rocket rumbling sound
 						;
-						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_MINECART_RIDING).reciever(user.getPlayer()).pitch(0.1).play());
+						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_MINECART_RIDING).receiver(user.getPlayer()).pitch(0.1).play());
 						script.add("<self> No please! Don't do it!");
 						script.add("wait 70");
 						wait += (70);
 
 						// Rocket launching sound
-						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH).reciever(user.getPlayer()).pitch(0.1).play());
+						Tasks.wait(wait, () -> new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH).receiver(user.getPlayer()).pitch(0.1).play());
 						script.add("MUAHAHAHA-");
 						script.add("wait 60");
 						wait += (60);
 
 						// Rocket exploding
 						Tasks.wait(wait, () -> {
-							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).reciever(user.getPlayer()).volume(2.0).pitch(0.1).play();
+							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).receiver(user.getPlayer()).volume(2.0).pitch(0.1).play();
 
-							new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).reciever(user.getPlayer()).volume(2.0).pitch(0.1).play();
+							new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).receiver(user.getPlayer()).volume(2.0).pitch(0.1).play();
 
-							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).reciever(user.getPlayer()).volume(2.0).play();
+							new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).receiver(user.getPlayer()).volume(2.0).play();
 							Tasks.wait(8, () -> {
-								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST).reciever(user.getPlayer()).volume(2.0).pitch(0.1).play();
-								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).reciever(user.getPlayer()).pitch(0.1).play();
+								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST).receiver(user.getPlayer()).volume(2.0).pitch(0.1).play();
+								new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_TWINKLE).receiver(user.getPlayer()).pitch(0.1).play();
 								Tasks.wait(8, () -> {
-									new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR).reciever(user.getPlayer()).pitch(0.1).play();
+									new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR).receiver(user.getPlayer()).pitch(0.1).play();
 								});
 							});
 						});

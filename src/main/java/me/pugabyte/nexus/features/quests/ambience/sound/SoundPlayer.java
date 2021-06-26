@@ -56,7 +56,7 @@ public class SoundPlayer {
 
 	public void playSound(String sound, Location location, float volume, float pitch) {
 		new SoundBuilder(org.bukkit.Sound.valueOf(sound))
-			.reciever(player)
+			.receiver(player)
 			.location(location)
 			.category(SoundCategory.AMBIENT)
 			.volume(volume)

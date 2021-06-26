@@ -73,7 +73,7 @@ public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 			eventService.save(eventUser);
 		} else {
 			player.sendMessage(JsonBuilder.fromPrefix(Pride21.PREFIX).next("&cYou don't have enough event tokens to purchase this item"));
-			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).reciever(player).category(SoundCategory.VOICE).volume(0.8f).play();
+			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).category(SoundCategory.VOICE).volume(0.8f).play();
 			return;
 		}
 		PlayerUtils.giveItemAndMailExcess(player, item, "Pride 2021 Purchase", WorldGroup.SURVIVAL);

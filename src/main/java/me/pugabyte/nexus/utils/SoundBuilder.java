@@ -20,27 +20,31 @@ import java.util.List;
 public class SoundBuilder implements Cloneable {
 	private List<HasPlayer> receivers;
 	private Location location;
-	private Sound sound;
+	private String sound;
 	private SoundCategory category = SoundCategory.MASTER;
 	private float volume = 1.0F;
 	private float pitch = 1.0F;
 	private int delay = 0;
 
 	public SoundBuilder(Sound sound) {
+		this.sound = sound.key().asString();
+	}
+
+	public SoundBuilder(String sound) {
 		this.sound = sound;
 	}
 
 	public SoundBuilder sound(Sound sound) {
-		this.sound = sound;
+		this.sound = sound.key().asString();
 		return this;
 	}
 
-	public SoundBuilder reciever(HasPlayer reciever) {
+	public SoundBuilder receiver(HasPlayer reciever) {
 		this.receivers = Collections.singletonList(reciever);
 		return this;
 	}
 
-	public SoundBuilder recievers(List<HasPlayer> recievers) {
+	public SoundBuilder receivers(List<HasPlayer> recievers) {
 		this.receivers = recievers;
 		return this;
 	}
@@ -96,7 +100,7 @@ public class SoundBuilder implements Cloneable {
 
 	public SoundBuilder clone() {
 		SoundBuilder soundBuilder = new SoundBuilder(this.sound);
-		soundBuilder.recievers(new ArrayList<>(this.receivers));
+		soundBuilder.receivers(new ArrayList<>(this.receivers));
 		soundBuilder.location(this.location.clone());
 		soundBuilder.category(this.category);
 		soundBuilder.pitch(this.pitch);

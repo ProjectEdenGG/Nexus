@@ -188,7 +188,7 @@ public class ReflectionGame {
 		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
 			Collection<Player> players = BearFair21.getWGUtils().getPlayersInRegion(gameRg);
 			for (Player player : players)
-				new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).reciever(player).location(laserSoundLoc).play();
+				new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).receiver(player).location(laserSoundLoc).play();
 		});
 	}
 

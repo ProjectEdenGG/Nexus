@@ -88,6 +88,6 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 
 	protected static void error(Player player, String message) {
 		send(player, "&c"+message);
-		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).reciever(player).category(SoundCategory.VOICE).volume(0.8).play();
+		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).category(SoundCategory.VOICE).volume(0.8).play();
 	}
 }

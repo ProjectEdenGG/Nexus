@@ -66,7 +66,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 				reset.run();
 				String fmt = sec < .9d ? "fast" : "slow";
 				inventoryContents.set(destination, inventoryContents.get(destination).get().clone(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Too "+fmt+", try again").build()));
-				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).reciever(player).category(SoundCategory.MASTER).volume(2f).play();
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).receiver(player).category(SoundCategory.MASTER).volume(2f).play();
 			} else {
 				getTask().partCompleted(PlayerManager.get(player));
 				inventory.close(player);

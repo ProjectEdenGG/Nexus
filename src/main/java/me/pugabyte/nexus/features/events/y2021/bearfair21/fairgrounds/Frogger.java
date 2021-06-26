@@ -329,14 +329,14 @@ public class Frogger implements Listener {
 				player.teleport(checkpointLoc);
 			else
 				player.teleport(respawnLoc);
-			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(player).volume(10).play();
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
 			if (canWorldGuardEdit(player)) return;
 
 			checkpointList.remove(player);
 			player.teleport(respawnLoc);
-			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(player).volume(10).pitch(2.0).play();
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).pitch(2.0).play();
 
 			BearFair21.giveDailyPoints(player, BF21PointSource.FROGGER, 5);
 		}
@@ -367,6 +367,6 @@ public class Frogger implements Listener {
 			player.teleport(checkpointLoc);
 		else
 			player.teleport(respawnLoc);
-		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(player).volume(10).play();
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 	}
 }

@@ -101,7 +101,7 @@ public class MiniGolfUtils {
 		ball.setTicksLived(1);
 
 		sendActionBar(user, "&cOut of bounds!");
-		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).reciever(user.getOnlinePlayer()).pitchStep(0).play();
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).receiver(user.getOnlinePlayer()).pitchStep(0).play();
 	}
 
 	public static MiniGolf21User getUser(Snowball ball) {

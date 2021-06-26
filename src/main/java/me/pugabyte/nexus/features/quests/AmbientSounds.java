@@ -40,7 +40,7 @@ public class AmbientSounds extends Feature {
 				Sound sound = RandomUtils.randomElement(undergroundSounds);
 				Map<Player, Integer> tempMap = new HashMap<>(undergroundTaskMap);
 
-				tempMap.forEach((player, integer) -> new SoundBuilder(sound).reciever(player).category(SoundCategory.AMBIENT).volume(1).pitch(.1).play());
+				tempMap.forEach((player, integer) -> new SoundBuilder(sound).receiver(player).category(SoundCategory.AMBIENT).volume(1).pitch(.1).play());
 			}
 		});
 
@@ -66,7 +66,7 @@ public class AmbientSounds extends Feature {
 
 	private void startLoop(Player player, AmbientSoundType type) {
 		if (type.equals(UNDERGROUND)) {
-			int taskId = Tasks.repeat(0, Time.SECOND.x(37), () -> new SoundBuilder(undergroundLoop).reciever(player).category(SoundCategory.AMBIENT).volume(5).play());
+			int taskId = Tasks.repeat(0, Time.SECOND.x(37), () -> new SoundBuilder(undergroundLoop).receiver(player).category(SoundCategory.AMBIENT).volume(5).play());
 
 			undergroundTaskMap.put(player, taskId);
 		}

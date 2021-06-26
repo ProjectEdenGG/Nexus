@@ -75,6 +75,6 @@ public class ImpostorMenu extends MenuUtils implements InventoryProvider {
         if (matchData.getSabotage() == null)
             matchData.sabotage(task);
         else
-			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).reciever(player).category(SoundCategory.VOICE).volume(.8f).play();
+			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).category(SoundCategory.VOICE).volume(.8f).play();
     }
 }

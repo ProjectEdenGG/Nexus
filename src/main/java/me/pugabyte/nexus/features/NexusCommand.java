@@ -159,6 +159,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		shutdownBossBars();
 	}
 
+	@Path("soundTest")
+	void soundTest() {
+		new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(player()).volume(.25).play();
+	}
+
 	@Path("cancelReload")
 	void cancelReload() {
 		reloader = null;
@@ -180,7 +185,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player))
-				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).reciever(player).play();
+				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
 
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(StringUtils.getUUID0(), "reload", Time.SECOND.x(15)))

@@ -125,7 +125,7 @@ public class Halloween20 implements Listener {
 		SoundButton button = SoundButton.getByLocation(event.getClickedBlock().getLocation());
 		if (button == null) return;
 
-		new SoundBuilder(button.getSound()).reciever(event.getPlayer()).play();
+		new SoundBuilder(button.getSound()).receiver(event.getPlayer()).play();
 
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(event.getPlayer());

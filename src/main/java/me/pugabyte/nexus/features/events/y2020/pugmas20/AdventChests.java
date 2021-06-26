@@ -200,7 +200,7 @@ public class AdventChests implements Listener {
 		Inventory inventory = Bukkit.createInventory(null, 3 * 9, InvTitle + day);
 		inventory.setItem(13, skull);
 		player.openInventory(inventory);
-		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).reciever(player).play();
+		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).play();
 	}
 
 	@EventHandler
@@ -245,7 +245,7 @@ public class AdventChests implements Listener {
 		inventory.setContents(contents);
 
 		player.openInventory(inventory);
-		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).reciever(player).play();
+		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).play();
 
 		return true;
 	}

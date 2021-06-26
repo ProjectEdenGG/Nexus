@@ -85,15 +85,15 @@ public class Quests {
 	}
 
 	public static void sound_obtainItem(Player player) {
-		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).reciever(player).volume(0.5F).pitch(2F).play();
+		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5F).pitch(2F).play();
 	}
 
 	public static void sound_villagerNo(Player player) {
-		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).reciever(player).volume(0.5F).pitch(1F).play();
+		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(0.5F).pitch(1F).play();
 	}
 
 	public static void sound_npcAlert(Player player) {
-		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).reciever(player).volume(0.5F).pitch(1F).play();
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(0.5F).pitch(1F).play();
 	}
 
 	public static boolean hasRoomFor(Player player, ItemStack... items) {

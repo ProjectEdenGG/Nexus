@@ -38,8 +38,8 @@ public class EasterEggs implements Listener {
 			return;
 
 		PlayerUtils.send(player, "&d&lPIG > &fFucking traitor.");
-		new SoundBuilder(Sound.ENTITY_PIG_DEATH).reciever(player).play();
-		Tasks.wait(3, () -> new SoundBuilder(Sound.ENTITY_PIGLIN_DEATH).reciever(player).play());
+		new SoundBuilder(Sound.ENTITY_PIG_DEATH).receiver(player).play();
+		Tasks.wait(3, () -> new SoundBuilder(Sound.ENTITY_PIGLIN_DEATH).receiver(player).play());
 	}
 
 	@EventHandler

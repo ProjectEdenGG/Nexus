@@ -106,7 +106,7 @@ public class GiftGiver implements Listener {
 		inventory.setContents(contents);
 
 		player.openInventory(inventory);
-		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).reciever(player).play();
+		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).play();
 		player.getInventory().removeItem(gift);
 	}
 

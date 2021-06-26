@@ -184,7 +184,7 @@ public abstract class SkullHuntEvent implements Listener {
 
 	public void playSounds(Player player, List<SoundBuilder> sounds) {
 		for (SoundBuilder soundBuilder : sounds) {
-			soundBuilder.clone().reciever(player).play();
+			soundBuilder.clone().receiver(player).play();
 		}
 	}
 
