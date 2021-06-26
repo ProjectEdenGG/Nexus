@@ -317,6 +317,11 @@ public class Quests implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
+		Block block = event.getBlock();
+
+		if (event.isCancelled()) return;
+		if (BearFair21.isNotAtBearFair(block)) return;
+		if (canWorldGuardEdit(player)) return;
 
 		if (!BearFair21.getConfig().isEnableEdit()) {
 			event.setCancelled(true);
@@ -326,12 +331,6 @@ public class Quests implements Listener {
 			}
 			return;
 		}
-
-		Block block = event.getBlock();
-
-		if (event.isCancelled()) return;
-		if (BearFair21.isNotAtBearFair(block)) return;
-		if (canWorldGuardEdit(player)) return;
 
 		event.setCancelled(true);
 
