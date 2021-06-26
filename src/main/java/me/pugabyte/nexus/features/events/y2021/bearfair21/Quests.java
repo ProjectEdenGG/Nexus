@@ -48,6 +48,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -325,5 +326,18 @@ public class Quests implements Listener {
 			send(Errors.cantBreak, player);
 			sound_villagerNo(player);
 		}
+	}
+
+	@EventHandler
+	public void onPlayerDeath(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (BearFair21.isNotAtBearFair(player)) return;
+
+		double newHealth = player.getHealth() - event.getFinalDamage();
+		if (newHealth > 0) return;
+
+		event.setCancelled(true);
+		player.setHealth(20);
+		player.teleport(BearFair21.getShipSpawnLoc());
 	}
 }

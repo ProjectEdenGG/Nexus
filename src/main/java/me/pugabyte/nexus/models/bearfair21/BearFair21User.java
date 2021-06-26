@@ -24,7 +24,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.AXEL;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BEEKEEPER;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BRUCE;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.FISHERMAN2;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.JOSE;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.LUMBERJACK;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.ORGANIZER;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.PUGMAS_MAYOR;
 
 @Data
 @Entity("bearfair21_user")
@@ -36,6 +43,7 @@ public class BearFair21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+	private boolean firstVisit = true;
 	// General Quest Stuff
 	private Set<ContentCategory> contentCategories = new HashSet<>(Set.of(
 		ContentCategory.SPEAKER_PART_SUBWOOFER,

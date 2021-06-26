@@ -1,12 +1,14 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.IslandType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21Config;
 import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
@@ -16,6 +18,7 @@ import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils.Timer;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -35,6 +38,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +55,8 @@ public class BearFair21 implements Listener {
 	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
 	@Getter
 	private static final BearFair21Config config = configService.get0();
+	private static final BearFair21UserService userService = new BearFair21UserService();
+
 	/**
 	 * TODO BF21: on first visit, clear inventory of player
 	 * TODO BF21: When BearFair21 is over:
@@ -61,6 +68,8 @@ public class BearFair21 implements Listener {
 	private static final String PREFIX = "&8&l[&eBearFair&8&l] &3";
 	@Getter
 	private static final String region = "bearfair21";
+	@Getter
+	private static final Location shipSpawnLoc = BearFair21.locationOf(5, 135, 32, 90, 0).toCenterLocation();
 
 
 	public BearFair21() {
@@ -84,7 +93,11 @@ public class BearFair21 implements Listener {
 	}
 
 	public static Location locationOf(double x, double y, double z) {
-		return new Location(getWorld(), x, y, z);
+		return locationOf(x, y, z, 0, 0);
+	}
+
+	public static Location locationOf(double x, double y, double z, float yaw, float pitch) {
+		return new Location(getWorld(), x, y, z, yaw, pitch);
 	}
 
 	public static WorldGuardUtils getWGUtils() {
@@ -267,6 +280,51 @@ public class BearFair21 implements Listener {
 		Quests.removeItemStacks(user, items);
 		giveDailyPoints(player, BF21PointSource.TRADER, 50);
 		Quests.sound_obtainItem(player);
+	}
+
+	@EventHandler
+	public void onRegionEnterYacht(PlayerEnteredRegionEvent event) {
+		if (!config.isEnableWarp()) return;
+		if (!event.getRegion().getId().equalsIgnoreCase("spawn_spaceyacht")) return;
+		Player player = event.getPlayer();
+		send("", player);
+		send("&3Captain &8> &fAll aboard! Everyone to their sleeping quarters! We'll be leaving soon.", player);
+		send("", player);
+	}
+
+	@EventHandler
+	public void onRegionEnterQuarters(PlayerEnteredRegionEvent event) {
+		if (!config.isEnableWarp()) return;
+		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
+
+		Location spawnTransition = new Location(Bukkit.getWorld("survival"), 9.5, 100, -180.5);
+		Player player = event.getPlayer();
+		BearFair21User user = userService.get(player);
+
+		Tasks.wait(Time.SECOND.x(2), () -> {
+			player.addPotionEffects(Collections.singletonList
+				(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
+			player.teleport(spawnTransition);
+			send("", player);
+			send("&e&o*You immediately fall asleep in your bed*", player);
+			send("", player);
+
+			Tasks.wait(Time.SECOND.x(4), () -> {
+				player.teleport(shipSpawnLoc);
+				send("", player);
+				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
+				send("", player);
+				if (user.isFirstVisit()) {
+					user.setFirstVisit(false);
+					userService.save(user);
+
+					Tasks.wait(Time.SECOND.x(3), () -> {
+						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair21", player);
+						Quests.sound_obtainItem(player);
+					});
+				}
+			});
+		});
 	}
 
 }

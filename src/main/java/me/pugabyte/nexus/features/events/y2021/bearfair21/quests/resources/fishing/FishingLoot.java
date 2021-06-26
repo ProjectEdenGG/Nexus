@@ -81,60 +81,23 @@ public enum FishingLoot {
 	Integer maxY;
 
 	FishingLoot(FishingLootCategory category, int gold, Material material, double weight) {
-		this.category = category;
-		this.gold = gold;
-		this.material = material;
-		this.weight = weight;
-		this.customName = null;
-		this.customModelData = 0;
-		this.region = null;
-		this.time = BOTH;
+		this(category, gold, material, weight, null, 0);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData) {
-		this.category = category;
-		this.gold = gold;
-		this.material = material;
-		this.weight = weight;
-		this.customName = customName;
-		this.customModelData = customModelData;
-		this.region = null;
-		this.time = BOTH;
+		this(category, gold, material, weight, customName, customModelData, null, BOTH);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region) {
-		this.category = category;
-		this.gold = gold;
-		this.material = material;
-		this.weight = weight;
-		this.customName = customName;
-		this.customModelData = customModelData;
-		this.region = region;
-		this.time = BOTH;
+		this(category, gold, material, weight, customName, customModelData, region, BOTH);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region, FishingLootTime time) {
-		this.category = category;
-		this.gold = gold;
-		this.material = material;
-		this.weight = weight;
-		this.customName = customName;
-		this.customModelData = customModelData;
-		this.region = region;
-		this.time = time;
-		this.maxY = null;
+		this(category, gold, material, weight, customName, customModelData, region, time, null);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region, Integer maxY) {
-		this.category = category;
-		this.gold = gold;
-		this.material = material;
-		this.weight = weight;
-		this.customName = customName;
-		this.customModelData = customModelData;
-		this.region = region;
-		this.time = BOTH;
-		this.maxY = maxY;
+		this(category, gold, material, weight, customName, customModelData, region, BOTH, maxY);
 	}
 
 	public static List<FishingLoot> of(FishingLootCategory category) {
@@ -237,12 +200,12 @@ public enum FishingLoot {
 		};
 	}
 
-	public static List<TradeBuilder> getTrades(Player player) {
+	public static List<TradeBuilder> getTrades() {
 		return new ArrayList<>() {{
 			for (FishingLoot loot : values()) {
 				add(new TradeBuilder()
-						.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
-						.ingredient(loot.getItem())
+					.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+					.ingredient(loot.getItem())
 				);
 			}
 		}};
