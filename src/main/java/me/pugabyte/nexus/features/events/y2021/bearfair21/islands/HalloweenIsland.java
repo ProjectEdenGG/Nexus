@@ -411,7 +411,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 		HalloweenNPCs(BearFair21NPC npc) {
 			this.npc = npc;
-			this.script = new ArrayList<>();
+			this.script = Collections.emptyList();
 		}
 
 		private boolean isAlive() {

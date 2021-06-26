@@ -24,13 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.AXEL;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BEEKEEPER;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.FISHERMAN2;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.JOSE;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.LUMBERJACK;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.ORGANIZER;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.PUGMAS_MAYOR;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
 
 @Data
 @Entity("bearfair21_user")
@@ -58,8 +52,8 @@ public class BearFair21User implements PlayerOwnedObject {
 		FISHERMAN2.getId(), // Side
 		AXEL.getId(), // MGN
 		PUGMAS_MAYOR.getId(), // Pugmas
-		JOSE.getId() // HALLOWEEN
-		// SDU
+		JOSE.getId(), // HALLOWEEN
+		BRUCE.getId() // SDU
 	));
 	private int activeTaskId = -1;
 

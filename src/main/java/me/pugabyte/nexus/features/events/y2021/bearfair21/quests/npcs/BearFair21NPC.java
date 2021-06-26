@@ -98,6 +98,10 @@ public enum BearFair21NPC {
 	ANTONIO("Antonio", 4195),
 
 	// SDU
+	BRUCE("Bruce", 4209),
+	KYLIE("Kylie", 4210),
+	MEL_GIBSON("Mel Gibson", 4211),
+	MILO("Milo", 4213)
 	;
 
 	@Getter

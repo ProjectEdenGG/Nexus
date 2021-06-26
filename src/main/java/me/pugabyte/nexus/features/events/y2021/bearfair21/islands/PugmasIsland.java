@@ -416,7 +416,7 @@ public class PugmasIsland implements BearFair21Island {
 
 		PugmasNPCs(BearFair21NPC npc) {
 			this.npc = npc;
-			this.script = new ArrayList<>();
+			this.script = Collections.emptyList();
 		}
 	}
 

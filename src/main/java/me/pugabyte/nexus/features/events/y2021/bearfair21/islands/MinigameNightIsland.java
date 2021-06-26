@@ -344,7 +344,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		MinigameNightNPCs(BearFair21NPC npc) {
 			this.npc = npc;
-			this.script = new ArrayList<>();
+			this.script = Collections.emptyList();
 		}
 	}
 

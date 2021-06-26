@@ -919,7 +919,7 @@ public class MainIsland implements BearFair21Island {
 
 		MainNPCs(BearFair21NPC npc) {
 			this.npc = npc;
-			this.script = new ArrayList<>();
+			this.script = Collections.emptyList();
 		}
 	}
 }
