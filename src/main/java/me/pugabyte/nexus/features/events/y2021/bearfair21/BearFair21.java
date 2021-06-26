@@ -191,7 +191,7 @@ public class BearFair21 implements Listener {
 	static {
 		Tasks.repeat(Time.SECOND, Time.SECOND, () -> {
 			for (Player player : BearFair21.getPlayers()) {
-				if (PlayerUtils.isVanished(player)) continue;
+				if (PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR) continue;
 
 				if (player.isFlying()) {
 					player.setFallDistance(0);
