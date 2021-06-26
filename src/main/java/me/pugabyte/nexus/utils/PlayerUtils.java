@@ -525,6 +525,12 @@ public class PlayerUtils {
 		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
 	}
 
+	public static void removeItems(HasPlayer player, List<ItemStack> items) {
+		for (ItemStack item : items) {
+			removeItem(player, item);
+		}
+	}
+
 	public static void removeItem(HasPlayer player, ItemStack item) {
 		final Player _player = player.getPlayer();
 		final PlayerInventory inv = _player.getInventory();
