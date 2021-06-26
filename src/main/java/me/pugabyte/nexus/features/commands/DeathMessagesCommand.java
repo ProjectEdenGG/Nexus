@@ -18,6 +18,7 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -149,6 +150,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reload")
+	@Permission("group.admin")
 	void reload() {
 		reloadConfig();
 		int total = config.getMessages().values().stream().map(CustomDeathMessage::count).reduce(0, Integer::sum);
