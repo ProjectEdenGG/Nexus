@@ -12,6 +12,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand;
@@ -72,6 +73,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,8 +94,6 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.ItemUtils.isSameHead;
 import static me.pugabyte.nexus.utils.ItemUtils.isTypeAndNameEqual;
 
-// TODO BF21: Quest + Dialog
-// TODO GRIFFIN: Update all dialogs & on quest complete: make sure to Quests.giveKey(user) + Trophy.BEAR_FAIR_2021_COMPLETION_MGN.give(player)
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
 public class MinigameNightIsland implements BearFair21Island {
@@ -159,6 +159,9 @@ public class MinigameNightIsland implements BearFair21Island {
 						}
 					}
 				}
+
+				if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR && FixableDevice.LAPTOP.hasFixed(player))
+					getPhoneParticles().receivers(player).spawn();
 			}
 		});
 	}
@@ -256,7 +259,7 @@ public class MinigameNightIsland implements BearFair21Island {
 							script.add("Yoo! Dude! I'm stoked! You really pulled through for us! And just in time too! The show starts in just a sec! Take one of the front row seats!");
 							script.add("Sup everyone! Happy Bear Fair! We are Chiptune and we're happy to celebrate Bear Fair by bringing you some awesome music tonight so grab some snacks and get ready to groove!");
 							Quests.giveKey(user);
-							// TODO tell them about the two below lines
+							// TODO tell them about the powder
 							PermissionChange.set().permission("powder.powder.dk_jungle_64").player(user).run();
 							Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST.give(user.getOnlinePlayer());
 							user.setQuestStage_MGN(QuestStage.COMPLETE);
@@ -373,6 +376,8 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	private final String galleryRegion = getRegion("gamegallery");
 	private final String solderRegion = getRegion("solder");
+	@Getter
+	@Setter
 	private static boolean activeSolder = false;
 
 	@EventHandler
@@ -384,9 +389,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!getWGUtils().isInRegion(clicked.getLocation(), region)) return;
 
 		event.setCancelled(true);
-
 		if (activeSolder) return;
-		activeSolder = true;
 
 		ArmorStand armorStand = null;
 		for (Entity nearbyEntity : event.getPlayer().getNearbyEntities(7, 7, 7)) {
@@ -411,9 +414,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!getWGUtils().isInRegion(clicked.getLocation(), region)) return;
 
 		event.setCancelled(true);
-
 		if (activeSolder) return;
-		activeSolder = true;
 
 		solder(player, ItemUtils.getTool(player), armorStand);
 	}
@@ -452,6 +453,7 @@ public class MinigameNightIsland implements BearFair21Island {
 	}
 
 	private void solderItem(ArmorStand armorStand, Player player, ItemStack broken, ItemStack fixed) {
+		activeSolder = true;
 		ItemStack air = new ItemStack(Material.AIR);
 
 		armorStand.setItem(EquipmentSlot.HAND, broken);
@@ -749,21 +751,32 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	// Phone
 
+	@NotNull
+	private static Location getPhoneLocation() {
+		return BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
+	}
+
+	private static ParticleBuilder getPhoneParticles() {
+		return new ParticleBuilder(Particle.VILLAGER_HAPPY)
+			.location(getPhoneLocation().toCenterLocation())
+			.offset(.25, .25, .25)
+			.count(2)
+			.extra(.01);
+	}
+
 	private static final Consumer<Player> ringingSound = player -> {
 		ActionBarUtils.sendActionBar(player, "&c*ring ring*");
+		Location location = getPhoneLocation();
 
-		Location location = BearFair21.getWGUtils().toLocation(
-			BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
-		ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location.toCenterLocation()).receivers(player)
-			.offset(0.25, 0.25, 0.25).count(2).extra(0.01);
 		int wait = 0;
 		for (int i = 0; i < 5; i++) {
 			addTaskId(player, Tasks.wait(wait += 2, () -> {
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).reciever(player).location(location).volume(0.5).pitchStep(0).play();
-				particles.spawn();
+				getPhoneParticles().receivers(player).spawn();
 			}));
 		}
 	};
+
 	private static final Map<UUID, List<Integer>> taskIds = new HashMap<>();
 
 	public static void addTaskId(Player player, int taskId) {

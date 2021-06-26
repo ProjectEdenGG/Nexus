@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.RouterMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.ScrambledCablesMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
@@ -235,6 +236,13 @@ public class BearFair21Command extends CustomCommand {
 	@Path("mgn router")
 	void router() {
 		new RouterMenu().open(player());
+	}
+
+	@Permission("group.admin")
+	@Path("mgn solder reset")
+	void solderReset() {
+		MinigameNightIsland.setActiveSolder(false);
+		send("Solder reset");
 	}
 
 	@Confirm

@@ -180,6 +180,7 @@ public class MainIsland implements BearFair21Island {
 						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too. It's a bit of an odd request, but could you spare some one over here to set up the internet? I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
 						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard...");
 						script.add("Great! It shouldn't take too long. We'll have everything ready for you when you get here.");
+						return script;
 					} else {
 						List<Component> tasks = new ArrayList<>();
 						if (!user.isMgn_connectWiring())

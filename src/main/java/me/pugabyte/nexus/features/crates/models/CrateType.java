@@ -110,8 +110,8 @@ public enum CrateType {
 
 			if (player.isOnline()) {
 				PlayerUtils.send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " +
-						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + "&3 but your inventory was full." +
-						"Use &c/delivery &3 to claim it.");
+						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + "&3 but your inventory was full. " +
+						"Use &c/delivery &3to claim it.");
 			}
 		}
 	}
