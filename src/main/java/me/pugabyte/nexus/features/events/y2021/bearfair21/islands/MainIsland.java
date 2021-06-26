@@ -39,7 +39,6 @@ import java.util.List;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
 import static me.pugabyte.nexus.utils.ItemUtils.isSameHead;
 
-// TODO BF21: Quest + Dialog
 @Region("main")
 @NPCClass(MainNPCs.class)
 public class MainIsland implements BearFair21Island {
@@ -123,6 +122,8 @@ public class MainIsland implements BearFair21Island {
 						script.add("There are three of them located at each corner of the main island.");
 						script.add("<self> Alright I'll see what I can find.");
 						script.add("Good, report back as soon as possible. I'll be on the deck of the Stellar Tides.");
+						user.getNextStepNPCs().add(getNpcId());
+						userService.save(user);
 					} else {
 						if (user.getMgn_beaconsActivated().size() == 3) {
 							script.add("Welcome aboard.");
@@ -148,7 +149,9 @@ public class MainIsland implements BearFair21Island {
 					script.add("Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
 					// TODO pay
 					script.add("<self> Thank You Sir!");
+					user.getNextStepNPCs().remove(getNpcId());
 					user.setQuestStage_MGN(QuestStage.STEP_EIGHT);
+					userService.save(user);
 				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all y'all people here safe.");
 					script.add("wait 80");
@@ -180,6 +183,8 @@ public class MainIsland implements BearFair21Island {
 						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too. It's a bit of an odd request, but could you spare some one over here to set up the internet? I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
 						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard...");
 						script.add("Great! It shouldn't take too long. We'll have everything ready for you when you get here.");
+						user.getNextStepNPCs().add(getNpcId());
+						userService.save(user);
 						return script;
 					} else {
 						List<Component> tasks = new ArrayList<>();
@@ -196,6 +201,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("Tell your manager to consider it a donation. Take care now.");
 							script.add("<self> It was no problem, happy to help wherever I can!");
 							user.setQuestStage_MGN(QuestStage.STEP_SIX);
+							user.getNextStepNPCs().remove(getNpcId());
 							userService.save(user);
 						} else {
 							script.add("Hey thanks for coming. All we need you to do is " + AdventureUtils.asPlainText(AdventureUtils.commaJoinText(tasks)) + ".");
@@ -237,6 +243,7 @@ public class MainIsland implements BearFair21Island {
 						// TODO Wakka script if you don't have enough money
 						script.add("<self> I'll take it!");
 						user.setMgn_boughtCar(true);
+						user.getNextStepNPCs().remove(getNpcId());
 						Quests.giveItem(user, MinigameNightIsland.getCarKey().build());
 
 						return script;

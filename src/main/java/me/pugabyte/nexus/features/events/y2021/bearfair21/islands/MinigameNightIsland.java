@@ -240,20 +240,28 @@ public class MinigameNightIsland implements BearFair21Island {
 						script.add("Duude, you're a lifesaver!");
 						wait += (60 + 60);
 
+						user.getNextStepNPCs().remove(getNpcId());
 						user.setQuestStage_MGN(QuestStage.STARTED);
 						userService.save(user);
 					}
 
 					case STEP_EIGHT -> {
 						if (user.getMgn_speakersFixed().size() < speakerLocations.size()) {
-							script.add("<self> Hello?");
-							script.add("Hey dude, we got a problem. You busy?");
-							script.add("<self> Nope, just finished up a service call, what's wrong?");
-							script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers! The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
-							script.add("<self> Oh no! What can I do?");
-							script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
-							script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
-							script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
+							if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
+								script.add("<self> Hello?");
+								script.add("Hey dude, we got a problem. You busy?");
+								script.add("<self> Nope, just finished up a service call, what's wrong?");
+								script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers! The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
+								script.add("<self> Oh no! What can I do?");
+								script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
+								script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
+								script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
+								user.getNextStepNPCs().add(getNpcId());
+								user.getNextStepNPCs().add(MainNPCs.JAMES.getNpcId());
+								userService.save(user);
+							} else {
+								script.add("TODO script - in person, hasn't fixed speakers");
+							}
 						} else {
 							script.add("<self> There, all the speakers are replaced... just don't play too loud. Some of them are in various states of quality, haha.");
 							script.add("Yoo! Dude! I'm stoked! You really pulled through for us! And just in time too! The show starts in just a sec! Take one of the front row seats!");
@@ -306,8 +314,9 @@ public class MinigameNightIsland implements BearFair21Island {
 					script.add("Yooo, sweet. Thanks dawg! Here, you can keep the change. Peace! Ima take a look at the new games section.");
 					script.add("<self> Thanks for choosing GG!");
 
-					user.getOnlinePlayer().getInventory().removeItem(FixableDevice.XBOX.getFixed());
+					PlayerUtils.removeItem(user.getOnlinePlayer(), FixableDevice.XBOX.getFixed());
 					user.setQuestStage_MGN(QuestStage.STEP_TWO);
+					user.getNextStepNPCs().remove(getNpcId());
 					userService.save(user);
 					Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
 				}
@@ -1117,7 +1126,10 @@ public class MinigameNightIsland implements BearFair21Island {
 			ItemBuilder.fromHeadId("43417").name("&cTrent's Broken Xbox One").undroppable().unplaceable().build(),
 			ItemBuilder.fromHeadId("43417").name("&aTrent's Fixed Xbox One").undroppable().unplaceable().build(),
 			null,
-			user -> user.setQuestStage_MGN(QuestStage.STEP_ONE)
+			user -> {
+				user.getNextStepNPCs().add(MinigameNightNPCs.TRENT.getNpcId());
+				user.setQuestStage_MGN(QuestStage.STEP_ONE);
+			}
 		),
 		LAPTOP(
 			new ItemBuilder(Material.POLISHED_BLACKSTONE_PRESSURE_PLATE).customModelData(1).name("&cFredrickson's Broken Laptop").undroppable().unplaceable().build(),
