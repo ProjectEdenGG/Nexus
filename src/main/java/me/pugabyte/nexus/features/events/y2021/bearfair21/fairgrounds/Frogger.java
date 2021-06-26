@@ -311,7 +311,7 @@ public class Frogger implements Listener {
 			startAnimations();
 
 		} else if (regionId.equalsIgnoreCase(checkpointRg)) {
-			if (player.spigot().getPing() >= 200) {
+			if (player.getPing() >= 200) {
 				checkpointList.add(player);
 			}
 

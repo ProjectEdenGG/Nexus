@@ -19,7 +19,6 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCate
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -53,15 +52,15 @@ public class BearFair21User implements PlayerOwnedObject {
 	);
 	private Set<Integer> metNPCs = new HashSet<>();
 	// TODO BF21: Set this system up
-	private Set<Integer> nextStepNPCs = new HashSet<>(Arrays.asList(
+	private Set<Integer> nextStepNPCs = new HashSet<>(Set.of(
 			ORGANIZER.getId(), // Main
-		BEEKEEPER.getId(), // Side
-		LUMBERJACK.getId(), // Side
-		FISHERMAN2.getId(), // Side
-		AXEL.getId(), // MGN
-		PUGMAS_MAYOR.getId(), // Pugmas
-		JOSE.getId(), // HALLOWEEN
-		BRUCE.getId() // SDU
+			BEEKEEPER.getId(), // Side
+			LUMBERJACK.getId(), // Side
+			FISHERMAN2.getId(), // Side
+			AXEL.getId(), // MGN
+			PUGMAS_MAYOR.getId(), // Pugmas
+			JOSE.getId(), // HALLOWEEN
+			BRUCE.getId() // SDU
 	));
 	private int activeTaskId = -1;
 

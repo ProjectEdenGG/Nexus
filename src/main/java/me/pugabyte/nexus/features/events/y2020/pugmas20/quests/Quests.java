@@ -50,7 +50,7 @@ public class Quests {
 
 	@Getter
 	@AllArgsConstructor
-	public enum Pugmas20Quest implements Quest {
+	public enum Pugmas20Quest implements Quest<Pugmas20User> {
 		GIFT_GIVER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + QuestNPC.JADE.getName() + " in the Workshop");
 		}}),

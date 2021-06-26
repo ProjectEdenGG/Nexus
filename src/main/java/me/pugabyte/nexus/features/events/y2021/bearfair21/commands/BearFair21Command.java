@@ -1,10 +1,12 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
 import eden.utils.TimeUtils.Time;
+import eden.utils.TimeUtils.Timespan;
 import eden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import me.pugabyte.nexus.features.events.models.Quest;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
@@ -12,11 +14,13 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightI
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.RouterMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.ScrambledCablesMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
+import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -30,6 +34,7 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
 import me.pugabyte.nexus.utils.BlockUtils;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -44,9 +49,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -91,6 +99,38 @@ public class BearFair21Command extends CustomCommand {
 	@Permission("group.admin")
 	public void toCollector() {
 		player().teleportAsync(Collector.getCurrentLoc());
+	}
+
+	@Path("progress [player]")
+	@Description("View your event progress")
+	void progress(@Arg(value = "self", permission = "group.staff") BearFair21User user) {
+		final LocalDate start = LocalDate.of(2021, 6, 27);
+		final LocalDate now = LocalDate.now();
+		int day = start.until(now).getDays() + 1;
+
+		send(PREFIX + "Event progress (Day &e#" + day + "&7/7&3):");
+		line();
+
+		for (BearFair21UserQuestStageHelper quest : BearFair21UserQuestStageHelper.values()) {
+			JsonBuilder json = json();
+			final QuestStage stage = quest.getter().apply(user);
+			String instructions = BearFair21Quest.valueOf(quest.name()).getInstructions(user, stage);
+
+			if (stage == QuestStage.COMPLETE)
+				json.next("&f  &a☑ &3" + camelCase(quest) + " &7- &aComplete");
+			else if (stage == QuestStage.NOT_STARTED || stage == QuestStage.INELIGIBLE)
+				json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &cNot started" + (instructions == null ? "" : " &7- " + instructions));
+			else
+				json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress" + (instructions == null ? "" : " &7- " + instructions));
+
+			send(json);
+		}
+
+		line();
+		if (day < 7) {
+			send("&3Next day begins in &e" + Timespan.of(now.plusDays(1)).format());
+			line();
+		}
 	}
 
 	// Database
@@ -171,7 +211,7 @@ public class BearFair21Command extends CustomCommand {
 	@Accessors(fluent = true)
 	public enum BearFair21UserQuestStageHelper {
 		MAIN(BearFair21User::getQuestStage_Main, BearFair21User::setQuestStage_Main),
-		RECYCLE(BearFair21User::getQuestStage_Recycle, BearFair21User::setQuestStage_Recycle),
+		RECYCLER(BearFair21User::getQuestStage_Recycle, BearFair21User::setQuestStage_Recycle),
 		BEEKEEPER(BearFair21User::getQuestStage_BeeKeeper, BearFair21User::setQuestStage_BeeKeeper),
 		LUMBERJACK(BearFair21User::getQuestStage_Lumberjack, BearFair21User::setQuestStage_Lumberjack),
 		MINIGAME_NIGHT(BearFair21User::getQuestStage_MGN, BearFair21User::setQuestStage_MGN),
@@ -182,6 +222,54 @@ public class BearFair21Command extends CustomCommand {
 
 		private final Function<BearFair21User, QuestStage> getter;
 		private final BiConsumer<BearFair21User, QuestStage> setter;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum BearFair21Quest implements Quest<BearFair21User> {
+		MAIN(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.MAYOR.getNpcNameAndJob() + " in Honeywood village");
+			for (QuestStage stage : List.of(QuestStage.STARTED, QuestStage.STEP_ONE, QuestStage.STEP_TWO, QuestStage.STEP_THREE, QuestStage.STEP_FOUR, QuestStage.STEP_FIVE, QuestStage.STEP_SIX))
+				put(stage, "Talk to " + BearFair21NPC.MAYOR.getNpcNameAndJob());
+		}}),
+		RECYCLER(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.FISHERMAN2.getNpcNameAndJob() + " by the lake");
+			put(QuestStage.STARTED, "Recycle some trash");
+		}}),
+		BEEKEEPER(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.BEEKEEPER.getNpcNameAndJob() + " by the bee colony");
+			put(QuestStage.STARTED, "Find the beehive");
+			put(QuestStage.STEP_ONE, "Talk to the Queen Bee");
+			put(QuestStage.STEPS_DONE, "Talk to " + BearFair21NPC.BEEKEEPER.getNpcNameAndJob());
+		}}),
+		LUMBERJACK(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.LUMBERJACK.getNpcNameAndJob() + " in the saw mill");
+			put(QuestStage.STARTED, "Talk to " + BearFair21NPC.LUMBERJACK.getNpcNameAndJob());
+		}}),
+		MINIGAME_NIGHT(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.AXEL.getNpcNameAndJob() + " by the Game Gallery");
+			// TODO Griffin
+		}}),
+		PUGMAS(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.PUGMAS_MAYOR.getNpcNameAndJob() + " by the Pugmas Tree");
+			for (QuestStage stage : List.of(QuestStage.STARTED, QuestStage.STEP_ONE))
+				put(stage, "Talk to the " + BearFair21NPC.GRINCH.getNpcNameAndJob());
+			put(QuestStage.STEP_TWO, "Find the presents");
+		}}),
+		HALLOWEEN(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.JOSE.getNpcNameAndJob() + " outside the Coco village");
+			put(QuestStage.STARTED, "Talk to " + BearFair21NPC.SANTIAGO.getNpcNameAndJob());
+			put(QuestStage.STEP_ONE, "Find " + BearFair21NPC.ANA.getNpcNameAndJob());
+			put(QuestStage.STEP_TWO, "Talk to " + BearFair21NPC.ANA.getNpcNameAndJob());
+			put(QuestStage.STEP_THREE, "Talk to " + BearFair21NPC.ANA.getNpcNameAndJob());
+			put(QuestStage.STEPS_DONE, "Talk to " + BearFair21NPC.JOSE.getNpcNameAndJob());
+		}}),
+		SUMMER_DOWN_UNDER(user -> new HashMap<>() {{
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.BRUCE.getNpcNameAndJob() + " next to the Pie shop");
+			// TODO Lexi
+		}});
+
+		private final Function<BearFair21User, Map<QuestStage, String>> instructions;
 	}
 
 	@Permission("group.admin")

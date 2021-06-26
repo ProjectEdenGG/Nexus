@@ -241,10 +241,7 @@ public class MiniGolf {
 					continue;
 				//
 
-				if (player.getLevel() != 0)
-					player.setLevel(0);
-
-				float amount = player.spigot().getPing() < 200 ? 0.04F : 0.02F;
+				float amount = player.getPing() < 200 ? 0.04F : 0.02F;
 
 				float exp = powerMap.getOrDefault(user, .0F);
 				exp += amount;

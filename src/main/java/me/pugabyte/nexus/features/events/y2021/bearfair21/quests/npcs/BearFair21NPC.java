@@ -4,15 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.PacketUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static eden.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 public enum BearFair21NPC {
@@ -32,7 +34,12 @@ public enum BearFair21NPC {
 	SORCERER("Lucian", 2658),
 	TRADER("Joe", 4206),
 	//   QUEST GIVERS
-	MAYOR("John", 3838),
+	MAYOR("John", 3838) {
+		@Override
+		public @NotNull String getNpcNameAndJob() {
+			return camelCase(this) + " " + getNpcName();
+		}
+	},
 	LUMBERJACK("Flint", 3845),
 	BEEKEEPER("Harold", 3844),
 	FISHERMAN2("Nate", 3841),
@@ -129,13 +136,26 @@ public enum BearFair21NPC {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 
-		String npcJob = StringUtils.camelCase(this.name().toLowerCase()
-			.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
-			.replaceAll("[0-9]+", "")).trim();
+		String npcJob = getNpcJob();
 
 		if (npcJob.equalsIgnoreCase(npcName))
 			return Collections.singletonList(PacketUtils.entityNameFake(player, npc.getEntity(), npcName));
 		else
 			return PacketUtils.entityNameFake(player, npc.getEntity(), npcJob, npcName);
+	}
+
+	@NotNull
+	public String getNpcNameAndJob() {
+		final String job = getNpcJob();
+		if (npcName.equalsIgnoreCase(job))
+			return npcName;
+		return npcName + " the " + job;
+	}
+
+	@NotNull
+	public String getNpcJob() {
+		return camelCase(this.name().toLowerCase()
+			.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
+			.replaceAll("[0-9]+", "")).trim();
 	}
 }

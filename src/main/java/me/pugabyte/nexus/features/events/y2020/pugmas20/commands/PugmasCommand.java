@@ -94,12 +94,6 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("progress")
-	@Description("View your event progress")
-	void progress() {
-		progress(pugmasUser);
-	}
-
 	@Path("muteTrain [muted]")
 	@Description("Mute train sounds")
 	void muteTrain(Boolean muted) {
@@ -111,13 +105,9 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Train " + (muted ? "muted" : "unmuted"));
 	}
 
-	@Permission("group.staff")
-	@Path("admin progress <player>")
-	void adminProgress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
-		progress(user);
-	}
-
-	void progress(Pugmas20User user) {
+	@Path("progress [player]")
+	@Description("View your event progress")
+	void progress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
 		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))
