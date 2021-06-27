@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
 import eden.utils.RandomUtils;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
@@ -441,6 +442,14 @@ public class Quests implements Listener {
 			player.setFoodLevel(8);
 
 		player.teleport(BearFair21.getShipSpawnLoc());
+	}
 
+	@EventHandler
+	public void onAnvilBreak(AnvilDamagedEvent event) {
+		Location location = event.getInventory().getLocation();
+		if (location == null) return;
+		if (isNotAtBearFair(location)) return;
+
+		event.setCancelled(true);
 	}
 }
