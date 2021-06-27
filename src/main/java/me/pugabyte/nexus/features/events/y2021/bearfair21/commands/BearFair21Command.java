@@ -126,6 +126,8 @@ public class BearFair21Command extends CustomCommand {
 			send(json);
 		}
 
+		// TODO Griffin daily points count
+
 		line();
 		if (day < 7) {
 			send("&3Next day begins in &e" + Timespan.of(now.plusDays(1)).format());
@@ -248,7 +250,15 @@ public class BearFair21Command extends CustomCommand {
 		}}),
 		MINIGAME_NIGHT(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.AXEL.getNpcNameAndJob() + " by the Game Gallery");
-			// TODO Griffin
+			put(QuestStage.STARTED, "Talk to " + BearFair21NPC.MGN_CUSTOMER_1);
+			put(QuestStage.STEP_ONE, "Talk to " + BearFair21NPC.MGN_CUSTOMER_1);
+			put(QuestStage.STEP_TWO, "Answer the phone");
+			put(QuestStage.STEP_THREE, "Repair the laptop");
+			put(QuestStage.STEP_FOUR, "Call " + BearFair21NPC.MGN_CUSTOMER_2.getNpcNameAndJob() + " back");
+			put(QuestStage.STEP_FIVE, "Answer the phone");
+			put(QuestStage.STEP_SIX, "Answer the phone");
+			put(QuestStage.STEP_SEVEN, "Talk to " + BearFair21NPC.ADMIRAL.getNpcNameAndJob());
+			put(QuestStage.STEP_EIGHT, "Answer the phone");
 		}}),
 		PUGMAS(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.PUGMAS_MAYOR.getNpcNameAndJob() + " by the Pugmas Tree");
