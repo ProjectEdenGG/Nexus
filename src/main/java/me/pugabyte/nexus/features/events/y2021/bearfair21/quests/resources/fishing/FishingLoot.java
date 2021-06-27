@@ -32,42 +32,42 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resource
 public enum FishingLoot {
 
 	// Fish
-	CARP(FISH, 1, Material.COD, 40.0, "Carp", 1),
-	SALMON(FISH, 1, Material.COD, 30.0, "Salmon", 2),
-	TROPICAL_FISH(FISH, 1, Material.COD, 20.0, "Tropical Fish", 3),
-	PUFFERFISH(FISH, 1, Material.COD, 10.0, "Pufferfish", 4),
-	BULLHEAD(FISH, 1, Material.COD, 10.0, "Bullhead", 5),
-	STURGEON(FISH, 1, Material.COD, 10.0, "Sturgeon", 6),
-	WOODSKIP(FISH, 1, Material.COD, 10.0, "Woodskip", 7),
-	VOID_SALMON(FISH, 1, Material.COD, 10.0, "Void Salmon", 8),
-	RED_SNAPPER(FISH, 1, Material.COD, 10.0, "Red Snapper", 9),
-	RED_MULLET(FISH, 1, Material.COD, 10.0, "Red Mullet", 10),
+	CARP(FISH, 2, Material.COD, 40.0, "Carp", 1),
+	SALMON(FISH, 2, Material.COD, 30.0, "Salmon", 2),
+	TROPICAL_FISH(FISH, 2, Material.COD, 20.0, "Tropical Fish", 3),
+	PUFFERFISH(FISH, 2, Material.COD, 10.0, "Pufferfish", 4),
+	BULLHEAD(FISH, 2, Material.COD, 10.0, "Bullhead", 5),
+	STURGEON(FISH, 2, Material.COD, 10.0, "Sturgeon", 6),
+	WOODSKIP(FISH, 2, Material.COD, 10.0, "Woodskip", 7),
+	VOID_SALMON(FISH, 2, Material.COD, 10.0, "Void Salmon", 8),
+	RED_SNAPPER(FISH, 2, Material.COD, 10.0, "Red Snapper", 9),
+	RED_MULLET(FISH, 2, Material.COD, 10.0, "Red Mullet", 10),
 	// Junk
 	OLD_BOOTS(JUNK, 1, Material.LEATHER_BOOTS, 10.0, "Old Boots", 1),
-	RUSTY_SPOON(JUNK, 1, Material.IRON_SHOVEL, 10.0, "Rusty Spoon", 1),
-	BROKEN_CD(JUNK, 1, Material.MUSIC_DISC_11, 10.0, "Broken CD", 1),
+	RUSTY_SPOON(JUNK, 0, Material.IRON_SHOVEL, 10.0, "Rusty Spoon", 1),
+	BROKEN_CD(JUNK, 0, Material.MUSIC_DISC_11, 10.0, "Broken CD", 1),
 	LOST_BOOK(JUNK, 1, Material.BOOK, 10.0, "Lost Book", 1),
-	SOGGY_NEWSPAPER(JUNK, 1, Material.PAPER, 10.0, "Soggy Newspaper", 1),
-	DRIFTWOOD(JUNK, 1, Material.STICK, 10.0, "Driftwood", 47),
-	SEAWEED(JUNK, 1, Material.KELP, 10.0, "Seaweed", 1),
+	SOGGY_NEWSPAPER(JUNK, 0, Material.PAPER, 10.0, "Soggy Newspaper", 1),
+	DRIFTWOOD(JUNK, 0, Material.STICK, 10.0, "Driftwood", 47),
+	SEAWEED(JUNK, 0, Material.KELP, 10.0, "Seaweed", 1),
 	// Treasure
 	GOLD_NUGGET(TREASURE, 1, Material.GOLD_NUGGET, 15.0),
-	UNBREAKING(TREASURE, 1, Material.ENCHANTED_BOOK, 10.0),
-	EFFICIENCY(TREASURE, 1, Material.ENCHANTED_BOOK, 10.0),
-	FORTUNE(TREASURE, 1, Material.ENCHANTED_BOOK, 8.0),
-	LURE(TREASURE, 1, Material.ENCHANTED_BOOK, 8.0),
-	DIAMOND(TREASURE, 1, Material.DIAMOND, 6.0),
-	NAUTILUS_SHELL(TREASURE, 1, Material.NAUTILUS_SHELL, 6.0),
-	TREASURE_CHEST(TREASURE, 1, Material.CHEST, 5.0, "Treasure Chest", 1),
+	UNBREAKING(TREASURE, 5, Material.ENCHANTED_BOOK, 10.0),
+	EFFICIENCY(TREASURE, 5, Material.ENCHANTED_BOOK, 10.0),
+	FORTUNE(TREASURE, 6, Material.ENCHANTED_BOOK, 8.0),
+	LURE(TREASURE, 6, Material.ENCHANTED_BOOK, 8.0),
+	DIAMOND(TREASURE, 7, Material.DIAMOND, 6.0),
+	NAUTILUS_SHELL(TREASURE, 7, Material.NAUTILUS_SHELL, 6.0),
+	TREASURE_CHEST(TREASURE, 8, Material.CHEST, 5.0, "Treasure Chest", 1),
 	// Unique
-	MIDNIGHT_CARP(UNIQUE, 1, Material.COD, 50.0, "Midnight Carp", 11, "main", NIGHT),
-	SUNFISH(UNIQUE, 1, Material.COD, 50.0, "Sunfish", 12, "main", DAY),
-	STONEFISH(UNIQUE, 1, Material.COD, 100.0, "Stonefish", 13, "main", 120),
-	TIGER_TROUT(UNIQUE, 1, Material.COD, 50.0, "Tiger Trout", 14, "minigamenight"),
-	SEA_CUCUMBER(UNIQUE, 1, Material.SEA_PICKLE, 50.0, "Sea Cucumber", 0, "minigamenight"),
-	GLACIERFISH(UNIQUE, 1, Material.COD, 100.0, "Glacierfish", 15, "pugmas"),
-	CRIMSONFISH(UNIQUE, 1, Material.COD, 100.0, "Crimsonfish", 16, "halloween"),
-	BLOBFISH(UNIQUE, 1, Material.COD, 100.0, "Blobfish", 17, "summerdownunder"),
+	MIDNIGHT_CARP(UNIQUE, 15, Material.COD, 50.0, "Midnight Carp", 11, "main", NIGHT),
+	SUNFISH(UNIQUE, 15, Material.COD, 50.0, "Sunfish", 12, "main", DAY),
+	STONEFISH(UNIQUE, 15, Material.COD, 100.0, "Stonefish", 13, "main", 120),
+	TIGER_TROUT(UNIQUE, 15, Material.COD, 50.0, "Tiger Trout", 14, "minigamenight"),
+	SEA_CUCUMBER(UNIQUE, 15, Material.SEA_PICKLE, 50.0, "Sea Cucumber", 0, "minigamenight"),
+	GLACIERFISH(UNIQUE, 15, Material.COD, 100.0, "Glacierfish", 15, "pugmas"),
+	CRIMSONFISH(UNIQUE, 15, Material.COD, 100.0, "Crimsonfish", 16, "halloween"),
+	BLOBFISH(UNIQUE, 15, Material.COD, 100.0, "Blobfish", 17, "summerdownunder"),
 	;
 
 	FishingLootCategory category;
@@ -195,7 +195,7 @@ public enum FishingLoot {
 		return switch (category) {
 			case FISH -> "&7Fish";
 			case UNIQUE -> "&7Unique";
-			case TREASURE -> "";
+			case TREASURE -> null;
 			case JUNK -> "&7Trash";
 		};
 	}
@@ -203,10 +203,21 @@ public enum FishingLoot {
 	public static List<TradeBuilder> getTrades() {
 		return new ArrayList<>() {{
 			for (FishingLoot loot : values()) {
-				add(new TradeBuilder()
-					.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
-					.ingredient(loot.getItem())
-				);
+				if (loot.equals(EFFICIENCY)) {
+					add(new TradeBuilder()
+						.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+						.ingredient(loot.getItemBuilder().enchant(Enchant.EFFICIENCY, 2))
+					);
+					add(new TradeBuilder()
+						.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+						.ingredient(loot.getItemBuilder().enchant(Enchant.EFFICIENCY, 3))
+					);
+				} else {
+					add(new TradeBuilder()
+						.result(Merchants.goldNugget.clone().amount(loot.getGold()).build())
+						.ingredient(loot.getItem())
+					);
+				}
 			}
 		}};
 	}
