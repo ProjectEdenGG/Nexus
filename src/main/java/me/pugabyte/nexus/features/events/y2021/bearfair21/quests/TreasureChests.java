@@ -15,18 +15,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-// TODO BF21: Place all heads!
 public class TreasureChests implements Listener {
 	private static final BearFair21UserService userService = new BearFair21UserService();
 	private static final Supplier<ItemBuilder> treasureChest = () -> ItemBuilder.fromHeadId("13379");
 
 	// @formatter:off
-	Set<Location> locations = new HashSet<>(Arrays.asList(
+	public static final Set<Location> locations = Set.of(
 		// Main Heads
 		loc(3, 138, -17), 		// main warp, right side, freebie
 		loc(137, 133, 15), 		// in purple tent, minigolf staircase
@@ -49,7 +46,7 @@ public class TreasureChests implements Listener {
 		loc(96, 110, -309),		// halloween - underworld, near ruben
 		loc(188, 152, -144),	// sdu - by burning trees
 		loc(164, 141, -242)		// sdu - under staircase on backside of island
-	));
+	);
 	// @formatter:on
 
 	public TreasureChests() {
@@ -77,9 +74,8 @@ public class TreasureChests implements Listener {
 			return;
 		}
 
-		String status = userSize + "/" + size;
 		if (user.getTreasureChests().contains(location)) {
-			user.sendMessage("&cYou've already found this Treasure Chest! (" + status + ")");
+			user.sendMessage("&cYou've already found this Treasure Chest! (" + userSize + "/" + size + ")");
 			return;
 		}
 
@@ -92,13 +88,13 @@ public class TreasureChests implements Listener {
 			Quests.giveKey(user, 2);
 			BearFair21.giveTokens(user, 300);
 		} else {
-			user.sendMessage("&3You've found &e" + status + "&3 Treasure Chests!");
+			user.sendMessage("&3You've found &e" + userSize + "/" + size + "&3 Treasure Chests!");
 		}
 
 		userService.save(user);
 	}
 
-	private Location loc(int x, int y, int z) {
+	public static Location loc(int x, int y, int z) {
 		return new Location(BearFair21.getWorld(), x, y, z);
 	}
 }
