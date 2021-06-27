@@ -81,26 +81,16 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 
 	@Path("set coords <x> <y>")
 	void set_coords(byte x, byte y) {
-		for (MapRenderer mapRenderer : getView().getRenderers())
-			if (mapRenderer instanceof BearFair21Renderer renderer) {
-				renderer.getCursor().setX(x);
-				renderer.getCursor().setY(y);
-				send(PREFIX + "Set coords to " + x + " / " + y);
-				return;
-			}
-		send(PREFIX + "Could not find Bear Fair Renderer");
+		myRenderer.getCursor().setX(x);
+		myRenderer.getCursor().setY(y);
+		send(PREFIX + "Set coords to " + x + " / " + y);
 	}
 
 	@Path("get coords")
 	void get_coords() {
-		for (MapRenderer mapRenderer : getView().getRenderers())
-			if (mapRenderer instanceof BearFair21Renderer renderer) {
-				byte x = renderer.getCursor().getX();
-				byte y = renderer.getCursor().getY();
-				send(PREFIX + "Current coords are " + x + " / " + y);
-				return;
-			}
-		send(PREFIX + "Could not find Bear Fair Renderer");
+		byte x = myRenderer.getCursor().getX();
+		byte y = myRenderer.getCursor().getY();
+		send(PREFIX + "Current coords are " + x + " / " + y);
 	}
 
 	@Path("toggle updating")
@@ -177,7 +167,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 
 				int xOffset = (int) Math.round(xDiff * .6) + (int) center.getX();
 				int yOffset = (int) Math.round(yDiff * .6) + (int) center.getZ() + 140; // TODO Why 140
-				if (!isWithinBounds(xOffset, Byte.class) || !isWithinBounds(xOffset, Byte.class)) {
+				if (!isWithinBounds(xOffset, Byte.class) || !isWithinBounds(yOffset, Byte.class)) {
 					cursor.setVisible(false);
 				} else {
 					cursor.setVisible(true);
