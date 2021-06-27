@@ -23,14 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.AXEL;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BEEKEEPER;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BRUCE;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.FISHERMAN2;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.JOSE;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.LUMBERJACK;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.ORGANIZER;
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.PUGMAS_MAYOR;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
 
 @Data
 @Entity("bearfair21_user")
@@ -111,6 +104,7 @@ public class BearFair21User implements PlayerOwnedObject {
 
 	// SDU
 	QuestStage questStage_SDU = QuestStage.NOT_STARTED;
+	boolean receivedBrikkies = false;
 
 	public void addRecycledItems(int count) {
 		this.recycledItems += count;

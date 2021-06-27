@@ -71,6 +71,17 @@ public class Talker {
 	 *
 	 * @param player player to send to
 	 * @param talker NPC to send from
+	 * @return CompletableFuture
+	 */
+	public static CompletableFuture<Boolean> runScript(Player player, TalkingNPC talker) {
+		return runScript(player, talker, talker.getScript(player));
+	}
+
+	/**
+	 * Sends a script to a player from a talking NPC.
+	 *
+	 * @param player player to send to
+	 * @param talker NPC to send from
 	 * @param script script to send
 	 * @return CompletableFuture
 	 */

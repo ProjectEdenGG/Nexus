@@ -1,25 +1,41 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.models.Talker;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.SummerDownUnderIsland.SummerDownUnderNPCs;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
+import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 // TODO BF21: serpent
 // TODO BF21: track NPCs who have been spoken to about our holy serpent
@@ -30,9 +46,91 @@ public class SummerDownUnderIsland implements BearFair21Island {
 	public static final ItemBuilder FEATHER = new ItemBuilder(Material.FEATHER).name("Wing Feather");
 	public static final ItemBuilder SEVEN_FEATHER = FEATHER.clone().amount(7);
 	public static final ItemBuilder BRIKKIES = new ItemBuilder(Material.COOKIE).name("Anzac Bikkie").amount(16);
+	public static final Talker.TalkingNPC SERPENT = new Talker.TalkingNPC() {
+		@Getter
+		private final String name = "Rainbow Serpent";
+		@Getter
+		private final int npcId = -1;
+		@Getter
+		private final List<String> script = List.of(
+			"Hello young one. It is nice to meet you.",
+			"wait 40",
+			"I must thank you for journeying this far to see me. Departing from that land was a burdensome task, and not one that came easily. But if you are ready to learn and pass on my story, I will be ready to return home.",
+			"wait 200",
+			"<self> I would like to hear your story, please.",
+			"wait 40",
+			"Long, long ago in the Dreamtime, the Earth lay flat and still. Nothing moved and nothing grew. One day, I woke from my slumber and came out from under the ground. I was known as the Rainbow Serpent.",
+			"wait 190",
+			"I travelled for a very long time, far and wide. As I made my way across the land, my body formed mountains, valleys, and rivers. I was the Dreamtime creature who shaped the Earth. After all of my travelling, I grew tired, and so I curled up and went to sleep.",
+			"wait 220",
+			"After some rest, I returned to the place that I had first appeared and called out to the frogs, \"Come out!\"",
+			"wait 100",
+			"The frogs woke up very slowly because they had so much water in their bellies. I tickled their stomachs, and the water began to fill the tracks that I had left. This is how the lakes and rivers were formed.",
+			"wait 200",
+			"After this, water, grass, and trees began to grow. All the other animals that lived in rocks, on the plains, in the trees and the air began to wake up and follow me. They were all happy with the Earth.",
+			"wait 200",
+			"I made rules that they all had to obey. Some did not like this and began to cause trouble. So I said, \"Those who obey will be rewarded; I shall give them human form. But, for those who don't, they will be punished and turned to stone.\"",
+			"wait 210",
+			"The tribes of people lived together on the land given to them by me. They knew that the land would always be theirs, as long as they took care of it. They believed that no one should ever take it away from them.",
+			"wait 200",
+			"Now, young one. Return to the village. Tell the people what you have heard today and I will return, and with me, I shall bring rain.",
+			"wait 150",
+			"Goodbye for now.",
+			"wait 80"
+		);
+	};
+	private static final Set<UUID> serpentTalkingTo = new HashSet<>();
 
 	public SummerDownUnderIsland() {
 		Nexus.registerListener(this);
+		Tasks.repeat(2, 2, () -> {
+			BearFair21.getWGUtils().getEntitiesInRegionByClass("bearfair21_elytra", Player.class)
+				.stream().filter(Player::isOnGround)
+				.filter(player -> !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_start")
+								&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_finish"))
+				.forEach(this::teleportToElytraCourse);
+		});
+	}
+
+	private void teleportToElytraCourse(Player player) {
+		player.teleportAsync(new Location(player.getWorld(), 1571.5, 194, -388.5, 120, 0));
+	}
+
+	@EventHandler
+	public void onEnterRegion(PlayerEnteredRegionEvent event) {
+		String regionName = event.getRegion().getId();
+		if (regionName.equals("bearfair21_summerdownunder_elytra")) {
+			if (new BearFair21UserService().get(event.getPlayer()).getQuestStage_SDU() == QuestStage.STEP_SEVEN)
+				teleportToElytraCourse(event.getPlayer());
+			else
+				event.getPlayer().sendMessage(new JsonBuilder("&c&oYou feel as though you are not yet ready to travel deeper into the cave..."));
+		} else if (regionName.equals("bearfair21_elytra_dialogue") && !serpentTalkingTo.contains(event.getPlayer().getUniqueId())) {
+			serpentTalkingTo.add(event.getPlayer().getUniqueId());
+			Talker.runScript(event.getPlayer(), SERPENT).thenRun(() -> {
+				new BearFair21UserService().edit(event.getPlayer(), bfuser -> bfuser.setQuestStage_SDU(QuestStage.STEPS_DONE));
+				serpentTalkingTo.remove(event.getPlayer().getUniqueId());
+				PlayerUtils.runCommand(event.getPlayer(), "bearfair21warps sdu_cave");
+			});
+		} else if (regionName.equals("bearfair21_elytra_finish")) {
+			PlayerUtils.removeItem(event, new ItemStack(Material.ELYTRA));
+		} else if (regionName.equals("bearfair21_summerdownunder")) {
+			bookContentHandler(event.getPlayer());
+		}
+	}
+
+	private static ItemFrame bookFrame;
+
+	static void bookContentHandler(Player player) {
+		World world = player.getWorld();
+		if (bookFrame == null) {
+			bookFrame = world.getNearbyEntitiesByType(ItemFrame.class, new Location(world, 169, 98, -175), 1, 1, 1).iterator().next();
+			if (bookFrame == null) {
+				Nexus.log("Could not find BF21 SDU book item frame");
+				return;
+			}
+		}
+		ItemStack content = new BearFair21UserService().get(player).getQuestStage_SDU().ordinal() < QuestStage.STEP_SIX.ordinal() ? null : bookFrame.getItem();
+		PacketUtils.updateItemFrame(player, bookFrame, content, -1);
 	}
 
 	public enum SummerDownUnderNPCs implements BearFair21TalkingNPC {
@@ -41,7 +139,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				QuestStage stage = user.getQuestStage_SDU();
 				int ordinal = stage.ordinal();
-				if (ordinal <= QuestStage.STEP_FIVE.ordinal() || (stage == QuestStage.STEP_FIVE && !user.getOnlinePlayer().getInventory().contains(SEVEN_FEATHER.build()))) {// todo: stage
+				if (ordinal <= QuestStage.STEP_FIVE.ordinal() || (stage == QuestStage.STEP_FIVE && !user.getOnlinePlayer().getInventory().contains(SEVEN_FEATHER.build()))) {
 					if (stage == QuestStage.NOT_STARTED) {
 						setStage(user, QuestStage.STARTED);
 						setNextNpc(user, KYLIE);
@@ -66,6 +164,8 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						"<self> Don't worry! I've got this."
 					);
 				} else if (stage == QuestStage.STEP_FIVE) {
+					SummerDownUnderIsland.bookContentHandler(user.getOnlinePlayer());
+					ClientsideContentManager.addCategory(user, ClientsideContent.Content.ContentCategory.SERPENT);
 					final int delay = 60;
 					Tasks.wait(delay, () -> {
 						user.getOnlinePlayer().getInventory().removeItemAnySlot(SEVEN_FEATHER.build());
@@ -80,14 +180,17 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					return Collections.singletonList("That should do it. It should help you traverse those caves a bit better. Head down there and let me know if you find anything to make sense of all this.");
 				} else if (stage == QuestStage.STEPS_DONE) {
 					return Collections.singletonList("Thank you <player>. It really dodes humble you some.");
+				} else if (stage == QuestStage.FOUND_ALL) {
+					List<String> text = new ArrayList<>(setStageGetScript(user, QuestStage.COMPLETE));
+					text.add("wait 40");
+					text.add("Please, take this. It's the least we could do for ya. See ya 'round, mate.");
+					Tasks.wait(99, () -> Quests.giveKey(user));
+					return text;
 				} else {
-					// todo: give mystery key (only once obv lol)
 					return List.of(
 						"You beauty! The rain really did come back! Thank you <player>!",
 						"wait 60",
-						"<self> Yay! I'm glad I could help!",
-						"wait 40",
-						"Please, take this. It's the least we could do for ya. See ya 'round, mate."
+						"<self> Yay! I'm glad I could help!"
 					);
 				}
 			}
@@ -121,7 +224,11 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						"Thank you! One last thing now, could you run over to Daisy the cow and fetch a bucket of milk? After that, we should be set!"
 					);
 				} else if (ordinal >= QuestStage.STEP_THREE.ordinal() && ordinal < QuestStage.STEPS_DONE.ordinal()) {
-					PlayerUtils.giveItem(user.getOnlinePlayer(), BRIKKIES.build()); // todo: don't allow duplication
+					if (!user.isReceivedBrikkies()) {
+						user.setReceivedBrikkies(true);
+						new BearFair21UserService().save(user);
+						PlayerUtils.giveItem(user.getOnlinePlayer(), BRIKKIES.build());
+					}
 					return List.of(
 						"Thanks again <player>! As appreciation, please help yourself to some of my famous Anzac Bikkies.",
 						"wait 60",
