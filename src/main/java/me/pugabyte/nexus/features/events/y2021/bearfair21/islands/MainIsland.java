@@ -133,33 +133,58 @@ public class MainIsland implements BearFair21Island {
 				if (user.getQuestStage_MGN() == QuestStage.STEP_SIX) {
 					if (BearFair21.isInRegion(player, "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> This is <player> at the Game Gallery?");
+						script.add("wait 40");
 						script.add("Hello, this is Admiral Phoenix aboard the F.S.S Stellar Tides. I was wondering if I might request your assistance on a pressing matter?");
+						script.add("wait 90");
 						script.add("<self> How might I be of service, Sir?");
+						script.add("wait 40");
 						script.add("I ferry travelers to and from Bear Fair Island and on my last voyage I noticed my nav computer no longer detected the island on the star map.");
+						script.add("wait 100");
 						script.add("I suspect something may have happened to the nav beacons.");
+						script.add("wait 50");
 						script.add("<self> Oh no... What are nav beacons exactly?");
+						script.add("wait 50");
 						script.add("They are broadcasting stations that triangulate their position to any ship's nav computer so they can find Bear Fair.");
+						script.add("wait 80");
 						script.add("I need someone to check on the beacons, inspect for damage, and reboot them.");
+						script.add("wait 70");
 						script.add("<self> Sounds easy enough, where can I find them?");
+						script.add("wait 60");
 						script.add("There are three of them located at each corner of the main island.");
+						script.add("wait 60");
 						script.add("<self> Alright I'll see what I can find.");
+						script.add("wait 40");
 						script.add("Good, report back as soon as possible. I'll be on the deck of the Stellar Tides.");
 						user.getNextStepNPCs().add(getNpcId());
 						userService.save(user);
 					} else {
 						if (user.getMgn_beaconsActivated().size() == 3) {
 							script.add("Welcome aboard.");
+							script.add("wait 40");
 							script.add("<self> All beacons are in good condition and fully operational.");
+							script.add("wait 50");
 							script.add("Hmmm. I'm still not getting the nav data. Perhaps there's some kind of interference...");
+							script.add("wait 60");
 							script.add("Scans indicate there is some significant geothermal activity currently on the island...");
+							script.add("wait 60");
 							script.add("That could be worse than just nav beacon interference...");
+							script.add("wait 50");
 							script.add("<self> Oh no... is the island becoming unstable?");
+							script.add("wait 50");
 							script.add("It appears to be trending that way... Here, take this. It's a portable grav-well.");
-							if (!player.getInventory().containsAtLeast(gravwell.build(), 1))
-								Quests.giveItem(player, gravwell.build());
+							script.add("wait 30");
+							int wait = 40 + 50 + 60 + 60 + 50 + 50 + 60 + 30;
+							Tasks.wait(wait, () -> {
+								if (!player.getInventory().containsAtLeast(gravwell.build(), 1))
+									Quests.giveItem(player, gravwell.build());
+							});
+							script.add("wait 30");
 							script.add("<self> Whoa... This is a little heavy.");
+							script.add("wait 40");
 							script.add("Get as close to the magma core as you can, and place this down. It will hold the island together until we can get some professionals out here.");
+							script.add("wait 80");
 							script.add("On top of that, the magnetic field this device generates should boost the beacons' signal and solve the interference issue.");
+							script.add("wait 80");
 							script.add("<self> Aye Aye, Admiral!");
 						} else {
 							script.add("Any luck with those nav-beacons? Make sure to check all three for damage and reboot them.");
@@ -167,13 +192,19 @@ public class MainIsland implements BearFair21Island {
 					}
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SEVEN) {
 					script.add("<self> Mission complete!");
+					script.add("wait 40");
 					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and re-stabilize the island.");
+					script.add("wait 100");
 					script.add("Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
-					Quests.pay(user, Merchants.goldIngot.clone().amount(6).build());
+					script.add("wait 30");
+					Tasks.wait(170, () -> Quests.pay(user, Merchants.goldIngot.clone().amount(6).build()));
+					script.add("wait 30");
 					script.add("<self> Thank You Sir!");
-					user.getNextStepNPCs().remove(getNpcId());
-					user.setQuestStage_MGN(QuestStage.STEP_EIGHT);
-					userService.save(user);
+					Tasks.wait(200, () -> {
+						user.getNextStepNPCs().remove(getNpcId());
+						user.setQuestStage_MGN(QuestStage.STEP_EIGHT);
+						userService.save(user);
+					});
 				} else if (!user.hasMet(this.getNpcId())) {
 					script.add("The name is Phoenix, Admiral Phoenix and my job is to keep all y'all people here safe.");
 					script.add("wait 80");
@@ -197,16 +228,23 @@ public class MainIsland implements BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (user.getQuestStage_MGN() == QuestStage.STEP_FIVE) {
-					// TODO Wakka add wait
 					if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
 						script.add("<self> Thanks for calling GG! How can I help?");
-						script.add("Hey, this is Zach over in Honeywood, on the main island. Me and my team are building a new house on the edge of town, ya know where an old shed burned down a while back?");
+						script.add("wait 40");
+						script.add("Hey, this is Zach over in Honeywood, on the main island. Me and my team are building a new house on the edge of town.");
+						script.add("wait 70");
 						script.add("Well we're in a bit of a bind now since my electrician bailed on me this morning.");
+						script.add("wait 60");
 						script.add("<self> Well that wasn't very professional of them.");
+						script.add("wait 40");
 						script.add("Right? Now I know GG is a videogame company, but from what I've heard, y'all are pretty good with tech repair too.");
+						script.add("wait 70");
 						script.add("It's a bit of an odd request, but could you spare some one over here to set up the internet?");
+						script.add("wait 60");
 						script.add("I'll pay double whatever your typical service fee is since this isn't your normal repair job.");
+						script.add("wait 60");
 						script.add("<self> Uh, sure I could give it a look. Can't be more complicated than a motherboard...");
+						script.add("wait 60");
 						script.add("Great! It shouldn't take too long. We'll have everything ready for you when you get here.");
 						user.getNextStepNPCs().add(getNpcId());
 						userService.save(user);
@@ -222,16 +260,22 @@ public class MainIsland implements BearFair21Island {
 
 						if (tasks.isEmpty()) {
 							script.add("Awesome! That was some quick work, buddy. Here's your pay, and yes, I'm paying you double.");
-							Quests.pay(user, Merchants.goldIngot.clone().amount(4).build());
-
+							script.add("wait 30");
+							Tasks.wait(30, () -> Quests.pay(user, Merchants.goldIngot.clone().amount(4).build()));
+							script.add("wait 30");
 							script.add("Tell your manager to consider it a donation. Take care now.");
+							script.add("wait 40");
 							script.add("<self> It was no problem, happy to help wherever I can!");
-							user.setQuestStage_MGN(QuestStage.STEP_SIX);
-							user.getNextStepNPCs().remove(getNpcId());
-							userService.save(user);
+							Tasks.wait(100, () -> {
+								user.setQuestStage_MGN(QuestStage.STEP_SIX);
+								user.getNextStepNPCs().remove(getNpcId());
+								userService.save(user);
+							});
 						} else {
 							script.add("Hey thanks for coming. All we need you to do is " + AdventureUtils.asPlainText(AdventureUtils.commaJoinText(tasks)) + ".");
+							script.add("wait 60");
 							script.add("You'll find the main cable over by the tree, the wires are under the house- watch your step btw");
+							script.add("wait 60");
 							script.add("And the router station is right there on the table.");
 						}
 
@@ -262,12 +306,18 @@ public class MainIsland implements BearFair21Island {
 				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
 					if (!user.isMgn_boughtCar()) {
 						script.add("Hey, interested in the car? Well I gotta warn you there's no posted price because it's been totaled.");
+						script.add("wait 80");
 						script.add("I'm just sellin' it for salvage so if you see any parts you'd like, we can talk price.");
+						script.add("wait 70");
 						script.add("<self> Actually... how's the sound-system?");
+						script.add("wait 40");
 						script.add("Well it was totaled by water damage so the front speakers are toast.");
-						script.add("The rear speakers actually managed to survive though so if you're cool with half a sound-system, I'd say <TODO Wakka Fix cost> aughta' cover it.");
-						// TODO Wakka script if you don't have enough money
+						script.add("wait 60");
+						script.add("The rear speakers actually managed to survive though so if you're cool with half a sound-system, I'd say 1 gold block aughta' cover it.");
+						script.add("wait 100");
+						// TODO Griffin check balance
 						script.add("<self> I'll take it!");
+						script.add("wait 60");
 						user.setMgn_boughtCar(true);
 						user.getNextStepNPCs().remove(getNpcId());
 						userService.save(user);
