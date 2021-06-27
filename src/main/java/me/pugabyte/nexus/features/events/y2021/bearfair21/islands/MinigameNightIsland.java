@@ -205,66 +205,67 @@ public class MinigameNightIsland implements BearFair21Island {
 					case NOT_STARTED -> {
 						int wait = 0;
 						script.add("Hey! Welcome to the Game Gallery! Proud sponsor of Bear Fair 2021! ... Hold up, <player>? Is that you?");
-						script.add("wait 80");
+						script.add("wait 90");
 						script.add("<self> Hey, Axel!");
-						script.add("wait 40");
-						script.add("Yooo how ya been dude? It'd be hard to forget the hero who saved last year's arcade tourney! Thanks again for that.");
-						script.add("wait 80");
-						script.add("<self> Always glad to help out where I can!");
-						script.add("wait 40");
-						script.add("Broo, it's hard to find people as dope as you these days.");
-						script.add("wait 40");
-						wait += (80 + 40 + 80 + 40 + 40);
-						script.add("<self> Aw, thanks! So how're things at GG?");
-						script.add("wait 40");
-						script.add("Pretty stressful, not gonna lie. Lots of good business, but it's hard to keep up with it all, being self employed, especially during bearfair.");
-						script.add("wait 100");
-						script.add("Just barely found a few moments to come out here and help the bros get set up for our Bear Fair Band-sesh' tonight.");
-						script.add("wait 100");
-						script.add("<self> Anything I can do to help?");
-						script.add("wait 40");
-						wait += (40 + 100 + 100 + 40);
-						script.add("Nah I couldn't keep you from the bear fair celebration...");
 						script.add("wait 50");
-						script.add("<self> No really, I wouldn't mind.");
-						script.add("wait 40");
-						script.add("Really? Well if you're sure, we all could actually use more practice... Would you mind running the store for me?");
-						script.add("wait 80");
-						script.add("Just till we close tonight; and I'll totally pay you. In fact, here.");
+						script.add("Yooo how ya been dude? It'd be hard to forget the hero who saved last year's arcade tourney! Thanks again for that.");
+						script.add("wait 120");
+						script.add("<self> Always glad to help out where I can!");
+						script.add("wait 50");
+						script.add("Broo, it's hard to find people as dope as you these days.");
 						script.add("wait 60");
-						wait += (50 + 40 + 80 + 60);
+						wait += 90 + 50 + 120 + 50 + 60;
+						script.add("<self> Aw, thanks! So how're things at GG?");
+						script.add("wait 50");
+						script.add("Pretty stressful, not gonna lie. Lots of good business, but it's hard to keep up with it all, being self employed, especially during bearfair.");
+						script.add("wait 110");
+						script.add("Just barely found a few moments to come out here and help the bros get set up for our Bear Fair Band-sesh' tonight.");
+						script.add("wait 110");
+						script.add("<self> Anything I can do to help?");
+						script.add("wait 50");
+						wait += 50 + 110 + 110 + 50;
+						script.add("Nah I couldn't keep you from the bear fair celebration...");
+						script.add("wait 70");
+						script.add("<self> No really, I wouldn't mind.");
+						script.add("wait 50");
+						script.add("Really? Well if you're sure, we all could actually use more practice... Would you mind running the store for me?");
+						script.add("wait 90");
+						script.add("Just till we close tonight; and I'll totally pay you. In fact, here.");
+						script.add("wait 70");
+						wait += 70 + 50 + 90 + 70;
 						Tasks.wait(wait, () -> Quests.giveItem(user, hat));
 						script.add("You're an official employee of GG! With your tech skills, it'll be a breeze.");
-						script.add("wait 60");
+						script.add("wait 70");
 						script.add("<self> I got you bro, practice all you need. I wanna hear an awesome song when I get back!");
-						script.add("wait 60");
+						script.add("wait 70");
 						script.add("Duude, you're a lifesaver!");
-						wait += (60 + 60);
-
-						user.getNextStepNPCs().remove(getNpcId());
-						user.setQuestStage_MGN(QuestStage.STARTED);
-						userService.save(user);
+						wait += (70 + 70);
+						Tasks.wait(wait, () -> {
+							user.getNextStepNPCs().remove(getNpcId());
+							user.setQuestStage_MGN(QuestStage.STARTED);
+							userService.save(user);
+						});
 					}
 
 					case STEP_EIGHT -> {
 						if (user.getMgn_speakersFixed().size() < speakerLocations.size()) {
 							if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
 								script.add("<self> Hello?");
-								script.add("wait 40");
-								script.add("Hey dude, we got a problem. You busy?");
 								script.add("wait 50");
-								script.add("<self> Nope, just finished up a service call, what's wrong?");
+								script.add("Hey dude, we got a problem. You busy?");
 								script.add("wait 60");
+								script.add("<self> Nope, just finished up a service call, what's wrong?");
+								script.add("wait 70");
 								script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers!");
-								script.add("wait 80");
+								script.add("wait 90");
 								script.add("The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
-								script.add("wait 100");
+								script.add("wait 110");
 								script.add("<self> Oh no! What can I do?");
 								script.add("wait 50");
 								script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
 								script.add("wait 80");
 								script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
-								script.add("wait 60");
+								script.add("wait 70");
 								script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
 								user.getNextStepNPCs().add(getNpcId());
 								user.getNextStepNPCs().add(MainNPCs.JAMES.getNpcId());
@@ -276,11 +277,11 @@ public class MinigameNightIsland implements BearFair21Island {
 							}
 						} else {
 							script.add("<self> There, all the speakers are replaced... just don't play too loud. Some of them are in various states of quality, haha.");
-							script.add("wait 60");
+							script.add("wait 70");
 							script.add("Yoo! Dude! I'm stoked! You really pulled through for us! And just in time too! The show starts in just a sec! Take one of the front row seats!");
-							script.add("wait 60");
+							script.add("wait 70");
 							script.add("Sup everyone! Happy Bear Fair! We are Chiptune and we're happy to celebrate Bear Fair by bringing you some awesome music tonight so grab some snacks and get ready to groove!");
-							int wait = 60 + 60 + 80;
+							int wait = 70 + 70 + 80;
 							Tasks.wait(wait, () -> {
 								Quests.giveKey(user);
 								user.sendMessage(StringUtils.getPrefix("Songs") + "You have earned the &eDK Jungle 64 &3song! &c/songs");
@@ -324,20 +325,21 @@ public class MinigameNightIsland implements BearFair21Island {
 					});
 
 					script.add("So like, It's an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
-					script.add("wait 60");
+					script.add("wait 70");
 					script.add("<self> Yeah that's not good... does the blue screen have an error message?");
-					script.add("wait 40");
+					script.add("wait 70");
 					script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
-					script.add("wait 100");
+					script.add("wait 110");
 					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I'll be right back with you as soon as it's fixed.");
-					script.add("wait 60");
+					script.add("wait 70");
 					script.add("A'ight, thanks dawg. I'll be right here.");
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
 					PlayerUtils.removeItem(user.getOnlinePlayer(), FixableDevice.XBOX.getFixed());
 					script.add("<self> Alright, here you are. Battery was shot. Had to replace it. Pretty simple fix so the bill won't be too bad.");
-					script.add("wait 70");
+					script.add("wait 80");
 					script.add("Yooo, sweet. Thanks dawg! Here, you can keep the change. Peace! Ima take a look at the new games section.");
-					script.add("wait 70");
+					// TODO pay 5 nuggets
+					script.add("wait 80");
 					script.add("<self> Thanks for choosing GG!");
 					Tasks.wait(70 + 70, () -> {
 						user.setQuestStage_MGN(QuestStage.STEP_TWO);
@@ -357,31 +359,31 @@ public class MinigameNightIsland implements BearFair21Island {
 
 				if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
 					script.add("<self> Thanks for calling the Game Gallery, how can I help?");
-					script.add("wait 40");
+					script.add("wait 70");
 					script.add("Hello, this is Ben Fredrickson. I'm calling about a laptop that my assistant dropped off in your mailbox this morning?");
-					script.add("wait 60");
+					script.add("wait 70");
 					script.add("<self> Yes Sir, we have it.");
 					script.add("wait 40");
 					script.add("I travel a great deal and I intended it to be a birthday gift for my son when I returned home.");
-					script.add("wait 50");
+					script.add("wait 70");
 					script.add("Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won't boot up.");
-					script.add("wait 60");
+					script.add("wait 80");
 					script.add("I was hoping you could find out what's wrong with it and remedy the problem?");
-					script.add("wait 50");
+					script.add("wait 70");
 					script.add("<self> Of course sir, I'll take a look at it.");
-					script.add("wait 40");
+					script.add("wait 60");
 					script.add("Wonderful, once it's fixed, if you could keep it in your back room, I'm doing business in the area and will be back by in the next few days to pick it up.");
-					script.add("wait 100");
+					script.add("wait 120");
 					script.add("<self> No problem sir, I'll call as soon as it's ready.");
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
 					script.add("This is Fredrickson.");
-					script.add("wait 40");
+					script.add("wait 50");
 					script.add("<self> Ok Mr. Fredrickson, the laptop is ready. The motherboard and screen were cracked and had to be replaced but it works perfectly now.");
-					script.add("wait 70");
+					script.add("wait 90");
 					script.add("Thank you so much! I knew I could count on an establishment of your caliber! Expect me back by the fifth.");
-					script.add("wait 60");
+					script.add("wait 80");
 					script.add("<self> Glad to be of service! Thanks for choosing the Game Gallery!");
-					int wait = 40 + 70 + 60;
+					int wait = 50 + 90 + 80;
 					Tasks.wait(wait, () -> {
 						user.getOnlinePlayer().getInventory().removeItem(FixableDevice.LAPTOP.getFixed());
 						user.setQuestStage_MGN(QuestStage.STEP_FIVE);

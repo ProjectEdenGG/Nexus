@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
 
 @Data
 @Builder
@@ -46,7 +49,7 @@ public class Godmode implements PlayerOwnedObject {
 		final Player player = getOnlinePlayer();
 		if (!Nerd.of(this).hasMoved())
 			return true;
-		if (!PlayerUtils.isVanished(player) && player.getWorld().getName().equals("bearfair21"))
+		if (player.getWorld().getName().equals("bearfair21") && new BearFair21ConfigService().get0().isEnabled(WARP) && !PlayerUtils.isVanished(player))
 			return false;
 		if (!Rank.of(player).isStaff())
 			return false;
