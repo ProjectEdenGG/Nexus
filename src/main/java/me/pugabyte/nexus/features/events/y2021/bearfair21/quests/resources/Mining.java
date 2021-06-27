@@ -81,6 +81,7 @@ public class Mining implements Listener {
 			return true;
 		}
 
+		Quests.giveExp(player);
 		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack());
 

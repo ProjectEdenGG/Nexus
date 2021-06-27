@@ -67,6 +67,7 @@ public class Farming implements Listener {
 					}
 					return true;
 				}
+				Quests.giveExp(player);
 				Tasks.wait(20, () -> RegenCrops.getBlockRegenMap().put(block.getLocation(), material));
 
 				// Multi Block
@@ -79,6 +80,7 @@ public class Farming implements Listener {
 					return true;
 				}
 
+				Quests.giveExp(player);
 				RegenCrops.getMultiRegenMap().put(block.getLocation(), material);
 				Block above = block.getRelative(0, 1, 0);
 				if (above.getType().equals(material)) {
@@ -108,6 +110,7 @@ public class Farming implements Listener {
 			return true;
 		}
 
+		Quests.giveExp(player);
 		Tasks.wait(5, () -> {
 			ageable.setAge(0);
 			block.setType(material);

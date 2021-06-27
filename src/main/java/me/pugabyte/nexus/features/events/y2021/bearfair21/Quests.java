@@ -340,6 +340,14 @@ public class Quests implements Listener {
 		return RandomUtils.randomElement(hello);
 	}
 
+	public static void giveExp(Player player) {
+		if (RandomUtils.chanceOf(50))
+			return;
+
+		int exp = RandomUtils.randomInt(1, 6);
+		player.giveExp(exp, true);
+	}
+
 	@EventHandler
 	public void onRegionEnter(EnteringRegionEvent event) {
 		Entity entity = event.getEntity();
