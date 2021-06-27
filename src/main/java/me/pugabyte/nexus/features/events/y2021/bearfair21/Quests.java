@@ -26,6 +26,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farmi
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.features.regionapi.events.common.EnteringRegionEvent;
+import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
@@ -73,6 +74,7 @@ import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.EDIT;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.SKIP_WAITS;
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -366,16 +368,20 @@ public class Quests implements Listener {
 		if (BearFair21.isNotAtBearFair(player))
 			return;
 
-		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "BF21_NPCInteract", Time.SECOND.x(2)))
-			return;
-
 		int id = event.getNPC().getId();
 		BearFair21NPC npc = BearFair21NPC.from(id);
 		if (npc == null)
 			return;
 
 		BearFair21User user = userService.get(player);
+		int wait = BearFair21Talker.getScriptWait(user, id) + 60;
+		if (new BearFair21ConfigService().get0().isEnabled(SKIP_WAITS))
+			wait = 0;
+
+		CooldownService cooldownService = new CooldownService();
+		if (!cooldownService.check(player, "BF21_NPCInteract", wait))
+			return;
+
 		BearFair21Talker.runScript(user, id).thenAccept(bool -> {
 			if (bool)
 				Merchants.openMerchant(player, id);

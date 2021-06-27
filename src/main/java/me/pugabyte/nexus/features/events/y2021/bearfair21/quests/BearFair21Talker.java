@@ -40,4 +40,18 @@ public class BearFair21Talker extends BearFairTalker {
 
 		return Talker.runScript(player, talker, talker.getScript(player));
 	}
+
+	public static int getScriptWait(BearFair21User user, int id) {
+		TalkingNPC talker = getTalkingNPC(user.getOnlinePlayer(), id);
+		if (talker == null)
+			return 0;
+
+		int wait = 0;
+		for (String line : talker.getScript(user.getOnlinePlayer())) {
+			if (line.toLowerCase().matches("^wait \\d+$"))
+				wait += Integer.parseInt(line.toLowerCase().replace("wait ", ""));
+		}
+
+		return wait;
+	}
 }
