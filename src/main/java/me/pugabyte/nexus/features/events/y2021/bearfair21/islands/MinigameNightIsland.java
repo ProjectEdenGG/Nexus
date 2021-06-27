@@ -257,15 +257,21 @@ public class MinigameNightIsland implements BearFair21Island {
 								script.add("<self> Nope, just finished up a service call, what's wrong?");
 								script.add("wait 70");
 								script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers!");
-								script.add("wait 90");
-								script.add("The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
+								script.add("wait 120");
+								script.add("The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop.");
 								script.add("wait 110");
+								script.add("But we're gonna need more than that, otherwise we can't play the show tonight!");
+								script.add("wait 90");
 								script.add("<self> Oh no! What can I do?");
-								script.add("wait 50");
-								script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
-								script.add("wait 80");
+								script.add("wait 60");
+								script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more...");
+								script.add("wait 120");
+								script.add("You might be able to find some parts at my house you could use to build another.");
+								script.add("wait 90");
+								script.add("After that, maybe we could borrow two from someone? I dunno man, this sucks...");
+								script.add("wait 90");
 								script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
-								script.add("wait 70");
+								script.add("wait 110");
 								script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
 								user.getNextStepNPCs().add(getNpcId());
 								user.getNextStepNPCs().add(MainNPCs.JAMES.getNpcId());
@@ -668,7 +674,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		public static boolean hasAnyItems(Player player) {
 			for (AxelSpeakerPart part : values())
-				if (!player.getInventory().containsAtLeast(part.getDisplayItem(), 1))
+				if (player.getInventory().containsAtLeast(part.getDisplayItem(), 1))
 					return true;
 			return false;
 		}

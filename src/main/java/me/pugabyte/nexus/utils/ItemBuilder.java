@@ -43,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -449,6 +450,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public void buildLore() {
 		if (lore.isEmpty())
 			return; // don't override Component lore
+		lore.removeIf(Objects::isNull);
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
 			if (doLoreize)
