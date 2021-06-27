@@ -107,6 +107,8 @@ public class ClientsideContent implements PlayerOwnedObject {
 			SPEAKER_PART_TANGLED_WIRE,
 			SPEAKER_PART_SPEAKER_HEAD,
 			SPEAKER_PART_AUX_PORT,
+			// SDU
+			SERPENT,
 		}
 	}
 
