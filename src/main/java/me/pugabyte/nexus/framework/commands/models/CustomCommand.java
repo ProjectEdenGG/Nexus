@@ -708,8 +708,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	@SneakyThrows
 	protected PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
 		Class<? extends MongoService> service = (Class<? extends MongoService>) MongoService.ofObject(type);
-		if (service != null)
-			return service.newInstance().get(convertToOfflinePlayer(value));
+		if (service != null) {
+			final OfflinePlayer player = convertToOfflinePlayer(value);
+			if (player != null)
+				return service.newInstance().get(player);
+		}
 		return null;
 	}
 
