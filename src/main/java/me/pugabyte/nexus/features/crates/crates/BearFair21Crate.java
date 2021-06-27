@@ -17,9 +17,9 @@ public class BearFair21Crate extends Crate {
 	@Override
 	public List<String> getCrateHologramLines() {
 		return new ArrayList<>() {{
-			add("&f&l--=[+]=--");
-			add("&f[+] &lBear Fair 21 Crate &f[+]");
-			add("&f&l--=[+]=--");
+			add("&3&l--=[+]=--");
+			add("&3[+] &6&lBear Fair 21 Crate &3[+]");
+			add("&3&l--=[+]=--");
 		}};
 	}
 
