@@ -197,7 +197,7 @@ public class Merchants {
 
 					if (user.getQuestStage_Main() == QuestStage.STEP_FOUR) {
 						add(new TradeBuilder()
-							.result(MainIsland.getCake().clone())
+							.result(MainIsland.getCakeItem().clone())
 							.ingredient(new ItemBuilder(Material.CAKE).build())
 							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(8).build()));
 					} else {

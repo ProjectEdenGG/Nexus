@@ -59,7 +59,7 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final ItemBuilder balloon_yellow = new ItemBuilder(Material.STICK).customModelData(18).undroppable();
 	@Getter
-	private static final ItemBuilder cake = new ItemBuilder(Material.CAKE).name("Bear Fair Cake").undroppable();
+	private static final ItemBuilder cakeItem = new ItemBuilder(Material.CAKE).name("Bear Fair Cake").customModelData(2).undroppable();
 	@Getter
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
@@ -654,7 +654,7 @@ public class MainIsland implements BearFair21Island {
 							return script;
 						}
 						case STEP_FOUR -> {
-							List<ItemBuilder> required = Collections.singletonList(cake);
+							List<ItemBuilder> required = Collections.singletonList(cakeItem);
 							if (!Quests.hasItemsLikeFrom(user, required)) {
 								script.add("For your next task, could you follow up with Maple the Pastry Chef about my cake order?");
 								return script;
