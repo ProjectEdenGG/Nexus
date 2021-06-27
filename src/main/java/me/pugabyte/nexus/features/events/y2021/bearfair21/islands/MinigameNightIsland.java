@@ -332,20 +332,20 @@ public class MinigameNightIsland implements BearFair21Island {
 					});
 
 					script.add("So like, It's an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
-					script.add("wait 70");
+					script.add("wait 90");
 					script.add("<self> Yeah that's not good... does the blue screen have an error message?");
 					script.add("wait 70");
 					script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
-					script.add("wait 110");
+					script.add("wait 120");
 					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I'll be right back with you as soon as it's fixed.");
-					script.add("wait 70");
+					script.add("wait 80");
 					script.add("A'ight, thanks dawg. I'll be right here.");
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
 					PlayerUtils.removeItem(user.getOnlinePlayer(), FixableDevice.XBOX.getFixed());
 					script.add("<self> Alright, here you are. Battery was shot. Had to replace it. Pretty simple fix so the bill won't be too bad.");
 					script.add("wait 80");
 					script.add("Yooo, sweet. Thanks dawg! Here, you can keep the change. Peace! Ima take a look at the new games section.");
-					// TODO pay 5 nuggets
+					Quests.pay(user, new ItemStack(Material.GOLD_NUGGET, 5));
 					script.add("wait 80");
 					script.add("<self> Thanks for choosing GG!");
 					Tasks.wait(70 + 70, () -> {

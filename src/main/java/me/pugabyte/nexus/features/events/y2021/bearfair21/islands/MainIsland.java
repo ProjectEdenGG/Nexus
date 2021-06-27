@@ -198,7 +198,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 130");
 					script.add("Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
 					script.add("wait 70");
-					final int wait = 50 + 130 + 70;
+					int wait = 50 + 130 + 70;
 					Tasks.wait(wait, () -> Quests.pay(user, Merchants.goldIngot.clone().amount(6).build()));
 					script.add("wait 30");
 					script.add("<self> Thank You Sir!");
@@ -306,42 +306,33 @@ public class MainIsland implements BearFair21Island {
 				List<String> script = new ArrayList<>();
 				ItemStack tool = getTool(user.getPlayer());
 
-				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
-					if (!user.isMgn_boughtCar()) {
-						script.add("Hey, interested in the car? Well I gotta warn you there's no posted price because it's been totaled.");
-						script.add("wait 110");
-						script.add("I'm just sellin' it for salvage so if you see any parts you'd like, we can talk price.");
-						script.add("wait 90");
-						script.add("<self> Actually... how's the sound-system?");
-						script.add("wait 60");
-						script.add("Well it was totaled by water damage so the front speakers are toast.");
-						script.add("wait 80");
-						script.add("The rear speakers actually managed to survive though so if you're cool with half a sound-system, I'd say 1 gold block aughta' cover it.");
-						script.add("wait 120");
-						// TODO Griffin check balance
-						script.add("<self> I'll take it!");
-						script.add("wait 70");
-						int wait = 110 + 90 + 60 + 80 + 120 + 70;
-						Tasks.wait(wait, () -> {
-							user.setMgn_boughtCar(true);
-							user.getNextStepNPCs().remove(getNpcId());
-							userService.save(user);
-							Quests.giveItem(user, MinigameNightIsland.getCarKey().build());
-						});
-
-						return script;
-					}
-				} else if (!user.hasMet(this.getNpcId())) {
-					script.add(Quests.getHello());
+				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && !user.isMgn_boughtCar()) {
+					script.add("Hey, interested in the car? Well I gotta warn you there's no posted price because it's been totaled.");
+					script.add("wait 110");
+					script.add("I'm just sellin' it for salvage so if you see any parts you'd like, we can talk price.");
+					script.add("wait 90");
+					script.add("<self> Actually... how's the sound-system?");
+					script.add("wait 60");
+					script.add("Well it was totaled by water damage so the front speakers are toast.");
+					script.add("wait 80");
+					script.add("The rear speakers actually managed to survive though so if you're cool with half a sound-system, I'd say 1 gold block aughta' cover it.");
+					script.add("wait 120");
+					script.add("<self> I'll take it!");
+					script.add("wait 70");
 					return script;
-				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add(Quests.getThanks());
-					invite(user, this.getNpcId(), tool);
+				} else {
+					if (!user.hasMet(this.getNpcId())) {
+						script.add(Quests.getHello());
+					} else if (isInviting(user, this.getNpcId(), tool)) {
+						script.add(Quests.getThanks());
+						invite(user, this.getNpcId(), tool);
+					} else {
+						script.add(Quests.getHello());
+					}
+
+					script.add("<exit>");
 					return script;
 				}
-
-				script.add(Quests.getHello());
-				return script;
 			}
 		},
 		CARPENTER(BearFair21NPC.CARPENTER) {
@@ -726,7 +717,7 @@ public class MainIsland implements BearFair21Island {
 							.filter(fishingLoot -> fishingLoot.getCategory().equals(FishingLootCategory.FISH))
 							.toList().forEach(fishingLoot -> required.add(fishingLoot.getItemBuilder()));
 
-					List<ItemStack> items = Quests.getItemsListFrom(user, required);
+					List<ItemStack> items = Quests.getItemsLikeFrom(user, required);
 					if (Utils.isNullOrEmpty(items)) {
 						script.add("Tell ya what, I spend most of my time up in the skies, but I'll trade you those balloons you want, if you can get me a catch from the depths.");
 					} else {

@@ -7,6 +7,8 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.IslandType;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21Config;
@@ -306,13 +308,27 @@ public class BearFair21 implements Listener {
 
 		BearFair21UserService userService = new BearFair21UserService();
 		BearFair21User user = userService.get(player);
-		List<ItemStack> items = Quests.getItemsListFrom(user, Collections.singletonList(Merchants.traderCoupon.clone()));
-		if (Utils.isNullOrEmpty(items))
-			return;
+		// Trader
+		{
+			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(Merchants.traderCoupon.clone()));
+			if (Utils.isNullOrEmpty(items))
+				return;
 
-		Quests.removeItemStacks(user, items);
-		giveDailyTokens(player, BF21PointSource.TRADER, 50);
-		Quests.sound_obtainItem(player);
+			Quests.removeItemStacks(user, items);
+			giveDailyTokens(player, BF21PointSource.TRADER, 50);
+			Quests.sound_obtainItem(player);
+		}
+
+		// James
+		{
+			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(MinigameNightIsland.getCarKey()));
+			if (Utils.isNullOrEmpty(items))
+				return;
+
+			user.setMgn_boughtCar(true);
+			user.getNextStepNPCs().remove(MainNPCs.JAMES.getNpcId());
+			userService.save(user);
+		}
 	}
 
 	@EventHandler

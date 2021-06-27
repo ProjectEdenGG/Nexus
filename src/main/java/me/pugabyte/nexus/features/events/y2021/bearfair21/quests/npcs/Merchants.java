@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
@@ -247,6 +248,17 @@ public class Merchants {
 							.result(traderCoupon.clone().amount(1))
 							.ingredient(goldBlock.clone().amount(1)));
 					}
+				}};
+			}
+		},
+		JAMES(BearFair21NPC.JAMES) {
+			@Override
+			public List<TradeBuilder> getTrades(BearFair21User user) {
+				return new ArrayList<>() {{
+					add(new TradeBuilder()
+						.maxUses(1)
+						.result(MinigameNightIsland.getCarKey().build())
+						.ingredient(goldBlock.clone().amount(1)));
 				}};
 			}
 		},

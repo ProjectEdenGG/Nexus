@@ -203,7 +203,7 @@ public class Quests implements Listener {
 		return sign.getLines();
 	}
 
-	public static List<ItemStack> getItemsListFrom(BearFair21User user, List<ItemBuilder> items) {
+	public static List<ItemStack> getItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
 		List<ItemStack> result = new ArrayList<>();
 		for (ItemBuilder item : items) {
 			if (ItemUtils.isNullOrAir(item.build()))
@@ -218,11 +218,11 @@ public class Quests implements Listener {
 	}
 
 	public static boolean hasAllItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
-		return getItemsListFrom(user, items).size() >= items.size();
+		return getItemsLikeFrom(user, items).size() >= items.size();
 	}
 
 	public static boolean hasItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
-		return getItemsListFrom(user, items).size() > 0;
+		return getItemsLikeFrom(user, items).size() > 0;
 	}
 
 	public static ItemStack getItemLikeFrom(BearFair21User user, ItemBuilder itemBuilder) {
