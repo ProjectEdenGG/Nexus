@@ -31,10 +31,12 @@ import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -237,9 +239,17 @@ public class Chat extends Feature {
 				void execute(Broadcast broadcast) {
 					final ComponentLike component = getMessage(broadcast);
 					Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
-					PlayerUtils.getOnlinePlayers().stream()
+					List<Player> players = PlayerUtils.getOnlinePlayers();
+
+					if (broadcast.channel != null && broadcast.sender != Identity.nil()) {
+						Set<Chatter> recipients = broadcast.channel.getRecipients(new ChatService().get(broadcast.sender.uuid()));
+						players = recipients.stream().map(Chatter::getOnlinePlayer).toList();
+					}
+
+					players.stream()
 							.map(player -> new ChatService().get(player))
-							.filter(chatter -> chatter.hasJoined(broadcast.channel) && !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), broadcast.muteMenuItem))
+							.filter(chatter -> chatter.hasJoined(broadcast.channel))
+							.filter(chatter -> !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), broadcast.muteMenuItem))
 							.forEach(chatter -> chatter.sendMessage(broadcast.sender, component, broadcast.messageType));
 				}
 			},

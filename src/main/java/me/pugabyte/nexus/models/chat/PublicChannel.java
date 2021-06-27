@@ -61,7 +61,7 @@ public class PublicChannel implements Channel {
 		else if (crossWorld)
 			recipients.addAll(PlayerUtils.getOnlinePlayers());
 		else
-			recipients.addAll(chatter.getOnlinePlayer().getWorld().getPlayers());
+			recipients.addAll(PlayerUtils.getOnlinePlayers(chatter.getOnlinePlayer().getWorld()));
 
 		return recipients.stream()
 				.map(player -> new ChatService().get(player))
