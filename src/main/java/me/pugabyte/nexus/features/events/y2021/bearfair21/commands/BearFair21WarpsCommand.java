@@ -24,11 +24,13 @@ public class BearFair21WarpsCommand extends _WarpCommand {
 
 	@Path
 	public void bearfair() {
-		if (!BearFair21.canWarp() && !isStaff())
-			error("Soon™");
+		if (!isStaff()) {
+			if (!BearFair21.canWarp())
+				error("Soon™");
 
-		if (user.isFirstVisit())
-			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
+			if (user.isFirstVisit())
+				error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
+		}
 
 		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR21));
 	}
