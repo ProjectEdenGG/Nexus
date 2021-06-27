@@ -442,6 +442,9 @@ public class MainIsland implements BearFair21Island {
 					user.setQuestStage_BeeKeeper(QuestStage.STEP_ONE);
 					userService.save(user);
 					return script;
+				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEP_ONE) {
+					script.add("Head down into the nursery once you are ready to do so and take one of the larvae.");
+					return script;
 				}
 
 				return script;
