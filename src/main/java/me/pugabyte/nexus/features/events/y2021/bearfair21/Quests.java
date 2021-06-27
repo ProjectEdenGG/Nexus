@@ -268,6 +268,32 @@ public class Quests implements Listener {
 		Quests.sound_completeQuest(user.getPlayer());
 	}
 
+	public static String getThanks() {
+		List<String> thanks = Arrays.asList(
+			"Thanks!",
+			"Many thanks!",
+			"Thank you.",
+			"Thank you very much!",
+			"Thanks so much."
+		);
+
+		return RandomUtils.randomElement(thanks);
+	}
+
+	public static String getHello() {
+		List<String> hello = Arrays.asList(
+			"Hello.",
+			"Hi.",
+			"Hey.",
+			"Hey there.",
+			"Hi there.",
+			"Greetings.",
+			"Good afternoon."
+		);
+
+		return RandomUtils.randomElement(hello);
+	}
+
 	@EventHandler
 	public void onRegionEnter(EnteringRegionEvent event) {
 		Entity entity = event.getEntity();
@@ -360,6 +386,7 @@ public class Quests implements Listener {
 		TitleUtils.sendSubtitle(player, "&cYou died.", 40);
 
 		player.setHealth(20);
+		player.setFireTicks(0);
 		player.teleport(BearFair21.getShipSpawnLoc());
 
 	}

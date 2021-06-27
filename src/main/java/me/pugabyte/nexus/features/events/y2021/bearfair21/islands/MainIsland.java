@@ -65,12 +65,12 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final Supplier<ItemBuilder> queenLarvae = () -> ItemBuilder.fromHeadId("33827").name("Queen Larva").undroppable();
 	@Getter
-	private static final ItemBuilder replacementSaw = new ItemBuilder(Material.STONECUTTER).name("Replacement Saw").customModelData(2);
+	private static final ItemBuilder replacementSaw = new ItemBuilder(Material.STONECUTTER).name("Replacement Saw").customModelData(2).undroppable();
 	@Getter
 	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").customModelData(3).undroppable();
 	@Getter
 	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
-		CURATOR, FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER, TRADER);
+		CURATOR, FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER, TRADER, JAMES);
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
 		WAKKAFLOCKA(BearFair21NPC.ORGANIZER) {
@@ -82,7 +82,7 @@ public class MainIsland implements BearFair21Island {
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Hello there, my name is WakkaFlocka, and I am an admin on Project Eden and the organizer for this event.");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					invite(user, this.getNpcId(), tool);
 					return script;
 				}
@@ -214,10 +214,10 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 110");
 					script.add("Now you just continue to have fun, got it?");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					invite(user, this.getNpcId(), tool);
 				} else {
-					script.add("TODO - Hello");
+					script.add(Quests.getHello());
 				}
 
 				return script;
@@ -291,12 +291,12 @@ public class MainIsland implements BearFair21Island {
 					script.add("Nice to meet you, my name is Zach and I love architecture with all my heart.");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					invite(user, this.getNpcId(), tool);
 					return script;
 				}
 
-				script.add("TODO - Hello");
+				script.add(Quests.getHello());
 				return script;
 			}
 		},
@@ -304,6 +304,7 @@ public class MainIsland implements BearFair21Island {
 			@Override
 			public List<String> getScript(BearFair21User user) {
 				List<String> script = new ArrayList<>();
+				ItemStack tool = getTool(user.getPlayer());
 
 				if (user.getQuestStage_MGN() == QuestStage.STEP_EIGHT) {
 					if (!user.isMgn_boughtCar()) {
@@ -330,11 +331,16 @@ public class MainIsland implements BearFair21Island {
 
 						return script;
 					}
+				} else if (!user.hasMet(this.getNpcId())) {
+					script.add(Quests.getHello());
+					return script;
+				} else if (isInviting(user, this.getNpcId(), tool)) {
+					script.add(Quests.getThanks());
+					invite(user, this.getNpcId(), tool);
+					return script;
 				}
 
-				// TODO Wakka rest of the script
-				script.add("TODO - Hello");
-
+				script.add(Quests.getHello());
 				return script;
 			}
 		},
@@ -356,12 +362,12 @@ public class MainIsland implements BearFair21Island {
 					script.add("How do you do friend, the name is Ron and as this town's carpenter, my job is to create masterpieces everyday!");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					invite(user, this.getNpcId(), tool);
 					return script;
 				}
 
-				script.add("TODO - Hello");
+				script.add(Quests.getHello());
 				return script;
 			}
 		},
@@ -384,7 +390,7 @@ public class MainIsland implements BearFair21Island {
 					Seeker.addPlayer(user.getOnlinePlayer());
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -396,6 +402,7 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				}
 
+				script.add(Quests.getHello());
 				return script;
 			}
 		},
@@ -416,7 +423,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("Are you by chance a fan of honey?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					invite(user, this.getNpcId(), tool);
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.NOT_STARTED || user.getQuestStage_BeeKeeper() == QuestStage.STARTED) {
@@ -448,12 +455,12 @@ public class MainIsland implements BearFair21Island {
 					}
 
 					if (item == null) {
-						script.add("TODO - Reminder");
+						script.add("Have you found the queen bee larvae?");
 						return script;
 					}
 
 					Quests.removeItemStacks(user, Collections.singletonList(item));
-					script.add("TODO - Thanks");
+					script.add(Quests.getThanks());
 					Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(user));
 					return script;
 				}
@@ -535,7 +542,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("However I suppose I can't put too much thought into it, as a fisherman it is my job to pull them out of that paradise, isn't it?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					invite(user, this.getNpcId(), tool);
 					return script;
 				} else if (user.getQuestStage_Recycle() == QuestStage.NOT_STARTED) {
@@ -553,7 +560,7 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				}
 
-				script.add("TODO - Hello");
+				script.add(Quests.getHello());
 				return script;
 			}
 		},
@@ -585,17 +592,17 @@ public class MainIsland implements BearFair21Island {
 						}
 						case STARTED -> {
 							List<ItemBuilder> required = Arrays.asList(
-									new ItemBuilder(Material.CYAN_BANNER).amount(4),
-									new ItemBuilder(Material.YELLOW_BANNER).amount(4));
+								new ItemBuilder(Material.CYAN_BANNER).amount(4),
+								new ItemBuilder(Material.YELLOW_BANNER).amount(4));
 							if (!Quests.hasAllItemsLikeFrom(user, required)) {
 								script.add("For your first task, could you gather the materials, and craft me 4 cyan & 4 yellow banners? I've seem to forgotten the recipe.");
 								return script;
 							}
 
 							Quests.removeItems(user, required);
-							script.add("TODO - Thanks");
+							script.add(Quests.getThanks());
 							script.add("wait 20");
-							script.add("TODO - While im placing these around the town, could you gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
+							script.add("I'm gonna work on hanging these around the village, could you now gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BANNER, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_ONE);
@@ -611,9 +618,9 @@ public class MainIsland implements BearFair21Island {
 							}
 
 							Quests.removeItems(user, required);
-							script.add("TODO - Thanks");
+							script.add(Quests.getThanks());
 							script.add("wait 20");
-							script.add("TODO - While im placing these around the town, could you gather me 32 White Wool and 8 of each red, green, and blue dyes?");
+							script.add("It'll take me some time to tie these up around the village. Could you gather me 32 White Wool and 8 of each red, green, and blue dyes in the meantime?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_THREE);
@@ -622,9 +629,9 @@ public class MainIsland implements BearFair21Island {
 						}
 						case STEP_THREE -> {
 							List<ItemBuilder> required = Arrays.asList(new ItemBuilder(Material.WHITE_WOOL).amount(32),
-									new ItemBuilder(Material.RED_DYE).amount(8),
-									new ItemBuilder(Material.GREEN_DYE).amount(8),
-									new ItemBuilder(Material.BLUE_DYE).amount(8));
+								new ItemBuilder(Material.RED_DYE).amount(8),
+								new ItemBuilder(Material.GREEN_DYE).amount(8),
+								new ItemBuilder(Material.BLUE_DYE).amount(8));
 
 							if (!Quests.hasAllItemsLikeFrom(user, required)) {
 								script.add("For your next task, could you gather me 32 White Wool and 8 of each red, green, and blue dyes?");
@@ -632,9 +639,9 @@ public class MainIsland implements BearFair21Island {
 							}
 
 							Quests.removeItems(user, required);
-							script.add("TODO - Thanks");
+							script.add(Quests.getThanks());
 							script.add("wait 20");
-							script.add("TODO - While im placing these around the town, could you follow up with Maple the Pastry Chef about my cake order?");
+							script.add("While I'm busy hanging these around the island, could you follow up with Maple the Pastry Chef about my cake order?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FOUR);
@@ -649,12 +656,12 @@ public class MainIsland implements BearFair21Island {
 							}
 
 							Quests.removeItems(user, required);
-							script.add("TODO - Thanks");
+							script.add(Quests.getThanks());
 							script.add("wait 20");
 							script.add("That's almost everything, there's just one last task I need you to do, while I'm finishing up.");
-							script.add("wait 100");
-							script.add("I had these invitations custom made, could you go around the island and give one to each of the townspeople?");
-							Tasks.wait(80, () -> Quests.giveItem(user, invitation.clone().amount(invitees.size()).build()));
+							script.add("wait 80");
+							script.add("I had these invitations custom made, could you go around the island and give one to each of the townspeople, while I finish up here?");
+							Tasks.wait(140, () -> Quests.giveItem(user, invitation.clone().amount(invitees.size()).build()));
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FOOD, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FIVE);
@@ -683,7 +690,7 @@ public class MainIsland implements BearFair21Island {
 					}
 				}
 
-				script.add("TODO - Hello");
+				script.add(Quests.getHello());
 				return script;
 			}
 
@@ -700,7 +707,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("The names Skye and I'm an explorer of well... the skies! They call me an aeronaut, pretty cool right?");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -713,10 +720,10 @@ public class MainIsland implements BearFair21Island {
 
 					List<ItemStack> items = Quests.getItemsListFrom(user, required);
 					if (Utils.isNullOrEmpty(items)) {
-						script.add("TODO - gib any fish to get balloons, ok?");
+						script.add("Tell ya what, I spend most of my time up in the skies, but I'll trade you those balloons you want, if you can get me a catch from the depths.");
 					} else {
 						Quests.removeItem(user, RandomUtils.randomElement(items));
-						script.add("TODO - here ye are");
+						script.add("Sweet, thanks! And here's you are.");
 
 						Quests.giveItem(user, balloon_cyan.clone().amount(16).build());
 						Quests.giveItem(user, balloon_yellow.clone().amount(16).build());
@@ -727,7 +734,7 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				}
 
-				script.add("TODO - Hello");
+				script.add(Quests.getHello());
 				return script;
 			}
 		},
@@ -745,7 +752,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -767,7 +774,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -789,7 +796,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 100");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -813,7 +820,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -835,7 +842,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -861,7 +868,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 60");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -883,7 +890,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -909,7 +916,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 40");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -941,7 +948,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 100");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -964,7 +971,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -1016,7 +1023,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 40");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -1032,10 +1039,13 @@ public class MainIsland implements BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - GREETING");
+					script.add("Hello there, My name is Joe, and I'm your local Event Point Trader.");
+					script.add("wait 80");
+					script.add("If you trade with me, you can earn 50 Event Points, everyday!");
+					script.add("wait 80");
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
-					script.add("TODO - Thanks!");
+					script.add(Quests.getThanks());
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
@@ -1050,7 +1060,7 @@ public class MainIsland implements BearFair21Island {
 			tool.setAmount(tool.getAmount() - 1);
 			user.getInvitees().add(npcId);
 			if (user.getInvitees().size() == invitees.size()) {
-				user.sendMessage("TODO - You've completed the task, return to Mayor John");
+				user.sendMessage("You've given out all of the invites, return to Mayor John.");
 				user.setQuestStage_Main(QuestStage.STEP_SIX);
 			}
 			userService.save(user);
