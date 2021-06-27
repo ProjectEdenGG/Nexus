@@ -65,6 +65,8 @@ import static me.pugabyte.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static me.pugabyte.nexus.utils.StringUtils.asParsableDecimal;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.Utils.getDefaultPrimitiveValue;
+import static me.pugabyte.nexus.utils.Utils.getMaxValue;
+import static me.pugabyte.nexus.utils.Utils.getMinValue;
 import static me.pugabyte.nexus.utils.Utils.isBoolean;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
@@ -411,27 +413,6 @@ public abstract class ICustomCommand {
 			throw new InvalidInputException("&e" + value + " &cis not a valid " + (type == BigDecimal.class ? "number" : type.getSimpleName().toLowerCase()));
 		}
 		return value;
-	}
-
-	@SneakyThrows
-	private Number getMaxValue(Class<?> type) {
-		return (Number) getMinMaxHolder(type).getDeclaredField("MAX_VALUE").get(null);
-	}
-
-	@SneakyThrows
-	private Number getMinValue(Class<?> type) {
-		return (Number) getMinMaxHolder(type).getDeclaredField("MIN_VALUE").get(null);
-	}
-
-	private Class<?> getMinMaxHolder(Class<?> type) {
-		if (Integer.class == type || Integer.TYPE == type) return Integer.class;
-		if (Double.class == type || Double.TYPE == type) return Double.class;
-		if (Float.class == type || Float.TYPE == type) return Float.class;
-		if (Short.class == type || Short.TYPE == type) return Short.class;
-		if (Long.class == type || Long.TYPE == type) return Long.class;
-		if (Byte.class == type || Byte.TYPE == type) return Byte.class;
-		if (BigDecimal.class == type) return Double.class;
-		throw new InvalidInputException("No min/max holder defined for " + type.getSimpleName());
 	}
 
 	private boolean isNumber(Class<?> type) {

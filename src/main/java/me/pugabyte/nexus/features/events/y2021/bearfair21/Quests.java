@@ -139,7 +139,7 @@ public class Quests implements Listener {
 
 				for (Integer npcId : npcs) {
 					NPC npc = CitizensUtils.getNPC(npcId);
-					if (!npc.isSpawned())
+					if (npc == null || !npc.isSpawned())
 						continue;
 
 					Location loc = npc.getEntity().getLocation().add(0, 1, 0);
