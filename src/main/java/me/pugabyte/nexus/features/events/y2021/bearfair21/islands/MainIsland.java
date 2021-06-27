@@ -603,7 +603,7 @@ public class MainIsland implements BearFair21Island {
 
 							Quests.removeItems(user, required);
 							script.add(Quests.getThanks());
-							script.add("wait 20");
+							script.add("wait 40");
 							script.add("I'm gonna work on hanging these around the village, could you now gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BANNER, Time.SECOND.x(10));
@@ -622,7 +622,7 @@ public class MainIsland implements BearFair21Island {
 
 							Quests.removeItems(user, required);
 							script.add(Quests.getThanks());
-							script.add("wait 20");
+							script.add("wait 40");
 							script.add("It'll take me some time to tie these up around the village. Could you gather me 32 White Wool and 8 of each red, green, and blue dyes in the meantime?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON, Time.SECOND.x(10));
@@ -644,7 +644,7 @@ public class MainIsland implements BearFair21Island {
 
 							Quests.removeItems(user, required);
 							script.add(Quests.getThanks());
-							script.add("wait 20");
+							script.add("wait 40");
 							script.add("While I'm busy hanging these around the island, could you follow up with Maple the Pastry Chef about my cake order?");
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON, Time.SECOND.x(10));
@@ -662,7 +662,7 @@ public class MainIsland implements BearFair21Island {
 
 							Quests.removeItems(user, required);
 							script.add(Quests.getThanks());
-							script.add("wait 20");
+							script.add("wait 40");
 							script.add("That's almost everything, there's just one last task I need you to do, while I'm finishing up.");
 							script.add("wait 80");
 							script.add("I had these invitations custom made, could you go around the island and give one to each of the townspeople, while I finish up here?");
@@ -737,6 +737,7 @@ public class MainIsland implements BearFair21Island {
 						Quests.giveItem(user, balloon_yellow.clone().amount(16).build());
 
 						user.setQuestStage_Main(QuestStage.STEP_TWO);
+						user.getNextStepNPCs().remove(this.getNpcId());
 						userService.save(user);
 					}
 					return script;
@@ -945,7 +946,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("I'm Maple and sweet treats are my passion! Cookies, cakes, pies, you name it, I've probably made it at some point.");
 					script.add("wait 100");
 					return script;
-				} else if (user.getQuestStage_Main() == QuestStage.STEP_THREE) {
+				} else if (user.getQuestStage_Main() == QuestStage.STEP_FOUR) {
 					ItemStack item = Quests.getItemLikeFrom(user, new ItemBuilder(Material.CAKE));
 					if (!ItemUtils.isNullOrAir(item))
 						return script;

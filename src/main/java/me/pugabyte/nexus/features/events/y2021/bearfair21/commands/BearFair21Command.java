@@ -212,7 +212,7 @@ public class BearFair21Command extends CustomCommand {
 		for (Integer npcId : npcs) {
 			BearFair21NPC npc = BearFair21NPC.from(npcId);
 			if (npc != null)
-				send(" - " + npcId + "(" + npc.getNpcName() + ")");
+				send(" - " + npc.getNpcNameAndJob() + " (" + npcId + ")");
 		}
 	}
 
@@ -227,7 +227,7 @@ public class BearFair21Command extends CustomCommand {
 		for (Integer npcId : npcs) {
 			BearFair21NPC npc = BearFair21NPC.from(npcId);
 			if (npc != null)
-				send(" - " + npcId + "(" + npc.getNpcName() + ")");
+				send(" - " + npc.getNpcNameAndJob() + " (" + npcId + ")");
 		}
 	}
 
