@@ -83,6 +83,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("You can find him at the church.");
 
 						user.setQuestStage_Halloween(QuestStage.STARTED);
+						user.getNextStepNPCs().add(SANTIAGO.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -118,6 +119,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("You're always welcome here again, amigo!");
 
 						user.setQuestStage_Halloween(QuestStage.COMPLETE);
+						user.getNextStepNPCs().remove(this.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -150,6 +152,8 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("To enter the underworld, simply hop in this casket. The path you seek should reveal itself when inside.");
 
 						user.setQuestStage_Halloween(STEP_ONE);
+						user.getNextStepNPCs().remove(JOSE.getNpcId());
+						user.getNextStepNPCs().add(ANA.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -182,6 +186,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("I'll need a carton of milk, a bar of chocolate and a bag of flour, por favor. Look around in the houses down here.");
 
 						user.setQuestStage_Halloween(QuestStage.STEP_TWO);
+						user.getNextStepNPCs().remove(SANTIAGO.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -215,6 +220,8 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("<self> Thank you Ana, Im sure this will help raise everyone's spirits!");
 
 						user.setQuestStage_Halloween(QuestStage.STEPS_DONE);
+						user.getNextStepNPCs().remove(this.getNpcId());
+						user.getNextStepNPCs().add(JOSE.getNpcId());
 						userService.save(user);
 						return script;
 					}

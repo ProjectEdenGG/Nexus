@@ -440,6 +440,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("Good luck!");
 
 					user.setQuestStage_BeeKeeper(QuestStage.STARTED);
+					user.getNextStepNPCs().add(QUEEN_BEE.getNpcId());
 					userService.save(user);
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
@@ -462,6 +463,9 @@ public class MainIsland implements BearFair21Island {
 					Quests.removeItemStacks(user, Collections.singletonList(item));
 					script.add(Quests.getThanks());
 					Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(user));
+
+					user.getNextStepNPCs().remove(this.getNpcId());
+					userService.save(user);
 					return script;
 				}
 
@@ -516,6 +520,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("I wish you safe travels.");
 
 					user.setQuestStage_BeeKeeper(QuestStage.STEP_ONE);
+					user.getNextStepNPCs().remove(BEEKEEPER.getNpcId());
 					userService.save(user);
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEP_ONE) {
@@ -555,12 +560,9 @@ public class MainIsland implements BearFair21Island {
 					user.setQuestStage_Recycle(QuestStage.STARTED);
 					userService.save(user);
 					return script;
-				} else if (user.getQuestStage_Recycle() == QuestStage.STARTED) {
-					script.add("You've recycled " + user.getRecycledItems() + " trash so far.");
-					return script;
 				}
 
-				script.add(Quests.getHello());
+				script.add("You've recycled " + user.getRecycledItems() + " trash so far.");
 				return script;
 			}
 		},
@@ -606,6 +608,7 @@ public class MainIsland implements BearFair21Island {
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BANNER, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_ONE);
+							user.getNextStepNPCs().add(AERONAUT.getNpcId());
 							userService.save(user);
 							return script;
 						}
@@ -624,6 +627,7 @@ public class MainIsland implements BearFair21Island {
 
 							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_THREE);
+							user.getNextStepNPCs().remove(AERONAUT.getNpcId());
 							userService.save(user);
 							return script;
 						}
@@ -645,6 +649,7 @@ public class MainIsland implements BearFair21Island {
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FOUR);
+							user.getNextStepNPCs().add(PASTRY_CHEF.getNpcId());
 							userService.save(user);
 							return script;
 						}
@@ -665,6 +670,7 @@ public class MainIsland implements BearFair21Island {
 
 							ClientsideContentManager.addCategory(user, ContentCategory.FOOD, Time.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FIVE);
+							user.getNextStepNPCs().remove(PASTRY_CHEF.getNpcId());
 							userService.save(user);
 							return script;
 						}
@@ -681,6 +687,7 @@ public class MainIsland implements BearFair21Island {
 							});
 
 							user.setQuestStage_Main(QuestStage.COMPLETE);
+							user.getNextStepNPCs().remove(this.getNpcId());
 							userService.save(user);
 							return script;
 						}
@@ -1002,6 +1009,7 @@ public class MainIsland implements BearFair21Island {
 					ClientsideContentManager.addCategory(user, ContentCategory.SAWMILL, Time.SECOND.x(10));
 
 					user.setQuestStage_Lumberjack(QuestStage.COMPLETE);
+					user.getNextStepNPCs().remove(this.getNpcId());
 					userService.save(user);
 					return script;
 				}
@@ -1064,6 +1072,7 @@ public class MainIsland implements BearFair21Island {
 				user.sendMessage("You've given out all of the invites, return to Mayor John.");
 				user.setQuestStage_Main(QuestStage.STEP_SIX);
 			}
+
 			userService.save(user);
 		}
 
@@ -1112,6 +1121,8 @@ public class MainIsland implements BearFair21Island {
 		if (BearFair21.getWGUtils().isInRegion(block.getLocation(), "bearfair21_main_beehive_nursery")) {
 			Quests.giveItem(event.getPlayer(), queenLarvae.get().clone().build());
 			user.setQuestStage_BeeKeeper(QuestStage.STEPS_DONE);
+			user.getNextStepNPCs().add(BEEKEEPER.getId());
+			user.getNextStepNPCs().remove(QUEEN_BEE.getId());
 			userService.save(user);
 		}
 	}

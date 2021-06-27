@@ -5,6 +5,8 @@ import eden.utils.RandomUtils;
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.crates.models.CrateType;
+import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Beehive;
@@ -105,8 +107,11 @@ public class Quests implements Listener {
 	}
 
 	private void nextStepNPCTask() {
-		List<Integer> excludeNPCs = Arrays.asList(BearFair21NPC.GRINCH_1.getId(),
-			BearFair21NPC.MGN_CUSTOMER_2.getId(), BearFair21NPC.QUEEN_BEE.getId());
+		List<Integer> excludeHasMetNPCs = Arrays.asList(
+			BearFair21NPC.GRINCH_1.getId(),
+			BearFair21NPC.MGN_CUSTOMER_2.getId(),
+			BearFair21NPC.QUEEN_BEE.getId()
+		);
 
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			Set<Player> players = BearFair21.getPlayers();
@@ -121,8 +126,16 @@ public class Quests implements Listener {
 				npcs.addAll(Arrays.stream(BearFair21NPC.values())
 					.map(BearFair21NPC::getId)
 					.filter(id -> !user.hasMet(id))
-					.filter(id -> !excludeNPCs.contains(id))
+					.filter(id -> !excludeHasMetNPCs.contains(id))
 					.toList());
+
+				// add npcs that the player needs to invite during main quest
+				if (user.getQuestStage_Main() == QuestStage.STEP_FIVE) {
+					npcs.addAll(MainIsland.getInvitees().stream()
+						.map(BearFair21NPC::getId)
+						.filter(id -> !user.getInvitees().contains(id))
+						.toList());
+				}
 
 				for (Integer npcId : npcs) {
 					NPC npc = CitizensUtils.getNPC(npcId);
@@ -130,13 +143,20 @@ public class Quests implements Listener {
 						continue;
 
 					Location loc = npc.getEntity().getLocation().add(0, 1, 0);
-					new ParticleBuilder(Particle.VILLAGER_HAPPY)
+					ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY)
 						.location(loc)
 						.count(10)
 						.receivers(player)
-						.offset(.25, .5, .25)
-						.spawn();
+						.offset(.25, .5, .25);
 
+					if (npcId == BearFair21NPC.QUEEN_BEE.getId()) {
+						particles
+							.location(new Location(BearFair21.getWorld(), -17, 107, -60))
+							.offset(3, 3, 3)
+							.count(25);
+					}
+
+					particles.spawn();
 				}
 			}
 		});

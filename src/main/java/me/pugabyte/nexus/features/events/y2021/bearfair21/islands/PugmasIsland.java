@@ -226,6 +226,7 @@ public class PugmasIsland implements BearFair21Island {
 						script.add("<self> Leave it to me!");
 
 						user.setQuestStage_Pugmas(QuestStage.STARTED);
+						user.getNextStepNPCs().add(GRINCH.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -328,10 +329,13 @@ public class PugmasIsland implements BearFair21Island {
 						wait += (80 + 80 + 100 + 60 + 60 + 80 + 80 + 100 + 60 + 40);
 
 						user.setQuestStage_Pugmas(QuestStage.STEP_ONE);
+						user.getNextStepNPCs().remove(MAYOR.getNpcId());
+						user.getNextStepNPCs().add(this.getNpcId());
 						userService.save(user);
 
 						Tasks.wait(wait, () -> {
 							user.setQuestStage_Pugmas(QuestStage.STEP_TWO);
+							user.getNextStepNPCs().remove(this.getNpcId());
 							userService.save(user);
 						});
 

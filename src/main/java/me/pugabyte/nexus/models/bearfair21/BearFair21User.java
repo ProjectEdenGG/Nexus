@@ -123,6 +123,7 @@ public class BearFair21User implements PlayerOwnedObject {
 
 		if (this.recycledItems >= JunkWeight.MIN.getAmount() && questStage_Recycle != QuestStage.COMPLETE) {
 			questStage_Recycle = QuestStage.COMPLETE;
+			getNextStepNPCs().remove(FISHERMAN2.getId());
 			Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(this));
 		}
 

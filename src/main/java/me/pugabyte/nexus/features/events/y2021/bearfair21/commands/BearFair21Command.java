@@ -206,21 +206,29 @@ public class BearFair21Command extends CustomCommand {
 	public void metNPCs() {
 		Set<Integer> npcs = userService.get(player()).getMetNPCs();
 		if (Utils.isNullOrEmpty(npcs))
-			error("has not met any npcs");
+			error("User has not met any npcs");
 
 		send("Has met: ");
-		for (Integer metNPC : npcs) {
-			send(" - " + metNPC);
+		for (Integer npcId : npcs) {
+			BearFair21NPC npc = BearFair21NPC.from(npcId);
+			if (npc != null)
+				send(" - " + npcId + "(" + npc.getNpcName() + ")");
 		}
 	}
 
-	@Path("metNPCs clear")
+	@Path("nextStepNPCs")
 	@Permission("group.admin")
-	public void metNPCsClear() {
-		BearFair21User user = userService.get(player());
-		user.getMetNPCs().clear();
-		userService.save(user);
-		send("cleared met NPCs");
+	public void nextStepNPCs() {
+		Set<Integer> npcs = userService.get(player()).getNextStepNPCs();
+		if (Utils.isNullOrEmpty(npcs))
+			error("User has not have any nextStepNPCs");
+
+		send("Next Step NPCs: ");
+		for (Integer npcId : npcs) {
+			BearFair21NPC npc = BearFair21NPC.from(npcId);
+			if (npc != null)
+				send(" - " + npcId + "(" + npc.getNpcName() + ")");
+		}
 	}
 
 	@Getter
