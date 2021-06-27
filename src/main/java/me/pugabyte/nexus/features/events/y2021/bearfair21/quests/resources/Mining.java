@@ -1,9 +1,13 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources;
 
+import eden.utils.StringUtils;
 import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
+import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.task.Task;
 import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -23,10 +27,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 
 public class Mining implements Listener {
 	public static String taskId = "bearfair21-ore-regen";
@@ -65,8 +73,13 @@ public class Mining implements Listener {
 		if (oreType == null)
 			return false;
 
-		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType()))
-			return false;
+		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType())) {
+			if (new CooldownService().check(player, "BF21_cantbreak_tool", Time.SECOND.x(15))) {
+				send(Errors.cantBreak + " with this tool. Required tools: " + oreType.getCanBreak(), player);
+				Quests.sound_villagerNo(player);
+			}
+			return true;
+		}
 
 		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack());
@@ -120,6 +133,16 @@ public class Mining implements Listener {
 
 		public boolean canBeMinedBy(Material pickaxe) {
 			return pickaxeOrder.indexOf(pickaxe) >= pickaxeOrder.indexOf(this.getPickaxe());
+		}
+
+		public String getCanBreak() {
+			List<Material> result = new ArrayList<>();
+			for (Material material : pickaxeOrder) {
+				if (canBeMinedBy(material))
+					result.add(material);
+			}
+
+			return result.stream().map(StringUtils::camelCase).collect(Collectors.joining(", "));
 		}
 	}
 }
