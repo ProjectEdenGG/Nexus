@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 @Getter
 public
@@ -45,6 +46,10 @@ enum MapPointerDirection {
 
 	private boolean contains(float yaw) {
 		return yaw >= lower() && yaw < upper();
+	}
+
+	public static MapPointerDirection of(Player player) {
+		return of(player.getLocation());
 	}
 
 	public static MapPointerDirection of(Location location) {

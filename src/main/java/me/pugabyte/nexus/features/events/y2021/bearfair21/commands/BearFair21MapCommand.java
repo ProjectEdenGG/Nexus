@@ -40,12 +40,13 @@ import static me.pugabyte.nexus.utils.Utils.isWithinBounds;
 @Permission("group.admin")
 public class BearFair21MapCommand extends CustomCommand implements Listener {
 	private static final Map<UUID, BearFair21Renderer> renderers = new HashMap<>();
-	private BearFair21Renderer myRenderer;
 
 	@NotNull
 	private static BearFair21Renderer getRenderer(UUID uuid) {
 		return renderers.computeIfAbsent(uuid, $ -> new BearFair21Renderer(true));
 	}
+
+	private BearFair21Renderer myRenderer;
 
 	public BearFair21MapCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -61,22 +62,6 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 				renderer.deactivate();
 		view.getRenderers().clear();
 		view.addRenderer(myRenderer);
-	}
-
-	@NotNull
-	private MapMeta getMap() {
-		final ItemStack tool = getToolRequired();
-		if (tool.getType() != Material.FILLED_MAP)
-			error("Not a map");
-		return (MapMeta) tool.getItemMeta();
-	}
-
-	@NotNull
-	private MapView getView() {
-		final MapView view = getMap().getMapView();
-		if (view == null)
-			error("Map view is null");
-		return view;
 	}
 
 	@Path("set coords <x> <y>")
@@ -95,14 +80,30 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 
 	@Path("toggle updating")
 	void toggle_updating() {
-		myRenderer.setUpdating(!myRenderer.updating);
-		send(PREFIX + "Map updating " + (myRenderer.updating ? "&aenabled" : "&cdisabled"));
+		myRenderer.setUpdating(!myRenderer.isUpdating());
+		send(PREFIX + "Map updating " + (myRenderer.isUpdating() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("deactivate")
 	void deactivate() {
 		myRenderer.deactivate();
 		send(PREFIX + "&cDeactivated");
+	}
+
+	@NotNull
+	private MapMeta getMap() {
+		final ItemStack tool = getToolRequired();
+		if (tool.getType() != Material.FILLED_MAP)
+			error("Not a map");
+		return (MapMeta) tool.getItemMeta();
+	}
+
+	@NotNull
+	private MapView getView() {
+		final MapView view = getMap().getMapView();
+		if (view == null)
+			error("Map view is null");
+		return view;
 	}
 
 	static {
@@ -155,27 +156,41 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 
 			if (updating) {
 				final Location location = player.getLocation();
-				IslandType island = IslandType.of(location);
-				if (island == null)
-					island = IslandType.MAIN;
-				if (island.getCenter().getX() == 0 && island.getCenter().getZ() == 0)
-					island = IslandType.MAIN;
+				final Location center = getIslandCenter(location);
+				int xOffset = getXOffset(location, center);
+				int yOffset = getYOffset(location, center);
 
-				Location center = island.getCenter();
-				double xDiff = location.getX() - center.getX();
-				double yDiff = location.getZ() - center.getZ();
+				boolean withinBounds = isWithinBounds(xOffset, Byte.class) && isWithinBounds(yOffset, Byte.class);
 
-				int xOffset = (int) Math.round(xDiff * .6) + (int) center.getX();
-				int yOffset = (int) Math.round(yDiff * .6) + (int) center.getZ() + 140; // TODO Why 140
-				if (!isWithinBounds(xOffset, Byte.class) || !isWithinBounds(yOffset, Byte.class)) {
-					cursor.setVisible(false);
-				} else {
+				if (withinBounds) {
 					cursor.setVisible(true);
 					cursor.setX((byte) xOffset);
 					cursor.setY((byte) yOffset);
-					cursor.setDirection(MapPointerDirection.of(player.getLocation()).b());
+					cursor.setDirection(MapPointerDirection.of(player).b());
+				} else {
+					cursor.setVisible(false);
 				}
 			}
+		}
+
+		private int getXOffset(Location location, Location center) {
+			double xDiff = location.getX() - center.getX();
+			return (int) Math.round(xDiff * .6) + (int) center.getX();
+		}
+
+		private int getYOffset(Location location, Location center) {
+			double yDiff = location.getZ() - center.getZ();
+			return (int) Math.round(yDiff * .6) + (int) center.getZ() + 140; // TODO Why 140
+		}
+
+		private Location getIslandCenter(Location location) {
+			IslandType island = IslandType.of(location);
+			if (island == null)
+				island = IslandType.MAIN;
+			if (island.getCenter().getX() == 0 && island.getCenter().getZ() == 0)
+				island = IslandType.MAIN;
+
+			return island.getCenter();
 		}
 
 		public void deactivate() {
