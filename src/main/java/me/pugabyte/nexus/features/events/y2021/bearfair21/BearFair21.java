@@ -192,7 +192,7 @@ public class BearFair21 implements Listener {
 
 	static {
 		Tasks.repeat(Time.SECOND, Time.SECOND, () -> {
-			if (config.isEnabled(WARP))
+			if (!config.isEnabled(WARP))
 				return;
 
 			for (Player player : BearFair21.getPlayers()) {
