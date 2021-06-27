@@ -109,9 +109,9 @@ public enum CrateType {
 			Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, item).send();
 
 			if (player.isOnline()) {
+				String error = WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL ? "&3 but your inventory was full. Use &c/delivery &3to claim it." : "&3. Use &c/delivery&3 in the survival world to claim it.";
 				PlayerUtils.send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " +
-						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + "&3 but your inventory was full. " +
-						"Use &c/delivery &3to claim it.");
+						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
 			}
 		}
 	}
