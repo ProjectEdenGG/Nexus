@@ -4,7 +4,6 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
-import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -100,14 +99,15 @@ public class Seeker implements Listener {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Player player = event.getPlayer();
-		UUID uuid = player.getUniqueId();
 		if (!isPlaying(player)) return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (block == null)
+			return;
 
 		Location blockLocation = block.getLocation();
-		if (!LocationUtils.blockLocationsEqual(blockLocation, playersMap.get(uuid))) return;
+		if (!LocationUtils.blockLocationsEqual(blockLocation, playersMap.get(player.getUniqueId())))
+			return;
 
 		event.setCancelled(true);
 
