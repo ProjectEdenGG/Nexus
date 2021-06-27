@@ -46,6 +46,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -249,30 +250,46 @@ public class MinigameNightIsland implements BearFair21Island {
 						if (user.getMgn_speakersFixed().size() < speakerLocations.size()) {
 							if (BearFair21.isInRegion(user.getOnlinePlayer(), "bearfair21_minigamenight_gamegallery")) {
 								script.add("<self> Hello?");
+								script.add("wait 40");
 								script.add("Hey dude, we got a problem. You busy?");
+								script.add("wait 50");
 								script.add("<self> Nope, just finished up a service call, what's wrong?");
-								script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers! The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
+								script.add("wait 60");
+								script.add("Well, we were jammin' and Ryan accidentally hit the volume slider on his keyboard. Basically blew out all the speakers!");
+								script.add("wait 80");
+								script.add("The whole sound-system is toast. I know I have one extra salvaged speaker down in the workshop, but we're gonna need more than that, otherwise we can't play the show tonight!");
+								script.add("wait 100");
 								script.add("<self> Oh no! What can I do?");
+								script.add("wait 50");
 								script.add("First grab the extra speaker and set it up on stage, then we'll have to figure out where we can snag three more... You might be able to find some parts at my house you could use to build another. After that, maybe we could borrow two from someone? I dunno man, this sucks....");
+								script.add("wait 80");
 								script.add("<self> Don't worry Axel, I'll find you some speakers somehow. We can't let this ruin your band's first gig!");
+								script.add("wait 60");
 								script.add("Thanks for the optimism dude... Don't worry about the Game Gallery, I'll close up for you.");
 								user.getNextStepNPCs().add(getNpcId());
 								user.getNextStepNPCs().add(MainNPCs.JAMES.getNpcId());
 								userService.save(user);
 							} else {
-								script.add("TODO script - in person, hasn't fixed speakers");
+								script.add("Hey dude! Were you able to find some new speakers?");
+								script.add("wait 60");
+								script.add("<self> Still working on it, but don't worry, I got this!");
 							}
 						} else {
 							script.add("<self> There, all the speakers are replaced... just don't play too loud. Some of them are in various states of quality, haha.");
+							script.add("wait 60");
 							script.add("Yoo! Dude! I'm stoked! You really pulled through for us! And just in time too! The show starts in just a sec! Take one of the front row seats!");
+							script.add("wait 60");
 							script.add("Sup everyone! Happy Bear Fair! We are Chiptune and we're happy to celebrate Bear Fair by bringing you some awesome music tonight so grab some snacks and get ready to groove!");
-							Quests.giveKey(user);
-							// TODO tell them about the powder
-							PermissionChange.set().permission("powder.powder.DK_Jungle_64").player(user).run();
-							Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST.give(user.getOnlinePlayer());
-							user.setQuestStage_MGN(QuestStage.COMPLETE);
-							userService.save(user);
-							Tasks.wait(Time.SECOND, () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());
+							int wait = 60 + 60 + 80;
+							Tasks.wait(wait, () -> {
+								Quests.giveKey(user);
+								user.sendMessage(StringUtils.getPrefix("Songs") + "You have earned the &eDK Jungle 64 &3song! &c/songs");
+								PermissionChange.set().permission("powder.powder.DK_Jungle_64").player(user).run();
+								Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST.give(user.getOnlinePlayer());
+								user.setQuestStage_MGN(QuestStage.COMPLETE);
+								userService.save(user);
+								Tasks.wait(Time.SECOND, () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());
+							});
 						}
 					}
 
@@ -298,26 +315,36 @@ public class MinigameNightIsland implements BearFair21Island {
 				List<String> script = new ArrayList<>();
 				if (user.getQuestStage_MGN() == QuestStage.STARTED) {
 					script.add("Ayy yo dude. You the one I gotta talk to 'bout fixin' my xbox?");
+					script.add("wait 50");
 					script.add("<self> Yep! What seems to be the problem?");
-
-					if (!FixableDevice.XBOX.hasBroken(user.getOnlinePlayer()))
-						PlayerUtils.giveItem(user.getOnlinePlayer(), FixableDevice.XBOX.getBroken());
+					script.add("wait 50");
+					Tasks.wait(75, () -> {
+						if (!FixableDevice.XBOX.hasBroken(user.getOnlinePlayer()))
+							PlayerUtils.giveItem(user.getOnlinePlayer(), FixableDevice.XBOX.getBroken());
+					});
 
 					script.add("So like, It's an xbox one, right, and I hit the power button and it like, flickers into a blue screen and shuts down.");
+					script.add("wait 60");
 					script.add("<self> Yeah that's not good... does the blue screen have an error message?");
+					script.add("wait 40");
 					script.add("Yuh, I took a pic. Here, dawg, says 'Critical Error. [ses.status.psWarning:warning]: DS14-Mk2-AT shelf 1 on channel 2a power warning for Power supply 2: critical status; DC overvoltage fault.'");
+					script.add("wait 100");
 					script.add("<self> Mmm, okay, I can fix this. Let me take a look at it and I'll be right back with you as soon as it's fixed.");
+					script.add("wait 60");
 					script.add("A'ight, thanks dawg. I'll be right here.");
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_ONE) {
-					script.add("<self> Alright, here you are. Battery was shot. Had to replace it. Pretty simple fix so the bill won't be too bad.");
-					script.add("Yooo, sweet. Thanks dawg! Here, you can keep the change. Peace! Ima take a look at the new games section.");
-					script.add("<self> Thanks for choosing GG!");
-
 					PlayerUtils.removeItem(user.getOnlinePlayer(), FixableDevice.XBOX.getFixed());
-					user.setQuestStage_MGN(QuestStage.STEP_TWO);
-					user.getNextStepNPCs().remove(getNpcId());
-					userService.save(user);
-					Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
+					script.add("<self> Alright, here you are. Battery was shot. Had to replace it. Pretty simple fix so the bill won't be too bad.");
+					script.add("wait 70");
+					script.add("Yooo, sweet. Thanks dawg! Here, you can keep the change. Peace! Ima take a look at the new games section.");
+					script.add("wait 70");
+					script.add("<self> Thanks for choosing GG!");
+					Tasks.wait(70 + 70, () -> {
+						user.setQuestStage_MGN(QuestStage.STEP_TWO);
+						user.getNextStepNPCs().remove(getNpcId());
+						userService.save(user);
+						Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
+					});
 				}
 
 				return script;
@@ -330,21 +357,37 @@ public class MinigameNightIsland implements BearFair21Island {
 
 				if (user.getQuestStage_MGN() == QuestStage.STEP_TWO) {
 					script.add("<self> Thanks for calling the Game Gallery, how can I help?");
+					script.add("wait 40");
 					script.add("Hello, this is Ben Fredrickson. I'm calling about a laptop that my assistant dropped off in your mailbox this morning?");
+					script.add("wait 60");
 					script.add("<self> Yes Sir, we have it.");
-					script.add("I travel a great deal and I intended it to be a birthday gift for my son when I returned home. Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won't boot up. I was hoping you could find out what's wrong with it and remedy the problem?");
+					script.add("wait 40");
+					script.add("I travel a great deal and I intended it to be a birthday gift for my son when I returned home.");
+					script.add("wait 50");
+					script.add("Unfortunately, it appears to have been damaged by improper handling on my last flight, as it won't boot up.");
+					script.add("wait 60");
+					script.add("I was hoping you could find out what's wrong with it and remedy the problem?");
+					script.add("wait 50");
 					script.add("<self> Of course sir, I'll take a look at it.");
+					script.add("wait 40");
 					script.add("Wonderful, once it's fixed, if you could keep it in your back room, I'm doing business in the area and will be back by in the next few days to pick it up.");
+					script.add("wait 100");
 					script.add("<self> No problem sir, I'll call as soon as it's ready.");
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_FOUR) {
 					script.add("This is Fredrickson.");
+					script.add("wait 40");
 					script.add("<self> Ok Mr. Fredrickson, the laptop is ready. The motherboard and screen were cracked and had to be replaced but it works perfectly now.");
+					script.add("wait 70");
 					script.add("Thank you so much! I knew I could count on an establishment of your caliber! Expect me back by the fifth.");
+					script.add("wait 60");
 					script.add("<self> Glad to be of service! Thanks for choosing the Game Gallery!");
-					user.getOnlinePlayer().getInventory().removeItem(FixableDevice.LAPTOP.getFixed());
-					user.setQuestStage_MGN(QuestStage.STEP_FIVE);
-					userService.save(user);
-					Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
+					int wait = 40 + 70 + 60;
+					Tasks.wait(wait, () -> {
+						user.getOnlinePlayer().getInventory().removeItem(FixableDevice.LAPTOP.getFixed());
+						user.setQuestStage_MGN(QuestStage.STEP_FIVE);
+						userService.save(user);
+						Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
+					});
 				}
 
 				return script;
