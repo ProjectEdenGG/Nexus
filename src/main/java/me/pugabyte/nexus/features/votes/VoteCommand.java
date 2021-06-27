@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static me.pugabyte.nexus.features.votes.Votes.GOAL;
 import static me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static me.pugabyte.nexus.utils.StringUtils.progressBar;
 
@@ -66,8 +67,7 @@ public class VoteCommand extends CustomCommand {
 		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
 				.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		line();
-		int goal = 6000;
-		send(json("&3Server goal: " + progressBar(sum, goal, NONE, 75) + " &e" + sum + "&3/&e" + goal)
+		send(json("&3Server goal: " + progressBar(sum, GOAL, NONE, 75) + " &e" + sum + "&3/&e" + GOAL)
 				.hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
