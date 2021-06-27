@@ -290,8 +290,17 @@ public class BearFair21Command extends CustomCommand {
 			put(QuestStage.STEPS_DONE, "Talk to " + BearFair21NPC.JOSE.getNpcNameAndJob());
 		}}),
 		SUMMER_DOWN_UNDER(user -> new HashMap<>() {{
-			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.BRUCE.getNpcNameAndJob() + " next to the Pie shop");
-			// TODO Lexi
+			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.BRUCE.getNpcNameAndJob() + " by the ute");
+			put(QuestStage.STARTED, "Talk to " + BearFair21NPC.KYLIE.getNpcNameAndJob());
+			put(QuestStage.STEP_ONE, "Get wheat for " + BearFair21NPC.KYLIE.getNpcNameAndJob());
+			put(QuestStage.STEP_TWO, "Milk Daisy the cow");
+			put(QuestStage.STEP_THREE, "Talk to " + BearFair21NPC.MEL_GIBSON.getNpcNameAndJob());
+			put(QuestStage.STEP_FOUR, "Talk to " + BearFair21NPC.MILO.getNpcNameAndJob());
+			put(QuestStage.STEP_FIVE, "Collect 7 feathers and bring them to " + BearFair21NPC.BRUCE.getNpcNameAndJob());
+			put(QuestStage.STEP_SIX, "Head down to the cave");
+			put(QuestStage.STEP_SEVEN, "Head deeper into the cave");
+			put(QuestStage.STEPS_DONE, "Talk to the townsfolk");
+			put(QuestStage.FOUND_ALL, "Talk to " + BearFair21NPC.BRUCE.getNpcNameAndJob());
 		}});
 
 		private final Function<BearFair21User, Map<QuestStage, String>> instructions;

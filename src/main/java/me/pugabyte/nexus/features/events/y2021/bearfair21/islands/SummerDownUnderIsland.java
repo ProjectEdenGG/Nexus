@@ -13,6 +13,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21Talki
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
@@ -21,21 +22,30 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 // TODO BF21: serpent
 // TODO BF21: track NPCs who have been spoken to about our holy serpent
@@ -59,22 +69,30 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			"wait 200",
 			"<self> I would like to hear your story, please.",
 			"wait 40",
-			"Long, long ago in the Dreamtime, the Earth lay flat and still. Nothing moved and nothing grew. One day, I woke from my slumber and came out from under the ground. I was known as the Rainbow Serpent.",
-			"wait 190",
-			"I travelled for a very long time, far and wide. As I made my way across the land, my body formed mountains, valleys, and rivers. I was the Dreamtime creature who shaped the Earth. After all of my travelling, I grew tired, and so I curled up and went to sleep.",
-			"wait 220",
+			"Long, long ago in the Dreamtime, the Earth lay flat and still. Nothing moved and nothing grew.",
+			"wait 100",
+			"One day, I woke from my slumber and came out from under the ground. I was known as the Rainbow Serpent.",
+			"wait 100",
+			"I travelled for a very long time, far and wide. As I made my way across the land, my body formed mountains, valleys, and rivers.",
+			"wait 120",
+			"I was the Dreamtime creature who shaped the Earth. After all of my travelling, I grew tired, and so I curled up and went to sleep.",
+			"wait 120",
 			"After some rest, I returned to the place that I had first appeared and called out to the frogs, \"Come out!\"",
 			"wait 100",
 			"The frogs woke up very slowly because they had so much water in their bellies. I tickled their stomachs, and the water began to fill the tracks that I had left. This is how the lakes and rivers were formed.",
 			"wait 200",
 			"After this, water, grass, and trees began to grow. All the other animals that lived in rocks, on the plains, in the trees and the air began to wake up and follow me. They were all happy with the Earth.",
 			"wait 200",
-			"I made rules that they all had to obey. Some did not like this and began to cause trouble. So I said, \"Those who obey will be rewarded; I shall give them human form. But, for those who don't, they will be punished and turned to stone.\"",
-			"wait 210",
-			"The tribes of people lived together on the land given to them by me. They knew that the land would always be theirs, as long as they took care of it. They believed that no one should ever take it away from them.",
-			"wait 200",
+			"I made rules that they all had to obey. Some did not like this and began to cause trouble.",
+			"wait 100",
+			"So I said, \"Those who obey will be rewarded; I shall give them human form. But, for those who don't, they will be punished and turned to stone.\"",
+			"wait 160",
+			"The tribes of people lived together on the land given to them by me.",
+			"wait 80",
+			"They knew that the land would always be theirs, as long as they took care of it. They believed that no one should ever take it away from them.",
+			"wait 160",
 			"Now, young one. Return to the village. Tell the people what you have heard today and I will return, and with me, I shall bring rain.",
-			"wait 150",
+			"wait 160",
 			"Goodbye for now.",
 			"wait 80"
 		);
@@ -99,15 +117,20 @@ public class SummerDownUnderIsland implements BearFair21Island {
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		String regionName = event.getRegion().getId();
+		BearFair21UserService service = new BearFair21UserService();
+		BearFair21User user = service.get(event.getPlayer());
+		QuestStage stage = user.getQuestStage_SDU();
 		if (regionName.equals("bearfair21_summerdownunder_elytra")) {
-			if (new BearFair21UserService().get(event.getPlayer()).getQuestStage_SDU() == QuestStage.STEP_SEVEN)
+			if (stage == QuestStage.STEP_SEVEN)
 				teleportToElytraCourse(event.getPlayer());
 			else
 				event.getPlayer().sendMessage(new JsonBuilder("&c&oYou feel as though you are not yet ready to travel deeper into the cave..."));
 		} else if (regionName.equals("bearfair21_elytra_dialogue") && !serpentTalkingTo.contains(event.getPlayer().getUniqueId())) {
 			serpentTalkingTo.add(event.getPlayer().getUniqueId());
 			Talker.runScript(event.getPlayer(), SERPENT).thenRun(() -> {
-				new BearFair21UserService().edit(event.getPlayer(), bfuser -> bfuser.setQuestStage_SDU(QuestStage.STEPS_DONE));
+				user.setQuestStage_SDU(QuestStage.STEPS_DONE);
+				SummerDownUnderNPCs.setNextNpc(user, null, SummerDownUnderNPCs.BRUCE, SummerDownUnderNPCs.MILO, SummerDownUnderNPCs.KYLIE, SummerDownUnderNPCs.MEL_GIBSON);
+				service.save(user);
 				serpentTalkingTo.remove(event.getPlayer().getUniqueId());
 				PlayerUtils.runCommand(event.getPlayer(), "bearfair21warps sdu_cave");
 			});
@@ -115,7 +138,15 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			PlayerUtils.removeItem(event, new ItemStack(Material.ELYTRA));
 		} else if (regionName.equals("bearfair21_summerdownunder")) {
 			bookContentHandler(event.getPlayer());
+			if (stage == QuestStage.FOUND_ALL || stage == QuestStage.COMPLETE)
+				event.getPlayer().setPlayerWeather(WeatherType.DOWNFALL);
 		}
+	}
+
+	@EventHandler
+	public void onExitRegion(PlayerLeavingRegionEvent event) {
+		if (new BearFair21UserService().get(event.getPlayer()).getQuestStage_SDU().ordinal() >= QuestStage.FOUND_ALL.ordinal())
+			event.getPlayer().resetPlayerWeather();
 	}
 
 	private static ItemFrame bookFrame;
@@ -131,6 +162,34 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		}
 		ItemStack content = new BearFair21UserService().get(player).getQuestStage_SDU().ordinal() < QuestStage.STEP_SIX.ordinal() ? null : bookFrame.getItem();
 		PacketUtils.updateItemFrame(player, bookFrame, content, -1);
+	}
+
+	private boolean isFindMeBook(ItemStack item) {
+		if (item == null) return false;
+		if (!item.hasItemMeta()) return false;
+		ItemMeta meta = item.getItemMeta();
+		if (!meta.hasDisplayName()) return false;
+		return meta.getDisplayName().equals("Find Me");
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onReadBook(PlayerInteractEvent event) {
+		if (BearFair21.isNotAtBearFair(event)) return;
+		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
+		BearFair21UserService service = new BearFair21UserService();
+		BearFair21User user = service.get(event.getPlayer());
+		if (user.getQuestStage_SDU() == QuestStage.STEP_SIX && isFindMeBook(event.getItem())) {
+			user.setQuestStage_SDU(QuestStage.STEP_SEVEN);
+			service.save(user);
+		}
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onItemFrameClick(PlayerInteractEntityEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) return;
+		if (BearFair21.isNotAtBearFair(event)) return;
+		if (!(event.getRightClicked() instanceof ItemFrame frame)) return;
+		// todo - give feathers + book + milo's items
 	}
 
 	public enum SummerDownUnderNPCs implements BearFair21TalkingNPC {
@@ -170,6 +229,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					Tasks.wait(delay, () -> {
 						user.getOnlinePlayer().getInventory().removeItemAnySlot(SEVEN_FEATHER.build());
 						PlayerUtils.giveItemAndMailExcess(user.getOnlinePlayer(), new ItemStack(Material.ELYTRA), WorldGroup.EVENTS); // prevent player from getting free elytra in survival lol
+						setNextNpc(user, null);
 					});
 					List<String> text = new ArrayList<>(setStageGetScript(user, QuestStage.STEP_SIX));
 					// reverse order:
@@ -179,8 +239,10 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				} else if (ordinal >= QuestStage.STEP_SIX.ordinal() && ordinal < QuestStage.STEPS_DONE.ordinal()) {
 					return Collections.singletonList("That should do it. It should help you traverse those caves a bit better. Head down there and let me know if you find anything to make sense of all this.");
 				} else if (stage == QuestStage.STEPS_DONE) {
-					return Collections.singletonList("Thank you <player>. It really dodes humble you some.");
+					taught(user);
+					return Collections.singletonList("Thank you <player>. It really does humble you some.");
 				} else if (stage == QuestStage.FOUND_ALL) {
+					removeNextNpc(user);
 					List<String> text = new ArrayList<>(setStageGetScript(user, QuestStage.COMPLETE));
 					text.add("wait 40");
 					text.add("Please, take this. It's the least we could do for ya. See ya 'round, mate.");
@@ -241,6 +303,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						"No worries!"
 					);
 				} else if (stage == QuestStage.STEPS_DONE) {
+					taught(user);
 					return List.of(
 						"Oh wow, I had no idea... I wish my grandparents had've told me about my history a bit more...",
 						"wait 60",
@@ -290,6 +353,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						"Good luck out there, <player>."
 					);
 				} else if (stage == QuestStage.STEPS_DONE) {
+					taught(user);
 					return Collections.singletonList("Ah yes, I recall it clearly now. Thank you for your effort. We couldn't have done it without ya.");
 				} else {
 					return Collections.singletonList("Ha! This is all thanks to you <player>! Good on ya!");
@@ -305,6 +369,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					return greeting;
 				if (stage == QuestStage.STEP_FOUR) {
 					if (false) { // todo: items
+						setNextNpc(user, BRUCE);
 						return setStageGetScript(user, QuestStage.STEP_FIVE);
 					}
 					return List.of(
@@ -325,6 +390,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						"<self> Alright, see you later!"
 					);
 				} else if (stage == QuestStage.STEPS_DONE) {
+					taught(user);
 					return Collections.singletonList("Woah, that’s why there was no rain? She was sad we had forgotten ‘er? I feel kinda bad now… I won’t forget about this.");
 				} else {
 					return Collections.singletonList("Sick! Any more of that drought and we’d be goners! Thanks!");
@@ -353,9 +419,21 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		}
 
 		void setNextNpc(BearFair21User user, SummerDownUnderNPCs npc) {
+			setNextNpc(user, this, npc);
+		}
+
+		static void setNextNpc(BearFair21User user, SummerDownUnderNPCs old, SummerDownUnderNPCs... next) {
+			Set<Integer> nextNpcs = user.getNextStepNPCs();
+			if (old != null)
+				nextNpcs.remove(old.getNpcId());
+			if (next.length > 0)
+				nextNpcs.addAll(Arrays.stream(next).map(SummerDownUnderNPCs::getNpcId).collect(Collectors.toList()));
+			new BearFair21UserService().save(user);
+		}
+
+		void removeNextNpc(BearFair21User user) {
 			Set<Integer> nextNpcs = user.getNextStepNPCs();
 			nextNpcs.remove(getNpcId());
-			nextNpcs.add(npc.getNpcId());
 			new BearFair21UserService().save(user);
 		}
 
@@ -368,6 +446,18 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			user.setQuestStage_SDU(stage);
 			new BearFair21UserService().save(user);
 			return getScript(user);
+		}
+
+		void taught(BearFair21User user) {
+			user.getTaughtNPCs().add(this);
+			if (user.getTaughtNPCs().size() == SummerDownUnderNPCs.values().length) {
+				setStage(user, QuestStage.FOUND_ALL);
+				setNextNpc(user, BRUCE);
+				user.getOnlinePlayer().setPlayerWeather(WeatherType.DOWNFALL);
+			} else {
+				removeNextNpc(user);
+			}
+			new BearFair21UserService().save(user);
 		}
 
 		SummerDownUnderNPCs(BearFair21NPC npc) {
