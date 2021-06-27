@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import me.pugabyte.nexus.features.events.models.Quest;
 import me.pugabyte.nexus.features.events.models.QuestStage;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
@@ -111,6 +113,7 @@ public class BearFair21Command extends CustomCommand {
 		send(PREFIX + "Event progress (Day &e#" + day + "&7/7&3):");
 		line();
 
+		send("&6&lQuests");
 		for (BearFair21UserQuestStageHelper quest : BearFair21UserQuestStageHelper.values()) {
 			JsonBuilder json = json();
 			final QuestStage stage = quest.getter().apply(user);
@@ -126,7 +129,19 @@ public class BearFair21Command extends CustomCommand {
 			send(json);
 		}
 
-		// TODO Griffin daily points count
+		line();
+		send("&6&lFairgrounds");
+		for (BF21PointSource source : BF21PointSource.values()) {
+			JsonBuilder json = json();
+			final int dailyTokensLeft = Math.abs(BearFair21.getDailyTokensLeft(player(), source, 0));
+
+			if (dailyTokensLeft == 0)
+				json.next("&f  &a☑ &3" + camelCase(source) + " &7- &aComplete");
+			else
+				json.next("&f  &7☐ &3" + camelCase(source) + " &7- &cIncomplete &3(&e" + dailyTokensLeft + " &3tokens left)");
+
+			send(json);
+		}
 
 		line();
 		if (day < 7) {

@@ -360,7 +360,7 @@ public class MiniGolf {
 
 						// Send message
 						int wait = Time.SECOND.x(2);
-						if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
+						if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
 							wait = 0;
 
 						BearFair21.giveDailyTokens(user.getPlayer(), BF21PointSource.MINIGOLF, 5);

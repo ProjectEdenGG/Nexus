@@ -243,7 +243,7 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
-					if (BearFair21.checkDailyTokens(user.getPlayer(), BF21PointSource.TRADER, 50) <= 0) {
+					if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.TRADER, 50) <= 0) {
 						add(new TradeBuilder()
 							.maxUses(1)
 							.result(traderCoupon.clone().amount(1))

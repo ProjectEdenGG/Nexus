@@ -48,8 +48,8 @@ public class BearFair21User implements PlayerOwnedObject {
 		ContentCategory.SPEAKER_PART_SUBWOOFER,
 		ContentCategory.SPEAKER_PART_AUX_PORT,
 		ContentCategory.SPEAKER_PART_TANGLED_WIRE,
-		ContentCategory.SPEAKER_PART_SPEAKER_HEAD)
-	);
+		ContentCategory.SPEAKER_PART_SPEAKER_HEAD
+	));
 	private Set<Integer> metNPCs = new HashSet<>();
 	// TODO BF21: Set this system up
 	private Set<Integer> nextStepNPCs = new HashSet<>(Set.of(

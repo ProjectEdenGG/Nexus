@@ -217,11 +217,11 @@ public class BearFair21 implements Listener {
 		tokenMaxes.put("bearfair21_" + source.name().toLowerCase(), amount);
 	}
 
-	public static int checkDailyTokens(OfflinePlayer player, BF21PointSource source, int amount) {
+	public static int getDailyTokensLeft(OfflinePlayer player, BF21PointSource source, int amount) {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		return user.checkDaily("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
+		return user.getDailyTokensLeft("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
 	}
 
 	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
@@ -282,12 +282,12 @@ public class BearFair21 implements Listener {
 	}
 
 	public enum BF21PointSource {
-		ARCHERY,
+		TRADER,
 		MINIGOLF,
-		FROGGER,
 		SEEKER,
-		REFLECTION,
-		TRADER
+		ARCHERY,
+		FROGGER,
+		REFLECTION
 	}
 
 	@EventHandler
