@@ -228,15 +228,14 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
-		if (!config.isEnabled(GIVE_TOKENS))
-			return;
-
 		// TODO BF21: Remove me
 		if (true) {
 			player.sendMessage("Give +" + amount + " tokens");
 			return;
 		}
 		//
+		if (!config.isEnabled(GIVE_TOKENS))
+			return;
 
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
@@ -252,15 +251,14 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveTokens(Player player, int amount) {
-		if (!config.isEnabled(GIVE_TOKENS))
-			return;
-
 		// TODO BF21: Remove me
 		if (true) {
 			player.sendMessage("Give +" + amount + " tokens");
 			return;
 		}
 		//
+		if (!config.isEnabled(GIVE_TOKENS))
+			return;
 
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);

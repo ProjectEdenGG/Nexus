@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
+import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
@@ -62,6 +64,10 @@ public class Seeker implements Listener {
 		playersMap.remove(player.getUniqueId());
 	}
 
+	public static boolean isPlaying(Player player) {
+		return playersMap.containsKey(player.getUniqueId());
+	}
+
 	private void updateTask() {
 		Tasks.repeat(0, Time.SECOND.x(2), () -> {
 			if (playersMap.size() == 0)
@@ -91,15 +97,16 @@ public class Seeker implements Listener {
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
-		if (BearFair21.isNotAtBearFair(event))
-			return;
+		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Player player = event.getPlayer();
 		UUID uuid = player.getUniqueId();
-		if (!playersMap.containsKey(uuid)) return;
-		if (event.getClickedBlock() == null) return;
+		if (!isPlaying(player)) return;
 
-		Location blockLocation = event.getClickedBlock().getLocation();
+		Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block)) return;
+
+		Location blockLocation = block.getLocation();
 		if (!LocationUtils.blockLocationsEqual(blockLocation, playersMap.get(uuid))) return;
 
 		event.setCancelled(true);
@@ -107,6 +114,6 @@ public class Seeker implements Listener {
 		removePlayer(player);
 		player.sendBlockChange(blockLocation, blockLocation.getBlock().getBlockData());
 
-		BearFair21.giveDailyTokens(player, BF21PointSource.SEEKER, 5);
+		BearFair21.giveDailyTokens(player, BF21PointSource.SEEKER, 25);
 	}
 }

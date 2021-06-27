@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
@@ -316,17 +317,30 @@ public class MainIsland implements BearFair21Island {
 				ItemStack tool = getTool(user.getPlayer());
 
 				if (!user.hasMet(this.getNpcId())) {
-					script.add("TODO - INTRO TO SEEKER");
+					script.add("Hello! I'm the curator of these unique mechanisms.");
+					script.add("wait 60");
+					script.add("I don't quite understand their purpose, but they seem to have value to my boss!");
+					script.add("wait 80");
+					script.add("I seem to have misplaced one of the items on display.");
+					script.add("wait 60");
+					script.add("It looks like a generic crimson button, but it's much more valuable than that.");
+					script.add("wait 80");
+					script.add("Any chance you can help me find it?");
+					Seeker.addPlayer(user.getOnlinePlayer());
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add("TODO - Thanks!");
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
+				} else if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.SEEKER, 25) <= 0) {
+					script.add("I seem to have lost the crimson button again. Can help me find it?");
+
+					if (!Seeker.isPlaying(user.getOnlinePlayer()))
+						Seeker.addPlayer(user.getOnlinePlayer());
+					return script;
 				}
 
-				script.add("TODO - FIND THE BUTTON.");
-				Seeker.addPlayer(user.getOnlinePlayer());
 				return script;
 			}
 		},

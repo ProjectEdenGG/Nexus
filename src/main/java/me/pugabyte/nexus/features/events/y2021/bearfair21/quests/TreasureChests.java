@@ -19,6 +19,7 @@ public class TreasureChests {
 				-163, 110, -188 	- volcano in mgn island
 				-67, 129, -344		- pugmas island, grinch cave
 				58, 143, -305		- halloween island, between wall and house
+				188, 152, -144		- sdu island, by burning trees
 
 	 */
 }
