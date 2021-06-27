@@ -50,7 +50,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_TOKENS;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
 import static me.pugabyte.nexus.utils.PlayerUtils.isVanished;
@@ -234,7 +234,7 @@ public class BearFair21 implements Listener {
 			return;
 		}
 		//
-		if (!config.isEnabled(GIVE_TOKENS))
+		if (!config.isEnabled(GIVE_REWARDS))
 			return;
 
 		EventUserService service = new EventUserService();
@@ -257,7 +257,7 @@ public class BearFair21 implements Listener {
 			return;
 		}
 		//
-		if (!config.isEnabled(GIVE_TOKENS))
+		if (!config.isEnabled(GIVE_REWARDS))
 			return;
 
 		EventUserService service = new EventUserService();

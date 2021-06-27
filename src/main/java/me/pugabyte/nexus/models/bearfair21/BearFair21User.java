@@ -24,7 +24,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.AXEL;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BEEKEEPER;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BRUCE;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.FISHERMAN2;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.JOSE;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.LUMBERJACK;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.ORGANIZER;
+import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.PUGMAS_MAYOR;
 
 @Data
 @Entity("bearfair21_user")
@@ -47,16 +54,18 @@ public class BearFair21User implements PlayerOwnedObject {
 	private Set<Integer> metNPCs = new HashSet<>();
 	// TODO BF21: Set this system up
 	private Set<Integer> nextStepNPCs = new HashSet<>(Set.of(
-			ORGANIZER.getId(), // Main
-			BEEKEEPER.getId(), // Side
-			LUMBERJACK.getId(), // Side
-			FISHERMAN2.getId(), // Side
-			AXEL.getId(), // MGN
-			PUGMAS_MAYOR.getId(), // Pugmas
-			JOSE.getId(), // HALLOWEEN
-			BRUCE.getId() // SDU
+		ORGANIZER.getId(), // Main
+		BEEKEEPER.getId(), // Side
+		LUMBERJACK.getId(), // Side
+		FISHERMAN2.getId(), // Side
+		AXEL.getId(), // MGN
+		PUGMAS_MAYOR.getId(), // Pugmas
+		JOSE.getId(), // HALLOWEEN
+		BRUCE.getId() // SDU
 	));
 	private int activeTaskId = -1;
+	private Set<Location> treasureChests = new HashSet<>();
+	private boolean foundAllTreasureChests = false;
 
 	// MAIN
 	QuestStage questStage_Main = QuestStage.NOT_STARTED;

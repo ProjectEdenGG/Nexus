@@ -382,7 +382,10 @@ public class PugmasIsland implements BearFair21Island {
 						script.add("wait 80");
 						wait += (80 + 80 + 80 + 80);
 
-						Tasks.wait(wait, () -> Quests.giveKey(user));
+						Tasks.wait(wait, () -> {
+							Quests.giveKey(user);
+							BearFair21.giveTokens(user, 200);
+						});
 
 						user.setQuestStage_Pugmas(QuestStage.COMPLETE);
 						userService.save(user);

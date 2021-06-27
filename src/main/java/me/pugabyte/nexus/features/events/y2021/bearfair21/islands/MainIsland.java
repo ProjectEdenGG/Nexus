@@ -676,7 +676,8 @@ public class MainIsland implements BearFair21Island {
 							script.add("You're a life saver, thank you! And as a token of my gratitude, have this...");
 							Tasks.wait(40, () -> {
 								Quests.giveKey(user);
-								Trophy.BEAR_FAIR_2021.give(user.getPlayer());
+								Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021);
+								BearFair21.giveTokens(user, 200);
 							});
 
 							user.setQuestStage_Main(QuestStage.COMPLETE);
@@ -981,7 +982,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("The mechanism can go haywire, nearly took my head off!");
 					script.add("wait 60");
 					script.add("Would you mind finding me a replacement saw? I'll pay handsomely.");
-					script.add("wait 80");
+					script.add("wait 60");
 
 					user.setQuestStage_Lumberjack(QuestStage.STARTED);
 					userService.save(user);
@@ -990,7 +991,7 @@ public class MainIsland implements BearFair21Island {
 					List<ItemBuilder> required = Collections.singletonList(replacementSaw.clone());
 					if (!Quests.hasAllItemsLikeFrom(user, required)) {
 						script.add("Would you mind finding me a replacement saw? I'll pay handsomely.");
-						script.add("wait 80");
+						script.add("wait 60");
 						return script;
 					}
 

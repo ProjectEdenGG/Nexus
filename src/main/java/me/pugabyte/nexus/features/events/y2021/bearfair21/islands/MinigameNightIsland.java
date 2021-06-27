@@ -292,7 +292,8 @@ public class MinigameNightIsland implements BearFair21Island {
 								Quests.giveKey(user);
 								user.sendMessage(StringUtils.getPrefix("Songs") + "You have earned the &eDK Jungle 64 &3song! &c/songs");
 								PermissionChange.set().permission("powder.powder.DK_Jungle_64").player(user).run();
-								Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST.give(user.getOnlinePlayer());
+								Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST);
+
 								user.setQuestStage_MGN(QuestStage.COMPLETE);
 								userService.save(user);
 								Tasks.wait(Time.SECOND.x(5), () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());

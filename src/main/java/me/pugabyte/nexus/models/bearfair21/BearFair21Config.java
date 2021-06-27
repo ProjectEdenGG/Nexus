@@ -46,7 +46,7 @@ public class BearFair21Config implements PlayerOwnedObject {
 		EDIT,
 		RIDES,
 		QUESTS,
-		GIVE_TOKENS,
+		GIVE_REWARDS,
 		SKIP_WAITS,
 	}
 

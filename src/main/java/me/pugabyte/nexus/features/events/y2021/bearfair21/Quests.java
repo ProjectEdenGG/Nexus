@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Errors;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.RadioHeads;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.Recycler;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.SellCrates;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.TreasureChests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
@@ -25,7 +26,9 @@ import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.features.regionapi.events.common.EnteringRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
+import me.pugabyte.nexus.models.bearfair21.MiniGolf21User;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
+import me.pugabyte.nexus.models.trophy.Trophy;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -66,6 +69,7 @@ import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.ca
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.send;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.EDIT;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
 
 public class Quests implements Listener {
@@ -84,6 +88,7 @@ public class Quests implements Listener {
 		new ClientsideContentManager();
 		new RadioHeads();
 		new Beehive();
+		new TreasureChests();
 		//
 		nextStepNPCTask();
 	}
@@ -264,9 +269,27 @@ public class Quests implements Listener {
 	}
 
 	public static void giveKey(BearFair21User user) {
-		CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), 1);
-		Quests.sound_completeQuest(user.getPlayer());
+		giveKey(user, 1);
 	}
+
+	public static void giveKey(BearFair21User user, int amount) {
+		Quests.sound_completeQuest(user.getPlayer());
+
+		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
+			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
+
+	}
+
+	public static void giveTrophy(MiniGolf21User user, Trophy trophy) {
+		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
+			trophy.give(user.getPlayer());
+	}
+
+	public static void giveTrophy(BearFair21User user, Trophy trophy) {
+		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
+			trophy.give(user.getPlayer());
+	}
+
 
 	public static String getThanks() {
 		List<String> thanks = Arrays.asList(
@@ -385,8 +408,12 @@ public class Quests implements Listener {
 		player.addPotionEffects(Collections.singletonList(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
 		TitleUtils.sendSubtitle(player, "&cYou died.", 40);
 
+		player.setFallDistance(0);
 		player.setHealth(20);
 		player.setFireTicks(0);
+		if (player.getFoodLevel() < 2)
+			player.setFoodLevel(8);
+
 		player.teleport(BearFair21.getShipSpawnLoc());
 
 	}

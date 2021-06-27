@@ -109,7 +109,10 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("wait 60");
 						script.add("Here, have this as a thank you for bringing me.. I mean us, these cookies!");
 						wait = (60 + 60 + 60 + 80 + 60);
-						Tasks.wait(wait, () -> Quests.giveKey(user));
+						Tasks.wait(wait, () -> {
+							Quests.giveKey(user);
+							BearFair21.giveTokens(user, 200);
+						});
 
 						script.add("wait 60");
 						script.add("You're always welcome here again, amigo!");

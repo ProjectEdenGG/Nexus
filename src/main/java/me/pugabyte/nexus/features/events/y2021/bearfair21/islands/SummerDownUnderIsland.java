@@ -246,7 +246,10 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					List<String> text = new ArrayList<>(setStageGetScript(user, QuestStage.COMPLETE));
 					text.add("wait 40");
 					text.add("Please, take this. It's the least we could do for ya. See ya 'round, mate.");
-					Tasks.wait(99, () -> Quests.giveKey(user));
+					Tasks.wait(99, () -> {
+						Quests.giveKey(user);
+						BearFair21.giveTokens(user, 200);
+					});
 					return text;
 				} else {
 					return List.of(
