@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
 import static me.pugabyte.nexus.utils.ItemUtils.isSameHead;
@@ -62,7 +63,7 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
-	private static final ItemBuilder queenLarvae = ItemBuilder.fromHeadId("33827").name("Queen Larva").undroppable();
+	private static final Supplier<ItemBuilder> queenLarvae = () -> ItemBuilder.fromHeadId("33827").name("Queen Larva").undroppable();
 	@Getter
 	private static final ItemBuilder replacementSaw = new ItemBuilder(Material.STONECUTTER).name("Replacement Saw").customModelData(2);
 	@Getter
@@ -440,7 +441,7 @@ public class MainIsland implements BearFair21Island {
 						if (ItemUtils.isNullOrAir(itemStack)) continue;
 						if (!Material.PLAYER_HEAD.equals(itemStack.getType())) continue;
 
-						if (isSameHead(queenLarvae.build(), itemStack)) {
+						if (isSameHead(queenLarvae.get().build(), itemStack)) {
 							item = itemStack;
 							break;
 						}
@@ -1098,7 +1099,7 @@ public class MainIsland implements BearFair21Island {
 		if (user.getQuestStage_BeeKeeper() != QuestStage.STEP_ONE) return;
 
 		if (BearFair21.getWGUtils().isInRegion(block.getLocation(), "bearfair21_main_beehive_nursery")) {
-			Quests.giveItem(event.getPlayer(), queenLarvae.clone().build());
+			Quests.giveItem(event.getPlayer(), queenLarvae.get().clone().build());
 			user.setQuestStage_BeeKeeper(QuestStage.STEPS_DONE);
 			userService.save(user);
 		}

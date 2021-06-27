@@ -484,7 +484,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		final FixableItem fixableItem = FixableItem.ofBroken(item);
 		boolean assemblingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAllItems(player);
 		boolean willBeAssemblingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && AxelSpeakerPart.hasAnyItems(player);
-		boolean fixingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && isSameHead(slightlyDamagedSpeaker.build(), item);
+		boolean fixingSpeaker = user.getQuestStage_MGN() == QuestStage.STEP_EIGHT && isSameHead(slightlyDamagedSpeaker.get().build(), item);
 		if (willBeAssemblingSpeaker) {
 			user.sendMessage("&cHmm, it seems I don't have all the parts to assemble a speaker...");
 		} else if (assemblingSpeaker) {
@@ -504,7 +504,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			});
 		} else if (fixingSpeaker) {
 			PlayerUtils.removeItem(player, ItemBuilder.oneOf(item).build());
-			solderItem(armorStand, player, slightlyDamagedSpeaker.build(), speaker.get().build());
+			solderItem(armorStand, player, slightlyDamagedSpeaker.get().build(), speaker.get().build());
 		} if (fixableItem != null) {
 			boolean fixingXbox = user.getQuestStage_MGN() == QuestStage.STARTED && FixableDevice.XBOX == fixableItem.getDevice();
 			boolean fixingLaptop = user.getQuestStage_MGN() == QuestStage.STEP_THREE && FixableDevice.LAPTOP == fixableItem.getDevice();
@@ -778,7 +778,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		new TrunkMenu().open(player);
 	}
 
-	private static final ItemBuilder slightlyDamagedSpeaker = ItemBuilder.fromHeadId("2126").name("&cSlightly Damaged Speaker").undroppable().unplaceable();
+	private static final Supplier<ItemBuilder> slightlyDamagedSpeaker = () -> ItemBuilder.fromHeadId("2126").name("&cSlightly Damaged Speaker").undroppable().unplaceable();
 
 	private static class TrunkMenu extends MenuUtils implements InventoryProvider {
 
@@ -794,8 +794,8 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			contents.set(0, 3, ClickableItem.empty(slightlyDamagedSpeaker.build()));
-			contents.set(2, 5, ClickableItem.empty(slightlyDamagedSpeaker.build()));
+			contents.set(0, 3, ClickableItem.empty(slightlyDamagedSpeaker.get().build()));
+			contents.set(2, 5, ClickableItem.empty(slightlyDamagedSpeaker.get().build()));
 			contents.set(1, 2, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
 			contents.set(0, 8, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
 			contents.set(1, 6, ClickableItem.empty(FishingLoot.OLD_BOOTS.getItem()));
