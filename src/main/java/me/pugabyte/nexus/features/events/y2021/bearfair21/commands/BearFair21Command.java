@@ -136,7 +136,7 @@ public class BearFair21Command extends CustomCommand {
 		send("&6&lFairgrounds");
 		for (BF21PointSource source : BF21PointSource.values()) {
 			JsonBuilder json = json();
-			final int dailyTokensLeft = Math.abs(BearFair21.getDailyTokensLeft(player(), source, 0));
+			final int dailyTokensLeft = Math.abs(BearFair21.getDailyTokensLeft(user.getOfflinePlayer(), source, 0));
 
 			if (dailyTokensLeft == 0)
 				json.next("&f  &a☑ &3" + camelCase(source) + " &7- &aComplete");
