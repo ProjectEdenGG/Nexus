@@ -32,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
-import org.jetbrains.annotations.NotNull;
 
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
 import static me.pugabyte.nexus.features.events.y2021.bearfair21.islands.BearFair21Renderer.getRenderer;
@@ -88,22 +87,6 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 	void get_grabACopy() {
 		PlayerUtils.giveItem(player(), grabACopy.build());
 		send(PREFIX + "Gave grab a copy item");
-	}
-
-	@NotNull
-	private MapMeta getMap() {
-		final ItemStack tool = getToolRequired();
-		if (tool.getType() != Material.FILLED_MAP)
-			error("Not a map");
-		return (MapMeta) tool.getItemMeta();
-	}
-
-	@NotNull
-	private MapView getView() {
-		final MapView view = getMap().getMapView();
-		if (view == null)
-			error("Map view is null");
-		return view;
 	}
 
 	static {

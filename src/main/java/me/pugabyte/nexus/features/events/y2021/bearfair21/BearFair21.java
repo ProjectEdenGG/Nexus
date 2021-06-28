@@ -229,12 +229,6 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
-		// TODO BF21: Remove me
-		if (true) {
-			player.sendMessage("Give +" + amount + " tokens");
-			return;
-		}
-		//
 		if (!config.isEnabled(GIVE_REWARDS))
 			return;
 
@@ -252,12 +246,6 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveTokens(Player player, int amount) {
-		// TODO BF21: Remove me
-		if (true) {
-			player.sendMessage("Give +" + amount + " tokens");
-			return;
-		}
-		//
 		if (!config.isEnabled(GIVE_REWARDS))
 			return;
 
