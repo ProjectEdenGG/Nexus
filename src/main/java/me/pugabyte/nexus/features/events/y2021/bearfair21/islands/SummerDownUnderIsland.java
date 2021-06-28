@@ -17,10 +17,10 @@ import me.pugabyte.nexus.features.regionapi.events.player.PlayerLeavingRegionEve
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
+import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -28,7 +28,6 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WeatherType;
-import org.bukkit.World;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -139,6 +138,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			serpentTalkingTo.add(event.getPlayer().getUniqueId());
 			Talker.runScript(event.getPlayer(), SERPENT).thenRun(() -> {
 				user.setQuestStage_SDU(QuestStage.STEPS_DONE);
+				ClientsideContentManager.removeCategory(user, ContentCategory.SDU_BOOK);
 				SummerDownUnderNPCs.setNextNpc(user, null, SummerDownUnderNPCs.BRUCE, SummerDownUnderNPCs.MILO, SummerDownUnderNPCs.KYLIE, SummerDownUnderNPCs.MEL_GIBSON);
 				service.save(user);
 				serpentTalkingTo.remove(event.getPlayer().getUniqueId());
@@ -148,7 +148,6 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		} else if (regionName.equals("bearfair21_elytra_finish")) {
 			PlayerUtils.removeItem(event, new ItemStack(Material.ELYTRA));
 		} else if (regionName.equals("bearfair21_summerdownunder")) {
-			bookContentHandler(event.getPlayer());
 			if (stage == QuestStage.FOUND_ALL || stage == QuestStage.COMPLETE)
 				event.getPlayer().setPlayerWeather(WeatherType.DOWNFALL);
 		} else if (regionName.equals("bearfair21")) {
@@ -160,21 +159,6 @@ public class SummerDownUnderIsland implements BearFair21Island {
 	public void onExitRegion(PlayerLeavingRegionEvent event) {
 		if (new BearFair21UserService().get(event.getPlayer()).getQuestStage_SDU().ordinal() >= QuestStage.FOUND_ALL.ordinal())
 			event.getPlayer().resetPlayerWeather();
-	}
-
-	private static ItemFrame bookFrame;
-
-	static void bookContentHandler(Player player) {
-		World world = player.getWorld();
-		if (bookFrame == null || !bookFrame.isValid()) {
-			bookFrame = world.getNearbyEntitiesByType(ItemFrame.class, new Location(world, 169, 98, -175), 1, 1, 1).iterator().next();
-			if (bookFrame == null) {
-				Nexus.log("Could not find BF21 SDU book item frame");
-				return;
-			}
-		}
-		ItemStack content = new BearFair21UserService().get(player).getQuestStage_SDU().ordinal() < QuestStage.STEP_SIX.ordinal() ? null : bookFrame.getItem();
-		PacketUtils.updateItemFrame(player, bookFrame, content, -1);
 	}
 
 	private boolean isFindMeBook(ItemStack item) {
@@ -266,7 +250,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						setNextNpc(user, null);
 					});
 					List<String> text = new ArrayList<>(setStageGetScript(user, QuestStage.STEP_SIX));
-					SummerDownUnderIsland.bookContentHandler(user.getOnlinePlayer());
+					ClientsideContentManager.addCategory(user, ContentCategory.SDU_BOOK);
 					// reverse order:
 					text.add(0, "wait " + delay);
 					text.add(0, "Ah right! I had been seein' these around the place. I know just the thing that'll help!");
