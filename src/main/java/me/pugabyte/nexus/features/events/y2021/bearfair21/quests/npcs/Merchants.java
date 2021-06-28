@@ -104,16 +104,22 @@ public class Merchants {
 						.result(new ItemBuilder(Material.GUNPOWDER).amount(1))
 						.ingredient(goldNugget.clone().amount(4)));
 					add(new TradeBuilder()
-						.result(goldNugget.clone().amount(3))
-						.ingredient(new ItemStack(Material.LEATHER)));
+						.result(goldNugget.clone().amount(5))
+						.ingredient(new ItemBuilder(Material.DIAMOND).amount(2)));
+					add(new TradeBuilder()
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.IRON_INGOT).amount(1)));
+					add(new TradeBuilder()
+						.result(goldNugget.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.COAL).amount(16)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1))
 						.ingredient(goldIngot.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.WOODEN_PICKAXE).amount(1)));
+						.ingredient(new ItemBuilder(Material.WOODEN_PICKAXE).amount(1)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.STONE_AXE).amount(1))
 						.ingredient(goldIngot.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.WOODEN_AXE).amount(1)));
+						.ingredient(new ItemBuilder(Material.WOODEN_AXE).amount(1)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.NETHERITE_PICKAXE).amount(1))
 						.ingredient(goldBlock.clone().amount(1))
