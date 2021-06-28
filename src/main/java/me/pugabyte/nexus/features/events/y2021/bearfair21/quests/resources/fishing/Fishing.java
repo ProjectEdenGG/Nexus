@@ -9,6 +9,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -88,22 +89,32 @@ public class Fishing implements Listener {
 
 		ItemStack tool = player.getInventory().getItemInMainHand();
 		ItemMeta meta = tool.getItemMeta();
-		int loops = 1;
+		int loops = 0;
 		if (meta.hasEnchants()) {
 			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK))) {
-				loops = RandomUtils.randomInt(1, (meta.getEnchants().get(Enchantment.LUCK)));
+				loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK));
 			}
 		}
 
-		for (int i = 0; i < loops; i++) {
-			ItemStack loot = getLoot(player);
-			if (loot == null)
-				loot = FishingLoot.CARP.getItem();
+		ItemStack loot = getFishingItem(player);
+		ItemStack itemStack = item.getItemStack();
+		itemStack.setType(loot.getType());
+		itemStack.setItemMeta(loot.getItemMeta());
 
-			ItemStack itemStack = item.getItemStack();
-			itemStack.setType(loot.getType());
-			itemStack.setItemMeta(loot.getItemMeta());
+		for (int i = 0; i < loops; i++) {
+			Tasks.wait(1, () -> {
+				Item _item = player.getWorld().dropItem(item.getLocation(), getFishingItem(player));
+				_item.setVelocity(item.getVelocity());
+			});
 		}
+	}
+
+	private ItemStack getFishingItem(Player player) {
+		ItemStack loot = getLoot(player);
+		if (loot == null)
+			loot = FishingLoot.CARP.getItem();
+
+		return loot;
 	}
 
 	@EventHandler
