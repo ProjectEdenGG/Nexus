@@ -18,6 +18,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -72,7 +73,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		@Getter
 		private final List<String> script = List.of(
 			"Hello young one. It is nice to meet you.",
-			"wait 40",
+			"wait 60",
 			"I must thank you for journeying this far to see me. Departing from that land was a burdensome task, and not one that came easily. But if you are ready to learn and pass on my story, I will be ready to return home.",
 			"wait 200",
 			"<self> I would like to hear your story, please.",
@@ -109,7 +110,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 
 	public SummerDownUnderIsland() {
 		Nexus.registerListener(this);
-		Tasks.repeat(2, 2, () -> {
+		Tasks.repeat(2, 1, () -> {
 			BearFair21.getWGUtils().getEntitiesInRegionByClass("bearfair21_elytra", Player.class).stream()
 				.filter(player -> player.isOnGround()
 								&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_start")
@@ -142,7 +143,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				SummerDownUnderNPCs.setNextNpc(user, null, SummerDownUnderNPCs.BRUCE, SummerDownUnderNPCs.MILO, SummerDownUnderNPCs.KYLIE, SummerDownUnderNPCs.MEL_GIBSON);
 				service.save(user);
 				serpentTalkingTo.remove(event.getPlayer().getUniqueId());
-				event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 162.5, 98, -190.5, 0, 0));
+				event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 172.5, 99, -171.5, -180, 0));
 				ClientsideContentManager.addCategory(user, ClientsideContent.Content.ContentCategory.SERPENT);
 			});
 		} else if (regionName.equals("bearfair21_elytra_finish")) {
@@ -166,7 +167,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		if (!item.hasItemMeta()) return false;
 		ItemMeta meta = item.getItemMeta();
 		if (!meta.hasDisplayName()) return false;
-		return meta.getDisplayName().equals("Find Me");
+		return AdventureUtils.asPlainText(meta.displayName()).equals("Find Me");
 	}
 
 	@EventHandler
@@ -204,7 +205,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			}
 		} else if (stage == QuestStage.STEP_FOUR && isMiloItem && !hasItem && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
 			Quests.giveItem(event.getPlayer(), item);
-		} else if (isFindMeBook(item) && !hasItem) {
+		} else if (isFindMeBook(item) && !hasItem && stage.ordinal() >= QuestStage.STEP_SIX.ordinal() && stage.ordinal() < QuestStage.STEPS_DONE.ordinal()) {
 			Quests.giveItem(event.getPlayer(), item);
 		}
 	}
@@ -244,7 +245,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					final int delay = 60;
 					Tasks.wait(delay, () -> {
 						user.getOnlinePlayer().getInventory().removeItemAnySlot(SEVEN_FEATHER.build());
-						PlayerUtils.giveItemAndMailExcess(user.getOnlinePlayer(), ELYTRA.damage(431)
+						PlayerUtils.giveItemAndMailExcess(user.getOnlinePlayer(), ELYTRA.clone().damage(431)
 							.lore("&3Take these down to the darkest depths of the cave and perhaps they will fly again")
 							.loreize(true).build(), WorldGroup.EVENTS); // prevent player from getting free elytra in survival lol
 						setNextNpc(user, null);
@@ -350,7 +351,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				int ordinal = stage.ordinal();
 				if (ordinal < QuestStage.STEP_THREE.ordinal()) {
 					return greeting;
-				} else if (ordinal <= QuestStage.STEPS_DONE.ordinal()) {
+				} else if (ordinal < QuestStage.STEPS_DONE.ordinal()) {
 					if (stage == QuestStage.STEP_THREE) {
 						setNextNpc(user, MILO);
 						setStage(user, QuestStage.STEP_FOUR);
