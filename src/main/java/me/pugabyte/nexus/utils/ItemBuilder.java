@@ -30,6 +30,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.BookMeta.Generation;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -105,6 +106,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	@Deprecated
 	public ItemBuilder durability(short durability) {
 		itemStack.setDurability(durability);
+		return this;
+	}
+
+	public ItemBuilder damage(int damage) {
+		if (!(itemMeta instanceof Damageable damageable)) throw new UnsupportedOperationException("Cannot apply durability to non-damageable item");
+		damageable.setDamage(damage);
 		return this;
 	}
 

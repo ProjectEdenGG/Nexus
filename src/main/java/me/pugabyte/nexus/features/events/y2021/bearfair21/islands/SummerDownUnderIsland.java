@@ -19,6 +19,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -35,6 +36,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,15 +49,20 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-// TODO BF21: serpent
-// TODO BF21: track NPCs who have been spoken to about our holy serpent
-// TODO BF21: client-side stuff
+// TODO BF21: place feathers
 @Region("summerdownunder")
 @NPCClass(SummerDownUnderNPCs.class)
 public class SummerDownUnderIsland implements BearFair21Island {
 	public static final ItemBuilder FEATHER = new ItemBuilder(Material.FEATHER).name("Wing Feather");
 	public static final ItemBuilder SEVEN_FEATHER = FEATHER.clone().amount(7);
 	public static final ItemBuilder BRIKKIES = new ItemBuilder(Material.COOKIE).name("Anzac Bikkie").amount(16);
+	public static final ItemBuilder ELYTRA = new ItemBuilder(Material.ELYTRA).unbreakable().glow().itemFlags(ItemFlag.HIDE_UNBREAKABLE);
+	// MILO ITEMS
+	public static final ItemBuilder YARN = new ItemBuilder(Material.STRING).name("Yarn");
+	public static final ItemBuilder DUST = new ItemBuilder(Material.GUNPOWDER).name("Dust Pile");
+	public static final ItemBuilder NEWSPAPER = new ItemBuilder(Material.BONE_MEAL).name("Crumpled Newspaper");
+	public static final ItemBuilder BOTTLE = new ItemBuilder(Material.GLASS_BOTTLE).name("Empty Bottle");
+	public static final ItemBuilder PIZZA = new ItemBuilder(Material.MUSIC_DISC_11).name("Burnt Pizza");
 	public static final Talker.TalkingNPC SERPENT = new Talker.TalkingNPC() {
 		@Getter
 		private final String name = "Rainbow Serpent";
@@ -102,9 +109,9 @@ public class SummerDownUnderIsland implements BearFair21Island {
 	public SummerDownUnderIsland() {
 		Nexus.registerListener(this);
 		Tasks.repeat(2, 2, () -> {
-			BearFair21.getWGUtils().getEntitiesInRegionByClass("bearfair21_elytra", Player.class)
-				.stream().filter(Player::isOnGround)
-				.filter(player -> !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_start")
+			BearFair21.getWGUtils().getEntitiesInRegionByClass("bearfair21_elytra", Player.class).stream()
+				.filter(player -> player.isOnGround()
+								&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_start")
 								&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_finish"))
 				.forEach(this::teleportToElytraCourse);
 		});
@@ -121,9 +128,10 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		BearFair21User user = service.get(event.getPlayer());
 		QuestStage stage = user.getQuestStage_SDU();
 		if (regionName.equals("bearfair21_summerdownunder_elytra")) {
-			if (stage == QuestStage.STEP_SEVEN)
+			if (stage == QuestStage.STEP_SEVEN) {
 				teleportToElytraCourse(event.getPlayer());
-			else
+				event.getPlayer().getInventory().setChestplate(ELYTRA.get());
+			} else if (stage.ordinal() < QuestStage.STEP_SEVEN.ordinal())
 				event.getPlayer().sendMessage(new JsonBuilder("&c&oYou feel as though you are not yet ready to travel deeper into the cave..."));
 		} else if (regionName.equals("bearfair21_elytra_dialogue") && !serpentTalkingTo.contains(event.getPlayer().getUniqueId())) {
 			serpentTalkingTo.add(event.getPlayer().getUniqueId());
@@ -132,7 +140,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				SummerDownUnderNPCs.setNextNpc(user, null, SummerDownUnderNPCs.BRUCE, SummerDownUnderNPCs.MILO, SummerDownUnderNPCs.KYLIE, SummerDownUnderNPCs.MEL_GIBSON);
 				service.save(user);
 				serpentTalkingTo.remove(event.getPlayer().getUniqueId());
-				PlayerUtils.runCommand(event.getPlayer(), "bearfair21warps sdu_cave");
+				event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 162.5, 98, -190.5, 0, 0));
 			});
 		} else if (regionName.equals("bearfair21_elytra_finish")) {
 			PlayerUtils.removeItem(event, new ItemStack(Material.ELYTRA));
@@ -140,6 +148,8 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			bookContentHandler(event.getPlayer());
 			if (stage == QuestStage.FOUND_ALL || stage == QuestStage.COMPLETE)
 				event.getPlayer().setPlayerWeather(WeatherType.DOWNFALL);
+		} else if (regionName.equals("bearfair21")) {
+			Quests.removeItem(user, ELYTRA.build());
 		}
 	}
 
@@ -153,7 +163,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 
 	static void bookContentHandler(Player player) {
 		World world = player.getWorld();
-		if (bookFrame == null) {
+		if (bookFrame == null || !bookFrame.isValid()) {
 			bookFrame = world.getNearbyEntitiesByType(ItemFrame.class, new Location(world, 169, 98, -175), 1, 1, 1).iterator().next();
 			if (bookFrame == null) {
 				Nexus.log("Could not find BF21 SDU book item frame");
@@ -189,7 +199,24 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (BearFair21.isNotAtBearFair(event)) return;
 		if (!(event.getRightClicked() instanceof ItemFrame frame)) return;
-		// todo - give feathers + book + milo's items
+		ItemStack item = frame.getItem();
+		if (item.getType() == Material.AIR) return;
+		BearFair21UserService service = new BearFair21UserService();
+		BearFair21User user = service.get(event.getPlayer());
+		QuestStage stage = user.getQuestStage_SDU();
+		boolean isMiloItem = BearFair21.getWGUtils().isInRegion(frame.getLocation(), "bearfair21_summerdownunder_milo");
+		boolean hasItem = event.getPlayer().getInventory().containsAtLeast(item, 1);
+		if (FEATHER.build().isSimilar(item) && (stage == QuestStage.STEP_FIVE || (stage == QuestStage.STEP_FOUR && isMiloItem))) {
+			Location loc = LocationUtils.getCenteredRotationlessLocation(frame.getLocation());
+			if (!user.getFeatherLocations().contains(loc)) {
+				user.getFeatherLocations().add(loc);
+				Quests.giveItem(event.getPlayer(), item);
+			}
+		} else if (stage == QuestStage.STEP_FOUR && isMiloItem && !hasItem && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+			Quests.giveItem(event.getPlayer(), item);
+		} else if (isFindMeBook(item) && !hasItem) {
+			Quests.giveItem(event.getPlayer(), item);
+		}
 	}
 
 	public enum SummerDownUnderNPCs implements BearFair21TalkingNPC {
@@ -228,7 +255,9 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					final int delay = 60;
 					Tasks.wait(delay, () -> {
 						user.getOnlinePlayer().getInventory().removeItemAnySlot(SEVEN_FEATHER.build());
-						PlayerUtils.giveItemAndMailExcess(user.getOnlinePlayer(), new ItemStack(Material.ELYTRA), WorldGroup.EVENTS); // prevent player from getting free elytra in survival lol
+						PlayerUtils.giveItemAndMailExcess(user.getOnlinePlayer(), ELYTRA.damage(431)
+							.lore("&3Take these down to the darkest depths of the cave and perhaps they will fly again")
+							.loreize(true).build(), WorldGroup.EVENTS); // prevent player from getting free elytra in survival lol
 						setNextNpc(user, null);
 					});
 					List<String> text = new ArrayList<>(setStageGetScript(user, QuestStage.STEP_SIX));
@@ -270,8 +299,10 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				else if (ordinal < QuestStage.STEP_TWO.ordinal()) {
 					if (stage == QuestStage.STARTED)
 						setStage(user, QuestStage.STEP_ONE);
-					else if (user.getOnlinePlayer().getInventory().containsAtLeast(new ItemStack(Material.WHEAT), 10))
+					else if (user.getOnlinePlayer().getInventory().containsAtLeast(new ItemStack(Material.WHEAT), 10)) {
+						Quests.giveItem(user, new ItemStack(Material.BUCKET));
 						return setStageGetScript(user, QuestStage.STEP_TWO);
+					}
 
 					return List.of(
 						"Hey there! A little kookaburra told me you're the one goin' 'round trynna help us out here! Thank you so much!",
@@ -292,7 +323,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					if (!user.isReceivedBrikkies()) {
 						user.setReceivedBrikkies(true);
 						new BearFair21UserService().save(user);
-						PlayerUtils.giveItem(user.getOnlinePlayer(), BRIKKIES.build());
+						PlayerUtils.giveItemAndMailExcess(user.getOnlinePlayer(), BRIKKIES.build(), WorldGroup.SURVIVAL);
 					}
 					return List.of(
 						"Thanks again <player>! As appreciation, please help yourself to some of my famous Anzac Bikkies.",
@@ -371,7 +402,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				if (ordinal < QuestStage.STEP_FOUR.ordinal())
 					return greeting;
 				if (stage == QuestStage.STEP_FOUR) {
-					if (false) { // todo: items
+					if (Quests.hasAllItemsLikeFrom(user, List.of(YARN, DUST, NEWSPAPER, BOTTLE, PIZZA, FEATHER))) {
 						setNextNpc(user, BRUCE);
 						return setStageGetScript(user, QuestStage.STEP_FIVE);
 					}
