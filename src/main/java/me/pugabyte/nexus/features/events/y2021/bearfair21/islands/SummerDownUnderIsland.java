@@ -411,7 +411,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					return List.of(
 						"Sweet! Thanks a bunch, mate.",
 						"wait 40",
-						"Oh uh... hold on to that feather though. I've seen a few more of those lyin' around lately. Collect seven more of them and bring them to Bruce, he'll be able to make them into something useful!",
+						"Oh uh... hold on to that feather though. I've seen a few more of those lyin' around lately. Collect six more of them and bring them to Bruce, he'll be able to make them into something useful!",
 						"wait 140",
 						"<self> Alright, see you later!"
 					);
