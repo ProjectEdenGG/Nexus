@@ -10,6 +10,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -84,13 +86,24 @@ public class Fishing implements Listener {
 		Entity caught = event.getCaught();
 		if (!(caught instanceof Item item)) return;
 
-		ItemStack loot = getLoot(player);
-		if (loot == null)
-			loot = FishingLoot.CARP.getItem();
+		ItemStack tool = player.getInventory().getItemInMainHand();
+		ItemMeta meta = tool.getItemMeta();
+		int loops = 1;
+		if (meta.hasEnchants()) {
+			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK))) {
+				loops = RandomUtils.randomInt(1, (meta.getEnchants().get(Enchantment.LUCK)));
+			}
+		}
 
-		ItemStack itemStack = item.getItemStack();
-		itemStack.setType(loot.getType());
-		itemStack.setItemMeta(loot.getItemMeta());
+		for (int i = 0; i < loops; i++) {
+			ItemStack loot = getLoot(player);
+			if (loot == null)
+				loot = FishingLoot.CARP.getItem();
+
+			ItemStack itemStack = item.getItemStack();
+			itemStack.setType(loot.getType());
+			itemStack.setItemMeta(loot.getItemMeta());
+		}
 	}
 
 	@EventHandler
