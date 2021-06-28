@@ -1006,7 +1006,8 @@ public class MainIsland implements BearFair21Island {
 					script.add("Thanks! Here you are. I'll set this sawmill up soon.");
 					script.add("<exit>");
 					Quests.removeItems(user, required);
-					Quests.pay(user, Merchants.goldIngot.clone().amount(2).build());
+					Quests.pay(user, Merchants.goldBlock.clone().amount(2).build());
+					Quests.pay(user, Merchants.goldIngot.clone().amount(4).build());
 					ClientsideContentManager.addCategory(user, ContentCategory.SAWMILL, Time.SECOND.x(10));
 
 					user.setQuestStage_Lumberjack(QuestStage.COMPLETE);
