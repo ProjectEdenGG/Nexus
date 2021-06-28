@@ -268,7 +268,7 @@ public class BearFair21Command extends CustomCommand {
 		}}),
 		RECYCLER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.FISHERMAN2.getNpcNameAndJob() + " by the lake");
-			put(QuestStage.STARTED, "Recycled trash: " + StringUtils.progressBar(user.getRecycledItems(), JunkWeight.MIN.getAmount(), ProgressBarStyle.NONE, 40));
+			put(QuestStage.STARTED, "Recycled trash: " + StringUtils.progressBar(user.getRecycledItems(), JunkWeight.MIN.getAmount(), ProgressBarStyle.PERCENT, 40));
 		}}),
 		BEEKEEPER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.BEEKEEPER.getNpcNameAndJob() + " by the bee colony");
