@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -12,11 +13,13 @@ import me.pugabyte.nexus.utils.SymbolBanner.Symbol;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -31,8 +34,11 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -63,6 +69,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder(Material material, int amount) {
 		this(new ItemStack(material, amount));
+	}
+
+	public ItemBuilder(ItemBuilder itemBuilder) {
+		this(itemBuilder.build());
 	}
 
 	public ItemBuilder(ItemStack itemStack) {
@@ -309,6 +319,40 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		if (symbol == null)
 			return this;
 		return symbol.get(this, ColorType.of(itemStack.getType()).getDyeColor(), patternDye);
+	}
+
+	// Maps
+
+	public ItemBuilder mapId(int id) {
+		return mapId(id, null);
+	}
+
+	public ItemBuilder mapId(int id, MapRenderer renderer) {
+		MapMeta mapMeta = (MapMeta) itemMeta;
+		mapMeta.setMapId(id);
+		MapView view = Bukkit.getServer().createMap(BearFair21.getWorld());
+		if (renderer != null)
+			view.addRenderer(renderer);
+		mapMeta.setMapView(view);
+		return this;
+	}
+
+	public int getMapId() {
+		MapMeta mapMeta = (MapMeta) itemMeta;
+		return mapMeta.getMapId();
+	}
+
+	public ItemBuilder createMapView(World world) {
+		return createMapView(world, null);
+	}
+
+	public ItemBuilder createMapView(World world, MapRenderer renderer) {
+		MapMeta mapMeta = (MapMeta) itemMeta;
+		MapView view = Bukkit.getServer().createMap(world);
+		if (renderer != null)
+			view.addRenderer(renderer);
+		mapMeta.setMapView(view);
+		return this;
 	}
 
 	// Shulker Boxes

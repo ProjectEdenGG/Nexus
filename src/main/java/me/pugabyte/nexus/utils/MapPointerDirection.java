@@ -25,7 +25,7 @@ enum MapPointerDirection {
 	SOUTH_SOUTH_EAST,
 	;
 
-	public byte b() {
+	public byte val() {
 		return (byte) ordinal();
 	}
 

@@ -119,6 +119,8 @@ public class BearFair21User implements PlayerOwnedObject {
 	Set<SummerDownUnderIsland.SummerDownUnderNPCs> taughtNPCs = new HashSet<>(); // NPCs that have been taught about the serpent
 	Set<Location> featherLocations = new HashSet<>();
 
+	private int mapId;
+
 	public void addRecycledItems(int count) {
 		this.recycledItems += count;
 
