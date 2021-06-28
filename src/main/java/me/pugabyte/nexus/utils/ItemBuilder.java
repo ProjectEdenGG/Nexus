@@ -4,7 +4,6 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -337,8 +336,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder mapId(int id, MapRenderer renderer) {
 		MapMeta mapMeta = (MapMeta) itemMeta;
 		mapMeta.setMapId(id);
-		MapView view = Bukkit.getServer().createMap(BearFair21.getWorld());
-		if (renderer != null)
+		MapView view = Bukkit.getServer().getMap(id);
+		if (view == null) {
+			Nexus.log("View for map id " + id + " is null");
+		} else if (renderer != null)
 			view.addRenderer(renderer);
 		mapMeta.setMapView(view);
 		return this;

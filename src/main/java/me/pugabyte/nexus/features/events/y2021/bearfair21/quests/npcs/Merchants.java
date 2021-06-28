@@ -174,6 +174,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
+						.maxUses(1)
 						.result(Quests.getBackPack(user.getPlayer()))
 						.ingredient(goldIngot.clone().amount(6)));
 					add(new TradeBuilder()
