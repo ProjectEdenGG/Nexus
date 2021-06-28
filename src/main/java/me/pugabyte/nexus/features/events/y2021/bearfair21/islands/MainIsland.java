@@ -715,7 +715,8 @@ public class MainIsland implements BearFair21Island {
 				} else if (user.getQuestStage_Main() == QuestStage.STEP_ONE) {
 					List<ItemBuilder> required = new ArrayList<>();
 					Arrays.stream(FishingLoot.values())
-							.filter(fishingLoot -> fishingLoot.getCategory().equals(FishingLootCategory.FISH))
+						.filter(fishingLoot -> fishingLoot.getCategory().equals(FishingLootCategory.FISH))
+						.filter(fishingLoot -> fishingLoot.getCategory().equals(FishingLootCategory.UNIQUE))
 							.toList().forEach(fishingLoot -> required.add(fishingLoot.getItemBuilder()));
 
 					List<ItemStack> items = Quests.getItemsLikeFrom(user, required);
