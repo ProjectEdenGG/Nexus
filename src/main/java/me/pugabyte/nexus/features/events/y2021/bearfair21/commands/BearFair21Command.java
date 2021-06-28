@@ -19,6 +19,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.TreasureChests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -267,7 +268,7 @@ public class BearFair21Command extends CustomCommand {
 		}}),
 		RECYCLER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.FISHERMAN2.getNpcNameAndJob() + " by the lake");
-			put(QuestStage.STARTED, "Recycle some trash");
+			put(QuestStage.STARTED, "Recycled trash: " + StringUtils.progressBar(user.getRecycledItems(), JunkWeight.MIN.getAmount(), ProgressBarStyle.NONE, 40));
 		}}),
 		BEEKEEPER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.BEEKEEPER.getNpcNameAndJob() + " by the bee colony");

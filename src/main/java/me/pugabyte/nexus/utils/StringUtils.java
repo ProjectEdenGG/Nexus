@@ -239,7 +239,7 @@ public class StringUtils extends eden.utils.StringUtils {
 		if (style == ProgressBarStyle.COUNT)
 			result += " &f" + progress + "/" + goal;
 		if (style == ProgressBarStyle.PERCENT)
-			result += " &f" + Math.floor(percent * 100);
+			result += " &f" + Math.floor(percent * 100) + "%";
 
 		return result;
 	}
