@@ -18,7 +18,6 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
-import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
@@ -29,6 +28,8 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WeatherType;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,13 +146,14 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 172.5, 99, -171.5, -180, 0));
 				ClientsideContentManager.addCategory(user, ClientsideContent.Content.ContentCategory.SERPENT);
 			});
-		} else if (regionName.equals("bearfair21_elytra_finish")) {
-			PlayerUtils.removeItem(event, new ItemStack(Material.ELYTRA));
+		} else if (regionName.equals("bearfair21_elytra_finish") || regionName.equals("bearfair21")) {
+			ItemStack elytra = ELYTRA.build();
+			for (ItemStack item : event.getPlayer().getInventory().getContents())
+				if (elytra.isSimilar(item))
+					item.setAmount(0);
 		} else if (regionName.equals("bearfair21_summerdownunder")) {
 			if (stage == QuestStage.FOUND_ALL || stage == QuestStage.COMPLETE)
 				event.getPlayer().setPlayerWeather(WeatherType.DOWNFALL);
-		} else if (regionName.equals("bearfair21")) {
-			Quests.removeItem(user, ELYTRA.build());
 		}
 	}
 
@@ -162,23 +163,18 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			event.getPlayer().resetPlayerWeather();
 	}
 
-	private boolean isFindMeBook(ItemStack item) {
-		if (item == null) return false;
-		if (!item.hasItemMeta()) return false;
-		ItemMeta meta = item.getItemMeta();
-		if (!meta.hasDisplayName()) return false;
-		return AdventureUtils.asPlainText(meta.displayName()).equals("Find Me");
-	}
-
 	@EventHandler
 	public void onReadBook(PlayerInteractEvent event) {
 		if (BearFair21.isNotAtBearFair(event)) return;
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
 		BearFair21UserService service = new BearFair21UserService();
 		BearFair21User user = service.get(event.getPlayer());
-		if (user.getQuestStage_SDU() == QuestStage.STEP_SIX && isFindMeBook(event.getItem())) {
+		Block block = event.getClickedBlock();
+		if (user.getQuestStage_SDU() == QuestStage.STEP_SIX && event.getItem() != null && event.getItem().getType() == Material.WRITTEN_BOOK) {
 			user.setQuestStage_SDU(QuestStage.STEP_SEVEN);
 			service.save(user);
+		} else if (block != null && block.getX() == 169 && block.getY() == 97 && block.getZ() == -175) { // lazy fixing
+			Quests.giveItem(user, ((Chest) block.getRelative(0, -9, 0).getBlockData()).getBlockInventory().getItem(0));
 		}
 	}
 
@@ -204,8 +200,6 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				user.sendMessage(JsonBuilder.fromPrefix("BearFair21", "&cYou've already found this Wing Feather!"));
 			}
 		} else if (stage == QuestStage.STEP_FOUR && isMiloItem && !hasItem && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-			Quests.giveItem(event.getPlayer(), item);
-		} else if (isFindMeBook(item) && !hasItem && stage.ordinal() >= QuestStage.STEP_SIX.ordinal() && stage.ordinal() < QuestStage.STEPS_DONE.ordinal()) {
 			Quests.giveItem(event.getPlayer(), item);
 		}
 	}
@@ -315,8 +309,8 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				} else if (ordinal >= QuestStage.STEP_THREE.ordinal() && ordinal < QuestStage.STEPS_DONE.ordinal()) {
 					if (!user.isReceivedBrikkies()) {
 						user.setReceivedBrikkies(true);
+						Quests.giveItem(user, BRIKKIES.build());
 						new BearFair21UserService().save(user);
-						PlayerUtils.giveItemAndMailExcess(user.getOnlinePlayer(), BRIKKIES.build(), WorldGroup.SURVIVAL);
 					}
 					return List.of(
 						"Thanks again <player>! As appreciation, please help yourself to some of my famous Anzac Bikkies.",
@@ -333,13 +327,14 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					taught(user);
 					return List.of(
 						"Oh wow, I had no idea... I wish my grandparents had've told me about my history a bit more...",
-						"wait 60",
+						"wait 80",
 						"Thank you for sharing this with me <player>! I will pass it on too!"
 					);
 				} else {
 					return List.of(
 						"No way! Daisy, we’re saved!",
-						"<name:Daisy> Moo!"
+						"wait 40",
+						"<name:Daisy>Moo!"
 					);
 				}
 			}
