@@ -463,7 +463,6 @@ public class HalloweenIsland implements BearFair21Island {
 		}
 	}
 
-
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) {
 		if (BearFair21.isNotAtBearFair(event))
@@ -474,7 +473,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
-
+		if (!BearFair21.isInRegion(block, getRegion())) return;
 		event.setCancelled(true);
 
 		checkLocation(user, block.getLocation());
@@ -491,6 +490,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
+		if (!BearFair21.isInRegion(clicked.getLocation(), getRegion())) return;
 
 		event.setCancelled(true);
 
