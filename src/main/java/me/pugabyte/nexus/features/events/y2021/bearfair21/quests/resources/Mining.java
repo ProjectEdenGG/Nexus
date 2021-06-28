@@ -21,10 +21,12 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -73,7 +75,8 @@ public class Mining implements Listener {
 		if (oreType == null)
 			return false;
 
-		if (!oreType.canBeMinedBy(player.getInventory().getItemInMainHand().getType())) {
+		ItemStack tool = player.getInventory().getItemInMainHand();
+		if (!oreType.canBeMinedBy(tool.getType())) {
 			if (new CooldownService().check(player, "BF21_cantbreak_tool", Time.SECOND.x(15))) {
 				send(Errors.cantBreak + " with this tool. Needs either: " + oreType.getCanBreak(), player);
 				Quests.sound_villagerNo(player);
@@ -83,7 +86,7 @@ public class Mining implements Listener {
 
 		Quests.giveExp(player);
 		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
-		PlayerUtils.giveItem(player, oreType.getIngotItemStack());
+		PlayerUtils.giveItem(player, oreType.getIngotItemStack(tool));
 
 		scheduleRegen(block);
 		block.setType(Material.STONE);
@@ -115,14 +118,23 @@ public class Mining implements Listener {
 		private final Material pickaxe;
 
 		private static final List<Material> pickaxeOrder = Arrays.asList(Material.WOODEN_PICKAXE, Material.GOLDEN_PICKAXE,
-				Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE);
+			Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE);
 
 		public static List<Material> getOres() {
 			return Arrays.stream(values()).map(OreType::getOre).toList();
 		}
 
-		public ItemStack getIngotItemStack() {
-			return new ItemBuilder(ingot).amount(RandomUtils.randomInt(min, max)).build();
+		public ItemStack getIngotItemStack(ItemStack tool) {
+			ItemMeta meta = tool.getItemMeta();
+			int level = 1;
+			if (meta.hasEnchants()) {
+				if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LOOT_BONUS_BLOCKS))) {
+					level = meta.getEnchants().get(Enchantment.LOOT_BONUS_BLOCKS) + 1;
+				}
+			}
+
+			int amount = RandomUtils.randomInt(min, max) * level;
+			return new ItemBuilder(ingot).amount(amount).build();
 		}
 
 		public static OreType ofOre(Material ore) {
