@@ -132,12 +132,13 @@ public class MinigameNightIsland implements BearFair21Island {
 						.volume(2.0)
 						.play();
 				} else {
-					new ParticleBuilder(Particle.VILLAGER_HAPPY)
-						.receivers(player)
-						.location(gravWellLoc)
-						.count(10)
-						.offset(.25, .25, .25)
-						.spawn();
+					if (player.getInventory().containsAtLeast(MainIsland.getGravwell().build(), 1))
+						new ParticleBuilder(Particle.VILLAGER_HAPPY)
+							.receivers(player)
+							.location(gravWellLoc.toCenterLocation())
+							.count(10)
+							.offset(.25, .25, .25)
+							.spawn();
 				}
 			}
 		});
