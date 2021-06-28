@@ -60,14 +60,14 @@ public enum FishingLoot {
 	NAUTILUS_SHELL(TREASURE, 7, Material.NAUTILUS_SHELL, 6.0),
 	TREASURE_CHEST(TREASURE, 8, Material.CHEST, 5.0, "Treasure Chest", 1),
 	// Unique
-	MIDNIGHT_CARP(UNIQUE, 15, Material.COD, 50.0, "Midnight Carp", 11, "main", NIGHT),
-	SUNFISH(UNIQUE, 15, Material.COD, 50.0, "Sunfish", 12, "main", DAY),
-	STONEFISH(UNIQUE, 15, Material.COD, 100.0, "Stonefish", 13, "main", 120),
-	TIGER_TROUT(UNIQUE, 15, Material.COD, 50.0, "Tiger Trout", 14, "minigamenight"),
-	SEA_CUCUMBER(UNIQUE, 15, Material.SEA_PICKLE, 50.0, "Sea Cucumber", 0, "minigamenight"),
-	GLACIERFISH(UNIQUE, 15, Material.COD, 100.0, "Glacierfish", 15, "pugmas"),
-	CRIMSONFISH(UNIQUE, 15, Material.COD, 100.0, "Crimsonfish", 16, "halloween"),
-	BLOBFISH(UNIQUE, 15, Material.COD, 100.0, "Blobfish", 17, "summerdownunder"),
+	MIDNIGHT_CARP(UNIQUE, 8, Material.COD, 50.0, "Midnight Carp", 11, "main", NIGHT),
+	SUNFISH(UNIQUE, 8, Material.COD, 50.0, "Sunfish", 12, "main", DAY),
+	STONEFISH(UNIQUE, 10, Material.COD, 100.0, "Stonefish", 13, "main", 120),
+	TIGER_TROUT(UNIQUE, 8, Material.COD, 50.0, "Tiger Trout", 14, "minigamenight"),
+	SEA_CUCUMBER(UNIQUE, 8, Material.SEA_PICKLE, 50.0, "Sea Cucumber", 0, "minigamenight"),
+	GLACIERFISH(UNIQUE, 10, Material.COD, 100.0, "Glacierfish", 15, "pugmas"),
+	CRIMSONFISH(UNIQUE, 10, Material.COD, 100.0, "Crimsonfish", 16, "halloween"),
+	BLOBFISH(UNIQUE, 10, Material.COD, 100.0, "Blobfish", 17, "summerdownunder"),
 	;
 
 	FishingLootCategory category;
