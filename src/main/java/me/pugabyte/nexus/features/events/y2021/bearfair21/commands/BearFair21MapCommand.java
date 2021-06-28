@@ -121,7 +121,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 
 		static {
 			try {
-				image = ImageIO.read(new URL("https://i.imgur.com/wuZTLcH.png"));
+				image = ImageIO.read(new URL("https://i.imgur.com/QvTesq2.png"));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -173,14 +173,19 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 			}
 		}
 
+		// Distance from location to island 0,0 to map 0,0 to world 0,0
+
+		private static final int mapXOffset = 0;
+		private static final int mapYOffset = 140;
+
 		private int getXOffset(Location location, Location center) {
 			double xDiff = location.getX() - center.getX();
-			return (int) Math.round(xDiff * .6) + (int) center.getX();
+			return (int) Math.round(xDiff * .6) + (int) center.getX() + mapXOffset;
 		}
 
 		private int getYOffset(Location location, Location center) {
 			double yDiff = location.getZ() - center.getZ();
-			return (int) Math.round(yDiff * .6) + (int) center.getZ() + 140; // TODO Why 140
+			return (int) Math.round(yDiff * .6) + (int) center.getZ() + mapYOffset;
 		}
 
 		private Location getIslandCenter(Location location) {

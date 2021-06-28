@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.quests;
 
+import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
@@ -23,7 +24,8 @@ public class TreasureChests implements Listener {
 	private static final Supplier<ItemBuilder> treasureChest = () -> ItemBuilder.fromHeadId("13379");
 
 	// @formatter:off
-	public static final Set<Location> locations = Set.of(
+	@Getter
+	private static final Set<Location> locations = Set.of(
 		// Main Heads
 		loc(3, 138, -17), 		// main warp, right side, freebie
 		loc(137, 133, 15), 		// in purple tent, minigolf staircase

@@ -15,6 +15,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.RouterMenu;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.ScrambledCablesMenu;
+import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.TreasureChests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
@@ -39,6 +40,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.StringUtils.ProgressBarStyle;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -142,6 +144,12 @@ public class BearFair21Command extends CustomCommand {
 
 			send(json);
 		}
+
+		line();
+		send("&6&lTreasure Chests");
+		final int found = user.getTreasureChests().size();
+		final int total = TreasureChests.getLocations().size();
+		send("&f  " + (found == total ? "&a☑" : "&7☐") + " &3Found: " + StringUtils.progressBar(found, total, ProgressBarStyle.COUNT, 40));
 
 		line();
 		if (day < 7) {
