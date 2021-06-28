@@ -235,10 +235,12 @@ public class BearFair21 implements Listener {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		user.giveTokens("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
-		service.save(user);
+		if (getDailyTokensLeft(player, source, amount) <= 0) {
+			user.giveTokens("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
+			service.save(user);
 
-		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Tokens");
+			ActionBarUtils.sendActionBar(player, "+" + amount + " Event Tokens");
+		}
 	}
 
 	public static void giveTokens(BearFair21User user, int amount) {

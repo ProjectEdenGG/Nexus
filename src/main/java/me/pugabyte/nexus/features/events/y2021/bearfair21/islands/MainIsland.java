@@ -977,7 +977,6 @@ public class MainIsland implements BearFair21Island {
 					invite(user, this.getNpcId(), tool);
 					return script;
 
-					// TODO BF21: this gets skipped?
 				} else if (user.getQuestStage_Lumberjack() == QuestStage.NOT_STARTED) {
 					script.add("Be careful around that broken saw mill, as you can see in the wall there.");
 					script.add("wait 60");
