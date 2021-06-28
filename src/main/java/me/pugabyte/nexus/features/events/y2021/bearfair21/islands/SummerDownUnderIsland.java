@@ -126,7 +126,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
-		String regionName = event.getRegion().getId();
+		String regionName = event.getRegion().getId().toLowerCase();
 		BearFair21UserService service = new BearFair21UserService();
 		BearFair21User user = service.get(event.getPlayer());
 		QuestStage stage = user.getQuestStage_SDU();
@@ -160,7 +160,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 
 	@EventHandler
 	public void onExitRegion(PlayerLeavingRegionEvent event) {
-		if (new BearFair21UserService().get(event.getPlayer()).getQuestStage_SDU().ordinal() >= QuestStage.FOUND_ALL.ordinal())
+		if (event.getRegion().getId().equalsIgnoreCase("bearfair21_summerdownunder") && new BearFair21UserService().get(event.getPlayer()).getQuestStage_SDU().ordinal() >= QuestStage.FOUND_ALL.ordinal())
 			event.getPlayer().resetPlayerWeather();
 	}
 
@@ -175,7 +175,9 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			user.setQuestStage_SDU(QuestStage.STEP_SEVEN);
 			service.save(user);
 		} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null && block.getX() == 169 && block.getY() == 97 && block.getZ() == -175) { // lazy fixing
-			Quests.giveItem(user, ((Chest) block.getRelative(0, -9, 0).getBlockData()).getBlockInventory().getItem(0));
+			ItemStack book = ((Chest) block.getRelative(0, -9, 0).getState()).getBlockInventory().getItem(0);
+			if (book != null && !Quests.hasItemsLikeFrom(user, Collections.singletonList(new ItemBuilder(book))))
+				Quests.giveItem(user, book);
 		}
 	}
 
