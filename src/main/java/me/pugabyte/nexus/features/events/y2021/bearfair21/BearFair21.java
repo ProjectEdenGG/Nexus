@@ -225,7 +225,7 @@ public class BearFair21 implements Listener {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		return user.getDailyTokensLeft("bearfair21_" + source.name().toLowerCase(), amount, tokenMaxes);
+		return user.getDailyTokensLeft(source.getId(), amount, tokenMaxes);
 	}
 
 	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
@@ -235,13 +235,12 @@ public class BearFair21 implements Listener {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 
-		final String id = "bearfair21_" + source.name().toLowerCase();
 		final int dailyTokensLeft = Math.abs(getDailyTokensLeft(player, source, 0));
 
 		if (dailyTokensLeft == 0) {
 			ActionBarUtils.sendActionBar(player, "&cDaily token limit reached");
 		} else {
-			user.giveTokens(id, amount, tokenMaxes);
+			user.giveTokens(source.getId(), amount, tokenMaxes);
 			service.save(user);
 
 			ActionBarUtils.sendActionBar(player, "&a+" + amount + " Event Tokens");
@@ -262,7 +261,7 @@ public class BearFair21 implements Listener {
 		user.giveTokens(amount);
 		service.save(user);
 
-		ActionBarUtils.sendActionBar(player, "+" + amount + " Event Tokens");
+		ActionBarUtils.sendActionBar(player, "&a+" + amount + " Event Tokens");
 	}
 
 	public static boolean canWarp() {
@@ -284,7 +283,12 @@ public class BearFair21 implements Listener {
 		SEEKER,
 		ARCHERY,
 		FROGGER,
-		REFLECTION
+		REFLECTION,
+		;
+
+		private String getId() {
+			return "bearfair21_" + name().toLowerCase();
+		}
 	}
 
 	@EventHandler
