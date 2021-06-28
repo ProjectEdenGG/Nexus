@@ -36,7 +36,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
@@ -52,7 +51,7 @@ import static me.pugabyte.nexus.utils.ItemUtils.isSameHead;
 
 @Region("main")
 @NPCClass(MainNPCs.class)
-public class MainIsland implements BearFair21Island, Listener {
+public class MainIsland implements BearFair21Island {
 
 	public MainIsland() {
 		Nexus.registerListener(this);
