@@ -32,7 +32,6 @@ import org.bukkit.World;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -45,6 +44,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -63,6 +63,8 @@ public class SummerDownUnderIsland implements BearFair21Island {
 	public static final ItemBuilder NEWSPAPER = new ItemBuilder(Material.BONE_MEAL).name("Crumpled Newspaper");
 	public static final ItemBuilder BOTTLE = new ItemBuilder(Material.GLASS_BOTTLE).name("Empty Bottle");
 	public static final ItemBuilder PIZZA = new ItemBuilder(Material.MUSIC_DISC_11).name("Burnt Pizza");
+	public static final List<ItemBuilder> MILO_ITEMS = List.of(YARN, DUST, NEWSPAPER, BOTTLE, PIZZA, FEATHER);
+	public static final List<ItemBuilder> MILO_REMOVE_ITEMS = List.of(YARN, DUST, NEWSPAPER, BOTTLE, PIZZA);
 	public static final Talker.TalkingNPC SERPENT = new Talker.TalkingNPC() {
 		@Getter
 		private final String name = "Rainbow Serpent";
@@ -141,6 +143,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				service.save(user);
 				serpentTalkingTo.remove(event.getPlayer().getUniqueId());
 				event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 162.5, 98, -190.5, 0, 0));
+				ClientsideContentManager.addCategory(user, ClientsideContent.Content.ContentCategory.SERPENT);
 			});
 		} else if (regionName.equals("bearfair21_elytra_finish")) {
 			PlayerUtils.removeItem(event, new ItemStack(Material.ELYTRA));
@@ -182,7 +185,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		return meta.getDisplayName().equals("Find Me");
 	}
 
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onReadBook(PlayerInteractEvent event) {
 		if (BearFair21.isNotAtBearFair(event)) return;
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
@@ -194,7 +197,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		}
 	}
 
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onItemFrameClick(PlayerInteractEntityEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (BearFair21.isNotAtBearFair(event)) return;
@@ -210,7 +213,10 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			Location loc = LocationUtils.getCenteredRotationlessLocation(frame.getLocation());
 			if (!user.getFeatherLocations().contains(loc)) {
 				user.getFeatherLocations().add(loc);
+				service.save(user);
 				Quests.giveItem(event.getPlayer(), item);
+			} else {
+				user.sendMessage(JsonBuilder.fromPrefix("BearFair21", "&cYou've already found this Wing Feather!"));
 			}
 		} else if (stage == QuestStage.STEP_FOUR && isMiloItem && !hasItem && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
 			Quests.giveItem(event.getPlayer(), item);
@@ -225,16 +231,16 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			public List<String> getScript(BearFair21User user) {
 				QuestStage stage = user.getQuestStage_SDU();
 				int ordinal = stage.ordinal();
-				if (ordinal <= QuestStage.STEP_FIVE.ordinal() || (stage == QuestStage.STEP_FIVE && !user.getOnlinePlayer().getInventory().contains(SEVEN_FEATHER.build()))) {
+				if (ordinal < QuestStage.STEP_FIVE.ordinal() || (stage == QuestStage.STEP_FIVE && !user.getOnlinePlayer().getInventory().containsAtLeast(FEATHER.build(), 7))) {
 					if (stage == QuestStage.NOT_STARTED) {
 						setStage(user, QuestStage.STARTED);
 						setNextNpc(user, KYLIE);
 					}
 					return List.of(
 						"Struth! I’m glad you’re here!",
-						"wait 40",
+						"wait 60",
 						"<self> Is something wrong?",
-						"wait 40",
+						"wait 60",
 						"You bet there is! Our crops haven't seen a drought this devastating in... well... EVER!",
 						"wait 80",
 						"We hardly have enough water to keep our livestock going!",
@@ -250,8 +256,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						"<self> Don't worry! I've got this."
 					);
 				} else if (stage == QuestStage.STEP_FIVE) {
-					SummerDownUnderIsland.bookContentHandler(user.getOnlinePlayer());
-					ClientsideContentManager.addCategory(user, ClientsideContent.Content.ContentCategory.SERPENT);
+					Quests.removeItem(user, SEVEN_FEATHER.build());
 					final int delay = 60;
 					Tasks.wait(delay, () -> {
 						user.getOnlinePlayer().getInventory().removeItemAnySlot(SEVEN_FEATHER.build());
@@ -261,6 +266,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						setNextNpc(user, null);
 					});
 					List<String> text = new ArrayList<>(setStageGetScript(user, QuestStage.STEP_SIX));
+					SummerDownUnderIsland.bookContentHandler(user.getOnlinePlayer());
 					// reverse order:
 					text.add(0, "wait " + delay);
 					text.add(0, "Ah right! I had been seein' these around the place. I know just the thing that'll help!");
@@ -301,19 +307,21 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						setStage(user, QuestStage.STEP_ONE);
 					else if (user.getOnlinePlayer().getInventory().containsAtLeast(new ItemStack(Material.WHEAT), 10)) {
 						Quests.giveItem(user, new ItemStack(Material.BUCKET));
+						Quests.removeItem(user, new ItemBuilder(Material.WHEAT).amount(10).build());
 						return setStageGetScript(user, QuestStage.STEP_TWO);
 					}
 
 					return List.of(
 						"Hey there! A little kookaburra told me you're the one goin' 'round trynna help us out here! Thank you so much!",
-						"wait 60",
+						"wait 80",
 						"<self> No problem! Is there anything I can do for you?",
-						"wait 30",
+						"wait 50",
 						"There sure is. Could you grab some wheat from the field at the back there? Gotta get these biscuits ready before the lunch-time rush. A bundle of 'bout 10 should do it."
 					);
 				} else if (stage == QuestStage.STEP_TWO) {
 					if (user.getOnlinePlayer().getInventory().containsAtLeast(new ItemStack(Material.MILK_BUCKET), 1)) {
 						setNextNpc(user, MEL_GIBSON);
+						Quests.removeItem(user, new ItemStack(Material.MILK_BUCKET));
 						return setStageGetScript(user, QuestStage.STEP_THREE);
 					}
 					return Collections.singletonList(
@@ -365,25 +373,25 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					}
 					return List.of(
 						"G'day. I take it you're <player>? The one Bruce has sent out to get to the bottom of the issue we're facin' here?",
-						"wait 60",
+						"wait 100",
 						"<self> I sure am!",
-						"wait 20",
+						"wait 40",
 						"Good on ya. I'm too old to be dealin' with it myself.",
-						"wait 40",
+						"wait 60",
 						"If only I had the foresight to see where we'd be now...",
-						"wait 40",
+						"wait 60",
 						"<self> What? You knew this would happen?",
-						"wait 40",
+						"wait 50",
 						"Huh? What? Oh no... not at all... No idea...",
-						"wait 40",
+						"wait 60",
 						"<self> For an actor, you're not too good at lying...",
-						"wait 40",
+						"wait 60",
 						"Okay well... I do know... but I can't be the one to tell ya. This has to be your own adventure.",
-						"wait 80",
+						"wait 90",
 						"For now, visit my son Milo. I believe his RV has something that might be useful to you.",
-						"wait 70",
+						"wait 80",
 						"<self> Okay, I'll head on over there.",
-						"wait 30",
+						"wait 40",
 						"Good luck out there, <player>."
 					);
 				} else if (stage == QuestStage.STEPS_DONE) {
@@ -402,15 +410,16 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				if (ordinal < QuestStage.STEP_FOUR.ordinal())
 					return greeting;
 				if (stage == QuestStage.STEP_FOUR) {
-					if (Quests.hasAllItemsLikeFrom(user, List.of(YARN, DUST, NEWSPAPER, BOTTLE, PIZZA, FEATHER))) {
+					if (Quests.hasAllItemsLikeFrom(user, MILO_ITEMS)) {
 						setNextNpc(user, BRUCE);
+						Quests.removeItems(user, MILO_REMOVE_ITEMS);
 						return setStageGetScript(user, QuestStage.STEP_FIVE);
 					}
 					return List.of(
 						"Oh hey <player>! My dad just called to tell me you'd be over here soon.",
 						"wait 60",
 						"My van is absolutely filthy! I haven't taken 'er out in 'bout 2 years now.",
-						"wait 40",
+						"wait 60",
 						"Would ya mind helping me clean up a bit? Just pick up all the junk lying 'round in there and bring it back to me. I'll throw it away for ya.",
 						"wait 80",
 						"<self> No problem, I'll be back soon!"
@@ -418,9 +427,9 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				} else if (ordinal >= QuestStage.STEP_FIVE.ordinal() && ordinal < QuestStage.STEPS_DONE.ordinal()) {
 					return List.of(
 						"Sweet! Thanks a bunch, mate.",
-						"wait 20",
+						"wait 40",
 						"Oh uh... hold on to that feather though. I've seen a few more of those lyin' around lately. Collect seven more of them and bring them to Bruce, he'll be able to make them into something useful!",
-						"wait 130",
+						"wait 140",
 						"<self> Alright, see you later!"
 					);
 				} else if (stage == QuestStage.STEPS_DONE) {
@@ -460,8 +469,8 @@ public class SummerDownUnderIsland implements BearFair21Island {
 			Set<Integer> nextNpcs = user.getNextStepNPCs();
 			if (old != null)
 				nextNpcs.remove(old.getNpcId());
-			if (next.length > 0)
-				nextNpcs.addAll(Arrays.stream(next).map(SummerDownUnderNPCs::getNpcId).collect(Collectors.toList()));
+			if (next != null && next.length > 0)
+				nextNpcs.addAll(Arrays.stream(next).filter(Objects::nonNull).map(SummerDownUnderNPCs::getNpcId).collect(Collectors.toList()));
 			new BearFair21UserService().save(user);
 		}
 
