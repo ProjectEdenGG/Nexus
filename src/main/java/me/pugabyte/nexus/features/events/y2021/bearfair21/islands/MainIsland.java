@@ -81,6 +81,7 @@ public class MainIsland implements BearFair21Island {
 
 				if (!user.hasMet(this.getNpcId())) {
 					script.add("Hello there, my name is WakkaFlocka, and I am an admin on Project Eden and the organizer for this event.");
+					script.add("wait 100");
 				} else if (isInviting(user, this.getNpcId(), tool)) {
 					script.add(Quests.getThanks());
 					invite(user, this.getNpcId(), tool);
@@ -975,6 +976,8 @@ public class MainIsland implements BearFair21Island {
 					script.add("<exit>");
 					invite(user, this.getNpcId(), tool);
 					return script;
+
+					// TODO BF21: this gets skipped?
 				} else if (user.getQuestStage_Lumberjack() == QuestStage.NOT_STARTED) {
 					script.add("Be careful around that broken saw mill, as you can see in the wall there.");
 					script.add("wait 60");
