@@ -378,7 +378,7 @@ public class MainIsland implements BearFair21Island {
 					script.add("wait 60");
 					script.add("It looks like a generic crimson button, but it's much more valuable than that.");
 					script.add("wait 80");
-					script.add("Any chance you can help me find it?");
+					script.add("Any chance you can help me find it? It's somewhere in this tent.");
 					Seeker.addPlayer(user.getOnlinePlayer());
 					return script;
 				} else if (isInviting(user, this.getNpcId(), tool)) {
@@ -387,7 +387,7 @@ public class MainIsland implements BearFair21Island {
 					invite(user, this.getNpcId(), tool);
 					return script;
 				} else if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.SEEKER, 25) <= 0) {
-					script.add("I seem to have lost the crimson button again. Can help me find it?");
+					script.add("I seem to have lost the crimson button again. Can help me find it? It's somewhere in this tent.");
 
 					if (!Seeker.isPlaying(user.getOnlinePlayer()))
 						Seeker.addPlayer(user.getOnlinePlayer());
