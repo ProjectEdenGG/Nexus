@@ -462,6 +462,7 @@ public class MainIsland implements BearFair21Island {
 					Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(user));
 
 					user.getNextStepNPCs().remove(this.getNpcId());
+					user.setQuestStage_BeeKeeper(QuestStage.COMPLETE);
 					userService.save(user);
 					return script;
 				}
