@@ -33,6 +33,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -173,7 +174,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		if (user.getQuestStage_SDU() == QuestStage.STEP_SIX && event.getItem() != null && event.getItem().getType() == Material.WRITTEN_BOOK) {
 			user.setQuestStage_SDU(QuestStage.STEP_SEVEN);
 			service.save(user);
-		} else if (block != null && block.getX() == 169 && block.getY() == 97 && block.getZ() == -175) { // lazy fixing
+		} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null && block.getX() == 169 && block.getY() == 97 && block.getZ() == -175) { // lazy fixing
 			Quests.giveItem(user, ((Chest) block.getRelative(0, -9, 0).getBlockData()).getBlockInventory().getItem(0));
 		}
 	}
