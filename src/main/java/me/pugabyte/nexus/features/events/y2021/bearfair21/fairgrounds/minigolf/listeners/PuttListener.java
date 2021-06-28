@@ -138,7 +138,7 @@ public class PuttListener implements Listener {
 							// Hit golf ball
 							dir.setY(0).normalize();
 
-							double power = player.getExp();
+							double power = MiniGolf.getPowerMap().getOrDefault(player.getUniqueId(), .0f);
 							if (power >= 0.90)
 								power = 1.0;
 							else if (power < 0.16)

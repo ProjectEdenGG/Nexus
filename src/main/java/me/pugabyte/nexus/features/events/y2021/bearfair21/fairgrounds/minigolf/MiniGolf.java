@@ -57,6 +57,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -200,6 +201,9 @@ public class MiniGolf {
 		});
 	}
 
+	@Getter
+	private static final Map<UUID, Float> powerMap = new HashMap<>();
+
 	private void playerTasks() {
 		// Kit
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
@@ -215,7 +219,6 @@ public class MiniGolf {
 		});
 
 		// Power
-		Map<MiniGolf21User, Float> powerMap = new HashMap<>();
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
 				if (!user.isOnline())
@@ -243,12 +246,12 @@ public class MiniGolf {
 
 				float amount = player.getPing() < 200 ? 0.04F : 0.02F;
 
-				float exp = powerMap.getOrDefault(user, .0F);
+				float exp = powerMap.getOrDefault(user.getUuid(), .0F);
 				exp += amount;
 				if (exp > 1.00) {
 					exp = 0.0F;
 				}
-				powerMap.put(user, exp);
+				powerMap.put(user.getUuid(), exp);
 
 				player.sendExperienceChange(exp, 0);
 			}

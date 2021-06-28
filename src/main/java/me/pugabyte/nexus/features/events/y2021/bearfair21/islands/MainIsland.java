@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.events.y2021.bearfair21.islands;
 
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.annotations.Region;
 import me.pugabyte.nexus.features.events.models.BearFairIsland.NPCClass;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -35,6 +36,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +52,11 @@ import static me.pugabyte.nexus.utils.ItemUtils.isSameHead;
 
 @Region("main")
 @NPCClass(MainNPCs.class)
-public class MainIsland implements BearFair21Island {
+public class MainIsland implements BearFair21Island, Listener {
+
+	public MainIsland() {
+		Nexus.registerListener(this);
+	}
 
 	private static final BearFair21UserService userService = new BearFair21UserService();
 	//
