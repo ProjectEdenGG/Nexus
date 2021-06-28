@@ -98,7 +98,7 @@ public class HalloweenIsland implements BearFair21Island {
 						Quests.removeItems(user, required);
 
 						int wait;
-						script.add("Aaah madres cookies!! I see you got them, mucho gracias!");
+						script.add("Aaah madres cookies!! I see you got them, muchos gracias!");
 						script.add("wait 60");
 						script.add("These smell so good. I can't wait to eat them all!");
 						script.add("wait 60");
