@@ -56,9 +56,19 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					for (Material material : MaterialTag.DYES.getValues()) {
-						add(new TradeBuilder()
+						if (material.equals(Material.BLUE_DYE)) {
+							add(new TradeBuilder()
+								.result(goldNugget.clone().amount(1))
+								.ingredient(new ItemBuilder(material).amount(32)));
+						} else if (material.equals(Material.GREEN_DYE)) {
+							add(new TradeBuilder()
+								.result(goldNugget.clone().amount(1))
+								.ingredient(new ItemBuilder(material).amount(4)));
+						} else {
+							add(new TradeBuilder()
 								.result(goldNugget.clone().amount(1))
 								.ingredient(new ItemBuilder(material).amount(8)));
+						}
 					}
 				}};
 			}
