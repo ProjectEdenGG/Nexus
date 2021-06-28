@@ -129,11 +129,11 @@ public class Mining implements Listener {
 			int level = 1;
 			if (meta.hasEnchants()) {
 				if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LOOT_BONUS_BLOCKS))) {
-					level = meta.getEnchants().get(Enchantment.LOOT_BONUS_BLOCKS) + 1;
+					level = meta.getEnchants().get(Enchantment.LOOT_BONUS_BLOCKS);
 				}
 			}
 
-			int amount = RandomUtils.randomInt(min, max) * level;
+			int amount = RandomUtils.randomInt(min, max) * RandomUtils.randomInt(1, level);
 			return new ItemBuilder(ingot).amount(amount).build();
 		}
 
