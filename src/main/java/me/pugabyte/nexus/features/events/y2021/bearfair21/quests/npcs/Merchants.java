@@ -123,6 +123,10 @@ public class Merchants {
 						.result(goldNugget.clone().amount(1))
 						.ingredient(new ItemBuilder(Material.COAL).amount(16)));
 					add(new TradeBuilder()
+						.result(new ItemBuilder(Material.NETHERITE_INGOT).amount(1))
+						.ingredient(goldBlock.clone().amount(1))
+						.ingredient(new ItemBuilder(Material.DIAMOND_PICKAXE).amount(1)));
+					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.STONE_PICKAXE).amount(1))
 						.ingredient(goldIngot.clone().amount(1))
 						.ingredient(new ItemBuilder(Material.WOODEN_PICKAXE).amount(1)));
@@ -130,14 +134,6 @@ public class Merchants {
 						.result(new ItemBuilder(Material.STONE_AXE).amount(1))
 						.ingredient(goldIngot.clone().amount(1))
 						.ingredient(new ItemBuilder(Material.WOODEN_AXE).amount(1)));
-					add(new TradeBuilder()
-						.result(new ItemBuilder(Material.NETHERITE_PICKAXE).amount(1))
-						.ingredient(goldBlock.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.DIAMOND_PICKAXE).amount(1)));
-					add(new TradeBuilder()
-						.result(new ItemBuilder(Material.NETHERITE_AXE).amount(1))
-						.ingredient(goldBlock.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.DIAMOND_AXE).amount(1)));
 				}};
 			}
 		},
