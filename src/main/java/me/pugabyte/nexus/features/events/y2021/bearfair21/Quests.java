@@ -444,12 +444,15 @@ public class Quests implements Listener {
 		TitleUtils.sendSubtitle(player, "&cYou died.", 40);
 
 		player.setFallDistance(0);
-		player.setHealth(20);
-		player.setFireTicks(0);
-		if (player.getFoodLevel() < 2)
-			player.setFoodLevel(8);
-
 		player.teleport(BearFair21.getShipSpawnLoc());
+
+		Tasks.wait(1, () -> {
+			player.setFireTicks(0);
+			player.setHealth(20);
+			if (player.getFoodLevel() < 2)
+				player.setFoodLevel(8);
+		});
+
 	}
 
 	@EventHandler
