@@ -241,19 +241,19 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3))
-						.ingredient(goldBlock.clone().amount(2)));
+						.ingredient(goldBlock.clone().amount(3)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5))
 						.ingredient(goldBlock.clone().amount(2)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.FORTUNE, 3))
-						.ingredient(goldBlock.clone().amount(2)));
+						.ingredient(goldBlock.clone().amount(3)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LURE, 3))
 						.ingredient(goldBlock.clone().amount(2)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchant.LUCK_OF_THE_SEA, 3))
-						.ingredient(goldBlock.clone().amount(2)));
+						.ingredient(goldBlock.clone().amount(3)));
 				}};
 			}
 		},
