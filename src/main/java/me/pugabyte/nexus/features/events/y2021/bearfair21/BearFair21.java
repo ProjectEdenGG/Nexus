@@ -65,8 +65,7 @@ public class BearFair21 implements Listener {
 	private static final BearFair21UserService userService = new BearFair21UserService();
 
 	/**
-	 * TODO BF21: When BearFair21 is over:
-	 * - disable: enableRides, enableQuests, enableWarp, enableEdit and giveDailyPoints
+	 * TODO BF21: When BearFair21 is over disable: GIVE_REWARDS
 	 */
 
 	@Getter

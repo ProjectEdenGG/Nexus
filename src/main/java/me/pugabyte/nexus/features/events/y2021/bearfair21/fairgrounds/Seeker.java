@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-// TODO BF21: setup npc to start the game
 public class Seeker implements Listener {
 	private static final World world = BearFair21.getWorld();
 	private static final Map<Location, BlockFace> locationsMap = new HashMap<>() {{

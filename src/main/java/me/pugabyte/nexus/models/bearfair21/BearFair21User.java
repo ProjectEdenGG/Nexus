@@ -53,7 +53,6 @@ public class BearFair21User implements PlayerOwnedObject {
 		ContentCategory.SPEAKER_PART_SPEAKER_HEAD
 	));
 	private Set<Integer> metNPCs = new HashSet<>();
-	// TODO BF21: Set this system up
 	private Set<Integer> nextStepNPCs = new HashSet<>(Set.of(
 		ORGANIZER.getId(),        // Intro
 		MAYOR.getId(),            // Main

@@ -257,7 +257,6 @@ public class PuttListener implements Listener {
 		return color + result;
 	}
 
-	// TODO: better way?
 	public boolean isInteracting(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getPlayer().isSneaking())
 			return false;

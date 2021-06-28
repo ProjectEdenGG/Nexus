@@ -301,17 +301,7 @@ public class MinigameNightIsland implements BearFair21Island {
 						}
 					}
 
-					case STARTED -> {
-						script.add("TODO - Reminder");
-					}
-
-					case COMPLETE -> {
-						script.add("TODO - Completed");
-					}
-
-					default -> {
-						script.add("TODO - Hello");
-					}
+					default -> script.add(Quests.getHello());
 				}
 
 				return script;
