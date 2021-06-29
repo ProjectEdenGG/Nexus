@@ -39,6 +39,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -357,14 +358,15 @@ public class BearFair21 implements Listener {
 			send("", player);
 
 			Tasks.wait(Time.SECOND.x(4), () -> {
+				boolean firstVisit = user.isFirstVisit();
+				user.setFirstVisit(false);
+				userService.save(user);
 				player.teleport(shipSpawnLoc);
 				send("", player);
 				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
 				send("", player);
-				if (user.isFirstVisit()) {
+				if (firstVisit) {
 					user.getOnlinePlayer().getInventory().setContents(new ItemStack[0]);
-					user.setFirstVisit(false);
-					userService.save(user);
 
 					Tasks.wait(Time.SECOND.x(3), () -> {
 						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair21", player);
@@ -373,6 +375,22 @@ public class BearFair21 implements Listener {
 				}
 			});
 		});
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		final boolean notFromBearFair = !event.getFrom().getWorld().equals(getWorld());
+		final boolean toBearFair = event.getTo().getWorld().equals(getWorld());
+
+		if (!(notFromBearFair && toBearFair))
+			return;
+
+		BearFair21User user = userService.get(event.getPlayer());
+		if (!user.isFirstVisit())
+			return;
+
+		event.setCancelled(true);
+		user.sendMessage(PREFIX + "To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 	}
 
 }
