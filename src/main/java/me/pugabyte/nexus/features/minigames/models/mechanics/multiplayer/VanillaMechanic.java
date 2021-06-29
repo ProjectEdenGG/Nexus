@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
@@ -71,6 +72,7 @@ public interface VanillaMechanic<T> {
 			if (!(entity instanceof HumanEntity))
 				entity.remove();
 		});
+		getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
 
 		int worldRadius = getWorldDiameter();
 		setWorldBorder(RandomUtils.randomInt(-worldRadius, worldRadius), RandomUtils.randomInt(-worldRadius, worldRadius));

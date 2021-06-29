@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import eden.utils.TimeUtils;
 import eden.utils.TimeUtils.Timespan;
 import lombok.Getter;
@@ -18,8 +19,11 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.MaterialUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
+import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
@@ -56,32 +60,46 @@ public class UHC extends TeamlessVanillaMechanic {
 
 	private final int worldDiameter = 4001;
 	private final String worldName = "uhc";
-	private static final int shrinksAt = TimeUtils.Time.MINUTE.x(40);
+	private static final long shrinksAtMinutes = 40;
+	private static final int shrinksAt = TimeUtils.Time.MINUTE.x(shrinksAtMinutes);
+	private static final Duration shrinksAtDuration = TimeUtils.Time.MINUTE.duration(shrinksAtMinutes);
+	private static final int warnMinutes = 3;
+	private static final int warnAt = shrinksAt - TimeUtils.Time.MINUTE.x(warnMinutes);
+	private static final int shrinksAtSecondsLeft = (int) (shrinksAt/10f);
+	public static final int finalDiameter = 49;
+	private static final String diameterString = finalDiameter + "x" + finalDiameter;
+
+	private final void announce(Audience to, ComponentLike message) {
+		Component msg = message.asComponent();
+		Title title = Title.title(Component.empty(), msg, AdventureUtils.BASIC_TIMES);
+		to.sendMessage(JsonBuilder.fromPrefix("UHC", msg));
+		to.showTitle(title);
+	}
 
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		final Match match = event.getMatch();
 		match.<UHCMatchData>getMatchData().setStartTime(LocalDateTime.now());
+		match.getTasks().wait(warnAt, () -> announce(match, new JsonBuilder("&cThe border will begin shrinking in &e"+warnMinutes+" minutes")));
 		match.getTasks().wait(shrinksAt, () -> {
-			getWorld().getWorldBorder().setSize(75, Duration.ofMinutes(20).toSeconds());
-			Component msg = JsonBuilder.fromPrefix("UHC").next("The border is now shrinking to &e75x75&r!").build();
-			Title title = Title.title(Component.empty(), msg, AdventureUtils.BASIC_TIMES);
-			match.sendMessage(msg);
-			match.showTitle(title);
+			getWorld().getWorldBorder().setSize(finalDiameter, Duration.ofMinutes(17).toSeconds());
+			getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+			announce(match, new JsonBuilder("&cThe border is now shrinking to &e"+diameterString));
 		});
 	}
 
 	@Override
 	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
 		super.onDisplayTimer(event);
-		int shrinkingIn = event.getSeconds() - (int) Math.ceil(shrinksAt/20f);
-		String wbText = shrinkingIn < 0
-			? "&cWorld Border is shrinking to &6100x100"
-			: "World Border begins shrinking in &e" + Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plusSeconds(shrinkingIn)).format();
+		Timespan timespan = Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plus(shrinksAtDuration));
+		String timespanText = timespan.format();
+		String wbText = timespanText.startsWith("-")
+			? "&cWorld Border is shrinking to &6"+diameterString // TODO: should display a different message after border finishes shrinking
+			: "World Border shrinks in &e" + Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plus(shrinksAtDuration)).format();
 		event.setContents(new JsonBuilder(event.getContents())
 			.next(" | Y: &e" + (int) Math.floor(event.getMinigamer().getPlayer().getLocation().getY()))
-			.next("&f | ").next(wbText));
+			.next(" | ").next(wbText));
 	}
 
 	@Override
@@ -125,6 +143,12 @@ public class UHC extends TeamlessVanillaMechanic {
 			event.setCancelled(true);
 	}
 
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onExperience(PlayerPickupExperienceEvent event) {
+		if (event.getPlayer().getWorld().getName().equals(worldName))
+			event.getExperienceOrb().setExperience(event.getExperienceOrb().getExperience() * 2);
+	}
+
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlaceBlock(BlockPlaceEvent event) {
 		// TODO: replace this with damaging the player if they go too high (after 5-10 seconds)
@@ -158,7 +182,9 @@ public class UHC extends TeamlessVanillaMechanic {
 				UHCMatchData matchData = match.getMatchData();
 				String message = "**UHC** " + TimeUtils.shortDateTimeFormat(matchData.getStartTime()) + nl;
 
-				message += "Alive: " + match.getAliveMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")) + nl + nl;
+				message += "Alive: " + match.getAliveMinigamers().stream()
+					.map(minigamer -> minigamer.getNickname() + " (" + Math.round(minigamer.getPlayer().getHealth()*100f)/200f + " \u2764)")
+					.collect(Collectors.joining(", ")) + nl + nl;
 
 				message += "Scores: ```";
 				for (Minigamer minigamer : match.getAllMinigamers())
