@@ -98,7 +98,7 @@ public class Votes extends Feature implements Listener {
 			return;
 
 		Setting reminders = new SettingService().get(vote.getUuid(), "vote-reminders");
-		if (reminders.getValue() != null && reminders.getBoolean())
+		if (reminders.getValue() != null && !reminders.getBoolean())
 			return;
 
 		if (!new CooldownService().check(UUID.fromString(vote.getUuid()), "vote-reminder", Time.MINUTE.x(10)))
