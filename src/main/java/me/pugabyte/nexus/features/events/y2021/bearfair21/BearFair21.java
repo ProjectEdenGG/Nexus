@@ -366,7 +366,7 @@ public class BearFair21 implements Listener {
 				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
 				send("", player);
 				if (firstVisit) {
-					user.getOnlinePlayer().getInventory().setContents(new ItemStack[0]);
+//					user.getOnlinePlayer().getInventory().setContents(new ItemStack[0]);
 
 					Tasks.wait(Time.SECOND.x(3), () -> {
 						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair21", player);
