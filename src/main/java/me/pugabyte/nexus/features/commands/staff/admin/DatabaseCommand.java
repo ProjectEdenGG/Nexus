@@ -29,7 +29,6 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@Path("count <service>")
 	<T extends PlayerOwnedObject> void count(MongoService<T> service) {
-		// TODO search for non quoted commas (regex), newline
 		send(service.getAll().size());
 	}
 
