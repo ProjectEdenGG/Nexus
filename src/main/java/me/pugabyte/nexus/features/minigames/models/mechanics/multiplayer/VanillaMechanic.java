@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import me.pugabyte.nexus.features.minigames.models.Match;
+import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -33,14 +34,6 @@ public interface VanillaMechanic<T> {
 
 	@NotNull
 	String getWorldName();
-
-	default boolean canOpenInventoryBlocks() {
-		return true;
-	}
-
-	default boolean canDropItem(@NotNull ItemStack item) {
-		return true;
-	}
 
 	void spreadPlayers(@NotNull Match match);
 
@@ -86,5 +79,13 @@ public interface VanillaMechanic<T> {
 
 	default void resetBorder() {
 		getWorld().getWorldBorder().reset();
+	}
+
+	default void dropItems(Minigamer minigamer) {
+		ItemStack[] contents = minigamer.getPlayer().getInventory().getContents();
+		for (ItemStack item : contents) {
+			if (item != null)
+				minigamer.getPlayer().getWorld().dropItemNaturally(minigamer.getPlayer().getLocation(), item);
+		}
 	}
 }

@@ -76,16 +76,12 @@ public class UHC extends TeamlessVanillaMechanic {
 	}
 
 	@Override
-	public void onDeath(@NotNull Minigamer victim) {
-		super.onDeath(victim);
-		victim.getMatch().<UHCMatchData>getMatchData().died(victim);
-	}
-
-	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		super.onDeath(event);
 		if (event.getAttacker() != null)
 			event.getAttacker().scored();
+		event.getMinigamer().getMatch().<UHCMatchData>getMatchData().died(event.getMinigamer());
+		dropItems(event.getMinigamer());
+		super.onDeath(event);
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

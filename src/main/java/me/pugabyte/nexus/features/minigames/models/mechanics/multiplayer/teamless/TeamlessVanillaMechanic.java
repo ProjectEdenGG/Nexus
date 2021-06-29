@@ -11,6 +11,7 @@ import me.pugabyte.nexus.utils.TimeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -46,6 +47,16 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	@Override
 	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
+	}
+
+	@Override
+	public boolean canOpenInventoryBlocks() {
+		return true;
+	}
+
+	@Override
+	public boolean canDropItem(@NotNull ItemStack item) {
+		return true;
 	}
 
 	@Override

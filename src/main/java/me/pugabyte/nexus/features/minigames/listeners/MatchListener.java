@@ -18,7 +18,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
-import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -63,7 +62,6 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (minigamer.getMatch() == null) return;
 		if (event.getInventory().getLocation() == null) return;
-		if (minigamer.getMatch().getMechanic() instanceof VanillaMechanic) return;
 		if (minigamer.getMatch().getMechanic().canOpenInventoryBlocks()) return;
 		event.setCancelled(true);
 	}
@@ -122,7 +120,6 @@ public class MatchListener implements Listener {
 		Player player = event.getPlayer();
 		Minigamer minigamer = PlayerManager.get(player);
 		if (!minigamer.isPlaying()) return;
-		if (minigamer.getMatch().getMechanic() instanceof VanillaMechanic) return;
 
 		minigamer.getMatch().getMechanic().onPlayerInteract(minigamer, event);
 	}
@@ -132,7 +129,6 @@ public class MatchListener implements Listener {
 		if (!(event.getWhoClicked() instanceof Player)) return;
 		Minigamer minigamer = PlayerManager.get(event.getWhoClicked());
 		if (!minigamer.isPlaying()) return;
-		if (minigamer.getMatch().getMechanic() instanceof VanillaMechanic) return;
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
 		ItemStack item = event.getCurrentItem();
 
@@ -148,7 +144,6 @@ public class MatchListener implements Listener {
 	public void onItemDrop(PlayerDropItemEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying()) return;
-		if (minigamer.getMatch().getMechanic() instanceof VanillaMechanic) return;
 
 		ItemStack item = event.getItemDrop().getItemStack();
 		if (!minigamer.getMatch().getMechanic().canDropItem(item))

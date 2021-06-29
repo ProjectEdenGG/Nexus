@@ -68,6 +68,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 			}
 		}
 
+		dropItems(event.getMinigamer());
 		Tasks.wait(1, () -> super.onDeath(event));
 	}
 
