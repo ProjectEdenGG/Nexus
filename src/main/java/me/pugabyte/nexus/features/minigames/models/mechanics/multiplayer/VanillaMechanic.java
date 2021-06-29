@@ -6,13 +6,14 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 import static me.pugabyte.nexus.utils.WorldUtils.getRandomLocationInBorder;
 
@@ -33,10 +34,6 @@ public interface VanillaMechanic<T> {
 	@NotNull
 	String getWorldName();
 
-	default @NotNull GameMode getGameMode() {
-		return GameMode.SURVIVAL;
-	}
-
 	default boolean canOpenInventoryBlocks() {
 		return true;
 	}
@@ -52,13 +49,13 @@ public interface VanillaMechanic<T> {
 		PaperLib.getChunkAtAsync(random, true).thenRun(() -> {
 			Location location = getWorld().getHighestBlockAt(random).getLocation();
 			if (location.getBlock().getType().isSolid())
-				onRandomTeleport(match, t, location);
+				onRandomTeleport(match, t, location.add(0, 1, 0));
 			else
 				randomTeleport(match, t);
 		});
 	}
 
-	void onRandomTeleport(@NotNull Match match, @NotNull T t, @NotNull Location location);
+	@NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull T t, @NotNull Location location);
 
 	int getWorldRadius();
 

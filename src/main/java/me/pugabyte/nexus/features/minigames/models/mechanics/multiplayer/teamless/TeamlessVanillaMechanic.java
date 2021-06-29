@@ -8,11 +8,15 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implements VanillaMechanic<Minigamer> {
 	@Override
@@ -40,18 +44,29 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	}
 
 	@Override
+	public @NotNull GameMode getGameMode() {
+		return GameMode.SURVIVAL;
+	}
+
+	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		for (Minigamer minigamer : match.getMinigamers()) {
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.Time.SECOND.x(20), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.Time.SECOND.x(5), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.Time.SECOND.x(5), 255, false, false));
-			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
+			Player player = minigamer.getPlayer();
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.Time.SECOND.x(20), 10, false, false));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.Time.SECOND.x(5), 10, false, false));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.Time.SECOND.x(5), 255, false, false));
+			player.setVelocity(new Vector(0, 0, 0));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, 254, false, false));
 			Tasks.async(() -> randomTeleport(match, minigamer));
 		}
 	}
 
 	@Override
-	public void onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
-		minigamer.teleport(location);
+	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+		return minigamer.teleport(location).thenRun(() -> {
+			Player player = minigamer.getPlayer();
+			player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 400, 254, false, false));
+		});
 	}
 }

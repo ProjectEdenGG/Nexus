@@ -27,6 +27,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static org.bukkit.Material.CRAFTING_TABLE;
 
@@ -79,8 +81,8 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	@Override
-	public void onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
-		minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
+	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+		return minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
 	}
 
 	@EventHandler

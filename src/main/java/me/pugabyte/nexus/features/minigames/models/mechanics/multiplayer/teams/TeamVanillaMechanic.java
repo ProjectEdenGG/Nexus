@@ -9,11 +9,14 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TimeUtils;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public abstract class TeamVanillaMechanic extends TeamMechanic implements VanillaMechanic<Team> {
 	@Override
@@ -41,6 +44,11 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	}
 
 	@Override
+	public @NotNull GameMode getGameMode() {
+		return GameMode.SURVIVAL;
+	}
+
+	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		match.getMinigamers().forEach(minigamer -> {
 			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.Time.SECOND.x(20), 10, false, false));
@@ -52,7 +60,8 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	}
 
 	@Override
-	public void onRandomTeleport(@NotNull Match match, @NotNull Team team, @NotNull Location location) {
-		team.getMinigamers(match).forEach(minigamer -> minigamer.teleport(location));
+	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Team team, @NotNull Location location) {
+		CompletableFuture<?>[] results = team.getMinigamers(match).stream().map(minigamer -> minigamer.teleport(location)).toArray(CompletableFuture[]::new);
+		return CompletableFuture.allOf(results);
 	}
 }
