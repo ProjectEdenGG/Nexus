@@ -49,6 +49,7 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownExce
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -1078,13 +1079,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 		return tabCompletePlayer(value);
 	}
 
-	private static final Map<String, MongoService> services = new HashMap<>();
+	private static final Map<String, MongoService<? extends PlayerOwnedObject>> services = new HashMap<>();
 
 	static {
-		Reflections reflections = new Reflections(Nexus.class.getPackage().getName() + ".models");
+		final String packageName = Nexus.class.getPackage().getName() + ".models";
+		Reflections reflections = new Reflections(packageName);
 		for (Class<? extends MongoService> service : reflections.getSubTypesOf(MongoService.class)) {
 			try {
-				services.put(service.getSimpleName(), service.newInstance());
+				services.put(service.getSimpleName().toLowerCase(), service.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -1092,10 +1094,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@ConverterFor(MongoService.class)
-	MongoService convertToMongoService(String value) {
-		if (!services.containsKey(value))
+	MongoService<? extends PlayerOwnedObject> convertToMongoService(String value) {
+		if (!services.containsKey(value.toLowerCase()))
 			error("Service &e" + value + " &cnot found");
-		return services.get(value);
+		return services.get(value.toLowerCase());
 	}
 
 	@TabCompleterFor(MongoService.class)
