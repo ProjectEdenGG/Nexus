@@ -287,6 +287,8 @@ public class StringUtils extends eden.utils.StringUtils {
 			world = world.replace("bskyblock_world", "skyblock");
 		else if (world.equals("bearfair21"))
 			return "Bear Fair 21";
+		else if (world.equals("uhc"))
+			return "UHC";
 		return camelCase(world);
 	}
 

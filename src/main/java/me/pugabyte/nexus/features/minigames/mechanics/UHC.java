@@ -1,10 +1,15 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
 import eden.utils.TimeUtils;
+import eden.utils.TimeUtils.Timespan;
 import lombok.Getter;
+import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import me.pugabyte.nexus.features.minigames.models.matchdata.UHCMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.AdventureUtils;
@@ -27,6 +32,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 @Getter
 public class UHC extends TeamlessVanillaMechanic {
@@ -71,7 +78,14 @@ public class UHC extends TeamlessVanillaMechanic {
 	@Override
 	public void onDeath(@NotNull Minigamer victim) {
 		super.onDeath(victim);
-		victim.getPlayer().setAllowFlight(true);
+		victim.getMatch().<UHCMatchData>getMatchData().died(victim);
+	}
+
+	@Override
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
+		super.onDeath(event);
+		if (event.getAttacker() != null)
+			event.getAttacker().scored();
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -125,4 +139,40 @@ public class UHC extends TeamlessVanillaMechanic {
 			return;
 		}
 	}
+
+	@Override
+	@SuppressWarnings("StringConcatenationInLoop")
+	public void onEnd(@NotNull MatchEndEvent event) {
+		final Match match = event.getMatch();
+		if (match.isStarted())
+			try {
+				if (!LocalDate.now().isEqual(LocalDate.of(2021, 6, 29)))
+					return;
+
+				final String nl = System.lineSeparator();
+				UHCMatchData matchData = match.getMatchData();
+				String message = "**UHC** " + TimeUtils.shortDateTimeFormat(matchData.getStartTime()) + nl;
+
+				message += "Alive: " + match.getAliveMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")) + nl + nl;
+
+				message += "Scores: ```";
+				for (Minigamer minigamer : match.getAllMinigamers())
+					message += minigamer.getNickname() + ": " + minigamer.getScore() + nl;
+				message += "```" + nl;
+
+				message += "Time Alive: ```";
+				for (Minigamer minigamer : match.getAllMinigamers())
+					if (matchData.getTimeAlive().containsKey(minigamer.getUniqueId()))
+						message += minigamer.getNickname() + ": " + Timespan.of(matchData.getTimeAlive().get(minigamer.getUniqueId())).format() + nl;
+				message += "```";
+
+				System.out.println(message);
+				Discord.adminLog(message);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+		super.onEnd(event);
+	}
+
 }
