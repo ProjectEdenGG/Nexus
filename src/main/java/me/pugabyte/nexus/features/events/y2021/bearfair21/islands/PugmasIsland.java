@@ -449,9 +449,14 @@ public class PugmasIsland implements BearFair21Island {
 		}
 
 		Countdown countdown = Countdown.builder()
-				.duration(Time.MINUTE.x(4))
-				.onSecond(i -> ActionBarUtils.sendActionBar(user.getPlayer(),
+			.duration(Time.MINUTE.x(4))
+			.onSecond(i -> {
+				if (user.isOnline()) {
+					ActionBarUtils.sendActionBar(user.getPlayer(),
 						"&3Time Left: &e" + Timespan.of(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)"))
+					;
+				}
+			})
 				.onComplete(() -> endChallenge(user, false))
 				.start();
 
