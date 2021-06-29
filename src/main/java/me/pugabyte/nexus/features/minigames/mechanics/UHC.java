@@ -78,7 +78,7 @@ public class UHC extends TeamlessVanillaMechanic {
 		int shrinkingIn = event.getSeconds() - (int) Math.ceil(shrinksAt/20f);
 		String wbText = shrinkingIn < 0
 			? "&cWorld Border is shrinking to &6100x100"
-			: "World Border begins shrinking in &e" + Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plusSeconds(shrinkingIn));
+			: "World Border begins shrinking in &e" + Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plusSeconds(shrinkingIn)).format();
 		event.setContents(new JsonBuilder(event.getContents())
 			.next(" | Y: &e" + (int) Math.floor(event.getMinigamer().getPlayer().getLocation().getY()))
 			.next("&f | ").next(wbText));
