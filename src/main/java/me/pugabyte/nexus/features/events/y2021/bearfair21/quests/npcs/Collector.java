@@ -56,7 +56,10 @@ public class Collector {
 			// Fishing Loot
 			add(new TradeBuilder()
 				.result(Merchants.goldNugget.clone().amount(FishingLoot.TIGER_TROUT.getGold() * 2))
-					.ingredient(FishingLoot.TIGER_TROUT.getItem()));
+				.ingredient(FishingLoot.TIGER_TROUT.getItem()));
+			add(new TradeBuilder()
+				.result(Merchants.goldNugget.clone().amount(FishingLoot.SEA_CUCUMBER.getGold() * 2))
+				.ingredient(FishingLoot.SEA_CUCUMBER.getItem()));
 			add(new TradeBuilder()
 				.result(Merchants.goldNugget.clone().amount(FishingLoot.GLACIERFISH.getGold() * 2))
 					.ingredient(FishingLoot.GLACIERFISH.getItem()));
