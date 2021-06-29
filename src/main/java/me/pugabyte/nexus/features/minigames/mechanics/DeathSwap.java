@@ -41,7 +41,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 	}
 
 	@Getter
-	public final int worldRadius = 2000;
+	public final int worldDiameter = 2000;
 	@Getter
 	public final String worldName = "deathswap";
 

@@ -507,7 +507,7 @@ public class Match implements ForwardingAudience {
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 						match.getMinigamers().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.of(time).format()));
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.of(time).format()), time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());
 						});

@@ -53,7 +53,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	public final int matchRadius = 3000;
 	@Getter
-	public final int worldRadius = 7000;
+	public final int worldDiameter = 7000;
 	@Getter
 	public final String worldName = "bingo";
 

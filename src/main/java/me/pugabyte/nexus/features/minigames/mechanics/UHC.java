@@ -9,6 +9,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.UHCMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import me.pugabyte.nexus.utils.ActionBarUtils;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Getter
@@ -52,27 +54,34 @@ public class UHC extends TeamlessVanillaMechanic {
 		return "Be the last person alive as you fight other players to death and escape the world border, all without regenerating health";
 	}
 
-	private final int worldRadius = 7000;
+	private final int worldDiameter = 4001;
 	private final String worldName = "uhc";
+	private static final int shrinksAt = TimeUtils.Time.MINUTE.x(40);
 
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		final Match match = event.getMatch();
-		match.getTasks().wait(TimeUtils.Time.MINUTE.x(40), () -> {
-			getWorld().getWorldBorder().setSize(70, Duration.ofMinutes(10).toSeconds());
-			Component msg = JsonBuilder.fromPrefix("UHC").next("The border is now shrinking to &e70x70&r!").build();
+		match.<UHCMatchData>getMatchData().setStartTime(LocalDateTime.now());
+		match.getTasks().wait(shrinksAt, () -> {
+			getWorld().getWorldBorder().setSize(75, Duration.ofMinutes(20).toSeconds());
+			Component msg = JsonBuilder.fromPrefix("UHC").next("The border is now shrinking to &e75x75&r!").build();
 			Title title = Title.title(Component.empty(), msg, AdventureUtils.BASIC_TIMES);
 			match.sendMessage(msg);
 			match.showTitle(title);
 		});
-		match.getTasks().wait(TimeUtils.Time.MINUTE.x(55), () -> {
-			getWorld().getWorldBorder().setSize(6, Duration.ofMinutes(5).toSeconds());
-			Component msg = JsonBuilder.fromPrefix("UHC").next("The border is now shrinking to &e6x6&r!").build();
-			Title title = Title.title(Component.empty(), msg, AdventureUtils.BASIC_TIMES);
-			match.sendMessage(msg);
-			match.showTitle(title);
-		});
+	}
+
+	@Override
+	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
+		super.onDisplayTimer(event);
+		int shrinkingIn = event.getSeconds() - (int) Math.ceil(shrinksAt/20f);
+		String wbText = shrinkingIn < 0
+			? "&cWorld Border is shrinking to &6100x100"
+			: "World Border begins shrinking in &e" + Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plusSeconds(shrinkingIn));
+		event.setContents(new JsonBuilder(event.getContents())
+			.next(" | Y: &e" + (int) Math.floor(event.getMinigamer().getPlayer().getLocation().getY()))
+			.next("&f | ").next(wbText));
 	}
 
 	@Override

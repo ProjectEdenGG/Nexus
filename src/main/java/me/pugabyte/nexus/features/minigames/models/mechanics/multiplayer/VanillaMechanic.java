@@ -50,7 +50,7 @@ public interface VanillaMechanic<T> {
 
 	@NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull T t, @NotNull Location location);
 
-	int getWorldRadius();
+	int getWorldDiameter();
 
 	default void setWorldBorder(double x, double z) {
 		setWorldBorder(new Location(getWorld(), x, 0, z));
@@ -59,7 +59,8 @@ public interface VanillaMechanic<T> {
 	default void setWorldBorder(@NotNull Location center) {
 		WorldBorder border = getWorld().getWorldBorder();
 		border.setCenter(center);
-		border.setSize(getWorldRadius());
+		getWorld().setSpawnLocation(center);
+		border.setSize(getWorldDiameter());
 		border.setDamageAmount(0.2);
 		border.setWarningDistance(20);
 	}
@@ -71,7 +72,7 @@ public interface VanillaMechanic<T> {
 				entity.remove();
 		});
 
-		int worldRadius = getWorldRadius();
+		int worldRadius = getWorldDiameter();
 		setWorldBorder(RandomUtils.randomInt(-worldRadius, worldRadius), RandomUtils.randomInt(-worldRadius, worldRadius));
 
 		event.getMatch().getTasks().wait(1, () -> spreadPlayers(event.getMatch()));
