@@ -80,7 +80,6 @@ public class BearFair21Command extends CustomCommand {
 		super(event);
 	}
 
-	@Permission("group.staff")
 	@Path
 	void warp() {
 		runCommand("bearfair21warp");
