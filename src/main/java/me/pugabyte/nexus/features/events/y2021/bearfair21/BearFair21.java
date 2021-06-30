@@ -379,10 +379,10 @@ public class BearFair21 implements Listener {
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		final boolean notFromBearFair = !event.getFrom().getWorld().equals(getWorld());
+		final boolean fromBearFair = event.getFrom().getWorld().equals(getWorld());
 		final boolean toBearFair = event.getTo().getWorld().equals(getWorld());
 
-		if (!(notFromBearFair && toBearFair))
+		if (fromBearFair || !toBearFair)
 			return;
 
 		BearFair21User user = userService.get(event.getPlayer());
