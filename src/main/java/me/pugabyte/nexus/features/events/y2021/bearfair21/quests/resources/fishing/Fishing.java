@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static me.pugabyte.nexus.utils.ItemUtils.getTool;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 public class Fishing implements Listener {
 
@@ -87,7 +88,10 @@ public class Fishing implements Listener {
 		Entity caught = event.getCaught();
 		if (!(caught instanceof Item item)) return;
 
-		ItemStack tool = player.getInventory().getItemInMainHand();
+		ItemStack tool = ItemUtils.getTool(player, Material.FISHING_ROD);
+		if (isNullOrAir(tool))
+			return;
+
 		ItemMeta meta = tool.getItemMeta();
 
 		int loops = 0;
