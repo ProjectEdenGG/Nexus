@@ -256,7 +256,7 @@ public class SerializationUtils {
 			);
 		}
 
-		public static class LocationSerializer implements JsonSerializer<Location> {
+		public static class LocationGsonSerializer implements JsonSerializer<Location> {
 
 			@Override
 			public JsonElement serialize(Location location, Type type, JsonSerializationContext context) {

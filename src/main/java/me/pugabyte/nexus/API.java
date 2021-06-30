@@ -10,7 +10,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ColorConverter
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.QuestConverter;
-import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
+import me.pugabyte.nexus.utils.SerializationUtils.JSON.LocationGsonSerializer;
 import org.bukkit.Location;
 
 import java.util.Arrays;
@@ -54,7 +54,7 @@ public class API extends EdenAPI {
 
 	@Override
 	public GsonBuilder getPrettyPrinter() {
-		return super.getPrettyPrinter().registerTypeAdapter(Location.class, new LocationSerializer());
+		return super.getPrettyPrinter().registerTypeAdapter(Location.class, new LocationGsonSerializer());
 	}
 
 }
