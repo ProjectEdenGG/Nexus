@@ -305,6 +305,10 @@ public class StringUtils extends eden.utils.StringUtils {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 
+	public static String getShortishLocationString(Location loc) {
+		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + df.format(loc.getYaw()) + " " + df.format(loc.getPitch()) + " " + loc.getWorld().getName();
+	}
+
 	public static String getCoordinateString(Location loc) {
 		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ();
 	}

@@ -3,7 +3,7 @@ package me.pugabyte.nexus.utils;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.bukkit.Bukkit;
@@ -260,14 +260,7 @@ public class SerializationUtils {
 
 			@Override
 			public JsonElement serialize(Location location, Type type, JsonSerializationContext context) {
-				final JsonObject json = new JsonObject();
-				json.addProperty("world", location.getWorld().getName());
-				json.addProperty("x", location.getX());
-				json.addProperty("y", location.getY());
-				json.addProperty("z", location.getZ());
-				json.addProperty("yaw", location.getYaw());
-				json.addProperty("pitch", location.getPitch());
-				return json;
+				return new JsonPrimitive(StringUtils.getShortishLocationString(location));
 			}
 
 		}
