@@ -67,7 +67,7 @@ public class DatabaseCommand extends CustomCommand {
 		final BiFunction<MongoService<? extends PlayerOwnedObject>, String, JsonBuilder> formatter = (service, index) ->
 			json("&3" + index + " &e" + name(service) + " &7- " + counts.get(service));
 
-		paginate(Utils.sortByValue(counts).keySet(), formatter, "/database count all", page);
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database count all", page);
 	}
 
 	@Async
@@ -89,7 +89,7 @@ public class DatabaseCommand extends CustomCommand {
 		final BiFunction<MongoService<? extends PlayerOwnedObject>, String, JsonBuilder> formatter = (service, index) ->
 			json("&e" + name(service) + " &7- " + service.getCache().size());
 
-		paginate(Utils.sortByValue(counts).keySet(), formatter, "/database count all cache", page);
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database count all cache", page);
 	}
 
 	@Async
