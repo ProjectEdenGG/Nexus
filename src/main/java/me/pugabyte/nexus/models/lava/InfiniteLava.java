@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import me.pugabyte.nexus.utils.WorldGroup;
 
 import java.util.UUID;
 
@@ -27,5 +28,15 @@ public class InfiniteLava implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = true;
+
+	public boolean isEnabled() {
+		if (!isOnline())
+			return false;
+
+		if (getWorldGroup() == WorldGroup.MINIGAMES)
+			return false;
+
+		return enabled;
+	}
 
 }
