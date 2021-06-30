@@ -30,11 +30,13 @@ public class InfiniteLava implements PlayerOwnedObject {
 	private UUID uuid;
 	private boolean enabled = true;
 
+	public static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES, WorldGroup.SKYBLOCK);
+
 	public boolean isEnabled() {
 		if (!isOnline())
 			return false;
 
-		if (List.of(WorldGroup.MINIGAMES, WorldGroup.SKYBLOCK).contains(getWorldGroup()))
+		if (DISABLED_WORLDS.contains(getWorldGroup()))
 			return false;
 
 		return enabled;
