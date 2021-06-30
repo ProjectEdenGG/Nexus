@@ -158,24 +158,7 @@ public class BearFair21Command extends CustomCommand {
 		}
 	}
 
-	// Database
-
-	@Confirm
-	@Path("database delete [player]")
-	@Permission("group.admin")
-	public void databaseDelete(@Arg("self") Player player) {
-		BearFair21User user = userService.get(player);
-		user.cancelActiveTask();
-//		Arrays.stream(ContentCategory.values()).forEach(category -> ClientsideContentManager.removeCategory(user, category));
-		userService.delete(user);
-		send("deleted bearfair21 user: " + player.getName());
-	}
-
-	@Path("database debug [player]")
-	@Permission("group.admin")
-	public void databaseDebug(@Arg("self") Player player) {
-		send(userService.get(player).toPrettyString());
-	}
+	// Config
 
 	@Permission("group.admin")
 	@Path("config <option> <boolean>")

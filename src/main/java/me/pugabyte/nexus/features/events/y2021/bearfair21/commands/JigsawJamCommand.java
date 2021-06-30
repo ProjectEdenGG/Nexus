@@ -130,21 +130,6 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 	}
 
-	@Async
-	@Confirm
-	@Path("deleteAll")
-	@Permission("group.seniorstaff")
-	void deleteAll() {
-		service.deleteAll();
-		send(PREFIX + "Reset all");
-	}
-
-	@Path("debug [player]")
-	@Permission("group.seniorstaff")
-	void debug(@Arg("self") OfflinePlayer player) {
-		send(service.get(player).toPrettyString());
-	}
-
 	@Path("time [player]")
 	void time(@Arg("self") OfflinePlayer player) {
 		JigsawJammer jammer = service.get(player);

@@ -49,7 +49,6 @@ import me.pugabyte.nexus.framework.exceptions.postconfigured.CommandCooldownExce
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.features.Features;
 import me.pugabyte.nexus.models.MongoService;
-import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
@@ -114,7 +113,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
-import org.reflections.Reflections;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,7 +122,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -468,26 +465,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("getEnv")
 	void getEnv() {
 		send(Nexus.getEnv().name());
-	}
-
-	@Path("clearCache <service>")
-	void clearCache(MongoService service) {
-		service.clearCache();
-		send(PREFIX + service.getClass().getSimpleName() + " cached cleared");
-	}
-
-	@Path("cacheSize <service>")
-	void cacheSize(MongoService service) {
-		send(PREFIX + service.getClass().getSimpleName() + " cache size: &e" + service.getCache().size());
-	}
-
-	@SneakyThrows
-	@Path("allCacheSizes")
-	void allCacheSizes() {
-		services.values().stream()
-				.sorted(Comparator.comparing(service -> service.getCache().size()))
-				.forEach(service ->
-						send(PREFIX + service.getClass().getSimpleName() + " cache size: &e" + service.getCache().size()));
 	}
 
 	@Path("setFirstJoin <player> <date>")
@@ -1077,34 +1054,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@TabCompleterFor(Nerd.class)
 	List<String> tabCompleteNerd(String value) {
 		return tabCompletePlayer(value);
-	}
-
-	private static final Map<String, MongoService<? extends PlayerOwnedObject>> services = new HashMap<>();
-
-	static {
-		final String packageName = Nexus.class.getPackage().getName() + ".models";
-		Reflections reflections = new Reflections(packageName);
-		for (Class<? extends MongoService> service : reflections.getSubTypesOf(MongoService.class)) {
-			try {
-				services.put(service.getSimpleName().toLowerCase(), service.newInstance());
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@ConverterFor(MongoService.class)
-	MongoService<? extends PlayerOwnedObject> convertToMongoService(String value) {
-		if (!services.containsKey(value.toLowerCase()))
-			error("Service &e" + value + " &cnot found");
-		return services.get(value.toLowerCase());
-	}
-
-	@TabCompleterFor(MongoService.class)
-	List<String> tabCompleteMongoService(String value) {
-		return services.keySet().stream()
-				.filter(serviceName -> serviceName.toLowerCase().startsWith(value.toLowerCase()))
-				.collect(Collectors.toList());
 	}
 
 	@ConverterFor(StaffMember.class)
