@@ -14,6 +14,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConver
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.WorldGroup;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -33,7 +34,7 @@ public class InfiniteLava implements PlayerOwnedObject {
 		if (!isOnline())
 			return false;
 
-		if (getWorldGroup() == WorldGroup.MINIGAMES)
+		if (List.of(WorldGroup.MINIGAMES, WorldGroup.SKYBLOCK).contains(getWorldGroup()))
 			return false;
 
 		return enabled;

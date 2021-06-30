@@ -54,10 +54,6 @@ public class LavaCommand extends CustomCommand implements Listener {
 		if (!material.equals(Material.LAVA_BUCKET))
 			return;
 
-		WorldGroup world = WorldGroup.of(player);
-		if (world.equals(WorldGroup.SKYBLOCK))
-			return;
-
 		InfiniteLava infiniteLava = new InfiniteLavaService().get(player);
 		if (!infiniteLava.isEnabled())
 			return;
