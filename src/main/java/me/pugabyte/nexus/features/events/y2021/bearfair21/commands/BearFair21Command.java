@@ -86,6 +86,16 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Permission("group.admin")
+	@Path("resetPugmas <player>")
+	void resetPugmasQuest(BearFair21User user) {
+		user.setQuestStage_Pugmas(QuestStage.NOT_STARTED);
+		user.setPugmasCompleted(false);
+		user.setPresentNdx(0);
+		userService.save(user);
+		send("Reset Pugmas quest variables for: " + user.getNickname());
+	}
+
+	@Permission("group.admin")
 	@Path("strengthTest")
 	void strengthTest() {
 		commandBlock();
