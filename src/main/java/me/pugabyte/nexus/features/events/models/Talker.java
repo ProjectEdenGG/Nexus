@@ -3,8 +3,8 @@ package me.pugabyte.nexus.features.events.models;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -93,7 +93,7 @@ public class Talker {
 			return future;
 		}
 
-		final Chatter chatter = new ChatService().get(player);
+		final Chatter chatter = new ChatterService().get(player);
 		Consumer<Boolean> complete = bool -> {
 			if (leftGlobal.get())
 				chatter.join(StaticChannel.GLOBAL.getChannel());

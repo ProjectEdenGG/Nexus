@@ -24,8 +24,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages;
 import me.pugabyte.nexus.models.deathmessages.DeathMessages.Behavior;
 import me.pugabyte.nexus.models.deathmessages.DeathMessagesService;
@@ -288,7 +288,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	private void local(Player player, JsonBuilder output) {
-		Chatter chatter = new ChatService().get(player);
+		Chatter chatter = new ChatterService().get(player);
 		for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 			if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
 				recipient.sendMessage(player, output, MessageType.CHAT);

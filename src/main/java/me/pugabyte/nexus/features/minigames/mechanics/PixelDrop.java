@@ -17,8 +17,8 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEven
 import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -277,7 +277,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		event.setCancelled(true);
 
-		ChatService chatService = new ChatService();
+		ChatterService chatService = new ChatterService();
 		Set<Chatter> recipients = match.getMinigamers().stream()
 				.map(_minigamer -> chatService.get(_minigamer.getPlayer()))
 				.collect(toSet());

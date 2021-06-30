@@ -12,8 +12,8 @@ import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.discord.DiscordId.Role;
 import me.pugabyte.nexus.features.discord.DiscordId.TextChannel;
 import me.pugabyte.nexus.features.minigames.utils.MinigameNight.NextMGN;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -62,7 +62,7 @@ public class Koda {
 	@Getter @NotNull
 	private static final UUID uuid = player.getUniqueId();
 	@Getter @NotNull
-	private static final Chatter chatter = new ChatService().get(player);
+	private static final Chatter chatter = new ChatterService().get(player);
 
 	public static void reply(@NotNull String message) {
 		Tasks.wait(10, () -> say(message));
