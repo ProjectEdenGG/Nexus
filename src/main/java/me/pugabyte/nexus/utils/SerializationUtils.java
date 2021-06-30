@@ -260,7 +260,6 @@ public class SerializationUtils {
 
 			@Override
 			public JsonElement serialize(Location location, Type type, JsonSerializationContext context) {
-				System.out.println("1");
 				final JsonObject json = new JsonObject();
 				json.addProperty("world", location.getWorld().getName());
 				json.addProperty("x", location.getX());
