@@ -498,6 +498,11 @@ public class MainIsland implements BearFair21Island {
 					script.add("Come back with 1 of each small flower, and then I'll call it even.");
 
 					return script;
+				} else if (user.getQuestStage_BeeKeeper() == QuestStage.COMPLETE) {
+					return script;
+				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEP_ONE) {
+					script.add("Head down into the nursery once you are ready to do so and take one of the larvae.");
+					return script;
 				} else if (user.isHiveAccess() && user.getQuestStage_BeeKeeper() != QuestStage.STEPS_DONE) {
 					script.add("What brings you here to my grand halls, traveler?");
 					script.add("wait 60");
@@ -520,9 +525,6 @@ public class MainIsland implements BearFair21Island {
 					user.setQuestStage_BeeKeeper(QuestStage.STEP_ONE);
 					user.getNextStepNPCs().remove(BEEKEEPER.getNpcId());
 					userService.save(user);
-					return script;
-				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEP_ONE) {
-					script.add("Head down into the nursery once you are ready to do so and take one of the larvae.");
 					return script;
 				}
 
