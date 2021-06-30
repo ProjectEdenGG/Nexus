@@ -89,8 +89,9 @@ public class Fishing implements Listener {
 
 		ItemStack tool = player.getInventory().getItemInMainHand();
 		ItemMeta meta = tool.getItemMeta();
+
 		int loops = 0;
-		if (meta.hasEnchants()) {
+		if (meta != null && meta.hasEnchants()) {
 			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK))) {
 				loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK));
 			}
