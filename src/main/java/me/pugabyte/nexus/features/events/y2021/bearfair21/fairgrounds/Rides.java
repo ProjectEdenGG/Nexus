@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -117,7 +118,11 @@ public class Rides {
 		}
 
 		public List<Player> getPlayersInRadius() {
-			return BearFair21.getPlayers().stream().filter(this::isWithinRadius).collect(Collectors.toList());
+			return BearFair21.getPlayers().stream()
+				.filter(this::isWithinRadius)
+				.filter(player -> !PlayerUtils.isVanished(player))
+				.filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR))
+				.collect(Collectors.toList());
 		}
 
 		public boolean getCurrentStatus() {
