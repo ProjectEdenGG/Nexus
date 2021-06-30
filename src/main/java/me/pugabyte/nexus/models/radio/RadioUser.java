@@ -57,6 +57,9 @@ public class RadioUser implements PlayerOwnedObject {
 	public Radio getLastServerRadio() {
 		RadioConfigService configService = new RadioConfigService();
 		RadioConfig config = configService.get0();
+		if (lastServerRadioId == null)
+			return null;
+
 		return config.getById(lastServerRadioId);
 	}
 }

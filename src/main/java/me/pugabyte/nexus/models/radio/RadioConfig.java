@@ -145,4 +145,18 @@ public class RadioConfig implements PlayerOwnedObject {
 		}
 	}
 
+
+	public enum RadioType {
+		SERVER,
+		RADIUS
+	}
+
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class RadioSong {
+		private String name;
+		private File file;
+
+	}
 }
