@@ -21,6 +21,7 @@ import me.pugabyte.nexus.models.jigsawjam.JigsawJammer;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.EntityUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.LocationUtils.Axis;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -95,7 +96,8 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (result == null)
 			error("Could not find an arena to teleport to");
 
-		player().teleportAsync(result, TeleportCause.COMMAND);
+		result.setYaw(270);
+		player().teleportAsync(LocationUtils.getCenteredLocation(result), TeleportCause.COMMAND);
 	}
 
 	@Path("validate")
