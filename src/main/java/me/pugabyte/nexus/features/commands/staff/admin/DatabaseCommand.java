@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.commands.staff.admin;
 
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
@@ -13,6 +14,7 @@ import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,25 +42,32 @@ public class DatabaseCommand extends CustomCommand {
 	}
 
 	@Async
-	@Confirm
-	@Path("delete <service> <uuid>")
-	<T extends PlayerOwnedObject> void delete(MongoService<T> service, UUID uuid) {
-		service.delete(service.get(uuid));
-		send(PREFIX + "Deleted " + Nickname.of(uuid) + " from " + service.getClass().getSimpleName());
-	}
-
-	@Async
 	@Path("save <service> <uuid>")
 	<T extends PlayerOwnedObject> void save(MongoService<T> service, UUID uuid) {
 		service.save(service.get(uuid));
-		send(PREFIX + "Saved " + Nickname.of(uuid) + " from " + service.getClass().getSimpleName());
+		send(PREFIX + "Saved " + Nickname.of(uuid) + " to " + name(service));
 	}
 
 	@Async
 	@Path("queueSave <service> <uuid> <delay>")
 	<T extends PlayerOwnedObject> void queueSave(MongoService<T> service, UUID uuid, int delay) {
 		service.queueSave(delay, service.get(uuid));
-		send(PREFIX + "Queued save " + Nickname.of(uuid) + " from " + service.getClass().getSimpleName());
+		send(PREFIX + "Queued save of " + Nickname.of(uuid) + " to " + name(service));
+	}
+
+	@Async
+	@Path("saveCache <service> <threads>")
+	<T extends PlayerOwnedObject> void saveCache(MongoService<T> service, @Arg("100") int threads) {
+		service.saveCache(threads);
+		send(PREFIX + "Saved " + service.getCache().size() + " cached objects to " + name(service));
+	}
+
+	@Async
+	@Confirm
+	@Path("delete <service> <uuid>")
+	<T extends PlayerOwnedObject> void delete(MongoService<T> service, UUID uuid) {
+		service.delete(service.get(uuid));
+		send(PREFIX + "Deleted " + Nickname.of(uuid) + " from " + name(service));
 	}
 
 	@Async
@@ -67,6 +76,11 @@ public class DatabaseCommand extends CustomCommand {
 	<T extends PlayerOwnedObject> void deleteAll(MongoService<T> service) {
 		service.deleteAll();
 		send(PREFIX + "Deleted all objects from " + service.getClass().getSimpleName());
+	}
+
+	@NotNull
+	private <T extends PlayerOwnedObject> String name(MongoService<T> service) {
+		return service.getClass().getSimpleName();
 	}
 
 	@ConverterFor(UUID.class)
