@@ -335,7 +335,8 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void handleGlow(Team team) {
-		if (team != null && getMechanic().getAnnotation(TeamGlowing.class) != null && !glowUpdates.containsKey(team)) {
+		if (false && team != null && getMechanic().getAnnotation(TeamGlowing.class) != null && !glowUpdates.containsKey(team)) {
+			// TODO: send potion effect packets instead of using GlowAPI (it creates its own scoreboard for colors which messes with things
 			AtomicInteger taskId = new AtomicInteger(-1);
 			taskId.set(tasks.wait(1, () -> {
 				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());

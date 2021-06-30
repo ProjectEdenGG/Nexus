@@ -1,10 +1,13 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
+import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.exceptions.MinigameException;
+import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
@@ -12,6 +15,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +30,7 @@ import static me.pugabyte.nexus.utils.WorldUtils.getRandomLocationInBorder;
  * and plays like a vanilla survival game
  * @param <T> what object should be used to spread players
  */
-public interface VanillaMechanic<T> {
+public interface VanillaMechanic<T> extends Listener {
 	@NotNull
 	default World getWorld() {
 		World world = Bukkit.getWorld(getWorldName());
@@ -89,6 +95,20 @@ public interface VanillaMechanic<T> {
 		for (ItemStack item : contents) {
 			if (item != null)
 				minigamer.getPlayer().getWorld().dropItemNaturally(minigamer.getPlayer().getLocation(), item);
+		}
+	}
+
+	default boolean allowLocalChat() {
+		return false;
+	}
+
+	@NotNull String getPrefix();
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	default void onLocalChat(PublicChatEvent event) {
+		if (!allowLocalChat() && event.getChannel().equals(Chat.StaticChannel.LOCAL.getChannel())) {
+			event.setCancelled(true);
+			event.getChatter().sendMessage(JsonBuilder.fromPrefix(getPrefix()).next("&cLocal chat is disabled in this minigame"));
 		}
 	}
 }
