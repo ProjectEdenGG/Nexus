@@ -475,8 +475,8 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		}
 
 		void taught(BearFair21User user) {
-			user.getTaughtNPCs().add(this);
-			if (user.getTaughtNPCs().size() == SummerDownUnderNPCs.values().length) {
+			user.getTaughtNpcIds().add(getNpcId());
+			if (user.getTaughtNpcIds().size() == SummerDownUnderNPCs.values().length) {
 				setStage(user, QuestStage.FOUND_ALL);
 				setNextNpc(user, BRUCE);
 				user.getOnlinePlayer().setPlayerWeather(WeatherType.DOWNFALL);

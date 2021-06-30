@@ -31,14 +31,26 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@Path("count <service>")
 	<T extends PlayerOwnedObject> void count(MongoService<T> service) {
-		send(service.getAll().size());
+		send(PREFIX + "Objects stored in " + name(service) + ": " + service.getAll().size());
 	}
 
 	@Async
 	@Path("debug <service> <uuid>")
 	<T extends PlayerOwnedObject> void debug(MongoService<T> service, UUID uuid) {
-		// TODO search for non quoted commas (regex), newline
 		send(service.get(uuid).toPrettyString());
+	}
+
+	@Async
+	@Path("cacheAll <service>")
+	<T extends PlayerOwnedObject> void cacheAll(MongoService<T> service) {
+		int count = 0;
+		for (T object : service.getAll())
+			if (!service.isCached(object)) {
+				++count;
+				service.cache(object);
+			}
+
+		send(PREFIX + "Cached " + count + " objects to " + name(service));
 	}
 
 	@Async

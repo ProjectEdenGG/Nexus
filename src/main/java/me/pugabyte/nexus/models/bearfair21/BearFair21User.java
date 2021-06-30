@@ -12,7 +12,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.SummerDownUnderIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
@@ -98,7 +97,6 @@ public class BearFair21User implements PlayerOwnedObject {
 	boolean mgn_boughtCar = false;
 	boolean mgn_openedTrunk = false;
 
-
 	Set<Location> mgn_beaconsActivated = new HashSet<>();
 	Set<Location> mgn_speakersFixed = new HashSet<>();
 
@@ -116,7 +114,7 @@ public class BearFair21User implements PlayerOwnedObject {
 	// SDU
 	QuestStage questStage_SDU = QuestStage.NOT_STARTED;
 	boolean receivedBrikkies = false;
-	Set<SummerDownUnderIsland.SummerDownUnderNPCs> taughtNPCs = new HashSet<>(); // NPCs that have been taught about the serpent
+	Set<Integer> taughtNpcIds = new HashSet<>();
 	Set<Location> featherLocations = new HashSet<>();
 
 	private int mapId;

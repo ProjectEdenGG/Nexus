@@ -1,5 +1,6 @@
 package me.pugabyte.nexus;
 
+import com.google.gson.GsonBuilder;
 import dev.morphia.converters.TypeConverter;
 import eden.EdenAPI;
 import eden.mongodb.DatabaseConfig;
@@ -9,6 +10,8 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ColorConverter
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.QuestConverter;
+import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
+import org.bukkit.Location;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,6 +50,11 @@ public class API extends EdenAPI {
 				LocationConverter.class,
 				QuestConverter.class
 		);
+	}
+
+	@Override
+	public GsonBuilder getPrettyPrinter() {
+		return super.getPrettyPrinter().registerTypeAdapter(Location.class, new LocationSerializer());
 	}
 
 }
