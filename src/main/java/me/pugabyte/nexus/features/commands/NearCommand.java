@@ -32,7 +32,7 @@ public class NearCommand extends CustomCommand {
 
 		UUID uuid = player.getUniqueId();
 		List<Player> nearby = PlayerUtils.getOnlinePlayers(player.getWorld()).stream()
-				.filter(_player -> !uuid.equals(player.getUniqueId())
+				.filter(_player -> !uuid.equals(_player.getUniqueId())
 						 && getDistance(player, _player) <= Chat.getLocalRadius()
 						 && (!isPlayer() || PlayerUtils.canSee(player(), _player)))
 				.collect(Collectors.toList());
