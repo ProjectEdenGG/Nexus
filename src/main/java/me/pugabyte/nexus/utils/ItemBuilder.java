@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -455,6 +456,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public boolean isTradeable() {
+		if (Backpacks.isBackpack(build()))
+			return false;
 		return getBoolean("tradeable", true);
 	}
 

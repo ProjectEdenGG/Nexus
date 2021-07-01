@@ -1,11 +1,9 @@
 package me.pugabyte.nexus.features.shops;
 
 import eden.utils.TimeUtils.Time;
-import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.OfflinePlayer;
@@ -42,15 +40,6 @@ public class ShopUtils {
 		if (free && number.doubleValue() == 0)
 			return "free";
 		return "$" + pretty(number);
-	}
-
-	public static boolean isTradeable(ItemStack item) {
-		if (!new ItemBuilder(item).isTradeable())
-			return false;
-		if (Backpacks.isBackpack(item))
-			return false;
-
-		return true;
 	}
 
 }
