@@ -168,6 +168,8 @@ public class SummerDownUnderIsland implements BearFair21Island {
 	public void onReadBook(PlayerInteractEvent event) {
 		if (BearFair21.isNotAtBearFair(event)) return;
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
+		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
+
 		BearFair21UserService service = new BearFair21UserService();
 		BearFair21User user = service.get(event.getPlayer());
 		Block block = event.getClickedBlock();
@@ -186,8 +188,11 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (BearFair21.isNotAtBearFair(event)) return;
 		if (!(event.getRightClicked() instanceof ItemFrame frame)) return;
+		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
+
 		ItemStack item = frame.getItem();
 		if (item.getType() == Material.AIR) return;
+
 		BearFair21UserService service = new BearFair21UserService();
 		BearFair21User user = service.get(event.getPlayer());
 		QuestStage stage = user.getQuestStage_SDU();

@@ -522,10 +522,9 @@ public class PugmasIsland implements BearFair21Island {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onClickPresent(PlayerInteractEvent event) {
-		if (BearFair21.isNotAtBearFair(event))
-			return;
-
+		if (BearFair21.isNotAtBearFair(event)) return;
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
 
 		Block block = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(block)) return;
