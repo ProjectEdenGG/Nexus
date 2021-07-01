@@ -72,11 +72,13 @@ public class TreasureChests implements Listener {
 		int userSize = user.getTreasureChests().size();
 		int size = locations.size();
 		if (userSize == size) {
-			user.sendMessage("&3You found &eall &3Treasure Chests!");
+			Quests.sound_villagerNo(user.getPlayer());
+			user.sendMessage("&3You already found &eall &3Treasure Chests!");
 			return;
 		}
 
 		if (user.getTreasureChests().contains(location)) {
+			Quests.sound_villagerNo(user.getPlayer());
 			user.sendMessage("&cYou've already found this Treasure Chest! (" + userSize + "/" + size + ")");
 			return;
 		}
@@ -90,7 +92,8 @@ public class TreasureChests implements Listener {
 			Quests.giveKey(user, 2);
 			BearFair21.giveTokens(user, 300);
 		} else {
-			user.sendMessage("&3You've found &e" + userSize + "/" + size + "&3 Treasure Chests!");
+			Quests.sound_obtainItem(user.getPlayer());
+			user.sendMessage("&3You've found a Treasure Chest! (&e" + userSize + "/" + size + "&3)");
 		}
 
 		userService.save(user);
