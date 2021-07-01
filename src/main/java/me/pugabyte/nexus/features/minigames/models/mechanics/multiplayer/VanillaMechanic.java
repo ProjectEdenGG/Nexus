@@ -1,8 +1,9 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
-import me.pugabyte.nexus.features.chat.Chat;
+import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.chat.events.PublicChatEvent;
+import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
@@ -106,9 +107,19 @@ public interface VanillaMechanic<T> extends Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	default void onLocalChat(PublicChatEvent event) {
-		if (!allowLocalChat() && event.getChannel().equals(Chat.StaticChannel.LOCAL.getChannel())) {
-			event.setCancelled(true);
-			event.getChatter().sendMessage(JsonBuilder.fromPrefix(getPrefix()).next("&cLocal chat is disabled in this minigame"));
-		}
+		final Minigamer minigamer = PlayerManager.get(event.getChatter().getUuid());
+
+		if (!minigamer.isPlaying())
+			return;
+		if (!(minigamer.getMatch().getMechanic() instanceof VanillaMechanic))
+			return;
+
+		if (allowLocalChat())
+			return;
+		if (!StaticChannel.LOCAL.getChannel().equals(event.getChannel()))
+			return;
+
+		event.setCancelled(true);
+		event.getChatter().sendMessage(JsonBuilder.fromPrefix(getPrefix()).next("&cLocal chat is disabled in this minigame"));
 	}
 }
