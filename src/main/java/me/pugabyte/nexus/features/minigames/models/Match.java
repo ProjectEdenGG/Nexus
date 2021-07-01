@@ -243,7 +243,7 @@ public class Match implements ForwardingAudience {
 		if (tasks != null)
 			tasks.end();
 		broadcast("Match has ended");
-		//logScores();
+		logScores();
 		broadcastNoPrefix("");
 		clearHolograms();
 		clearEntities();
@@ -278,7 +278,7 @@ public class Match implements ForwardingAudience {
 
 		if (scores.length() > 0) {
 			String header = "Scores for " + getArena().getName() + " (" + arena.getMechanic().getName() + "):" + System.lineSeparator();
-			Discord.staffLog("```" + header + scores.toString() + "```");
+			Discord.staffLog("```" + header + scores + "```");
 		}
 	}
 

@@ -474,7 +474,6 @@ public class HalloweenIsland implements BearFair21Island {
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
 		if (!BearFair21.isInRegion(block, getRegion())) return;
-		event.setCancelled(true);
 
 		checkLocation(user, block.getLocation());
 		checkLocation(user, block.getRelative(event.getBlockFace()).getLocation());
