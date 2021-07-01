@@ -439,6 +439,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// NBT
 
+	public boolean getBoolean(String key, boolean orDefault) {
+		NBTItem item = new NBTItem(build());
+		if (!item.hasKey(key)) return orDefault;
+		return item.getBoolean(key);
+	}
+
 	public ItemBuilder untradeable() {
 		return tradeable(false);
 	}
@@ -446,6 +452,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder tradeable(boolean tradeable) {
 		nbt(item -> item.setBoolean("tradeable", tradeable));
 		return this;
+	}
+
+	public boolean isTradeable() {
+		return getBoolean("tradeable", true);
 	}
 
 	public ItemBuilder undroppable() {
@@ -457,6 +467,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public boolean isDroppable() {
+		return getBoolean("droppable", true);
+	}
+
 	public ItemBuilder unplaceable() {
 		return placeable(false);
 	}
@@ -464,6 +478,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder placeable(boolean placeable) {
 		nbt(item -> item.setBoolean("placeable", placeable));
 		return this;
+	}
+
+	public boolean isPlaceable() {
+		return getBoolean("placeable", true);
 	}
 
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {

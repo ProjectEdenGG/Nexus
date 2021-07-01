@@ -64,6 +64,7 @@ import me.pugabyte.nexus.models.task.TaskService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
@@ -1044,6 +1045,15 @@ public class NexusCommand extends CustomCommand implements Listener {
 		NPC npc = CitizensUtils.getSelectedNPC(player());
 		NPCListener.allowNPC(npc);
 		runCommand("npc tphere");
+	}
+
+	@Path("testTradeable [tradeable]")
+	void testTradeable(Boolean tradeable) {
+		ItemBuilder item = new ItemBuilder(inventory().getItemInMainHand());
+		if (tradeable != null)
+			item.tradeable(tradeable);
+		Tasks.wait(1, () -> inventory().setItemInMainHand(item.build()));
+		Tasks.wait(2, () -> send(String.valueOf(new ItemBuilder(inventory().getItemInMainHand()).isTradeable())));
 	}
 
 	@ConverterFor(Nerd.class)
