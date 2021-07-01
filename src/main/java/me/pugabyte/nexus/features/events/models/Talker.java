@@ -125,7 +125,7 @@ public class Talker {
 					Tasks.wait(wait.get(), () -> complete.accept(true));
 
 			} else {
-				if (script.size() > 3 && previousChannel.get() != null) {
+				if (script.size() > 3 && previousChannel.get() == null) {
 					previousChannel.set(chatter.getActiveChannel());
 					chatter.leave(StaticChannel.GLOBAL.getChannel());
 				}
