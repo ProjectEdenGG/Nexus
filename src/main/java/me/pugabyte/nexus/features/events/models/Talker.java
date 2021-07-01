@@ -3,8 +3,10 @@ package me.pugabyte.nexus.features.events.models;
 import me.pugabyte.nexus.features.chat.Chat.StaticChannel;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import me.pugabyte.nexus.models.bearfair21.BearFair21ConfigService;
+import me.pugabyte.nexus.models.chat.Channel;
 import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.ChatterService;
+import me.pugabyte.nexus.models.chat.PublicChannel;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
@@ -14,8 +16,8 @@ import org.bukkit.entity.Player;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.SKIP_WAITS;
@@ -86,7 +88,7 @@ public class Talker {
 	 * @return CompletableFuture
 	 */
 	public static CompletableFuture<Boolean> runScript(Player player, TalkingNPC talker, List<String> script) {
-		AtomicBoolean leftGlobal = new AtomicBoolean(false);
+		AtomicReference<Channel> previousChannel = new AtomicReference<>();
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		if (script == null || script.isEmpty()) {
 			future.complete(true);
@@ -95,8 +97,14 @@ public class Talker {
 
 		final Chatter chatter = new ChatterService().get(player);
 		Consumer<Boolean> complete = bool -> {
-			if (leftGlobal.get())
-				chatter.join(StaticChannel.GLOBAL.getChannel());
+			Channel channel = previousChannel.get();
+			if (channel != null) {
+				PublicChannel global = StaticChannel.GLOBAL.getChannel();
+				if (channel.equals(global) && !chatter.getActiveChannel().equals(channel))
+					chatter.setActiveChannel(channel);
+				else
+					chatter.join(global);
+			}
 
 			future.complete(bool);
 		};
@@ -117,9 +125,9 @@ public class Talker {
 					Tasks.wait(wait.get(), () -> complete.accept(true));
 
 			} else {
-				if (script.size() > 3 && !leftGlobal.get()) {
+				if (script.size() > 3 && previousChannel.get() != null) {
+					previousChannel.set(chatter.getActiveChannel());
 					chatter.leave(StaticChannel.GLOBAL.getChannel());
-					leftGlobal.set(true);
 				}
 
 				line = line.replaceAll("<player>", playerName);
