@@ -64,7 +64,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-@Aliases("bf21")
+@Aliases({"bf21", "bearfair"})
 public class BearFair21Command extends CustomCommand {
 	ClientsideContentService contentService = new ClientsideContentService();
 	ClientsideContent clientsideContent = contentService.get0();
@@ -534,5 +534,16 @@ public class BearFair21Command extends CustomCommand {
 		contentList.add(content);
 		clientsideContent.setContentList(contentList);
 		contentService.save(clientsideContent);
+	}
+
+	@Path("stats")
+	@Permission("group.admin")
+	void stats() {
+		// Total time played
+		// % of time spent at bf vs other worlds
+		// unique visitors
+		// % of people who logged in that visited bf
+		// % of playtime per world during bf
+		// % at each quest stage of each quest
 	}
 }
