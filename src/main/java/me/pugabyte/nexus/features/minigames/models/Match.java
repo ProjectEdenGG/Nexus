@@ -49,6 +49,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -464,8 +466,19 @@ public class Match implements ForwardingAudience {
 	}
 
 	public <T extends Entity> T spawn(Location location, Class<T> type) {
+		return spawn(location, type, null);
+	}
+
+	public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<Entity> onSpawn) {
 		T entity = location.getWorld().spawn(location, type);
 		entities.add(entity);
+
+		if (entity instanceof LivingEntity livingEntity)
+			livingEntity.setRemoveWhenFarAway(false);
+
+		if (onSpawn != null)
+			onSpawn.accept(entity);
+
 		return entity;
 	}
 

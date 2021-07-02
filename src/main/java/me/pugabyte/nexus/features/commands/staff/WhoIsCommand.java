@@ -21,7 +21,6 @@ import me.pugabyte.nexus.models.godmode.GodmodeService;
 import me.pugabyte.nexus.models.hours.Hours;
 import me.pugabyte.nexus.models.hours.HoursService;
 import me.pugabyte.nexus.models.nerd.Nerd;
-import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -46,7 +45,7 @@ public class WhoIsCommand extends CustomCommand {
 	void run(Nerd nerd) {
 		line();
 		line();
-		send("&3Who the fuck is &6&l" + nerd.getName() + "&3?");
+		send("&3Who the fuck is &6&l" + nerd.getNickname() + "&3?");
 
 		HoursService hoursService = new HoursService();
 		GeoIPService geoIpService = new GeoIPService();
@@ -55,7 +54,6 @@ public class WhoIsCommand extends CustomCommand {
 		boolean history = punishments.hasHistory();
 		JsonBuilder alts = punishments.getAltsMessage();
 
-		String nickname = Nickname.of(nerd);
 		Hours hours = hoursService.get(nerd);
 		String rank = nerd.getRank().getColoredName();
 		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());
@@ -82,7 +80,7 @@ public class WhoIsCommand extends CustomCommand {
 		JsonBuilder json = json();
 
 		if (nerd.hasNickname())
-			json.newline().next("&3Nickname: &e" + nickname).group();
+			json.newline().next("&3Real Name: &e" + nerd.getName()).group();
 
 		json.newline().next("&3Rank: &e" + rank).group();
 		json.newline().next("&3First Join: &e" + firstJoin).group();
