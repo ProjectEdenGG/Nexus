@@ -16,8 +16,8 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
@@ -25,7 +25,7 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SoundUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -277,7 +277,7 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 		cleanup(event.getMinigamer());
 	}
@@ -324,8 +324,8 @@ public class HideAndSeek extends Infection {
 
 					minigamer.getPlayer().attack(target.getPlayer());
 					target.setImmobileTicks(0);
-					SoundUtils.playSound(minigamer.getPlayer(), Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK, SoundCategory.PLAYERS);
-					SoundUtils.playSound(target.getPlayer(), Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK, SoundCategory.PLAYERS);
+					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).receiver(minigamer.getPlayer()).category(SoundCategory.PLAYERS).play();
+					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).receiver(target.getPlayer()).category(SoundCategory.PLAYERS).play();
 					return;
 				}
 			}

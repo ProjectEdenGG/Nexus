@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import me.lexikiq.HasPlayer;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -308,7 +309,12 @@ public class ItemUtils {
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			return result;
 		}
+	}
 
+	public static boolean isSameHead(ItemStack itemStack1, ItemStack itemStack2) {
+		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (itemStack1.getType() != Material.PLAYER_HEAD || itemStack2.getType() != Material.PLAYER_HEAD) return false;
+		return Nexus.getHeadAPI().getItemID(itemStack1).equals(Nexus.getHeadAPI().getItemID(itemStack2));
 	}
 
 	/**

@@ -83,6 +83,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("You can find him at the church.");
 
 						user.setQuestStage_Halloween(QuestStage.STARTED);
+						user.getNextStepNPCs().add(SANTIAGO.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -97,7 +98,7 @@ public class HalloweenIsland implements BearFair21Island {
 						Quests.removeItems(user, required);
 
 						int wait;
-						script.add("Aaah madres cookies!! I see you got them, mucho gracias!");
+						script.add("Aaah madres cookies!! I see you got them, muchos gracias!");
 						script.add("wait 60");
 						script.add("These smell so good. I can't wait to eat them all!");
 						script.add("wait 60");
@@ -109,12 +110,16 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("wait 60");
 						script.add("Here, have this as a thank you for bringing me.. I mean us, these cookies!");
 						wait = (60 + 60 + 60 + 80 + 60);
-						Tasks.wait(wait, () -> Quests.giveKey(user));
+						Tasks.wait(wait, () -> {
+							Quests.giveKey(user);
+							BearFair21.giveTokens(user, 200);
+						});
 
 						script.add("wait 60");
 						script.add("You're always welcome here again, amigo!");
 
 						user.setQuestStage_Halloween(QuestStage.COMPLETE);
+						user.getNextStepNPCs().remove(this.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -147,6 +152,8 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("To enter the underworld, simply hop in this casket. The path you seek should reveal itself when inside.");
 
 						user.setQuestStage_Halloween(STEP_ONE);
+						user.getNextStepNPCs().remove(JOSE.getNpcId());
+						user.getNextStepNPCs().add(ANA.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -179,6 +186,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("I'll need a carton of milk, a bar of chocolate and a bag of flour, por favor. Look around in the houses down here.");
 
 						user.setQuestStage_Halloween(QuestStage.STEP_TWO);
+						user.getNextStepNPCs().remove(SANTIAGO.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -212,6 +220,8 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("<self> Thank you Ana, Im sure this will help raise everyone's spirits!");
 
 						user.setQuestStage_Halloween(QuestStage.STEPS_DONE);
+						user.getNextStepNPCs().remove(this.getNpcId());
+						user.getNextStepNPCs().add(JOSE.getNpcId());
 						userService.save(user);
 						return script;
 					}
@@ -411,7 +421,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 		HalloweenNPCs(BearFair21NPC npc) {
 			this.npc = npc;
-			this.script = new ArrayList<>();
+			this.script = Collections.emptyList();
 		}
 
 		private boolean isAlive() {
@@ -453,7 +463,6 @@ public class HalloweenIsland implements BearFair21Island {
 		}
 	}
 
-
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInteract(PlayerInteractEvent event) {
 		if (BearFair21.isNotAtBearFair(event))
@@ -464,8 +473,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
-
-		event.setCancelled(true);
+		if (!BearFair21.isInRegion(block, getRegion())) return;
 
 		checkLocation(user, block.getLocation());
 		checkLocation(user, block.getRelative(event.getBlockFace()).getLocation());
@@ -481,6 +489,7 @@ public class HalloweenIsland implements BearFair21Island {
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
+		if (!BearFair21.isInRegion(clicked.getLocation(), getRegion())) return;
 
 		event.setCancelled(true);
 

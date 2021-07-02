@@ -22,6 +22,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -150,11 +151,16 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	// moved this here because it's used by a couple "team" games (juggernaut) and copy-pasting was kinda icky
 	protected final void announceTeamlessWinners(@NotNull Match match) {
+		Minigames.broadcast(getTeamlessWinnersString(match));
+	}
+
+	@Nullable
+	protected JsonBuilder getTeamlessWinnersString(@NotNull Match match) {
 		Arena arena = match.getArena();
 		Map<Minigamer, Integer> scores = new HashMap<>();
 
 		match.getAliveMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
-		if (scores.size() == 0) return;
+		if (scores.size() == 0) return null;
 		int winningScore = getWinningScore(scores.values());
 		List<Minigamer> winners = getWinners(winningScore, scores);
 
@@ -169,8 +175,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		builder.next(arena);
 		if (winningScore != 0)
 			builder.next(" (" + winningScore + ")");
-
-		Minigames.broadcast(builder);
+		return builder;
 	}
 
 	protected @NotNull List<Minigamer> getWinners(int winningScore, @NotNull Map<Minigamer, Integer> scores) {

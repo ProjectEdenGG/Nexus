@@ -6,8 +6,8 @@ import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.CheckpointArena;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
@@ -33,7 +33,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 
 		getMatchData(event.getMinigamer()).clearData(event.getMinigamer());

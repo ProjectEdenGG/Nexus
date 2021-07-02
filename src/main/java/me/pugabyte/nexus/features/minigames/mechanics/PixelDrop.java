@@ -13,12 +13,12 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.PixelDropArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.PixelDropMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import me.pugabyte.nexus.models.chat.ChatService;
 import me.pugabyte.nexus.models.chat.Chatter;
+import me.pugabyte.nexus.models.chat.ChatterService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -82,7 +82,7 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
@@ -139,7 +139,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		matchData.resetRound();
 
-		if (matchData.getCurrentRound() == MAX_ROUNDS) {
+		if (matchData.getCurrentRound() >= MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
 				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
@@ -277,7 +277,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		event.setCancelled(true);
 
-		ChatService chatService = new ChatService();
+		ChatterService chatService = new ChatterService();
 		Set<Chatter> recipients = match.getMinigamers().stream()
 				.map(_minigamer -> chatService.get(_minigamer.getPlayer()))
 				.collect(toSet());

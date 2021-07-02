@@ -19,8 +19,8 @@ import me.pugabyte.nexus.features.minigames.models.arenas.ThimbleMap;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.ThimbleMatchData;
@@ -129,10 +129,11 @@ public final class Thimble extends TeamlessMechanic {
 	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {
 		ThimbleArena arena = minigamer.getMatch().getArena();
 		minigamer.tell("You are playing &eThimble&3: &e" + arena.getGamemode().getName());
+		tellDescriptionAndModifier(minigamer);
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
 		matchData.getTurnMinigamerList().remove(minigamer);

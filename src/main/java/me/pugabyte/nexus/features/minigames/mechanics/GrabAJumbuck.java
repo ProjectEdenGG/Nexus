@@ -10,8 +10,8 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.arenas.GrabAJumbuckArena;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -81,7 +81,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 		removeAllPassengers(event.getMinigamer().getPlayer(), event.getMatch());
 	}

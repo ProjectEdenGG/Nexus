@@ -40,6 +40,7 @@ public enum MechanicType {
 	TEAM_DEATHMATCH(new TeamDeathmatch()),
 	THIMBLE(new Thimble()),
 	TNT_RUN(new TNTRun()),
+	UHC(new UHC()),
 	UNCIVIL_ENGINEERS(new UncivilEngineers()),
 	XRUN(new XRun());
 

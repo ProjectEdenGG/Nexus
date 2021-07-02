@@ -13,8 +13,8 @@ import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.Scoreboard;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
@@ -37,9 +37,9 @@ import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PacketUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -225,7 +225,7 @@ public class Sabotage extends TeamMechanic {
 				PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), EnumWrappers.ItemSlot.MAINHAND);
 				SabotageTeam team = SabotageTeam.of(minigamer);
 				if (team != SabotageTeam.IMPOSTOR) {
-					Tasks.sync(() -> {
+					match.getTasks().sync(() -> {
 						List<Minigamer> nearby = new ArrayList<>();
 						location.getNearbyEntitiesByType(Player.class, lightLevel).forEach(_player -> {
 							Minigamer other = PlayerManager.get(_player);
@@ -301,7 +301,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		super.onQuit(event);
 		UUID uuid = event.getMinigamer().getUniqueId();
 		SabotageMatchData matchData = event.getMatch().getMatchData();
@@ -330,10 +330,10 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = match.getMatchData();
 		Chat.setActiveChannel(minigamer, matchData.getSpectatorChannel());
 		event.setDeathMessage(null);
-		SoundUtils.playSound(minigamer, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER, 1.0f, 0.9f);
+		new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(minigamer).volume(1).pitch(0.9).play();
 		JsonBuilder builder = new JsonBuilder();
 		if (event.getAttacker() != null) {
-			SoundUtils.playSound(event.getAttacker(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER, .5f, 1.2f);
+			new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(event.getAttacker()).volume(.5).pitch(1.2).play();
 			builder.next("You were killed by ").next(event.getAttacker().getNickname(), matchData.getColor(event.getAttacker()).colored());
 		} else
 			builder.next("You have been ejected");
@@ -385,14 +385,14 @@ public class Sabotage extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this)) return;
 		if (event.isCancelled() || !event.getMinigamer().isAlive() || (event.getTarget() != null && !event.getTarget().isAlive())) {
 			event.setCancelled(true);
-			SoundUtils.playSound(event.getMinigamer(), Sound.ENTITY_VILLAGER_NO, SoundCategory.VOICE, 0.8f, 1.0f);
+			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(event.getMinigamer()).category(SoundCategory.VOICE).volume(0.8).play();
 			return;
 		}
 		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMatch().getMinigamers());
 	}
 
 	private void giveVentItems(Minigamer minigamer, Block vent, Container container) {
-		SoundUtils.playSound(minigamer, Sound.BLOCK_IRON_TRAPDOOR_OPEN);
+		new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_OPEN).receiver(minigamer).play();
 		PlayerInventory inventory = minigamer.getPlayer().getInventory();
 		inventory.clear();
 		Location currentLoc = vent.getLocation();
@@ -430,7 +430,7 @@ public class Sabotage extends TeamMechanic {
 		if (event.isSneaking() && minigamer.isPlaying(this)) {
 			SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 			if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
-				SoundUtils.playSound(minigamer, Sound.BLOCK_IRON_TRAPDOOR_CLOSE);
+				new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_CLOSE).receiver(minigamer).play();
 				matchData.exitVent(minigamer);
 			}
 		}

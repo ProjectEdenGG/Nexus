@@ -24,6 +24,8 @@ import net.minecraft.world.entity.decoration.EntityItemFrame;
 import net.minecraft.world.entity.monster.EntitySlime;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,6 +50,7 @@ public class ClientsideContentManager implements Listener {
 	public ClientsideContentManager() {
 		Nexus.registerListener(this);
 		blockTask();
+		schematicTask();
 		npcTask();
 	}
 
@@ -84,13 +87,35 @@ public class ClientsideContentManager implements Listener {
 		Tasks.repeat(0, Time.TICK.x(10), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Content content : contentService.getList()) {
-				if (content.isItemFrame()) continue;
+				if (!content.isBlock()) continue;
 
 				for (Player player : players) {
 					if (!isNear(player, content.getLocation(), 75)) continue;
 					if (!canSee(player, content)) continue;
 
-					player.sendBlockChange(content.getLocation(), content.getMaterial().createBlockData());
+					final BlockData blockData = content.getMaterial().createBlockData();
+					if (content.getBlockFace() != null)
+						((Directional) blockData).setFacing(content.getBlockFace());
+					player.sendBlockChange(content.getLocation(), blockData);
+				}
+			}
+		});
+	}
+
+	private void schematicTask() {
+		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+			Set<Player> players = BearFair21.getPlayers();
+			for (Content content : contentService.getList()) {
+				if (!content.isSchematic()) continue;
+
+				for (Player player : players) {
+					if (!isNear(player, content.getLocation(), 75)) continue;
+					if (!canSee(player, content)) continue;
+
+					BearFair21.getWEUtils().paster()
+						.file(content.getSchematic())
+						.at(content.getLocation())
+						.buildClientSide(player);
 				}
 			}
 		});
@@ -164,6 +189,8 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	public static void sendRemoveContent(Player player, List<Content> contentList) {
+		if (!playerEntities.containsKey(player.getUniqueId()))
+			return;
 		List<Entity> entities = new ArrayList<>(playerEntities.get(player.getUniqueId()));
 		if (Utils.isNullOrEmpty(entities))
 			return;

@@ -185,12 +185,11 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		}
 	}
 
-	public void regenerate(@NotNull String type) {
-		String name = getMechanicName();
+	private void regenerate(@NotNull String type) {
 		String regex = getRegionTypeRegex(type);
 
 		getWGUtils().getRegionsLike(regex).forEach(region -> {
-			String file = getSchematicName(region.getId().replaceFirst((name + "_" + getName() + "_").toLowerCase(), ""));
+			String file = getSchematicName(region.getId().replaceFirst(getRegionBaseName().toLowerCase() + "_", ""));
 			getWEUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
@@ -199,7 +198,8 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return (getSchematicBaseName() + name).toLowerCase();
 	}
 
-	private @NotNull String getMechanicName() {
+	@NotNull
+	protected String getMechanicName() {
 		return getMechanic().getClass().getSimpleName().toLowerCase();
 	}
 

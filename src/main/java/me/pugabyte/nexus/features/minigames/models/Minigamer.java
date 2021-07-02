@@ -18,7 +18,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -27,6 +26,7 @@ import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static me.pugabyte.nexus.utils.LocationUtils.blockLocationsEqual;
 import static me.pugabyte.nexus.utils.PlayerUtils.hidePlayer;
@@ -255,18 +256,17 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		});
 	}
 
-	public void teleport(@NotNull Location location) {
-		teleport(location, false);
+	public CompletableFuture<Void> teleport(@NotNull Location location) {
+		return teleport(location, false);
 	}
 
-	public void teleport(@NotNull Location location, boolean withSlowness) {
-		if (location == null)
-			throw new InvalidInputException("Tried to teleport " + getName() + " to a null location");
+	public CompletableFuture<Void> teleport(@NotNull Location location, boolean withSlowness) {
+		Utils.notNull(location, "Tried to teleport " + getName() + " to a null location");
 
 		final Location up = location.clone().add(0, .5, 0);
 		final Vector still = new Vector(0, 0, 0);
 
-		location.getWorld().getChunkAtAsyncUrgently(up).thenRun(() -> {
+		return location.getWorld().getChunkAtAsyncUrgently(up).thenRun(() -> {
 			player.setVelocity(still);
 			canTeleport = true;
 
@@ -454,16 +454,18 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void clearState() {
+		clearState(false);
+	}
+
+	public void clearState(boolean forceClearInventory) {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
-		// TODO: Unvanish
-		clearGameModeState();
 		player.setGameMode(match.getMechanic().getGameMode());
-		clearGameModeState();
+		clearGameModeState(forceClearInventory);
 
 		unhideAll();
 	}
 
-	private void clearGameModeState() {
+	private void clearGameModeState(boolean forceClearInventory) {
 		Mechanic mechanic = match.getMechanic();
 
 		player.setFireTicks(0);
@@ -482,7 +484,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		SpeedCommand.resetSpeed(player);
 		player.setOp(false);
 
-		if (mechanic.shouldClearInventory())
+		if (mechanic.shouldClearInventory() || forceClearInventory)
 			player.getInventory().clear();
 
 		for (PotionEffect effect : player.getActivePotionEffects())
