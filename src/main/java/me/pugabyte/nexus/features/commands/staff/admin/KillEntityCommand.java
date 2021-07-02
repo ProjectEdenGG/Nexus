@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
-import de.tr7zw.nbtapi.NBTEntity;
 import lombok.Getter;
 import me.pugabyte.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -9,6 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
+import me.pugabyte.nexus.framework.commands.models.annotations.Switch;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -37,8 +37,8 @@ public class KillEntityCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<entityType> <radius>")
-	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius) {
+	@Path("<entityType> <radius> [--force]")
+	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius, @Switch @Arg(permission = "group.admin") boolean force) {
 		if (!isAdmin() && radius > 200)
 			error("Radius cannot be greater than 200");
 
@@ -53,7 +53,7 @@ public class KillEntityCommand extends CustomCommand {
 				for (final Entity entity : chunk.getEntities())
 					if (location().distance(entity.getLocation()) <= radius)
 						if (toKill.contains(entity.getType()))
-							if (canKill(entity))
+							if (canKill(entity, force))
 								entities.add(entity);
 
 			entities.forEach(Entity::remove);
@@ -69,11 +69,14 @@ public class KillEntityCommand extends CustomCommand {
 			kill.run();
 	}
 
-	private boolean canKill(Entity entity) {
+	private boolean canKill(Entity entity, boolean force) {
+		if (force)
+			return true;
+
 		if (entity instanceof Monster) {
 			if (entity.getCustomName() != null)
 				return false;
-			if (new NBTEntity(entity).getBoolean("PersistenceRequired"))
+			if (entity.isPersistent())
 				return false;
 		}
 		return true;
