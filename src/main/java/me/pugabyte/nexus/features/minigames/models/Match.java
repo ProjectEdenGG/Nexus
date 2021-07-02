@@ -6,7 +6,6 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.FormatType;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
-import io.papermc.lib.PaperLib;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -66,6 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -89,7 +89,7 @@ public class Match implements ForwardingAudience {
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
 	private MinigameScoreboard.ITeams scoreboardTeams;
-	private final ArrayList<Entity> entities = new ArrayList<>();
+	private final ArrayList<UUID> entities = new ArrayList<>();
 	private final ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
@@ -354,8 +354,11 @@ public class Match implements ForwardingAudience {
 	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
 
 	private void clearEntities() {
-		for (Entity entity : entities)
-			PaperLib.getChunkAtAsync(entity.getLocation()).thenRun(entity::remove);
+		for (UUID uuid : entities) {
+			final Entity entity = getWorld().getEntity(uuid);
+			if (entity != null)
+				entity.remove();
+		}
 
 		getWorld().getEntities().forEach(entity -> {
 			if (getArena().getRegion().contains(getWEUtils().toBlockVector3(entity.getLocation())))
@@ -473,7 +476,7 @@ public class Match implements ForwardingAudience {
 
 	public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<Entity> onSpawn) {
 		T entity = location.getWorld().spawn(location, type);
-		entities.add(entity);
+		entities.add(entity.getUniqueId());
 
 		if (entity instanceof LivingEntity livingEntity)
 			livingEntity.setRemoveWhenFarAway(false);
