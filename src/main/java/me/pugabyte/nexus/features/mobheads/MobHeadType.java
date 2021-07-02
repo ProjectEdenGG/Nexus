@@ -137,6 +137,12 @@ public enum MobHeadType {
 	@Setter
 	private double chance;
 
+	public ItemStack getGeneric() {
+		if (generic == null)
+			return null;
+		return generic.clone();
+	}
+
 	@Getter
 	private static final Set<ItemStack> allSkulls = new HashSet<>();
 

@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.minigames.models.mechanics;
 import eden.interfaces.Named;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
-import io.papermc.lib.PaperLib;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
@@ -185,8 +184,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onEnd(@NotNull MatchEndEvent event) {
-		for (Entity entity : event.getMatch().getEntities())
-			PaperLib.getChunkAtAsync(entity.getLocation()).thenRun(entity::remove);
+//		for (Entity entity : event.getMatch().getEntities())
+//			PaperLib.getChunkAtAsync(entity.getLocation()).thenRun(entity::remove);
+		event.getMatch().getEntities().forEach(Entity::remove);
 		if (event.getMatch().isStarted())
 			announceWinners(event.getMatch());
 	}

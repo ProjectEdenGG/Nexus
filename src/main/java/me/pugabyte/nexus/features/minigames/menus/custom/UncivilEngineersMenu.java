@@ -24,6 +24,7 @@ import java.util.List;
 
 import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.features.minigames.Minigames.menus;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @CustomMechanicSettings(UncivilEngineers.class)
 public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider {
@@ -66,18 +67,21 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 		public void init(Player player, InventoryContents contents) {
 			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
 
-			contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&aAdd Mob Point"), e ->
-				SmartInventory.builder()
-					.provider(new AddMobPointMenu())
-					.title("Add Mob Point")
-					.size(6, 9)
-					.build()
-					.open(player)));
+			contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&aAdd Mob Point"), e -> new AddMobPointMenu().open(player)));
 
 			List<ClickableItem> items = new ArrayList<>();
 
 			for (MobPoint mobPoint : arena.getMobPoints()) {
-				final ItemStack skull = MobHeadType.of(mobPoint.getType()).getGeneric();
+				final MobHeadType mobHeadType = MobHeadType.of(mobPoint.getType());
+				ItemStack skull;
+				if (mobHeadType == null)
+					skull = new ItemStack(Material.BARRIER);
+				else {
+					skull = mobHeadType.getGeneric();
+					if (isNullOrAir(skull))
+						skull = new ItemStack(Material.BARRIER);
+				}
+
 				final String lore = getLocationLore(mobPoint.getLocation()) + "|| ||&7Click to remove";
 				final ItemStack item = nameItem(skull, "&3" + camelCase(mobPoint.getType()), lore);
 
@@ -96,6 +100,16 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 	public class AddMobPointMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("Add Mob Point")
+				.size(6, 9)
+				.build()
+				.open(viewer, page);
+		}
+
+		@Override
 		public void init(Player player, InventoryContents contents) {
 			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
 
@@ -107,7 +121,14 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				if (!LivingEntity.class.isAssignableFrom(type.getEntityClass()))
 					continue;
 
-				final ItemStack item = new ItemBuilder(MobHeadType.of(type).getGeneric()).name("&e" + camelCase(type)).build();
+				final MobHeadType mobHeadType = MobHeadType.of(type);
+				if (mobHeadType == null)
+					continue;
+				final ItemStack skull = mobHeadType.getGeneric();
+				if (isNullOrAir(skull))
+					continue;
+
+				final ItemStack item = new ItemBuilder(skull).name("&e" + camelCase(type)).build();
 
 				items.add(ClickableItem.from(item, e -> {
 					arena.getMobPoints().add(new MobPoint(player.getLocation(), type));

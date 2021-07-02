@@ -305,7 +305,7 @@ public class MatchListener implements Listener {
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
 
 		Arena arena = minigamer.getMatch().getArena();
-		if (arena.ownsRegion(event.getRegion().getId(), "kill"))
+		if (arena.ownsRegion(event.getRegion(), "kill"))
 			mechanic.kill(minigamer);
 	}
 

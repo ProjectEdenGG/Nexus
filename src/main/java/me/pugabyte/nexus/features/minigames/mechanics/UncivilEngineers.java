@@ -1,7 +1,5 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import io.papermc.lib.PaperLib;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Arena;
@@ -12,10 +10,9 @@ import me.pugabyte.nexus.features.minigames.models.arenas.UncivilEngineersArena;
 import me.pugabyte.nexus.features.minigames.models.arenas.UncivilEngineersArena.MobPoint;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointData;
+import me.pugabyte.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,14 +22,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.Set;
 
-@Regenerating(value = "regen", air = false)
+@Regenerating(value = "regen")
 public class UncivilEngineers extends TeamlessMechanic {
 	private static final int SLICES = 10;
 	private static final int SEPARATOR_Z = -25;
 
-	private static Location getFirstSpawnpoint() {
+	public static Location getStart() {
 		return new Location(Minigames.getWorld(), 2554, 56, -2677, 90, 0);
 	}
 
@@ -79,20 +75,21 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	public void separatePlayers(Match match) {
-		final Location start = getFirstSpawnpoint();
+		final UncivilEngineersMatchData matchData = match.getMatchData();
 		final Iterator<Minigamer> minigamers = match.getMinigamers().iterator();
 		for (int i = 1; i <= SLICES; i++)
 			if (minigamers.hasNext())
-				minigamers.next().teleport(offset(start, i));
+				matchData.assignSlice(minigamers.next(), i);
 	}
 
 	public void spawnEntities(Match match) {
 		UncivilEngineersArena arena = match.getArena();
 		for (MobPoint point : arena.getMobPoints())
 			for (int i = 1; i <= SLICES; i++) {
-				Location spawnLoc = offset(point.getLocation(), i);
-				PaperLib.getChunkAtAsync(spawnLoc).thenRun(() ->
-					match.spawn(spawnLoc, point.getType().getEntityClass()));
+				Location location = offset(point.getLocation(), i);
+//				PaperLib.getChunkAtAsync(spawnLoc).thenRun(() ->
+//					match.spawn(spawnLoc, point.getType().getEntityClass()));
+				match.spawn(location, point.getType().getEntityClass());
 			}
 	}
 
@@ -105,17 +102,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	public static int getSlice(Minigamer minigamer) {
-		final Arena arena = minigamer.getMatch().getArena();
-		final WorldGuardUtils worldGuardUtils = minigamer.getMatch().getWGUtils();
-		final Location location = minigamer.getPlayer().getLocation();
-		final String regex = arena.getRegionBaseName() + "_slice_[0-9]+";
-
-		final Set<ProtectedRegion> regions = worldGuardUtils.getRegionsLikeAt(regex, location);
-		if (regions.isEmpty())
-			throw new InvalidInputException("[UncivilEngineers] Could not find slice number for " + minigamer.getNickname());
-
-		String id = regions.iterator().next().getId();
-		return Integer.parseInt(id.split("_")[2]);
+		return minigamer.getMatch().<UncivilEngineersMatchData>getMatchData().getSlice(minigamer);
 	}
 
 	@EventHandler
@@ -147,14 +134,14 @@ public class UncivilEngineers extends TeamlessMechanic {
 		UncivilEngineersArena arena = minigamer.getMatch().getArena();
 		CheckpointData matchData = minigamer.getMatch().getMatchData();
 		minigamer.clearState();
-		if (!matchData.getCheckpoints().containsKey(minigamer.getPlayer().getUniqueId())) {
-			Location spawnpoint = arena.getTeams().get(0).getSpawnpoints().get(0);
-			minigamer.teleport(offset(spawnpoint, minigamer));
-			return;
-		}
 
-		final Location checkpoint = arena.getCheckpoint(matchData.getCheckpointId(minigamer));
-		minigamer.teleport(offset(checkpoint, minigamer));
+		Location location;
+		if (!matchData.getCheckpoints().containsKey(minigamer.getPlayer().getUniqueId()))
+			location = getStart().toCenterLocation();
+		else
+			location = arena.getCheckpoint(matchData.getCheckpointId(minigamer));
+
+		minigamer.teleport(offset(location, minigamer));
 	}
 
 	@Override
