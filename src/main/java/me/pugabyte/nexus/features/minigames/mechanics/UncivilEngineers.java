@@ -11,7 +11,6 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.nexus.features.minigames.models.arenas.UncivilEngineersArena;
 import me.pugabyte.nexus.features.minigames.models.arenas.UncivilEngineersArena.MobPoint;
-import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
@@ -23,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Enderman;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
@@ -186,19 +184,6 @@ public class UncivilEngineers extends TeamlessMechanic {
 		event.setKeepInventory(true);
 		event.getDrops().clear();
 		event.setDeathMessage(null);
-	}
-
-	@Override
-	public void onEnd(@NotNull MatchEndEvent event) {
-		// TODO Figure out why Match#clearEntities isn't working
-		final Match match = event.getMatch();
-		match.getWorld().getEntities().forEach(entity -> {
-			if (entity instanceof LivingEntity)
-				if (match.getArena().getRegion().contains(match.getWEUtils().toBlockVector3(entity.getLocation())))
-					entity.remove();
-		});
-
-		super.onEnd(event);
 	}
 
 	@EventHandler
