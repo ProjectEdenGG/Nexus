@@ -37,6 +37,8 @@ import me.pugabyte.nexus.models.bearfair21.ClientsideContent;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import me.pugabyte.nexus.models.bearfair21.ClientsideContentService;
+import me.pugabyte.nexus.models.eventuser.EventUser;
+import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.SoundBuilder;
@@ -541,6 +543,8 @@ public class BearFair21Command extends CustomCommand {
 	@Permission("group.admin")
 	void stats() {
 		List<BearFair21User> users = userService.getAll();
+		EventUserService eventUserService = new EventUserService();
+		List<EventUser> eventUsers = eventUserService.getAll();
 
 		// Total time played
 		// % of time spent at bf vs other worlds
@@ -548,6 +552,15 @@ public class BearFair21Command extends CustomCommand {
 		// % of playtime per world during bf
 
 		send("Unique visitors: " + users.stream().filter(bearFair21User -> !bearFair21User.isFirstVisit()).toList().size());
+
+		send("Daily Points:");
+		send(json(" - [Day 1]").hover(getCompletedSources(eventUsers, Day.TUE)));
+		send(json(" - [Day 2]").hover(getCompletedSources(eventUsers, Day.WED)));
+		send(json(" - [Day 3]").hover(getCompletedSources(eventUsers, Day.THU)));
+		send(json(" - [Day 4]").hover(getCompletedSources(eventUsers, Day.FRI)));
+		send(json(" - [Day 5]").hover(getCompletedSources(eventUsers, Day.SAT)));
+		send(json(" - [Day 6]").hover(getCompletedSources(eventUsers, Day.SUN)));
+
 
 		// % at each quest stage of each quest
 		send("Quest Stages:");
@@ -577,9 +590,45 @@ public class BearFair21Command extends CustomCommand {
 		questStageMap.keySet().stream().sorted(Comparator.comparing(Enum::ordinal)).forEach(questStage -> {
 			int count = questStageMap.get(questStage);
 			if (count > 0)
-				lines.add(StringUtils.camelCase(questStage) + ": " + questStageMap.get(questStage));
+				lines.add(StringUtils.camelCase(questStage) + ": " + count);
 		});
 
 		return lines;
+	}
+
+	private List<String> getCompletedSources(List<EventUser> users, Day day) {
+		Map<BF21PointSource, Integer> sourceMap = new HashMap<>();
+		for (EventUser user : users) {
+			for (BF21PointSource source : BF21PointSource.values()) {
+				int userTokens = user.getTokensRecieved(source.getId(), day.getLocalDate());
+				int maxSourceTokens = BearFair21.getTokenMax(source);
+				int count = sourceMap.getOrDefault(source, 0);
+				if (userTokens == maxSourceTokens) {
+					++count;
+					sourceMap.put(source, count);
+				}
+			}
+		}
+
+		List<String> lines = new ArrayList<>();
+		sourceMap.keySet().stream().sorted(Comparator.comparing(Enum::ordinal)).forEach(source -> {
+			int count = sourceMap.get(source);
+			lines.add(StringUtils.camelCase(source) + ": " + count);
+		});
+
+		return lines;
+	}
+
+	@AllArgsConstructor
+	private enum Day {
+		TUE(LocalDate.of(2021, 6, 29)),
+		WED(LocalDate.of(2021, 6, 30)),
+		THU(LocalDate.of(2021, 7, 1)),
+		FRI(LocalDate.of(2021, 7, 2)),
+		SAT(LocalDate.of(2021, 7, 3)),
+		SUN(LocalDate.of(2021, 7, 4));
+
+		@Getter
+		LocalDate localDate;
 	}
 }

@@ -28,14 +28,6 @@ import static me.pugabyte.nexus.utils.StringUtils.plural;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-/*
-	TODO
-		Create an EventType enum
-		Use Pugmas20 inventory store to manage event items between events
-		Add a way to clear the eventtype inventory once upon entering the world
-		Add a way to differentiate between event-world only items and survival items
-		Add a way to send survival items back to survival (delivery service)
- */
 public class EventUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -45,7 +37,11 @@ public class EventUser implements PlayerOwnedObject {
 	private Map<String, Map<LocalDate, Integer>> tokensReceivedToday = new HashMap<>();
 
 	public int getTokensReceivedToday(String id) {
-		return tokensReceivedToday.getOrDefault(id, new HashMap<>()).getOrDefault(LocalDate.now(), 0);
+		return getTokensRecieved(id, LocalDate.now());
+	}
+
+	public int getTokensRecieved(String id, LocalDate date) {
+		return tokensReceivedToday.getOrDefault(id, new HashMap<>()).getOrDefault(date, 0);
 	}
 
 	public int getDailyTokensLeft(String id, int amount, Map<String, Integer> maxes) {
