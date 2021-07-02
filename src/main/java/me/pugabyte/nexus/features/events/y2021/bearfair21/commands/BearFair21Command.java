@@ -57,6 +57,7 @@ import org.bukkit.entity.Player;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -539,11 +540,46 @@ public class BearFair21Command extends CustomCommand {
 	@Path("stats")
 	@Permission("group.admin")
 	void stats() {
+		List<BearFair21User> users = userService.getAll();
+
 		// Total time played
 		// % of time spent at bf vs other worlds
-		// unique visitors
 		// % of people who logged in that visited bf
 		// % of playtime per world during bf
+
+		send("Unique visitors: " + users.stream().filter(bearFair21User -> !bearFair21User.isFirstVisit()).toList().size());
+
 		// % at each quest stage of each quest
+		send("Quest Stages:");
+		send(json("- [Main]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.MAIN)));
+		send(json("  - [LumberJack]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.LUMBERJACK)));
+		send(json("  - [BeeKeeper]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.BEEKEEPER)));
+		send(json("  - [Recycler]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.RECYCLER)));
+		send(json("- [Minigame Night]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.MINIGAME_NIGHT)));
+		send(json("- [Pugmas]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.PUGMAS)));
+		send(json("- [Halloween]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.HALLOWEEN)));
+		send(json("- [Summer Down Under]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.SUMMER_DOWN_UNDER)));
+	}
+
+	// TODO: im sure there's some stream magic that can clean this up
+	private List<String> getQuestStages(List<BearFair21User> users, BearFair21UserQuestStageHelper quest) {
+		Map<QuestStage, Integer> questStageMap = new HashMap<>();
+		for (QuestStage questStage : QuestStage.values()) {
+			for (BearFair21User user : users) {
+				if (quest.getter().apply(user).equals(questStage)) {
+					int count = questStageMap.getOrDefault(questStage, 0);
+					questStageMap.put(questStage, ++count);
+				}
+			}
+		}
+
+		List<String> lines = new ArrayList<>();
+		questStageMap.keySet().stream().sorted(Comparator.comparing(Enum::ordinal)).forEach(questStage -> {
+			int count = questStageMap.get(questStage);
+			if (count > 0)
+				lines.add(StringUtils.camelCase(questStage) + ": " + questStageMap.get(questStage));
+		});
+
+		return lines;
 	}
 }
