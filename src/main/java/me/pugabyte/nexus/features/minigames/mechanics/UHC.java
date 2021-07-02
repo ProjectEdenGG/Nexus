@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import eden.utils.TimeUtils;
 import eden.utils.TimeUtils.Timespan;
 import lombok.Getter;
+import me.lexikiq.event.block.BlockDropResourcesEvent;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -23,10 +24,8 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -106,29 +105,14 @@ public class UHC extends TeamlessVanillaMechanic {
 		super.onDeath(event);
 	}
 
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onItemDrop(BlockDropItemEvent event) {
-		if (!event.getPlayer().getWorld().getName().equals(worldName)) return;
-		for (Item item : event.getItems()) {
-			ItemStack stack = item.getItemStack();
-			Material mat = stack.getType();
-
-			// apples from all trees - part 1
-			if (mat == Material.APPLE) return;
-
-			// ore auto-smelter
-			Material ingot = MaterialUtils.oreToIngot(stack.getType());
-			if (ingot == null) continue;
-			stack.setType(ingot);
-			item.setItemStack(stack);
-			return;
-		}
-		// apples from all trees - part 2
-		if (MaterialTag.LEAVES.isTagged(event.getBlockState().getType()) && RandomUtils.randomInt(1, 200) == 1)
-			event.getItems().add(event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.APPLE)));
+	@EventHandler
+	public void onBlockDropResources(BlockDropResourcesEvent event) {
+		// always drop apples on leaf break (mining/decay)
+		if (!event.getBlock().getWorld().getName().equals(worldName)) return;
+		event.getResources().removeIf(itemStack -> itemStack.getType() == Material.APPLE); // remove existing apples
+		if (MaterialTag.LEAVES.isTagged(event.getBlock().getType()) && RandomUtils.getRandom().nextInt(200) == 0)
+			event.getResources().add(new ItemStack(Material.APPLE));
 	}
-
-	// TODO: fast leaf decay + apples from leaf decay
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onRegainHealth(EntityRegainHealthEvent event) {
