@@ -6,6 +6,7 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.TimeUtils.Timespan.FormatType;
 import eden.utils.TimeUtils.Timespan.TimespanBuilder;
+import io.papermc.lib.PaperLib;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -350,10 +351,12 @@ public class Match implements ForwardingAudience {
 		}
 	}
 
-	private static List<EntityType> deletableTypes = Arrays.asList(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
+	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
 
 	private void clearEntities() {
-		entities.forEach(Entity::remove);
+		for (Entity entity : entities)
+			PaperLib.getChunkAtAsync(entity.getLocation()).thenRun(entity::remove);
+
 		getWorld().getEntities().forEach(entity -> {
 			if (getArena().getRegion().contains(getWEUtils().toBlockVector3(entity.getLocation())))
 				if (deletableTypes.contains(entity.getType()))
@@ -377,7 +380,6 @@ public class Match implements ForwardingAudience {
 	}
 
 	private void teleportIn() {
-		Set<Location> usedSpawnpoints = new HashSet<>();
 		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 

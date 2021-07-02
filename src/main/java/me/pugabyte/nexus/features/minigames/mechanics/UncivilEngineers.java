@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import io.papermc.lib.PaperLib;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.minigames.Minigames;
+import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Arena;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -9,6 +11,7 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.Regenerating;
 import me.pugabyte.nexus.features.minigames.models.arenas.UncivilEngineersArena;
 import me.pugabyte.nexus.features.minigames.models.arenas.UncivilEngineersArena.MobPoint;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
@@ -19,25 +22,31 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Enderman;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.Set;
+
+import static me.pugabyte.nexus.features.minigames.Minigames.getWorld;
 
 @Regenerating(value = "regen")
 public class UncivilEngineers extends TeamlessMechanic {
 	private static final int SLICES = 10;
 	private static final int SEPARATOR_Z = -25;
-	private static final NamespacedKey NBT_KEY = new NamespacedKey(Nexus.getInstance(), "UncivilEngineers-Slice");
+	private static final NamespacedKey NBT_KEY = new NamespacedKey(Nexus.getInstance(), "uncivilengineers-slice");
 
 	public static Location getStart() {
-		return new Location(Minigames.getWorld(), 2554, 56, -2677, 90, 0);
+		return new Location(getWorld(), 2554, 56, -2677, 90, 0);
 	}
 
 	@Override
@@ -92,18 +101,21 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 	public void spawnEntities(Match match) {
 		UncivilEngineersArena arena = match.getArena();
+		final UncivilEngineersMatchData matchData = match.getMatchData();
 		for (MobPoint point : arena.getMobPoints())
 			for (int i = 1; i <= SLICES; i++) {
 				final int slice = i;
+				if (matchData.getSlices().size() < slice)
+					continue;
+
 				Location location = offset(point.getLocation(), i);
-//				PaperLib.getChunkAtAsync(spawnLoc).thenRun(() ->
-//					match.spawn(spawnLoc, point.getType().getEntityClass()));
-				match.spawn(location, point.getType().getEntityClass(), entity -> {
+				PaperLib.getChunkAtAsync(location).thenRun(() ->
+					match.spawn(location, point.getType().getEntityClass(), entity -> {
 					if (entity instanceof Sheep sheep)
 						sheep.setColor(DyeColor.WHITE);
 
 					entity.getPersistentDataContainer().set(NBT_KEY, PersistentDataType.INTEGER, slice);
-				});
+				}));
 			}
 	}
 
@@ -176,6 +188,19 @@ public class UncivilEngineers extends TeamlessMechanic {
 		event.setDeathMessage(null);
 	}
 
+	@Override
+	public void onEnd(@NotNull MatchEndEvent event) {
+		// TODO Figure out why Match#clearEntities isn't working
+		final Match match = event.getMatch();
+		match.getWorld().getEntities().forEach(entity -> {
+			if (entity instanceof LivingEntity)
+				if (match.getArena().getRegion().contains(match.getWEUtils().toBlockVector3(entity.getLocation())))
+					entity.remove();
+		});
+
+		super.onEnd(event);
+	}
+
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (!(event.getTarget() instanceof Player player))
@@ -185,13 +210,43 @@ public class UncivilEngineers extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		final Integer integer = event.getEntity().getPersistentDataContainer().get(NBT_KEY, PersistentDataType.INTEGER);
-		if (integer == null) {
+		final Integer spawnSlice = event.getEntity().getPersistentDataContainer().get(NBT_KEY, PersistentDataType.INTEGER);
+		if (spawnSlice == null) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (integer != getSlice(minigamer))
+		if (spawnSlice != getSlice(minigamer))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onEntityTeleport(EntityTeleportEvent event) {
+		final Location to = event.getTo();
+		if (to == null)
+			return;
+
+		if (!(event.getEntity() instanceof Enderman))
+			return;
+
+		final Integer spawnSlice = event.getEntity().getPersistentDataContainer().get(NBT_KEY, PersistentDataType.INTEGER);
+		if (spawnSlice == null)
+			return;
+
+		final Arena arena = ArenaManager.getFromLocation(to);
+		if (arena == null) {
+			event.setCancelled(true);
+			return;
+		}
+
+		final Set<ProtectedRegion> regions = arena.getRegionsLikeAt(arena.getRegionTypeRegex("slice"), to);
+		if (regions.isEmpty()) {
+			event.setCancelled(true);
+			return;
+		}
+
+		ProtectedRegion region = regions.iterator().next();
+		if (Arena.getRegionNumber(region) != spawnSlice)
 			event.setCancelled(true);
 	}
 

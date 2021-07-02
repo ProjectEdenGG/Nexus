@@ -37,7 +37,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -184,9 +183,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onEnd(@NotNull MatchEndEvent event) {
-//		for (Entity entity : event.getMatch().getEntities())
-//			PaperLib.getChunkAtAsync(entity.getLocation()).thenRun(entity::remove);
-		event.getMatch().getEntities().forEach(Entity::remove);
+
 		if (event.getMatch().isStarted())
 			announceWinners(event.getMatch());
 	}

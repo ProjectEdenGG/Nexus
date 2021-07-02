@@ -54,10 +54,14 @@ public class ArenaManager {
 	}
 
 	public static Arena getFromLocation(Location location) {
+		return getFromLocation(location, null);
+	}
+
+	public static Arena getFromLocation(Location location, String type) {
 		Set<ProtectedRegion> regionsAt = new WorldGuardUtils(location).getRegionsAt(location);
 		for (ProtectedRegion region : regionsAt) {
 			Arena fromRegion = getFromRegion(region.getId());
-			if (fromRegion != null)
+			if (fromRegion != null && (type == null || fromRegion.ownsRegion(region, type)))
 				return fromRegion;
 		}
 
