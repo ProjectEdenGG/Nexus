@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.mechanics;
 
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Arena;
@@ -13,12 +14,18 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.CheckpointData;
 import me.pugabyte.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -27,6 +34,7 @@ import java.util.Iterator;
 public class UncivilEngineers extends TeamlessMechanic {
 	private static final int SLICES = 10;
 	private static final int SEPARATOR_Z = -25;
+	private static final NamespacedKey NBT_KEY = new NamespacedKey(Nexus.getInstance(), "UncivilEngineers-Slice");
 
 	public static Location getStart() {
 		return new Location(Minigames.getWorld(), 2554, 56, -2677, 90, 0);
@@ -86,10 +94,16 @@ public class UncivilEngineers extends TeamlessMechanic {
 		UncivilEngineersArena arena = match.getArena();
 		for (MobPoint point : arena.getMobPoints())
 			for (int i = 1; i <= SLICES; i++) {
+				final int slice = i;
 				Location location = offset(point.getLocation(), i);
 //				PaperLib.getChunkAtAsync(spawnLoc).thenRun(() ->
 //					match.spawn(spawnLoc, point.getType().getEntityClass()));
-				match.spawn(location, point.getType().getEntityClass());
+				match.spawn(location, point.getType().getEntityClass(), entity -> {
+					if (entity instanceof Sheep sheep)
+						sheep.setColor(DyeColor.WHITE);
+
+					entity.getPersistentDataContainer().set(NBT_KEY, PersistentDataType.INTEGER, slice);
+				});
 			}
 	}
 
@@ -108,7 +122,8 @@ public class UncivilEngineers extends TeamlessMechanic {
 	@EventHandler
 	public void onFinish(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion().getId(), "finish")) return;
 		minigamer.scored();
@@ -119,7 +134,8 @@ public class UncivilEngineers extends TeamlessMechanic {
 	@EventHandler
 	public void onEnterCheckpointRegion(PlayerEnteredRegionEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		UncivilEngineersArena arena = minigamer.getMatch().getArena();
 		CheckpointData matchData = minigamer.getMatch().getMatchData();
@@ -152,11 +168,31 @@ public class UncivilEngineers extends TeamlessMechanic {
 	@EventHandler
 	public void onCustomDeath(PlayerDeathEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getEntity());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		event.setKeepInventory(true);
 		event.getDrops().clear();
 		event.setDeathMessage(null);
+	}
+
+	@EventHandler
+	public void onEntityTarget(EntityTargetEvent event) {
+		if (!(event.getTarget() instanceof Player player))
+			return;
+
+		Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying(this))
+			return;
+
+		final Integer integer = event.getEntity().getPersistentDataContainer().get(NBT_KEY, PersistentDataType.INTEGER);
+		if (integer == null) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (integer != getSlice(minigamer))
+			event.setCancelled(true);
 	}
 
 }
