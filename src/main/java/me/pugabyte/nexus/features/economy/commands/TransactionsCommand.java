@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.banker.Transaction;
 import me.pugabyte.nexus.models.banker.Transaction.TransactionCause;
@@ -91,6 +92,12 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
 		paginate(combine(transactions), formatter, "/transaction history " + banker.getName(), page);
+	}
+
+	@Path("count [player]")
+	@Permission("group.admin")
+	void count(Transactions banker) {
+		send("Size: " + banker.getTransactions().size());
 	}
 
 	@NotNull

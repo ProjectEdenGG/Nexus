@@ -4,6 +4,7 @@ import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,9 +22,15 @@ public class TransactionsService extends MongoService<Transactions> {
 		return saveQueue;
 	}
 
+	private final static int LIMIT = 40000;
+
 	@Override
 	protected void beforeSave(Transactions transactions) {
-		transactions.getTransactions().removeIf(transaction -> transaction.getTimestamp().isBefore(LocalDateTime.now().minusDays(60)));
+		final List<Transaction> txns = transactions.getTransactions();
+		txns.removeIf(transaction -> transaction.getTimestamp().isBefore(LocalDateTime.now().minusDays(60)));
+
+		if (txns.size() > LIMIT)
+			transactions.setTransactions(txns.subList(txns.size() - LIMIT, txns.size()));
 	}
 
 }
