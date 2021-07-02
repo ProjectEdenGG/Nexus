@@ -3,9 +3,13 @@ package me.pugabyte.nexus.features.minigames.mechanics;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import eden.utils.TimeUtils;
 import eden.utils.TimeUtils.Timespan;
+import eden.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import me.lexikiq.event.block.BlockDropResourcesEvent;
 import me.pugabyte.nexus.features.minigames.models.Match;
+import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
@@ -22,18 +26,24 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
 import org.bukkit.GameRule;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExhaustionEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 public class UHC extends TeamlessVanillaMechanic {
@@ -52,18 +62,27 @@ public class UHC extends TeamlessVanillaMechanic {
 		return "Be the last person alive as you fight other players to death and escape the world border, all without regenerating health";
 	}
 
-	private final int worldDiameter = 4001;
-	private final String worldName = "uhc";
-	private static final long shrinksAtMinutes = 40;
-	private static final int shrinksAt = TimeUtils.Time.MINUTE.x(shrinksAtMinutes);
-	private static final Duration shrinksAtDuration = TimeUtils.Time.MINUTE.duration(shrinksAtMinutes);
-	private static final int warnMinutes = 3;
-	private static final int warnAt = shrinksAt - TimeUtils.Time.MINUTE.x(warnMinutes);
-	private static final int shrinksAtSecondsLeft = (int) (shrinksAt/10f);
-	public static final int finalDiameter = 49;
-	private static final String diameterString = finalDiameter + "x" + finalDiameter;
+	@EqualsAndHashCode
+	@AllArgsConstructor
+	private static final class WorldBorderWrapper {
+		private final @NotNull Duration delay;
+		private final @NotNull Duration shrink;
+		private final @NotNull Duration warning;
+		private final int diameter;
 
-	private final void announce(Audience to, ComponentLike message) {
+		public final String getDiameterString() {
+			return diameter + "x" + diameter;
+		}
+	}
+
+	private final int worldDiameter = 3001; // TODO: custom variable for world border center radius
+	private final String worldName = "uhc";
+	private static final List<WorldBorderWrapper> WORLD_BORDER_DATA = List.of(
+		new WorldBorderWrapper(Duration.ofMinutes(40), Duration.ofMinutes(17), Duration.ofMinutes(3), 49),
+		new WorldBorderWrapper(Duration.ofMinutes(58), Duration.ofMinutes(2), Duration.ofSeconds(10), 9)
+	);
+
+	private void announce(Audience to, ComponentLike message) {
 		Component msg = message.asComponent();
 		Title title = Title.title(Component.empty(), msg, AdventureUtils.BASIC_TIMES);
 		to.sendMessage(JsonBuilder.fromPrefix("UHC", msg));
@@ -75,22 +94,45 @@ public class UHC extends TeamlessVanillaMechanic {
 		super.onStart(event);
 		final Match match = event.getMatch();
 		match.<UHCMatchData>getMatchData().setStartTime(LocalDateTime.now());
-		match.getTasks().wait(warnAt, () -> announce(match, new JsonBuilder("&cThe border will begin shrinking in &e"+warnMinutes+" minutes")));
-		match.getTasks().wait(shrinksAt, () -> {
-			getWorld().getWorldBorder().setSize(finalDiameter, Duration.ofMinutes(17).toSeconds());
-			getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-			announce(match, new JsonBuilder("&cThe border is now shrinking to &e"+diameterString));
+		WORLD_BORDER_DATA.forEach(worldBorder -> {
+			match.getTasks().wait(TimeUtils.Time.SECOND.x(worldBorder.delay.minus(worldBorder.warning).getSeconds()),
+				() -> announce(match, new JsonBuilder("&cThe border will begin shrinking in &e" + worldBorder.warning.toMinutes() + " minutes")));
+			match.getTasks().wait(TimeUtils.Time.SECOND.x(worldBorder.delay.getSeconds()), () -> {
+				getWorld().getWorldBorder().setSize(worldBorder.diameter, worldBorder.shrink.getSeconds());
+				getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+				announce(match, new JsonBuilder("&cThe border is now shrinking to &e" + worldBorder.getDiameterString()));
+			});
 		});
 	}
 
 	@Override
 	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
 		super.onDisplayTimer(event);
-		Timespan timespan = Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plus(shrinksAtDuration));
-		String timespanText = timespan.format();
-		String wbText = timespanText.startsWith("-")
-			? "&cWorld Border is shrinking to &6"+diameterString // TODO: should display a different message after border finishes shrinking
-			: "World Border shrinks in &e" + Timespan.of(LocalDateTime.now(), event.getMatch().<UHCMatchData>getMatchData().getStartTime().plus(shrinksAtDuration)).format();
+		String wbText = null; // world border text
+		PlayerInventory inv = event.getMinigamer().getPlayer().getInventory();
+		if (inv.getItemInMainHand().getType() == Material.COMPASS || inv.getItemInOffHand().getType() == Material.COMPASS) {
+			UUID uuid = event.getMinigamer().getUniqueId();
+			Location loc = event.getMinigamer().getPlayer().getLocation();
+			Utils.MinMaxResult<Minigamer> result = Utils.getMin(event.getMatch().getAliveMinigamers().stream().filter(minigamer -> !minigamer.getUniqueId().equals(uuid)).collect(Collectors.toList()),
+				minigamer -> minigamer.getPlayer().getLocation().distance(loc));
+			wbText = "&3The nearest player is &e" + result.getObject().getNickname() + "&3 (&6" + result.getInteger() + "m&3)";
+		} else {
+			LocalDateTime start = event.getMatch().<UHCMatchData>getMatchData().getStartTime();
+			LocalDateTime now = LocalDateTime.now();
+			for (WorldBorderWrapper worldBorder : WORLD_BORDER_DATA) {
+				LocalDateTime borderStart = start.plus(worldBorder.delay);
+				if (now.isBefore(borderStart)) {
+					wbText = "World Border shrinks in &e" + Timespan.of(now, borderStart).format();
+					break;
+				} else if (now.isBefore(borderStart.plus(worldBorder.shrink))) {
+					break; // don't display "shrinks in" message if a border is shrinking
+				}
+			}
+			if (wbText == null) {
+				int size = (int) Math.ceil(getWorld().getWorldBorder().getSize());
+				wbText = "&cWorld Border is currently &6" + size + "x" + size;
+			}
+		}
 		event.setContents(new JsonBuilder(event.getContents())
 			.next(" | Y: &e" + (int) Math.floor(event.getMinigamer().getPlayer().getLocation().getY()))
 			.next(" | ").next(wbText));
@@ -119,6 +161,12 @@ public class UHC extends TeamlessVanillaMechanic {
 		if (event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED
 		&& event.getEntity() instanceof HumanEntity entity
 		&& entity.getWorld().getName().equals(worldName))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onExhaustion(EntityExhaustionEvent event) { // TODO: fix imports
+		if (event.getEntity().getWorld().getName().equals(worldName) && event.getExhaustionReason() == EntityExhaustionEvent.ExhaustionReason.REGEN)
 			event.setCancelled(true);
 	}
 
