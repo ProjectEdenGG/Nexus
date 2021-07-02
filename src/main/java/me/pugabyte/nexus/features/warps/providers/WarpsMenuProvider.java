@@ -121,7 +121,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				ItemStack banners = nameItem(Material.CYAN_BANNER, "&3Banners");
 				ItemStack storetesting = nameItem(Material.GOLD_INGOT, "&3Store Perk Testing Area");
 				ItemStack walkthrough = nameItem(Material.NETHER_STAR, "&3Two Year Anniversary", "&e&lHistory Walkthrough||&eCelebrating 2 years||&eof Project Eden");
-				ItemStack bearfair = nameItem(Material.FIREWORK_ROCKET, "&3Three Year Anniversary", "&e&lBear Fair||&eCelebrating 3 years||&eof Project Eden");
+				ItemStack bearfair = nameItem(Material.FIREWORK_ROCKET, "&3Six Year Anniversary", "&e&lBear Fair||&eCelebrating 6 years||&eof Project Eden");
 				ItemStack buildcontests = nameItem(Material.CHEST, "&3Past Build Contests");
 				contents.set(1, 1, ClickableItem.from(leaderboards, e -> warp(player, "leaderboards")));
 				contents.set(1, 3, ClickableItem.from(staffhall, e -> warp(player, "staffhall")));
@@ -131,7 +131,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				contents.set(2, 4, ClickableItem.from(storetesting, e -> warp(player, "donortrial")));
 				contents.set(2, 6, ClickableItem.from(buildcontests, e -> WarpsMenu.open(player, WarpMenu.BUILD_CONTESTS)));
 				contents.set(3, 3, ClickableItem.from(walkthrough, e -> warp(player, "2y")));
-				contents.set(3, 5, ClickableItem.from(bearfair, e -> warp(player, "bearfair")));
+				contents.set(3, 5, ClickableItem.from(bearfair, e -> command(player, "bearfair21")));
 			}
 			case BUILD_CONTESTS -> {
 				ItemStack contest0 = nameItem(Material.JACK_O_LANTERN, "&3Halloween - 2015");
