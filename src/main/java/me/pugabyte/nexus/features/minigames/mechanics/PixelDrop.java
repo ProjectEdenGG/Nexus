@@ -139,7 +139,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		matchData.resetRound();
 
-		if (matchData.getCurrentRound() == MAX_ROUNDS) {
+		if (matchData.getCurrentRound() >= MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
 				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
