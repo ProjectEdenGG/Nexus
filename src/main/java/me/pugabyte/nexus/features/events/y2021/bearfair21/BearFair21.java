@@ -216,10 +216,15 @@ public class BearFair21 implements Listener {
 
 	// point stuff
 
+	@Getter
 	private static final Map<String, Integer> tokenMaxes = new HashMap<>();
 
 	public static void addTokenMax(BF21PointSource source, int amount) {
 		tokenMaxes.put("bearfair21_" + source.name().toLowerCase(), amount);
+	}
+
+	public static int getTokenMax(BF21PointSource source) {
+		return tokenMaxes.get("bearfair21_" + source.name().toLowerCase());
 	}
 
 	public static int getDailyTokensLeft(OfflinePlayer player, BF21PointSource source, int amount) {
@@ -287,7 +292,7 @@ public class BearFair21 implements Listener {
 		REFLECTION,
 		;
 
-		private String getId() {
+		public String getId() {
 			return "bearfair21_" + name().toLowerCase();
 		}
 	}
