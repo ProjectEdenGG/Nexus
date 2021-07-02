@@ -7,12 +7,15 @@ import me.pugabyte.nexus.features.minigames.models.MatchData;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.annotations.MatchDataFor;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import org.bukkit.Location;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,6 +41,21 @@ public class BingoMatchData extends MatchData {
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				challenges[i][j] = iterator.next();
+	}
+
+	public Set<Challenge> getAllChallenges() {
+		return new HashSet<>() {{
+			for (Challenge[] array : challenges)
+				this.addAll(Set.of(array));
+		}};
+	}
+
+	public Set<Challenge> getAllChallenges(Class<? extends IChallenge> challengeType) {
+		return new HashSet<>() {{
+			for (Challenge challenge : getAllChallenges())
+				if (challengeType.isAssignableFrom(challenge.getChallenge().getClass()))
+					add(challenge);
+		}};
 	}
 
 	public CompletableFuture<Void> spawnpoint(Minigamer minigamer, Location location) {

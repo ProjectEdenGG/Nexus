@@ -184,7 +184,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Entity getTargetEntityRequired(EntityType entityType) {
 		Entity targetEntity = getTargetEntity();
 		if (targetEntity == null || targetEntity.getType() != entityType)
-			error("You must be looking at " + an(entityType.name()) + " " + camelCase(entityType));
+			error("You must be looking at " + an(camelCase(entityType)));
 		return targetEntity;
 	}
 
