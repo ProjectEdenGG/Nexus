@@ -248,7 +248,7 @@ public class Match implements ForwardingAudience {
 		broadcastNoPrefix("");
 		clearHolograms();
 		clearEntities();
-		clearStates();
+		clearStates(true);
 		stopModifierBar();
 		toGamelobby();
 		try {
@@ -390,8 +390,12 @@ public class Match implements ForwardingAudience {
 		minigamer.getTeam().spawn(minigamer);
 	}
 
-	private void clearStates() {
+	public void clearStates() {
 		minigamers.forEach(Minigamer::clearState);
+	}
+
+	public void clearStates(boolean forceClearInventory) {
+		minigamers.forEach(minigamer -> minigamer.clearState(forceClearInventory));
 	}
 
 	private void toGamelobby() {
