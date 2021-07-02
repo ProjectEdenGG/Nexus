@@ -13,4 +13,9 @@ import java.util.List;
 public class ObtainChallengeProgress implements IItemChallengeProgress {
 	private final List<ItemStack> items = new ArrayList<>();
 
+	@Override
+	public String getTask() {
+		return "Obtain";
+	}
+
 }

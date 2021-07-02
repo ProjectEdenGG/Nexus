@@ -49,6 +49,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -156,7 +157,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return lore(Arrays.asList(lore));
 	}
 
-	public ItemBuilder lore(List<String> lore) {
+	public ItemBuilder lore(Collection<String> lore) {
 		if (lore != null)
 			this.lore.addAll(lore);
 		return this;
@@ -527,9 +528,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
 			if (doLoreize)
-				colorized.addAll(Arrays.asList(StringUtils.loreize(colorize(line)).split("\\|\\|")));
+				colorized.addAll(Arrays.asList(StringUtils.loreize(colorize("&f" + line)).split("\\|\\|")));
 			else
-				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
+				colorized.addAll(Arrays.asList(colorize("&f" + line).split("\\|\\|")));
 		itemMeta.setLore(colorized);
 	}
 
