@@ -2,12 +2,19 @@ package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.chall
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BreakChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ConsumeChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CraftChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.DimensionChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.KillChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ObtainChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
 import me.pugabyte.nexus.utils.MaterialTag;
+import org.bukkit.StructureType;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
@@ -72,6 +79,25 @@ public enum Challenge {
 	KILL_2_PIGLIN_BRUTES(new KillChallenge(EntityType.PIGLIN_BRUTE, 2)),
 	KILL_2_MAGMA_CUBES(new KillChallenge(EntityType.MAGMA_CUBE, 2)),
 	KILL_1_GHAST(new KillChallenge(EntityType.GHAST, 1)),
+
+	// Eating
+	EAT_16_DRIED_KELP(new ConsumeChallenge(new FuzzyItemStack(DRIED_KELP, 16))),
+	// TODO I dont think i can currently support this one
+//	EAT_4_DIFFERENT_COOKED_FOODS(new ConsumeChallenge(FuzzyItemStack.ofEach(new MaterialTag("COOKED_", MatchMode.PREFIX), 1))),
+	EAT_2_SUSPICIOUS_STEW(new ConsumeChallenge(new FuzzyItemStack(SUSPICIOUS_STEW, 2))),
+	EAT_1_MUSHROOM_STEW(new ConsumeChallenge(new FuzzyItemStack(MUSHROOM_STEW, 1))),
+	DRINK_A_POTION(new ConsumeChallenge(new FuzzyItemStack(POTION, 1))),
+
+	// Biomes
+	ICE_SPIKES(new BiomeChallenge(Set.of(Biome.ICE_SPIKES))),
+	// TODO More
+
+	// Dimensions
+	ENTER_THE_NETHER(new DimensionChallenge(Environment.NETHER)),
+
+	// Structures
+	FIND_A_NETHER_FORTRESS(new StructureChallenge(StructureType.NETHER_FORTRESS)),
+	FIND_A_BASTION(new StructureChallenge(StructureType.BASTION_REMNANT)),
 
 	;
 

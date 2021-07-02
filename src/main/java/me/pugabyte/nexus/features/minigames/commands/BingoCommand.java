@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class BingoCommand extends CustomCommand {
 
 	private Minigamer minigamer;

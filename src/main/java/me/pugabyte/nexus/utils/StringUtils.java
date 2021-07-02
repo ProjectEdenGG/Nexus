@@ -207,7 +207,7 @@ public class StringUtils extends eden.utils.StringUtils {
 
 	@NotNull
 	public static String an(@NotNull String text) {
-		return "a" + (text.matches("(?i)^[AEIOU].*") ? "n" : "");
+		return "a" + (text.matches("(?i)^[AEIOU].*") ? "n" : "") + " " + text;
 	}
 
 	public static String progressBar(int progress, int goal) {

@@ -5,28 +5,43 @@ import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.features.listeners.Misc.FixedCraftItemEvent;
 import me.pugabyte.nexus.features.listeners.Misc.LivingEntityDamageByPlayerEvent;
+import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
+import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.BiomeChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.BreakChallengeProgress;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.ConsumeChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.CraftChallengeProgress;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.DimensionChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.KillChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.ObtainChallengeProgress;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import org.bukkit.Location;
+import org.bukkit.StructureType;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -138,6 +153,74 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final KillChallengeProgress progress = matchData.getProgress(minigamer, KillChallengeProgress.class);
 
 		progress.getKills().add(event.getEntity().getType());
+	}
+
+	@EventHandler
+	public void onConsume(PlayerItemConsumeEvent event) {
+		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+
+		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
+		final ConsumeChallengeProgress progress = matchData.getProgress(minigamer, ConsumeChallengeProgress.class);
+
+		progress.getItems().add(event.getItem());
+	}
+
+	private static List<Minigamer> getActiveBingoMinigamers() {
+		return new ArrayList<>() {{
+			for (Match match : MatchManager.getAll()) {
+				if (!match.isStarted())
+					continue;
+				if (match.getArena().getMechanicType() != MechanicType.BINGO)
+					continue;
+
+				addAll(match.getAliveMinigamers());
+			}
+		}};
+	}
+
+	static {
+		Tasks.repeat(Time.SECOND.x(10), Time.SECOND.x(5), () -> {
+			for (Minigamer minigamer : getActiveBingoMinigamers()) {
+				final Match match = minigamer.getMatch();
+				final BingoMatchData matchData = match.getMatchData();
+				final BiomeChallengeProgress progress = matchData.getProgress(minigamer, BiomeChallengeProgress.class);
+				final Biome biome = minigamer.getPlayer().getLocation().getBlock().getBiome();
+				progress.getBiomes().add(biome);
+			}
+		});
+	}
+
+	@EventHandler
+	public void onDimensionChange(PlayerChangedWorldEvent event) {
+		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this)) return;
+
+		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
+		final DimensionChallengeProgress progress = matchData.getProgress(minigamer, DimensionChallengeProgress.class);
+
+		progress.getDimensions().add(event.getPlayer().getWorld().getEnvironment());
+	}
+
+	static {
+		Tasks.repeat(Time.SECOND.x(10), Time.SECOND.x(15), () -> {
+			for (Minigamer minigamer : getActiveBingoMinigamers()) {
+				final Match match = minigamer.getMatch();
+				final BingoMatchData matchData = match.getMatchData();
+				for (Challenge challenge : matchData.getAllChallenges(StructureChallenge.class)) {
+					final StructureChallenge structureChallenge = (StructureChallenge) challenge.getChallenge();
+					final StructureType structureType = structureChallenge.getStructureType();
+					final Location location = minigamer.getPlayer().getLocation();
+					final Location found = location.getWorld().locateNearestStructure(location, structureType, 2, false);
+
+					if (found == null)
+						continue;
+
+					final StructureChallengeProgress progress = matchData.getProgress(minigamer, StructureChallengeProgress.class);
+					progress.getStructures().add(structureType);
+				}
+			}
+		});
 	}
 
 }
