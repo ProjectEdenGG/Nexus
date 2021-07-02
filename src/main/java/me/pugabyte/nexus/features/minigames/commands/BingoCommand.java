@@ -22,6 +22,8 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.stream.Collectors;
+
 public class BingoCommand extends CustomCommand {
 
 	private Minigamer minigamer;
@@ -80,11 +82,14 @@ public class BingoCommand extends CustomCommand {
 
 			for (Challenge[] array : matchData.getChallenges()) {
 				for (Challenge challenge : array) {
-					final ItemBuilder builder = new ItemBuilder(Material.STONE).name(EnumUtils.prettyName(challenge.name()));
+					final ItemBuilder builder = new ItemBuilder(Material.STONE).name(EnumUtils.prettyName(challenge.name())).lore("");
 					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge.getChallenge().getProgressClass());
 					if (progress.isCompleted(challenge.getChallenge())) {
 						builder.glow();
 						builder.lore("&aCompleted");
+					} else {
+						builder.lore("&cRemaining Tasks");
+						builder.lore(progress.getRemainingTasks(challenge).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
 					}
 
 					contents.set(row, column, ClickableItem.empty(builder.build()));
