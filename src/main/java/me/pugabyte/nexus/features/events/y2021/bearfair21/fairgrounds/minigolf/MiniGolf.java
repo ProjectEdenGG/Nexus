@@ -107,10 +107,7 @@ public class MiniGolf {
 	}
 
 	public static void giveKit(MiniGolf21User user) {
-		List<ItemStack> kit = Arrays.asList(getPutter(), getWedge(), getWhistle(),
-				getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build(), getScoreBook());
-
-		PlayerUtils.giveItems(user.getOnlinePlayer(), kit);
+		PlayerUtils.giveItems(user.getOnlinePlayer(), List.of(getPutter(), getWedge(), getWhistle(), user.getGolfBall(), getScoreBook()));
 	}
 
 	public static void takeKit(MiniGolf21User user) {
@@ -118,7 +115,7 @@ public class MiniGolf {
 		inventory.remove(getPutter());
 		inventory.remove(getWedge());
 		inventory.remove(getWhistle());
-		inventory.remove(getGolfBall().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+		inventory.remove(user.getGolfBall());
 		inventory.remove(getScoreBook());
 	}
 
