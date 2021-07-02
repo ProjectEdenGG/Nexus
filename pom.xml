@@ -189,15 +189,8 @@
         <!-- Parchment API + server (NMS) -->
         <dependency>
             <groupId>me.lexikiq</groupId>
-            <artifactId>parchment-api</artifactId>
+            <artifactId>parchment</artifactId>
             <version>1.17-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
-            <!--<classifier>remapped-mojang</classifier>-->
             <scope>provided</scope>
         </dependency>
         <!-- PaperLib API wrapper -->
