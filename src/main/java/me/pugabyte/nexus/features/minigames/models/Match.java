@@ -16,7 +16,6 @@ import me.pugabyte.nexus.features.commands.staff.admin.RebootCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
-import me.pugabyte.nexus.features.minigames.mechanics.UncivilEngineers;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.nexus.features.minigames.models.annotations.TeamGlowing;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -146,8 +145,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		List<Class<?>> usesWorldEdit = List.of(UncivilEngineers.class);
-		if (usesWorldEdit.contains(arena.getMechanic().getClass()) || arena.getName().equals("RavensNestEstate")) {
+		if (arena.getName().equals("RavensNestEstate")) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;
 		}
@@ -194,7 +192,7 @@ public class Match implements ForwardingAudience {
 		if (event.isCancelled()) return;
 
 		minigamers.remove(minigamer);
-		minigamer.clearState();
+		minigamer.clearState(true);
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
 

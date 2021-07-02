@@ -454,14 +454,18 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void clearState() {
+		clearState(false);
+	}
+
+	public void clearState(boolean forceClearInventory) {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		player.setGameMode(match.getMechanic().getGameMode());
-		clearGameModeState();
+		clearGameModeState(forceClearInventory);
 
 		unhideAll();
 	}
 
-	private void clearGameModeState() {
+	private void clearGameModeState(boolean forceClearInventory) {
 		Mechanic mechanic = match.getMechanic();
 
 		player.setFireTicks(0);
@@ -480,7 +484,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		SpeedCommand.resetSpeed(player);
 		player.setOp(false);
 
-		if (mechanic.shouldClearInventory())
+		if (mechanic.shouldClearInventory() || forceClearInventory)
 			player.getInventory().clear();
 
 		for (PotionEffect effect : player.getActivePotionEffects())

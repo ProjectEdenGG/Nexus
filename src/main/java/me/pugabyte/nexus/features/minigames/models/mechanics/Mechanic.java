@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.minigames.models.mechanics;
 import eden.interfaces.Named;
 import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
+import io.papermc.lib.PaperLib;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.models.Arena;
@@ -37,6 +38,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -183,6 +185,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onEnd(@NotNull MatchEndEvent event) {
+		for (Entity entity : event.getMatch().getEntities())
+			PaperLib.getChunkAtAsync(entity.getLocation()).thenRun(entity::remove);
 		if (event.getMatch().isStarted())
 			announceWinners(event.getMatch());
 	}
