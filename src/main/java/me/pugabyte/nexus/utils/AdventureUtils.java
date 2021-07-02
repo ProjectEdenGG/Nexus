@@ -18,6 +18,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +31,8 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class AdventureUtils {
-	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().build();
-	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').build();
+	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().flattener(Bukkit.getUnsafe().componentFlattener()).build();
+	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	public static final Title.Times BASIC_TIMES = Title.Times.of(TimeUtils.Time.SECOND.duration(1, 2), TimeUtils.Time.SECOND.duration(5), TimeUtils.Time.SECOND.duration(1, 2));
 
 	public static Component stripColor(ComponentLike componentLike) {
