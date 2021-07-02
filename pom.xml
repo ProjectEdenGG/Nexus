@@ -198,7 +198,6 @@
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.2</version>
-            <scope>provided</scope>
         </dependency>
         <!-- EdenAPI -->
         <dependency>
