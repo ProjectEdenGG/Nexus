@@ -1,8 +1,10 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics;
 
+import lombok.AllArgsConstructor;
 import me.pugabyte.nexus.features.minigames.mechanics.*;
 import org.jetbrains.annotations.NotNull;
 
+@AllArgsConstructor
 public enum MechanicType {
 	ANVIL_DROP(new AnvilDrop()),
 	ARCHERY(new Archery()),
@@ -42,13 +44,10 @@ public enum MechanicType {
 	TNT_RUN(new TNTRun()),
 	UHC(new UHC()),
 	UNCIVIL_ENGINEERS(new UncivilEngineers()),
-	XRUN(new XRun());
+	XRUN(new XRun()),
+	;
 
 	private final @NotNull Mechanic mechanic;
-
-	MechanicType(@NotNull Mechanic mechanic) {
-		this.mechanic = mechanic;
-	}
 
 	public @NotNull Mechanic get() {
 		return mechanic;

@@ -554,15 +554,14 @@ public class BearFair21Command extends CustomCommand {
 		send("Unique visitors: " + users.stream().filter(bearFair21User -> !bearFair21User.isFirstVisit()).toList().size());
 
 		send("Daily Points:");
-		send(json(" - [Day 1]").hover(getCompletedSources(eventUsers, Day.TUE)));
-		send(json(" - [Day 2]").hover(getCompletedSources(eventUsers, Day.WED)));
-		send(json(" - [Day 3]").hover(getCompletedSources(eventUsers, Day.THU)));
-		send(json(" - [Day 4]").hover(getCompletedSources(eventUsers, Day.FRI)));
-		send(json(" - [Day 5]").hover(getCompletedSources(eventUsers, Day.SAT)));
-		send(json(" - [Day 6]").hover(getCompletedSources(eventUsers, Day.SUN)));
+		send(json(" - [Day 1]").hover(getCompletedSources(eventUsers, Day.MON)));
+		send(json(" - [Day 2]").hover(getCompletedSources(eventUsers, Day.TUE)));
+		send(json(" - [Day 3]").hover(getCompletedSources(eventUsers, Day.WED)));
+		send(json(" - [Day 4]").hover(getCompletedSources(eventUsers, Day.THU)));
+		send(json(" - [Day 5]").hover(getCompletedSources(eventUsers, Day.FRI)));
+		send(json(" - [Day 6]").hover(getCompletedSources(eventUsers, Day.SAT)));
+		send(json(" - [Day 7]").hover(getCompletedSources(eventUsers, Day.SUN)));
 
-
-		// % at each quest stage of each quest
 		send("Quest Stages:");
 		send(json("- [Main]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.MAIN)));
 		send(json("  - [LumberJack]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.LUMBERJACK)));
@@ -574,7 +573,6 @@ public class BearFair21Command extends CustomCommand {
 		send(json("- [Summer Down Under]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.SUMMER_DOWN_UNDER)));
 	}
 
-	// TODO: im sure there's some stream magic that can clean this up
 	private List<String> getQuestStages(List<BearFair21User> users, BearFair21UserQuestStageHelper quest) {
 		Map<QuestStage, Integer> questStageMap = new HashMap<>();
 		for (QuestStage questStage : QuestStage.values()) {
@@ -621,6 +619,7 @@ public class BearFair21Command extends CustomCommand {
 
 	@AllArgsConstructor
 	private enum Day {
+		MON(LocalDate.of(2021, 6, 28)),
 		TUE(LocalDate.of(2021, 6, 29)),
 		WED(LocalDate.of(2021, 6, 30)),
 		THU(LocalDate.of(2021, 7, 1)),
