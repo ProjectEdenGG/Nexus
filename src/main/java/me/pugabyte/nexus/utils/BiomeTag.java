@@ -2,7 +2,6 @@ package me.pugabyte.nexus.utils;
 
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -34,9 +33,8 @@ public class BiomeTag {
 		return this;
 	}
 
-	@SafeVarargs
-	public final BiomeTag append(Tag<Biome>... biomeTags) {
-		for (Tag<Biome> biomeTag : biomeTags)
+	public final BiomeTag append(BiomeTag... biomeTags) {
+		for (BiomeTag biomeTag : biomeTags)
 			this.biomes.addAll(biomeTag.getValues());
 
 		return this;
@@ -49,12 +47,12 @@ public class BiomeTag {
 		return this;
 	}
 
-	public BiomeTag append(String segment, BiomeTag.MatchMode mode) {
+	public BiomeTag append(String segment, MatchMode mode) {
 		append(segment, mode, Biome.values());
 		return this;
 	}
 
-	public BiomeTag append(String segment, BiomeTag.MatchMode mode, Biome[] biomes) {
+	public BiomeTag append(String segment, MatchMode mode, Biome... biomes) {
 		segment = segment.toUpperCase();
 
 		switch (mode) {
@@ -87,9 +85,8 @@ public class BiomeTag {
 		return this;
 	}
 
-	@SafeVarargs
-	public final BiomeTag exclude(Tag<Biome>... biomeTags) {
-		for (Tag<Biome> biomeTag : biomeTags)
+	public final BiomeTag exclude(BiomeTag... biomeTags) {
+		for (BiomeTag biomeTag : biomeTags)
 			this.biomes.removeAll(biomeTag.getValues());
 
 		return this;
@@ -100,12 +97,12 @@ public class BiomeTag {
 		return this;
 	}
 
-	public BiomeTag exclude(String segment, BiomeTag.MatchMode mode) {
+	public BiomeTag exclude(String segment, MatchMode mode) {
 		exclude(segment, mode, Biome.values());
 		return this;
 	}
 
-	public BiomeTag exclude(String segment, BiomeTag.MatchMode mode, Biome[] biomes) {
+	public BiomeTag exclude(String segment, MatchMode mode, Biome... biomes) {
 		segment = segment.toUpperCase();
 
 		switch (mode) {

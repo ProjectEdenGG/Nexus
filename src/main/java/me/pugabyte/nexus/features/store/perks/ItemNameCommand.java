@@ -15,11 +15,14 @@ import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.StringUtils.Gradient;
 import me.pugabyte.nexus.utils.StringUtils.Rainbow;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
 import static me.pugabyte.nexus.features.store.perks.ItemNameCommand.PERMISSION;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.StringUtils.applyFormattingToAll;
 
 @Aliases("nameitem")
@@ -34,6 +37,25 @@ public class ItemNameCommand extends CustomCommand {
 	@Path("(null|none|reset)")
 	void reset() {
 		name(null, false, false, false, false, false);
+	}
+
+	@Path("resetAll <material>")
+	void reset(Material material) {
+		int count = 0;
+		for (ItemStack content : inventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			if (content.getType() != material)
+				continue;
+
+			final ItemMeta meta = content.getItemMeta();
+			meta.setDisplayName(null);
+			content.setItemMeta(meta);
+			++count;
+		}
+
+		send(PREFIX + "Reset item names of " + count + " " + camelCase(material));
 	}
 
 	@Path("<name...>")
