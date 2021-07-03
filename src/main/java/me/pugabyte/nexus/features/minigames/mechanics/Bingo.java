@@ -23,6 +23,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progre
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.ObtainChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import org.bukkit.Location;
@@ -92,7 +93,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		if (bed != null && getWorld().equals(bed.getWorld()))
 			victim.teleport(bed);
 		else
-			victim.teleport(victim.getMatch().<BingoMatchData>getMatchData().getSpawnpoints().get(victim.getUniqueId()));
+			victim.teleport(victim.getMatch().<BingoMatchData>getMatchData().getData(victim).getSpawnpoint());
 	}
 
 	@Override
@@ -163,7 +164,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final ConsumeChallengeProgress progress = matchData.getProgress(minigamer, ConsumeChallengeProgress.class);
 
-		progress.getItems().add(event.getItem());
+		progress.getItems().add(ItemBuilder.oneOf(event.getItem()).build());
 	}
 
 	private static List<Minigamer> getActiveBingoMinigamers() {
