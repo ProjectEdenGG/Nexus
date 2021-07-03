@@ -131,8 +131,15 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onEndPortalCreate(PortalCreateEvent event) {
-		if (WorldGroup.of(event.getWorld()) != WorldGroup.SURVIVAL)
-			event.setCancelled(true);
+		final WorldGroup worldGroup = WorldGroup.of(event.getWorld());
+		if (worldGroup == WorldGroup.SURVIVAL)
+			return;
+
+		// Vanilla mechanic portals
+		if (worldGroup == WorldGroup.MINIGAMES && !event.getWorld().getName().equals("gameworld"))
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler

@@ -18,6 +18,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
+import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.ParticleProjectile;
 import me.pugabyte.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -46,6 +47,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -89,8 +91,14 @@ public class MatchListener implements Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onTeleport(PlayerTeleportEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (minigamer.getMatch() == null) return;
-		if (minigamer.canTeleport()) return;
+		if (minigamer.getMatch() == null)
+			return;
+		if (minigamer.canTeleport())
+			return;
+		if (minigamer.getMatch().getMechanic() instanceof VanillaMechanic)
+			if (event.getCause() == TeleportCause.NETHER_PORTAL)
+				return;
+
 		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
 			if (event.getFrom().distance(event.getTo()) < 2)
 				return;

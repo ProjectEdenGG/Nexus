@@ -24,16 +24,24 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progre
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialUtils;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.StructureType;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -102,10 +110,28 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		return minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
 	}
 
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onItemDrop(BlockDropItemEvent event) {
+		if (!event.getPlayer().getWorld().getName().startsWith(worldName))
+			return;
+
+		for (Item item : event.getItems()) {
+			ItemStack stack = item.getItemStack();
+			Material ingot = MaterialUtils.oreToIngot(stack.getType());
+			if (ingot == null)
+				continue;
+
+			stack.setType(ingot);
+			item.setItemStack(stack);
+			return;
+		}
+	}
+
 	@EventHandler
 	public void onBlock(BlockBreakEvent event) {
 		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final BreakChallengeProgress progress = matchData.getProgress(minigamer, BreakChallengeProgress.class);
@@ -115,26 +141,53 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onObtain(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player player)) return;
+		if (!(event.getEntity() instanceof Player player))
+			return;
 
 		final Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final ObtainChallengeProgress progress = matchData.getProgress(minigamer, ObtainChallengeProgress.class);
 
 		final ItemStack itemStack = event.getItem().getItemStack();
 		final NBTItem nbtItem = new NBTItem(itemStack);
-		if (nbtItem.hasKey(NBT_KEY)) return;
+		if (nbtItem.hasKey(NBT_KEY))
+			return;
 
 		nbtItem.setBoolean(NBT_KEY, true);
 		progress.getItems().add(nbtItem.getItem());
 	}
 
 	@EventHandler
+	public void onObtain(InventoryCloseEvent event) {
+		final Player player = (Player) event.getPlayer();
+		final Minigamer minigamer = PlayerManager.get(player);
+		if (!minigamer.isPlaying(this))
+			return;
+
+		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
+		final ObtainChallengeProgress progress = matchData.getProgress(minigamer, ObtainChallengeProgress.class);
+
+		for (ItemStack itemStack : PlayerUtils.getAllInventoryContents(player)) {
+			if (ItemUtils.isNullOrAir(itemStack))
+				continue;
+
+			final NBTItem nbtItem = new NBTItem(itemStack, true);
+			if (nbtItem.hasKey(NBT_KEY))
+				continue;
+
+			nbtItem.setBoolean(NBT_KEY, true);
+			progress.getItems().add(nbtItem.getItem());
+		}
+	}
+
+	@EventHandler
 	public void onCraft(FixedCraftItemEvent event) {
 		final Minigamer minigamer = PlayerManager.get(event.getWhoClicked());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final CraftChallengeProgress progress = matchData.getProgress(minigamer, CraftChallengeProgress.class);
@@ -146,10 +199,12 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@EventHandler
 	public void onKill(LivingEntityDamageByPlayerEvent event) {
 		final Minigamer minigamer = PlayerManager.get(event.getAttacker());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		final LivingEntity entity = (LivingEntity) event.getOriginalEvent().getEntity();
-		if (entity.getHealth() - event.getOriginalEvent().getFinalDamage() > 0) return;
+		if (entity.getHealth() - event.getOriginalEvent().getFinalDamage() > 0)
+			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final KillChallengeProgress progress = matchData.getProgress(minigamer, KillChallengeProgress.class);
@@ -160,7 +215,8 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@EventHandler
 	public void onConsume(PlayerItemConsumeEvent event) {
 		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final ConsumeChallengeProgress progress = matchData.getProgress(minigamer, ConsumeChallengeProgress.class);
@@ -196,7 +252,8 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@EventHandler
 	public void onDimensionChange(PlayerChangedWorldEvent event) {
 		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final DimensionChallengeProgress progress = matchData.getProgress(minigamer, DimensionChallengeProgress.class);
@@ -216,6 +273,9 @@ public final class Bingo extends TeamlessVanillaMechanic {
 					final Location found = location.getWorld().locateNearestStructure(location, structureType, 2, false);
 
 					if (found == null)
+						continue;
+
+					if (found.distance(location) > 32)
 						continue;
 
 					final StructureChallengeProgress progress = matchData.getProgress(minigamer, StructureChallengeProgress.class);
