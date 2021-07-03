@@ -10,9 +10,7 @@ import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import org.bukkit.Material;
 import org.bukkit.Rotation;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -37,14 +35,6 @@ import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Utils extends eden.utils.Utils {
-
-	public static EntityType getSpawnEggType(Material type) {
-		return EntityType.valueOf(type.toString().split("_SPAWN_EGG")[0]);
-	}
-
-	public static Material getSpawnEgg(EntityType type) {
-		return Material.valueOf(type.toString() + "_SPAWN_EGG");
-	}
 
 	public static void registerListeners(String packageName) {
 		new Reflections(packageName).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);

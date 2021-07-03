@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.nexus.utils.Utils.getSpawnEgg;
+import static me.pugabyte.nexus.utils.EntityUtils.getSpawnEgg;
 
 @Permission("essentials.gamemode.creative")
 public class SpawnEggCommand extends CustomCommand {
