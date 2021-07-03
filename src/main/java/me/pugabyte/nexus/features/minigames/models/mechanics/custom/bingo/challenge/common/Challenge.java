@@ -39,6 +39,7 @@ public enum Challenge {
 	BREAK_16_SUGAR_CANE(new BreakChallenge(new FuzzyItemStack(SUGAR_CANE, 16))),
 	BREAK_192_NETHERRACK(new BreakChallenge(new FuzzyItemStack(NETHERRACK, 192))),
 	BREAK_128_MAGMA_BLOCKS(new BreakChallenge(new FuzzyItemStack(MAGMA_BLOCK, 128))),
+	BREAK_64_GLOWSTONE(new BreakChallenge(new FuzzyItemStack(GLOWSTONE, 64))),
 	BREAK_64_NETHER_BRICKS(new BreakChallenge(new FuzzyItemStack(NETHER_BRICKS, 64))),
 	BREAK_64_BASALT(new BreakChallenge(new FuzzyItemStack(BASALT, 64))),
 	BREAK_64_BLACKSTONE(new BreakChallenge(new FuzzyItemStack(BLACKSTONE, 64))),

@@ -45,6 +45,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -95,7 +96,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@Override
 	public void onDeath(@NotNull Minigamer victim) {
 		victim.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 10, false, false));
-		TitleUtils.sendTitle(victim.getPlayer(), "&cYou died!");
+		TitleUtils.sendTitle(victim.getPlayer(), "&cYou died!", 150);
 
 		final Location bed = victim.getPlayer().getBedSpawnLocation();
 		if (bed != null && getWorld().equals(bed.getWorld()))
@@ -220,6 +221,10 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final ConsumeChallengeProgress progress = matchData.getProgress(minigamer, ConsumeChallengeProgress.class);
+
+		if (event.getItem().getItemMeta() instanceof PotionMeta meta)
+			if (meta.getCustomEffects().isEmpty())
+				return;
 
 		progress.getItems().add(ItemBuilder.oneOf(event.getItem()).build());
 	}
