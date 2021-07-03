@@ -188,7 +188,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 	}
 
 	private static ItemStack findMap(Player player) {
-		for (ItemStack content : PlayerUtils.getAllInventoryContents(player))
+		for (ItemStack content : player.getInventory().getContents())
 			if (isMap(content))
 				return content;
 		return null;

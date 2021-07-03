@@ -45,7 +45,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
-import static me.pugabyte.nexus.utils.PlayerUtils.getAllInventoryContents;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
@@ -105,7 +104,7 @@ public class ResourceWorld implements Listener {
 
 			rejectedMaterials.clear();
 
-			for (ItemStack item : getAllInventoryContents(player))
+			for (ItemStack item : player.getInventory().getContents())
 				for (ItemStack content : getShulkerContents(item))
 					if (materials.contains(content.getType())) {
 						rejectedMaterials.add(content.getType());
