@@ -79,7 +79,10 @@ public interface VanillaMechanic<T> extends Listener {
 			if (!(entity instanceof HumanEntity))
 				entity.remove();
 		});
+
 		getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+		getWorld().setGameRule(GameRule.DO_INSOMNIA, false);
+		getWorld().setGameRule(GameRule.DO_PATROL_SPAWNING, false);
 
 		int worldRadius = getWorldDiameter();
 		setWorldBorder(RandomUtils.randomInt(-worldRadius, worldRadius), RandomUtils.randomInt(-worldRadius, worldRadius));
