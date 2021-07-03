@@ -121,8 +121,10 @@ public class BingoMatchData extends MatchData {
 					BingoLine.DIAGONAL_1, BingoLine.DIAGONAL_2); // Always check these because im lazy
 
 				lines.forEach(line -> {
-					if (line.check(minigamer))
+					if (line.check(minigamer)) {
+						match.broadcast("&e" + minigamer.getNickname() + " &3got a &6Bingo&3!");
 						minigamer.scored(5);
+					}
 				});
 			}
 		}
