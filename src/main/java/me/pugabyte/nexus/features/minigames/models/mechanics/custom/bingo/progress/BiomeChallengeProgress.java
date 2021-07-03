@@ -22,7 +22,7 @@ public class BiomeChallengeProgress implements IChallengeProgress {
 
 	@Override
 	public Set<String> getRemainingTasks(IChallenge challenge) {
-		final Set<Biome> required = ((BiomeChallenge) challenge).getBiomes();
+		final Set<Biome> required = ((BiomeChallenge) challenge).getBiomeTag().getValues();
 		for (Biome biome : biomes)
 			if (required.contains(biome))
 				return Collections.emptySet();

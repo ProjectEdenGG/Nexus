@@ -2,6 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import me.lexikiq.HasPlayer;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -99,4 +100,13 @@ public class EntityUtils {
 			default -> false;
 		};
 	}
+
+	public static EntityType getSpawnEggType(Material type) {
+		return EntityType.valueOf(type.toString().split("_SPAWN_EGG")[0]);
+	}
+
+	public static Material getSpawnEgg(EntityType type) {
+		return Material.valueOf(type.toString() + "_SPAWN_EGG");
+	}
+
 }

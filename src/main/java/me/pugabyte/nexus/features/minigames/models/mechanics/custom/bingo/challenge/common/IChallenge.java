@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.chall
 
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import org.bukkit.Material;
 
 public interface IChallenge {
 
@@ -12,6 +13,8 @@ public interface IChallenge {
 
 		return annotation.value();
 	}
+
+	Material getDisplayMaterial();
 
 	// Breaking
 	// Placing

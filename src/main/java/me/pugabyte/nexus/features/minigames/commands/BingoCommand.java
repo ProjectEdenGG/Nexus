@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.minigames.commands;
 
-import eden.utils.EnumUtils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -19,7 +18,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
@@ -84,7 +82,7 @@ public class BingoCommand extends CustomCommand {
 
 			for (Challenge[] array : matchData.getChallenges()) {
 				for (Challenge challenge : array) {
-					final ItemBuilder builder = new ItemBuilder(Material.STONE).name(EnumUtils.prettyName(challenge.name())).lore("");
+					final ItemBuilder builder = challenge.getDisplayItem();
 					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
 					if (progress.isCompleted(challenge.getChallenge())) {
 						builder.glow();

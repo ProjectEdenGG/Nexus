@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common;
 
+import eden.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
@@ -10,11 +11,12 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challe
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.KillChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ObtainChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
+import me.pugabyte.nexus.utils.BiomeTag;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
@@ -89,7 +91,7 @@ public enum Challenge {
 	DRINK_A_POTION(new ConsumeChallenge(new FuzzyItemStack(POTION, 1))),
 
 	// Biomes
-	FIND_AN_ICE_SPIKES_BIOME(new BiomeChallenge(Set.of(Biome.ICE_SPIKES))),
+	FIND_AN_ICE_SPIKES_BIOME(new BiomeChallenge(BiomeTag.ICE_SPIKES)),
 	// TODO More
 
 	// Dimensions
@@ -107,6 +109,10 @@ public enum Challenge {
 		ArrayList<Challenge> values = new ArrayList<>(Arrays.asList(Challenge.values()));
 		Collections.shuffle(values);
 		return values;
+	}
+
+	public ItemBuilder getDisplayItem() {
+		return new ItemBuilder(challenge.getDisplayMaterial()).name(EnumUtils.prettyName(name())).lore("");
 	}
 
 }

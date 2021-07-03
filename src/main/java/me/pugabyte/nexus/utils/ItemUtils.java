@@ -4,6 +4,8 @@ import me.lexikiq.HasPlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.bukkit.StructureType;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
@@ -452,5 +454,36 @@ public class ItemUtils {
 			default:
 				return null;
 		}
+	}
+
+	public static Material getStructureTypeDisplayMaterial(StructureType structureType) {
+		if (structureType == StructureType.MINESHAFT) return Material.COBWEB;
+		if (structureType == StructureType.VILLAGE) return Material.BELL;
+		if (structureType == StructureType.NETHER_FORTRESS) return Material.NETHER_BRICK;
+		if (structureType == StructureType.STRONGHOLD) return Material.STONE_BRICKS;
+		if (structureType == StructureType.JUNGLE_PYRAMID) return Material.MOSSY_COBBLESTONE;
+		if (structureType == StructureType.OCEAN_RUIN) return Material.MAGMA_BLOCK;
+		if (structureType == StructureType.DESERT_PYRAMID) return Material.SANDSTONE;
+		if (structureType == StructureType.IGLOO) return Material.SNOW_BLOCK;
+		if (structureType == StructureType.SWAMP_HUT) return Material.CAULDRON;
+		if (structureType == StructureType.OCEAN_MONUMENT) return Material.PRISMARINE;
+		if (structureType == StructureType.END_CITY) return Material.PURPUR_BLOCK;
+		if (structureType == StructureType.WOODLAND_MANSION) return Material.DARK_OAK_LOG;
+		if (structureType == StructureType.BURIED_TREASURE) return Material.CHEST;
+		if (structureType == StructureType.SHIPWRECK) return Material.OAK_BOAT;
+		if (structureType == StructureType.PILLAGER_OUTPOST) return Material.BIRCH_PLANKS;
+		if (structureType == StructureType.NETHER_FOSSIL) return Material.BONE_BLOCK;
+		if (structureType == StructureType.RUINED_PORTAL) return Material.OBSIDIAN;
+		if (structureType == StructureType.BASTION_REMNANT) return Material.BASALT;
+		return null;
+	}
+
+	public static Material getDimensionDisplayMaterial(Environment dimension) {
+		return switch (dimension) {
+			case NORMAL -> Material.GRASS_BLOCK;
+			case NETHER -> Material.NETHERRACK;
+			case THE_END -> Material.END_STONE;
+			default -> null;
+		};
 	}
 }
