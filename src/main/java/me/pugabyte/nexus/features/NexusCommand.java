@@ -131,6 +131,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
@@ -287,6 +288,35 @@ public class NexusCommand extends CustomCommand implements Listener {
 			return;
 
 		PlayerUtils.runCommand(player.getPlayer(), "nexus reload");
+	}
+
+	@Path("testInventoryContents")
+	void testInventoryContents() {
+		Consumer<ItemStack> send = item -> {
+			if (item != null)
+				send(item.getType().name());
+		};
+
+
+		line();
+		send("getContents()");
+		for (ItemStack content : inventory().getContents())
+			send.accept(content);
+
+		line();
+		send("getStorageContents()");
+		for (ItemStack content : inventory().getStorageContents())
+			send.accept(content);
+
+		line();
+		send("getArmorContents()");
+		for (ItemStack content : inventory().getArmorContents())
+			send.accept(content);
+
+		line();
+		send("getExtraContents()");
+		for (ItemStack content : inventory().getExtraContents())
+			send.accept(content);
 	}
 
 	@Path("debug")

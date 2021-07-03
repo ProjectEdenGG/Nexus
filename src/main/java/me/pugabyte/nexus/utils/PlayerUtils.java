@@ -51,7 +51,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -379,14 +378,14 @@ public class PlayerUtils {
 	 */
 	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
 		if (player.getPlayer() == null) return false;
-		return getAllInventoryContents(player.getPlayer()).contains(itemStack);
+		return Arrays.asList(player.getPlayer().getInventory().getContents()).contains(itemStack);
 	}
 
 	public static ItemStack searchInventory(OptionalPlayer player, CustomModel customModel) {
 		if (player.getPlayer() == null)
 			return null;
 
-		for (ItemStack content : getAllInventoryContents(player.getPlayer()))
+		for (ItemStack content : player.getPlayer().getInventory().getContents())
 			if (customModel.equals(content))
 				return content;
 
@@ -394,19 +393,8 @@ public class PlayerUtils {
 	}
 
 	@NotNull
-	public static Set<@Nullable ItemStack> getAllInventoryContents(HasPlayer player) {
-		Player _player = player.getPlayer();
-		Set<ItemStack> items = new HashSet<>();
-		items.addAll(Arrays.asList(_player.getInventory().getContents()));
-		items.addAll(Arrays.asList(_player.getInventory().getArmorContents()));
-		items.addAll(Arrays.asList(_player.getInventory().getExtraContents()));
-		items.add(_player.getInventory().getItemInOffHand());
-		return items;
-	}
-
-	@NotNull
-	public static Set<@NotNull ItemStack> getNonNullInventoryContents(HasPlayer player) {
-		return getAllInventoryContents(player).stream().filter(Objects::nonNull).collect(Collectors.toSet());
+	public static Set<@NotNull ItemStack> getNonNullInventoryContents(Player player) {
+		return Arrays.stream(player.getInventory().getContents()).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 
 	public static ItemStack[] getHotbarContents(HasPlayer player) {

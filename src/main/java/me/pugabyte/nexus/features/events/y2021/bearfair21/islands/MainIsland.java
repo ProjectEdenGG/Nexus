@@ -27,7 +27,6 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils;
@@ -442,7 +441,7 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
 					ItemStack item = null;
-					for (ItemStack itemStack : PlayerUtils.getAllInventoryContents(user.getOnlinePlayer())) {
+					for (ItemStack itemStack : user.getOnlinePlayer().getInventory().getContents()) {
 						if (ItemUtils.isNullOrAir(itemStack)) continue;
 						if (!Material.PLAYER_HEAD.equals(itemStack.getType())) continue;
 

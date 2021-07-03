@@ -26,7 +26,6 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamles
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialUtils;
-import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import org.bukkit.Location;
@@ -171,7 +170,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final ObtainChallengeProgress progress = matchData.getProgress(minigamer, ObtainChallengeProgress.class);
 
-		for (ItemStack itemStack : PlayerUtils.getAllInventoryContents(player)) {
+		for (ItemStack itemStack : player.getInventory().getContents()) {
 			if (ItemUtils.isNullOrAir(itemStack))
 				continue;
 
