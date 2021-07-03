@@ -25,7 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ProjectileListener implements Listener {
-	private final List<Material> killMaterial = Arrays.asList(Material.BARRIER, Material.CRIMSON_HYPHAE, Material.PURPLE_STAINED_GLASS, Material.WATER, Material.LAVA);
+	private final List<Material> killMaterial = Arrays.asList(Material.BARRIER, Material.CRIMSON_HYPHAE,
+		Material.PURPLE_STAINED_GLASS, Material.WATER, Material.LAVA);
 
 	public ProjectileListener() {
 		Nexus.registerListener(this);
