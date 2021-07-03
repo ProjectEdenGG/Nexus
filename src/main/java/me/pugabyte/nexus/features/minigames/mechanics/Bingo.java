@@ -21,6 +21,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progre
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.DimensionChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.KillChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.ObtainChallengeProgress;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.PlaceChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -39,6 +40,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -128,13 +130,25 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	@EventHandler
-	public void onBlock(BlockBreakEvent event) {
+	public void onBreak(BlockBreakEvent event) {
 		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final BreakChallengeProgress progress = matchData.getProgress(minigamer, BreakChallengeProgress.class);
+
+		progress.getItems().add(new ItemStack(event.getBlock().getType(), 1));
+	}
+
+	@EventHandler
+	public void onPlace(BlockPlaceEvent event) {
+		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this))
+			return;
+
+		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
+		final PlaceChallengeProgress progress = matchData.getProgress(minigamer, PlaceChallengeProgress.class);
 
 		progress.getItems().add(new ItemStack(event.getBlock().getType(), 1));
 	}

@@ -3,15 +3,14 @@ package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.chall
 import eden.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BreakChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ConsumeChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CraftChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.DimensionChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.KillChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ObtainChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.PlaceChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
-import me.pugabyte.nexus.utils.BiomeTag;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.bukkit.Material.*;
 
@@ -48,9 +46,12 @@ public enum Challenge {
 	BREAK_3_OF_EACH_TULIP(new BreakChallenge(FuzzyItemStack.ofEach(MaterialTag.TULIPS, 1))),
 	BREAK_1_MONSTER_SPAWNER(new BreakChallenge(new FuzzyItemStack(SPAWNER, 1))),
 	BREAK_32_BAMBOO(new BreakChallenge(new FuzzyItemStack(BAMBOO, 32))),
-	BREAK_1_OF_EVERY_ORE(new BreakChallenge(FuzzyItemStack.ofEach(MaterialTag.MINERAL_ORES, 1))),
-	BREAK_64_OF_COMMON_BLOCKS(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(SAND, GRAVEL, STONE, ANDESITE, DIORITE, GRANITE, NETHERRACK), 64))),
-	BREAK_1_SPONGE(new BreakChallenge(new FuzzyItemStack(Set.of(SPONGE, WET_SPONGE), 1))),
+	BREAK_1_OF_EVERY_ORE(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.MINERAL_ORES).exclude(EMERALD_ORE), 1))),
+	BREAK_64_OF_COMMON_BLOCKS(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(SAND, GRAVEL, STONE, GRASS, DIRT, NETHERRACK), 64))),
+
+	// Placing
+	PLACE_6_OF_EACH_RAIL(new PlaceChallenge(FuzzyItemStack.ofEach(new MaterialTag(RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL), 6))),
+	PLACE_9_STACKS_OF_BLOCKS(new PlaceChallenge(new FuzzyItemStack(MaterialTag.BLOCKS, 9 * 64))),
 
 	// Crafting
 	CRAFT_16_FENCE_GATES(new CraftChallenge(new FuzzyItemStack(MaterialTag.FENCE_GATES, 16))),
@@ -58,17 +59,29 @@ public enum Challenge {
 	CRAFT_IRON_ARMOR(new CraftChallenge(FuzzyItemStack.ofEach(MaterialTag.ARMOR_IRON, 1))),
 	CRAFT_32_WALLS(new CraftChallenge(new FuzzyItemStack(MaterialTag.WALLS, 32))),
 	CRAFT_32_POLISHED_BLACKSTONE_BRICKS(new CraftChallenge(new FuzzyItemStack(POLISHED_BLACKSTONE_BRICKS, 32))),
+	CRAFT_A_CAKE(new CraftChallenge(new FuzzyItemStack(CAKE, 1))),
+	CRAFT_8_DRIED_KELP_BLOCKS(new CraftChallenge(new FuzzyItemStack(DRIED_KELP_BLOCK, 8))),
+	CRAFT_16_ITEM_FRAMES(new CraftChallenge(new FuzzyItemStack(ITEM_FRAME, 16))),
+	// 1.17 CRAFT_4_GLOW_ITEM_FRAMES(new CraftChallenge(new FuzzyItemStack(GLOW_ITEM_FRAME))),
+	CRAFT_64_CHISELED_STONE_BRICKS(new CraftChallenge(new FuzzyItemStack(CHISELED_STONE_BRICKS, 64))), // TODO Do I need to worry about stonecutters?
+	CRAFT_3_BLAST_FURNACES(new CraftChallenge(new FuzzyItemStack(BLAST_FURNACE, 3))),
+	CRAFT_16_SOUL_CAMPFIRES(new CraftChallenge(new FuzzyItemStack(SOUL_CAMPFIRE, 16))),
+	CRAFT_4_LECTERNS(new CraftChallenge(new FuzzyItemStack(LECTERN, 4))),
+	CRAFT_2_DAYLIGHT_DETECTORS(new CraftChallenge(new FuzzyItemStack(DAYLIGHT_DETECTOR, 2))),
+	CRAFT_8_TARGET_BLOCKS(new CraftChallenge(new FuzzyItemStack(TARGET, 8))),
+	CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(NETHERITE_BOOTS), 1))),
+	CRAFT_A_GOLDEN_APPLE(new CraftChallenge(new FuzzyItemStack(GOLDEN_APPLE, 1))),
+	CRAFT_8_ARMOR_STANDS(new CraftChallenge(new FuzzyItemStack(ARMOR_STAND, 8))),
 
 	// Obtaining
 	OBTAIN_4_OBSIDIAN(new ObtainChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
 	OBTAIN_CROPS(new ObtainChallenge(FuzzyItemStack.ofEach(new MaterialTag(BEETROOT, CARROT, WHEAT, POTATO, APPLE), 1))),
 	CATCH_8_FISH(new ObtainChallenge(new FuzzyItemStack(MaterialTag.RAW_FISH, 8))),
-	// TODO prevent placing them back?
-	CATCH_1_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 1))),
-	CATCH_16_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 16))),
+	CATCH_6_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 6))),
 	OBTAIN_1_OF_EVERY_DYE(new ObtainChallenge(FuzzyItemStack.ofEach(MaterialTag.DYES, 1))),
 	OBTAIN_1_NETHERITE_INGOT(new ObtainChallenge(new FuzzyItemStack(NETHERITE_INGOT, 1))),
 	OBTAIN_1_TOTEM_OF_UNDYING(new ObtainChallenge(new FuzzyItemStack(TOTEM_OF_UNDYING, 1))),
+	OBTAIN_2_ENDER_PEARLS(new ObtainChallenge(new FuzzyItemStack(ENDER_PEARL, 2))),
 
 	// Killing
 	KILL_6_SKELETONS(new KillChallenge(EntityType.SKELETON, 6)),
@@ -92,8 +105,7 @@ public enum Challenge {
 	DRINK_A_POTION(new ConsumeChallenge(new FuzzyItemStack(POTION, 1))),
 
 	// Biomes
-	FIND_AN_ICE_SPIKES_BIOME(new BiomeChallenge(BiomeTag.ICE_SPIKES)),
-	// TODO More
+	// TODO
 
 	// Dimensions
 	ENTER_THE_NETHER(new DimensionChallenge(Environment.NETHER)),
@@ -101,6 +113,13 @@ public enum Challenge {
 	// Structures
 	FIND_A_NETHER_FORTRESS(new StructureChallenge(StructureType.NETHER_FORTRESS)),
 	FIND_A_BASTION(new StructureChallenge(StructureType.BASTION_REMNANT)),
+	FIND_A_VILLAGE(new StructureChallenge(StructureType.VILLAGE)),
+	FIND_A_SHIPWRECK(new StructureChallenge(StructureType.SHIPWRECK)),
+
+	// Summon an iron golem
+	// Summon a snowman
+	// Climb to build limit
+	// Dig to bedrock
 
 	;
 
