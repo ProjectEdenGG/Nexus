@@ -147,7 +147,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("wait 80");
 						script.add("If you want to see her, you need to follow her path. If and when you find her, please wish her well from me.");
 						script.add("wait 100");
-						script.add("<self> of course! Thank you for all your help Santiago.");
+						script.add("<self> Of course! Thank you for all your help Santiago.");
 						script.add("wait 60");
 						script.add("To enter the underworld, simply hop in this casket. The path you seek should reveal itself when inside.");
 
