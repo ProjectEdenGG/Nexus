@@ -59,7 +59,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Fill out your Bingo board from doing unique survival challenges";
+		return "Fill out your &c/bingo &eboard from doing unique survival challenges";
 	}
 
 	@Override
@@ -98,6 +98,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+		super.onRandomTeleport(match, minigamer, location);
 		return minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
 	}
 
