@@ -16,6 +16,7 @@ import me.pugabyte.nexus.features.commands.staff.admin.RebootCommand;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.minigames.Minigames;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
+import me.pugabyte.nexus.features.minigames.mechanics.Bingo;
 import me.pugabyte.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import me.pugabyte.nexus.features.minigames.models.annotations.TeamGlowing;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -56,6 +57,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -268,6 +270,12 @@ public class Match implements ForwardingAudience {
 	}
 
 	private void logScores() {
+		if (!(getMechanic() instanceof Bingo))
+			return;
+
+		if (LocalDateTime.now().isAfter(LocalDateTime.of(2021, 7, 5, 12, 0, 0)))
+			return;
+
 		StringBuilder scores = new StringBuilder();
 		if (arena.getMechanic() instanceof TeamMechanic) {
 			getArena().getTeams().stream().sorted(Comparator.comparing((Team team) -> team.getScore(this)).reversed()).forEach(team ->
