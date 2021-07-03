@@ -528,9 +528,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
 			if (doLoreize)
-				colorized.addAll(Arrays.asList(StringUtils.loreize(colorize("&f" + line)).split("\\|\\|")));
+				colorized.addAll(Arrays.asList(StringUtils.loreize(colorize(line)).split("\\|\\|")));
 			else
-				colorized.addAll(Arrays.asList(colorize("&f" + line).split("\\|\\|")));
+				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
 		itemMeta.setLore(colorized);
 	}
 
