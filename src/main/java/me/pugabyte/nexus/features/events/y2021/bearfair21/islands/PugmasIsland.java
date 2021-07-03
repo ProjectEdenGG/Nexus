@@ -378,7 +378,7 @@ public class PugmasIsland implements BearFair21Island {
 
 						script.add("<self> Phew! Well I'm glad to be back! I suppose I should be giving these to you.");
 						script.add("wait 80");
-						script.add("<name:Mayor> <player> Your help has been vital for us. I couldn't possibly thank you enough!");
+						script.add("<name:Mayor> <player>, your help has been vital for us. I couldn't possibly thank you enough!");
 						script.add("wait 80");
 						script.add("<name:Mayor> I may not have much to offer, but please, take this. It's the least I can do");
 						script.add("wait 80");
