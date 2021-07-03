@@ -395,6 +395,8 @@ public class BearFair21 implements Listener {
 			return;
 
 		event.setCancelled(true);
+		event.getPlayer().teleport(event.getFrom());
+
 		user.sendMessage(PREFIX + "To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 	}
 
