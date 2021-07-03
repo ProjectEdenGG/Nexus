@@ -127,7 +127,7 @@ public class MaterialTag implements Tag<Material> {
 			WARPED_FUNGUS, CRIMSON_FUNGUS, VINE)
 			.append(ALL_CORALS, FLOWERS);
 
-	public static final MaterialTag TULIPS = new MaterialTag("_TULIP", MatchMode.SUFFIX);
+	public static final MaterialTag TULIPS = new MaterialTag("_TULIP", MatchMode.SUFFIX).exclude("POTTED", MatchMode.CONTAINS);
 
 	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, TALL_FLOWERS);
 

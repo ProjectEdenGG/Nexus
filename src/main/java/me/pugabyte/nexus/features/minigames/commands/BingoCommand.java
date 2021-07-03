@@ -49,6 +49,7 @@ public class BingoCommand extends CustomCommand {
 
 	@Path
 	void menu() {
+		matchData.check(minigamer);
 		new BingoMenu(minigamer).open(player());
 	}
 
@@ -84,7 +85,7 @@ public class BingoCommand extends CustomCommand {
 			for (Challenge[] array : matchData.getChallenges()) {
 				for (Challenge challenge : array) {
 					final ItemBuilder builder = new ItemBuilder(Material.STONE).name(EnumUtils.prettyName(challenge.name())).lore("");
-					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge.getChallenge().getProgressClass());
+					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
 					if (progress.isCompleted(challenge.getChallenge())) {
 						builder.glow();
 						builder.lore("&aCompleted");

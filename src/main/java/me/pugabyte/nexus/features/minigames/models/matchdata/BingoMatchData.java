@@ -11,9 +11,11 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challe
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import org.bukkit.Location;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -24,10 +26,26 @@ import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 @Data
 @MatchDataFor(Bingo.class)
 public class BingoMatchData extends MatchData {
-	private static final int size = 5;
-	private Map<UUID, Location> spawnpoints = new HashMap<>();
-	private Challenge[][] challenges = new Challenge[size][size];
-	private Map<UUID, Map<Class<? extends IChallengeProgress>, IChallengeProgress>> progress = new HashMap<>();
+	private static final int SIZE = 5;
+	private Map<UUID, MinigamerBingoData> players = new HashMap<>();
+	private Challenge[][] challenges = new Challenge[SIZE][SIZE];
+
+	@Data
+	public static class MinigamerBingoData {
+		private Location spawnpoint;
+		private Boolean[][] completed = new Boolean[SIZE][SIZE];
+		private Set<BingoLine> bingos = new HashSet<>();
+		private final Map<Class<? extends IChallengeProgress>, IChallengeProgress> progress = new HashMap<>();
+
+		public MinigamerBingoData() {
+			for (Boolean[] array : completed)
+				Arrays.fill(array, false);
+		}
+
+		public boolean hasBingo(BingoLine line) {
+			return bingos.contains(line);
+		}
+	}
 
 	public BingoMatchData(Match match) {
 		super(match);
@@ -38,20 +56,24 @@ public class BingoMatchData extends MatchData {
 	private void determineChallenges() {
 		Iterator<Challenge> iterator = Challenge.shuffle().iterator();
 
-		for (int i = 0; i < size; i++)
-			for (int j = 0; j < size; j++)
+		for (int i = 0; i < SIZE; i++)
+			for (int j = 0; j < SIZE; j++)
 				challenges[i][j] = iterator.next();
 	}
 
+	public MinigamerBingoData getData(Minigamer minigamer) {
+		return players.computeIfAbsent(minigamer.getUniqueId(), $ -> new MinigamerBingoData());
+	}
+
 	public Set<Challenge> getAllChallenges() {
-		return new HashSet<>() {{
+		return new LinkedHashSet<>() {{
 			for (Challenge[] array : challenges)
 				this.addAll(Set.of(array));
 		}};
 	}
 
 	public Set<Challenge> getAllChallenges(Class<? extends IChallenge> challengeType) {
-		return new HashSet<>() {{
+		return new LinkedHashSet<>() {{
 			for (Challenge challenge : getAllChallenges())
 				if (challengeType.isAssignableFrom(challenge.getChallenge().getClass()))
 					add(challenge);
@@ -60,21 +82,142 @@ public class BingoMatchData extends MatchData {
 
 	public CompletableFuture<Void> spawnpoint(Minigamer minigamer, Location location) {
 		location = getCenteredLocation(location.clone().add(0, 2, 0));
-		spawnpoints.put(minigamer.getUniqueId(), location);
+		getData(minigamer).setSpawnpoint(location);
 		return minigamer.teleport(location, true);
 	}
 
+	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Challenge challenge) {
+		return (T) getProgress(minigamer, challenge.getChallenge().getProgressClass());
+	}
+
 	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Class<? extends T> clazz) {
-		return (T) progress
-				.computeIfAbsent(minigamer.getUniqueId(), $ -> new HashMap<>())
-				.computeIfAbsent(clazz, $ -> {
-					try {
-						return clazz.getDeclaredConstructor().newInstance();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-						return null;
-					}
+		return (T) getData(minigamer).getProgress().computeIfAbsent(clazz, $ -> {
+			try {
+				return clazz.getDeclaredConstructor().newInstance();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return null;
+			}
+		});
+	}
+
+	public void check(Minigamer minigamer) {
+		final Boolean[][] completed = getData(minigamer).getCompleted();
+
+		BingoMatchData matchData = minigamer.getMatch().getMatchData();
+
+		for (int row = 0; row < SIZE; row++) {
+			for (int col = 0; col < SIZE; col++) {
+				Challenge challenge = challenges[row][col];
+
+				if (completed[row][col])
+					continue;
+
+				final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
+				if (progress.isCompleted(challenge.getChallenge()))
+					completed[row][col] = true;
+
+				var lines = Arrays.asList(BingoLine.ofRow(row), BingoLine.ofCol(col),
+					BingoLine.DIAGONAL_1, BingoLine.DIAGONAL_2); // Always check these because im lazy
+
+				lines.forEach(line -> {
+					if (line.check(minigamer))
+						minigamer.scored(5);
 				});
+			}
+		}
+	}
+
+	private enum BingoLineDirection {
+		ROW {
+			@Override
+			public boolean check(Boolean[][] completed, BingoLine line) {
+				for (int col = 0; col < SIZE; col++)
+					if (!completed[line.index()][col])
+						return false;
+				return true;
+			}
+		},
+		COLUMN {
+			@Override
+			public boolean check(Boolean[][] completed, BingoLine line) {
+				for (int row = 0; row < SIZE; row++)
+					if (!completed[row][line.index()])
+						return false;
+				return true;
+			}
+		},
+		DIAGONAL { // Again, im lazy
+			@Override
+			public boolean check(Boolean[][] completed, BingoLine line) {
+				if (line == BingoLine.DIAGONAL_1) {
+					for (int i = 0; i < SIZE; i++)
+						if (!completed[i][i])
+							return false;
+
+					return true;
+				}
+
+				if (line == BingoLine.DIAGONAL_2) {
+					int row = SIZE;
+					for (int column = 0; column < SIZE; column++)
+						if (!completed[--row][column])
+							return false;
+
+					return true;
+				}
+
+				return false;
+			}
+		},
+		;
+
+		abstract boolean check(Boolean[][] completed, BingoLine line);
+	}
+
+	private enum BingoLine {
+		ROW_0,
+		ROW_1,
+		ROW_2,
+		ROW_3,
+		ROW_4,
+		COLUMN_0,
+		COLUMN_1,
+		COLUMN_2,
+		COLUMN_3,
+		COLUMN_4,
+		DIAGONAL_1,
+		DIAGONAL_2,
+		;
+
+		public static BingoLine ofRow(int row) {
+			return valueOf("ROW_" + row);
+		}
+
+		public static BingoLine ofCol(int row) {
+			return valueOf("COLUMN_" + row);
+		}
+
+		public BingoLineDirection direction() {
+			return BingoLineDirection.valueOf(name().split("_")[0]);
+		}
+
+		public int index() {
+			return Integer.parseInt(name().split("_")[1]);
+		}
+
+		public boolean check(Minigamer minigamer) {
+			final MinigamerBingoData data = minigamer.getMatch().<BingoMatchData>getMatchData().getData(minigamer);
+
+			if (data.hasBingo(this))
+				return false;
+
+			if (!direction().check(data.getCompleted(), this))
+				return false;
+
+			data.getBingos().add(this);
+			return true;
+		}
 	}
 
 }

@@ -80,7 +80,7 @@ public enum Challenge {
 	KILL_2_MAGMA_CUBES(new KillChallenge(EntityType.MAGMA_CUBE, 2)),
 	KILL_1_GHAST(new KillChallenge(EntityType.GHAST, 1)),
 
-	// Eating
+	// Consuming
 	EAT_16_DRIED_KELP(new ConsumeChallenge(new FuzzyItemStack(DRIED_KELP, 16))),
 	// TODO I dont think i can currently support this one
 //	EAT_4_DIFFERENT_COOKED_FOODS(new ConsumeChallenge(FuzzyItemStack.ofEach(new MaterialTag("COOKED_", MatchMode.PREFIX), 1))),
@@ -89,7 +89,7 @@ public enum Challenge {
 	DRINK_A_POTION(new ConsumeChallenge(new FuzzyItemStack(POTION, 1))),
 
 	// Biomes
-	ICE_SPIKES(new BiomeChallenge(Set.of(Biome.ICE_SPIKES))),
+	FIND_AN_ICE_SPIKES_BIOME(new BiomeChallenge(Set.of(Biome.ICE_SPIKES))),
 	// TODO More
 
 	// Dimensions
