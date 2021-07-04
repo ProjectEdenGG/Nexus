@@ -24,6 +24,10 @@ public class CustomChallengeProgress implements IChallengeProgress {
 		return progressMap.computeIfAbsent(challenge, $ -> new LinkedHashSet<>());
 	}
 
+	public void complete(Challenge challenge, String task) {
+		getProgress(challenge).add(task);
+	}
+
 	@Override
 	public Set<String> getRemainingTasks(Challenge challenge) {
 		final Set<String> tasks = ((CustomChallenge) challenge.getChallenge()).getTasks();
