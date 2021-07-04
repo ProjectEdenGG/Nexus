@@ -123,7 +123,7 @@ public class BingoMatchData extends MatchData {
 				lines.forEach(line -> {
 					if (line.check(minigamer)) {
 						match.broadcast("&e" + minigamer.getNickname() + " &3got a &6Bingo&3!");
-						minigamer.scored(5);
+						minigamer.scored(1);
 					}
 				});
 			}
