@@ -77,7 +77,10 @@ public class CitizensUtils {
 	}
 
 	public static void updateName(NPC npc, String name) {
-		Tasks.sync(() -> npc.setName(name));
+		Tasks.sync(() -> {
+			if (!npc.getName().equals(name))
+				npc.setName(name);
+		});
 	}
 
 	public static void updateSkin(int id, String name) {
@@ -95,7 +98,8 @@ public class CitizensUtils {
 
 			Entity npcEntity = npc.getEntity();
 			if (npcEntity instanceof SkinnableEntity skinnableEntity) {
-				skinnableEntity.getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
+				if (!skinnableEntity.getSkinTracker().getSkin().getSkinName().equals(name))
+					skinnableEntity.getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
 			}
 		});
 	}
