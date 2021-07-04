@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 
 public class BiomeTag {
 	public static final BiomeTag OCEAN = new BiomeTag(Material.WATER_BUCKET).append("OCEAN", MatchMode.CONTAINS);
+	public static final BiomeTag SWAMP = new BiomeTag(Material.VINE).append("SWAMP", MatchMode.CONTAINS);
 	public static final BiomeTag TAIGA = new BiomeTag(Material.SPRUCE_LOG).append("TAIGA", MatchMode.CONTAINS);
 	public static final BiomeTag JUNGLE = new BiomeTag(Material.JUNGLE_LOG).append("JUNGLE", MatchMode.CONTAINS);
 	public static final BiomeTag MESA = new BiomeTag(Material.TERRACOTTA).append("BADLANDS", MatchMode.CONTAINS);

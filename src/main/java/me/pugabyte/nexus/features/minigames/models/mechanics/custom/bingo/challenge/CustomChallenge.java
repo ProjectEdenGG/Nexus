@@ -25,6 +25,8 @@ public class CustomChallenge implements IChallenge {
 		public static final String SPAWN_A_SNOW_GOLEM = "Spawn a Snow Golem";
 		public static final String CLIMB_TO_BUILD_HEIGHT = "Climb to world build height";
 		public static final String DIG_TO_BEDROCK = "Dig to Bedrock";
+		public static final String TRADE_WITH_A_VILLAGER = "Trade with a Villager";
+		public static final String TRADE_WITH_A_PIGLIN = "Trade with a Piglin";
 	}
 
 }
