@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress;
 
+import eden.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
@@ -7,11 +8,14 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StatisticIncreaseChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
+import org.bukkit.Statistic;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static eden.utils.StringUtils.camelCase;
 
 @Data
 public class StatisticIncreaseChallengeProgress implements IChallengeProgress {
@@ -32,16 +36,25 @@ public class StatisticIncreaseChallengeProgress implements IChallengeProgress {
 
 	@Override
 	public Set<String> getRemainingTasks(Challenge challenge) {
-		StatisticIncreaseChallenge statChallenge = challenge.getChallenge();
+		final StatisticIncreaseChallenge statChallenge = challenge.getChallenge();
+		final Statistic statistic = statChallenge.getStatistic();
+		final String key = statistic.getKey().getKey().toLowerCase();
+
 		final int startingValue = startingValues.get(challenge);
 		final int currentValue = statChallenge.getValue(minigamer.getOnlinePlayer());
 		final int completed = currentValue - startingValue;
+		final int remaining = statChallenge.getAmount() - completed;
 
 		if (completed >= statChallenge.getAmount())
 			return Collections.emptySet();
 
-		// TODO Figure out how to display
-		return Set.of(statChallenge.getStatistic().getKey().getKey());
+		if (key.contains("_one_cm"))
+			return Set.of(camelCase(key.replace("_one_cm", "")) + " " + StringUtils.getDf().format(remaining / 100d) + " meters");
+
+		if (statistic == Statistic.BREAK_ITEM)
+			return Set.of("Break " + remaining + " " + camelCase(statChallenge.getMaterial()));
+
+		return Set.of(key);
 	}
 
 }
