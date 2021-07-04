@@ -7,7 +7,7 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challe
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ConsumeChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CraftChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge;
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTasks;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTask;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.DimensionChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.KillChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ObtainChallenge;
@@ -131,10 +131,10 @@ public enum Challenge {
 
 	// Custom
 	// TODO Better way to do this?
-	SPAWN_AN_IRON_GOLEM(new CustomChallenge(IRON_BLOCK, CustomTasks.SPAWN_AN_IRON_GOLEM)),
-	SPAWN_A_SNOW_GOLEM(new CustomChallenge(Material.SNOW_BLOCK, CustomTasks.SPAWN_A_SNOW_GOLEM)),
-	CLIMB_TO_BUILD_HEIGHT(new CustomChallenge(BLUE_CONCRETE, CustomTasks.CLIMB_TO_BUILD_HEIGHT)),
-	DIG_TO_BEDROCK(new CustomChallenge(BEDROCK, CustomTasks.DIG_TO_BEDROCK)),
+	SPAWN_AN_IRON_GOLEM(new CustomChallenge(IRON_BLOCK, CustomTask.SPAWN_AN_IRON_GOLEM)),
+	SPAWN_A_SNOW_GOLEM(new CustomChallenge(Material.SNOW_BLOCK, CustomTask.SPAWN_A_SNOW_GOLEM)),
+	CLIMB_TO_BUILD_HEIGHT(new CustomChallenge(BLUE_CONCRETE, CustomTask.CLIMB_TO_BUILD_HEIGHT)),
+	DIG_TO_BEDROCK(new CustomChallenge(BEDROCK, CustomTask.DIG_TO_BEDROCK)),
 
 	;
 

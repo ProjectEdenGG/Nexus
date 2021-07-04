@@ -20,7 +20,7 @@ public class CustomChallenge implements IChallenge {
 		this.tasks = new LinkedHashSet<>(Set.of(tasks));
 	}
 
-	public static class CustomTasks {
+	public static class CustomTask {
 		public static final String SPAWN_AN_IRON_GOLEM = "Spawn an Iron Golem";
 		public static final String SPAWN_A_SNOW_GOLEM = "Spawn a Snow Golem";
 		public static final String CLIMB_TO_BUILD_HEIGHT = "Climb to world build height";

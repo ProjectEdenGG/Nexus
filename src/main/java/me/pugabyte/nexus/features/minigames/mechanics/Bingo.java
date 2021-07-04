@@ -15,7 +15,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTasks;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTask;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.BiomeChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.BreakChallengeProgress;
@@ -316,7 +316,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
 
-		progress.getProgress(Challenge.SPAWN_AN_IRON_GOLEM).add(CustomTasks.SPAWN_AN_IRON_GOLEM);
+		progress.complete(Challenge.SPAWN_AN_IRON_GOLEM, CustomTask.SPAWN_AN_IRON_GOLEM);
 	}
 
 	@EventHandler
@@ -328,7 +328,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
 
-		progress.getProgress(Challenge.SPAWN_A_SNOW_GOLEM).add(CustomTasks.SPAWN_A_SNOW_GOLEM);
+		progress.complete(Challenge.SPAWN_A_SNOW_GOLEM, CustomTask.SPAWN_A_SNOW_GOLEM);
 	}
 
 	static {
@@ -341,12 +341,12 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 				if (matchData.getAllChallenges().contains(Challenge.CLIMB_TO_BUILD_HEIGHT)) {
 					if (y >= 256)
-						progress.getProgress(Challenge.CLIMB_TO_BUILD_HEIGHT).add(CustomTasks.CLIMB_TO_BUILD_HEIGHT);
+						progress.complete(Challenge.CLIMB_TO_BUILD_HEIGHT, CustomTask.CLIMB_TO_BUILD_HEIGHT);
 				}
 
 				if (matchData.getAllChallenges().contains(Challenge.DIG_TO_BEDROCK)) {
 					if (y <= 5)
-						progress.getProgress(Challenge.DIG_TO_BEDROCK).add(CustomTasks.DIG_TO_BEDROCK);
+						progress.complete(Challenge.DIG_TO_BEDROCK, CustomTask.DIG_TO_BEDROCK);
 				}
 			}
 		});
