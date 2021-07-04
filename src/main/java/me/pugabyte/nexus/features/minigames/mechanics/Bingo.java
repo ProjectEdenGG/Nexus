@@ -4,7 +4,9 @@ import de.tr7zw.nbtapi.NBTItem;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.features.listeners.Misc.FixedCraftItemEvent;
+import me.pugabyte.nexus.features.listeners.Misc.IronGolemBuildEvent;
 import me.pugabyte.nexus.features.listeners.Misc.LivingEntityDamageByPlayerEvent;
+import me.pugabyte.nexus.features.listeners.Misc.SnowGolemBuildEvent;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
@@ -12,12 +14,14 @@ import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTasks;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.BiomeChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.BreakChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.ConsumeChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.CraftChallengeProgress;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.CustomChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.DimensionChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.KillChallengeProgress;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.ObtainChallengeProgress;
@@ -298,6 +302,51 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 					final StructureChallengeProgress progress = matchData.getProgress(minigamer, StructureChallengeProgress.class);
 					progress.getStructures().add(structureType);
+				}
+			}
+		});
+	}
+
+	@EventHandler
+	public void onIronGolemBuild(IronGolemBuildEvent event) {
+		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this))
+			return;
+
+		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
+		final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
+
+		progress.getProgress(Challenge.SPAWN_AN_IRON_GOLEM).add(CustomTasks.SPAWN_AN_IRON_GOLEM);
+	}
+
+	@EventHandler
+	public void onSnowGolemBuild(SnowGolemBuildEvent event) {
+		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		if (!minigamer.isPlaying(this))
+			return;
+
+		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
+		final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
+
+		progress.getProgress(Challenge.SPAWN_A_SNOW_GOLEM).add(CustomTasks.SPAWN_A_SNOW_GOLEM);
+	}
+
+	static {
+		Tasks.repeat(Time.SECOND.x(10), Time.SECOND.x(3), () -> {
+			for (Minigamer minigamer : getActiveBingoMinigamers()) {
+				final Match match = minigamer.getMatch();
+				final BingoMatchData matchData = match.getMatchData();
+				final double y = minigamer.getOnlinePlayer().getLocation().getY();
+				final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
+
+				if (matchData.getAllChallenges().contains(Challenge.CLIMB_TO_BUILD_HEIGHT)) {
+					if (y >= 256)
+						progress.getProgress(Challenge.CLIMB_TO_BUILD_HEIGHT).add(CustomTasks.CLIMB_TO_BUILD_HEIGHT);
+				}
+
+				if (matchData.getAllChallenges().contains(Challenge.DIG_TO_BEDROCK)) {
+					if (y <= 5)
+						progress.getProgress(Challenge.DIG_TO_BEDROCK).add(CustomTasks.DIG_TO_BEDROCK);
 				}
 			}
 		});

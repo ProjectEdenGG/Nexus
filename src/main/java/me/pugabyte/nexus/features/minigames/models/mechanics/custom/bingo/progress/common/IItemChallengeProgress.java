@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common;
 
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IItemChallenge;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
 import me.pugabyte.nexus.utils.StringUtils;
