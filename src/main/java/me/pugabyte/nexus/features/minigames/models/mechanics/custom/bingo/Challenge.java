@@ -52,6 +52,7 @@ public enum Challenge {
 	BREAK_64_BLACKSTONE(new BreakChallenge(new FuzzyItemStack(BLACKSTONE, 64))),
 	BREAK_32_SHROOMLIGHT(new BreakChallenge(new FuzzyItemStack(SHROOMLIGHT, 32))),
 	BREAK_1_ANCIENT_DEBRIS(new BreakChallenge(new FuzzyItemStack(ANCIENT_DEBRIS, 1))),
+	BREAK_32_NETHER_GOLD_ORE(new BreakChallenge(new FuzzyItemStack(NETHER_GOLD_ORE, 32))),
 	BREAK_16_SOUL_SAND(new BreakChallenge(new FuzzyItemStack(SOUL_SAND, 16))),
 	BREAK_32_PODZOL(new BreakChallenge(new FuzzyItemStack(PODZOL, 32))),
 	BREAK_32_GRAVEL(new BreakChallenge(new FuzzyItemStack(GRAVEL, 32))),
@@ -143,6 +144,7 @@ public enum Challenge {
 	KILL_8_SQUID(new KillChallenge(EntityType.SQUID, 8)),
 	KILL_8_SALMON(new KillChallenge(EntityType.SALMON, 8)),
 	KILL_8_COD(new KillChallenge(EntityType.COD, 8)),
+	/* TODO Fix mob spawn rates
 	KILL_6_SKELETONS(new KillChallenge(EntityType.SKELETON, 6)),
 	KILL_6_ZOMBIES(new KillChallenge(EntityType.ZOMBIE, 6)),
 	KILL_6_DROWNED(new KillChallenge(EntityType.DROWNED, 6)),
@@ -155,6 +157,7 @@ public enum Challenge {
 	KILL_2_MAGMA_CUBES(new KillChallenge(EntityType.MAGMA_CUBE, 2)),
 	KILL_3_STRIDER(new KillChallenge(EntityType.STRIDER, 3)),
 	KILL_1_GHAST(new KillChallenge(EntityType.GHAST, 1)),
+	 */
 
 	// Consuming
 	EAT_16_DRIED_KELP(new ConsumeChallenge(new FuzzyItemStack(DRIED_KELP, 16))),
@@ -174,7 +177,6 @@ public enum Challenge {
 
 	// Structures
 	FIND_A_NETHER_FORTRESS(new StructureChallenge(StructureType.NETHER_FORTRESS)),
-	FIND_A_BASTION(new StructureChallenge(StructureType.BASTION_REMNANT)),
 	FIND_A_VILLAGE(new StructureChallenge(StructureType.VILLAGE)),
 	FIND_A_SHIPWRECK(new StructureChallenge(StructureType.SHIPWRECK)),
 
