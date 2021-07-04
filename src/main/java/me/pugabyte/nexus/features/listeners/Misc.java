@@ -603,7 +603,7 @@ public class Misc implements Listener {
 					ARM1_X.getBlock().setType(Material.AIR);
 					ARM2_X.getBlock().setType(Material.AIR);
 
-					Location location = event.getBlock().getLocation().add(0, -1, 0);
+					Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
 					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class);
 					if (golem.isValid())
 						new IronGolemBuildEvent(player, golem).callEvent();
@@ -615,7 +615,7 @@ public class Misc implements Listener {
 					ARM1_Z.getBlock().setType(Material.AIR);
 					ARM2_Z.getBlock().setType(Material.AIR);
 
-					Location location = event.getBlock().getLocation().add(0, -1, 0);
+					Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
 					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class);
 					if (golem.isValid())
 						new IronGolemBuildEvent(player, golem).callEvent();
@@ -642,7 +642,7 @@ public class Misc implements Listener {
 				TORSO.getBlock().setType(Material.AIR);
 				LEGS.getBlock().setType(Material.AIR);
 
-				Location location = event.getBlock().getLocation().add(0, -1, 0);
+				Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
 				final Snowman golem = location.getWorld().spawn(location, Snowman.class);
 				if (golem.isValid())
 					new SnowGolemBuildEvent(player, golem).callEvent();

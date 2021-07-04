@@ -14,7 +14,9 @@ import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -49,6 +51,20 @@ public class BingoCommand extends CustomCommand {
 	void menu() {
 		matchData.check(minigamer);
 		new BingoMenu(minigamer).open(player());
+	}
+
+	@Confirm
+	@Permission("group.admin")
+	@Path("challenge complete <challenge> [player]")
+	void complete(Challenge challenge, Minigamer minigamer) {
+		matchData.getData(minigamer).setCompleted(challenge, true);
+	}
+
+	@Confirm
+	@Permission("group.admin")
+	@Path("challenge reset <challenge> [player]")
+	void reset(Challenge challenge, Minigamer minigamer) {
+		matchData.getData(minigamer).setCompleted(challenge, false);
 	}
 
 	private static class BingoMenu extends MenuUtils implements InventoryProvider {
