@@ -19,10 +19,15 @@ public interface IItemChallengeProgress extends IChallengeProgress {
 
 	@Override
 	default Set<String> getRemainingTasks(Challenge challenge) {
+		final int LIMIT = 5;
 		return getRemainingItems(challenge).stream().map(fuzzyItemStack -> {
-			final String materials = fuzzyItemStack.getMaterials().stream()
+			String materials = fuzzyItemStack.getMaterials().stream()
+				.limit(LIMIT)
 				.map(StringUtils::camelCase)
 				.collect(Collectors.joining(" or "));
+
+			if (fuzzyItemStack.getMaterials().size() > LIMIT)
+				materials += " or etc.";
 
 			return getTask() + " " + fuzzyItemStack.getAmount() + " " + materials;
 		}).collect(Collectors.toSet());
