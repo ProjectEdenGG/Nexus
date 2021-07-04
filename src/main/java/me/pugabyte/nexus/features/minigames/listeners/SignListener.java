@@ -62,7 +62,7 @@ public class SignListener implements Listener {
 
 						String descriptionText = arena.getMechanic().getDescription();
 						if (!descriptionText.isEmpty() && !descriptionText.equalsIgnoreCase("todo"))
-							builder.newline(false).next("Description: ").next(descriptionText, NamedTextColor.YELLOW);
+							builder.newline(false).next("Description: ").next(new JsonBuilder(descriptionText).color(NamedTextColor.YELLOW));
 
 						builder.newline(false).next(String.valueOf(players), NamedTextColor.YELLOW).next("/").next(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
 								.next(Component.text(" players"));
