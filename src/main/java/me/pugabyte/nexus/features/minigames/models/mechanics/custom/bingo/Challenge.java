@@ -50,6 +50,9 @@ public enum Challenge {
 	BREAK_64_NETHER_BRICKS(new BreakChallenge(new FuzzyItemStack(NETHER_BRICKS, 64))),
 	BREAK_64_BASALT(new BreakChallenge(new FuzzyItemStack(BASALT, 64))),
 	BREAK_64_BLACKSTONE(new BreakChallenge(new FuzzyItemStack(BLACKSTONE, 64))),
+	BREAK_32_SHROOMLIGHT(new BreakChallenge(new FuzzyItemStack(SHROOMLIGHT, 32))),
+	BREAK_1_ANCIENT_DEBRIS(new BreakChallenge(new FuzzyItemStack(ANCIENT_DEBRIS, 1))),
+	BREAK_16_SOUL_SAND(new BreakChallenge(new FuzzyItemStack(SOUL_SAND, 16))),
 	BREAK_32_PODZOL(new BreakChallenge(new FuzzyItemStack(PODZOL, 32))),
 	BREAK_32_GRAVEL(new BreakChallenge(new FuzzyItemStack(GRAVEL, 32))),
 	BREAK_3_OF_EACH_TULIP(new BreakChallenge(FuzzyItemStack.ofEach(MaterialTag.TULIPS, 3))),
@@ -152,6 +155,7 @@ public enum Challenge {
 	KILL_4_HOGLINS(new KillChallenge(EntityType.HOGLIN, 4)),
 	KILL_2_PIGLIN_BRUTES(new KillChallenge(EntityType.PIGLIN_BRUTE, 2)),
 	KILL_2_MAGMA_CUBES(new KillChallenge(EntityType.MAGMA_CUBE, 2)),
+	KILL_3_STRIDER(new KillChallenge(EntityType.STRIDER, 3)),
 	KILL_1_GHAST(new KillChallenge(EntityType.GHAST, 1)),
 
 	// Consuming
