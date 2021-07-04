@@ -299,20 +299,23 @@ public final class Bingo extends TeamlessVanillaMechanic {
 				final BingoMatchData matchData = match.getMatchData();
 				for (Challenge challenge : matchData.getAllChallenges(StructureChallenge.class)) {
 					final StructureChallenge structureChallenge = challenge.getChallenge();
-					System.out.println("structureChallenge " + challenge.name());
 					final StructureType structureType = structureChallenge.getStructureType();
-					System.out.println("structureType " + structureType);
 					final Location location = minigamer.getPlayer().getLocation();
 					final Location found = location.getWorld().locateNearestStructure(location, structureType, 2, false);
 
 					if (found == null)
 						continue;
 
-					System.out.println("found " + found);
-					if (found.distance(location) > 32)
-						continue;
+					found.setY(location.getY());
 
-					System.out.println("adding to progress");
+					if (structureType == StructureType.NETHER_FORTRESS) {
+						if (found.distance(location) > 100)
+							continue;
+					} else {
+						if (found.distance(location) > 32)
+							continue;
+					}
+
 					final StructureChallengeProgress progress = matchData.getProgress(minigamer, StructureChallengeProgress.class);
 					progress.getStructures().add(structureType);
 				}
