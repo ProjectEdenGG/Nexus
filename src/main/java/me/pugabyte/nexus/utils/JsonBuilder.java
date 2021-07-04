@@ -14,8 +14,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -904,26 +902,6 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
-	 * Sets hover text to render the metadata of the provided item stack, like when hovering over one in your inventory
-	 * @return this builder
-	 */
-	@NotNull @Contract("_ -> this")
-	public JsonBuilder hover(@NonNull ItemStack itemStack) {
-		builder.hoverEvent(itemStack.asHoverEvent());
-		return this;
-	}
-
-	/**
-	 * Sets hover text to render the name, type, and UUID of an entity
-	 * @return this builder
-	 */
-	@NotNull @Contract("_ -> this")
-	public JsonBuilder hover(@NonNull Entity entity) {
-		builder.hoverEvent(entity.asHoverEvent());
-		return this;
-	}
-
-	/**
 	 * Sets the text shown on hover
 	 * @return this builder
 	 */
@@ -966,7 +944,7 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Runs {@link #build()} and sends the resulting component to a recipient.
-	 * @param recipient a player object (see {@link PlayerUtils#send(Object, Object)} for valid objects)
+	 * @param recipient a player object (see {@link PlayerUtils#send(Object, Object, Object...) PlayerUtils#send} for valid objects)
 	 */
 	public void send(@Nullable Object recipient) {
 		PlayerUtils.send(recipient, this);
