@@ -192,8 +192,8 @@ public class Leaderboards implements Listener {
 				AtomicInteger i = new AtomicInteger(0);
 				top.entrySet().iterator().forEachRemaining(entry -> {
 					Nerd nerd = Nerd.of(entry.getKey());
-					CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
 					CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
+					CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
 					runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
 				});
 			});
