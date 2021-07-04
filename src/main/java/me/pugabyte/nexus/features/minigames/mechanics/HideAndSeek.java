@@ -364,7 +364,7 @@ public class HideAndSeek extends Infection {
 				clickableItems.add(ClickableItem.from(itemStack, e -> {
 					matchData.getBlockChoices().put(player.getUniqueId(), material);
 					player.closeInventory();
-					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey())));
+					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey(), NamedTextColor.YELLOW)));
 				}));
 			});
 			addPagination(player, contents, clickableItems);

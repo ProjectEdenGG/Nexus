@@ -46,7 +46,6 @@ public enum CrateType {
 		return LocationUtils.getCenteredLocation(this.location.clone());
 	}
 
-	@Getter
 	private final ItemStack key = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key").glow()
 			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))
 			.lore("&7Use me on the Crate at").lore("&7spawn to receive a reward").build();
