@@ -84,7 +84,7 @@ public class BingoCommand extends CustomCommand {
 				for (Challenge challenge : array) {
 					final ItemBuilder builder = challenge.getDisplayItem();
 					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
-					if (progress.isCompleted(challenge.getChallenge())) {
+					if (progress.isCompleted(challenge)) {
 						builder.glow();
 						builder.lore("&aCompleted");
 					} else {

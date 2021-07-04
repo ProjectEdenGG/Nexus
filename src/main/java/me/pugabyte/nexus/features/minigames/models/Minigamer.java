@@ -18,6 +18,7 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.Min
 import me.pugabyte.nexus.features.minigames.models.mechanics.Mechanic;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import me.pugabyte.nexus.features.minigames.models.perks.Perk;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNicknamed;
 import me.pugabyte.nexus.models.nerd.Rank;
@@ -29,6 +30,7 @@ import me.pugabyte.nexus.utils.TitleUtils;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -55,7 +57,7 @@ import static me.pugabyte.nexus.utils.StringUtils.colorize;
 @EqualsAndHashCode(exclude = "match")
 public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	@NotNull
-	private Player player;
+	private UUID uuid;
 	@ToString.Exclude
 	private Match match;
 	@Nullable
@@ -79,14 +81,26 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	private static final double HEALTH_PER_TICK = (1d/2d)/ Time.SECOND.x(2);
 	private static final int IMMOBILE_SECONDS = Time.SECOND.x(3);
 
-	@Override
-	public @NotNull OfflinePlayer getOfflinePlayer() {
+	public @NotNull Player getOnlinePlayer() {
+		final Player player = Bukkit.getPlayer(uuid);
+		if (player == null || !player.isOnline())
+			throw new PlayerNotOnlineException(Bukkit.getOfflinePlayer(uuid));
 		return player;
 	}
 
 	@Override
+	public @NotNull Player getPlayer() {
+		return getOnlinePlayer();
+	}
+
+	@Override
+	public @NotNull OfflinePlayer getOfflinePlayer() {
+		return getPlayer();
+	}
+
+	@Override
 	public @NotNull UUID getUniqueId() {
-		return player.getUniqueId();
+		return getPlayer().getUniqueId();
 	}
 
 	/**
@@ -96,11 +110,11 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	@Deprecated
 	@NotNull
 	public String getName() {
-		return Name.of(player);
+		return Name.of(uuid);
 	}
 
 	public @NotNull String getNickname() {
-		return Nickname.of(player);
+		return Nickname.of(uuid);
 	}
 
 	public @NotNull Color getColor() {
@@ -114,7 +128,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void join(@NotNull Arena arena) {
-		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(player.getWorld()))) {
+		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(getPlayer().getWorld()))) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;
@@ -232,16 +246,16 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull String message, boolean prefix) {
-		player.sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
+		getPlayer().sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
 	}
 
 	public void toGamelobby() {
-		boolean staff = Rank.of(player).isStaff();
+		boolean staff = Rank.of(getPlayer()).isStaff();
 
-		player.setGameMode(GameMode.SURVIVAL);
-		player.setFallDistance(0);
-		player.setAllowFlight(staff);
-		player.setFlying(staff);
+		getPlayer().setGameMode(GameMode.SURVIVAL);
+		getPlayer().setFallDistance(0);
+		getPlayer().setAllowFlight(staff);
+		getPlayer().setFlying(staff);
 
 		teleport(Minigames.getLobby());
 	}
@@ -250,9 +264,9 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		teleport(match.getArena().getSpectateLocation());
 		match.getMinigamers().forEach(minigamer -> {
 			if (minigamer.isAlive)
-				minigamer.getPlayer().hidePlayer(Nexus.getInstance(), player);
+				minigamer.getPlayer().hidePlayer(Nexus.getInstance(), getPlayer());
 			else
-				player.showPlayer(Nexus.getInstance(), minigamer.getPlayer());
+				getPlayer().showPlayer(Nexus.getInstance(), minigamer.getPlayer());
 		});
 	}
 
@@ -267,16 +281,16 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		final Vector still = new Vector(0, 0, 0);
 
 		return location.getWorld().getChunkAtAsyncUrgently(up).thenRun(() -> {
-			player.setVelocity(still);
+			getPlayer().setVelocity(still);
 			canTeleport = true;
 
-			player.teleport(up, match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN);
+			getPlayer().teleport(up, match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN);
 
 			canTeleport = false;
-			player.setVelocity(still);
+			getPlayer().setVelocity(still);
 			if (withSlowness) {
-				match.getTasks().wait(1, () -> player.setVelocity(still));
-				match.getTasks().wait(2, () -> player.setVelocity(still));
+				match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
+				match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
 			}
 		});
 	}
@@ -292,7 +306,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			((TeamMechanic) match.getMechanic()).joinTeamChannel(this);
 			if (team.getObjective() != null && !team.getObjective().isEmpty()) {
 				sendMessage("&6Team Objective: &e" + team.getObjective());
-				TitleUtils.sendTitle(player, "&6Team Objective", "&e" + team.getObjective(), 10, Time.SECOND.x(4), 20);
+				TitleUtils.sendTitle(getPlayer(), "&6Team Objective", "&e" + team.getObjective(), 10, Time.SECOND.x(4), 20);
 			}
 		}
 
@@ -345,7 +359,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			respawning = true;
 			teleport(match.getArena().getRespawnLocation(), true);
 			clearState();
-			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
+			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
 			hideAll();
 			Runnable respawn = () -> {
 				if (!match.isEnded()) {
@@ -375,7 +389,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * @return player's {@link org.bukkit.Location} without yaw or pitch
 	 */
 	private @NotNull Location getRotationlessLocation() {
-		Location location = player.getLocation();
+		Location location = getPlayer().getLocation();
 		location.setYaw(0);
 		location.setPitch(0);
 		return location;
@@ -397,7 +411,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		double multiplier = 1;
 		double sneakMultiplier = 1; // calculated independently as it is variable
 
-		if (player.isSneaking())
+		if (getPlayer().isSneaking())
 			sneakMultiplier = 1.5d;
 
 		if (immobileTicks >= IMMOBILE_SECONDS) {
@@ -416,7 +430,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void heal(double amount) {
-		player.setHealth(Math.min(player.getMaxHealth(), player.getHealth()+amount));
+		getPlayer().setHealth(Math.min(getPlayer().getMaxHealth(), getPlayer().getHealth()+amount));
 	}
 
 	// respawning
@@ -448,8 +462,8 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	public void unhideAll() {
 		PlayerUtils.getOnlinePlayers().forEach(_player -> {
-			showPlayer(player).to(_player);
-			showPlayer(_player).to(player);
+			showPlayer(getPlayer()).to(_player);
+			showPlayer(_player).to(getPlayer());
 		});
 	}
 
@@ -459,7 +473,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	public void clearState(boolean forceClearInventory) {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
-		player.setGameMode(match.getMechanic().getGameMode());
+		getPlayer().setGameMode(match.getMechanic().getGameMode());
 		clearGameModeState(forceClearInventory);
 
 		unhideAll();
@@ -468,27 +482,27 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	private void clearGameModeState(boolean forceClearInventory) {
 		Mechanic mechanic = match.getMechanic();
 
-		player.setFireTicks(0);
-		player.resetMaxHealth();
-		player.setHealth(20);
-		player.setExp(0);
-		player.setTotalExperience(0);
-		player.setLevel(0);
-		player.getInventory().setHeldItemSlot(0);
-		player.setFoodLevel(20);
-		player.setFallDistance(0);
-		player.setAllowFlight(mechanic.allowFly());
-		player.setFlying(mechanic.allowFly());
-		if (VanishAPI.isInvisible(player))
-			VanishAPI.showPlayer(player);
-		SpeedCommand.resetSpeed(player);
-		player.setOp(false);
+		getPlayer().setFireTicks(0);
+		getPlayer().resetMaxHealth();
+		getPlayer().setHealth(20);
+		getPlayer().setExp(0);
+		getPlayer().setTotalExperience(0);
+		getPlayer().setLevel(0);
+		getPlayer().getInventory().setHeldItemSlot(0);
+		getPlayer().setFoodLevel(20);
+		getPlayer().setFallDistance(0);
+		getPlayer().setAllowFlight(mechanic.allowFly());
+		getPlayer().setFlying(mechanic.allowFly());
+		if (VanishAPI.isInvisible(getPlayer()))
+			VanishAPI.showPlayer(getPlayer());
+		SpeedCommand.resetSpeed(getPlayer());
+		getPlayer().setOp(false);
 
 		if (mechanic.shouldClearInventory() || forceClearInventory)
-			player.getInventory().clear();
+			getPlayer().getInventory().clear();
 
-		for (PotionEffect effect : player.getActivePotionEffects())
-			player.removePotionEffect(effect.getType());
+		for (PotionEffect effect : getPlayer().getActivePotionEffects())
+			getPlayer().removePotionEffect(effect.getType());
 	}
 
 	public boolean usesPerk(@NotNull Class<? extends Perk> perk) {
@@ -504,6 +518,6 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Minigamer minigamer = (Minigamer) o;
-		return Objects.equals(player.getUniqueId(), minigamer.player.getUniqueId());
+		return Objects.equals(getPlayer().getUniqueId(), minigamer.getPlayer().getUniqueId());
 	}
 }

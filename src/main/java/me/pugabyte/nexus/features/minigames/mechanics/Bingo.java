@@ -285,7 +285,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 				final Match match = minigamer.getMatch();
 				final BingoMatchData matchData = match.getMatchData();
 				for (Challenge challenge : matchData.getAllChallenges(StructureChallenge.class)) {
-					final StructureChallenge structureChallenge = (StructureChallenge) challenge.getChallenge();
+					final StructureChallenge structureChallenge = challenge.getChallenge();
 					final StructureType structureType = structureChallenge.getStructureType();
 					final Location location = minigamer.getPlayer().getLocation();
 					final Location found = location.getWorld().locateNearestStructure(location, structureType, 2, false);

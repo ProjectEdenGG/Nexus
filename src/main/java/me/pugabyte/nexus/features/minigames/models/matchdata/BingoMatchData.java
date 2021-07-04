@@ -93,7 +93,7 @@ public class BingoMatchData extends MatchData {
 	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Class<? extends T> clazz) {
 		return (T) getData(minigamer).getProgress().computeIfAbsent(clazz, $ -> {
 			try {
-				return clazz.getDeclaredConstructor().newInstance();
+				return clazz.getDeclaredConstructor(Minigamer.class).newInstance(minigamer);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				return null;
@@ -114,7 +114,7 @@ public class BingoMatchData extends MatchData {
 					continue;
 
 				final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
-				if (progress.isCompleted(challenge.getChallenge()))
+				if (progress.isCompleted(challenge))
 					completed[row][col] = true;
 
 				var lines = Arrays.asList(BingoLine.ofRow(row), BingoLine.ofCol(col),

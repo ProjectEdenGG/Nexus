@@ -78,7 +78,7 @@ public class Mining implements Listener {
 		ItemStack tool = player.getInventory().getItemInMainHand();
 		if (!oreType.canBeMinedBy(tool.getType())) {
 			if (new CooldownService().check(player, "BF21_cantbreak_tool", Time.SECOND.x(15))) {
-				send(Errors.cantBreak + " with this tool. Needs either: " + oreType.getCanBreak(), player);
+				send(Errors.CANT_BREAK + " with this tool. Needs either: " + oreType.getCanBreak(), player);
 				Quests.sound_villagerNo(player);
 			}
 			return true;
