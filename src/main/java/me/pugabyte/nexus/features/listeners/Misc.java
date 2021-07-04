@@ -578,6 +578,9 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onSpawnIronGolem(BlockPlaceEvent event) {
+		if (!event.getBlock().getWorld().getName().contains("bingo"))
+			return;
+
 		Player player = event.getPlayer();
 		if (event.getBlock().getType().equals(Material.PUMPKIN)) {
 			Location HEAD = event.getBlock().getLocation();
@@ -623,6 +626,9 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onSpawnSnowGolem(BlockPlaceEvent event) {
+		if (!event.getBlock().getWorld().getName().contains("bingo"))
+			return;
+
 		Player player = event.getPlayer();
 		if (event.getBlock().getType().equals(Material.PUMPKIN)) {
 			Location HEAD = event.getBlock().getLocation();
