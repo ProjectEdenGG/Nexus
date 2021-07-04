@@ -26,7 +26,7 @@ public class PlayerManager {
 		Player onlinePlayer = offlinePlayer.getPlayer();
 		if (onlinePlayer == null)
 			throw new PlayerNotOnlineException(offlinePlayer);
-		return new Minigamer(onlinePlayer);
+		return new Minigamer(player);
 	}
 
 	@Contract("null -> null; !null -> !null")
@@ -39,7 +39,7 @@ public class PlayerManager {
 		} catch (PlayerNotOnlineException exc) {
 			// fake player (NPC), this should probably return null but to avoid breaking changes we create a fake minigamer as well
 			if (player instanceof Player player1)
-				return new Minigamer(player1);
+				return new Minigamer(player1.getUniqueId());
 			throw exc;
 		}
 	}

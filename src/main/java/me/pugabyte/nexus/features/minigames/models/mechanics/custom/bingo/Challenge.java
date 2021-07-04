@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common;
+package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo;
 
 import eden.utils.EnumUtils;
 import lombok.AllArgsConstructor;
@@ -6,15 +6,19 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BreakChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ConsumeChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CraftChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTasks;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.DimensionChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.KillChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ObtainChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.PlaceChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StatisticIncreaseChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
@@ -122,13 +126,15 @@ public enum Challenge {
 
 	// Statistic Increase
 	WALK_1_KILOMETER(new StatisticIncreaseChallenge(DIAMOND_BOOTS, Statistic.WALK_ONE_CM, 100000)),
-	BOAT_1_KILOMETER(new StatisticIncreaseChallenge(OAK_BOAT, Statistic.BOAT_ONE_CM, 100000))
+	BOAT_1_KILOMETER(new StatisticIncreaseChallenge(OAK_BOAT, Statistic.BOAT_ONE_CM, 500000)),
+	BREAK_A_WOODEN_PICKAXE(new StatisticIncreaseChallenge(WOODEN_PICKAXE, Statistic.BREAK_ITEM, WOODEN_PICKAXE, 1)),
 
-	// Summon an iron golem
-	// Summon a snowman
-	// Climb to build limit
-	// Dig to bedrock
-	// Break a wooden tool
+	// Custom
+	// TODO Better way to do this?
+	SPAWN_AN_IRON_GOLEM(new CustomChallenge(IRON_BLOCK, CustomTasks.SPAWN_AN_IRON_GOLEM)),
+	SPAWN_A_SNOW_GOLEM(new CustomChallenge(Material.SNOW_BLOCK, CustomTasks.SPAWN_A_SNOW_GOLEM)),
+	CLIMB_TO_BUILD_HEIGHT(new CustomChallenge(BLUE_CONCRETE, CustomTasks.CLIMB_TO_BUILD_HEIGHT)),
+	DIG_TO_BEDROCK(new CustomChallenge(BEDROCK, CustomTasks.DIG_TO_BEDROCK)),
 
 	;
 

@@ -88,7 +88,8 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag TOOLS_IRON = new MaterialTag("IRON_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_CHAINMAIL = new MaterialTag("CHAINMAIL_", MatchMode.PREFIX, MaterialTag.TOOLS);
-	public static final MaterialTag TOOLS_LEATHER = new MaterialTag("LEATHER_", MatchMode.PREFIX, MaterialTag.TOOLS);
+	public static final MaterialTag TOOLS_STONE = new MaterialTag("STONE_", MatchMode.PREFIX, MaterialTag.TOOLS);
+	public static final MaterialTag TOOLS_WOODEN = new MaterialTag("WOODEN_", MatchMode.PREFIX, MaterialTag.TOOLS);
 
 	public static final MaterialTag CHESTS = new MaterialTag(CHEST, TRAPPED_CHEST, BARREL);
 	public static final MaterialTag FURNACES = new MaterialTag(FURNACE, BLAST_FURNACE, SMOKER);

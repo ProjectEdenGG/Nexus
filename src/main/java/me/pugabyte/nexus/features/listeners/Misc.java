@@ -32,6 +32,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -43,10 +44,13 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Golem;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -190,7 +194,7 @@ public class Misc implements Listener {
 
 		if (event.getCause() == DamageCause.VOID)
 			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player))
-					|| player.getWorld().getEnvironment() == Environment.THE_END)) {
+				|| player.getWorld().getEnvironment() == Environment.THE_END)) {
 				if (PlayerManager.get(player).getMatch() != null)
 					Warps.spawn((Player) event.getEntity());
 			}
@@ -399,6 +403,7 @@ public class Misc implements Listener {
 		public HandlerList getHandlers() {
 			return handlers;
 		}
+
 	}
 
 	public static class LivingEntityDamageByPlayerEvent extends EntityEvent {
@@ -431,6 +436,7 @@ public class Misc implements Listener {
 		public HandlerList getHandlers() {
 			return handlers;
 		}
+
 	}
 
 	@EventHandler
@@ -492,6 +498,7 @@ public class Misc implements Listener {
 			super(recipe, what, type, slot, click, action, key);
 			this.resultItemStack = resultItemStack;
 		}
+
 	}
 
 	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
@@ -567,6 +574,114 @@ public class Misc implements Listener {
 				result += Math.max(stack.getMaxStackSize() - item.getAmount(), 0);
 
 		return result;
+	}
+
+	@EventHandler
+	public void onSpawnIronGolem(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		if (event.getBlock().getType().equals(Material.PUMPKIN)) {
+			Location HEAD = event.getBlock().getLocation();
+
+			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
+			Location LEGS = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 2, HEAD.getZ());
+
+			Location ARM1_X = new Location(HEAD.getWorld(), HEAD.getX() - 1, HEAD.getY() - 1, HEAD.getZ());
+			Location ARM2_X = new Location(HEAD.getWorld(), HEAD.getX() + 1, HEAD.getY() - 1, HEAD.getZ());
+
+			Location ARM1_Z = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ() - 1);
+			Location ARM2_Z = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ() + 1);
+
+			if (Material.IRON_BLOCK.equals(TORSO.getBlock().getType()) && Material.IRON_BLOCK.equals(LEGS.getBlock().getType())) {
+				if (Material.IRON_BLOCK.equals(ARM1_X.getBlock().getType()) && Material.IRON_BLOCK.equals(ARM2_X.getBlock().getType())) {
+					event.setCancelled(true);
+					HEAD.getBlock().setType(Material.AIR);
+					TORSO.getBlock().setType(Material.AIR);
+					LEGS.getBlock().setType(Material.AIR);
+					ARM1_X.getBlock().setType(Material.AIR);
+					ARM2_X.getBlock().setType(Material.AIR);
+
+					Location location = player.getLocation();
+					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class);
+					if (golem.isValid())
+						new IronGolemBuildEvent(player, golem);
+				} else if (Material.IRON_BLOCK.equals(ARM1_Z.getBlock().getType()) && Material.IRON_BLOCK.equals(ARM2_Z.getBlock().getType())) {
+					event.setCancelled(true);
+					HEAD.getBlock().setType(Material.AIR);
+					TORSO.getBlock().setType(Material.AIR);
+					LEGS.getBlock().setType(Material.AIR);
+					ARM1_Z.getBlock().setType(Material.AIR);
+					ARM2_Z.getBlock().setType(Material.AIR);
+
+					Location location = player.getLocation();
+					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class);
+					if (golem.isValid())
+						new IronGolemBuildEvent(player, golem);
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onSpawnSnowGolem(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		if (event.getBlock().getType().equals(Material.PUMPKIN)) {
+			Location HEAD = event.getBlock().getLocation();
+
+			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
+			Location LEGS = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 2, HEAD.getZ());
+
+			if (Material.SNOW_BLOCK.equals(TORSO.getBlock().getType()) && Material.SNOW_BLOCK.equals(LEGS.getBlock().getType())) {
+				event.setCancelled(true);
+				HEAD.getBlock().setType(Material.AIR);
+				TORSO.getBlock().setType(Material.AIR);
+				LEGS.getBlock().setType(Material.AIR);
+
+				Location location = player.getLocation();
+				final Snowman golem = location.getWorld().spawn(location, Snowman.class);
+				if (golem.isValid())
+					new SnowGolemBuildEvent(player, golem);
+			}
+		}
+	}
+
+	public static class GolemBuildEvent extends PlayerEvent {
+		@NonNull
+		@Getter
+		final Golem entity;
+
+		public GolemBuildEvent(@NotNull Player who, @NonNull Golem entity) {
+			super(who);
+			this.entity = entity;
+		}
+
+		private static final HandlerList handlers = new HandlerList();
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		@NotNull
+		@Override
+		public HandlerList getHandlers() {
+			return handlers;
+		}
+
+	}
+
+	public static class IronGolemBuildEvent extends GolemBuildEvent {
+
+		public IronGolemBuildEvent(@NotNull Player who, @NonNull IronGolem entity) {
+			super(who, entity);
+		}
+
+	}
+
+	public static class SnowGolemBuildEvent extends GolemBuildEvent {
+
+		public SnowGolemBuildEvent(@NotNull Player who, @NonNull Snowman entity) {
+			super(who, entity);
+		}
+
 	}
 
 }

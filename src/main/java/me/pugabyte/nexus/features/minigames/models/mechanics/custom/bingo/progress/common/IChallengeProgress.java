@@ -1,7 +1,7 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common;
 
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 
 import java.util.Set;
 
