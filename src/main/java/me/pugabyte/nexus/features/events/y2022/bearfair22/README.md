@@ -7,6 +7,8 @@ Ideas:
     - What to do with rollercoaster?
 - Keep Fair Theme:
     - Replace SDU island w/ a Pride Island
+        - mini city?
+        - could feature the contest winner
 
 Improvements that need to be made from last year:
 
