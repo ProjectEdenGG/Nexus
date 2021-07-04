@@ -27,23 +27,33 @@ import static me.pugabyte.nexus.utils.LocationUtils.getCenteredLocation;
 @MatchDataFor(Bingo.class)
 public class BingoMatchData extends MatchData {
 	private static final int SIZE = 5;
-	private Map<UUID, MinigamerBingoData> players = new HashMap<>();
+	private Map<UUID, BingoMinigamerData> players = new HashMap<>();
 	private Challenge[][] challenges = new Challenge[SIZE][SIZE];
 
 	@Data
-	public static class MinigamerBingoData {
+	public static class BingoMinigamerData {
+		private final Minigamer minigamer;
 		private Location spawnpoint;
 		private Boolean[][] completed = new Boolean[SIZE][SIZE];
 		private Set<BingoLine> bingos = new HashSet<>();
 		private final Map<Class<? extends IChallengeProgress>, IChallengeProgress> progress = new HashMap<>();
 
-		public MinigamerBingoData() {
+		public BingoMinigamerData(Minigamer minigamer) {
+			this.minigamer = minigamer;
 			for (Boolean[] array : completed)
 				Arrays.fill(array, false);
 		}
 
 		public boolean hasBingo(BingoLine line) {
 			return bingos.contains(line);
+		}
+
+		public void setCompleted(Challenge challenge, boolean completed) {
+			final Challenge[][] challenges = minigamer.getMatch().<BingoMatchData>getMatchData().getChallenges();
+			for (int i = 0; i < SIZE; i++)
+				for (int j = 0; j < SIZE; j++)
+					if (challenge == challenges[i][j])
+						this.completed[i][j] = completed;
 		}
 	}
 
@@ -61,8 +71,8 @@ public class BingoMatchData extends MatchData {
 				challenges[i][j] = iterator.next();
 	}
 
-	public MinigamerBingoData getData(Minigamer minigamer) {
-		return players.computeIfAbsent(minigamer.getUniqueId(), $ -> new MinigamerBingoData());
+	public BingoMinigamerData getData(Minigamer minigamer) {
+		return players.computeIfAbsent(minigamer.getUniqueId(), $ -> new BingoMinigamerData(minigamer));
 	}
 
 	public Set<Challenge> getAllChallenges() {
@@ -209,7 +219,7 @@ public class BingoMatchData extends MatchData {
 		}
 
 		public boolean check(Minigamer minigamer) {
-			final MinigamerBingoData data = minigamer.getMatch().<BingoMatchData>getMatchData().getData(minigamer);
+			final BingoMinigamerData data = minigamer.getMatch().<BingoMatchData>getMatchData().getData(minigamer);
 
 			if (data.hasBingo(this))
 				return false;
