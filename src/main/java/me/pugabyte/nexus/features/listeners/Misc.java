@@ -630,7 +630,7 @@ public class Misc implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (event.getBlock().getType().equals(Material.PUMPKIN)) {
+		if (event.getBlock().getType().equals(Material.CARVED_PUMPKIN)) {
 			Location HEAD = event.getBlock().getLocation();
 
 			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
