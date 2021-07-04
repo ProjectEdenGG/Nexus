@@ -1,6 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common;
 
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IItemChallenge;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -18,7 +18,7 @@ public interface IItemChallengeProgress extends IChallengeProgress {
 	String getTask();
 
 	@Override
-	default Set<String> getRemainingTasks(IChallenge challenge) {
+	default Set<String> getRemainingTasks(Challenge challenge) {
 		return getRemainingItems(challenge).stream().map(fuzzyItemStack -> {
 			final String materials = fuzzyItemStack.getMaterials().stream()
 				.map(StringUtils::camelCase)
@@ -28,8 +28,8 @@ public interface IItemChallengeProgress extends IChallengeProgress {
 		}).collect(Collectors.toSet());
 	}
 
-	default Set<FuzzyItemStack> getRemainingItems(IChallenge challenge) {
-		final Set<FuzzyItemStack> required = ((IItemChallenge) challenge).getItems();
+	default Set<FuzzyItemStack> getRemainingItems(Challenge challenge) {
+		final Set<FuzzyItemStack> required = ((IItemChallenge) challenge.getChallenge()).getItems();
 		final List<ItemStack> provided = getItems();
 		final Set<FuzzyItemStack> todo = new HashSet<>();
 

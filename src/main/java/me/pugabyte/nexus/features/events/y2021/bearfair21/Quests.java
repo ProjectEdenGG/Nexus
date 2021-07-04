@@ -410,7 +410,7 @@ public class Quests implements Listener {
 		if (!BearFair21.getConfig().isEnabled(EDIT)) {
 			event.setCancelled(true);
 			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
-				send(Errors.cantBreak, player);
+				send(Errors.CANT_BREAK, player);
 				sound_villagerNo(player);
 			}
 			return;
@@ -423,7 +423,7 @@ public class Quests implements Listener {
 		if (Farming.breakBlock(event)) return;
 
 		if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
-			send(Errors.cantBreak, player);
+			send(Errors.CANT_BREAK, player);
 			sound_villagerNo(player);
 		}
 	}

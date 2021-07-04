@@ -62,7 +62,7 @@ public class Farming implements Listener {
 			} else if (cropSingleBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
 					if (new CooldownService().check(player, "BF21_decorOnly", Time.MINUTE)) {
-						send(Errors.decorOnly, player);
+						send(Errors.DECOR_ONLY, player);
 						Quests.sound_villagerNo(player);
 					}
 					return true;
@@ -74,7 +74,7 @@ public class Farming implements Listener {
 			} else if (cropMultiBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
 					if (new CooldownService().check(player, "BF21_bottomBlock", Time.MINUTE)) {
-						send(Errors.bottomBlock, player);
+						send(Errors.BOTTOM_BLOCK, player);
 						Quests.sound_villagerNo(player);
 					}
 					return true;
@@ -104,7 +104,7 @@ public class Farming implements Listener {
 
 		if (ageable.getAge() != ageable.getMaximumAge()) {
 			if (new CooldownService().check(player, "BF21_notFullyGrown", Time.MINUTE)) {
-				send(Errors.notFullyGrown, player);
+				send(Errors.NOT_FULLY_GROWN, player);
 				Quests.sound_villagerNo(player);
 			}
 			return true;

@@ -59,7 +59,7 @@ public class Recycler implements Listener {
 			return;
 
 		if (active) {
-			PlayerUtils.send(event.getPlayer(), Errors.inUse);
+			PlayerUtils.send(event.getPlayer(), Errors.IN_USE);
 			return;
 		}
 
@@ -98,7 +98,7 @@ public class Recycler implements Listener {
 			return;
 
 		if (active) {
-			PlayerUtils.send(player, Errors.inUse);
+			PlayerUtils.send(player, Errors.IN_USE);
 			PlayerUtils.giveItems(player, trash);
 			return;
 		}

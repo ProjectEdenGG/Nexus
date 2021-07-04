@@ -1,9 +1,11 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
-import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.Challenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import org.bukkit.block.Biome;
 
@@ -16,13 +18,15 @@ import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.an;
 
 @Data
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class BiomeChallengeProgress implements IChallengeProgress {
+	@NonNull
+	private Minigamer minigamer;
 	private final Set<Biome> biomes = new HashSet<>();
 
 	@Override
-	public Set<String> getRemainingTasks(IChallenge challenge) {
-		final Set<Biome> required = ((BiomeChallenge) challenge).getBiomeTag().getValues();
+	public Set<String> getRemainingTasks(Challenge challenge) {
+		final Set<Biome> required = ((BiomeChallenge) challenge.getChallenge()).getBiomeTag().getValues();
 		for (Biome biome : biomes)
 			if (required.contains(biome))
 				return Collections.emptySet();

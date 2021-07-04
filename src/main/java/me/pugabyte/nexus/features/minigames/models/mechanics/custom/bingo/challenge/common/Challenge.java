@@ -10,10 +10,12 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challe
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.KillChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ObtainChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.PlaceChallenge;
+import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StatisticIncreaseChallenge;
 import me.pugabyte.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import org.bukkit.Statistic;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
@@ -52,6 +54,7 @@ public enum Challenge {
 	// Placing
 	PLACE_6_OF_EACH_RAIL(new PlaceChallenge(FuzzyItemStack.ofEach(new MaterialTag(RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL), 6))),
 	PLACE_9_STACKS_OF_BLOCKS(new PlaceChallenge(new FuzzyItemStack(MaterialTag.BLOCKS, 9 * 64))),
+	PLANT_16_OAK_SAPLINGS(new PlaceChallenge(new FuzzyItemStack(OAK_SAPLING, 16))),
 
 	// Crafting
 	CRAFT_16_FENCE_GATES(new CraftChallenge(new FuzzyItemStack(MaterialTag.FENCE_GATES, 16))),
@@ -72,6 +75,7 @@ public enum Challenge {
 	CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(NETHERITE_BOOTS), 1))),
 	CRAFT_A_GOLDEN_APPLE(new CraftChallenge(new FuzzyItemStack(GOLDEN_APPLE, 1))),
 	CRAFT_8_ARMOR_STANDS(new CraftChallenge(new FuzzyItemStack(ARMOR_STAND, 8))),
+	CRAFT_A_COMPASS(new CraftChallenge(new FuzzyItemStack(COMPASS, 1))),
 
 	// Obtaining
 	OBTAIN_4_OBSIDIAN(new ObtainChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
@@ -116,14 +120,23 @@ public enum Challenge {
 	FIND_A_VILLAGE(new StructureChallenge(StructureType.VILLAGE)),
 	FIND_A_SHIPWRECK(new StructureChallenge(StructureType.SHIPWRECK)),
 
+	// Statistic Increase
+	WALK_1_KILOMETER(new StatisticIncreaseChallenge(DIAMOND_BOOTS, Statistic.WALK_ONE_CM, 100000)),
+	BOAT_1_KILOMETER(new StatisticIncreaseChallenge(OAK_BOAT, Statistic.BOAT_ONE_CM, 100000))
+
 	// Summon an iron golem
 	// Summon a snowman
 	// Climb to build limit
 	// Dig to bedrock
+	// Break a wooden tool
 
 	;
 
 	private final IChallenge challenge;
+
+	public <T extends IChallenge> T getChallenge() {
+		return (T) challenge;
+	}
 
 	public static List<Challenge> shuffle() {
 		ArrayList<Challenge> values = new ArrayList<>(Arrays.asList(Challenge.values()));
