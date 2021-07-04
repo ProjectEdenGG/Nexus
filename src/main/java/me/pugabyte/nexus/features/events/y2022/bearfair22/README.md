@@ -15,12 +15,14 @@ Improvements that need to be made from last year:
 - **Event needs to end before or on the 1th of July** *for 2022*
 - More puzzles for Quests & Minigames, and less scav hunts
     - Make these puzzles easily understood on what needs to be done
+    - Per player difficulty setting? Easier difficulty would require more times completed / less of a prize:
+        - Ex: Hard: 25 pts, Normal: 20 pts, Easy: 15 pts
 - Replace Fairground Minigames:
     - Seeker: too hard, and not fun
     - Frogger: has appeared twice, keep if no new ideas minigames
     - Archery: same as above
 - Trees/Woodcutting:
-    - On break a tree, place a sapling, and allow the palyer to force grow the tree using bonemeal
+    - On break a tree, place a sapling, and allow the player to force grow the tree using bonemeal
 - Quest Items:
     - Lore that is more helpful and matches other uses for items, like sellcrates or recycler
         - Ex: [SellCrate] Fishing Items --> [SellCrate] FishingLoot
