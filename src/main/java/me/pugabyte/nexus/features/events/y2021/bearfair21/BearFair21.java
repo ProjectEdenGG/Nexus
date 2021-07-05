@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_DAILY_TOKENS;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
 import static me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
@@ -235,7 +236,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
-		if (!config.isEnabled(GIVE_REWARDS))
+		if (!config.isEnabled(GIVE_DAILY_TOKENS))
 			return;
 
 		EventUserService service = new EventUserService();
