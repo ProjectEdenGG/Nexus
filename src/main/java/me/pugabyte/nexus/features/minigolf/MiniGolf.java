@@ -1,5 +1,7 @@
 package me.pugabyte.nexus.features.minigolf;
 
+import eden.annotations.Environments;
+import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import me.pugabyte.nexus.features.minigolf.listeners.InteractListener;
@@ -19,6 +21,7 @@ import org.bukkit.entity.Snowball;
 import java.util.ArrayList;
 import java.util.List;
 
+@Environments({Env.TEST, Env.DEV})
 public class MiniGolf extends Feature {
 	@Getter
 	private static final double maxVelocity = 1.5;
@@ -26,7 +29,7 @@ public class MiniGolf extends Feature {
 	private static final double minVelocity = 0.01;
 	@Getter
 	private static final double floorOffset = 0.05;
-	List<GolfBall> golfBalls = new ArrayList<>();
+	private static final List<GolfBall> golfBalls = new ArrayList<>();
 
 	@Override
 	public void onStart() {
