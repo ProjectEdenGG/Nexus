@@ -27,16 +27,16 @@ public class MaterialUtils {
 	public final Mineral REDSTONE = new Mineral(Material.REDSTONE);
 
 	public @Nullable Material oreToIngot(@NotNull Material ore) {
-		// TODO: 1.17 copper ingot
 		return switch (ore) {
 			case DIAMOND_ORE -> Material.DIAMOND;
-			case IRON_ORE -> Material.IRON_INGOT;
-			case GOLD_ORE, NETHER_GOLD_ORE -> Material.GOLD_INGOT;
+			case IRON_ORE, RAW_IRON -> Material.IRON_INGOT;
+			case GOLD_ORE, NETHER_GOLD_ORE, RAW_GOLD -> Material.GOLD_INGOT;
 			case EMERALD_ORE -> Material.EMERALD;
 			case COAL_ORE -> Material.COAL;
 			case LAPIS_ORE -> Material.LAPIS_LAZULI;
 			case REDSTONE_ORE -> Material.REDSTONE;
 			case NETHER_QUARTZ_ORE -> Material.QUARTZ;
+			case COPPER_ORE, RAW_COPPER -> Material.COPPER_INGOT;
 			default -> null;
 		};
 	}
@@ -85,6 +85,8 @@ public class MaterialUtils {
 		public boolean blockIsMineral(@NotNull Material block) {
 			String blockName = block.name();
 			return getOreName().equals(blockName)
+				|| ("RAW_" + prefix).equals(blockName)
+				|| ("RAW_" + prefix + "_BLOCK").equals(blockName)
 				|| (prefix + "_BLOCK").equals(blockName)
 				|| extraBlocks.contains(block);
 		}
