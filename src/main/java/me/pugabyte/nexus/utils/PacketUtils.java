@@ -352,7 +352,8 @@ public class PacketUtils {
 		itemFrame.setInvisible(invisible);
 		itemFrame.setRotation(rotation);
 
-		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(itemFrame, getObjectId(itemFrame));
+//		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(itemFrame, getObjectId(itemFrame));
+		PacketPlayOutSpawnEntity rawSpawnPacket = (PacketPlayOutSpawnEntity) itemFrame.getPacket();
 		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(itemFrame.getId(), itemFrame.getDataWatcher(), true);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);

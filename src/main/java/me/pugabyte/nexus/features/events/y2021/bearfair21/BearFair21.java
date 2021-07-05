@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import lombok.Getter;
@@ -386,6 +387,9 @@ public class BearFair21 implements Listener {
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (Nexus.getEnv() != Env.PROD)
+			return;
+
 		final boolean fromBearFair = event.getFrom().getWorld().equals(getWorld());
 		final boolean toBearFair = event.getTo().getWorld().equals(getWorld());
 
