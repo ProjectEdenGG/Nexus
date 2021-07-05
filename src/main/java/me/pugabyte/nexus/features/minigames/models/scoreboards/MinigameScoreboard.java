@@ -63,7 +63,7 @@ public interface MinigameScoreboard {
 				boolean nameTagVisibility = annotation == null || annotation.visibleNameTags();
 
 				if (doTeams)
-					return new Teams(match);
+					return null; // new Teams(match);
 				else if (!nameTagVisibility)
 					return new Teamless(match);
 				return null;
