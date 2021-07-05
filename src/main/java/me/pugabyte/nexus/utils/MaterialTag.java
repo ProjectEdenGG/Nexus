@@ -137,10 +137,10 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_BEEHIVES = new MaterialTag(BEEHIVE, BEE_NEST);
 
-	public static final MaterialTag DEEPSLATE = new MaterialTag("DEEPSLATE", MatchMode.CONTAINS);
+	public static final MaterialTag ALL_DEEPSLATE = new MaterialTag("DEEPSLATE", MatchMode.CONTAINS);
 
 	public static final MaterialTag ALL_STONE = new MaterialTag(STONE, STONE_STAIRS, STONE_SLAB, Material.STONE_BRICKS, SMOOTH_STONE, SMOOTH_STONE_SLAB)
-		.append(DEEPSLATE).exclude(new MaterialTag("WALL", MatchMode.CONTAINS, DEEPSLATE))
+		.append(ALL_DEEPSLATE).exclude(new MaterialTag("WALL", MatchMode.CONTAINS, ALL_DEEPSLATE))
 		.append(new MaterialTag("STONE_BRICK", MatchMode.PREFIX))
 		.append(new MaterialTag("_STONE_BRICKS", MatchMode.SUFFIX)).exclude(END_STONE_BRICKS)
 		.append(new MaterialTag("COBBLESTONE", MatchMode.CONTAINS))

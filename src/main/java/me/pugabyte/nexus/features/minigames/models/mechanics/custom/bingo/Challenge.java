@@ -20,6 +20,7 @@ import me.pugabyte.nexus.utils.BiomeTag;
 import me.pugabyte.nexus.utils.FuzzyItemStack;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.MaterialTag.MatchMode;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.StructureType;
@@ -41,7 +42,6 @@ public enum Challenge {
 	BREAK_32_COAL_ORE(new BreakChallenge(new FuzzyItemStack(COAL_ORE, 32))),
 	BREAK_16_IRON_ORE(new BreakChallenge(new FuzzyItemStack(IRON_ORE, 16))),
 	BREAK_5_DIAMOND_ORE(new BreakChallenge(new FuzzyItemStack(DIAMOND_ORE, 5))),
-	BREAK_2_EMERALD_ORE(new BreakChallenge(new FuzzyItemStack(EMERALD_ORE, 2))),
 	BREAK_192_STONE(new BreakChallenge(new FuzzyItemStack(STONE, 192))),
 	BREAK_16_SUGAR_CANE(new BreakChallenge(new FuzzyItemStack(SUGAR_CANE, 16))),
 	BREAK_192_NETHERRACK(new BreakChallenge(new FuzzyItemStack(NETHERRACK, 192))),
@@ -59,7 +59,7 @@ public enum Challenge {
 	BREAK_3_OF_EACH_TULIP(new BreakChallenge(FuzzyItemStack.ofEach(MaterialTag.TULIPS, 3))),
 	//	BREAK_1_MONSTER_SPAWNER(new BreakChallenge(new FuzzyItemStack(SPAWNER, 1))),
 	BREAK_32_BAMBOO(new BreakChallenge(new FuzzyItemStack(BAMBOO, 32))),
-	BREAK_1_OF_EVERY_ORE(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.MINERAL_ORES).exclude(EMERALD_ORE), 1))),
+	BREAK_1_OF_EVERY_ORE(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.MINERAL_ORES).exclude(EMERALD_ORE).exclude(new MaterialTag("ORE", MatchMode.CONTAINS, MaterialTag.ALL_DEEPSLATE)), 1))),
 	BREAK_64_OF_COMMON_BLOCKS(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(SAND, GRAVEL, STONE, GRASS, DIRT, NETHERRACK), 64))),
 	BREAK_4_OBSIDIAN(new BreakChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
 	BREAK_64_LEAVES(new BreakChallenge(new FuzzyItemStack(MaterialTag.LEAVES, 64))),
@@ -92,7 +92,7 @@ public enum Challenge {
 	CRAFT_2_COMPARATORS(new CraftChallenge(new FuzzyItemStack(COMPARATOR, 2))),
 	CRAFT_A_JUKEBOX(new CraftChallenge(new FuzzyItemStack(JUKEBOX, 1))),
 	CRAFT_8_TARGET_BLOCKS(new CraftChallenge(new FuzzyItemStack(TARGET, 8))),
-	CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(NETHERITE_BOOTS), 1))),
+	CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(CHAINMAIL_BOOTS, NETHERITE_BOOTS), 1))),
 	CRAFT_A_GOLDEN_APPLE(new CraftChallenge(new FuzzyItemStack(GOLDEN_APPLE, 1))),
 	CRAFT_8_ARMOR_STANDS(new CraftChallenge(new FuzzyItemStack(ARMOR_STAND, 8))),
 	CRAFT_A_COMPASS(new CraftChallenge(new FuzzyItemStack(COMPASS, 1))),
