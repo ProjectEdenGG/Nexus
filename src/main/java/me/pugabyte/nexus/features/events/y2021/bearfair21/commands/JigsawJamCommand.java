@@ -7,7 +7,6 @@ import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.afk.AFK;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -456,12 +455,6 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 		if (correct == totalMaps) {
 			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
-
-			if (!jammer.hasPlayed()) {
-				BearFair21.giveTokens(jammer.getPlayer(), 50);
-				jammer.hasPlayed(true);
-				new JigsawJamService().save(jammer);
-			}
 
 			return true;
 		} else {

@@ -144,6 +144,7 @@ public class BearFair21Command extends CustomCommand {
 			send(json);
 		}
 
+		/*
 		line();
 		send("&6&lFairgrounds");
 		for (BF21PointSource source : BF21PointSource.values()) {
@@ -157,6 +158,7 @@ public class BearFair21Command extends CustomCommand {
 
 			send(json);
 		}
+		 */
 
 		line();
 		send("&6&lTreasure Chests");
