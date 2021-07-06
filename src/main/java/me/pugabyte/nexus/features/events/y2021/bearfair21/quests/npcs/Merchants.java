@@ -11,6 +11,7 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
+import me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.utils.Enchant;
@@ -257,11 +258,13 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
-					if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.TRADER, 50) <= 0) {
-						add(new TradeBuilder()
-							.maxUses(1)
-							.result(traderCoupon.clone().amount(1))
-							.ingredient(goldBlock.clone().amount(1)));
+					if (BearFair21.getConfig().isEnabled(BearFair21ConfigOption.GIVE_DAILY_TOKENS)) {
+						if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.TRADER, 50) <= 0) {
+							add(new TradeBuilder()
+								.maxUses(1)
+								.result(traderCoupon.clone().amount(1))
+								.ingredient(goldBlock.clone().amount(1)));
+						}
 					}
 				}};
 			}
