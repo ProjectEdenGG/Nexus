@@ -32,7 +32,6 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	private final RainbowBeaconService service = new RainbowBeaconService();
 	private RainbowBeacon rainbowBeacon;
 
-
 	public RainbowBeaconCommand(CommandEvent event) {
 		super(event);
 		rainbowBeacon = service.get(player());
@@ -119,9 +118,11 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		final RainbowBeaconService service = new RainbowBeaconService();
-		for (RainbowBeacon rainbowBeacon : service.getCache().values())
-			if (rainbowBeacon.getLocation() != null)
-				rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
+		for (RainbowBeacon rainbowBeacon : service.getCache().values()) {
+			final Location location = rainbowBeacon.getLocation();
+			if (location != null && location.isChunkLoaded())
+				location.getBlock().setType(Material.AIR);
+		}
 	}
 
 	private static final List<Material> colors = new ArrayList<>() {{
@@ -139,6 +140,8 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		Location location = rainbowBeacon.getLocation();
 		AtomicInteger i = new AtomicInteger(0);
 		rainbowBeacon.setTaskId(Tasks.repeat(0, Time.SECOND, () -> {
+			if (location == null)
+				return;
 			if (!location.isChunkLoaded())
 				return;
 

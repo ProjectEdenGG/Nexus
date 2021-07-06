@@ -137,12 +137,12 @@ public class PixelPainters extends TeamlessMechanic {
 				copyMaxV = designMax.subtract(0, 0, i);
 				pasteMinV = pasteMin.add(0, i, 0);
 				Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
-				match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).paste();
+				match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).pasteAsync();
 			}
 
 			// Paste Design
 			Region pasteRegion = arena.getLobbyAnimationRegion();
-			match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).paste();
+			match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).pasteAsync();
 		});
 		matchData.setAnimateLobbyId(taskId);
 	}
@@ -161,10 +161,8 @@ public class PixelPainters extends TeamlessMechanic {
 
 	@Override
 	public void onEnd(@NotNull MatchEndEvent event) {
-		event.getMatch().getTasks().async(() -> {
-			pasteLogo(event.getMatch());
-			clearFloors(event.getMatch());
-		});
+		pasteLogo(event.getMatch());
+		clearFloors(event.getMatch());
 		super.onEnd(event);
 	}
 
@@ -235,7 +233,7 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.getChecked().clear();
 
 		minigamers.forEach(minigamer -> minigamer.getPlayer().getInventory().clear());
-		match.getTasks().async(() -> setupNextDesign(match));
+		setupNextDesign(match);
 
 		if (matchData.getCurrentRound() == MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
@@ -251,10 +249,8 @@ public class PixelPainters extends TeamlessMechanic {
 		} else {
 			// Start countdown to new round
 			match.getTasks().wait(TIME_BETWEEN_ROUNDS / 2, () -> {
-				match.getTasks().async(() -> {
-					pasteLogo(match);
-					clearFloors(match);
-				});
+				pasteLogo(match);
+				clearFloors(match);
 				match.getTasks().countdown(Countdown.builder()
 						.duration(TIME_BETWEEN_ROUNDS)
 						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
@@ -293,10 +289,8 @@ public class PixelPainters extends TeamlessMechanic {
 		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
 
 		matchData.setRoundStart(System.currentTimeMillis());
-		match.getTasks().async(() -> {
-			pasteNewDesign(match);
-			giveBlocks(match);
-		});
+		pasteNewDesign(match);
+		giveBlocks(match);
 
 		// Enable checking
 		matchData.canCheck(true);
@@ -488,7 +482,7 @@ public class PixelPainters extends TeamlessMechanic {
 			copyMaxV = designMax.subtract(0, 0, i);
 			pasteMinV = pasteMin.add(0, i, 0);
 			Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
-			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).paste();
+			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).pasteAsync();
 		}
 	}
 
@@ -497,7 +491,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).paste();
+			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
@@ -519,7 +513,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).paste();
+			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
