@@ -79,7 +79,7 @@ public enum Challenge {
 	CRAFT_A_CAKE(new CraftChallenge(new FuzzyItemStack(CAKE, 1))),
 	CRAFT_8_DRIED_KELP_BLOCKS(new CraftChallenge(new FuzzyItemStack(DRIED_KELP_BLOCK, 8))),
 	CRAFT_16_ITEM_FRAMES(new CraftChallenge(new FuzzyItemStack(ITEM_FRAME, 16))),
-	// 1.17? CRAFT_4_GLOW_ITEM_FRAMES(new CraftChallenge(new FuzzyItemStack(GLOW_ITEM_FRAME))),
+	// 1.17 + mob spawn fix? CRAFT_4_GLOW_ITEM_FRAMES(new CraftChallenge(new FuzzyItemStack(GLOW_ITEM_FRAME))),
 	CRAFT_64_CHISELED_STONE_BRICKS(new CraftChallenge(new FuzzyItemStack(CHISELED_STONE_BRICKS, 64))), // TODO Do I need to worry about stonecutters?
 	CRAFT_3_BLAST_FURNACES(new CraftChallenge(new FuzzyItemStack(BLAST_FURNACE, 3))),
 	CRAFT_16_SOUL_CAMPFIRES(new CraftChallenge(new FuzzyItemStack(SOUL_CAMPFIRE, 16))),

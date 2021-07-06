@@ -52,6 +52,8 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -242,8 +244,11 @@ public class Sabotage extends TeamMechanic {
 						if (lastKnownLight != null)
 							player.sendBlockChange(lastKnownLight, lastKnownLight.getBlock().getBlockData());
 						if (lightLevel > 2) {
-							if (location.getBlock().isReplaceable())
-								player.sendBlockChange(location, Material.REDSTONE_TORCH.createBlockData()); // TODO: 1.17 - use light block
+							if (location.getBlock().isReplaceable()) {
+								final BlockData blockData = Material.LIGHT.createBlockData();
+								((Light) blockData).setLevel(7);
+								player.sendBlockChange(location, blockData);
+							}
 							matchData.getLightMap().put(player.getUniqueId(), location);
 						} else {
 							player.sendBlockChange(location, location.getBlock().getBlockData());

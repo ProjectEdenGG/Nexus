@@ -120,7 +120,7 @@ public class Flag {
 		Location location = originalLocation.clone();
 		double originalHeight = location.getY();
 		int maxHeight = location.getWorld().getMaxHeight();
-		int minHeight = 0; // 1.17: use location.getWorld().getMinHeight()
+		int minHeight = location.getWorld().getMinHeight();
 
 		while (!MaterialTag.ALL_AIR.isTagged(location.getBlock().getType()) && // goal is to be in an air block
 				location.getY() < maxHeight && // don't go above the world
