@@ -4,6 +4,7 @@ import com.dieselpoint.norm.serialize.DbSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mysql.LocationSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,6 +20,11 @@ public class Warp {
 	private String type;
 
 	public void teleport(Player player) {
+		if (location == null)
+			throw new InvalidInputException("Location is null!");
+		if (location.getWorld() == null)
+			throw new InvalidInputException("World is null!");
+
 		player.teleportAsync(location, TeleportCause.COMMAND);
 	}
 
