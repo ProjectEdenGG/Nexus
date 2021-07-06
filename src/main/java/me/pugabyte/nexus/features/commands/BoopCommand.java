@@ -38,7 +38,7 @@ public class BoopCommand extends CustomCommand {
 			error("No players to boop");
 
 		for (Player player : players)
-			run(player(), player, message, true);
+			run(player(), player, message, anonymous);
 	}
 
 	@Path("<player> [message...] [--anonymous]")
