@@ -12,6 +12,9 @@ import me.pugabyte.nexus.features.minigames.managers.MatchManager;
 import me.pugabyte.nexus.features.minigames.managers.PlayerManager;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MatchJoinEvent;
+import me.pugabyte.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import me.pugabyte.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import me.pugabyte.nexus.features.minigames.models.matchdata.BingoMatchData;
 import me.pugabyte.nexus.features.minigames.models.mechanics.MechanicType;
@@ -37,6 +40,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.TitleUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.StructureType;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Item;
@@ -109,6 +113,36 @@ public final class Bingo extends TeamlessVanillaMechanic {
 			victim.teleport(bed);
 		else
 			victim.teleport(victim.getMatch().<BingoMatchData>getMatchData().getData(victim).getSpawnpoint());
+	}
+
+	@Override
+	public void onJoin(@NotNull MatchJoinEvent event) {
+		removeBedSpawnLocation(event.getMinigamer().getOfflinePlayer());
+	}
+
+	@Override
+	public void onQuit(@NotNull MinigamerQuitEvent event) {
+		removeBedSpawnLocation(event.getMinigamer().getOfflinePlayer());
+	}
+
+	@Override
+	public void onEnd(@NotNull MatchEndEvent event) {
+		for (Player player : event.getMatch().getPlayers())
+			removeBedSpawnLocation(player);
+	}
+
+	private void removeBedSpawnLocation(OfflinePlayer offlinePlayer) {
+		if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
+			return;
+
+		final Player player = offlinePlayer.getPlayer();
+		if (player.getBedSpawnLocation() == null)
+			return;
+
+		if (!player.getBedSpawnLocation().getWorld().equals(getWorld()))
+			return;
+
+		player.setBedSpawnLocation(null, true);
 	}
 
 	@Override
