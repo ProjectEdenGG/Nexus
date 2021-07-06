@@ -51,6 +51,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PiglinBarterEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -164,6 +165,18 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 			stack.setType(ingot);
 			item.setItemStack(stack);
+			break;
+		}
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onEntityKill(EntityDeathEvent event) {
+		if (!event.getEntity().getWorld().getName().equals(worldName)) return;
+		for (ItemStack item : event.getDrops()) {
+			Material cooked = MaterialUtils.rawToCooked(item.getType());
+			if (cooked == null)
+				continue;
+			item.setType(cooked);
 			return;
 		}
 	}
