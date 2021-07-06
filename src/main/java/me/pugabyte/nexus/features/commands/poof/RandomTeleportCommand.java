@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.commands.poof;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
+import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
@@ -65,10 +67,11 @@ public class RandomTeleportCommand extends CustomCommand {
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
-		if (service.getProtectionsInRange(best, 50).size() != 0 && count.get() < 5) {
-			rtp();
-			return;
-		}
+		if (Nexus.getEnv() == Env.PROD)
+			if (service.getProtectionsInRange(best, 50).size() != 0 && count.get() < 5) {
+				rtp();
+				return;
+			}
 
 		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
 			Block highestBlock = world.getHighestBlockAt(best);
@@ -82,6 +85,9 @@ public class RandomTeleportCommand extends CustomCommand {
 	}
 
 	public static double getDensity(Location location, int range) {
+		if (Nexus.getEnv() != Env.PROD)
+			return 0;
+
 		List<LWCProtection> protections = service.getProtectionsInRange(location, range);
 		return (protections.size() / Math.pow(range * 2.0, 2.0)) * 100;
 	}
