@@ -317,9 +317,11 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {
-				builder.lore("&7Axolotl Type: " + camelCase(meta.getVariant()));
-			}
+			try {
+				if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {
+					builder.lore("&7Axolotl Type: " + camelCase(meta.getVariant()));
+				}
+			} catch (NoClassDefFoundError ignore) {}
 
 			if (!getShulkerContents(item).isEmpty())
 				builder.lore("&7Right click to view contents");
