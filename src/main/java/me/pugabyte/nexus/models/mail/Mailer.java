@@ -168,6 +168,9 @@ public class Mailer implements PlayerOwnedObject {
 		}
 
 		public void send() {
+			if (!hasMessage() && !hasItems())
+				throw new InvalidInputException("You must add either a message or some items to this delivery before sending it");
+
 			if (getFromMailer().getPendingMail().containsKey(worldGroup) && getFromMailer().getPendingMail().get(worldGroup).equals(this))
 				getFromMailer().getPendingMail().remove(worldGroup);
 
