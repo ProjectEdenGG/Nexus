@@ -39,6 +39,7 @@ import org.bukkit.block.Beehive;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
@@ -55,6 +56,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.features.shops.ShopUtils.giveItems;
 import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
@@ -313,6 +315,10 @@ public class Shop implements PlayerOwnedObject {
 				if (meta.getBlockState() instanceof Beehive beehive) {
 					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
 				}
+			}
+
+			if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {
+				builder.lore("&7Axolotl Type: " + camelCase(meta.getVariant()));
 			}
 
 			if (!getShulkerContents(item).isEmpty())
