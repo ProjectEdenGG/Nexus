@@ -205,7 +205,7 @@ public class SerializationUtils {
 		}
 
 		private static final List<String> intKeys = Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "custom-model-data",
-				"effect", "duration", "amplifier", "fish-variant", "LodestonePosX", "LodestonePosY", "LodestonePosZ");
+				"effect", "duration", "amplifier", "fish-variant", "LodestonePosX", "LodestonePosY", "LodestonePosZ", "axolotl-variant");
 		// MongoDB deserializes some properties as the wrong class, do conversion
 		private static void fixItemMetaClasses(Map<String, Object> deserialized) {
 			intKeys.forEach(key ->
