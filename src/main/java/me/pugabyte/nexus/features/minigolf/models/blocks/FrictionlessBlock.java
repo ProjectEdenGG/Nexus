@@ -8,8 +8,8 @@ import java.util.Set;
 
 public class FrictionlessBlock extends ModifierBlock {
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on frictionless block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on frictionless block");
 
 		golfBall.setVelocity(golfBall.getVelocity());
 	}

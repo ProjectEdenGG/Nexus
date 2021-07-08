@@ -10,11 +10,13 @@ import java.util.Set;
 public class GravityBlock extends ModifierBlock {
 
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on gravity block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on gravity block");
 
 		// TODO: Utilize bounding box
-		golfBall.getBall().setGravity(true);
+
+		if (!golfBall.getSnowball().hasGravity())
+			golfBall.getSnowball().setGravity(true);
 	}
 
 	@Override

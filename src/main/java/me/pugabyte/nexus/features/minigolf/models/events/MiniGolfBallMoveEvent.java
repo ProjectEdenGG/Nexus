@@ -21,7 +21,9 @@ public class MiniGolfBallMoveEvent extends MiniGolfBallEvent implements Cancella
 	public MiniGolfBallMoveEvent(final GolfBall golfBall) {
 		super(golfBall);
 		this.from = golfBall.getLastLocation();
-		this.to = golfBall.getBall().getLocation();
+		this.to = null;
+		if (golfBall.isAlive())
+			this.to = golfBall.getLocation();
 	}
 
 	public MiniGolfBallMoveEvent(final GolfBall golfBall, final Location from, final Location to) {

@@ -6,7 +6,7 @@ import me.pugabyte.nexus.features.minigolf.models.blocks.ModifierBlockType;
 
 public class MiniGolfBallModifierBlockEvent extends MiniGolfBallMoveEvent {
 	@Getter
-	ModifierBlockType modifierBlockType;
+	private final ModifierBlockType modifierBlockType;
 
 	public MiniGolfBallModifierBlockEvent(GolfBall golfBall, ModifierBlockType modifierBlockType) {
 		super(golfBall);

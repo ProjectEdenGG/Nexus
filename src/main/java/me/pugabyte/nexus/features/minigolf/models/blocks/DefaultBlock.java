@@ -11,8 +11,8 @@ import java.util.Set;
 
 public class DefaultBlock extends ModifierBlock {
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on default block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on default block");
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();
@@ -35,7 +35,7 @@ public class DefaultBlock extends ModifierBlock {
 			golfBall.setGravity(false);
 			golfBall.teleport(golfBall.getLocation());
 
-			if (golfBall.isInBounds()) {
+			if (!golfBall.isInBounds()) {
 				golfBall.getUser().debug("ball is out of bounds, respawning...");
 				MiniGolfUtils.respawnBall(golfBall);
 			}

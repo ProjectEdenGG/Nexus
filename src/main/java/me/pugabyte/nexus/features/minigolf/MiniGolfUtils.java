@@ -12,22 +12,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.util.Vector;
 
+import java.util.UUID;
+
 public class MiniGolfUtils {
-	public static void removeBall(GolfBall golfBall) {
-		golfBall.getUser().debug("removing ball...");
-		golfBall.getBall().remove();
-		golfBall.setBall(null);
-	}
 
 	public static void respawnBall(GolfBall golfBall) {
-		golfBall.getUser().debug("found user from ball, respawning ball...");
-
-		golfBall.setVelocity(new Vector(0, 0, 0));
-		golfBall.setGravity(false);
-		golfBall.teleport(golfBall.getLocation().add(0, MiniGolf.getFloorOffset(), 0));
-		golfBall.getBall().setFireTicks(0);
-		golfBall.getBall().setTicksLived(1);
-
+		golfBall.respawn();
 		sendActionBar(golfBall.getUser(), "&cOut of bounds!");
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).receiver(golfBall.getUser().getPlayer()).pitchStep(0).play();
 	}
@@ -80,7 +70,18 @@ public class MiniGolfUtils {
 					return "" + diff;
 				else
 					return "+" + diff;
-
 		}
+	}
+
+	public static MiniGolfUser getUser(UUID uuid) {
+		return MiniGolf.getUsers()
+			.stream()
+			.filter(miniGolfUser -> miniGolfUser.getUuid().equals(uuid))
+			.findFirst()
+			.orElse(null);
+	}
+
+	public static String getStrokeString(MiniGolfUser user) {
+		return "Stroke " + user.getGolfBall().getStrokes();
 	}
 }

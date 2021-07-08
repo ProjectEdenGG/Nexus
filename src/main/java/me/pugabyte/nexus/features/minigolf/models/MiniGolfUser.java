@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.minigolf.models;
 
 import lombok.Data;
+import lombok.NonNull;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -9,8 +11,10 @@ import java.util.UUID;
 
 @Data
 public class MiniGolfUser {
+	@NonNull
 	private UUID uuid;
 	private boolean debug;
+	private GolfBall golfBall;
 
 	public void debug(boolean bool, String debug) {
 		if (bool)
@@ -23,7 +27,7 @@ public class MiniGolfUser {
 	}
 
 	public void sendMessage(String message) {
-		getPlayer().sendMessage(message);
+		getPlayer().sendMessage(StringUtils.colorize(message));
 	}
 
 	public OfflinePlayer getOfflinePlayer() {

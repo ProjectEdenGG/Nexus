@@ -11,8 +11,8 @@ import java.util.Set;
 
 public class DirectionalBoostBlock extends ModifierBlock {
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on directional boost block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on directional boost block");
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();

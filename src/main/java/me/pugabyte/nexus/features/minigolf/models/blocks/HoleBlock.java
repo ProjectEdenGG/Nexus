@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.minigolf.models.blocks;
 
 import eden.utils.TimeUtils.Time;
-import me.pugabyte.nexus.features.minigolf.MiniGolfUtils;
 import me.pugabyte.nexus.features.minigolf.models.GolfBall;
 import me.pugabyte.nexus.features.minigolf.models.events.MiniGolfBallSinkEvent;
 import me.pugabyte.nexus.utils.ColorType;
@@ -19,10 +18,10 @@ import java.util.Set;
 public class HoleBlock extends ModifierBlock {
 
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on hole block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on hole block");
 
-		Snowball ball = golfBall.getBall();
+		Snowball ball = golfBall.getSnowball();
 		Vector vel = golfBall.getVelocity();
 		if (vel.getY() >= 0 && vel.length() > 0.34)
 			return;
@@ -30,7 +29,7 @@ public class HoleBlock extends ModifierBlock {
 		if (!golfBall.isInBounds()) // TODO: Kill ball?
 			return;
 
-		MiniGolfBallSinkEvent ballSinkEvent = new MiniGolfBallSinkEvent(golfBall, golfBall.getStrokes(), golfBall.getPar());
+		MiniGolfBallSinkEvent ballSinkEvent = new MiniGolfBallSinkEvent(golfBall, golfBall.getHoleRegion(), golfBall.getStrokes(), golfBall.getPar());
 		if (!ballSinkEvent.callEvent())
 			return;
 
@@ -38,7 +37,7 @@ public class HoleBlock extends ModifierBlock {
 		ball.setVelocity(new Vector(0, ball.getVelocity().getY(), 0));
 
 		// Remove ball
-		MiniGolfUtils.removeBall(golfBall);
+		golfBall.remove();
 
 		// Spawn firework
 		Tasks.wait(Time.TICK, () -> new FireworkLauncher(ball.getLocation())

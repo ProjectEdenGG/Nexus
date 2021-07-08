@@ -21,8 +21,8 @@ import java.util.Set;
 public class CannonBlock extends ModifierBlock {
 
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on cannon block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on cannon block");
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();
@@ -54,6 +54,24 @@ public class CannonBlock extends ModifierBlock {
 		} catch (Exception ignored) {
 
 		}
+	}
+
+	@Override
+	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
+		golfBall.getUser().debug("on hit cannon block");
+		Vector velocity = golfBall.getVelocity();
+
+		switch (blockFace) {
+			case NORTH, SOUTH -> velocity.setZ(0);
+			case EAST, WEST -> velocity.setX(0);
+			case UP, DOWN -> velocity.setY(0);
+			default -> {
+				super.handleBounce(golfBall, blockFace);
+				return;
+			}
+		}
+
+		golfBall.setVelocity(velocity);
 	}
 
 	@Override

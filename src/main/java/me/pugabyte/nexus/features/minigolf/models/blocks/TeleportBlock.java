@@ -14,8 +14,8 @@ import java.util.Set;
 
 public class TeleportBlock extends ModifierBlock {
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on teleport block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on teleport block");
 
 		Block below = golfBall.getBlockBelow();
 		Block under = below.getRelative(BlockFace.DOWN);

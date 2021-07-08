@@ -11,8 +11,8 @@ import java.util.Set;
 
 public class ConveyorBlock extends ModifierBlock {
 	@Override
-	public void handle(GolfBall golfBall) {
-		golfBall.getUser().debug("on conveyor block");
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.getUser().debug("&oon roll on conveyor block");
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();

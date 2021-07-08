@@ -7,19 +7,20 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.minigolf.listeners.InteractListener;
 import me.pugabyte.nexus.features.minigolf.listeners.ProjectileListener;
 import me.pugabyte.nexus.features.minigolf.models.GolfBall;
+import me.pugabyte.nexus.features.minigolf.models.MiniGolfUser;
 import me.pugabyte.nexus.features.minigolf.models.blocks.ModifierBlock;
 import me.pugabyte.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import me.pugabyte.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
 import me.pugabyte.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Snowball;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Environments({Env.TEST, Env.DEV})
 public class MiniGolf extends Feature {
@@ -29,7 +30,12 @@ public class MiniGolf extends Feature {
 	private static final double minVelocity = 0.01;
 	@Getter
 	private static final double floorOffset = 0.05;
-	private static final List<GolfBall> golfBalls = new ArrayList<>();
+	@Getter
+	private static final Set<MiniGolfUser> users = new HashSet<>();
+	@Getter
+	private static final Set<GolfBall> golfBalls = new HashSet<>();
+	public static final String holeRegionRegex = ".*minigolf_hole_[0-9]+$";
+
 
 	@Override
 	public void onStart() {
@@ -42,9 +48,19 @@ public class MiniGolf extends Feature {
 	public void onStop() {
 		for (GolfBall golfBall : new ArrayList<>(golfBalls)) {
 			if (golfBall.isAlive()) {
-				golfBall.getBall().remove();
+				golfBall.getSnowball().remove();
 			}
 		}
+	}
+
+	public static void join(MiniGolfUser user) {
+		getUsers().add(user);
+	}
+
+	public static void quit(MiniGolfUser user) {
+		user.getGolfBall().remove();
+		getGolfBalls().remove(user.getGolfBall());
+		getUsers().remove(user);
 	}
 
 	private void miniGolfTask() {
@@ -53,13 +69,18 @@ public class MiniGolf extends Feature {
 				return;
 
 			for (GolfBall golfBall : new ArrayList<>(golfBalls)) {
-				Snowball ball = golfBall.getBall();
-				if (!golfBall.isAlive())
+				Snowball ball = golfBall.getSnowball();
+				if (ball == null)
 					continue;
 
-				Location location = ball.getLocation();
-				if (golfBall.getLastLocation().equals(location))
+				if (!ball.isValid()) {
+					golfBall.remove();
 					continue;
+				}
+
+//				Location location = ball.getLocation();
+//				if (golfBall.getLastLocation().equals(location))
+//					continue;
 
 				MiniGolfBallMoveEvent ballMoveEvent = new MiniGolfBallMoveEvent(golfBall, golfBall.getLastLocation(), ball.getLocation());
 				if (!ballMoveEvent.callEvent()) {
@@ -75,7 +96,7 @@ public class MiniGolf extends Feature {
 					if (modifierBlockType.equals(ModifierBlockType.DEFAULT) || modifierBlock.getMaterials().contains(belowType)) {
 						MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
 						if (modifierBlockEvent.callEvent()) {
-							modifierBlock.handle(golfBall);
+							modifierBlock.handleRoll(golfBall);
 							break;
 						}
 					}

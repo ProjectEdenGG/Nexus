@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.minigolf.models.GolfBall;
 
 public class MiniGolfBallEvent extends MiniGolfEvent {
-
 	@Getter
 	protected GolfBall golfBall;
 

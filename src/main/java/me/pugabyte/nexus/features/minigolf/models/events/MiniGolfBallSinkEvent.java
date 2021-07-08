@@ -12,6 +12,8 @@ public class MiniGolfBallSinkEvent extends MiniGolfBallMoveEvent implements Canc
 	protected boolean cancelled = false;
 
 	@Getter
+	private final String holeRegion;
+	@Getter
 	private int strokes;
 	@Getter
 	private int par;
@@ -20,8 +22,9 @@ public class MiniGolfBallSinkEvent extends MiniGolfBallMoveEvent implements Canc
 	@Setter
 	private String message = "Strokes: " + strokes + " (" + score + ")";
 
-	public MiniGolfBallSinkEvent(GolfBall golfBall, int strokes, int par) {
+	public MiniGolfBallSinkEvent(GolfBall golfBall, String holeRegion, int strokes, int par) {
 		super(golfBall);
+		this.holeRegion = holeRegion;
 		this.strokes = strokes;
 		this.par = par;
 	}
