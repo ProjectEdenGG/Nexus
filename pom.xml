@@ -4,6 +4,12 @@
     <groupId>me.pugabyte</groupId>
     <artifactId>Nexus</artifactId>
     <version>2.0</version>
+
+    <properties>
+        <jdk.version>16</jdk.version>
+        <lombok.encoding>UTF-8</lombok.encoding>
+    </properties>
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
@@ -29,6 +35,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
                     <release>16</release>
                     <encoding>UTF-8</encoding>
                     <compilerArgument>-parameters</compilerArgument>
@@ -54,6 +62,25 @@
                         --add-opens java.base/java.util=ALL-UNNAMED
                         --add-opens java.base/java.time=ALL-UNNAMED
                     </argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>${jdk.version}</version>
+                        </jdk>
+                    </toolchains>
                 </configuration>
             </plugin>
             <plugin>
@@ -102,15 +129,14 @@
         -->
         </plugins>
     </build>
-    <properties>
-        <lombok.encoding>UTF-8</lombok.encoding>
-    </properties>
+
     <pluginRepositories>
         <pluginRepository>
             <id>apache.snapshots</id>
             <url>https://repository.apache.org/snapshots/</url>
         </pluginRepository>
     </pluginRepositories>
+
     <repositories>
         <repository>
             <id>jitpack-repo</id>
@@ -185,6 +211,7 @@
             <url>https://mvn.intellectualsites.com/content/repositories/thirdparty/</url>
         </repository>
     </repositories>
+
     <dependencies>
         <!-- Parchment API + server (NMS) -->
         <dependency>
@@ -572,4 +599,5 @@
             <url>https://sonatype.projecteden.gg/repository/maven-releases</url>
         </repository>
     </distributionManagement>
+
 </project>
