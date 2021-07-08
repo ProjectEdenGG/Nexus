@@ -10,6 +10,7 @@ import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemBuilder.ItemSetting;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Utils;
@@ -181,7 +182,7 @@ public class ExchangeConfigProvider extends _ShopProvider {
 				if (!ItemUtils.isNullOrAir(player.getItemOnCursor())) {
 					try {
 						ItemStack item = player.getItemOnCursor();
-						if (!new ItemBuilder(item).isTradeable())
+						if (new ItemBuilder(item).isNot(ItemSetting.TRADEABLE))
 							throw new InvalidInputException("You can not trade that item in shops");
 
 						itemStack.set(item);
