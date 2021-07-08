@@ -16,9 +16,9 @@ public class JMiniGolfCommand extends CustomCommand {
 			user = MiniGolfUtils.getUser(uuid());
 			if (user == null) {
 				user = new MiniGolfUser(uuid());
-				user.debug("new user");
+				user.sendMessage("new user");
 			} else {
-				user.debug("get user");
+				user.sendMessage("get user");
 			}
 
 		}
