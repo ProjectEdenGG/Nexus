@@ -1,7 +1,9 @@
 package me.pugabyte.nexus.features.shops;
 
+import de.tr7zw.nbtapi.NBTItem;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -16,7 +18,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.AxolotlBucketMeta;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")
@@ -28,13 +29,8 @@ public class AxolotlBucketCommand extends CustomCommand implements Listener {
 
 	@Path("<variant> [amount]")
 	void variant(Axolotl.Variant variant, @Arg("1") int amount) {
-		final ItemStack item = new ItemStack(Material.AXOLOTL_BUCKET);
-		final AxolotlBucketMeta meta = (AxolotlBucketMeta) item.getItemMeta();
-		meta.setVariant(variant);
-		item.setItemMeta(meta);
-
 		for (int i = 0; i < amount; i++)
-			PlayerUtils.giveItem(player(), item.clone());
+			PlayerUtils.giveItem(player(), new ItemBuilder(Material.AXOLOTL_BUCKET).axolotl(variant).build());
 	}
 
 	@EventHandler
@@ -44,8 +40,7 @@ public class AxolotlBucketCommand extends CustomCommand implements Listener {
 			return;
 
 		final ItemStack bucket = event.getEntityBucket();
-		final ItemBuilder builder = new ItemBuilder(bucket).customModelData(axolotl.getVariant().ordinal());
-
+		new NBTItem(bucket, true).setInteger(CustomModel.NBT_KEY, axolotl.getVariant().ordinal());
 	}
 
 }

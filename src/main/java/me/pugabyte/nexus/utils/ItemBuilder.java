@@ -25,8 +25,10 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Axolotl;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
@@ -440,6 +442,15 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	// Entities
+
+	public ItemBuilder axolotl(Axolotl.Variant variant) {
+		final AxolotlBucketMeta bucketMeta = (AxolotlBucketMeta) itemMeta;
+		bucketMeta.setVariant(variant);
+		customModelData(variant.ordinal());
+		return this;
+	}
+
 	// NBT
 
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
@@ -513,7 +524,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public int customModelData() {
 		NBTItem nbtItem = new NBTItem(build());
-		return nbtItem.getInteger(CustomModel.NBT_KEY);
+		final Integer customModelData = nbtItem.getInteger(CustomModel.NBT_KEY);
+		return customModelData == null ? 0 : customModelData;
 	}
 
 	// Building //
