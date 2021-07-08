@@ -87,7 +87,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isCustomItem(@Nullable ItemStack item) {
-		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && new NBTItem(item).hasKey("CustomModelData");
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && new NBTItem(item).hasKey(CustomModel.NBT_KEY);
 	}
 
 	@EventHandler

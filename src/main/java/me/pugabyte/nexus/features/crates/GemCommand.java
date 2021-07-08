@@ -1,6 +1,5 @@
 package me.pugabyte.nexus.features.crates;
 
-import de.tr7zw.nbtapi.NBTItem;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -104,7 +103,7 @@ public class GemCommand extends CustomCommand implements Listener {
 		if (ItemUtils.isNullOrAir(item)) return false;
 		if (!item.getType().equals(Material.EMERALD)) return false;
 		if (item.getEnchantments().size() == 0) return false;
-		if (new NBTItem(item).getInteger("CustomModelData") != 1) return false;
+		if (new ItemBuilder(item).customModelData() != 1) return false;
 		return true;
 	}
 

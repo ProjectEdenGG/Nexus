@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
+import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.interfaces.Colored;
 import me.pugabyte.nexus.models.nickname.Nickname;
@@ -506,13 +507,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder customModelData(int id) {
 		if (id > 0)
-			nbt(item -> item.setInteger("CustomModelData", id));
+			nbt(item -> item.setInteger(CustomModel.NBT_KEY, id));
 		return this;
 	}
 
 	public int customModelData() {
 		NBTItem nbtItem = new NBTItem(build());
-		return nbtItem.getInteger("CustomModelData");
+		return nbtItem.getInteger(CustomModel.NBT_KEY);
 	}
 
 	// Building //
