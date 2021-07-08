@@ -17,7 +17,6 @@ import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -198,7 +197,7 @@ public class BrowseProductsProvider extends _ShopProvider {
 							}
 						}));
 					} catch (Exception ex) {
-						Nexus.severe("Error formatting product in BrowseItemsProvider: " + StringUtils.toPrettyString(product));
+						Nexus.severe("Error formatting product in BrowseItemsProvider: " + product.toString());
 						ex.printStackTrace();
 					}
 				});

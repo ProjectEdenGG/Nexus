@@ -36,6 +36,8 @@ import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Beehive;
+import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Axolotl.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -317,11 +319,13 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			try {
-				if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {
-					builder.lore("&7Axolotl Type: " + camelCase(meta.getVariant()));
-				}
-			} catch (NoClassDefFoundError ignore) {}
+			if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {
+				Axolotl.Variant variant = Variant.LUCY;
+				if (meta.hasVariant())
+					variant = meta.getVariant();
+
+				builder.lore("&7Axolotl Type: " + camelCase(variant));
+			}
 
 			if (!getShulkerContents(item).isEmpty())
 				builder.lore("&7Right click to view contents");
