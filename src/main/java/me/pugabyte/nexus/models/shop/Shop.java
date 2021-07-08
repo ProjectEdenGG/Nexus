@@ -314,9 +314,8 @@ public class Shop implements PlayerOwnedObject {
 			}
 
 			if (item.getItemMeta() instanceof BlockStateMeta meta) {
-				if (meta.getBlockState() instanceof Beehive beehive) {
+				if (meta.getBlockState() instanceof Beehive beehive)
 					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
-				}
 			}
 
 			if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {

@@ -441,59 +441,67 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// NBT
 
-	public boolean getBoolean(String key, boolean orDefault) {
-		NBTItem item = new NBTItem(build());
-		if (!item.hasKey(key)) return orDefault;
-		return item.getBoolean(key);
-	}
-
-	public ItemBuilder untradeable() {
-		return tradeable(false);
-	}
-
-	public ItemBuilder tradeable(boolean tradeable) {
-		nbt(item -> item.setBoolean("tradeable", tradeable));
-		return this;
-	}
-
-	public boolean isTradeable() {
-		if (Backpacks.isBackpack(build()))
-			return false;
-		return getBoolean("tradeable", true);
-	}
-
-	public ItemBuilder undroppable() {
-		return droppable(false);
-	}
-
-	public ItemBuilder droppable(boolean droppable) {
-		nbt(item -> item.setBoolean("droppable", droppable));
-		return this;
-	}
-
-	public boolean isDroppable() {
-		return getBoolean("droppable", true);
-	}
-
-	public ItemBuilder unplaceable() {
-		return placeable(false);
-	}
-
-	public ItemBuilder placeable(boolean placeable) {
-		nbt(item -> item.setBoolean("placeable", placeable));
-		return this;
-	}
-
-	public boolean isPlaceable() {
-		return getBoolean("placeable", true);
-	}
-
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
 		NBTItem nbtItem = new NBTItem(build());
 		consumer.accept(nbtItem);
 		itemStack = nbtItem.getItem();
 		itemMeta = itemStack.getItemMeta();
 		return this;
+	}
+
+	public enum ItemSetting {
+		DROPPABLE,
+		PLACEABLE,
+		TRADEABLE {
+			@Override
+			public boolean of(ItemBuilder builder, boolean orDefault) {
+				if (Backpacks.isBackpack(builder.build()))
+					return false;
+
+				return super.of(builder, orDefault);
+			}
+		},
+		;
+
+		public String getKey() {
+			return name().toLowerCase();
+		}
+
+		public boolean of(ItemBuilder builder, boolean orDefault) {
+			NBTItem item = new NBTItem(builder.build());
+			if (!item.hasKey(getKey()))
+				return orDefault;
+
+			return item.getBoolean(getKey());
+		}
+	}
+
+	public ItemBuilder setting(ItemSetting setting, boolean value) {
+		return nbt(nbt -> nbt.setBoolean(setting.getKey(), value));
+	}
+
+	public boolean is(ItemSetting setting) {
+		return setting.of(this, true);
+	}
+
+	public boolean isNot(ItemSetting setting) {
+		return !is(setting);
+	}
+
+	public boolean is(ItemSetting setting, boolean orDefault) {
+		return setting.of(this, orDefault);
+	}
+
+	public ItemBuilder untradeable() {
+		return setting(ItemSetting.TRADEABLE, false);
+	}
+
+	public ItemBuilder undroppable() {
+		return setting(ItemSetting.DROPPABLE, false);
+	}
+
+	public ItemBuilder unplaceable() {
+		return setting(ItemSetting.PLACEABLE, false);
 	}
 
 	public ItemBuilder customModelData(int id) {

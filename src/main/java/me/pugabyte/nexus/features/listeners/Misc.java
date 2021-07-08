@@ -22,6 +22,7 @@ import me.pugabyte.nexus.models.warps.WarpService;
 import me.pugabyte.nexus.models.warps.WarpType;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemBuilder.ItemSetting;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Name;
@@ -109,7 +110,7 @@ public class Misc implements Listener {
 	public void nbt_onDropItem(PlayerDropItemEvent event) {
 		final ItemStack item = event.getItemDrop().getItemStack();
 		if (isNullOrAir(item)) return;
-		if (!new ItemBuilder(item).isDroppable())
+		if (new ItemBuilder(item).isNot(ItemSetting.DROPPABLE))
 			event.setCancelled(true);
 	}
 
@@ -117,7 +118,7 @@ public class Misc implements Listener {
 	public void nbt_onPlaceBlock(BlockPlaceEvent event) {
 		final ItemStack item = event.getItemInHand();
 		if (isNullOrAir(item)) return;
-		if (!new ItemBuilder(item).isPlaceable())
+		if (new ItemBuilder(item).isNot(ItemSetting.PLACEABLE))
 			event.setCancelled(true);
 	}
 
