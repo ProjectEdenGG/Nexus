@@ -324,6 +324,7 @@ public class Shop implements PlayerOwnedObject {
 				if (meta.hasVariant())
 					variant = meta.getVariant();
 
+				builder.customModelData(variant.ordinal());
 				builder.lore("&7Axolotl Type: " + camelCase(variant));
 			}
 

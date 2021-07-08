@@ -159,11 +159,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		shutdownBossBars();
 	}
 
-	@Path("soundTest")
-	void soundTest() {
-		new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(player()).volume(.25).play();
-	}
-
 	@Path("cancelReload")
 	void cancelReload() {
 		reloader = null;
@@ -830,6 +825,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("jingles <jingle>")
 	void jingles(Jingle jingle) {
 		jingle.play(player());
+	}
+
+	@Path("customSoundTest")
+	void customSoundTest() {
+		new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(player()).volume(.25).play();
 	}
 
 	// Doesnt work

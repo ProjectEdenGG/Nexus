@@ -145,8 +145,9 @@ public class Nexus extends JavaPlugin {
 		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 			listeners.add(listener);
-			for (Method method : getMethods(listener.getClass(), withAnnotation(EventHandler.class)))
-				eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
+			if (!(listener instanceof TemporaryListener))
+				for (Method method : getMethods(listener.getClass(), withAnnotation(EventHandler.class)))
+					eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
 			log("Could not register listener " + listener.toString() + "!");
 	}
