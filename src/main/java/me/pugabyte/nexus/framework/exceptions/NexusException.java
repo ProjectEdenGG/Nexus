@@ -24,4 +24,8 @@ public class NexusException extends EdenException {
 		this(new JsonBuilder(message));
 	}
 
+	public ComponentLike withPrefix(String prefix) {
+		return new JsonBuilder(prefix).next(getJson());
+	}
+
 }

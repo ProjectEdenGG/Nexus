@@ -3,14 +3,17 @@ package me.pugabyte.nexus.features.crates;
 import eden.annotations.Environments;
 import eden.utils.EnumUtils;
 import eden.utils.Env;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.commands.staff.admin.RebootCommand;
 import me.pugabyte.nexus.features.crates.menus.CrateEditMenu;
 import me.pugabyte.nexus.features.crates.models.CrateLoot;
 import me.pugabyte.nexus.features.crates.models.CrateType;
-import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
+import me.pugabyte.nexus.framework.exceptions.NexusException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
@@ -40,6 +43,10 @@ public class Crates extends Feature implements Listener {
 	public static YamlConfiguration config;
 
 	public static List<CrateLoot> lootCache = new ArrayList<>();
+
+	@Getter
+	@Setter
+	private static boolean enabled = false;
 
 	@Override
 	public void onStart() {
@@ -117,41 +124,43 @@ public class Crates extends Feature implements Listener {
 
 	@EventHandler
 	public void onClickWithKey(PlayerInteractEvent event) {
-		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (event.getClickedBlock() == null) return;
+		try {
+			if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
+			if (event.getClickedBlock() == null) return;
 
-		CrateType locationType = CrateType.fromLocation(event.getClickedBlock().getLocation());
-		if (locationType == null) return;
-		event.setCancelled(true);
-		Location location = LocationUtils.getCenteredLocation(event.getClickedBlock().getLocation());
+			CrateType locationType = CrateType.fromLocation(event.getClickedBlock().getLocation());
+			if (locationType == null) return;
+			event.setCancelled(true);
+			Location location = LocationUtils.getCenteredLocation(event.getClickedBlock().getLocation());
 
-		if (event.getHand() == null) return;
-		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
+			if (event.getHand() == null) return;
+			if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 
-		if (RebootCommand.isQueued())
-			throw new CrateOpeningException("Server reboot is queued, cannot open crates");
+			if (!enabled)
+				throw new CrateOpeningException("Crates are temporarily disabled");
+			if (RebootCommand.isQueued())
+				throw new CrateOpeningException("Server reboot is queued, cannot open crates");
 
-		CrateType keyType = CrateType.fromKey(event.getItem());
-		if (locationType != keyType && locationType != CrateType.ALL)
-			try {
+			CrateType keyType = CrateType.fromKey(event.getItem());
+			if (locationType != keyType && locationType != CrateType.ALL)
 				if (Crates.getLootByType(locationType).stream().filter(CrateLoot::isActive).toArray().length == 0)
 					throw new CrateOpeningException("&3Coming soon...");
 				else
 					locationType.previewDrops(null).open(event.getPlayer());
-			} catch (CrateOpeningException ex) {
-				PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
-			}
-		else if (keyType != null)
-			try {
-				if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
-					keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
-				else
-					keyType.getCrateClass().openCrate(location, event.getPlayer());
-			} catch (CrateOpeningException ex) {
-				if (ex.getMessage() != null)
-					PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
-				keyType.getCrateClass().reset();
-			}
+			else if (keyType != null)
+				try {
+					if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)
+						keyType.getCrateClass().openMultiple(location, event.getPlayer(), event.getItem().getAmount());
+					else
+						keyType.getCrateClass().openCrate(location, event.getPlayer());
+				} catch (CrateOpeningException ex) {
+					if (ex.getMessage() != null)
+						PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
+					keyType.getCrateClass().reset();
+				}
+		} catch (NexusException ex) {
+			PlayerUtils.send(event.getPlayer(), ex.withPrefix(Crates.PREFIX));
+		}
 	}
 
 	@EventHandler

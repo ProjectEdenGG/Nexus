@@ -1,8 +1,8 @@
-package me.pugabyte.nexus.features.crates.models.exceptions;
+package me.pugabyte.nexus.framework.exceptions.postconfigured;
 
 import me.pugabyte.nexus.features.crates.models.Crate;
 
-public class CrateOpeningException extends RuntimeException {
+public class CrateOpeningException extends PostConfiguredException {
 
 	/**
 	 * Used the full stop a crate process at any point and reset it.

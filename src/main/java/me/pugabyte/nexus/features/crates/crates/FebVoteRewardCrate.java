@@ -4,7 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import me.pugabyte.nexus.features.crates.models.Crate;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.crates.models.events.CrateSpawnItemEvent;
-import me.pugabyte.nexus.features.crates.models.exceptions.CrateOpeningException;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Item;

@@ -26,6 +26,12 @@ public class CrateCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("toggle")
+	void toggle() {
+		Crates.setEnabled(!Crates.isEnabled());
+		send(PREFIX + "Crates " + (Crates.isEnabled() ? "&aenabled" : "&cdisabled"));
+	}
+
 	@Path
 	void info() {
 		line();
