@@ -172,6 +172,10 @@ public final class WorldGuardUtils {
 		return region.contains(toBlockVector3(vector));
 	}
 
+	public boolean isInRegionLikeAt(@NotNull String regex, @NotNull Location location) {
+		return !getRegionsLikeAt(regex, location).isEmpty();
+	}
+
 	public @NotNull Collection<Player> getPlayersInRegion(@NotNull String region) {
 		return getPlayersInRegion(getProtectedRegion(region));
 	}
