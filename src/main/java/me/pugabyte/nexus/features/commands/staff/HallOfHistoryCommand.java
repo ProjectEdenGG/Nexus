@@ -36,9 +36,9 @@ import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static eden.utils.TimeUtils.dateFormat;
+import static eden.utils.TimeUtils.shortDateFormat;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.TimeUtils.dateFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
 
 @Aliases("hoh")
 public class HallOfHistoryCommand extends CustomCommand {

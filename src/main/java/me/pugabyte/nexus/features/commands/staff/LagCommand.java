@@ -17,7 +17,7 @@ import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static eden.utils.TimeUtils.shortDateTimeFormat;
 
 @Permission("group.seniorstaff")
 @Aliases({"gc", "memory", "uptime"})

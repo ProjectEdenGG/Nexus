@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.votes;
 
+import eden.utils.TimeUtils;
 import eden.utils.TimeUtils.Timespan;
 import eden.utils.Utils;
 import lombok.NonNull;
@@ -23,7 +24,6 @@ import me.pugabyte.nexus.models.vote.VoteSite;
 import me.pugabyte.nexus.models.vote.Voter;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.TimeUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

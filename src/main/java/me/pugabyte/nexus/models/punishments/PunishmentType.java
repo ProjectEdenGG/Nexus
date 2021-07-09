@@ -28,9 +28,9 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static eden.utils.StringUtils.isNullOrEmpty;
+import static eden.utils.TimeUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Getter
 @AllArgsConstructor

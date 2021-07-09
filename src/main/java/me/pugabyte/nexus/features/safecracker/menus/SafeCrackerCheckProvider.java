@@ -15,7 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static eden.utils.TimeUtils.shortDateTimeFormat;
 
 @Disabled
 public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProvider {

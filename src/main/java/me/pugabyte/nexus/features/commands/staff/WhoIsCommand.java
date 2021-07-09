@@ -29,8 +29,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Set;
 
+import static eden.utils.TimeUtils.shortDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.getLocationString;
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"whotf", "whothefuck"})
 @Permission("group.staff")

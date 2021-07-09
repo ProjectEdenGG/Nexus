@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.events.y2021.pride21;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import eden.utils.TimeUtils;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.events.DyeBombCommand;
 import me.pugabyte.nexus.features.events.models.Talker;
@@ -17,7 +18,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;

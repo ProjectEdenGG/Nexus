@@ -8,7 +8,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 
-import static me.pugabyte.nexus.utils.TimeUtils.longDateTimeFormat;
+import static eden.utils.TimeUtils.longDateTimeFormat;
 
 @Aliases("firstjoin")
 public class FirstLoginCommand extends CustomCommand {

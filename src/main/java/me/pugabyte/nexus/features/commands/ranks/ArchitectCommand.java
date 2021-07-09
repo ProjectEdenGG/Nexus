@@ -6,7 +6,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.nerd.Rank;
 
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
+import static eden.utils.TimeUtils.shortDateFormat;
 
 public class ArchitectCommand extends CustomCommand {
 

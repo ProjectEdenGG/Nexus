@@ -35,8 +35,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static eden.utils.TimeUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
-import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
 
 @Data
 @Entity(value = "nickname", noClassnameStored = true)

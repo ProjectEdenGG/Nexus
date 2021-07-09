@@ -30,7 +30,7 @@ import org.bukkit.OfflinePlayer;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
+import static eden.utils.TimeUtils.shortDateTimeFormat;
 
 public class DiscordCommand extends CustomCommand {
 	DiscordUserService service = new DiscordUserService();

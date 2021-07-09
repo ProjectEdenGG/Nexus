@@ -7,7 +7,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.DoubleSlash;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timer;
+import me.pugabyte.nexus.utils.Timer;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;

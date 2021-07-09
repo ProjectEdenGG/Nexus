@@ -13,7 +13,7 @@ import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.models.skincache.SkinCacheService;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TimeUtils.Timer;
+import me.pugabyte.nexus.utils.Timer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

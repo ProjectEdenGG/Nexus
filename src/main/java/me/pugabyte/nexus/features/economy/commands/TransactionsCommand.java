@@ -38,10 +38,10 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static eden.utils.TimeUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 import static me.pugabyte.nexus.models.banker.Transaction.combine;
 import static me.pugabyte.nexus.utils.StringUtils.prettyMoney;
-import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
 
 @NoArgsConstructor
 @Aliases({"transaction", "txn", "txns"})

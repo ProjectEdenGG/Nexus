@@ -1,10 +1,10 @@
 package me.pugabyte.nexus.features.events.y2021.pride21;
 
+import eden.utils.TimeUtils;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.models.pride21.Pride21UserService;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;

@@ -27,7 +27,7 @@ import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils.Timer;
+import me.pugabyte.nexus.utils.Timer;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
@@ -61,9 +61,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static eden.utils.TimeUtils.shortDateTimeFormat;
+import static eden.utils.TimeUtils.shortTimeFormat;
 import static java.util.stream.Collectors.joining;
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.shortTimeFormat;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 

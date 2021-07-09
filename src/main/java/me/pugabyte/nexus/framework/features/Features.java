@@ -3,7 +3,7 @@ package me.pugabyte.nexus.framework.features;
 import eden.annotations.Disabled;
 import lombok.Getter;
 import me.pugabyte.nexus.framework.exceptions.NexusException;
-import me.pugabyte.nexus.utils.TimeUtils.Timer;
+import me.pugabyte.nexus.utils.Timer;
 import me.pugabyte.nexus.utils.Utils;
 import org.bukkit.plugin.Plugin;
 import org.objenesis.ObjenesisStd;

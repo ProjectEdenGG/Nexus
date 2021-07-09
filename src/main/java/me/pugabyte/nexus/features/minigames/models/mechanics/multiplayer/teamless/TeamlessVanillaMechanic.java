@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.teamless;
 
+import eden.utils.TimeUtils;
 import me.pugabyte.nexus.features.minigames.models.Match;
 import me.pugabyte.nexus.features.minigames.models.Minigamer;
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -7,7 +8,6 @@ import me.pugabyte.nexus.features.minigames.models.events.matches.MatchInitializ
 import me.pugabyte.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import me.pugabyte.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TimeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

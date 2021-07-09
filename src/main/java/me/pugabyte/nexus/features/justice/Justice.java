@@ -51,7 +51,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateFormat;
+import static eden.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
 public class Justice extends Feature implements Listener {

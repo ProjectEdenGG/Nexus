@@ -42,11 +42,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import static eden.utils.TimeUtils.shortDateTimeFormat;
+import static eden.utils.TimeUtils.shortishDateTimeFormat;
 import static me.pugabyte.nexus.utils.PlayerUtils.getPlayer;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
-import static me.pugabyte.nexus.utils.TimeUtils.shortDateTimeFormat;
-import static me.pugabyte.nexus.utils.TimeUtils.shortishDateTimeFormat;
 
 @NoArgsConstructor
 @Permission("group.seniorstaff")

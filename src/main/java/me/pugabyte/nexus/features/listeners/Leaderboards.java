@@ -150,7 +150,7 @@ public class Leaderboards implements Listener {
 			}
 		};
 
-		int[] ids;
+		private final int[] ids;
 
 		Leaderboard(int... ids) {
 			this.ids = ids;
