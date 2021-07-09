@@ -118,6 +118,8 @@ public class Leaderboards implements Listener {
 				UUID last = null;
 				while (iterator.hasNext()) {
 					Purchase purchase = iterator.next();
+					if (purchase.getPrice() == 0)
+						continue;
 					UUID key = purchase.getPurchaserUuid();
 
 					if (recent.size() == 3 && last != key)
