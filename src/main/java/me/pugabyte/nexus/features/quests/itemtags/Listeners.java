@@ -83,7 +83,7 @@ public class Listeners implements Listener {
 		Tasks.sync(() -> event.setResult(updated));
 	}
 
-	// TODO ItemTags: Remove
+	// TODO ItemTags: Uncomment
 //	@EventHandler
 //	public void onBreakItemFrame(EntityDamageByEntityEvent event){
 //
@@ -99,7 +99,7 @@ public class Listeners implements Listener {
 //		itemFrame.setItem(updated);
 //	}
 
-	// TODO ItemTags: Remove
+	// TODO ItemTags: Uncomment
 //	@EventHandler
 //	public void onItemFrameBreak(HangingBreakEvent event){
 //		if (!(event.getEntity().getType().equals(EntityType.ITEM_FRAME)))
@@ -117,7 +117,7 @@ public class Listeners implements Listener {
 //		itemFrame.setItem(updated);
 //	}
 
-	// TODO ItemTags: Remove
+	// TODO ItemTags: Uncomment
 //	@EventHandler
 //	public void onEntityDeath(EntityDeathEvent event) {
 //		int ndx = 0;

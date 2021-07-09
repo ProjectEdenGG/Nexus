@@ -347,17 +347,17 @@ public class BearFair21Command extends CustomCommand {
 	void clientsideClear(ContentCategory category) {
 		BearFair21User user = userService.get(uuid());
 		if (category == null) {
-			user.getContentCategories().clear();
+			for (ContentCategory _category : ContentCategory.values()) {
+				ClientsideContentManager.removeCategory(user, _category);
+			}
+
 			userService.save(user);
 
 			send("removed all locations from " + user.getNickname());
 			return;
-		} else {
-			Set<ContentCategory> categories = user.getContentCategories();
-			categories.remove(category);
-			user.setContentCategories(categories);
 		}
 
+		ClientsideContentManager.removeCategory(user, category);
 		userService.save(user);
 		send("removed " + category + " Content Category");
 	}
