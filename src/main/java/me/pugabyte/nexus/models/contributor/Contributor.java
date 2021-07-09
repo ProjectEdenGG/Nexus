@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.store.Package;
 import me.pugabyte.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.StringUtils;
@@ -102,6 +103,13 @@ public class Contributor implements PlayerOwnedObject {
 
 		public OfflinePlayer getPurchaserOfflinePlayer() {
 			return Bukkit.getOfflinePlayer(purchaserUuid);
+		}
+
+		public double getRealPrice() {
+			if (Package.CUSTOM_DONATION.getId().equals(packageId))
+				return price;
+			else
+				return packagePrice;
 		}
 
 		private static Converter<String, String> caseConverter = CaseFormat.LOWER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE);

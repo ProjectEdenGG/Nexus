@@ -20,7 +20,9 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.contributor.Contributor;
+import me.pugabyte.nexus.models.contributor.Contributor.Purchase;
 import me.pugabyte.nexus.models.contributor.ContributorService;
+import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -41,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static eden.utils.StringUtils.prettyMoney;
 
@@ -72,6 +75,15 @@ public class StoreCommand extends CustomCommand {
 	@Path("packages [player]")
 	void packages(@Arg("self") OfflinePlayer player) {
 		new StoreProvider(player).open(player());
+	}
+
+	@Async
+	@Path("contributors recent [page]")
+	void contributors_recent(@Arg("1") int page) {
+		BiFunction<Purchase, String, JsonBuilder> formatter = (purchase, index) ->
+			json("&3" + index + " " + Nerd.of(purchase.getPurchaserUuid()).getColoredName() + " &7- " +
+				StringUtils.prettyMoney(purchase.getRealPrice()));
+		paginate(service.getRecent(), formatter, "/store contributors recent", page);
 	}
 
 	@Path("credit [player]")

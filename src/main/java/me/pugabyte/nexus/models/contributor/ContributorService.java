@@ -4,6 +4,7 @@ import eden.mongodb.annotations.PlayerClass;
 import me.pugabyte.nexus.models.MongoService;
 import me.pugabyte.nexus.models.contributor.Contributor.Purchase;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +31,19 @@ public class ContributorService extends MongoService<Contributor> {
 		return saveQueue;
 	}
 
+	public List<Purchase> getRecent() {
+		return getRecent(0);
+	}
+
 	public List<Purchase> getRecent(int count) {
-		return map(getCollection().aggregate(List.of(
+		return map(getCollection().aggregate(new ArrayList<>(List.of(
 			unwind("$purchases"),
 			replaceRoot("$purchases"),
-			sort(descending("timestamp")),
-			limit(count)
-		)), Purchase.class);
+			sort(descending("timestamp"))
+		)) {{
+			if (count > 0)
+				add(limit(count));
+		}}), Purchase.class);
 	}
 
 	public List<Contributor> getTop(int count) {

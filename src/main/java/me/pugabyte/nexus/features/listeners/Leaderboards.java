@@ -9,8 +9,6 @@ import eden.utils.TimeUtils.Time;
 import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.store.Package;
-import me.pugabyte.nexus.features.store.annotations.Category.StoreCategory;
 import me.pugabyte.nexus.features.votes.EndOfMonth.TopVoterData;
 import me.pugabyte.nexus.models.banker.Banker;
 import me.pugabyte.nexus.models.banker.BankerService;
@@ -31,19 +29,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static eden.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toList;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -116,25 +112,28 @@ public class Leaderboards implements Listener {
 		RECENT_PURCHASES(2772, 2773, 2774) {
 			@Override
 			Map<UUID, String> getTop() {
-				Iterator<Purchase> recent = new ContributorService().getRecent(20).iterator();
-				Map<UUID, String> top = new LinkedHashMap<>();
-				while (top.size() != 3 && recent.hasNext()) {
-					Purchase purchase = recent.next();
+				Iterator<Purchase> iterator = new ContributorService().getRecent(50).iterator();
 
-					String name = "";
-					Package purchasedPackage = Package.getPackage(purchase.getPackageId());
-					if (purchasedPackage != null) {
-						StoreCategory category = purchasedPackage.getCategory();
-						if (List.of(StoreCategory.PETS, StoreCategory.DISGUISES).contains(category))
-							name += camelCase(category) + " - ";
-					}
+				Map<UUID, Map<String, Double>> recent = new LinkedHashMap<>();
+				UUID last = null;
+				while (iterator.hasNext()) {
+					Purchase purchase = iterator.next();
+					UUID key = purchase.getPurchaserUuid();
 
-					name += purchase.getPackageName().split("\\[")[0].trim();
-					name += " (" + NumberFormat.getCurrencyInstance().format(purchase.getPackagePrice()) + ")";
-					top.put(purchase.getUuid(), name);
+					if (recent.size() == 3 && last != key)
+						break;
+
+					recent.computeIfAbsent(key, $ -> new HashMap<>()).put(purchase.getTransactionId(), purchase.getPrice());
+
+					last = purchase.getPurchaserUuid();
 				}
 
-				return top;
+				return new LinkedHashMap<>() {{
+					recent.forEach((uuid, txns) -> {
+						final double sum = txns.values().stream().mapToDouble(Double::valueOf).sum();
+						put(uuid, StringUtils.prettyMoney(sum));
+					});
+				}};
 			}
 		},
 		TOP_CONTRIBUTORS(3835, 3837, 3836) {
