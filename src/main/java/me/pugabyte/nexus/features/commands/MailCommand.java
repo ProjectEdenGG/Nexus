@@ -81,7 +81,7 @@ public class MailCommand extends CustomCommand implements Listener {
 				.next("  &3|  ")
 				.group()
 				.next("&e&l" + (mail.hasMessage() ? "Edit" : "Add") + " Message")
-				.suggest("/mail message " + (mail.hasMessage() ? mail.getMessage() : ""))
+				.suggest("/mail message " + (mail.hasMessage() ? new ItemBuilder(mail.getMessage()).getBookPlainContents() : ""))
 				.hover("&eClick to " + (mail.hasMessage() ? "edit" : "add a") + " message")
 				.group()
 				.next("  &3|  ")

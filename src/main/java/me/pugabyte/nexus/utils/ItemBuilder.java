@@ -442,6 +442,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public String getBookPlainContents() {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		return bookMeta.pages().stream().map(AdventureUtils::asPlainText).collect(Collectors.joining(" "));
+	}
+
 	// Entities
 
 	public ItemBuilder axolotl(Axolotl.Variant variant) {
