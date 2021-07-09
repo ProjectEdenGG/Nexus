@@ -37,7 +37,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -107,7 +107,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@Override
 	public void onDeath(@NotNull Minigamer victim) {
 		victim.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 10, false, false));
-		TitleUtils.sendTitle(victim.getPlayer(), "&cYou died!", 150);
+		new TitleBuilder().players(victim).title("&cYou died!").stay(150).send();
 
 		final Location bed = victim.getPlayer().getBedSpawnLocation();
 		if (bed != null && getWorld().equals(bed.getWorld()))

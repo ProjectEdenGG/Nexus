@@ -14,7 +14,7 @@ import me.pugabyte.nexus.features.minigames.models.perks.common.PlayerParticlePe
 import me.pugabyte.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.SoundBuilder;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -130,7 +130,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 		minigamers.forEach(enemy -> {
 			new SoundBuilder(sound).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(volume).pitch(1.2).play();
 			new SoundBuilder(Sound.ENTITY_ENDER_DRAGON_FLAP).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(0.9).play();
-			TitleUtils.sendSubtitle(enemy.getPlayer(), message, 7, Time.SECOND.x(3), 7);
+			new TitleBuilder().players(enemy).subtitle(message).fadeIn(7).stay(Time.SECOND.x(3)).fadeOut(7).send();
 		});
 	}
 

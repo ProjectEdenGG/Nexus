@@ -28,7 +28,7 @@ import me.pugabyte.nexus.framework.interfaces.HasDescription;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
@@ -252,7 +252,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			minigamer.tell("Objective: &e" + description);
 		MinigameModifier modifier = Minigames.getModifier();
 		if (modifier.getClass() != NoModifier.class) {
-			TitleUtils.sendTitle(minigamer.getPlayer(), "&3Modifier: &e" + modifier.getName(), "&6" + modifier.getDescription(), 5, Time.SECOND.x(5), 10);
+			new TitleBuilder().players(minigamer).title("&3Modifier: &e" + modifier.getName()).subtitle("&6" + modifier.getDescription()).fadeIn(5).stay(Time.SECOND.x(5)).fadeOut(10).send();
 		}
 	}
 

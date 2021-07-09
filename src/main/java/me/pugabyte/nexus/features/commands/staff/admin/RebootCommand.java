@@ -14,7 +14,7 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -52,7 +52,7 @@ public class RebootCommand extends CustomCommand {
 
 		conditions.forEach(ReloadCondition::run);
 
-		TitleUtils.sendTitleToAllPlayers("&cRebooting server", "&cCome back in ~60 seconds");
+		new TitleBuilder().allPlayers().title("&cRebooting server").subtitle("&cCome back in ~60 seconds").send();
 		Koda.say("Rebooting server, come back in 60 seconds");
 		rebooting = true;
 		Tasks.wait(Time.SECOND.x(10), () -> {

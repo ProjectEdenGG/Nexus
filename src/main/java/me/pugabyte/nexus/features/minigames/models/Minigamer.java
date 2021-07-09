@@ -26,7 +26,7 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
@@ -306,7 +306,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			((TeamMechanic) match.getMechanic()).joinTeamChannel(this);
 			if (team.getObjective() != null && !team.getObjective().isEmpty()) {
 				sendMessage("&6Team Objective: &e" + team.getObjective());
-				TitleUtils.sendTitle(getPlayer(), "&6Team Objective", "&e" + team.getObjective(), 10, Time.SECOND.x(4), 20);
+				new TitleBuilder().players(this).title("&6Team Objective").subtitle("&e" + team.getObjective()).fadeIn(10).stay(Time.SECOND.x(4)).fadeOut(20).send();
 			}
 		}
 

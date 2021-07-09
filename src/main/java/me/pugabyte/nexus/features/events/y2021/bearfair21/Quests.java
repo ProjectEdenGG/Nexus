@@ -40,7 +40,7 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -439,7 +439,7 @@ public class Quests implements Listener {
 		event.setCancelled(true);
 
 		player.addPotionEffects(Collections.singletonList(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
-		TitleUtils.sendSubtitle(player, "&cYou died.", 40);
+		new TitleBuilder().players(player).subtitle("&cYou died.").stay(40).send();
 
 		player.setFallDistance(0);
 		player.teleport(BearFair21.getShipSpawnLoc());

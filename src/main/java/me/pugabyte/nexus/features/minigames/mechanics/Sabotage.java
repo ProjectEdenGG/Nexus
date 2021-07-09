@@ -40,7 +40,7 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.SoundUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import me.pugabyte.nexus.utils.Utils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import net.kyori.adventure.text.Component;
@@ -342,7 +342,8 @@ public class Sabotage extends TeamMechanic {
 			builder.next("You were killed by ").next(event.getAttacker().getNickname(), matchData.getColor(event.getAttacker()).colored());
 		} else
 			builder.next("You have been ejected");
-		TitleUtils.sendTitle(minigamer, builder, TimeUtils.Time.SECOND.duration(4), Duration.ofSeconds(1).dividedBy(2));
+		final Duration fade = Duration.ofSeconds(1).dividedBy(2);
+		new TitleBuilder().players(minigamer).title(builder).times(fade, TimeUtils.Time.SECOND.duration(4), fade).send();
 		minigamer.setAlive(false);
 		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1000000, 0, true, false, false));
 		PlayerUtils.showPlayers(minigamer, match.getMinigamers());

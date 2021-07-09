@@ -13,7 +13,7 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import me.pugabyte.nexus.utils.WorldGuardFlagUtils;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Material;
@@ -47,7 +47,23 @@ import java.util.Set;
 
 import static me.pugabyte.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static me.pugabyte.nexus.utils.EntityUtils.isHostile;
-import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.*;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_ACTIONBAR;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_SUBTITLE;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_TITLE;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.GRASS_DECAY;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_ACTIONBAR;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_SUBTITLE;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_TITLE;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.HANGING_BREAK;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.HOSTILE_SPAWN;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.MINIGAMES_WATER_DAMAGE;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.MOB_AGGRESSION;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.TAMING;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_FADE;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_TICKS;
+import static me.pugabyte.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOORS;
 
 public class WorldGuardFlags implements Listener {
 
@@ -220,7 +236,7 @@ public class WorldGuardFlags implements Listener {
 			else if (title_fade < 1)
 				title_fade = 1;
 
-			TitleUtils.sendTitle(player, greeting_title, greeting_subtitle, title_ticks, title_fade);
+			new TitleBuilder().players(player).title(greeting_title).subtitle(greeting_subtitle).fade(title_fade).stay(title_ticks).send();
 		}
 	}
 
@@ -265,7 +281,7 @@ public class WorldGuardFlags implements Listener {
 			else if (title_fade < 1)
 				title_fade = 1;
 
-			TitleUtils.sendTitle(player, farewell_title, farewell_subtitle, title_ticks, title_fade);
+			new TitleBuilder().players(player).title(farewell_title).subtitle(farewell_subtitle).fade(title_fade).stay(title_ticks).send();
 		}
 	}
 

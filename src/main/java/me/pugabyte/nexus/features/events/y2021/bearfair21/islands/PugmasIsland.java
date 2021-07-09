@@ -26,7 +26,7 @@ import me.pugabyte.nexus.utils.LocationUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
-import me.pugabyte.nexus.utils.TitleUtils;
+import me.pugabyte.nexus.utils.TitleBuilder;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Location;
@@ -440,7 +440,7 @@ public class PugmasIsland implements BearFair21Island {
 	}
 
 	private static void startChallenge(BearFair21User user) {
-		TitleUtils.sendSubtitle(user.getPlayer(), "&cGo!");
+		new TitleBuilder().players(user).subtitle("&cGo!").send();
 		if (user.getActiveTaskId() != -1) {
 			user.sendMessage("Error: You have an active task running");
 			user.setQuestStage_Pugmas(QuestStage.STARTED);
