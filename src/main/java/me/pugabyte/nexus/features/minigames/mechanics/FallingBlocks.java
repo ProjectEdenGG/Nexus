@@ -24,6 +24,8 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class FallingBlocks extends TeamlessMechanic {
 
 	@Override
@@ -91,9 +93,11 @@ public class FallingBlocks extends TeamlessMechanic {
 			minigamer.scored();
 	}
 
+	private static final List<DamageCause> DAMAGE_CAUSES = List.of(DamageCause.SUFFOCATION, DamageCause.FALLING_BLOCK);
+
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.getCause() != DamageCause.FALLING_BLOCK)
+		if (!DAMAGE_CAUSES.contains(event.getCause()))
 			return;
 
 		if (!(event.getEntity() instanceof Player player))
