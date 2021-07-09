@@ -58,7 +58,11 @@ public class MiniGolf extends Feature {
 	}
 
 	public static void quit(MiniGolfUser user) {
-		user.getGolfBall().remove();
+		if (user.getGolfBall() != null) {
+			user.getGolfBall().remove();
+			user.setGolfBall(null);
+		}
+
 		getGolfBalls().remove(user.getGolfBall());
 		getUsers().remove(user);
 	}

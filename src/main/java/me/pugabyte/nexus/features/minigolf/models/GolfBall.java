@@ -123,7 +123,7 @@ public class GolfBall {
 		if (!isAlive())
 			return false;
 
-		return getVelocity().length() >= MiniGolf.getMaxVelocity();
+		return getVelocity().length() < MiniGolf.getMaxVelocity();
 	}
 
 	public boolean isMinVelocity() {

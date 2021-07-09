@@ -288,5 +288,4 @@ public final class WorldGuardUtils {
 		}
 		return blocks;
 	}
-
 }

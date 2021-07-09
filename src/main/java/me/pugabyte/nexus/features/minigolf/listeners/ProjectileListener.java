@@ -49,19 +49,20 @@ public class ProjectileListener implements Listener {
 		if (!golfBall.getSnowball().equals(oldBall))
 			return;
 
-		Location loc = oldBall.getLocation();
-		Vector vel = oldBall.getVelocity();
+		Location location = oldBall.getLocation();
+		Vector velocity = oldBall.getVelocity();
 		World world = oldBall.getWorld();
-		Material material = loc.getBlock().getType();
+		Material material = location.getBlock().getType();
 
 		// spawn a new ball
-		Snowball newBall = (Snowball) world.spawnEntity(loc, oldBall.getType());
+		Snowball newBall = (Snowball) world.spawnEntity(location, oldBall.getType());
 		newBall.setGravity(entity.hasGravity());
 		newBall.setShooter(golfBall.getShooter());
 
 		newBall.setCustomName(MiniGolfUtils.getStrokeString(user));
 		newBall.setCustomNameVisible(true);
 		newBall.setTicksLived(entity.getTicksLived());
+		newBall.setVelocity(velocity);
 
 		golfBall.setSnowball(newBall);
 		golfBall.applyDisplayItem();
@@ -80,7 +81,7 @@ public class ProjectileListener implements Listener {
 			} else {
 				user.debug("  invert velocity");
 				// Bounce off of entity
-				vel.multiply(-1).multiply(0.25);
+				velocity.multiply(-1).multiply(0.25);
 			}
 		}
 
@@ -89,6 +90,8 @@ public class ProjectileListener implements Listener {
 			user.debug("golfball hit null or air block");
 			return;
 		}
+
+		golfBall.setVelocity(velocity);
 
 		Material hitMaterial = event.getHitBlock().getType();
 		BlockFace blockFace = event.getHitBlockFace();

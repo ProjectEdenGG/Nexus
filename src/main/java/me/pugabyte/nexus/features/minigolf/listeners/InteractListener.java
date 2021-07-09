@@ -40,6 +40,7 @@ public class InteractListener implements Listener {
 		ItemStack item = event.getItem();
 		if (ItemUtils.isNullOrAir(item)) {
 			user.debug("item is null or air, returning");
+			event.setCancelled(true);
 			return;
 		}
 
@@ -49,13 +50,15 @@ public class InteractListener implements Listener {
 		if (item.getType().equals(Material.SNOWBALL)) {
 			user.debug("placing golf ball...");
 
-			if (user.getGolfBall() != null) {
+			if (user.getGolfBall() != null && user.getGolfBall().getSnowball() != null) {
 				user.debug("you already have a ball placed");
+				event.setCancelled(true);
 				return;
 			}
 
 			if (BlockUtils.isNullOrAir(block)) {
 				user.debug("placed on block is air or null");
+				event.setCancelled(true);
 				return;
 			}
 
@@ -67,6 +70,7 @@ public class InteractListener implements Listener {
 			ProtectedRegion region = regions.stream().findFirst().orElse(null);
 			if (region == null) {
 				user.debug("hole region not found");
+				event.setCancelled(true);
 				return;
 			}
 
@@ -76,11 +80,13 @@ public class InteractListener implements Listener {
 			MiniGolfUserPlaceBallEvent placeBallEvent = new MiniGolfUserPlaceBallEvent(user, golfBall, Set.of(Material.GREEN_WOOL));
 			if (!placeBallEvent.callEvent()) {
 				user.debug("place ball event cancelled");
+				event.setCancelled(true);
 				return;
 			}
 
 			if (!placeBallEvent.canPlaceBall(block.getType())) {
 				user.debug("incorrect starting position");
+				event.setCancelled(true);
 				return;
 			}
 
@@ -88,6 +94,7 @@ public class InteractListener implements Listener {
 			MiniGolfBallSpawnEvent ballSpawnEvent = new MiniGolfBallSpawnEvent(golfBall, block.getLocation());
 			if (!ballSpawnEvent.callEvent()) {
 				user.debug("place spawn event cancelled");
+				event.setCancelled(true);
 				return;
 			}
 

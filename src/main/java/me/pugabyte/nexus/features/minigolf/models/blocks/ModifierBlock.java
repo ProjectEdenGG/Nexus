@@ -11,10 +11,12 @@ import java.util.Set;
 
 public abstract class ModifierBlock {
 
-	public abstract void handleRoll(GolfBall golfball);
+	public void handleRoll(GolfBall golfBall) {
+		golfBall.debug("&oon roll on generic block");
+	}
 
 	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
-		golfBall.debug("&oon hit generic block");
+		golfBall.debug("&oon hit generic block: " + blockFace);
 		Vector velocity = golfBall.getVelocity();
 		Snowball snowball = golfBall.getSnowball();
 
@@ -32,6 +34,7 @@ public abstract class ModifierBlock {
 				velocity.multiply(0.7);
 
 				if (velocity.getY() < 0.1) {
+					golfBall.debug("velocity < 0.1");
 					velocity.setY(0);
 					snowball.teleport(snowball.getLocation().add(0, MiniGolf.getFloorOffset(), 0));
 					snowball.setGravity(false);
@@ -39,7 +42,8 @@ public abstract class ModifierBlock {
 			}
 		}
 
-		golfBall.setVelocity(velocity);
+//		golfBall.debug(golfBall.getVelocity() + " --> " + velocity);
+		golfBall.getSnowball().setVelocity(velocity);
 
 	}
 
