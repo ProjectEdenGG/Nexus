@@ -13,6 +13,7 @@ public enum MechanicType {
 	CAPTURE_THE_FLAG(new CaptureTheFlag()),
 	DEATH_SWAP(new DeathSwap()),
 	DOGFIGHTING(new Dogfighting()),
+	FALLING_BLOCKS(new FallingBlocks()),
 	FOUR_TEAM_DEATHMATCH(new FourTeamDeathmatch()),
 	FREE_FOR_ALL(new FreeForAll()),
 	GOLD_RUSH(new GoldRush()),

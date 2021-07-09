@@ -43,7 +43,11 @@ public class MinigamerDeathEvent extends MinigamerEvent implements Cancellable {
 	}
 
 	public void broadcastDeathMessage() {
-		if (deathMessage == null) return;
+		if (minigamer.getMatch() == null)
+			return;
+		if (deathMessage == null)
+			return;
+
 		if (deathMessage.isEmpty()) {
 			boolean showTeam = minigamer.getMatch().getMechanic().showTeamOnDeath();
 			String victimName = showTeam ? minigamer.getColoredName() : "&3" + minigamer.getNickname();

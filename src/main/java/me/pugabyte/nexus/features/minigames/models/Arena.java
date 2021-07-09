@@ -219,11 +219,15 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + NUMBER_MODIFIER + "$";
 	}
 
-	public boolean ownsRegion(@NotNull ProtectedRegion region, @NotNull String type) {
+	public boolean ownsRegion(@NotNull ProtectedRegion region) {
+		return ownsRegion(region.getId(), null);
+	}
+
+	public boolean ownsRegion(@NotNull ProtectedRegion region, @Nullable String type) {
 		return ownsRegion(region.getId(), type);
 	}
 
-	public boolean ownsRegion(@NotNull String regionName, @NotNull String type) {
+	public boolean ownsRegion(@NotNull String regionName, @Nullable String type) {
 		return regionName.toLowerCase().matches(getRegionTypeRegex(type));
 	}
 
