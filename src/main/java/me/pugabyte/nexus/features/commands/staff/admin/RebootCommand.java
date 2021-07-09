@@ -66,7 +66,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
 			for (Player player : PlayerUtils.getOnlinePlayers())
-				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about 60 seconds\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
+				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about 60 seconds\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
 			BashCommand.execute("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
 		});
 	}
