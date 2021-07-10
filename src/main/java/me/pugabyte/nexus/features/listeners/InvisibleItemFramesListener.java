@@ -1,18 +1,27 @@
 package me.pugabyte.nexus.features.listeners;
 
+import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +54,51 @@ public class InvisibleItemFramesListener implements Listener {
 			} else
 				itemFrame.setVisible(false);
 		}
+	}
+
+	@EventHandler
+	public void onDye(PlayerInteractEntityEvent event) {
+		Entity entity = event.getRightClicked();
+		final Player player = event.getPlayer();
+
+		if (player.isSneaking())
+			return;
+
+		if (!Rank.of(player).isStaff())
+			return;
+
+		if (entity.getType() != EntityType.ITEM_FRAME)
+			return;
+
+		if (!entity.isGlowing())
+			return;
+
+		ItemStack dye = player.getInventory().getItem(event.getHand());
+
+		if (dye == null || !MaterialTag.DYES.isTagged(dye.getType()))
+			return;
+
+		final ColorType color = ColorType.of(dye.getType());
+
+		if (color == null)
+			return;
+
+		DyeColor dyeColor = color.getDyeColor();
+
+		if (dyeColor == null)
+			return;
+
+		event.setCancelled(true);
+
+		final Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+		final String teamId = "ifc-" + dyeColor.name().toLowerCase();
+
+		Team team = scoreboard.getTeam(teamId);
+		if (team == null)
+			team = scoreboard.registerNewTeam(teamId);
+
+		team.color(color.getNamedColor());
+		team.addEntry(entity.getUniqueId().toString());
 	}
 
 }
