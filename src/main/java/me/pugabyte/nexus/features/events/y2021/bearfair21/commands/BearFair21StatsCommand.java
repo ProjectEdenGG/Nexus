@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21.commands;
 
+import eden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
@@ -15,6 +16,7 @@ import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
 import me.pugabyte.nexus.models.eventuser.EventUser;
 import me.pugabyte.nexus.models.eventuser.EventUserService;
 import me.pugabyte.nexus.utils.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Aliases("bf21stats")
 public class BearFair21StatsCommand extends CustomCommand {
@@ -42,30 +45,35 @@ public class BearFair21StatsCommand extends CustomCommand {
 		// % of people who logged in that visited bf
 		// % of playtime per world during bf
 
-		send("Unique visitors: " + users.stream().filter(bearFair21User -> !bearFair21User.isFirstVisit()).toList().size());
+		send("&6&lUnique visitors: &e" + users.stream().filter(bearFair21User -> !bearFair21User.isFirstVisit()).count());
 
-		send("Event Participation:");
+		line();
+		send("&6&lQuest Stages");
+		send(json("- Main").hover(getQuestStages(users, BearFair21UserQuestStageHelper.MAIN)));
+		send(json("  - LumberJack").hover(getQuestStages(users, BearFair21UserQuestStageHelper.LUMBERJACK)));
+		send(json("  - BeeKeeper").hover(getQuestStages(users, BearFair21UserQuestStageHelper.BEEKEEPER)));
+		send(json("  - Recycler").hover(getQuestStages(users, BearFair21UserQuestStageHelper.RECYCLER)));
+		send(json("- Minigame Night").hover(getQuestStages(users, BearFair21UserQuestStageHelper.MINIGAME_NIGHT)));
+		send(json("- Pugmas").hover(getQuestStages(users, BearFair21UserQuestStageHelper.PUGMAS)));
+		send(json("- Halloween").hover(getQuestStages(users, BearFair21UserQuestStageHelper.HALLOWEEN)));
+		send(json("- Summer Down Under").hover(getQuestStages(users, BearFair21UserQuestStageHelper.SUMMER_DOWN_UNDER)));
+
+		line();
+		send("&6&lEvent Participation");
 		for (String event : eventParticipation.keySet())
-			send(" - " + event + ":" + eventParticipation.get(event).size());
+			send(" - " + event + ": " + eventParticipation.get(event).size());
 
-		send("Daily Points:");
-		send(json(" - [Day 1]").hover(getCompletedSources(eventUsers, Day.MON)));
-		send(json(" - [Day 2]").hover(getCompletedSources(eventUsers, Day.TUE)));
-		send(json(" - [Day 3]").hover(getCompletedSources(eventUsers, Day.WED)));
-		send(json(" - [Day 4]").hover(getCompletedSources(eventUsers, Day.THU)));
-		send(json(" - [Day 5]").hover(getCompletedSources(eventUsers, Day.FRI)));
-		send(json(" - [Day 6]").hover(getCompletedSources(eventUsers, Day.SAT)));
-		send(json(" - [Day 7]").hover(getCompletedSources(eventUsers, Day.SUN)));
+		line();
+		send("&6&lDaily Points");
+		for (Day day : Day.values())
+			send(json(" - Day " + (day.ordinal() + 1)).hover(getCompletedSources(eventUsers, day)));
 
-		send("Quest Stages:");
-		send(json("- [Main]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.MAIN)));
-		send(json("  - [LumberJack]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.LUMBERJACK)));
-		send(json("  - [BeeKeeper]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.BEEKEEPER)));
-		send(json("  - [Recycler]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.RECYCLER)));
-		send(json("- [Minigame Night]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.MINIGAME_NIGHT)));
-		send(json("- [Pugmas]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.PUGMAS)));
-		send(json("- [Halloween]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.HALLOWEEN)));
-		send(json("- [Summer Down Under]").hover(getQuestStages(users, BearFair21UserQuestStageHelper.SUMMER_DOWN_UNDER)));
+		line();
+		send("&6&lTreasure Chests");
+		Map<Integer, Integer> data = getTreasureChestData(users);
+		send(json("- Found all: " + data.get(20)));
+		send(json("- Found some: " + getFoundSomeTreasureChests(data)).hover(getTreasureChestStats(data)));
+		send(json("- Found none: " + data.get(0)));
 	}
 
 	private List<String> getQuestStages(List<BearFair21User> users, BearFair21UserQuestStageHelper quest) {
@@ -112,6 +120,7 @@ public class BearFair21StatsCommand extends CustomCommand {
 		return lines;
 	}
 
+	@Getter
 	@AllArgsConstructor
 	private enum Day {
 		MON(LocalDate.of(2021, 6, 28)),
@@ -120,10 +129,36 @@ public class BearFair21StatsCommand extends CustomCommand {
 		THU(LocalDate.of(2021, 7, 1)),
 		FRI(LocalDate.of(2021, 7, 2)),
 		SAT(LocalDate.of(2021, 7, 3)),
-		SUN(LocalDate.of(2021, 7, 4));
+		SUN(LocalDate.of(2021, 7, 4)),
+		;
 
-		@Getter
-		LocalDate localDate;
+		private final LocalDate localDate;
+	}
+
+	private List<String> getTreasureChestStats(Map<Integer, Integer> data) {
+		return new ArrayList<>() {{
+			Utils.sortByKeyReverse(data).forEach((found, count) -> {
+				if (found != 0 && found != 20)
+					add(found + ": " + count);
+			});
+		}};
+	}
+
+	public int getFoundSomeTreasureChests(Map<Integer, Integer> data) {
+		AtomicInteger amount = new AtomicInteger();
+		data.forEach((found, count) -> {
+			if (found != 0 && found != 20)
+				amount.addAndGet(count);
+		});
+		return amount.intValue();
+	}
+
+	@NotNull
+	private Map<Integer, Integer> getTreasureChestData(List<BearFair21User> users) {
+		return new HashMap<>() {{
+			for (BearFair21User user : users)
+				put(user.getTreasureChests().size(), getOrDefault(user.getTreasureChests().size(), 0) + 1);
+		}};
 	}
 
 	private static final Map<String, List<String>> eventParticipation = new HashMap<>() {{
