@@ -1,13 +1,14 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import eden.utils.TimeUtils.Timespan;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import org.bukkit.WeatherType;
 import org.bukkit.World;
 
 @Permission("group.seniorstaff")
@@ -20,17 +21,33 @@ public class WeatherCommand extends CustomCommand {
 	}
 
 	@Path("<type> [duration]")
-	void run(WeatherType weatherType, int duration) {
+	void run(FixedWeatherType weatherType, int duration) {
 		run(world(), weatherType, duration);
 	}
 
 	@Path("<world> <type> [duration]")
-	void run(World world, WeatherType weatherType, int duration) {
-		world.setStorm(weatherType == WeatherType.DOWNFALL);
+	void run(World world, FixedWeatherType weatherType, int duration) {
+		weatherType.apply(world);
 		if (duration > 0)
 			world.setWeatherDuration(duration);
 
 		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + Timespan.of(duration).format() : ""));
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum FixedWeatherType {
+		CLEAR(false, false),
+		RAIN(true, false),
+		STORM(true, true);
+
+		private final boolean rain;
+		private final boolean thunder;
+
+		public void apply(World world) {
+			world.setStorm(rain);
+			world.setThundering(thunder);
+		}
 	}
 
 }
