@@ -162,7 +162,7 @@ public enum FishingLoot {
 	}
 
 	public ItemStack getItem() {
-		return getItemBuilder().build();
+		return getItemBuilder().amount(1).build();
 	}
 
 	public ItemBuilder getItemBuilder() {
