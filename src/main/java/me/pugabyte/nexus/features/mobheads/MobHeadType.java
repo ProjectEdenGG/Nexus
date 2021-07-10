@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.mobheads;
 
 import eden.utils.EnumUtils;
+import eden.utils.Env;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -179,7 +180,17 @@ public enum MobHeadType {
 		return variant == null ? generic : variant.getSkull();
 	}
 
+	public boolean hasVariants() {
+		return getVariant() != null;
+	}
+
+	public List<MobHeadVariant> getVariants() {
+		return List.of(getVariant().getEnumConstants());
+	}
+
 	public interface MobHeadVariant {
+
+		String name();
 
 		EntityType getEntityType();
 
@@ -611,7 +622,7 @@ public enum MobHeadType {
 	}
 
 	static {
-		World world = Bukkit.getWorld("survival");
+		World world = Bukkit.getWorld(Nexus.getEnv() == Env.PROD ? "survival" : "world");
 		WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
 
