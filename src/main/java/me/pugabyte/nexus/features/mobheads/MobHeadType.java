@@ -147,10 +147,6 @@ public enum MobHeadType {
 	@Getter
 	private static final Set<ItemStack> allSkulls = new HashSet<>();
 
-	MobHeadType() {
-		this(null);
-	}
-
 	MobHeadType(EntityType type) {
 		this(type, null, null);
 	}

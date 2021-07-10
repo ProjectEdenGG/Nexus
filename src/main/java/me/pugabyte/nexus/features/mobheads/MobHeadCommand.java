@@ -1,11 +1,8 @@
 package me.pugabyte.nexus.features.mobheads;
 
 import eden.utils.EnumUtils;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.features.mobheads.MobHeadType.MobHeadVariant;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -16,9 +13,6 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import me.pugabyte.nexus.models.mobhead.MobHeadConfig;
-import me.pugabyte.nexus.models.mobhead.MobHeadConfig.MobHeadTypeConfig;
-import me.pugabyte.nexus.models.mobhead.MobHeadConfigService;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
@@ -89,35 +83,6 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 //			if (entity != null && LivingEntity.class.isAssignableFrom(entity) && !types.contains(entityType))
 //				send("Mob Head not found: " + StringUtils.camelCase(entityType));
 //		}
-	}
-
-	@Path("convert")
-	void convert() {
-		final MobHeadConfigService service = new MobHeadConfigService();
-		final MobHeadConfig config = service.get0();
-		for (MobHeadType type : MobHeadType.values()) {
-			final MobHeadTypeConfig typeConfig = config.get(type);
-			typeConfig.setHead(type.getGeneric());
-			typeConfig.setChance(type.getChance());
-			if (type.hasVariants())
-				for (MobHeadVariant variant : type.getVariants())
-					typeConfig.getVariantHeads().put(variant, type.getSkull(variant));
-		}
-		service.save(config);
-	}
-
-	public static class MobHeadMenu extends MenuUtils implements InventoryProvider {
-
-		@Override
-		public void open(Player viewer, int page) {
-			super.open(viewer, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents inventoryContents) {
-
-		}
-
 	}
 
 	private static final List<UUID> handledEntities = new ArrayList<>();
