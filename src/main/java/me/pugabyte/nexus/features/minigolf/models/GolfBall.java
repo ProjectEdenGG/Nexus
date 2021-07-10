@@ -95,6 +95,17 @@ public class GolfBall {
 		if (!isAlive())
 			return;
 
+		// TODO: test with this some more, it actually seemed to fix some issues
+//		Block block = location.getBlock();
+//		if(!BlockUtils.isNullOrAir(block)){
+//			if(MiniGolfUtils.isBottomSlab(block))
+//				if(block.getLocation().getY() + 0.5 + MiniGolf.getFloorOffset() != location.getY())
+//					location.add(0, 0.5, 0);
+//			else if(MiniGolfUtils.isTopSlab(block))
+//				if(block.getLocation().getY() + MiniGolf.getFloorOffset() != location.getY())
+//					location.subtract(0, 0.5, 0);
+//		}
+
 		snowball.teleport(location);
 	}
 

@@ -23,7 +23,15 @@ public class MiniGolfUtils {
 	}
 
 	public static boolean isBottomSlab(Block block) {
-		return Tag.SLABS.isTagged(block.getType()) && ((Slab) block.getBlockData()).getType() == Slab.Type.BOTTOM;
+		return isSlab(block) && ((Slab) block.getBlockData()).getType() == Slab.Type.BOTTOM;
+	}
+
+	public static boolean isTopSlab(Block block) {
+		return isSlab(block) && ((Slab) block.getBlockData()).getType() == Slab.Type.TOP;
+	}
+
+	private static boolean isSlab(Block block) {
+		return Tag.SLABS.isTagged(block.getType());
 	}
 
 	public static Vector getDirection(BlockFace face, double power) {

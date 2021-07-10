@@ -40,7 +40,6 @@ public class InteractListener implements Listener {
 		ItemStack item = event.getItem();
 		if (ItemUtils.isNullOrAir(item)) {
 			user.debug("item is null or air, returning");
-			event.setCancelled(true);
 			return;
 		}
 

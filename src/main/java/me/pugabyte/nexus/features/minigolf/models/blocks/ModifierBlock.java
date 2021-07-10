@@ -42,9 +42,7 @@ public abstract class ModifierBlock {
 			}
 		}
 
-//		golfBall.debug(golfBall.getVelocity() + " --> " + velocity);
 		golfBall.getSnowball().setVelocity(velocity);
-
 	}
 
 	public abstract Set<Material> getMaterials();

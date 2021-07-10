@@ -18,9 +18,19 @@ public class DefaultBlock extends ModifierBlock {
 		Block below = golfBall.getBlockBelow();
 		Location location = golfBall.getLocation();
 
-		// Check if floating above slabs
-		if (MiniGolfUtils.isBottomSlab(below) && location.getY() > below.getY() + 0.5)
+		// Check if floating above slab
+		if (MiniGolfUtils.isBottomSlab(below) && location.getY() > below.getY() + 0.5) {
+			golfBall.getUser().debug("ball is ontop of bottom slab");
 			golfBall.setGravity(true);
+		}
+
+		// Check if floating below slab
+//		if(MiniGolfUtils.isTopSlab(location.getBlock()) && location.getY() >= location.getBlock().getY() + 0.5) {
+//			golfBall.getUser().debug("ball is inside of top slab");
+//			golfBall.teleport(golfBall.getLocation().subtract(0, 0.05, 0));
+//			golfBall.setGravity(true);
+//		}
+
 
 		if (golfBall.getLocation().getY() < 0) {
 			golfBall.getUser().debug("ball is in void, respawning...");

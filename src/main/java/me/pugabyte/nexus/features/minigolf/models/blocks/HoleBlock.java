@@ -9,6 +9,7 @@ import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Snowball;
 import org.bukkit.util.Vector;
 
@@ -54,6 +55,14 @@ public class HoleBlock extends ModifierBlock {
 		// Reset Variables
 		golfBall.setHoleRegion(null);
 		golfBall.setStrokes(0);
+	}
+
+	@Override
+	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
+		if (blockFace.equals(BlockFace.UP))
+			handleRoll(golfBall);
+
+		super.handleBounce(golfBall, blockFace);
 	}
 
 	@Override
