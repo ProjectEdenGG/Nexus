@@ -24,6 +24,7 @@ import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.punishments.Punishments;
 import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
 import me.pugabyte.nexus.utils.JsonBuilder;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -120,6 +121,8 @@ public class WhoIsCommand extends CustomCommand {
 				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup)).group();
 
 		if (player != null) {
+			json.newline().next("&3Minecraft Version: &e" + PlayerUtils.getPlayerVersion(player));
+
 			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName()).group();
 
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode())).group();

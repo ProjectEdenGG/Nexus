@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import com.google.common.base.Strings;
+import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import eden.utils.Utils.MinMaxResult;
@@ -648,6 +649,28 @@ public class PlayerUtils {
 	 */
 	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
+	}
+
+	// https://wiki.vg/Protocol_version_numbers
+	// TODO Is this available somewhere besides the wiki?
+	private static final Map<Integer, String> versions = Map.of(
+		756, "1.17.1",
+		755, "1.17"
+	);
+
+	public static String getPlayerVersion(Player player) {
+		try {
+			if (Bukkit.getServer().getPluginManager().getPlugin("ViaVersion") == null)
+				return "Unknown (ViaVersion not loaded)";
+
+			final int version = Via.getAPI().getPlayerVersion(player);
+			if (versions.containsKey(version))
+				return versions.get(version);
+			return "Unknown (" + version + ")";
+		} catch (IllegalArgumentException ex) {
+			ex.printStackTrace();
+			return "Unknown (ViaVersion error)";
+		}
 	}
 
 	/**
