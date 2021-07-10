@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.wither.models;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.Title;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import eden.utils.TimeUtils.Time;
 import lombok.Data;
@@ -49,6 +50,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -354,17 +356,23 @@ public abstract class WitherFight implements Listener {
 	@EventHandler
 	public void onKillWither(EntityDeathEvent event) {
 		if (event.getEntityType() != EntityType.WITHER) return;
+
 		Wither wither = (Wither) event.getEntity();
-		if (wither != this.wither) return;
+		if (wither != this.wither) {
+			event.setDroppedExp(0);
+			event.getDrops().clear();
+			return;
+		}
+
 		tasks.forEach(Tasks::cancel);
 		giveItems();
 
 		int partySize = party.size();
 
 		String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
-				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-				" successfully beaten the Wither in " +
-				getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");
+			(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
+			" successfully beaten the Wither in " +
+			getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");
 
 		Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
@@ -476,6 +484,13 @@ public abstract class WitherFight implements Listener {
 	}
 
 	@EventHandler
+	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
+		if (!isInRegion(event.getPlayer().getLocation())) return;
+		event.setRawXpGained(0F);
+		event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onClickEntityWitherBlock(PlayerInteractAtEntityEvent event) {
 		if (!(event.getRightClicked() instanceof ItemFrame)) return;
 		if (!isInRegion(event.getRightClicked().getLocation())) return;
@@ -570,7 +585,7 @@ public abstract class WitherFight implements Listener {
 			}
 
 			public Wither spawnMinion(Location location) {
-				Wither wither = location.getWorld().spawn(location, Wither.class);
+				Wither wither = location.getWorld().spawn(location, Wither.class, SpawnReason.CUSTOM);
 				wither.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(1);
 				wither.setHealth(1);
 				wither.setCustomName("Minion");

@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -27,9 +28,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
-import static me.pugabyte.nexus.utils.EntityUtils.isUnnaturalSpawn;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
@@ -115,16 +116,32 @@ public class MobHeads extends Feature implements Listener {
 				return;
 
 			Optional<ItemStack> skull = MobHeadType.getAllSkulls()
-					.stream()
-					.filter(mobHead -> mobHead.getType().equals(itemType))
-					.findFirst();
+				.stream()
+				.filter(mobHead -> mobHead.getType().equals(itemType))
+				.findFirst();
 
-			if (!skull.isPresent())
+			if (skull.isEmpty())
 				return;
 
 			item.setItemStack(skull.get());
 			item.getItemStack().setAmount(itemStack.getAmount());
 		}
+	}
+
+	private boolean isUnnaturalSpawn(LivingEntity entity) {
+		Set<SpawnReason> spawners = Set.of(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG);
+		EntityType type = entity.getType();
+		SpawnReason reason = entity.getEntitySpawnReason();
+
+		// Special cases
+		if (type.equals(EntityType.CAVE_SPIDER) && spawners.contains(reason))
+			return false;
+		//
+
+		return switch (entity.getEntitySpawnReason()) {
+			case SPAWNER_EGG, SPAWNER, CUSTOM, BUILD_IRONGOLEM, BUILD_WITHER, COMMAND -> true;
+			default -> false;
+		};
 	}
 
 }

@@ -20,6 +20,7 @@ import org.bukkit.entity.Silverfish;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -82,7 +83,7 @@ public class CorruptedFight extends WitherFight {
 
 	@Override
 	public void spawnWither(Location location) {
-		Wither wither = location.getWorld().spawn(location, Wither.class);
+		Wither wither = location.getWorld().spawn(location, Wither.class, SpawnReason.NATURAL);
 		this.wither = wither;
 		AttributeInstance health = wither.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 		health.setBaseValue(health.getValue() * 3);

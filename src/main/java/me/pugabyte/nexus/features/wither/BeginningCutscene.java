@@ -24,6 +24,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -125,7 +126,7 @@ public class BeginningCutscene implements Listener {
 				player.playSound(LIGHTNING_LOCATIONS[11], Sound.ENTITY_WITHER_SPAWN, 1, 1);
 
 			witherSkeleton.remove();
-			Wither witherEntity = cageLoc.getWorld().spawn(cageLoc, Wither.class);
+			Wither witherEntity = cageLoc.getWorld().spawn(cageLoc, Wither.class, SpawnReason.CUSTOM);
 			witherEntity.setAI(false);
 			witherEntity.setGravity(false);
 			witherEntity.getBossBar().setVisible(false);

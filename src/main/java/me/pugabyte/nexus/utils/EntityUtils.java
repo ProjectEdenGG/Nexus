@@ -9,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -95,8 +96,16 @@ public class EntityUtils {
 	}
 
 	public static boolean isUnnaturalSpawn(LivingEntity entity) {
+		EntityType type = entity.getType();
+		SpawnReason reason = entity.getEntitySpawnReason();
+
+		// Special cases
+		if (type.equals(EntityType.CAVE_SPIDER) && reason.equals(SpawnReason.SPAWNER))
+			return false;
+		//
+
 		return switch (entity.getEntitySpawnReason()) {
-			case SPAWNER_EGG, SPAWNER, CUSTOM -> true;
+			case SPAWNER_EGG, SPAWNER, CUSTOM, BUILD_IRONGOLEM, COMMAND -> true;
 			default -> false;
 		};
 	}

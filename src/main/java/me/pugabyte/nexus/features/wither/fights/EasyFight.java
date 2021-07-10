@@ -5,6 +5,7 @@ import me.pugabyte.nexus.features.wither.WitherChallenge;
 import me.pugabyte.nexus.features.wither.models.WitherFight;
 import org.bukkit.Location;
 import org.bukkit.entity.Wither;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class EasyFight extends WitherFight {
 
 	@Override
 	public void spawnWither(Location location) {
-		this.wither = location.getWorld().spawn(location, Wither.class);
+		this.wither = location.getWorld().spawn(location, Wither.class, SpawnReason.NATURAL);
 	}
 
 	@Override
