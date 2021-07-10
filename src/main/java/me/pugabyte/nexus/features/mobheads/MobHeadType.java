@@ -17,11 +17,27 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Llama;
 import org.bukkit.entity.Llama.Color;
+import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.MushroomCow.Variant;
+import org.bukkit.entity.Panda;
 import org.bukkit.entity.Panda.Gene;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.TraderLlama;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.inventory.ItemStack;
 import org.reflections.Reflections;
 
@@ -187,7 +203,6 @@ public enum MobHeadType {
 	@Getter
 	@RequiredArgsConstructor
 	private enum SheepColor implements MobHeadVariant {
-		NONE(null),
 		RED(ColorType.RED),
 		ORANGE(ColorType.ORANGE),
 		YELLOW(ColorType.YELLOW),
@@ -216,14 +231,13 @@ public enum MobHeadType {
 		}
 
 		public static SheepColor of(Sheep sheep) {
-			return Arrays.stream(values()).filter(entry -> ColorType.of(sheep.getColor()) == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> ColorType.of(sheep.getColor()) == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum HorseColor implements MobHeadVariant {
-		NONE(null),
 		WHITE(Horse.Color.WHITE),
 		CREAMY(Horse.Color.CREAMY),
 		CHESTNUT(Horse.Color.CHESTNUT),
@@ -243,14 +257,13 @@ public enum MobHeadType {
 		}
 
 		public static HorseColor of(Horse horse) {
-			return Arrays.stream(values()).filter(entry -> horse.getColor() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> horse.getColor() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum CatType implements MobHeadVariant {
-		NONE(null),
 		BLACK(Cat.Type.BLACK),
 		WHITE(Cat.Type.WHITE),
 		ALL_BLACK(Cat.Type.ALL_BLACK),
@@ -274,14 +287,13 @@ public enum MobHeadType {
 		private ItemStack itemStack;
 
 		public static CatType of(Cat cat) {
-			return Arrays.stream(values()).filter(entry -> cat.getCatType() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> cat.getCatType() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum RabbitType implements MobHeadVariant {
-		NONE(null),
 		BLACK(Rabbit.Type.BLACK),
 		WHITE(Rabbit.Type.WHITE),
 		BROWN(Rabbit.Type.BROWN),
@@ -300,14 +312,13 @@ public enum MobHeadType {
 		}
 
 		public static RabbitType of(Rabbit rabbit) {
-			return Arrays.stream(values()).filter(entry -> rabbit.getRabbitType() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> rabbit.getRabbitType() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum AxolotlVariant implements MobHeadVariant {
-		NONE(null),
 		LUCY(Axolotl.Variant.LUCY),
 		WILD(Axolotl.Variant.WILD),
 		GOLD(Axolotl.Variant.GOLD),
@@ -325,7 +336,7 @@ public enum MobHeadType {
 		}
 
 		public static AxolotlVariant of(Axolotl axolotl) {
-			return Arrays.stream(values()).filter(entry -> axolotl.getVariant() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> axolotl.getVariant() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
@@ -360,7 +371,6 @@ public enum MobHeadType {
 	@Getter
 	@RequiredArgsConstructor
 	private enum ParrotVariant implements MobHeadVariant {
-		NONE(null),
 		BLUE(Parrot.Variant.BLUE),
 		RED(Parrot.Variant.RED),
 		CYAN(Parrot.Variant.CYAN),
@@ -378,14 +388,13 @@ public enum MobHeadType {
 		}
 
 		public static ParrotVariant of(Parrot parrot) {
-			return Arrays.stream(values()).filter(entry -> parrot.getVariant() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> parrot.getVariant() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum FoxType implements MobHeadVariant {
-		NONE(null),
 		RED(Fox.Type.RED),
 		SNOW(Fox.Type.SNOW),
 		;
@@ -400,14 +409,13 @@ public enum MobHeadType {
 		}
 
 		public static FoxType of(Fox fox) {
-			return Arrays.stream(values()).filter(entry -> fox.getFoxType() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> fox.getFoxType() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum CreeperType implements MobHeadVariant {
-		NONE,
 		POWERED,
 		;
 
@@ -420,14 +428,13 @@ public enum MobHeadType {
 		}
 
 		public static CreeperType of(Creeper creeper) {
-			return creeper.isPowered() ? POWERED : NONE;
+			return creeper.isPowered() ? POWERED : null;
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum PandaGene implements MobHeadVariant {
-		NONE(null),
 		BROWN(Gene.BROWN),
 		AGGRESSIVE(Gene.AGGRESSIVE),
 		LAZY(Gene.LAZY),
@@ -447,14 +454,13 @@ public enum MobHeadType {
 		}
 
 		public static PandaGene of(Panda panda) {
-			return Arrays.stream(values()).filter(entry -> panda.getMainGene() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> panda.getMainGene() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum SnowmanType implements MobHeadVariant {
-		NONE,
 		DERP,
 		;
 
@@ -467,15 +473,13 @@ public enum MobHeadType {
 		}
 
 		public static SnowmanType of(Snowman snowman) {
-			return snowman.isDerp() ? DERP : NONE;
+			return snowman.isDerp() ? DERP : null;
 		}
-
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum VillagerProfession implements MobHeadVariant {
-		NONE(null),
 		ARMORER(Profession.ARMORER),
 		BUTCHER(Profession.BUTCHER),
 		CARTOGRAPHER(Profession.CARTOGRAPHER),
@@ -502,14 +506,13 @@ public enum MobHeadType {
 		}
 
 		private static VillagerProfession of(Villager villager) {
-			return Arrays.stream(values()).filter(entry -> villager.getProfession() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> villager.getProfession() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum ZombieVillagerProfession implements MobHeadVariant {
-		NONE(null),
 		ARMORER(Profession.ARMORER),
 		BUTCHER(Profession.BUTCHER),
 		CARTOGRAPHER(Profession.CARTOGRAPHER),
@@ -536,14 +539,13 @@ public enum MobHeadType {
 		}
 
 		public static ZombieVillagerProfession of(ZombieVillager zombieVillager) {
-			return Arrays.stream(values()).filter(entry -> zombieVillager.getVillagerProfession() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> zombieVillager.getVillagerProfession() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum LlamaColor implements MobHeadVariant {
-		NONE(null),
 		GRAY(Color.GRAY),
 		WHITE(Color.WHITE),
 		BROWN(Color.BROWN),
@@ -560,14 +562,13 @@ public enum MobHeadType {
 		}
 
 		private static LlamaColor of(Llama llama) {
-			return Arrays.stream(values()).filter(entry -> llama.getColor() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> llama.getColor() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum TraderLlamaColor implements MobHeadVariant {
-		NONE(null),
 		GRAY(Color.GRAY),
 		WHITE(Color.WHITE),
 		BROWN(Color.BROWN),
@@ -584,14 +585,13 @@ public enum MobHeadType {
 		}
 
 		public static TraderLlamaColor of(TraderLlama traderLlama) {
-			return Arrays.stream(values()).filter(entry -> traderLlama.getColor() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> traderLlama.getColor() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 
 	@Getter
 	@RequiredArgsConstructor
 	private enum MooshroomType implements MobHeadVariant {
-		NONE(null),
 		RED(Variant.RED),
 		BROWN(Variant.BROWN),
 		;
@@ -606,7 +606,7 @@ public enum MobHeadType {
 		}
 
 		public static MooshroomType of(MushroomCow mushroomCow) {
-			return Arrays.stream(values()).filter(entry -> mushroomCow.getVariant() == entry.getType()).findFirst().orElse(NONE);
+			return Arrays.stream(values()).filter(entry -> mushroomCow.getVariant() == entry.getType()).findFirst().orElse(null);
 		}
 	}
 

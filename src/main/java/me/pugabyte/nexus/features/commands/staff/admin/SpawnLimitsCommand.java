@@ -59,6 +59,21 @@ public class SpawnLimitsCommand extends CustomCommand {
 		}
 	}
 
+	@Path("set <type> <value> [world]")
+	void set(SpawnLimitType type, int value, @Arg("current") World world) {
+		final int before = type.getter.apply(world);
+		type.setter.accept(world, value);
+		send(PREFIX + camelCase(type) + " spawn limit set to " + value + getDiff(before, value));
+	}
+
+	@Path("reset <type> [world]")
+	void set(SpawnLimitType type, @Arg("current") World world) {
+		final int before = type.getter.apply(world);
+		final int value = type.getDefaultValue();
+		type.setter.accept(world, value);
+		send(PREFIX + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
+	}
+
 	@NotNull
 	private String getDiff(int before, int after) {
 		String diff = "";
@@ -73,21 +88,6 @@ public class SpawnLimitsCommand extends CustomCommand {
 		diff += "&3)";
 
 		return diff;
-	}
-
-	@Path("set <type> <value> [world]")
-	void set(SpawnLimitType type, int value, @Arg("current") World world) {
-		final int before = type.getter.apply(world);
-		type.setter.accept(world, value);
-		send(PREFIX + camelCase(type) + " spawn limit set to " + value + getDiff(before, value));
-	}
-
-	@Path("reset <type> [world]")
-	void set(SpawnLimitType type, @Arg("current") World world) {
-		final int before = type.getter.apply(world);
-		final int value = type.getDefaultValue();
-		type.setter.accept(world, value);
-		send(PREFIX + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
 	}
 
 }
