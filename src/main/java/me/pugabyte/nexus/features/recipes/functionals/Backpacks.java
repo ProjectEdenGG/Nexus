@@ -212,13 +212,11 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	public static class BackPackMenuListener implements TemporaryListener {
-
-		ItemStack backpack;
-		String backpackId;
+		private final ItemStack backpack;
+		private final String backpackId;
 		@Getter
-		Player player;
-		Inventory inv;
-		ItemStack[] originalItems;
+		private final Player player;
+		private final ItemStack[] originalItems;
 
 		public BackPackMenuListener(Player player, ItemStack backpack) {
 			this.backpack = backpack;
@@ -231,7 +229,6 @@ public class Backpacks extends FunctionalRecipe {
 
 			Inventory inv = Bukkit.createInventory(null, 27, backpack.getItemMeta().getDisplayName());
 			inv.setContents(originalItems);
-			this.inv = inv;
 			player.openInventory(inv);
 			Nexus.registerTemporaryListener(this);
 		}
@@ -240,15 +237,18 @@ public class Backpacks extends FunctionalRecipe {
 			BlockStateMeta blockStateMeta = null;
 			ItemStack[] inv = player.getInventory().getContents();
 			ItemStack itemStack = null;
-			for (int i = 0; i < 36; i++) {
-				ItemStack item = inv[i];
-				if (!isBackpack(item)) continue;
+
+			for (ItemStack item : inv) {
+				if (!isBackpack(item))
+					continue;
+
 				if (new NBTItem(item.clone()).getString("BackpackId").equals(backpackId)) {
 					blockStateMeta = (BlockStateMeta) item.getItemMeta();
 					itemStack = item;
 					break;
 				}
 			}
+
 			if (blockStateMeta == null) {
 				Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
 				Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
