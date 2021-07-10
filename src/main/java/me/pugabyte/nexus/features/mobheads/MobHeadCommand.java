@@ -13,12 +13,14 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
@@ -33,8 +35,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -56,6 +60,12 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		giveItem(mobHeadType.getSkull(variant));
 	}
 
+	@Path("reload")
+	void reload() {
+		MobHeadType.load();
+		send(PREFIX + "Reloaded");
+	}
+
 	@ConverterFor(MobHeadVariant.class)
 	MobHeadVariant convertToMobHeadVariant(String value, MobHeadType context) {
 		if (context.getVariant() == null)
@@ -75,14 +85,33 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		return tabCompleteEnum(filter, (Class<? extends Enum<?>>) context.getVariant());
 	}
 
+	private static final List<EntityType> exclude = List.of(EntityType.ARMOR_STAND, EntityType.GIANT);
+
 	@Path("checkTypes")
 	void checkTypes() {
-//		List<EntityType> types = Arrays.asList(EntityType.values());
-//		for (EntityType entityType : MobHeads.getMobHeads().keySet()) {
-//			Class<? extends Entity> entity = entityType.getEntityClass();
-//			if (entity != null && LivingEntity.class.isAssignableFrom(entity) && !types.contains(entityType))
-//				send("Mob Head not found: " + StringUtils.camelCase(entityType));
-//		}
+		List<EntityType> allEntityTypes = new ArrayList<>(Arrays.asList(EntityType.values()));
+		allEntityTypes.removeIf(entityType -> {
+			if (entityType.getEntityClass() == null)
+				return true;
+			if (!LivingEntity.class.isAssignableFrom(entityType.getEntityClass()))
+				return true;
+			if (exclude.contains(entityType))
+				return true;
+
+			return false;
+		});
+
+		for (MobHeadType mobHeadType : MobHeadType.values())
+			allEntityTypes.remove(mobHeadType.getType());
+
+		if (allEntityTypes.isEmpty()) {
+			send(PREFIX + "All entity types have defined mob heads");
+			return;
+		}
+
+		send(PREFIX + "Missing entity types:");
+		for (EntityType entityType : allEntityTypes)
+			send(" &e" + camelCase(entityType));
 	}
 
 	private static final List<UUID> handledEntities = new ArrayList<>();
@@ -97,14 +126,17 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		if (killer == null) return;
 
 		// TODO: Remove when done
-		if (!Dev.WAKKA.is(killer)) return;
+		if (!(Dev.WAKKA.is(killer) || Dev.GRIFFIN.is(killer))) return;
 		//
 
 		if (WorldGroup.of(killer) != WorldGroup.SURVIVAL) return;
+		if (killer.getGameMode() != GameMode.SURVIVAL) return;
 		if (isUnnaturalSpawn(victim)) return;
 		if (isBaby(victim)) return;
 		if (handledEntities.contains(victim.getUniqueId())) return;
 		handledEntities.add(victim.getUniqueId());
+
+		event.getDrops().removeIf(item -> MaterialTag.SKULLS.isTagged(item.getType()));
 
 		EntityType type = victim.getType();
 		MobHeadType mobHeadType = MobHeadType.of(type);
@@ -116,14 +148,23 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		if (victim instanceof Player)
 			skull = new ItemBuilder(skull).name("&e" + ((Player) victim).getDisplayName() + "'s Head").skullOwner((OfflinePlayer) victim).build();
 
-		if (skull != null && RandomUtils.chanceOf(mobHeadType.getChance()))
+		final double chance = mobHeadType.getChance() + getLooting(killer);
+
+		if (skull != null && RandomUtils.chanceOf(chance))
 			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
 	}
 
+	private int getLooting(Player killer) {
+		int looting = 0;
+		final ItemMeta weapon = killer.getInventory().getItemInMainHand().getItemMeta();
+		if (weapon.hasEnchant(Enchant.LOOTING))
+			looting = weapon.getEnchantLevel(Enchant.LOOTING);
+		return looting;
+	}
+
 	private static boolean isBaby(LivingEntity entity) {
-		if (entity instanceof Ageable ageable) {
+		if (entity instanceof Ageable ageable)
 			return !ageable.isAdult();
-		}
 		return false;
 	}
 
@@ -133,8 +174,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			return;
 
 		// TODO: Remove when done
-		if (!Dev.WAKKA.is(player))
-			return;
+		if (!(Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player))) return;
 		//
 
 		Item item = event.getItem();

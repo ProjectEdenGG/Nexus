@@ -169,7 +169,7 @@ public enum MobHeadType {
 		if (mobHeadType.getConverter() == null)
 			return mobHeadType.getGeneric();
 
-		return mobHeadType.getConverter().apply(entity).getSkull();
+		return mobHeadType.getSkull(mobHeadType.getConverter().apply(entity));
 	}
 
 	public ItemStack getSkull(MobHeadVariant variant) {
@@ -618,6 +618,10 @@ public enum MobHeadType {
 	}
 
 	static {
+		load();
+	}
+
+	static void load() {
 		World world = Bukkit.getWorld(Nexus.getEnv() == Env.PROD ? "survival" : "world");
 		WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
