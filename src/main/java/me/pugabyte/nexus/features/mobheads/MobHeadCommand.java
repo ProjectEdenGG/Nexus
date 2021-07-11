@@ -28,6 +28,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -222,9 +223,16 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		SpawnReason reason = entity.getEntitySpawnReason();
 
 		// Special cases
+		// Cave spiders only spawn from spawners
 		if (type.equals(EntityType.CAVE_SPIDER) && spawners.contains(reason))
 			return false;
+
+		// Only drop heads of slime/magma cube if they are not size 0
+		if (entity instanceof Slime slime)
+			return slime.getSize() == 0;
+
 		//
+
 
 		return switch (entity.getEntitySpawnReason()) {
 			case SPAWNER_EGG, SPAWNER, CUSTOM, BUILD_IRONGOLEM, BUILD_WITHER, COMMAND -> true;
