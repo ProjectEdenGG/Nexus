@@ -281,15 +281,14 @@ public class Backpacks extends FunctionalRecipe {
 
 		@EventHandler
 		public void onInventoryClose(InventoryCloseEvent event) {
-			if (player != event.getPlayer())
+			if (!player.equals(event.getPlayer()))
 				return;
 
 			Nexus.unregisterTemporaryListener(this);
-			ItemStack[] contents = event.getView().getTopInventory().getContents();
-			saveContents(contents);
+			save(event.getView().getTopInventory().getContents());
 		}
 
-		public void saveContents(ItemStack[] contents) {
+		private void save(ItemStack[] contents) {
 			ItemStack[] inv = player.getInventory().getContents();
 			ItemStack backpack = find(inv, item -> isBackpack(item, this.backpackId));
 			BlockStateMeta blockStateMeta = null;
