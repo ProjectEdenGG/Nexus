@@ -18,7 +18,6 @@ import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils.Dev;
-import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -45,6 +44,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static eden.utils.RandomUtils.chanceOf;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
@@ -151,16 +151,16 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 		final double chance = mobHeadType.getChance() + getLooting(killer);
 
-		if (skull != null && RandomUtils.chanceOf(chance))
+		if (skull != null && chanceOf(chance))
 			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
 	}
 
-	private int getLooting(Player killer) {
+	private double getLooting(Player killer) {
 		int looting = 0;
 		final ItemMeta weapon = killer.getInventory().getItemInMainHand().getItemMeta();
 		if (weapon.hasEnchant(Enchant.LOOTING))
 			looting = weapon.getEnchantLevel(Enchant.LOOTING);
-		return looting;
+		return looting / 10d;
 	}
 
 	private static boolean isBaby(LivingEntity entity) {
