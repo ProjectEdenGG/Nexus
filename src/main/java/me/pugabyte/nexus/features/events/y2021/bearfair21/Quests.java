@@ -25,7 +25,6 @@ import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodC
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.Farming;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.RegenCrops;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
-import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.features.regionapi.events.common.EnteringRegionEvent;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
@@ -161,10 +160,6 @@ public class Quests implements Listener {
 				}
 			}
 		});
-	}
-
-	public static ItemStack getBackPack(Player player) {
-		return Backpacks.getBackpack(null, player);
 	}
 
 	public static void pay(BearFair21User user, ItemStack itemStack) {

@@ -155,7 +155,8 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		if (handledEntities.contains(victim.getUniqueId())) return;
 		handledEntities.add(victim.getUniqueId());
 
-		event.getDrops().removeIf(item -> MaterialTag.SKULLS.isTagged(item.getType()));
+		if (victim.getType() == EntityType.WITHER_SKELETON)
+			event.getDrops().removeIf(item -> item.getType() == Material.WITHER_SKELETON_SKULL);
 
 		EntityType type = victim.getType();
 		MobHeadType mobHeadType = MobHeadType.of(type);

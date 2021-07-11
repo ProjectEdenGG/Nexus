@@ -6,11 +6,11 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.events.models.QuestStage;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
-import me.pugabyte.nexus.features.events.y2021.bearfair21.Quests;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import me.pugabyte.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
+import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
 import me.pugabyte.nexus.models.bearfair21.BearFair21User;
 import me.pugabyte.nexus.models.bearfair21.BearFair21UserService;
@@ -171,7 +171,7 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 						.maxUses(1)
-						.result(Quests.getBackPack(user.getPlayer()))
+						.result(Backpacks.getBackpack(null, user.getPlayer()))
 						.ingredient(goldIngot.clone().amount(6)));
 					add(new TradeBuilder()
 						.result(new ItemStack(Material.ELYTRA))
