@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.mobheads;
 import eden.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.mobheads.MobHeadType.MobHeadVariant;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -132,7 +133,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 		if (WorldGroup.of(killer) != WorldGroup.SURVIVAL) return;
 		if (killer.getGameMode() != GameMode.SURVIVAL) return;
-		if (isUnnaturalSpawn(victim)) return;
+		if (shouldIgnore(victim)) return;
 		if (isBaby(victim)) return;
 		if (handledEntities.contains(victim.getUniqueId())) return;
 		handledEntities.add(victim.getUniqueId());
@@ -149,9 +150,16 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		if (victim instanceof Player)
 			skull = new ItemBuilder(skull).name("&e" + ((Player) victim).getDisplayName() + "'s Head").skullOwner((OfflinePlayer) victim).build();
 
-		final double chance = mobHeadType.getChance() + getLooting(killer);
+		double chance = mobHeadType.getChance();
 
-		if (skull != null && chanceOf(chance))
+		if (chance == 0) {
+			Nexus.warn("[MobHeads] Chance for " + camelCase(type) + " head is 0");
+			return;
+		}
+
+		chance += getLooting(killer);
+
+		if (chanceOf(chance))
 			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
 	}
 
@@ -217,14 +225,15 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private boolean isUnnaturalSpawn(LivingEntity entity) {
-		Set<SpawnReason> spawners = Set.of(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG);
+	private static final Set<EntityType> spawnerOnlyMobs = Set.of(EntityType.BLAZE, EntityType.CAVE_SPIDER);
+	private static final Set<SpawnReason> spawnerOnlyMobSpawnReasons = Set.of(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG);
+
+	private boolean shouldIgnore(LivingEntity entity) {
 		EntityType type = entity.getType();
 		SpawnReason reason = entity.getEntitySpawnReason();
 
 		// Special cases
-		// Cave spiders only spawn from spawners
-		if (type.equals(EntityType.CAVE_SPIDER) && spawners.contains(reason))
+		if (spawnerOnlyMobs.contains(type) && spawnerOnlyMobSpawnReasons.contains(reason))
 			return false;
 
 		// Only drop heads of slime/magma cube if they are not size 0
