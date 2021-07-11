@@ -14,11 +14,11 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
-import me.pugabyte.nexus.utils.PlayerUtils.Dev;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -124,15 +124,15 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			return;
 
 		LivingEntity victim = event.getEntity();
-		Player killer = victim.getKiller();
-		if (killer == null) return;
+		Player player = victim.getKiller();
+		if (player == null) return;
 
 		// TODO: Remove when done
-		if (!(Dev.WAKKA.is(killer) || Dev.GRIFFIN.is(killer))) return;
+		if (!Rank.of(player).isStaff()) return;
 		//
 
-		if (WorldGroup.of(killer) != WorldGroup.SURVIVAL) return;
-		if (killer.getGameMode() != GameMode.SURVIVAL) return;
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) return;
+		if (player.getGameMode() != GameMode.SURVIVAL) return;
 		if (shouldIgnore(victim)) return;
 		if (isBaby(victim)) return;
 		if (handledEntities.contains(victim.getUniqueId())) return;
@@ -157,10 +157,10 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		chance += getLooting(killer);
+		chance += getLooting(player);
 
 		if (chanceOf(chance))
-			killer.getWorld().dropItemNaturally(victim.getLocation(), skull);
+			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
 	}
 
 	private double getLooting(Player killer) {
@@ -183,7 +183,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			return;
 
 		// TODO: Remove when done
-		if (!(Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player))) return;
+		if (!Rank.of(player).isStaff()) return;
 		//
 
 		Item item = event.getItem();
