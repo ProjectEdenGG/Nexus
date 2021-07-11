@@ -11,6 +11,7 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.SoundBuilder;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
@@ -307,6 +308,7 @@ public class Backpacks extends FunctionalRecipe {
 			backpack.setItemMeta(blockStateMeta);
 
 			player.updateInventory();
+			Tasks.wait(1, player::updateInventory);
 		}
 
 		private void handleError(ItemStack[] contents) {
