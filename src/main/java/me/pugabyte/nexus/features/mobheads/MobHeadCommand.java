@@ -116,6 +116,23 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			send(" &e" + camelCase(entityType));
 	}
 
+	@Path("checkChances")
+	void checkChances() {
+		List<MobHeadType> zeroChance = new ArrayList<>();
+		for (MobHeadType type : MobHeadType.values())
+			if (type.getChance() == 0)
+				zeroChance.add(type);
+
+		if (zeroChance.isEmpty()) {
+			send(PREFIX + "All mobs have a defined chance greater than 0");
+			return;
+		}
+
+		send(PREFIX + "Mobs with 0% chance to drop head:");
+		for (MobHeadType type : zeroChance)
+			send(" &e" + camelCase(type));
+	}
+
 	private static final List<UUID> handledEntities = new ArrayList<>();
 
 	@EventHandler(priority = EventPriority.HIGHEST)

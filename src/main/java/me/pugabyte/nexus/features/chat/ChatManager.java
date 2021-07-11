@@ -113,6 +113,7 @@ public class ChatManager {
 		Nerd nerd = Nerd.of(event.getChatter());
 
 		List<String> hoverLines = new ArrayList<>();
+		hoverLines.add("&3Rank: " + nerd.getRank().getColoredName());
 		if (nerd.hasNickname())
 			hoverLines.add("&3Real name: &e" + nerd.getName());
 		if (!nerd.getPronouns().isEmpty())
