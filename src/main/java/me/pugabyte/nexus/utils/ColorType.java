@@ -191,7 +191,8 @@ public enum ColorType implements IsColored {
 	private final @NotNull DyeColor similarDyeColor;
 	private final @Nullable GlowAPI.Color glowColor;
 
-	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor, NamedTextColor namedColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
+	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor,
+			  NamedTextColor namedColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
 		this(name, bukkitColor, chatColor, bukkitChatColor, namedColor, dyeColor, dyeColor, glowColor);
 	}
 
@@ -393,6 +394,16 @@ public enum ColorType implements IsColored {
 	@NotNull
 	public static Material getShulkerBox(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_SHULKER_BOX));
+	}
+
+	@NotNull
+	public Material getCandle() {
+		return getShulkerBox(this);
+	}
+
+	@NotNull
+	public static Material getCandle(@NotNull ColorType colorType) {
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.CANDLE));
 	}
 
 	@NotNull

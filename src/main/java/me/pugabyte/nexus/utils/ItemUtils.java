@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
@@ -294,6 +295,17 @@ public class ItemUtils {
 
 	public static ItemStack getItem(Block block) {
 		return block.getDrops().iterator().next();
+	}
+
+	public static ItemStack find(ItemStack[] items, Predicate<ItemStack> predicate) {
+		return find(List.of(items), predicate);
+	}
+
+	public static ItemStack find(List<ItemStack> items, Predicate<ItemStack> predicate) {
+		for (ItemStack item : items)
+			if (predicate.test(item))
+				return item;
+		return null;
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {

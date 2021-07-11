@@ -14,11 +14,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -173,4 +175,12 @@ public class NexusRecipe {
 	private static String getItemName(ItemStack result) {
 		return StringUtils.stripColor(ItemUtils.getName(result).replaceAll(" ", "_").trim().toLowerCase());
 	}
+
+	@NotNull
+	protected List<ItemStack> getFilteredMatrix(PrepareItemCraftEvent event) {
+		List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix().clone()));
+		matrix.removeIf(ItemUtils::isNullOrAir);
+		return matrix;
+	}
+
 }

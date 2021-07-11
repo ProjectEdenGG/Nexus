@@ -7,12 +7,12 @@ import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
 import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
-import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
-import me.pugabyte.nexus.utils.StringUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Utils.ActionGroup;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -40,9 +40,11 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static eden.utils.StringUtils.isNullOrEmpty;
+import static eden.utils.StringUtils.paste;
+import static me.pugabyte.nexus.utils.ItemUtils.find;
+import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.MaterialTag.DYES;
 
 public class Backpacks extends FunctionalRecipe {
@@ -77,12 +79,12 @@ public class Backpacks extends FunctionalRecipe {
 
 	@Override
 	public List<ItemStack> getIngredients() {
-		return new ArrayList<>() {{
-			add(new ItemStack(Material.LEATHER));
-			add(new ItemStack(Material.TRIPWIRE_HOOK));
-			add(new ItemStack(Material.SHULKER_SHELL));
-			add(new ItemStack(Material.CHEST));
-		}};
+		return new ArrayList<>(List.of(
+			new ItemStack(Material.LEATHER),
+			new ItemStack(Material.TRIPWIRE_HOOK),
+			new ItemStack(Material.SHULKER_SHELL),
+			new ItemStack(Material.CHEST)
+		));
 	}
 
 	@Override
@@ -95,20 +97,23 @@ public class Backpacks extends FunctionalRecipe {
 		return null;
 	}
 
-	public static String getRandomBackPackId() {
-		return RandomStringUtils.randomAlphabetic(10);
-	}
-
 	public static boolean isBackpack(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return false;
 
-		return !isNullOrEmpty(new NBTItem(item.clone()).getString("BackpackId"));
+		return !isNullOrEmpty(new NBTItem(item).getString("BackpackId"));
+	}
+
+	public static boolean isBackpack(ItemStack item, String id) {
+		if (!isBackpack(item))
+			return false;
+
+		return new NBTItem(item).getString("BackpackId").equals(id);
 	}
 
 	public void openBackpack(Player player, ItemStack backpack) {
-		player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, .3f, 1f);
-		new BackPackMenuListener(player, backpack);
+		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).location(player).volume(.3f).play();
+		new BackpackMenu(player, backpack);
 	}
 
 	@EventHandler
@@ -122,15 +127,17 @@ public class Backpacks extends FunctionalRecipe {
 		if (!(event.getClickedInventory() instanceof PlayerInventory))
 			return;
 
+		if (!(event.getWhoClicked() instanceof Player player))
+			return;
+
 		event.setCancelled(true);
-		event.getWhoClicked().closeInventory();
-		openBackpack((Player) event.getWhoClicked(), event.getCurrentItem());
+		player.closeInventory();
+		openBackpack(player, event.getCurrentItem());
 	}
 
 	@EventHandler
 	public void onColorBackpackPrepareCraft(PrepareItemCraftEvent event) {
-		List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix().clone()));
-		matrix.removeIf(ItemUtils::isNullOrAir);
+		List<ItemStack> matrix = getFilteredMatrix(event);
 
 		if (matrix.size() != 2)
 			return;
@@ -145,21 +152,18 @@ public class Backpacks extends FunctionalRecipe {
 		if (color == null)
 			return;
 
+		Component displayName = Component.text("Backpack").color(color.getNamedColor());
+		if (backpack.getItemMeta().hasDisplayName())
+			displayName = backpack.getItemMeta().displayName();
+
 		ItemStack newBackpack = new ItemBuilder(backpack.clone())
-			.material(Material.valueOf(color.name() + "_SHULKER_BOX"))
-			.name(backpack.getItemMeta().hasDisplayName() ? backpack.getItemMeta().getDisplayName() : color.getChatColor() + "Backpack")
+			.material(color.getShulkerBox())
+			.name(displayName)
 			.build();
 
 		copyContents(backpack, newBackpack);
 
 		event.getInventory().setResult(newBackpack);
-	}
-
-	private ItemStack find(List<ItemStack> items, Predicate<ItemStack> predicate) {
-		for (ItemStack item : items)
-			if (predicate.test(item))
-				return item;
-		return null;
 	}
 
 	private void copyContents(ItemStack oldBackpack, ItemStack newBackpack) {
@@ -197,7 +201,7 @@ public class Backpacks extends FunctionalRecipe {
 			backpack = defaultBackpack.clone();
 
 		NBTItem nbtItem = new NBTItem(backpack);
-		nbtItem.setString("BackpackId", getRandomBackPackId());
+		nbtItem.setString("BackpackId", RandomStringUtils.randomAlphabetic(10));
 		nbtItem.setString("BackpackOwner", player.getUniqueId().toString());
 		return nbtItem.getItem();
 	}
@@ -205,9 +209,6 @@ public class Backpacks extends FunctionalRecipe {
 	@EventHandler
 	public void onPlaceBackpack(PlayerInteractEvent event) {
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
-			return;
-
-		if (ItemUtils.isNullOrAir(event.getItem()))
 			return;
 
 		if (!isBackpack(event.getItem()))
@@ -219,23 +220,22 @@ public class Backpacks extends FunctionalRecipe {
 
 	@EventHandler
 	public void onDispenserPlaceBackpack(BlockDispenseEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem()))
-			return;
 		if (!isBackpack(event.getItem()))
 			return;
+
 		event.setCancelled(true);
 	}
 
-	public static class BackPackMenuListener implements TemporaryListener {
-		private final ItemStack backpack;
-		private final String backpackId;
+	public static class BackpackMenu implements TemporaryListener {
 		@Getter
 		private final Player player;
+		private final ItemStack backpack;
+		private final String backpackId;
 		private final ItemStack[] originalItems;
 
-		public BackPackMenuListener(Player player, ItemStack backpack) {
-			this.backpack = backpack;
+		public BackpackMenu(Player player, ItemStack backpack) {
 			this.player = player;
+			this.backpack = backpack;
 			this.backpackId = new NBTItem(backpack.clone()).getString("BackpackId");
 
 			BlockStateMeta blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
@@ -246,39 +246,6 @@ public class Backpacks extends FunctionalRecipe {
 			inv.setContents(originalItems);
 			player.openInventory(inv);
 			Nexus.registerTemporaryListener(this);
-		}
-
-		public void saveContents(ItemStack[] contents) {
-			BlockStateMeta blockStateMeta = null;
-			ItemStack[] inv = player.getInventory().getContents();
-			ItemStack itemStack = null;
-
-			for (ItemStack item : inv) {
-				if (!isBackpack(item))
-					continue;
-
-				if (new NBTItem(item.clone()).getString("BackpackId").equals(backpackId)) {
-					blockStateMeta = (BlockStateMeta) item.getItemMeta();
-					itemStack = item;
-					break;
-				}
-			}
-
-			if (blockStateMeta == null) {
-				Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
-				Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
-				Nexus.warn("Old Contents: " + StringUtils.paste(JSON.toString(JSON.serialize(Arrays.asList(originalItems)))));
-				Nexus.warn("New Contents: " + StringUtils.paste(JSON.toString(JSON.serialize(Arrays.asList(contents)))));
-				PlayerUtils.send(player,"&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
-				return;
-			}
-
-			ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
-			shulkerBox.getInventory().setContents(contents);
-			blockStateMeta.setBlockState(shulkerBox);
-			itemStack.setItemMeta(blockStateMeta);
-
-			player.updateInventory();
 		}
 
 		@EventHandler
@@ -295,7 +262,7 @@ public class Backpacks extends FunctionalRecipe {
 
 		// Cancel Moving Shulker Boxes While backpack is open
 		@EventHandler
-		public void onClickBackPack(InventoryClickEvent event) {
+		public void onClickBackpack(InventoryClickEvent event) {
 			if (player != event.getWhoClicked())
 				return;
 
@@ -321,6 +288,36 @@ public class Backpacks extends FunctionalRecipe {
 			ItemStack[] contents = event.getView().getTopInventory().getContents();
 			saveContents(contents);
 		}
+
+		public void saveContents(ItemStack[] contents) {
+			ItemStack[] inv = player.getInventory().getContents();
+			ItemStack backpack = find(inv, item -> isBackpack(item, this.backpackId));
+			BlockStateMeta blockStateMeta = null;
+
+			if (backpack != null)
+				blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
+
+			if (blockStateMeta == null) {
+				handleError(contents);
+				return;
+			}
+
+			ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
+			shulkerBox.getInventory().setContents(contents);
+			blockStateMeta.setBlockState(shulkerBox);
+			backpack.setItemMeta(blockStateMeta);
+
+			player.updateInventory();
+		}
+
+		private void handleError(ItemStack[] contents) {
+			Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
+			Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
+			Nexus.warn("Old Contents: " + paste(JSON.toString(JSON.serialize(Arrays.asList(originalItems)))));
+			Nexus.warn("New Contents: " + paste(JSON.toString(JSON.serialize(Arrays.asList(contents)))));
+			PlayerUtils.send(player, "&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
+		}
+
 	}
 
 }
