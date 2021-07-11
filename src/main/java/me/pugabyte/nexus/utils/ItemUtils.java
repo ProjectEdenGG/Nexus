@@ -298,7 +298,7 @@ public class ItemUtils {
 	}
 
 	public static ItemStack find(ItemStack[] items, Predicate<ItemStack> predicate) {
-		return find(List.of(items), predicate);
+		return find(Arrays.asList(items), predicate);
 	}
 
 	public static ItemStack find(List<ItemStack> items, Predicate<ItemStack> predicate) {
