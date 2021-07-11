@@ -171,7 +171,7 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 						.maxUses(1)
-						.result(Backpacks.getBackpack(null, user.getPlayer()))
+						.result(Backpacks.getBackpack(user.getPlayer()))
 						.ingredient(goldIngot.clone().amount(6)));
 					add(new TradeBuilder()
 						.result(new ItemStack(Material.ELYTRA))

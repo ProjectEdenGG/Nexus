@@ -1,18 +1,18 @@
 package me.pugabyte.nexus.features.recipes.functionals;
 
-import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
+import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.SerializationUtils;
+import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Utils;
+import me.pugabyte.nexus.utils.Utils.ActionGroup;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -33,18 +33,25 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+
+import static eden.utils.StringUtils.isNullOrEmpty;
+import static me.pugabyte.nexus.utils.MaterialTag.DYES;
 
 public class Backpacks extends FunctionalRecipe {
 
 	@Getter
-	public static ItemStack defaultBackpack = new ItemBuilder(Material.SHULKER_BOX).name("&rBackpack").customModelData(1).build();
+	public static ItemStack defaultBackpack = new ItemBuilder(Material.SHULKER_BOX)
+		.name("Backpack")
+		.customModelData(1)
+		.build();
 
 	@Override
 	public String getPermission() {
@@ -84,7 +91,7 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	@Override
-	public RecipeChoice.MaterialChoice getMaterialChoice() {
+	public MaterialChoice getMaterialChoice() {
 		return null;
 	}
 
@@ -93,9 +100,10 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	public static boolean isBackpack(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item)) return false;
-		NBTItem nbtItem = new NBTItem(item.clone());
-		return !Strings.isNullOrEmpty(nbtItem.getString("BackpackId"));
+		if (ItemUtils.isNullOrAir(item))
+			return false;
+
+		return !isNullOrEmpty(new NBTItem(item.clone()).getString("BackpackId"));
 	}
 
 	public void openBackpack(Player player, ItemStack backpack) {
@@ -105,9 +113,15 @@ public class Backpacks extends FunctionalRecipe {
 
 	@EventHandler
 	public void onClickBackpack(InventoryClickEvent event) {
-		if (!isBackpack(event.getCurrentItem())) return;
-		if (!event.getClick().isRightClick()) return;
-		if (!(event.getClickedInventory() instanceof PlayerInventory)) return;
+		if (!isBackpack(event.getCurrentItem()))
+			return;
+
+		if (!event.getClick().isRightClick())
+			return;
+
+		if (!(event.getClickedInventory() instanceof PlayerInventory))
+			return;
+
 		event.setCancelled(true);
 		event.getWhoClicked().closeInventory();
 		openBackpack((Player) event.getWhoClicked(), event.getCurrentItem());
@@ -115,43 +129,70 @@ public class Backpacks extends FunctionalRecipe {
 
 	@EventHandler
 	public void onColorBackpackPrepareCraft(PrepareItemCraftEvent event) {
-		ItemStack[] matrix = event.getInventory().getMatrix();
-		List<ItemStack> matrixList = new ArrayList<>(Arrays.asList(matrix.clone()));
-		matrixList.removeIf(ItemUtils::isNullOrAir);
-		if (matrixList.size() != 2) return;
-		ItemStack backpack;
-		ItemStack dye;
-		if (isBackpack(matrixList.get(0)) && MaterialTag.DYES.isTagged(matrixList.get(1).getType())) {
-			backpack = matrixList.get(0);
-			dye = matrixList.get(1);
-		} else if (isBackpack(matrixList.get(1)) && MaterialTag.DYES.isTagged(matrixList.get(0).getType())) {
-			backpack = matrixList.get(1);
-			dye = matrixList.get(0);
-		} else return;
-		BackpackColor color = BackpackColor.fromDye(dye.getType());
-		if (color == null) return;
-		ItemStack newBackpack = new ItemBuilder(backpack.clone()).material(Material.valueOf(color.name() + "_SHULKER_BOX")).name("&" + color.getColorCode() + "Backpack").build();
-		// Copy Contents
-		BlockStateMeta oldMeta = (BlockStateMeta) backpack.getItemMeta();
+		List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix().clone()));
+		matrix.removeIf(ItemUtils::isNullOrAir);
+
+		if (matrix.size() != 2)
+			return;
+
+		ItemStack dye = find(matrix, DYES::isTagged);
+		ItemStack backpack = find(matrix, Backpacks::isBackpack);
+
+		if (backpack == null || dye == null)
+			return;
+
+		final ColorType color = ColorType.of(dye.getType());
+		if (color == null)
+			return;
+
+		ItemStack newBackpack = new ItemBuilder(backpack.clone())
+			.material(Material.valueOf(color.name() + "_SHULKER_BOX"))
+			.name(backpack.getItemMeta().hasDisplayName() ? backpack.getItemMeta().getDisplayName() : color.getChatColor() + "Backpack")
+			.build();
+
+		copyContents(backpack, newBackpack);
+
+		event.getInventory().setResult(newBackpack);
+	}
+
+	private ItemStack find(List<ItemStack> items, Predicate<ItemStack> predicate) {
+		for (ItemStack item : items)
+			if (predicate.test(item))
+				return item;
+		return null;
+	}
+
+	private void copyContents(ItemStack oldBackpack, ItemStack newBackpack) {
+		BlockStateMeta oldMeta = (BlockStateMeta) oldBackpack.getItemMeta();
 		BlockStateMeta newMeta = (BlockStateMeta) newBackpack.getItemMeta();
 		ShulkerBox oldBox = (ShulkerBox) oldMeta.getBlockState();
 		ShulkerBox newBox = (ShulkerBox) newMeta.getBlockState();
 		newBox.getInventory().setContents(oldBox.getInventory().getContents());
 		newMeta.setBlockState(newBox);
 		newBackpack.setItemMeta(newMeta);
-
-		event.getInventory().setResult(newBackpack);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onCraftBackpack(PrepareItemCraftEvent event) {
-		if (event.getRecipe() == null) return;
-		if (event.getInventory().getResult() == null) return;
-		if (!event.getInventory().getResult().equals(getDefaultBackpack())) return;
-		event.getInventory().setResult(getBackpack(event.getInventory().getResult().clone(), (Player) event.getView().getPlayer()));
+		if (event.getRecipe() == null)
+			return;
+
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
+
+		final ItemStack result = event.getInventory().getResult();
+		if (!getDefaultBackpack().equals(result))
+			return;
+
+		final ItemStack backpack = getBackpack(player, result.clone());
+		event.getInventory().setResult(backpack);
 	}
 
-	public static ItemStack getBackpack(ItemStack backpack, Player player) {
+	public static ItemStack getBackpack(Player player) {
+		return getBackpack(player, null);
+	}
+
+	public static ItemStack getBackpack(Player player, ItemStack backpack) {
 		if (backpack == null)
 			backpack = defaultBackpack.clone();
 
@@ -163,52 +204,26 @@ public class Backpacks extends FunctionalRecipe {
 
 	@EventHandler
 	public void onPlaceBackpack(PlayerInteractEvent event) {
-		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
-		if (ItemUtils.isNullOrAir(event.getItem())) return;
-		if (!isBackpack(event.getItem())) return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
+			return;
+
+		if (ItemUtils.isNullOrAir(event.getItem()))
+			return;
+
+		if (!isBackpack(event.getItem()))
+			return;
+
 		event.setCancelled(true);
 		openBackpack(event.getPlayer(), event.getItem());
 	}
 
 	@EventHandler
 	public void onDispenserPlaceBackpack(BlockDispenseEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem())) return;
-		if (!isBackpack(event.getItem())) return;
+		if (ItemUtils.isNullOrAir(event.getItem()))
+			return;
+		if (!isBackpack(event.getItem()))
+			return;
 		event.setCancelled(true);
-	}
-
-	public enum BackpackColor {
-		WHITE('r'),
-		ORANGE('6'),
-		MAGENTA('d'),
-		LIGHT_BLUE('b'),
-		YELLOW('e'),
-		LIME('a'),
-		PINK('d'),
-		GRAY('8'),
-		LIGHT_GRAY('7'),
-		CYAN('3'),
-		PURPLE('5'),
-		BLUE('9'),
-		BROWN('6'),
-		GREEN('2'),
-		RED('c'),
-		BLACK('0');
-
-		@Getter
-		char colorCode;
-
-		BackpackColor(char colorCode) {
-			this.colorCode = colorCode;
-		}
-
-		static BackpackColor fromDye(Material material) {
-			try {
-				return valueOf(material.name().replace("_DYE", ""));
-			} catch (Exception ig) {
-			}
-			return null;
-		}
 	}
 
 	public static class BackPackMenuListener implements TemporaryListener {
@@ -252,8 +267,8 @@ public class Backpacks extends FunctionalRecipe {
 			if (blockStateMeta == null) {
 				Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
 				Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
-				Nexus.warn("Old Contents: " + StringUtils.paste(SerializationUtils.JSON.toString(SerializationUtils.JSON.serialize(Arrays.asList(originalItems)))));
-				Nexus.warn("New Contents: " + StringUtils.paste(SerializationUtils.JSON.toString(SerializationUtils.JSON.serialize(Arrays.asList(contents)))));
+				Nexus.warn("Old Contents: " + StringUtils.paste(JSON.toString(JSON.serialize(Arrays.asList(originalItems)))));
+				Nexus.warn("New Contents: " + StringUtils.paste(JSON.toString(JSON.serialize(Arrays.asList(contents)))));
 				PlayerUtils.send(player,"&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
 				return;
 			}
@@ -268,8 +283,12 @@ public class Backpacks extends FunctionalRecipe {
 
 		@EventHandler
 		public void onDropBackpack(PlayerDropItemEvent event) {
-			if (player != event.getPlayer()) return;
-			if (!isBackpack(event.getItemDrop().getItemStack())) return;
+			if (player != event.getPlayer())
+				return;
+
+			if (!isBackpack(event.getItemDrop().getItemStack()))
+				return;
+
 			event.setCancelled(true);
 			player.getInventory().setItem(player.getInventory().getHeldItemSlot(), backpack);
 		}
@@ -277,19 +296,27 @@ public class Backpacks extends FunctionalRecipe {
 		// Cancel Moving Shulker Boxes While backpack is open
 		@EventHandler
 		public void onClickBackPack(InventoryClickEvent event) {
-			if (player != event.getWhoClicked()) return;
-			if (event.getClickedInventory() == null) return;
+			if (player != event.getWhoClicked())
+				return;
+
+			if (event.getClickedInventory() == null)
+				return;
+
 			ItemStack item = event.getClickedInventory().getItem(event.getSlot());
 			if (event.getClick() == ClickType.NUMBER_KEY)
 				item = player.getInventory().getContents()[event.getHotbarButton()];
-			if (ItemUtils.isNullOrAir(item)) return;
-			if (!MaterialTag.SHULKER_BOXES.isTagged(item.getType())) return;
+
+			if (!MaterialTag.SHULKER_BOXES.isTagged(item))
+				return;
+
 			event.setCancelled(true);
 		}
 
 		@EventHandler
 		public void onInventoryClose(InventoryCloseEvent event) {
-			if (player != event.getPlayer()) return;
+			if (player != event.getPlayer())
+				return;
+
 			Nexus.unregisterTemporaryListener(this);
 			ItemStack[] contents = event.getView().getTopInventory().getContents();
 			saveContents(contents);

@@ -9,6 +9,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -468,8 +469,8 @@ public class MaterialTag implements Tag<Material> {
 		return materials.contains(material);
 	}
 
-	public boolean isTagged(@NotNull ItemStack item) {
-		return isTagged(item.getType());
+	public boolean isTagged(@Nullable ItemStack item) {
+		return item != null && isTagged(item.getType());
 	}
 
 	public boolean isTagged(@NotNull Block block) {
