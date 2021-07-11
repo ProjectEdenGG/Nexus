@@ -158,7 +158,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	private double getLooting(Player killer) {
 		int looting = 0;
 		final ItemMeta weapon = killer.getInventory().getItemInMainHand().getItemMeta();
-		if (weapon.hasEnchant(Enchant.LOOTING))
+		if (weapon != null && weapon.hasEnchant(Enchant.LOOTING))
 			looting = weapon.getEnchantLevel(Enchant.LOOTING);
 		return looting / 10d;
 	}
