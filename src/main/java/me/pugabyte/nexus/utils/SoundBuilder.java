@@ -3,7 +3,6 @@ package me.pugabyte.nexus.utils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.lexikiq.HasPlayer;
-import me.pugabyte.nexus.features.particles.MathUtils;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Location;
 import org.bukkit.Sound;

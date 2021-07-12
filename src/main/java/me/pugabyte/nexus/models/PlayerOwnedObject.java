@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.models;
 
+import eden.utils.StringUtils;
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayerLike;
 import me.pugabyte.nexus.Nexus;
@@ -9,6 +10,7 @@ import me.pugabyte.nexus.models.mail.Mailer.Mail;
 import me.pugabyte.nexus.models.nerd.Nerd;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.models.nickname.NicknameService;
+import me.pugabyte.nexus.utils.AdventureUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.Name;
 import me.pugabyte.nexus.utils.Tasks;
@@ -120,10 +122,18 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 	}
 
 	default void sendMessage(String message) {
-		sendMessage(json(message));
+		if (StringUtils.isUUID0(getUuid()))
+			Nexus.log(message);
+		else
+			sendMessage(json(message));
 	}
 
 	default void sendOrMail(String message) {
+		if (StringUtils.isUUID0(getUuid())) {
+			Nexus.log(message);
+			return;
+		}
+
 		if (isOnline())
 			sendMessage(json(message));
 		else
@@ -131,19 +141,30 @@ public interface PlayerOwnedObject extends eden.interfaces.PlayerOwnedObject, Op
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {
-		sendMessage(identityOf(sender), component, type);
+		if (StringUtils.isUUID0(getUuid()))
+			Nexus.log(AdventureUtils.asPlainText(component));
+		else
+			sendMessage(identityOf(sender), component, type);
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component) {
-		sendMessage(identityOf(sender), component);
+		if (StringUtils.isUUID0(getUuid()))
+			Nexus.log(AdventureUtils.asPlainText(component));
+		else
+			sendMessage(identityOf(sender), component);
 	}
 
 	default void sendMessage(int delay, String message) {
 		Tasks.wait(delay, () -> sendMessage(message));
 	}
 
-	default void sendMessage(int delay, ComponentLike message) {
-		Tasks.wait(delay, () -> sendMessage(message));
+	default void sendMessage(int delay, ComponentLike component) {
+		Tasks.wait(delay, () -> {
+			if (StringUtils.isUUID0(getUuid()))
+				Nexus.log(AdventureUtils.asPlainText(component));
+			else
+				sendMessage(component);
+		});
 	}
 
 	default JsonBuilder json() {

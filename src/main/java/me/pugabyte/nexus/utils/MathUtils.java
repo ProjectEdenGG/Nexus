@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.particles;
+package me.pugabyte.nexus.utils;
 
 import lombok.experimental.UtilityClass;
 
@@ -215,9 +215,7 @@ public final class MathUtils {
 	static public int clamp(int value, int min, int max) {
 		if (value < min)
 			return min;
-		if (value > max)
-			return max;
-		return value;
+		return Math.min(value, max);
 	}
 
 	static public short clamp(short value, short min, short max) {
@@ -231,9 +229,13 @@ public final class MathUtils {
 	static public float clamp(float value, float min, float max) {
 		if (value < min)
 			return min;
-		if (value > max)
-			return max;
-		return value;
+		return Math.min(value, max);
+	}
+
+	static public double clamp(double value, double min, double max) {
+		if (value < min)
+			return min;
+		return Math.min(value, max);
 	}
 
 	// ---

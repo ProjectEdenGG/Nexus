@@ -15,13 +15,13 @@ public class Events extends Feature {
 
 	@Override
 	public void onStart() {
-		if (Nexus.getEnv().equals(Env.PROD)) {
-			new ArmorStandStalker();
+		if (Nexus.getEnv() == Env.PROD) {
 			new ScavHuntLegacy();
 			new AeveonProject();
 			new Pride21();
 		}
 
+		new ArmorStandStalker();
 		new BearFair21();
 	}
 
