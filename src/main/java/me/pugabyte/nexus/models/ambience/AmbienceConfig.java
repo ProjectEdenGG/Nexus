@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static eden.utils.StringUtils.camelCase;
@@ -113,7 +114,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 		@Getter
 		@AllArgsConstructor
 		public enum AmbienceType {
-			METAL_WINDCHIMES(AmbienceLocationType.ITEM_FRAME, Material.AMETHYST_SHARD, 1) {
+			METAL_WINDCHIMES(AmbienceLocationType.ITEM_FRAME, Material.AMETHYST_SHARD, Set.of(1, 2, 3)) {
 				@Override
 				void play(Location location) {
 					new SoundBuilder("minecraft:custom.windchimes_metal_" + RandomUtils.randomInt(1, 5))
@@ -127,14 +128,14 @@ public class AmbienceConfig implements PlayerOwnedObject {
 
 			private final AmbienceLocationType type;
 			private final Material material;
-			private final int customModelData;
+			private final Set<Integer> customModelDatas;
 
 			abstract void play(Location location);
 
 			public boolean equals(ItemStack itemStack) {
 				if (itemStack.getType() != material)
 					return false;
-				if (new ItemBuilder(itemStack).customModelData() != customModelData)
+				if (!customModelDatas.contains(new ItemBuilder(itemStack).customModelData()))
 					return false;
 
 				return true;
