@@ -41,7 +41,6 @@ import me.pugabyte.nexus.utils.ColorType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.LocationUtils;
-import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
@@ -291,8 +290,7 @@ public class MinigameNightIsland implements BearFair21Island {
 							int wait = 70 + 70 + 80;
 							Tasks.wait(wait, () -> {
 								Quests.giveKey(user);
-								user.sendMessage(StringUtils.getPrefix("Songs") + "You have earned the &eDK Jungle 64 &3song! &c/songs");
-								PermissionChange.set().permission("powder.powder.DK_Jungle_64").player(user).run();
+								Quests.givePermission(user, "powder.powder.DK_Jungle_64", StringUtils.getPrefix("Songs") + "You have earned the &eDK Jungle 64 &3song! &c/songs");
 								Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST);
 
 								user.setQuestStage_MGN(QuestStage.COMPLETE);

@@ -35,6 +35,7 @@ import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.CitizensUtils;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
+import me.pugabyte.nexus.utils.LuckPermsUtils.PermissionChange;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
@@ -304,6 +305,13 @@ public class Quests implements Listener {
 	public static void giveTrophy(BearFair21User user, Trophy trophy) {
 		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
 			trophy.give(user.getPlayer());
+	}
+
+	public static void givePermission(BearFair21User user, String permission, String message) {
+		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS)) {
+			PermissionChange.set().permission(permission).player(user).run();
+			user.sendMessage(message);
+		}
 	}
 
 
