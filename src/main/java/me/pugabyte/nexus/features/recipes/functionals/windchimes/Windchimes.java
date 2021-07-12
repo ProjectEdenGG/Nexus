@@ -1,5 +1,6 @@
-package me.pugabyte.nexus.features.recipes.functionals;
+package me.pugabyte.nexus.features.recipes.functionals.windchimes;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
@@ -16,13 +17,28 @@ import org.bukkit.inventory.ShapedRecipe;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Windchimes extends FunctionalRecipe {
+import static eden.utils.StringUtils.camelCase;
+
+public abstract class Windchimes extends FunctionalRecipe {
 
 	@Getter
-	public static ItemStack item = new ItemBuilder(Material.AMETHYST_SHARD)
-		.name("Metal Windchimes")
-		.customModelData(1)
+	@AllArgsConstructor
+	protected enum WindchimeType {
+		IRON(Material.IRON_INGOT),
+		GOLD(Material.GOLD_INGOT),
+		COPPER(Material.COPPER_INGOT),
+		;
+
+		private final Material ingot;
+	}
+
+	@Getter
+	public ItemStack item = new ItemBuilder(Material.AMETHYST_SHARD)
+		.name(camelCase(getWindchimeType()) + " Windchimes")
+		.customModelData(getWindchimeType().ordinal() + 1)
 		.build();
+
+	abstract WindchimeType getWindchimeType();
 
 	@Override
 	public String getPermission() {
@@ -41,13 +57,13 @@ public class Windchimes extends FunctionalRecipe {
 
 	@Override
 	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_windchimes_metal");
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_windchimes_" + getWindchimeType().name().toLowerCase());
 		ShapedRecipe recipe = new ShapedRecipe(key, item);
 		recipe.shape(getPattern());
 		recipe.setIngredient('1', Material.STICK);
 		recipe.setIngredient('2', Material.CHAIN);
-		recipe.setIngredient('3', Material.IRON_INGOT);
-		recipe.setIngredient('4', new RecipeChoice.MaterialChoice(MaterialTag.WOOD_BUTTONS));
+		recipe.setIngredient('3', getWindchimeType().getIngot());
+		recipe.setIngredient('4', getMaterialChoice());
 		return recipe;
 	}
 
@@ -56,14 +72,14 @@ public class Windchimes extends FunctionalRecipe {
 		return new ArrayList<>(List.of(
 			new ItemStack(Material.STICK),
 			new ItemStack(Material.CHAIN),
-			new ItemStack(Material.IRON_INGOT),
+			new ItemStack(getWindchimeType().getIngot()),
 			new ItemStack(Material.OAK_BUTTON)
 		));
 	}
 
 	@Override
 	public MaterialChoice getMaterialChoice() {
-		return null;
+		return new RecipeChoice.MaterialChoice(MaterialTag.WOOD_BUTTONS);
 	}
 
 }

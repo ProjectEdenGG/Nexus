@@ -7,8 +7,10 @@ import me.pugabyte.nexus.features.recipes.models.NexusRecipe;
 import me.pugabyte.nexus.features.recipes.models.RecipeType;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemUtils.ItemStackComparator;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,7 +27,7 @@ import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 public class CustomRecipes extends Feature implements Listener {
 
@@ -41,21 +43,50 @@ public class CustomRecipes extends Feature implements Listener {
 		registerStoneBricks();
 		misc();
 
-		Set<Class<? extends FunctionalRecipe>> functionals = new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class);
-
 		// Need to wait for ResourcePack feature to register
 		// TODO Create dependency system for features
-		Tasks.wait(1, () -> functionals.forEach(clazz -> {
-			try {
-				FunctionalRecipe recipe = clazz.newInstance();
+		Tasks.wait(1, () -> new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
+			.map(clazz -> {
+				try {
+					return clazz.newInstance();
+				} catch (InstantiationException | IllegalAccessException e) {
+					Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
+					e.printStackTrace();
+					return null;
+				}
+			})
+			.filter(obj -> Objects.nonNull(obj) && obj.getResult() != null)
+			.sorted((recipe1, recipe2) -> new ItemStackComparator().compare(recipe1.getResult(), recipe2.getResult()))
+			.forEach(recipe -> {
 				recipe.setType(RecipeType.FUNCTIONAL);
 				recipe.register();
 				recipes.add(recipe);
-			} catch (InstantiationException | IllegalAccessException e) {
-				Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
-				e.printStackTrace();
-			}
-		}));
+			}));
+	}
+
+	public static void register(Recipe recipe) {
+		try {
+			if (recipe == null)
+				return;
+
+			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
+				if (RecipeUtils.areEqual(recipe, recipe1))
+					return;
+
+			Tasks.sync(() -> {
+				try {
+					Bukkit.addRecipe(recipe);
+				} catch (IllegalStateException duplicate) {
+					Nexus.log(duplicate.getMessage());
+				} catch (Exception ex) {
+					Nexus.log("Error while adding custom recipe " + ((Keyed) recipe).getKey() + " to Bukkit");
+					ex.printStackTrace();
+				}
+			});
+		} catch (Exception ex) {
+			Nexus.log("Error while adding custom recipe " + ((Keyed) recipe).getKey());
+			ex.printStackTrace();
+		}
 	}
 
 	public NexusRecipe getCraftByRecipe(Recipe result) {
@@ -148,4 +179,5 @@ public class CustomRecipes extends Feature implements Listener {
 				new ItemBuilder(Material.LINGERING_POTION).potionEffect(PotionEffectType.INVISIBILITY).name("Lingering Invisibility Potion").build(),
 				new RecipeChoice.MaterialChoice(Material.ITEM_FRAME)).type(RecipeType.FUNCTIONAL);
 	}
+
 }

@@ -6,12 +6,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.CustomRecipes;
-import me.pugabyte.nexus.features.recipes.RecipeUtils;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.StringUtils;
-import me.pugabyte.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
-import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
@@ -152,24 +148,7 @@ public class NexusRecipe {
 	}
 
 	public void register() {
-		try {
-			if (getRecipe() == null) return;
-			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(getRecipe().getResult()))
-				if (RecipeUtils.areEqual(getRecipe(), recipe1)) return;
-			Tasks.sync(() -> {
-				try {
-					Bukkit.addRecipe(getRecipe());
-				} catch (IllegalStateException duplicate) {
-					Nexus.log(duplicate.getMessage());
-				} catch (Exception ex) {
-					Nexus.log("Error while adding custom recipe " + ((Keyed) getRecipe()).getKey() + " to Bukkit");
-					ex.printStackTrace();
-				}
-			});
-		} catch (Exception ex) {
-			Nexus.log("Error while adding custom recipe " + ((Keyed) getRecipe()).getKey());
-			ex.printStackTrace();
-		}
+		CustomRecipes.register(getRecipe());
 	}
 
 	private static String getItemName(ItemStack result) {

@@ -321,6 +321,9 @@ public class ItemUtils {
 			if (result != 0) return result;
 
 			result = Integer.compare(b.getAmount(), a.getAmount());
+			if (result != 0) return result;
+
+			result = Integer.compare(new ItemBuilder(a).customModelData(), new ItemBuilder(b).customModelData());
 			return result;
 		}
 	}

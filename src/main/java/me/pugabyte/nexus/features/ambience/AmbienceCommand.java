@@ -77,6 +77,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		final AmbienceConfigService service = new AmbienceConfigService();
 		final AmbienceConfig config = service.get0();
 
+		// TODO These should tick, utilize cooldowns + randomness
 		Tasks.repeat(Time.MINUTE, Time.SECOND.x(RandomUtils.randomInt(45, 90)), () -> {
 			for (AmbienceConfig.Ambience ambience : new ArrayList<>(config.getAmbiences())) {
 				if (!ambience.getLocation().isChunkLoaded())
