@@ -14,6 +14,7 @@ import me.pugabyte.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import me.pugabyte.nexus.models.ambience.AmbienceConfigService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -76,7 +77,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		final AmbienceConfigService service = new AmbienceConfigService();
 		final AmbienceConfig config = service.get0();
 
-		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> {
+		Tasks.repeat(Time.MINUTE, Time.TICK.x(RandomUtils.randomInt(400, 1200)), () -> {
 			for (AmbienceConfig.Ambience ambience : new ArrayList<>(config.getAmbiences())) {
 				if (!ambience.getLocation().isChunkLoaded())
 					continue;

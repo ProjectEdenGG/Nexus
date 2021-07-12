@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +18,12 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConver
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 
@@ -115,6 +120,16 @@ public class AmbienceConfig implements PlayerOwnedObject {
 				@Override
 				void play(Location location) {
 					// TODO
+					int wait = 0;
+					for (int i = 0; i < RandomUtils.randomInt(1, 4); i++) {
+						Tasks.wait(wait += Time.SECOND.x(3), () ->
+							new SoundBuilder(Sound.BLOCK_AMETHYST_BLOCK_CHIME)
+								.pitch(RandomUtils.randomDouble(0.1, 0.3))
+								.volume(10)
+								.location(location)
+								.play());
+
+					}
 				}
 			},
 			;
