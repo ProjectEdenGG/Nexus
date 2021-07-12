@@ -292,20 +292,20 @@ public class Backpacks extends FunctionalRecipe {
 		private void save(ItemStack[] contents) {
 			ItemStack[] inv = player.getInventory().getContents();
 			ItemStack backpack = find(inv, item -> isBackpack(item, this.backpackId));
-			BlockStateMeta blockStateMeta = null;
+			BlockStateMeta meta = null;
 
 			if (backpack != null)
-				blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
+				meta = (BlockStateMeta) backpack.getItemMeta();
 
-			if (blockStateMeta == null) {
+			if (meta == null) {
 				handleError(contents);
 				return;
 			}
 
-			ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
+			ShulkerBox shulkerBox = (ShulkerBox) meta.getBlockState();
 			shulkerBox.getInventory().setContents(contents);
-			blockStateMeta.setBlockState(shulkerBox);
-			backpack.setItemMeta(blockStateMeta);
+			meta.setBlockState(shulkerBox);
+			backpack.setItemMeta(meta);
 
 			player.updateInventory();
 			Tasks.wait(1, player::updateInventory);

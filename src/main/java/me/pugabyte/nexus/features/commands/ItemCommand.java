@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 
 @Aliases("i")
 @Permission("essentials.item")
@@ -28,6 +29,11 @@ public class ItemCommand extends CustomCommand {
 	@Permission(value = "group.staff", absolute = true)
 	void rp(Material material, int id) {
 		PlayerUtils.giveItem(player(), new ItemBuilder(material).customModelData(id).build());
+	}
+
+	@Path("tag <tag> [amount]")
+	void tag(Tag<Material> tag, @Arg("1") int amount) {
+		tag.getValues().forEach(material -> run(material, amount, null));
 	}
 
 }
