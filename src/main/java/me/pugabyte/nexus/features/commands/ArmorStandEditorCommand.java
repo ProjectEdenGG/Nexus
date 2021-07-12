@@ -4,9 +4,14 @@ import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.LocationUtils;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.util.EulerAngle;
 
 import static me.pugabyte.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 
@@ -30,5 +35,69 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		armorStand.setArms(enabled);
 		send(PREFIX + "Arms " + (enabled ? "&aenabled" : "&cdisabled"));
 	}
+
+	@Path("summon 0")
+	@Permission("group.admin")
+	void summon0() {
+		final ArmorStand armorStand = location().getWorld().spawn(LocationUtils.getCenteredLocation(location()), ArmorStand.class);
+		armorStand.setRightArmPose(EulerAngle.ZERO);
+		armorStand.setLeftArmPose(EulerAngle.ZERO);
+		armorStand.setHeadPose(EulerAngle.ZERO);
+		armorStand.setInvulnerable(true);
+		armorStand.setGravity(false);
+		armorStand.setBasePlate(false);
+		armorStand.setArms(true);
+		armorStand.setDisabledSlots(EquipmentSlot.values());
+	}
+
+	@Path("position arms left")
+	@Permission("group.admin")
+	void position_arms() {
+		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+
+		if (!isPerkAllowedAt(armorStand.getLocation()))
+			error("You cannot edit armor stands here");
+
+		float yaw = LocationUtils.normalizeYaw(location());
+		float pitch = location().getPitch();
+
+		line();
+		send("yaw: " + yaw + " / pitch: " + pitch);
+
+		double x;
+		if (yaw > 180)
+			x = yaw + pitch;
+		else
+			x = yaw - pitch;
+
+		double y = yaw + 180;
+		if (y > 360)
+			y -= 360;
+		double z = 0;
+
+		double xr = Math.toRadians(x);
+		double yr = Math.toRadians(y);
+		double zr = Math.toRadians(z);
+
+		send(StringUtils.getDf().format(x) + " " + StringUtils.getDf().format(y) + " " + StringUtils.getDf().format(z));
+		send(StringUtils.getDf().format(xr) + " " + StringUtils.getDf().format(yr) + " " + StringUtils.getDf().format(zr));
+		EulerAngle ea = new EulerAngle(xr, yr, zr);
+		armorStand.setLeftArmPose(ea);
+	}
+
+	@Path("set arms left <x> <y> <z>")
+	@Permission("group.admin")
+	void set_arms_left(float x, float y, float z) {
+		position_arms();
+		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+
+		if (!isPerkAllowedAt(armorStand.getLocation()))
+			error("You cannot edit armor stands here");
+
+		EulerAngle ea = new EulerAngle(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));
+		armorStand.setLeftArmPose(ea);
+	}
+
+
 
 }

@@ -397,4 +397,10 @@ public class LocationUtils {
 		return blockLocationsEqual(location1, location2);
 	}
 
+	public static float normalizeYaw(Location location) {
+		float yaw = Location.normalizeYaw(location.getYaw());
+		if (yaw < 0) yaw += 360;
+		return yaw;
+	}
+
 }

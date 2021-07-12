@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import static me.pugabyte.nexus.utils.LocationUtils.normalizeYaw;
+
 @Getter
 public
 enum MapPointerDirection {
@@ -61,11 +63,5 @@ enum MapPointerDirection {
 				result = direction;
 
 		return result;
-	}
-
-	private static float normalizeYaw(Location location) {
-		float yaw = Location.normalizeYaw(location.getYaw());
-		if (yaw < 0) yaw += 360;
-		return yaw;
 	}
 }
