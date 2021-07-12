@@ -67,10 +67,15 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	@Override
+	public String[] getPattern() {
+		return new String[]{"121", "343", "111"};
+	}
+
+	@Override
 	public Recipe getRecipe() {
 		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_backpack");
 		ShapedRecipe recipe = new ShapedRecipe(key, getDefaultBackpack());
-		recipe.shape("121", "343", "111");
+		recipe.shape(getPattern());
 		recipe.setIngredient('1', Material.LEATHER);
 		recipe.setIngredient('2', Material.TRIPWIRE_HOOK);
 		recipe.setIngredient('3', Material.SHULKER_SHELL);
@@ -86,11 +91,6 @@ public class Backpacks extends FunctionalRecipe {
 			new ItemStack(Material.SHULKER_SHELL),
 			new ItemStack(Material.CHEST)
 		));
-	}
-
-	@Override
-	public String[] getPattern() {
-		return new String[]{"121", "343", "111"};
 	}
 
 	@Override
