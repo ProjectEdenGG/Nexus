@@ -84,6 +84,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 	}
 
 	@Data
+	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class Ambience {
 		private Location location;

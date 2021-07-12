@@ -294,7 +294,6 @@ public class Quests implements Listener {
 
 		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
 			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
-
 	}
 
 	public static void giveTrophy(MiniGolf21User user, Trophy trophy) {
