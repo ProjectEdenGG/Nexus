@@ -78,6 +78,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag TOOLS_WEAPONS_ARMOR = new MaterialTag(TOOLS, WEAPONS, ARMOR);
 
+	public static final MaterialTag ARMOR_NETHERITE = new MaterialTag("NETHERITE_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_DIAMOND = new MaterialTag("DIAMOND_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_IRON = new MaterialTag("IRON_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.ARMOR);
