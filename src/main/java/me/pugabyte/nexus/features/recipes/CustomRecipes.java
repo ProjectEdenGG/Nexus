@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.recipes;
 
+import eden.utils.Utils;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
@@ -25,7 +26,6 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.potion.PotionEffectType;
 import org.reflections.Reflections;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -49,8 +49,9 @@ public class CustomRecipes extends Feature implements Listener {
 		Tasks.wait(1, () -> new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
 			.map(clazz -> {
 				try {
-					if (Modifier.isAbstract(clazz.getModifiers()))
+					if (!Utils.canEnable(clazz))
 						return null;
+
 					return clazz.newInstance();
 				} catch (InstantiationException | IllegalAccessException e) {
 					Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());

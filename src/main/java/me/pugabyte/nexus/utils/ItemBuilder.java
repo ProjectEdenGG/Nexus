@@ -134,7 +134,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder name(@Nullable String displayName) {
-		if (displayName != null)
+		if (displayName == null)
+			itemMeta.setDisplayName(null);
+		else
 			itemMeta.setDisplayName(colorize("&f" + displayName));
 		return this;
 	}
@@ -143,6 +145,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		if (componentLike != null)
 			itemMeta.displayName(removeItalicIfUnset(componentLike.asComponent()));
 		return this;
+	}
+
+	public ItemBuilder resetName() {
+		return name((String) null);
 	}
 
 	public ItemBuilder setLore(String... lore) {

@@ -124,6 +124,12 @@ public class AmbienceConfig implements PlayerOwnedObject {
 						.play();
 				}
 			},
+			BIRD_HOUSE(AmbienceLocationType.ITEM_FRAME, Material.OAK_WOOD, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9)) {
+				@Override
+				void play(Location location) {
+					// TODO
+				}
+			},
 			;
 
 			private final AmbienceLocationType type;
