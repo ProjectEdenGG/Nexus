@@ -73,23 +73,31 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		paginate(ambiences, formatter, "/ambience list " + type.name().toLowerCase(), page);
 	}
 
+	@Path("play")
+	void play() {
+		playAll();
+	}
+
 	static {
+		Tasks.repeat(Time.MINUTE, Time.SECOND.x(RandomUtils.randomInt(45, 90)), AmbienceCommand::playAll);
+	}
+
+	static void playAll() {
 		final AmbienceConfigService service = new AmbienceConfigService();
 		final AmbienceConfig config = service.get0();
 
 		// TODO These should tick, utilize cooldowns + randomness
-		Tasks.repeat(Time.MINUTE, Time.SECOND.x(RandomUtils.randomInt(45, 90)), () -> {
-			for (AmbienceConfig.Ambience ambience : new ArrayList<>(config.getAmbiences())) {
-				if (!ambience.getLocation().isChunkLoaded())
-					continue;
+		for (AmbienceConfig.Ambience ambience : new ArrayList<>(config.getAmbiences())) {
+			if (!ambience.getLocation().isChunkLoaded())
+				continue;
 
-				if (!ambience.validate())
-					continue;
+			if (!ambience.validate())
+				continue;
 
-				ambience.play();
-			}
-		});
+			ambience.play();
+		}
 	}
+
 
 	@EventHandler
 	public void onRemoveAmbience(EntityDamageByEntityEvent event) {

@@ -5,6 +5,10 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.recipes.models.FunctionalRecipe;
 import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.SoundBuilder;
+import me.pugabyte.nexus.utils.Tasks;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -106,6 +110,34 @@ public abstract class Birdhouse extends FunctionalRecipe {
 	@Override
 	public MaterialChoice getMaterialChoice() {
 		return null;
+	}
+
+	public enum BirdhouseSound {
+		WILLOW_TIT {
+			@Override
+			public void play(Location location) {
+				Runnable one = () -> sound("willow_tit_1").location(location).play();
+				Runnable two = () -> sound("willow_tit_2").location(location).play();
+
+				int wait = 0;
+				Tasks.wait(wait += 30, one);
+				Tasks.wait(wait += 30, one);
+				Tasks.wait(wait += 30, one);
+				Tasks.wait(wait += 30, two);
+				Tasks.wait(wait += 30, two);
+				Tasks.wait(wait += 30, two);
+			}
+		};
+
+		abstract public void play(Location location);
+
+		protected SoundBuilder sound(String sound) {
+			return new SoundBuilder("minecraft:custom.birdhouse_" + sound);
+		}
+
+		public static BirdhouseSound random() {
+			return RandomUtils.randomElement(List.of(values()));
+		}
 	}
 
 }
