@@ -121,6 +121,12 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
 	}
 
+	@Path("getHash")
+	@Permission("group.admin")
+	void getHash() {
+		send(json(PREFIX + "Resource pack hash: " + hash).hover("&eClick to copy").copy(hash));
+	}
+
 	@Async
 	@Path("update")
 	@Permission("group.admin")
