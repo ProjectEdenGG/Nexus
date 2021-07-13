@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import eden.utils.Utils;
 import lombok.Getter;
@@ -40,7 +39,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -383,27 +381,6 @@ public class BearFair21 implements Listener {
 				}
 			});
 		});
-	}
-
-	@EventHandler
-	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		if (Nexus.getEnv() != Env.PROD)
-			return;
-
-		final boolean fromBearFair = event.getFrom().getWorld().equals(getWorld());
-		final boolean toBearFair = event.getTo().getWorld().equals(getWorld());
-
-		if (fromBearFair || !toBearFair)
-			return;
-
-		BearFair21User user = userService.get(event.getPlayer());
-		if (!user.isFirstVisit())
-			return;
-
-		event.setCancelled(true);
-		event.getPlayer().teleport(event.getFrom());
-
-		user.sendMessage(PREFIX + "To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 	}
 
 }
