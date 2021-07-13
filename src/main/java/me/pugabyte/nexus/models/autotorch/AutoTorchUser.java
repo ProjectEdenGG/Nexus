@@ -29,7 +29,7 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private int lightLevel = 7;
+	private int lightLevel = 7; // TODO: 1.18 - change default to 0 (new max light level for spawning)
 	private boolean enabled = false;
 
 	/**
