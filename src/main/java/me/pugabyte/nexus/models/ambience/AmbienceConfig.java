@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +14,14 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.recipes.functionals.birdhouses.Birdhouse.BirdhouseSound;
+import me.pugabyte.nexus.features.ambience.sounds.BirdSound;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
+import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
@@ -34,6 +36,7 @@ import java.util.UUID;
 
 import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 @Data
@@ -118,7 +121,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 			METAL_WINDCHIMES(AmbienceLocationType.ITEM_FRAME, Material.AMETHYST_SHARD, Set.of(1, 2, 3)) {
 				@Override
 				void play(Location location) {
-					new SoundBuilder("minecraft:custom.windchimes_metal_" + RandomUtils.randomInt(1, 5))
+					new SoundBuilder("minecraft:custom.ambient.windchimes.metal_" + randomInt(1, 5))
 						.location(location)
 						.volume(3)
 						.pitch(RandomUtils.randomDouble(0.1, 2.0))
@@ -128,7 +131,9 @@ public class AmbienceConfig implements PlayerOwnedObject {
 			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.OAK_WOOD, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9)) {
 				@Override
 				void play(Location location) {
-					BirdhouseSound.random().play(location);
+					Tasks.wait(Time.SECOND.x(randomInt(0, 45)), () -> {
+						BirdSound.random().play(location);
+					});
 				}
 			},
 			;

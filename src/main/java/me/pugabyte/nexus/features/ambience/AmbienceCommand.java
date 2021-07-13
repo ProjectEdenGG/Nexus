@@ -4,6 +4,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.ambience.sounds.BirdSound;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -78,6 +79,11 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		playAll();
 	}
 
+	@Path("birds play <sound>")
+	void sound(BirdSound sound) {
+		sound.play(location());
+	}
+
 	static {
 		Tasks.repeat(Time.MINUTE, Time.SECOND.x(RandomUtils.randomInt(45, 90)), AmbienceCommand::playAll);
 	}
@@ -97,7 +103,6 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 			ambience.play();
 		}
 	}
-
 
 	@EventHandler
 	public void onRemoveAmbience(EntityDamageByEntityEvent event) {

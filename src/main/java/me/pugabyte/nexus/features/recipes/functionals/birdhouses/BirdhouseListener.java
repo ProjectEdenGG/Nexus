@@ -50,7 +50,9 @@ public class BirdhouseListener implements Listener {
 			else if (face != BlockFace.DOWN)
 				customModelData += 1;
 
+			itemFrame.setSilent(true);
 			itemFrame.setItem(itemBuilder.resetName().customModelData(customModelData).build());
+			itemFrame.setSilent(false);
 		});
 	}
 
