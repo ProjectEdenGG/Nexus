@@ -3,9 +3,8 @@ package me.pugabyte.nexus.features.ambience;
 import eden.annotations.Environments;
 import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.ambience.particles.common.ParticleEffects;
+import me.pugabyte.nexus.features.ambience.managers.common.AmbienceManagers;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import me.pugabyte.nexus.models.ambience.AmbienceUserService;
@@ -19,45 +18,28 @@ import java.util.List;
 @Environments(Env.TEST)
 public class Ambience extends Feature implements Listener {
 	private static final AmbienceUserService userService = new AmbienceUserService();
-	@Getter
-	private static final boolean windBlowing = true;
-	@Getter
-	public static double windDir = Math.random() * 2 * Math.PI;
-	@Getter
-	public static double WIND_X = Math.sin(windDir);
-	@Getter
-	public static double WIND_Z = Math.cos(windDir);
 
 	@Override
 	public void onStart() {
-		ParticleEffects.loadEffects();
+		AmbienceManagers.start();
 		ambienceTask();
 	}
 
 	@Override
 	public void onStop() {
-		ParticleEffects.getActiveEffects().clear();
-		// TODO: stop particles & sounds
+		AmbienceManagers.stop();
 	}
 
-
 	private void ambienceTask() {
-		// change wind direction
-		Tasks.repeat(0, Time.MINUTE.x(1), () -> windDir = Math.random() * 2 * Math.PI);
-
-		// update variables & instances
 		Tasks.repeat(0, Time.TICK.x(2), () -> {
 			for (AmbienceUser user : getUsers())
 				user.getVariables().update();
-			ParticleEffects.tick();
+			AmbienceManagers.tick();
 		});
 
-		// play sounds & particles
 		Tasks.repeat(0, Time.SECOND.x(1), () -> {
-			List<AmbienceUser> particleUsers = getUsers().stream().filter(AmbienceUser::isParticles).toList();
-			for (AmbienceUser user : particleUsers) {
-				ParticleEffects.update(user);
-			}
+			for (AmbienceUser user : getUsers())
+				AmbienceManagers.update(user);
 		});
 	}
 
