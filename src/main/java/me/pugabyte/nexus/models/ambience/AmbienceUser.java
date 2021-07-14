@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.ambience.Variables;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
 import java.util.UUID;

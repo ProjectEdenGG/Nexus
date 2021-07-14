@@ -1,11 +1,12 @@
-package me.pugabyte.nexus.features.ambience;
+package me.pugabyte.nexus.features.ambience.particles.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.pugabyte.nexus.features.ambience.ParticleEffects.AmbienceEffect;
-import me.pugabyte.nexus.features.ambience.particleeffects.DustWind;
-import me.pugabyte.nexus.features.ambience.particleeffects.FallingLeaves;
-import me.pugabyte.nexus.features.ambience.particleeffects.Fireflies;
+import me.pugabyte.nexus.features.ambience.Ambience;
+import me.pugabyte.nexus.features.ambience.particles.DustWind;
+import me.pugabyte.nexus.features.ambience.particles.FallingLeaves;
+import me.pugabyte.nexus.features.ambience.particles.Fireflies;
+import me.pugabyte.nexus.features.ambience.particles.common.ParticleEffects.AmbienceEffect;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

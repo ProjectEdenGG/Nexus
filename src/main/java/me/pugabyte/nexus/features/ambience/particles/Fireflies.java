@@ -1,11 +1,12 @@
-package me.pugabyte.nexus.features.ambience.particleeffects;
+package me.pugabyte.nexus.features.ambience.particles;
 
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
-import me.pugabyte.nexus.features.ambience.ParticleEffect;
-import me.pugabyte.nexus.features.ambience.ParticleEffects.AmbienceEffect;
-import me.pugabyte.nexus.features.ambience.Variables.TimeQuadrant;
+import me.pugabyte.nexus.features.ambience.particles.common.ParticleEffect;
+import me.pugabyte.nexus.features.ambience.particles.common.ParticleEffectInstance;
+import me.pugabyte.nexus.features.ambience.particles.common.ParticleEffects.AmbienceEffect;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
+import me.pugabyte.nexus.models.ambience.Variables.TimeQuadrant;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

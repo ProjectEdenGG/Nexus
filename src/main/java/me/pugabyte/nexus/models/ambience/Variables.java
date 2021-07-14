@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.ambience;
+package me.pugabyte.nexus.models.ambience;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,17 +15,17 @@ import java.util.List;
 
 @Data
 public class Variables {
-	Player player;
-	Location location;
-	Biome biome;
+	private Player player;
+	private Location location;
+	private Biome biome;
 	//
-	boolean exposed;
-	boolean submerged;
+	private boolean exposed;
+	private boolean submerged;
 	//
-	long time;
-	TimeQuadrant timeQuadrant;
-	boolean raining;
-	boolean thundering;
+	private long time;
+	private TimeQuadrant timeQuadrant;
+	private boolean raining;
+	private boolean thundering;
 
 	public Variables(Player player) {
 		this.player = player;

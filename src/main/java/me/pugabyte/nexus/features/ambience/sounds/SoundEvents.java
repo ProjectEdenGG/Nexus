@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.ambience;
+package me.pugabyte.nexus.features.ambience.sounds;
 
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 

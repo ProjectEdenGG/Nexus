@@ -38,6 +38,7 @@ import java.util.function.BiFunction;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
+@Permission("group.staff")
 public class AmbienceCommand extends CustomCommand implements Listener {
 	final AmbienceConfigService service = new AmbienceConfigService();
 	final AmbienceConfig config = service.get0();
@@ -82,7 +83,6 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("types [page]")
-	@Permission("group.staff")
 	void types(@Arg("1") int page) {
 		final List<AmbienceType> types = List.of(AmbienceType.values());
 		if (types.isEmpty())
@@ -99,7 +99,6 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list <type> [page]")
-	@Permission("group.staff")
 	void list(AmbienceType type, @Arg("1") int page) {
 		final List<Ambience> ambiences = config.get(type);
 		if (ambiences.isEmpty())
@@ -115,13 +114,11 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("play")
-	@Permission("group.staff")
 	void play() {
 		playAll();
 	}
 
 	@Path("birds play <sound>")
-	@Permission("group.staff")
 	void sound(BirdSound sound) {
 		sound.play(location());
 	}

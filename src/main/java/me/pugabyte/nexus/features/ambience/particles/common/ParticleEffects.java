@@ -1,8 +1,7 @@
-package me.pugabyte.nexus.features.ambience;
+package me.pugabyte.nexus.features.ambience.particles.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.features.ambience.particleeffects.ParticleEffectInstance;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import org.bukkit.Location;
 import org.bukkit.Material;

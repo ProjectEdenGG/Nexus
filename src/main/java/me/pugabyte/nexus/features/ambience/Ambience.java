@@ -1,8 +1,11 @@
 package me.pugabyte.nexus.features.ambience;
 
+import eden.annotations.Environments;
+import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.ambience.particles.common.ParticleEffects;
 import me.pugabyte.nexus.framework.features.Feature;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import me.pugabyte.nexus.models.ambience.AmbienceUserService;
@@ -13,6 +16,7 @@ import org.bukkit.event.Listener;
 import java.util.List;
 
 @NoArgsConstructor
+@Environments(Env.TEST)
 public class Ambience extends Feature implements Listener {
 	private static final AmbienceUserService userService = new AmbienceUserService();
 	// TODO: make this dynamic
