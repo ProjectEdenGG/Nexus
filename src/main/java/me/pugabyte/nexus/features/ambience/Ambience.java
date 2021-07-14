@@ -46,4 +46,5 @@ public class Ambience extends Feature implements Listener {
 	public List<AmbienceUser> getUsers() {
 		return PlayerUtils.getOnlinePlayers().stream().map(userService::get).toList();
 	}
+
 }

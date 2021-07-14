@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.ambience.particles.common;
+package me.pugabyte.nexus.features.ambience.effects.particles.common;
 
 import lombok.AllArgsConstructor;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
