@@ -8,11 +8,14 @@ import me.pugabyte.nexus.features.ambience.sounds.BirdSound;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
+import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.ambience.AmbienceConfig;
 import me.pugabyte.nexus.models.ambience.AmbienceConfig.Ambience;
 import me.pugabyte.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import me.pugabyte.nexus.models.ambience.AmbienceConfigService;
+import me.pugabyte.nexus.models.ambience.AmbienceUser;
+import me.pugabyte.nexus.models.ambience.AmbienceUserService;
 import me.pugabyte.nexus.utils.JsonBuilder;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
@@ -38,12 +41,48 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 public class AmbienceCommand extends CustomCommand implements Listener {
 	final AmbienceConfigService service = new AmbienceConfigService();
 	final AmbienceConfig config = service.get0();
+	final AmbienceUserService userService = new AmbienceUserService();
+	AmbienceUser user;
 
 	public AmbienceCommand(@NonNull CommandEvent event) {
 		super(event);
+
+		if (isPlayerCommandEvent())
+			user = userService.get(player());
+	}
+
+	@Path("sounds [enable]")
+	void toggleSounds(Boolean enable) {
+		if (enable == null)
+			enable = !user.isSounds();
+
+		user.setSounds(enable);
+		userService.save(user);
+		send(PREFIX + "Sounds " + (enable ? "&aEnabled" : "&cDisabled"));
+	}
+
+	@Path("particles [enable]")
+	void toggleParticles(Boolean enable) {
+		if (enable == null)
+			enable = !user.isParticles();
+
+		user.setParticles(enable);
+		userService.save(user);
+		send(PREFIX + "Particles " + (enable ? "&aEnabled" : "&cDisabled"));
+	}
+
+	@Path("debug [enable]")
+	void toggleDebug(Boolean enable) {
+		if (enable == null)
+			enable = !user.isDebug();
+
+		user.setDebug(enable);
+		userService.save(user);
+		send(PREFIX + "Debug " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@Path("types [page]")
+	@Permission("group.staff")
 	void types(@Arg("1") int page) {
 		final List<AmbienceType> types = List.of(AmbienceType.values());
 		if (types.isEmpty())
@@ -60,6 +99,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list <type> [page]")
+	@Permission("group.staff")
 	void list(AmbienceType type, @Arg("1") int page) {
 		final List<Ambience> ambiences = config.get(type);
 		if (ambiences.isEmpty())
@@ -75,11 +115,13 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("play")
+	@Permission("group.staff")
 	void play() {
 		playAll();
 	}
 
 	@Path("birds play <sound>")
+	@Permission("group.staff")
 	void sound(BirdSound sound) {
 		sound.play(location());
 	}

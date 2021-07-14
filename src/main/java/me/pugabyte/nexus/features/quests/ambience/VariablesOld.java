@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
-public class Variables {
+public class VariablesOld {
 	Player player = null;
 	Location location;
 	//
@@ -48,18 +48,18 @@ public class Variables {
 	}
 
 	private static boolean exposedCheck(Player player) {
-		Location loc = player.getLocation();
-		int mx = loc.getBlockX() + 1;
-		int my = loc.getBlockY() + 1;
-		int mz = loc.getBlockZ() + 1;
+		Location location = player.getLocation();
+		int playerX = location.getBlockX() + 1;
+		int playerY = location.getBlockY() + 1;
+		int playerZ = location.getBlockZ() + 1;
 
 		World world = player.getWorld();
-		for (int cx = mx - 2; cx <= mx; cx++) {
-			for (int cy = my - 2; cy <= my; cy++) {
-				for (int cz = mz - 2; cz <= mz; cz++) {
-					if (!world.getBlockAt(cx, cy, cz).getType().equals(Material.AIR))
+		for (int x = playerX - 2; x <= playerX; x++) {
+			for (int y = playerY - 2; y <= playerY; y++) {
+				for (int z = playerZ - 2; z <= playerZ; z++) {
+					if (!world.getBlockAt(x, y, z).getType().equals(Material.AIR))
 						continue;
-					if (world.getBlockAt(cx, cy, cz).getLightFromSky() > 4) // increased from 0
+					if (world.getBlockAt(x, y, z).getLightFromSky() > 4) // increased from 0
 						return true;
 				}
 			}

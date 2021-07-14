@@ -13,7 +13,7 @@ public class AmbienceUser {
 	Player player;
 	BlockScanner blockScanner;
 	SoundPlayer soundPlayer;
-	Variables variables;
+	VariablesOld variables;
 
 
 }

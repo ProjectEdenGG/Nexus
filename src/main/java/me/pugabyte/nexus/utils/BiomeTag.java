@@ -21,6 +21,7 @@ public class BiomeTag {
 	public static final BiomeTag ICE_SPIKES = new BiomeTag(Material.PACKED_ICE).append(Biome.ICE_SPIKES);
 	public static final BiomeTag ALL_NETHER = new BiomeTag(Material.NETHERRACK).append(Biome.NETHER_WASTES, Biome.BASALT_DELTAS,
 		Biome.CRIMSON_FOREST, Biome.WARPED_FOREST, Biome.SOUL_SAND_VALLEY);
+	public static final BiomeTag ALL_DESERT = new BiomeTag(Material.SAND).append("DESERT", MatchMode.CONTAINS);
 
 	private final EnumSet<Biome> biomes;
 	@Getter
