@@ -19,11 +19,10 @@ import java.util.List;
 @Environments(Env.TEST)
 public class Ambience extends Feature implements Listener {
 	private static final AmbienceUserService userService = new AmbienceUserService();
-	// TODO: make this dynamic
 	@Getter
 	private static final boolean windBlowing = true;
 	@Getter
-	public static final double windDir = Math.random() * 2 * Math.PI;
+	public static double windDir = Math.random() * 2 * Math.PI;
 	@Getter
 	public static double WIND_X = Math.sin(windDir);
 	@Getter
@@ -43,14 +42,17 @@ public class Ambience extends Feature implements Listener {
 
 
 	private void ambienceTask() {
-		Tasks.repeat(0, Time.TICK.x(2), () -> {
-			for (AmbienceUser user : getUsers()) {
-				user.getVariables().update();
-			}
+		// change wind direction
+		Tasks.repeat(0, Time.MINUTE.x(1), () -> windDir = Math.random() * 2 * Math.PI);
 
+		// update variables & instances
+		Tasks.repeat(0, Time.TICK.x(2), () -> {
+			for (AmbienceUser user : getUsers())
+				user.getVariables().update();
 			ParticleEffects.tick();
 		});
 
+		// play sounds & particles
 		Tasks.repeat(0, Time.SECOND.x(1), () -> {
 			List<AmbienceUser> particleUsers = getUsers().stream().filter(AmbienceUser::isParticles).toList();
 			for (AmbienceUser user : particleUsers) {
