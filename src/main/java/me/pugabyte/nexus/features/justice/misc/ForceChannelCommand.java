@@ -19,7 +19,7 @@ public class ForceChannelCommand extends CustomCommand {
 
 	@Path("<player> <channel>")
 	void forceChannel(Chatter chatter, PublicChannel channel) {
-		chatter.setActiveChannel(channel);
+		chatter.setActiveChannel(channel, true);
 		send("&3Forced &e" + chatter.getOfflinePlayer().getName() + " &3to " + channel.getColor() + channel.getName());
 	}
 
