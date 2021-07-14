@@ -24,6 +24,7 @@ import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 
@@ -122,6 +123,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 				@Override
 				void play(Location location) {
 					new SoundBuilder("minecraft:custom.ambient.windchimes.metal_" + randomInt(1, 5))
+						.category(SoundCategory.AMBIENT)
 						.location(location)
 						.volume(3)
 						.pitch(RandomUtils.randomDouble(0.1, 2.0))
