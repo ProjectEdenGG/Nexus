@@ -47,8 +47,9 @@ public class FallingLeaves extends ParticleEffect {
 
 		if (user.isDebug())
 			DotEffect.builder()
-				.location(new Location(player.getWorld(), xRange, yRange, zRange))
 				.player(player)
+				.location(new Location(player.getWorld(), xRange, yRange, zRange))
+				.clientSide(true)
 				.color(Color.RED)
 				.speed(.1)
 				.ticks(Time.SECOND.get())
