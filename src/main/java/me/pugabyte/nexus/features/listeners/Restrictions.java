@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -25,6 +26,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
@@ -65,6 +67,12 @@ public class Restrictions implements Listener {
 			return false;
 
 		return true;
+	}
+
+	@EventHandler
+	public void onCommandMinecartSpawn(EntitySpawnEvent event) {
+		if (event.getEntity() instanceof CommandMinecart minecart)
+			minecart.setCommand(null);
 	}
 
 	@EventHandler
