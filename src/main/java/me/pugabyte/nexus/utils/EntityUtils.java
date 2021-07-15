@@ -66,10 +66,18 @@ public class EntityUtils {
 	}
 
 	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
+		makeArmorStandLookAtPlayer(stand, player, minYaw, maxYaw, minPitch, maxPitch, null);
+	}
+
+	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch, Double percentage) {
 		Location origin = stand.getEyeLocation(); //our original location (Point A)
 		double initYaw = origin.getYaw();
 		Vector tgt = player.getPlayer().getEyeLocation().toVector(); //our target location (Point B)
 		origin.setDirection(tgt.subtract(origin.toVector())); //set the origin's direction to be the direction vector between point A and B.
+
+		if(percentage != null)
+			origin.setDirection(origin.getDirection().multiply(percentage));
+
 		double yaw = origin.getYaw() - initYaw;
 		double pitch = origin.getPitch();
 
