@@ -20,6 +20,9 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (!isCorrectMaterial(config, block))
 				return false;
 
+			if (RandomUtils.chanceOf(config.getChance()))
+				return false;
+
 			return true;
 		}
 	},
@@ -58,7 +61,13 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (!isCorrectMaterial(config, block))
 				return false;
 
-			if (!TimeQuadrant.NIGHT.equals(user.getVariables().getTimeQuadrant()))
+			if (!isTimeQuadrant(user, TimeQuadrant.NIGHT))
+				return false;
+
+			if (isStorming(user))
+				return false;
+
+			if (RandomUtils.chanceOf(config.getChance()))
 				return false;
 
 			return true;

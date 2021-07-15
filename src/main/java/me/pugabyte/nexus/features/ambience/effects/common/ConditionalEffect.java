@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.ambience.effects.common;
 
 import me.pugabyte.nexus.features.ambience.Wind;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
+import me.pugabyte.nexus.models.ambience.Variables.TimeQuadrant;
 import me.pugabyte.nexus.utils.BiomeTag;
 import org.bukkit.World.Environment;
 
@@ -36,8 +37,15 @@ public interface ConditionalEffect {
 		return user.getVariables().isThundering();
 	}
 
+	default boolean isStorming(AmbienceUser user) {
+		return isRaining(user) || isThundering(user);
+	}
+
+	default boolean isTimeQuadrant(AmbienceUser user, TimeQuadrant quadrant) {
+		return user.getVariables().getTimeQuadrant().equals(quadrant);
+	}
+
 	default boolean isWindBlowing() {
 		return Wind.isBlowing();
 	}
-
 }

@@ -25,7 +25,7 @@ public class ArmorStandStalker {
 	// @formatter:off
 	public static final List<Stalker> stalkers = new ArrayList<>() {{
 		if(Nexus.getEnv() == Env.TEST) {
-			add(Stalker.builder().location("world", -209, 76, 293).radius(25).interval(1.5).build());            // test server
+			add(Stalker.builder().location("world", -209, 76, 293).radius(25).percentage(1.0).build());            // test server
 		} else if(Nexus.getEnv() == Env.PROD) {
 			add(Stalker.builder().location("survival", 15, 15, -8).build());                         // Spawn - Wakka Crate
 			add(Stalker.builder().location(BearFair21.getWorld(), 72, 131, -351).build());                 // BearFair21 - Halloween Island
@@ -50,8 +50,7 @@ public class ArmorStandStalker {
 
 				Player nearestPlayer = (Player) EntityUtils.getNearestEntityType(location, EntityType.PLAYER, stalker.getRadius());
 				if (nearestPlayer != null)
-					EntityUtils.makeArmorStandLookAtPlayer(armorStand, nearestPlayer, stalker.getMinYaw(),
-							stalker.getMaxYaw(), stalker.getMinPitch(), stalker.getMaxPitch(), 5.0);
+					lookAt(armorStand, stalker, nearestPlayer);
 			}
 		});
 	}
@@ -68,7 +67,7 @@ public class ArmorStandStalker {
 		private Double maxPitch = 30.0;
 		private Double minYaw = null;
 		private Double maxYaw = null;
-		private Double interval = null;
+		private Double percentage = null;
 
 		private static class StalkerBuilder {
 			public StalkerBuilder location(String world, int x, int y, int z) {
@@ -84,5 +83,17 @@ public class ArmorStandStalker {
 				return this;
 			}
 		}
+	}
+
+	private void lookAt(ArmorStand armorStand, Stalker stalker, Player player) {
+		EntityUtils.makeArmorStandLookAtPlayer(
+			armorStand,
+			player,
+			stalker.getMinYaw(),
+			stalker.getMaxYaw(),
+			stalker.getMinPitch(),
+			stalker.getMaxPitch(),
+			stalker.getPercentage()
+		);
 	}
 }

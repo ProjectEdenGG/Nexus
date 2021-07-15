@@ -69,32 +69,45 @@ public class EntityUtils {
 		makeArmorStandLookAtPlayer(stand, player, minYaw, maxYaw, minPitch, maxPitch, null);
 	}
 
-	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch, Double percentage) {
-		Location origin = stand.getEyeLocation(); //our original location (Point A)
-		double initYaw = origin.getYaw();
-		Vector tgt = player.getPlayer().getEyeLocation().toVector(); //our target location (Point B)
-		origin.setDirection(tgt.subtract(origin.toVector())); //set the origin's direction to be the direction vector between point A and B.
+	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch, Double percent) {
+		Location standLocation = stand.getEyeLocation(); // Point A
+		double standYaw = standLocation.getYaw();
 
-		if(percentage != null)
-			origin.setDirection(origin.getDirection().multiply(percentage));
+		Vector playerLocation = player.getPlayer().getEyeLocation().toVector(); // Point B
 
-		double yaw = origin.getYaw() - initYaw;
-		double pitch = origin.getPitch();
+		//set the origin's direction to be the direction vector between point A and B.
+		if (percent == null)
+			standLocation.setDirection(playerLocation.subtract(standLocation.toVector()));
+		else {
+//			Nexus.log("Old Dir: " + standLocation.getDirection());
+
+			Vector diff = playerLocation.subtract(standLocation.toVector());
+//			Nexus.log("diff: " + diff);
+
+			Vector percentage = diff.multiply(percent);
+//			Nexus.log(percent + "% = " + percentage);
+
+			standLocation.setDirection(percentage);
+//			Nexus.log("New Dir: " + standLocation.getDirection());
+		}
+
+		double yaw = standLocation.getYaw() - standYaw;
+		double pitch = standLocation.getPitch();
 
 		if (yaw < -180)
 			yaw = yaw + 360;
 		else if (yaw >= 180)
 			yaw -= 360;
 
-		if (maxYaw != null && yaw > maxYaw)
-			yaw = maxYaw;
-		else if (minYaw != null && yaw < minYaw)
-			yaw = minYaw;
+		if (maxYaw != null)
+			yaw = Math.min(yaw, maxYaw);
+		if (minYaw != null)
+			yaw = Math.max(yaw, minYaw);
 
-		if (maxPitch != null && pitch > maxPitch)
-			pitch = maxPitch;
-		else if (minPitch != null && pitch < minPitch)
-			pitch = minPitch;
+		if (maxPitch != null)
+			pitch = Math.min(pitch, maxPitch);
+		if (minPitch != null)
+			pitch = Math.max(pitch, minPitch);
 
 		double x = Math.toRadians(pitch);
 		double y = Math.toRadians(yaw);
