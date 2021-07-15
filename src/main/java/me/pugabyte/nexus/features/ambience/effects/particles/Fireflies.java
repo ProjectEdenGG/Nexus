@@ -32,7 +32,7 @@ public class Fireflies extends ParticleEffect {
 			return;
 
 		double xRange = x + (Math.random() * RANGE + 3) - RANGE;
-		double yRange = y + (Math.random() * RANGE) * RANGE;
+		double yRange = y + (Math.random() * RANGE);
 		double zRange = z + (Math.random() * RANGE + 3) - RANGE;
 		double xVel = 0.5 * (Math.random() - 0.5);
 		double yVel = 0.2 * (Math.random() - 0.5);
