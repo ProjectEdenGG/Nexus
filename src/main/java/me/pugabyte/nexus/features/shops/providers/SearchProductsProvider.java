@@ -78,7 +78,7 @@ public class SearchProductsProvider extends _ShopProvider {
 			browseItemsMenu.open(player);
 		}));
 
-		contents.set(2, 4, ClickableItem.from(nameItem(Material.STONE_BRICKS, "&6Search for light sources"), e -> {
+		contents.set(2, 4, ClickableItem.from(nameItem(Material.SHROOMLIGHT, "&6Search for light sources"), e -> {
 			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Light sources", product -> filter(product.getItem(), MaterialTag.LIGHT_SOURCES)));
 			browseItemsMenu.open(player);
 		}));
