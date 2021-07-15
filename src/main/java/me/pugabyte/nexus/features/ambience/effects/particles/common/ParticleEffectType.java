@@ -5,7 +5,6 @@ import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import me.pugabyte.nexus.models.ambience.Variables.TimeQuadrant;
 import me.pugabyte.nexus.utils.BiomeTag;
 import me.pugabyte.nexus.utils.RandomUtils;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -31,7 +30,7 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (player == null)
 				return false;
 
-			if (RandomUtils.chanceOf(config.getChance()))
+			if (isUnderground(user))
 				return false;
 
 			if (!isWindBlowing())
@@ -43,7 +42,7 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (!isCorrectMaterial(config, block))
 				return false;
 
-			if (!blockAboveIs(block, Material.AIR))
+			if (RandomUtils.chanceOf(config.getChance()))
 				return false;
 
 			return true;

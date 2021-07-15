@@ -3,10 +3,7 @@ package me.pugabyte.nexus.features.ambience.effects.common;
 import me.pugabyte.nexus.features.ambience.Wind;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import me.pugabyte.nexus.utils.BiomeTag;
-import org.bukkit.Material;
 import org.bukkit.World.Environment;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 
 public interface ConditionalEffect {
 
@@ -41,10 +38,6 @@ public interface ConditionalEffect {
 
 	default boolean isWindBlowing() {
 		return Wind.isBlowing();
-	}
-
-	default boolean blockAboveIs(Block block, Material material) {
-		return block.getRelative(BlockFace.UP).getType().equals(material);
 	}
 
 }
