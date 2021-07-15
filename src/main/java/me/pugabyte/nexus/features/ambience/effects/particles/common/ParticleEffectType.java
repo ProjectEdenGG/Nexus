@@ -1,13 +1,14 @@
 package me.pugabyte.nexus.features.ambience.effects.particles.common;
 
 import lombok.AllArgsConstructor;
+import me.pugabyte.nexus.features.ambience.effects.common.ConditionalEffect;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import me.pugabyte.nexus.models.ambience.Variables.TimeQuadrant;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 @AllArgsConstructor
-public enum ParticleEffectType {
+public enum ParticleEffectType implements ConditionalEffect {
 	FALLING_LEAVES {
 		@Override
 		public boolean conditionsMet(ParticleEffectConfig config, AmbienceUser user, Block block, double x, double y, double z) {
