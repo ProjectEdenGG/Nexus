@@ -21,7 +21,7 @@ public class ParticleEffectConfig {
 	private final Material belowMaterial;
 	private double chance;
 
-	public void update(AmbienceUser user, Block block, double x, double y, double z) {
+	public void update(AmbienceUser user, Block block, int x, int y, int z) {
 		if (!this.effect.conditionsMet(this, user, block, x, y, z))
 			return;
 

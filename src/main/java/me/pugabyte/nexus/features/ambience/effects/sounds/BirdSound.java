@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.ambience.sounds;
+package me.pugabyte.nexus.features.ambience.effects.sounds;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.utils.RandomUtils;

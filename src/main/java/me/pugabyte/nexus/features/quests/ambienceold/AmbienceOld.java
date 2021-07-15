@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.quests.ambience;
+package me.pugabyte.nexus.features.quests.ambienceold;
 
 import eden.annotations.Disabled;
 import lombok.Getter;
@@ -12,12 +12,12 @@ import java.util.Set;
 
 @Disabled
 @NoArgsConstructor
-public class Ambience extends Feature implements Listener {
+public class AmbienceOld extends Feature implements Listener {
 	@Getter
-	private final Set<AmbienceUser> players = new HashSet<>();
+	private final Set<AmbienceUserOld> players = new HashSet<>();
 
 	public void addPlayer(Player player) {
-		AmbienceUser user = new AmbienceUser(player);
+		AmbienceUserOld user = new AmbienceUserOld(player);
 
 		// init events (setup cooldowns), so they don't all occur at once for the first time
 		// TODO
@@ -26,22 +26,12 @@ public class Ambience extends Feature implements Listener {
 	}
 
 	public void removePlayer(Player player) {
-		for (AmbienceUser user : new HashSet<>(players)) {
+		for (AmbienceUserOld user : new HashSet<>(players)) {
 			if (user.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				user.getSoundPlayer().stopSounds();
 			players.remove(user);
 		}
 	}
-
-//	@EventHandler
-//	public void onJoin(PlayerJoinEvent event){
-//		addPlayer(event.getPlayer());
-//	}
-//
-//	@EventHandler
-//	public void onQuid(PlayerQuitEvent event){
-//		removePlayer(event.getPlayer());
-//	}
 
 	@Override
 	public void onStart() {

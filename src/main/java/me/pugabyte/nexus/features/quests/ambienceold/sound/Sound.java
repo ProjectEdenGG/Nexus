@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.quests.ambience.sound;
+package me.pugabyte.nexus.features.quests.ambienceold.sound;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

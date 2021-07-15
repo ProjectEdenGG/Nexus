@@ -2,11 +2,13 @@ package me.pugabyte.nexus.features.ambience.managers.common;
 
 import lombok.AllArgsConstructor;
 import me.pugabyte.nexus.features.ambience.managers.ParticleEffectManager;
+import me.pugabyte.nexus.features.ambience.managers.SoundEffectManager;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 
 @AllArgsConstructor
 public enum AmbienceManagers {
 	PARTICLE_EFFECTS(new ParticleEffectManager()),
+	SOUND_EFFECTS(new SoundEffectManager()),
 	;
 
 	private final AmbienceManager<?> manager;

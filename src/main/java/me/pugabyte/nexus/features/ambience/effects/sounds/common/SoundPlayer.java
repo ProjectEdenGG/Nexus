@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.quests.ambience.sound;
+package me.pugabyte.nexus.features.ambience.effects.sounds.common;
 
 import me.pugabyte.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
@@ -26,13 +26,17 @@ public class SoundPlayer {
 		}
 	}
 
+	public void playSound(Sound sound, Location location) {
+		playSound(sound, location.getX(), location.getY(), location.getZ());
+	}
+
 	public void playSound(Sound sound, double x, double y, double z) {
 		// check sound probability
 		if (sound.getProbability() < 1 && Math.random() >= sound.getProbability()) return;
 
 		// calculate volume and pitch
-		float volume = sound.getVolume();
-		float pitch = sound.getPitch();
+		double volume = sound.getRandomVolume();
+		double pitch = sound.getRandomPitch();
 
 		// schedule if delay > 0
 		if (sound.getDelay() > 0) {
@@ -46,15 +50,15 @@ public class SoundPlayer {
 		playSound(sound.getName(), sound.getX(), sound.getY(), sound.getZ(), sound.getVolume(), sound.getPitch());
 	}
 
-	public void playSound(String sound, double x, double y, double z, float volume, float pitch) {
+	public void playSound(String sound, double x, double y, double z, double volume, double pitch) {
 		playSound(sound, new Location(player.getWorld(), x, y, z), volume, pitch);
 	}
 
-	public void playSound(String sound, float volume, float pitch) {
+	public void playSound(String sound, double volume, double pitch) {
 		playSound(sound, player.getLocation(), volume, pitch);
 	}
 
-	public void playSound(String sound, Location location, float volume, float pitch) {
+	public void playSound(String sound, Location location, double volume, double pitch) {
 		new SoundBuilder(org.bukkit.Sound.valueOf(sound))
 			.receiver(player)
 			.location(location)
@@ -62,9 +66,5 @@ public class SoundPlayer {
 			.volume(volume)
 			.pitch(pitch)
 			.play();
-	}
-
-	public void stopSounds() {
-		// TODO
 	}
 }

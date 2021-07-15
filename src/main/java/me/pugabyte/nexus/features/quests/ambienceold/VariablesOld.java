@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.quests.ambience;
+package me.pugabyte.nexus.features.quests.ambienceold;
 
 import lombok.Data;
 import org.bukkit.Location;
