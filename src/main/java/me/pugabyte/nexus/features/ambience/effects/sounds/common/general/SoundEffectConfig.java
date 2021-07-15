@@ -1,10 +1,11 @@
-package me.pugabyte.nexus.features.ambience.effects.sounds.common;
+package me.pugabyte.nexus.features.ambience.effects.sounds.common.general;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.pugabyte.nexus.features.ambience.effects.sounds.BirdSound;
+import me.pugabyte.nexus.features.ambience.effects.sounds.common.Sound;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -13,29 +14,17 @@ import java.util.Random;
 public class SoundEffectConfig {
 	private static final Random RANDOM = new Random();
 	//
+	@NotNull
 	private SoundEffectType effectType;
-	private Sound sound = null;
-	private BirdSound birdSound = null;
+	@NotNull
+	private Sound sound;
 	private int cooldownMin;
 	private int cooldownMax;
 	private String cooldownId;
 
-	public SoundEffectConfig(SoundEffectType effectType, Sound sound, int cooldownMin, int cooldownMax) {
+	public SoundEffectConfig(@NotNull SoundEffectType effectType, @NotNull Sound sound, int cooldownMin, int cooldownMax) {
 		this.effectType = effectType;
 		this.sound = sound;
-		this.cooldownMin = cooldownMin;
-		this.cooldownMax = cooldownMax;
-		this.cooldownId = effectType.name().toLowerCase();
-
-		if (cooldownMin < 0) throw new IllegalArgumentException("cooldown minimum cannot be negative");
-		if (cooldownMax < 0) throw new IllegalArgumentException("cooldown maximum cannot be negative");
-		if (cooldownMax < cooldownMin)
-			throw new IllegalArgumentException("cooldown min cannot be larger than cooldown max");
-	}
-
-	public SoundEffectConfig(SoundEffectType effectType, BirdSound birdSound, int cooldownMin, int cooldownMax) {
-		this.effectType = effectType;
-		this.birdSound = birdSound;
 		this.cooldownMin = cooldownMin;
 		this.cooldownMax = cooldownMax;
 		this.cooldownId = effectType.name().toLowerCase();
@@ -55,15 +44,11 @@ public class SoundEffectConfig {
 		if (player == null)
 			return;
 
-		if (!effectType.conditionsMet(this, user))
+		if (!effectType.conditionsMet(user, this))
 			return;
 
 		if (user.updateCooldown(cooldownId) <= 0) {
-			if (sound != null)
-				user.getSoundPlayer().playSound(sound, player.getLocation());
-			else if (birdSound != null)
-				birdSound.play(player, player.getLocation());
-
+			user.getSoundPlayer().playSound(sound, player.getLocation());
 			setCooldown(user);
 		}
 	}

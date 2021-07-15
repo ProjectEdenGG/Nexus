@@ -1,10 +1,11 @@
 package me.pugabyte.nexus.features.ambience.managers;
 
 import lombok.Getter;
-import me.pugabyte.nexus.features.ambience.effects.sounds.BirdSound;
 import me.pugabyte.nexus.features.ambience.effects.sounds.common.Sound;
-import me.pugabyte.nexus.features.ambience.effects.sounds.common.SoundEffectConfig;
-import me.pugabyte.nexus.features.ambience.effects.sounds.common.SoundEffectType;
+import me.pugabyte.nexus.features.ambience.effects.sounds.common.birds.BirdSoundEffectConfig;
+import me.pugabyte.nexus.features.ambience.effects.sounds.common.birds.BirdSoundEffectType;
+import me.pugabyte.nexus.features.ambience.effects.sounds.common.general.SoundEffectConfig;
+import me.pugabyte.nexus.features.ambience.effects.sounds.common.general.SoundEffectType;
 import me.pugabyte.nexus.features.ambience.managers.common.AmbienceManager;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 
@@ -41,9 +42,8 @@ public class SoundEffectManager extends AmbienceManager {
 				15, 60));
 
 		effects.add(
-			new SoundEffectConfig(
-				SoundEffectType.BIRD_FOREST,
-				BirdSound.BLUEBIRD,
+			new BirdSoundEffectConfig(
+				BirdSoundEffectType.FOREST,
 				15, 60));
 	}
 }

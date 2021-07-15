@@ -2,7 +2,10 @@ package me.pugabyte.nexus.features.ambience.effects.sounds;
 
 import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.SneakyThrows;
+import me.pugabyte.nexus.features.ambience.effects.sounds.common.annotations.Biomes;
+import me.pugabyte.nexus.features.ambience.effects.sounds.common.annotations.Birdhouse;
+import me.pugabyte.nexus.utils.BiomeTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
@@ -10,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +24,8 @@ import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 
 @AllArgsConstructor
 public enum BirdSound {
-	BLUEBIRD(true) {
+	@Birdhouse
+	BLUEBIRD {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
@@ -32,7 +37,8 @@ public enum BirdSound {
 			tasks.put(wait += 25, sound(2));
 		}
 	},
-	BUDGERIGAR(true) {
+	@Birdhouse
+	BUDGERIGAR {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
@@ -40,26 +46,30 @@ public enum BirdSound {
 				tasks.put(wait += randomInt(7, 15), sound(randomInt(1, 2)).volume(.05));
 		}
 	},
-	CARDINAL(true) {
+	@Birdhouse
+	CARDINAL {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(1));
 		}
 	},
-	FINCH(true) {
+	@Birdhouse
+	FINCH {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	GOLDCREST(true) {
+	@Birdhouse
+	GOLDCREST {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(1));
 			tasks.put(Time.SECOND.x(randomInt(4, 6)), sound(1));
 		}
 	},
-	GOULDIAN_FINCH(true) {
+	@Birdhouse
+	GOULDIAN_FINCH {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
@@ -67,7 +77,8 @@ public enum BirdSound {
 				tasks.put(wait += randomInt(7, 15), sound(1));
 		}
 	},
-	KILLDEER(true) {
+	@Birdhouse
+	KILLDEER {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
@@ -75,37 +86,43 @@ public enum BirdSound {
 				tasks.put(wait += randomInt(10, 15), sound(1).pitch(randomDouble(.9, 1.1)));
 		}
 	},
-	LEAF_WARBLER(true) {
+	@Birdhouse
+	LEAF_WARBLER {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	MOCKINGBIRD(true) {
+	@Birdhouse
+	MOCKINGBIRD {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(randomInt(1, 7)));
 		}
 	},
-	ROBIN(true) {
+	@Birdhouse
+	ROBIN {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	SHRIKE(true) {
+	@Birdhouse
+	SHRIKE {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	SPARROW(true) {
+	@Birdhouse
+	SPARROW {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(1));
 		}
 	},
-	WILLOW_TIT(true) {
+	@Birdhouse
+	WILLOW_TIT {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			final SoundBuilder sound = sound(randomInt(1, 2)).volume(.07);
@@ -115,17 +132,35 @@ public enum BirdSound {
 				tasks.put(wait += 25, sound);
 		}
 	},
-	WOODPECKER(true) {
+	@Birdhouse
+	WOODPECKER {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(1));
 			tasks.put(Time.SECOND.x(randomDouble(1.5, 2.5)), sound(1));
 		}
 	},
+	@Biomes(BiomeTag.JUNGLE)
+	MACAW {
+		@Override
+		void get(Map<Integer, SoundBuilder> tasks) {
+
+		}
+	}
 	;
 
-	@Getter
-	private final boolean birdhouse;
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
+	public boolean isBirdhouse() {
+		return getField().getAnnotation(Birdhouse.class) != null;
+	}
+
+	public boolean getBiomes() {
+		return getField().getAnnotation(Birdhouse.class) != null;
+	}
 
 	public void play(Location location) {
 		build().forEach((wait, sound) ->

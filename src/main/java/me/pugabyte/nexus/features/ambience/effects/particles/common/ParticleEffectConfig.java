@@ -22,7 +22,7 @@ public class ParticleEffectConfig {
 	private double chance;
 
 	public void update(AmbienceUser user, Block block, int x, int y, int z) {
-		if (!this.effect.conditionsMet(this, user, block, x, y, z))
+		if (!this.effect.conditionsMet(user, this, block, x, y, z))
 			return;
 
 		// TODO Abstract?
