@@ -11,7 +11,7 @@ public enum BirdEffectType implements ConditionalEffect {
 	FOREST {
 		@Override
 		public boolean conditionsMet2(AmbienceUser user, BirdEffectConfig config) {
-			if (isBiome(user, BiomeTag.FOREST))
+			if (isBiome(user, BiomeTag.ALL_FORESTS))
 				return false;
 
 			return true;

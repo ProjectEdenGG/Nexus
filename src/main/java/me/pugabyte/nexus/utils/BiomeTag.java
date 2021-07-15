@@ -18,7 +18,8 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public enum BiomeTag {
 	OCEAN(Material.WATER_BUCKET, new BiomeTagBuilder("OCEAN", MatchMode.CONTAINS)),
-	FOREST(Material.OAK_LEAVES, new BiomeTagBuilder("FOREST", MatchMode.CONTAINS)
+	FORESTS(Material.OAK_LEAVES, new BiomeTagBuilder("FOREST", MatchMode.CONTAINS)),
+	ALL_FORESTS(Material.BIRCH_LEAVES, new BiomeTagBuilder(FORESTS)
 		.append("GIANT_SPRUCE_TAIGA", MatchMode.CONTAINS)
 		.exclude(Biome.CRIMSON_FOREST, Biome.WARPED_FOREST)),
 	SWAMP(Material.VINE, new BiomeTagBuilder("SWAMP", MatchMode.CONTAINS)),
@@ -38,20 +39,20 @@ public enum BiomeTag {
 	}
 
 	public Biome[] toArray() {
-		return new ArrayList<>(tag.getValues()).toArray(Biome[]::new);
+		return tag.toArray();
 	}
 
 	public boolean isTagged(@NotNull Biome biome) {
-		return tag.getValues().contains(biome);
+		return tag.isTagged(biome);
 	}
 
 	public boolean isTagged(@NotNull Block block) {
-		return isTagged(block.getBiome());
+		return tag.isTagged(block);
 	}
 
 	@Override
 	public String toString() {
-		return tag.getValues().toString();
+		return tag.toString();
 	}
 
 	protected static class BiomeTagBuilder {
@@ -63,6 +64,11 @@ public enum BiomeTag {
 		public BiomeTagBuilder(Biome... biomes) {
 			this.biomes = EnumSet.noneOf(Biome.class);
 			append(biomes);
+		}
+
+		public BiomeTagBuilder(BiomeTag... biomeTags) {
+			this.biomes = EnumSet.noneOf(Biome.class);
+			append(biomeTags);
 		}
 
 		public BiomeTagBuilder(BiomeTagBuilder... biomeTags) {
@@ -89,6 +95,13 @@ public enum BiomeTag {
 
 		public BiomeTagBuilder append(Biome... biomes) {
 			this.biomes.addAll(Arrays.asList(biomes));
+			return this;
+		}
+
+		public final BiomeTagBuilder append(BiomeTag... biomeTags) {
+			for (BiomeTag biomeTag : biomeTags)
+				this.biomes.addAll(biomeTag.getValues());
+
 			return this;
 		}
 
