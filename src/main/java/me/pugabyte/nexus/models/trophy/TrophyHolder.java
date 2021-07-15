@@ -17,7 +17,6 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.WorldGroup;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -65,7 +64,10 @@ public class TrophyHolder implements PlayerOwnedObject {
 		if (!hasEarned(trophy))
 			throw new InvalidInputException("You have not earned that trophy");
 
-		PlayerUtils.giveItemsAndMailExcess(this, Collections.singleton(trophy.getItem().build()), trophy.toString(), WorldGroup.SURVIVAL);
+		if (getWorldGroup() != WorldGroup.SURVIVAL)
+			throw new InvalidInputException("You must be in Survival to claim this trophy");
+
+		PlayerUtils.giveItem(this, trophy.getItem().build());
 		claimed.add(trophy);
 		return true;
 	}
