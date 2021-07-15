@@ -7,8 +7,8 @@ import me.pugabyte.nexus.models.ambience.AmbienceUser;
 
 @AllArgsConstructor
 public enum AmbienceManagers {
-	PARTICLE_EFFECTS(new ParticleEffectManager()),
-	SOUND_EFFECTS(new SoundEffectManager()),
+	PARTICLES(new ParticleEffectManager()),
+	SOUNDS(new SoundEffectManager()),
 	;
 
 	private final AmbienceManager<?> manager;
@@ -20,6 +20,11 @@ public enum AmbienceManagers {
 	public static void tick() {
 		for (AmbienceManagers manager : values())
 			manager.get().tick();
+	}
+
+	public static void init(AmbienceUser user) {
+		for (AmbienceManagers manager : values())
+			manager.get().init(user);
 	}
 
 	public static void update(AmbienceUser user) {

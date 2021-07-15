@@ -10,13 +10,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.nexus.features.ambience.effects.sounds.common.SoundEffect;
 import me.pugabyte.nexus.features.ambience.effects.sounds.common.SoundPlayer;
-import me.pugabyte.nexus.features.ambience.managers.SoundEffectManager;
-import me.pugabyte.nexus.features.ambience.managers.common.AmbienceManager;
 import me.pugabyte.nexus.features.ambience.managers.common.AmbienceManagers;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -47,25 +45,26 @@ public class AmbienceUser implements PlayerOwnedObject {
 	}
 
 	public Variables getVariables() {
-		if (variables == null) {
+		if (variables == null)
 			variables = new Variables(getPlayer());
-		}
 
 		return variables;
 	}
 
 	public Map<String, Integer> getCooldowns() {
-		if (cooldowns == null) {
-			final AmbienceManager<SoundEffect> soundEffectManager = AmbienceManagers.SOUND_EFFECTS.get();
-			SoundEffectManager manager = (SoundEffectManager) soundEffectManager;
-			manager.init(this);
-		}
+		if (cooldowns == null)
+			AmbienceManagers.SOUNDS.get().init(this);
 
 		return cooldowns;
 	}
 
+	public boolean hasCooldown(String key) {
+		return getCooldowns().containsKey(key);
+	}
+
 	public int updateCooldown(String key) {
-		if (!cooldowns.containsKey(key)) return 0;
+		if (!hasCooldown(key))
+			return 0;
 
 		int value = cooldowns.get(key) - 1;
 		cooldowns.put(key, value);
@@ -73,7 +72,8 @@ public class AmbienceUser implements PlayerOwnedObject {
 	}
 
 	public int getCooldown(String key) {
-		if (!cooldowns.containsKey(key)) return 0;
+		if (!hasCooldown(key))
+			return 0;
 
 		return cooldowns.get(key);
 	}
@@ -81,6 +81,9 @@ public class AmbienceUser implements PlayerOwnedObject {
 	public void setCooldown(String key, int value) {
 		if (value < 0)
 			value = 0;
+
+		if (cooldowns == null)
+			cooldowns = new HashMap<>();
 
 		cooldowns.put(key, value);
 	}

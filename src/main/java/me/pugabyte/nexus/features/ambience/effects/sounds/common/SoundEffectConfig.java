@@ -17,7 +17,7 @@ public class SoundEffectConfig {
 	private List<Sound> sounds;
 	private int cooldownMin;
 	private int cooldownMax;
-	String cooldownId;
+	private String cooldownId;
 
 	public SoundEffectConfig(SoundEffectType effectType, List<Sound> sounds, int cooldownMin, int cooldownMax) {
 		this.effectType = effectType;
@@ -41,13 +41,13 @@ public class SoundEffectConfig {
 		if (player == null)
 			return;
 
-		if (!this.effectType.conditionsMet(this, user))
+		if (!effectType.conditionsMet(this, user))
 			return;
 
 		if (user.updateCooldown(cooldownId) <= 0) {
-			for (Sound sound : sounds) {
+			for (Sound sound : sounds)
 				user.getSoundPlayer().playSound(sound, player.getLocation());
-			}
+
 			setCooldown(user);
 		}
 	}

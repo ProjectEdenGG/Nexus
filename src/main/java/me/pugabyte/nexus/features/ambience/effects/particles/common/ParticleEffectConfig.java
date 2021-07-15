@@ -26,7 +26,7 @@ public class ParticleEffectConfig {
 			return;
 
 		// TODO Abstract?
-		final AmbienceManager<ParticleEffect> manager = AmbienceManagers.PARTICLE_EFFECTS.get();
+		final AmbienceManager<ParticleEffect> manager = AmbienceManagers.PARTICLES.get();
 		switch (this.effect) {
 			case FIREFLIES -> manager.addInstance(user, new Fireflies(user, x, y, z, chance));
 			case DUST_WIND -> manager.addInstance(user, new DustWind(user, block.getType(), x, y, z, chance));

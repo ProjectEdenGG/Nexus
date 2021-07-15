@@ -34,6 +34,7 @@ public class ParticleEffectManager extends AmbienceManager<ParticleEffect> {
 		}
 	}
 
+	@Override
 	public void update(AmbienceUser user) {
 		if (!user.isParticles())
 			return;

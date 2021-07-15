@@ -21,11 +21,13 @@ public abstract class AmbienceManager<T> {
 		getEffects(user.getUuid()).add(particleEffect);
 	}
 
-	abstract public void tick();
+	public void tick() {}
 
-	abstract public void update(AmbienceUser user);
+	public void update(AmbienceUser user) {}
 
-	abstract public void onStart();
+	public void init(AmbienceUser user) {}
+
+	public void onStart() {}
 
 	public void onStop() {
 		getActiveEffects().clear();

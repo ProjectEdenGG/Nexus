@@ -21,17 +21,16 @@ public class SoundEffectManager extends AmbienceManager<SoundEffect> {
 
 	}
 
+	@Override
 	public void init(AmbienceUser user) {
-		for (SoundEffectConfig effect : effects) {
+		for (SoundEffectConfig effect : effects)
 			effect.init(user);
-		}
 	}
 
 	@Override
 	public void update(AmbienceUser user) {
-		for (SoundEffectConfig effect : effects) {
+		for (SoundEffectConfig effect : effects)
 			effect.update(user);
-		}
 	}
 
 	@Override
