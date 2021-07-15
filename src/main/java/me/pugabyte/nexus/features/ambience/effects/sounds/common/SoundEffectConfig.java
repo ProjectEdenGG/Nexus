@@ -2,10 +2,10 @@ package me.pugabyte.nexus.features.ambience.effects.sounds.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import me.pugabyte.nexus.features.ambience.effects.sounds.BirdSound;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.Random;
 
 @Data
@@ -14,14 +14,28 @@ public class SoundEffectConfig {
 	private static final Random RANDOM = new Random();
 	//
 	private SoundEffectType effectType;
-	private List<Sound> sounds;
+	private Sound sound = null;
+	private BirdSound birdSound = null;
 	private int cooldownMin;
 	private int cooldownMax;
 	private String cooldownId;
 
-	public SoundEffectConfig(SoundEffectType effectType, List<Sound> sounds, int cooldownMin, int cooldownMax) {
+	public SoundEffectConfig(SoundEffectType effectType, Sound sound, int cooldownMin, int cooldownMax) {
 		this.effectType = effectType;
-		this.sounds = sounds;
+		this.sound = sound;
+		this.cooldownMin = cooldownMin;
+		this.cooldownMax = cooldownMax;
+		this.cooldownId = effectType.name().toLowerCase();
+
+		if (cooldownMin < 0) throw new IllegalArgumentException("cooldown minimum cannot be negative");
+		if (cooldownMax < 0) throw new IllegalArgumentException("cooldown maximum cannot be negative");
+		if (cooldownMax < cooldownMin)
+			throw new IllegalArgumentException("cooldown min cannot be larger than cooldown max");
+	}
+
+	public SoundEffectConfig(SoundEffectType effectType, BirdSound birdSound, int cooldownMin, int cooldownMax) {
+		this.effectType = effectType;
+		this.birdSound = birdSound;
 		this.cooldownMin = cooldownMin;
 		this.cooldownMax = cooldownMax;
 		this.cooldownId = effectType.name().toLowerCase();
@@ -45,8 +59,10 @@ public class SoundEffectConfig {
 			return;
 
 		if (user.updateCooldown(cooldownId) <= 0) {
-			for (Sound sound : sounds)
+			if (sound != null)
 				user.getSoundPlayer().playSound(sound, player.getLocation());
+			else if (birdSound != null)
+				birdSound.play(player, player.getLocation());
 
 			setCooldown(user);
 		}

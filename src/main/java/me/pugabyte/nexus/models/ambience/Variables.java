@@ -5,6 +5,7 @@ import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
@@ -18,6 +19,7 @@ public class Variables {
 	private Player player;
 	private Location location;
 	private Biome biome;
+	private Environment dimension;
 	//
 	private boolean exposed;
 	private boolean submerged;
@@ -49,6 +51,7 @@ public class Variables {
 
 		location = player.getLocation();
 		biome = location.getBlock().getBiome();
+		dimension = player.getWorld().getEnvironment();
 		//
 		exposed = exposedCheck(player);
 		submerged = submergedCheck(player);
