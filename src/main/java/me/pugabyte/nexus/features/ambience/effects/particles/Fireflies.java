@@ -6,6 +6,7 @@ import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffe
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffectType;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 @NoArgsConstructor
@@ -17,17 +18,17 @@ public class Fireflies extends ParticleEffect {
 
 	public static final int LIFE = Time.SECOND.x(10);
 
-	public Fireflies(AmbienceUser user, double x, double y, double z, double chance) {
+	public Fireflies(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.FIREFLIES, Particle.END_ROD, LIFE, chance);
 
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.x = block.getX();
+		this.y = block.getY();
+		this.z = block.getZ();
 	}
 
 	@Override
 	public void play() {
-		Player player = getUser().getPlayer();
+		Player player = user.getPlayer();
 		if (player == null)
 			return;
 
@@ -38,7 +39,7 @@ public class Fireflies extends ParticleEffect {
 		double yVel = 0.2 * (Math.random() - 0.5);
 		double zVel = 0.5 * (Math.random() - 0.5);
 
-		player.spawnParticle(getParticle(), xRange, yRange, zRange, 0, xVel, yVel, zVel, 1);
+		player.spawnParticle(particle, xRange, yRange, zRange, 0, xVel, yVel, zVel, 1);
 	}
 
 }

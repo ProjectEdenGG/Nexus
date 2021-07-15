@@ -8,6 +8,7 @@ import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffe
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,25 +18,21 @@ public class DustWind extends ParticleEffect {
 	private double x;
 	private double y;
 	private double z;
-	private double windX;
-	private double windZ;
 
 	private static final int LIFE = Time.SECOND.x(3);
 
-	public DustWind(AmbienceUser user, Material material, double x, double y, double z, double chance) {
+	public DustWind(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.DUST_WIND, Particle.ITEM_CRACK, LIFE, chance);
 
-		this.material = material;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.windX = Wind.getX();
-		this.windZ = Wind.getZ();
+		this.material = block.getType();
+		this.x = block.getX();
+		this.y = block.getY();
+		this.z = block.getZ();
 	}
 
 	@Override
 	public void play() {
-		Player player = getUser().getPlayer();
+		Player player = user.getPlayer();
 		if (player == null)
 			return;
 
@@ -44,11 +41,11 @@ public class DustWind extends ParticleEffect {
 		double zRange = z - 2 + Math.random() * 5;
 
 		double scale = 1 + Math.random() * 0.2;
-		double xVel = windX * scale;
+		double xVel = Wind.getX() * scale;
 		double yVel = 0;
-		double zVel = windZ * scale;
+		double zVel = Wind.getZ() * scale;
 
-		player.spawnParticle(getParticle(), xRange, yRange, zRange, 0, xVel, yVel, zVel, 1, new ItemStack(material));
+		player.spawnParticle(particle, xRange, yRange, zRange, 0, xVel, yVel, zVel, 1, new ItemStack(material));
 	}
 
 }

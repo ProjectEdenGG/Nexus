@@ -1,19 +1,18 @@
-package me.pugabyte.nexus.features.ambience.effects.sounds.common.general;
+package me.pugabyte.nexus.features.ambience.effects.sounds.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.pugabyte.nexus.features.ambience.effects.sounds.common.Sound;
+import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.features.ambience.effects.common.AmbientEffectConfig;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
+import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
-
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class SoundEffectConfig {
-	private static final Random RANDOM = new Random();
-	//
+public class SoundEffectConfig implements AmbientEffectConfig<SoundEffectType> {
 	@NotNull
 	private SoundEffectType effectType;
 	@NotNull
@@ -39,6 +38,10 @@ public class SoundEffectConfig {
 		setCooldown(user);
 	}
 
+	private void setCooldown(AmbienceUser user) {
+		user.setCooldown(cooldownId, cooldownMin + RandomUtils.getRandom().nextInt(cooldownMax - cooldownMin + 1));
+	}
+
 	public void update(AmbienceUser user) {
 		Player player = user.getPlayer();
 		if (player == null)
@@ -51,10 +54,6 @@ public class SoundEffectConfig {
 			user.getSoundPlayer().playSound(sound, player.getLocation());
 			setCooldown(user);
 		}
-	}
-
-	private void setCooldown(AmbienceUser user) {
-		user.setCooldown(cooldownId, cooldownMin + RANDOM.nextInt(cooldownMax - cooldownMin + 1));
 	}
 
 }

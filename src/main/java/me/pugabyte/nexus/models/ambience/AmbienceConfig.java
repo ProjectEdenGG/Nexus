@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.ambience.effects.sounds.BirdSound;
+import me.pugabyte.nexus.features.ambience.effects.birds.BirdSound;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;

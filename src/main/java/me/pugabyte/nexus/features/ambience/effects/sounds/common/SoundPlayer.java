@@ -77,4 +77,5 @@ public class SoundPlayer implements PlayerOwnedObject {
 			.pitch(pitch)
 			.play();
 	}
+
 }

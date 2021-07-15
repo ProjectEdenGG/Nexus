@@ -1,6 +1,4 @@
-package me.pugabyte.nexus.features.ambience.effects.sounds.common.annotations;
-
-import me.pugabyte.nexus.utils.BiomeTag;
+package me.pugabyte.nexus.features.ambience.effects.birds.common.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,6 +7,4 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Biomes {
-	BiomeTag[] value();
-}
+public @interface Birdhouse {}

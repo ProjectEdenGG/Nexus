@@ -4,7 +4,7 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.ambience.effects.sounds.BirdSound;
+import me.pugabyte.nexus.features.ambience.effects.birds.BirdSound;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;

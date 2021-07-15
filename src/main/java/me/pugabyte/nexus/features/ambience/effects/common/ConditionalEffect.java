@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.features.ambience.effects.common;
 
 import me.pugabyte.nexus.features.ambience.Wind;
-import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffectConfig;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import me.pugabyte.nexus.utils.BiomeTag;
 import org.bukkit.Material;
@@ -24,14 +23,6 @@ public interface ConditionalEffect {
 		return false;
 	}
 
-	default boolean isAboveMaterial(ParticleEffectConfig config, Block block){
-		return config.getAboveMaterial().equals(block.getRelative(0, 1, 0).getType());
-	}
-
-	default boolean isSpawnMaterial(ParticleEffectConfig config, Block block){
-		return config.getSpawnMaterial().equals(block.getType());
-	}
-
 	default boolean isUnderground(AmbienceUser user) {
 		return !user.getVariables().isExposed();
 	}
@@ -48,11 +39,12 @@ public interface ConditionalEffect {
 		return user.getVariables().isThundering();
 	}
 
-	default boolean isWindBlowing(){
+	default boolean isWindBlowing() {
 		return Wind.isBlowing();
 	}
 
-	default boolean blockAbove(Block block, Material material){
+	default boolean blockAboveIs(Block block, Material material) {
 		return block.getRelative(BlockFace.UP).getType().equals(material);
 	}
+
 }

@@ -1,10 +1,10 @@
-package me.pugabyte.nexus.features.ambience.effects.sounds;
+package me.pugabyte.nexus.features.ambience.effects.birds;
 
 import eden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import me.pugabyte.nexus.features.ambience.effects.sounds.common.annotations.Biomes;
-import me.pugabyte.nexus.features.ambience.effects.sounds.common.annotations.Birdhouse;
+import me.pugabyte.nexus.features.ambience.effects.birds.common.annotations.Biomes;
+import me.pugabyte.nexus.features.ambience.effects.birds.common.annotations.Birdhouse;
 import me.pugabyte.nexus.utils.BiomeTag;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
@@ -146,7 +146,7 @@ public enum BirdSound {
 		void get(Map<Integer, SoundBuilder> tasks) {
 
 		}
-	}
+	},
 	;
 
 	@SneakyThrows

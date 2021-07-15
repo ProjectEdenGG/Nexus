@@ -72,7 +72,7 @@ public class ParticleEffectManager extends AmbienceManager {
 			Block block = player.getWorld().getBlockAt(x, y, z);
 
 			for (ParticleEffectConfig config : effects)
-				config.update(user, block, x, y, z);
+				config.update(user, block);
 		}
 	}
 

@@ -18,6 +18,9 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public enum BiomeTag {
 	OCEAN(Material.WATER_BUCKET, new BiomeTagBuilder("OCEAN", MatchMode.CONTAINS)),
+	FOREST(Material.OAK_LEAVES, new BiomeTagBuilder("FOREST", MatchMode.CONTAINS)
+		.append("GIANT_SPRUCE_TAIGA", MatchMode.CONTAINS)
+		.exclude(Biome.CRIMSON_FOREST, Biome.WARPED_FOREST)),
 	SWAMP(Material.VINE, new BiomeTagBuilder("SWAMP", MatchMode.CONTAINS)),
 	TAIGA(Material.SPRUCE_LOG, new BiomeTagBuilder("TAIGA", MatchMode.CONTAINS)),
 	JUNGLE(Material.JUNGLE_LOG, new BiomeTagBuilder("JUNGLE", MatchMode.CONTAINS)),

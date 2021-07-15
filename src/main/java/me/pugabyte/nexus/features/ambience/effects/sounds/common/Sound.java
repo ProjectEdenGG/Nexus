@@ -72,4 +72,5 @@ public class Sound {
 	public double getRandomPitch() {
 		return pitchMin + (Math.random() * (pitchMax - pitchMin));
 	}
+
 }

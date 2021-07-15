@@ -2,20 +2,35 @@ package me.pugabyte.nexus.features.ambience;
 
 import eden.utils.TimeUtils.Time;
 import lombok.Getter;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 
 public class Wind {
 	@Getter
-	private static final boolean blowing = true;
+	private static boolean blowing = true;
 	@Getter
-	public static double direction = Math.random() * 2 * Math.PI;
+	private static double direction;
 	@Getter
-	public static double X = Math.sin(direction);
+	private static double X;
 	@Getter
-	public static double Z = Math.cos(direction);
+	private static double Z;
+
+	private static final int blowingUpdateInterval = Time.MINUTE.x(5);
+	private static final Runnable blowingUpdate = () ->
+		blowing = RandomUtils.chanceOf(25);
+
+	private static final int directionUpdateInterval = Time.MINUTE.get();
+	private static final Runnable directionUpdate = () -> {
+		direction = Math.random() * 2 * Math.PI;
+		X = Math.sin(direction);
+		Z = Math.cos(direction);
+	};
 
 	static {
-		// change wind direction
-		Tasks.repeat(0, Time.MINUTE.x(1), () -> direction = Math.random() * 2 * Math.PI);
+		blowingUpdate.run();
+		directionUpdate.run();
+
+		Tasks.repeat(blowingUpdateInterval, blowingUpdateInterval, blowingUpdate);
+		Tasks.repeat(directionUpdateInterval, directionUpdateInterval, directionUpdate);
 	}
 }

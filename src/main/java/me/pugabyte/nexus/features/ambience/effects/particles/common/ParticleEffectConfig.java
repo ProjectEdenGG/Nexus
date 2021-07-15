@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.ambience.effects.particles.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import me.pugabyte.nexus.features.ambience.effects.common.AmbientEffectConfig;
 import me.pugabyte.nexus.features.ambience.effects.particles.DustWind;
 import me.pugabyte.nexus.features.ambience.effects.particles.FallingLeaves;
 import me.pugabyte.nexus.features.ambience.effects.particles.Fireflies;
@@ -13,24 +14,25 @@ import org.bukkit.block.Block;
 
 @Data
 @AllArgsConstructor
-public class ParticleEffectConfig {
-	private final ParticleEffectType effect;
+public class ParticleEffectConfig implements AmbientEffectConfig<ParticleEffectType> {
+	private final ParticleEffectType effectType;
 	private final Material particleMaterial;
 	private final Material spawnMaterial;
 	private final Material aboveMaterial;
 	private final Material belowMaterial;
 	private double chance;
 
-	public void update(AmbienceUser user, Block block, int x, int y, int z) {
-		if (!this.effect.conditionsMet(user, this, block, x, y, z))
+	public void update(AmbienceUser user, Block block) {
+		if (!this.effectType.conditionsMet(user, this, block))
 			return;
 
 		// TODO Abstract?
 		final ParticleEffectManager manager = AmbienceManagers.PARTICLES.get();
-		switch (this.effect) {
-			case FIREFLIES -> manager.addInstance(user, new Fireflies(user, x, y, z, chance));
-			case DUST_WIND -> manager.addInstance(user, new DustWind(user, block.getType(), x, y, z, chance));
-			case FALLING_LEAVES -> manager.addInstance(user, new FallingLeaves(user, block.getType(), x, y, z, chance));
+		switch (this.effectType) {
+			case FIREFLIES -> manager.addInstance(user, new Fireflies(user, block, chance));
+			case DUST_WIND -> manager.addInstance(user, new DustWind(user, block, chance));
+			case FALLING_LEAVES -> manager.addInstance(user, new FallingLeaves(user, block, chance));
 		}
 	}
+
 }
