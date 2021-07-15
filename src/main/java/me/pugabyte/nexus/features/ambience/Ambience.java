@@ -32,8 +32,10 @@ public class Ambience extends Feature implements Listener {
 
 	private void ambienceTask() {
 		Tasks.repeat(0, Time.TICK.x(2), () -> {
-			for (AmbienceUser user : getUsers())
+			for (AmbienceUser user : getUsers()) {
 				user.getVariables().update();
+				user.getSoundPlayer().update();
+			}
 			AmbienceManagers.tick();
 		});
 
