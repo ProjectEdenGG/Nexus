@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.particles.effects;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
 import eden.utils.TimeUtils.Time;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class DotEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public DotEffect(Player player, Location location, Particle particle, int count, int ticks, double speed,
+	public DotEffect(Player player, Location location, boolean clientSide, Particle particle, int count, int ticks, double speed,
 					 boolean rainbow, Color color, double disX, double disY, double disZ,
 					 int startDelay, int pulseDelay) {
 
@@ -75,8 +76,18 @@ public class DotEffect {
 				blue.set(rgb[2]);
 			}
 
-			Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
-			ParticleUtils.display(finalParticle, finalLocation, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+			final ParticleBuilder builder = new ParticleBuilder(finalParticle)
+				.location(finalLocation)
+				.extra(finalSpeed)
+				.count(finalCount)
+				.color(red.get(), green.get(), blue.get());
+
+			if (clientSide)
+				builder.receivers(player);
+			else
+				builder.allPlayers();
+
+			builder.spawn();
 
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
