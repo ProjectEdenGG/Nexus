@@ -29,6 +29,9 @@ public class SoundEffectManager extends AmbienceManager {
 
 	@Override
 	public void update(AmbienceUser user) {
+		if (!user.isSounds())
+			return;
+
 		for (SoundEffectConfig effect : effects)
 			effect.update(user);
 	}
