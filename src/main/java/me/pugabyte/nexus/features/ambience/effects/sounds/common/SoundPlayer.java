@@ -1,16 +1,23 @@
 package me.pugabyte.nexus.features.ambience.effects.sounds.common;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.models.PlayerOwnedObject;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
-import org.bukkit.entity.Player;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
-public class SoundPlayer {
-	Player player;
+@Data
+@RequiredArgsConstructor
+public class SoundPlayer implements PlayerOwnedObject {
+	@Getter
+	private final UUID uuid;
 	private final List<ScheduledSound> scheduledSounds = new LinkedList<>();
 
 	public void update() {
@@ -51,16 +58,19 @@ public class SoundPlayer {
 	}
 
 	public void playSound(String sound, double x, double y, double z, double volume, double pitch) {
-		playSound(sound, new Location(player.getWorld(), x, y, z), volume, pitch);
+		if (!isOnline())
+			return;
+
+		playSound(sound, new Location(getOnlinePlayer().getWorld(), x, y, z), volume, pitch);
 	}
 
 	public void playSound(String sound, double volume, double pitch) {
-		playSound(sound, player.getLocation(), volume, pitch);
+		playSound(sound, getOnlinePlayer().getLocation(), volume, pitch);
 	}
 
 	public void playSound(String sound, Location location, double volume, double pitch) {
-		new SoundBuilder(org.bukkit.Sound.valueOf(sound))
-			.receiver(player)
+		new SoundBuilder(sound)
+			.receiver(getOnlinePlayer())
 			.location(location)
 			.category(SoundCategory.AMBIENT)
 			.volume(volume)

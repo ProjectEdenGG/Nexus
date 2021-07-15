@@ -51,6 +51,13 @@ public class AmbienceUser implements PlayerOwnedObject {
 		return variables;
 	}
 
+	public SoundPlayer getSoundPlayer() {
+		if (soundPlayer == null)
+			soundPlayer = new SoundPlayer(uuid);
+
+		return soundPlayer;
+	}
+
 	public Map<String, Integer> getCooldowns() {
 		if (cooldowns == null)
 			AmbienceManagers.SOUNDS.get().init(this);

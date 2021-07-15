@@ -37,7 +37,7 @@ public class SoundEffectManager extends AmbienceManager {
 		effects.add(
 			new SoundEffectConfig(
 				SoundEffectType.BIRD_FOREST,
-				List.of(new Sound("minecraft:custom.ambient.birds.woodpecker_1").pitchMin(0.9).pitchMax(110)),
+				List.of(new Sound("minecraft:custom.ambient.birds.woodpecker_peck_1").pitchMin(0.9).pitchMax(1.1)),
 				15,
 				60));
 	}

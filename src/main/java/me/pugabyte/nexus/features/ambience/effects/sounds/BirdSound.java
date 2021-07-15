@@ -1,139 +1,161 @@
 package me.pugabyte.nexus.features.ambience.effects.sounds;
 
 import eden.utils.TimeUtils.Time;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.SoundBuilder;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static me.pugabyte.nexus.utils.RandomUtils.randomDouble;
 import static me.pugabyte.nexus.utils.RandomUtils.randomInt;
 
+@AllArgsConstructor
 public enum BirdSound {
-	BLUEBIRD {
+	BLUEBIRD(true) {
 		@Override
-		public void play(Location location) {
-			Runnable one = () -> sound(1).location(location).play();
-			Runnable two = () -> sound(2).location(location).play();
-
+		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
-			Tasks.wait(wait += 25, one);
-			Tasks.wait(wait += 25, two);
-			Tasks.wait(wait += 25, one);
-			Tasks.wait(wait += 25, two);
-			Tasks.wait(wait += 25, one);
-			Tasks.wait(wait += 25, two);
+			tasks.put(wait += 25, sound(1));
+			tasks.put(wait += 25, sound(2));
+			tasks.put(wait += 25, sound(1));
+			tasks.put(wait += 25, sound(2));
+			tasks.put(wait += 25, sound(1));
+			tasks.put(wait += 25, sound(2));
 		}
 	},
-	BUDGERIGAR {
+	BUDGERIGAR(true) {
 		@Override
-		public void play(Location location) {
+		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
 			for (int i = 0; i < randomInt(5, 12); i++)
-				Tasks.wait(wait += randomInt(7, 15), () ->
-					sound(randomInt(1, 2)).location(location).volume(.05).play());
+				tasks.put(wait += randomInt(7, 15), sound(randomInt(1, 2)).volume(.05));
 		}
 	},
-	CARDINAL {
+	CARDINAL(true) {
 		@Override
-		public void play(Location location) {
-			sound(1).location(location).play();
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(1));
 		}
 	},
-	FINCH {
+	FINCH(true) {
 		@Override
-		public void play(Location location) {
-			sound(randomInt(1, 2)).location(location).play();
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	GOLDCREST {
+	GOLDCREST(true) {
 		@Override
-		public void play(Location location) {
-			Runnable one = () -> sound(1).location(location).play();
-
-			one.run();
-			Tasks.wait(Time.SECOND.x(randomInt(4, 6)), one);
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(1));
+			tasks.put(Time.SECOND.x(randomInt(4, 6)), sound(1));
 		}
 	},
-	GOULDIAN_FINCH {
+	GOULDIAN_FINCH(true) {
 		@Override
-		public void play(Location location) {
+		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
 			for (int i = 0; i < randomInt(3, 7); i++)
-				Tasks.wait(wait += randomInt(7, 15), () ->
-					sound(1).location(location).play());
+				tasks.put(wait += randomInt(7, 15), sound(1));
 		}
 	},
-	KILLDEER {
+	KILLDEER(true) {
 		@Override
-		public void play(Location location) {
+		public void get(Map<Integer, SoundBuilder> tasks) {
 			int wait = 0;
 			for (int i = 0; i < randomInt(5, 12); i++)
-				Tasks.wait(wait += randomInt(10, 15), () ->
-					sound(1).location(location).pitch(randomDouble(.9, 1.1)).play());
+				tasks.put(wait += randomInt(10, 15), sound(1).pitch(randomDouble(.9, 1.1)));
 		}
 	},
-	LEAF_WARBLER {
+	LEAF_WARBLER(true) {
 		@Override
-		public void play(Location location) {
-			sound(randomInt(1, 2)).location(location).play();
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	MOCKINGBIRD {
+	MOCKINGBIRD(true) {
 		@Override
-		public void play(Location location) {
-			sound(randomInt(1, 7)).location(location).play();
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(randomInt(1, 7)));
 		}
 	},
-	ROBIN {
+	ROBIN(true) {
 		@Override
-		public void play(Location location) {
-			sound(randomInt(1, 2)).location(location).play();
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	SHRIKE {
+	SHRIKE(true) {
 		@Override
-		public void play(Location location) {
-			sound(randomInt(1, 2)).location(location).play();
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(randomInt(1, 2)));
 		}
 	},
-	SPARROW {
+	SPARROW(true) {
 		@Override
-		public void play(Location location) {
-			sound(1).location(location).play();
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(1));
 		}
 	},
-	WILLOW_TIT {
+	WILLOW_TIT(true) {
 		@Override
-		public void play(Location location) {
-			final SoundBuilder sound = sound(randomInt(1, 2)).location(location).volume(.07);
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			final SoundBuilder sound = sound(randomInt(1, 2)).volume(.07);
 
 			int wait = 0;
 			for (int i = 0; i < randomInt(2, 3); i++)
-				Tasks.wait(wait += 25, sound::play);
+				tasks.put(wait += 25, sound);
 		}
 	},
-	WOODPECKER {
+	WOODPECKER(true) {
 		@Override
-		public void play(Location location) {
-			Runnable one = () -> sound(1).location(location).play();
-
-			one.run();
-			Tasks.wait(Time.SECOND.x(randomDouble(1.5, 2.5)), one);
+		public void get(Map<Integer, SoundBuilder> tasks) {
+			tasks.put(0, sound(1));
+			tasks.put(Time.SECOND.x(randomDouble(1.5, 2.5)), sound(1));
 		}
 	},
 	;
 
-	abstract public void play(Location location);
+	@Getter
+	private final boolean birdhouse;
+
+	public void play(Location location) {
+		build().forEach((wait, sound) ->
+			Tasks.wait(wait, () -> sound.location(location).play()));
+	}
+
+	public void play(Player player, Location location) {
+		build().forEach((wait, sound) ->
+			Tasks.wait(wait, () -> sound.receiver(player).location(location).play()));
+	}
+
+	public Map<Integer, SoundBuilder> build() {
+		final HashMap<Integer, SoundBuilder> tasks = new HashMap<>();
+		get(tasks);
+		return tasks;
+	}
+
+	abstract void get(Map<Integer, SoundBuilder> tasks);
 
 	protected SoundBuilder sound(int number) {
-		return new SoundBuilder("minecraft:custom.ambient.birds." + name().toLowerCase() + "_" + number).category(SoundCategory.AMBIENT).volume(.3);
+		return new SoundBuilder("minecraft:custom.ambient.birds." + name().toLowerCase() + "_" + number)
+			.category(SoundCategory.AMBIENT)
+			.volume(.3);
 	}
 
 	public static BirdSound random() {
 		return RandomUtils.randomElement(List.of(values()));
+	}
+
+	public static BirdSound randomBirdhouse() {
+		return RandomUtils.randomElement(Arrays.stream(values()).filter(BirdSound::isBirdhouse).toList());
 	}
 }
