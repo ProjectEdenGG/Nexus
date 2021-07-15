@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.utils;
 
 import me.lexikiq.HasPlayer;
-import me.pugabyte.nexus.Nexus;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -27,13 +26,13 @@ public class EntityUtils {
 	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, double radius) {
 		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
+			.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
 	}
 
 	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, double radius) {
 		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-				.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
+			.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
 	}
 
 	public static boolean isHostile(Entity entity) {
@@ -49,9 +48,9 @@ public class EntityUtils {
 			return null;
 
 		List<Entity> entities = getNearbyEntities(location, radius).keySet().stream()
-				.filter(_entity -> _entity.getType().equals(filter))
-				.filter(_entity -> !(_entity instanceof Player) || (!CitizensUtils.isNPC(_entity) && !PlayerUtils.isVanished((Player) _entity)))
-				.collect(Collectors.toList());
+			.filter(_entity -> _entity.getType().equals(filter))
+			.filter(_entity -> !(_entity instanceof Player) || (!CitizensUtils.isNPC(_entity) && !PlayerUtils.isVanished((Player) _entity)))
+			.collect(Collectors.toList());
 
 		double shortest = radius;
 		Entity result = null;
@@ -67,66 +66,27 @@ public class EntityUtils {
 	}
 
 	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
-		makeArmorStandLookAtPlayer(stand, player, minYaw, maxYaw, minPitch, maxPitch, null);
-	}
-
-	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw,
-												  Double minPitch, Double maxPitch, Double interval) {
-		Location standLocation = stand.getEyeLocation(); // Point A
-		double originalYaw = standLocation.getYaw();
-		double originalPitch = standLocation.getPitch();
-
-		Vector playerLocation = player.getPlayer().getEyeLocation().toVector(); // Point B
-
-		//set the standLocation's direction to be the direction vector between point A and B.
-		standLocation.setDirection(playerLocation.subtract(standLocation.toVector()));
-
-		double yaw = standLocation.getYaw() - originalYaw;
-		double pitch = standLocation.getPitch();
+		Location origin = stand.getEyeLocation(); //our original location (Point A)
+		double initYaw = origin.getYaw();
+		Vector tgt = player.getPlayer().getEyeLocation().toVector(); //our target location (Point B)
+		origin.setDirection(tgt.subtract(origin.toVector())); //set the origin's direction to be the direction vector between point A and B.
+		double yaw = origin.getYaw() - initYaw;
+		double pitch = origin.getPitch();
 
 		if (yaw < -180)
 			yaw = yaw + 360;
 		else if (yaw >= 180)
 			yaw -= 360;
 
-		Nexus.log("");
-		if (interval != null) {
-			Nexus.log("Stand: " + originalYaw + " / " + originalPitch);
-			Nexus.log("Player: " + yaw + " / " + pitch);
+		if (maxYaw != null && yaw > maxYaw)
+			yaw = maxYaw;
+		else if (minYaw != null && yaw < minYaw)
+			yaw = minYaw;
 
-			double yawDiff = originalYaw - yaw;
-			double pitchDiff = originalPitch - pitch;
-
-			if (yaw > 0) {
-				if (yawDiff > interval)
-					yaw = originalYaw + interval;
-			} else {
-				if (yawDiff < interval)
-					yaw = originalYaw - interval;
-			}
-
-			if (pitch > 0) {
-				if (pitchDiff > interval)
-					pitch = originalPitch + interval;
-			} else {
-				if (pitchDiff < interval)
-					pitch = originalPitch - interval;
-			}
-
-			Nexus.log("Interval: " + yaw + " / " + pitch);
-		}
-
-		if (maxYaw != null)
-			yaw = Math.min(yaw, maxYaw);
-		if (minYaw != null)
-			yaw = Math.max(yaw, minYaw);
-
-		if (maxPitch != null)
-			pitch = Math.min(pitch, maxPitch);
-		if (minPitch != null)
-			pitch = Math.max(pitch, minPitch);
-
-		Nexus.log("Result: " + yaw + " / " + pitch);
+		if (maxPitch != null && pitch > maxPitch)
+			pitch = maxPitch;
+		else if (minPitch != null && pitch < minPitch)
+			pitch = minPitch;
 
 		double x = Math.toRadians(pitch);
 		double y = Math.toRadians(yaw);
