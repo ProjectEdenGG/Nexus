@@ -4,7 +4,10 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffectType;
+import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -40,6 +43,15 @@ public class Fireflies extends ParticleEffect {
 		double zVel = 0.5 * (Math.random() - 0.5);
 
 		player.spawnParticle(particle, xRange, yRange, zRange, 0, xVel, yVel, zVel, 1);
+
+		if (user.isDebug())
+			DotEffect.builder()
+				.location(new Location(player.getWorld(), xRange, yRange, zRange))
+				.player(player)
+				.color(Color.YELLOW)
+				.speed(.1)
+				.ticks(Time.SECOND.get())
+				.start();
 	}
 
 }

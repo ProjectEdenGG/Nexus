@@ -5,7 +5,10 @@ import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.ambience.Wind;
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffectType;
+import me.pugabyte.nexus.features.particles.effects.DotEffect;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -46,6 +49,15 @@ public class DustWind extends ParticleEffect {
 		double zVel = Wind.getZ() * scale;
 
 		player.spawnParticle(particle, xRange, yRange, zRange, 0, xVel, yVel, zVel, 1, new ItemStack(material));
+
+		if (user.isDebug())
+			DotEffect.builder()
+				.location(new Location(player.getWorld(), xRange, yRange, zRange))
+				.player(player)
+				.color(Color.ORANGE)
+				.speed(.1)
+				.ticks(Time.SECOND.get())
+				.start();
 	}
 
 }
