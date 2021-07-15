@@ -20,10 +20,7 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (!isCorrectMaterial(config, block))
 				return false;
 
-			if (RandomUtils.chanceOf(config.getChance()))
-				return false;
-
-			return true;
+			return !RandomUtils.chanceOf(config.getChance());
 		}
 	},
 	DUST_WIND {
@@ -45,10 +42,7 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (!isCorrectMaterial(config, block))
 				return false;
 
-			if (RandomUtils.chanceOf(config.getChance()))
-				return false;
-
-			return true;
+			return !RandomUtils.chanceOf(config.getChance());
 		}
 	},
 	FIREFLIES {
@@ -67,10 +61,10 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (isStorming(user))
 				return false;
 
-			if (RandomUtils.chanceOf(config.getChance()))
+			if (!isBiome(user, BiomeTag.ALL_FORESTS, BiomeTag.JUNGLE, BiomeTag.PLAINS))
 				return false;
 
-			return true;
+			return !RandomUtils.chanceOf(config.getChance());
 		}
 	},
 	;

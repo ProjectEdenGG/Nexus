@@ -18,15 +18,16 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public enum BiomeTag {
 	OCEAN(Material.WATER_BUCKET, new BiomeTagBuilder("OCEAN", MatchMode.CONTAINS)),
-	FORESTS(Material.OAK_LEAVES, new BiomeTagBuilder("FOREST", MatchMode.CONTAINS)),
-	ALL_FORESTS(Material.BIRCH_LEAVES, new BiomeTagBuilder(FORESTS)
-		.append("GIANT_SPRUCE_TAIGA", MatchMode.CONTAINS)
+	FORESTS(Material.OAK_LEAVES, new BiomeTagBuilder("FOREST", MatchMode.CONTAINS)
 		.exclude(Biome.CRIMSON_FOREST, Biome.WARPED_FOREST)),
 	SWAMP(Material.VINE, new BiomeTagBuilder("SWAMP", MatchMode.CONTAINS)),
 	TAIGA(Material.SPRUCE_LOG, new BiomeTagBuilder("TAIGA", MatchMode.CONTAINS)),
 	JUNGLE(Material.JUNGLE_LOG, new BiomeTagBuilder("JUNGLE", MatchMode.CONTAINS)),
 	MESA(Material.TERRACOTTA, new BiomeTagBuilder("BADLANDS", MatchMode.CONTAINS)),
 	ICE_SPIKES(Material.PACKED_ICE, new BiomeTagBuilder(Biome.ICE_SPIKES)),
+	PLAINS(Material.GRASS_BLOCK, new BiomeTagBuilder("PLAINS", MatchMode.CONTAINS)),
+	ALL_FORESTS(Material.BIRCH_LEAVES, new BiomeTagBuilder(FORESTS)
+		.append("GIANT_SPRUCE_TAIGA", MatchMode.CONTAINS)),
 	ALL_NETHER(Material.NETHERRACK, new BiomeTagBuilder(Biome.NETHER_WASTES, Biome.BASALT_DELTAS, Biome.CRIMSON_FOREST, Biome.WARPED_FOREST, Biome.SOUL_SAND_VALLEY)),
 	ALL_DESERT(Material.SAND, new BiomeTagBuilder("DESERT", MatchMode.CONTAINS)),
 	;
