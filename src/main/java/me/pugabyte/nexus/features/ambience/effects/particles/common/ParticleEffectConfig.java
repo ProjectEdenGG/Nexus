@@ -5,7 +5,7 @@ import lombok.Data;
 import me.pugabyte.nexus.features.ambience.effects.particles.DustWind;
 import me.pugabyte.nexus.features.ambience.effects.particles.FallingLeaves;
 import me.pugabyte.nexus.features.ambience.effects.particles.Fireflies;
-import me.pugabyte.nexus.features.ambience.managers.common.AmbienceManager;
+import me.pugabyte.nexus.features.ambience.managers.ParticleEffectManager;
 import me.pugabyte.nexus.features.ambience.managers.common.AmbienceManagers;
 import me.pugabyte.nexus.models.ambience.AmbienceUser;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ public class ParticleEffectConfig {
 			return;
 
 		// TODO Abstract?
-		final AmbienceManager<ParticleEffect> manager = AmbienceManagers.PARTICLES.get();
+		final ParticleEffectManager manager = AmbienceManagers.PARTICLES.get();
 		switch (this.effect) {
 			case FIREFLIES -> manager.addInstance(user, new Fireflies(user, x, y, z, chance));
 			case DUST_WIND -> manager.addInstance(user, new DustWind(user, block.getType(), x, y, z, chance));

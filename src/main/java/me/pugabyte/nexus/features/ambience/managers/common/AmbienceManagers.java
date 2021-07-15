@@ -11,10 +11,10 @@ public enum AmbienceManagers {
 	SOUNDS(new SoundEffectManager()),
 	;
 
-	private final AmbienceManager<?> manager;
+	private final AmbienceManager manager;
 
-	public <T> AmbienceManager<T> get() {
-		return (AmbienceManager<T>) manager;
+	public <T extends AmbienceManager> T get() {
+		return (T) manager;
 	}
 
 	public static void tick() {

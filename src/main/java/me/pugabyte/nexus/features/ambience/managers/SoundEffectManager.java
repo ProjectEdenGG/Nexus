@@ -2,7 +2,6 @@ package me.pugabyte.nexus.features.ambience.managers;
 
 import lombok.Getter;
 import me.pugabyte.nexus.features.ambience.effects.sounds.common.Sound;
-import me.pugabyte.nexus.features.ambience.effects.sounds.common.SoundEffect;
 import me.pugabyte.nexus.features.ambience.effects.sounds.common.SoundEffectConfig;
 import me.pugabyte.nexus.features.ambience.effects.sounds.common.SoundEffectType;
 import me.pugabyte.nexus.features.ambience.managers.common.AmbienceManager;
@@ -12,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SoundEffectManager extends AmbienceManager<SoundEffect> {
+public class SoundEffectManager extends AmbienceManager {
 	@Getter
 	private final Set<SoundEffectConfig> effects = new HashSet<>();
 

@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.ambience.managers;
 
+import lombok.Getter;
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffectConfig;
 import me.pugabyte.nexus.features.ambience.effects.particles.common.ParticleEffectType;
@@ -10,15 +11,29 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-public class ParticleEffectManager extends AmbienceManager<ParticleEffect> {
+public class ParticleEffectManager extends AmbienceManager {
 	private final Random random = new Random();
 	private final Set<ParticleEffectConfig> effects = new HashSet<>();
+	@Getter
+	protected final Map<UUID, List<ParticleEffect>> activeEffects = new HashMap<>();
+
+	public List<ParticleEffect> getEffects(UUID uuid) {
+		return activeEffects.computeIfAbsent(uuid, $ -> new ArrayList<>());
+	}
+
+	public void addInstance(AmbienceUser user, ParticleEffect particleEffect) {
+		getEffects(user.getUuid()).add(particleEffect);
+	}
 
 	public void tick() {
 		for (UUID uuid : activeEffects.keySet()) {
@@ -78,12 +93,6 @@ public class ParticleEffectManager extends AmbienceManager<ParticleEffect> {
 		effects.add(new ParticleEffectConfig(ParticleEffectType.FALLING_LEAVES, Material.DARK_OAK_LEAVES, Material.DARK_OAK_LEAVES, null, Material.AIR, 5));
 		effects.add(new ParticleEffectConfig(ParticleEffectType.FALLING_LEAVES, Material.AZALEA_LEAVES, Material.AZALEA_LEAVES, null, Material.AIR, 5));
 		effects.add(new ParticleEffectConfig(ParticleEffectType.FALLING_LEAVES, Material.FLOWERING_AZALEA_LEAVES, Material.FLOWERING_AZALEA_LEAVES, null, Material.AIR, 5));
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		// TODO: stop particles
 	}
 
 }
