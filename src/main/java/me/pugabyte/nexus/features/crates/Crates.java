@@ -46,7 +46,7 @@ public class Crates extends Feature implements Listener {
 
 	@Getter
 	@Setter
-	private static boolean enabled = false;
+	private static boolean enabled = true;
 
 	@Override
 	public void onStart() {
