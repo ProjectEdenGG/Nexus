@@ -37,7 +37,7 @@
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
-                    <release>16</release>
+                    <release>${jdk.version}</release>
                     <encoding>UTF-8</encoding>
                     <compilerArgument>-parameters</compilerArgument>
                     <annotationProcessorPaths>
