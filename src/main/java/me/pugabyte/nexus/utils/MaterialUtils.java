@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Singular;
 import lombok.experimental.UtilityClass;
+import me.lexikiq.inventory.RecipeType;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,32 +29,12 @@ public class MaterialUtils {
 	public final Mineral LAPIS = Mineral.builder().mineral(Material.LAPIS_LAZULI).prefix("LAPIS").build();
 	public final Mineral REDSTONE = new Mineral(Material.REDSTONE);
 
-	public @Nullable Material oreToIngot(@NotNull Material ore) {
-		return switch (ore) {
-			case DIAMOND_ORE -> Material.DIAMOND;
-			case IRON_ORE, RAW_IRON -> Material.IRON_INGOT;
-			case GOLD_ORE, NETHER_GOLD_ORE, RAW_GOLD -> Material.GOLD_INGOT;
-			case EMERALD_ORE -> Material.EMERALD;
-			case COAL_ORE -> Material.COAL;
-			case LAPIS_ORE -> Material.LAPIS_LAZULI;
-			case REDSTONE_ORE -> Material.REDSTONE;
-			case NETHER_QUARTZ_ORE -> Material.QUARTZ;
-			case COPPER_ORE, RAW_COPPER -> Material.COPPER_INGOT;
-			default -> null;
-		};
+	public @Nullable ItemStack oreToIngot(@NotNull World world, @NotNull Material ore) {
+		return world.smeltItem(new ItemStack(ore), RecipeType.BLASTING);
 	}
 
-	public @Nullable Material rawToCooked(@NotNull Material raw) {
-		return switch (raw) {
-			case PORKCHOP -> Material.COOKED_PORKCHOP;
-			case BEEF -> Material.COOKED_BEEF;
-			case COD -> Material.COOKED_COD;
-			case CHICKEN -> Material.COOKED_CHICKEN;
-			case MUTTON -> Material.COOKED_MUTTON;
-			case RABBIT -> Material.COOKED_RABBIT;
-			case SALMON -> Material.COOKED_SALMON;
-			default -> null;
-		};
+	public @Nullable ItemStack rawToCooked(@NotNull World world, @NotNull Material raw) {
+		return world.smeltItem(new ItemStack(raw), RecipeType.CAMPFIRE_COOKING);
 	}
 
 	@Getter

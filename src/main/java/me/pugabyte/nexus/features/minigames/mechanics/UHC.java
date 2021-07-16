@@ -28,9 +28,12 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExhaustionEvent;
@@ -157,6 +160,24 @@ public class UHC extends TeamlessVanillaMechanic {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onItemDrop(BlockDropItemEvent event) {
+		if (!event.getPlayer().getWorld().getName().startsWith(worldName))
+			return;
+		World world = event.getPlayer().getWorld();
+
+		for (Item item : event.getItems()) {
+			ItemStack stack = item.getItemStack();
+			ItemStack ingot = MaterialUtils.oreToIngot(world, stack.getType());
+			if (ingot == null)
+				continue;
+
+			stack.setType(ingot.getType());
+			item.setItemStack(stack);
+			break;
+		}
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onRegainHealth(EntityRegainHealthEvent event) {
 		if (event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED
 		&& event.getEntity() instanceof HumanEntity entity
@@ -165,7 +186,7 @@ public class UHC extends TeamlessVanillaMechanic {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onExhaustion(EntityExhaustionEvent event) { // TODO: fix imports
+	public void onExhaustion(EntityExhaustionEvent event) {
 		if (event.getEntity().getWorld().getName().equals(worldName) && event.getExhaustionReason() == EntityExhaustionEvent.ExhaustionReason.REGEN)
 			event.setCancelled(true);
 	}
@@ -187,12 +208,14 @@ public class UHC extends TeamlessVanillaMechanic {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onEntityKill(EntityDeathEvent event) {
-		if (!event.getEntity().getWorld().getName().equals(worldName)) return;
-		for (ItemStack item : event.getDrops()) {
-			Material cooked = MaterialUtils.rawToCooked(item.getType());
-			if (cooked == null) continue;
-			item.setType(cooked);
+		if (!event.getEntity().getWorld().getName().equals(worldName))
 			return;
+		World world = event.getEntity().getWorld();
+
+		for (ItemStack item : event.getDrops()) {
+			ItemStack cooked = MaterialUtils.rawToCooked(world, item.getType());
+			if (cooked == null) continue;
+			item.setType(cooked.getType());
 		}
 	}
 

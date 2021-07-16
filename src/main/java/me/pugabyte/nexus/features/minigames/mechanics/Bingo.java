@@ -42,6 +42,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.StructureType;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -156,14 +157,15 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	public void onItemDrop(BlockDropItemEvent event) {
 		if (!event.getPlayer().getWorld().getName().startsWith(worldName))
 			return;
+		World world = event.getPlayer().getWorld();
 
 		for (Item item : event.getItems()) {
 			ItemStack stack = item.getItemStack();
-			Material ingot = MaterialUtils.oreToIngot(stack.getType());
+			ItemStack ingot = MaterialUtils.oreToIngot(world, stack.getType());
 			if (ingot == null)
 				continue;
 
-			stack.setType(ingot);
+			stack.setType(ingot.getType());
 			item.setItemStack(stack);
 			break;
 		}
@@ -171,12 +173,15 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onEntityKill(EntityDeathEvent event) {
-		if (!event.getEntity().getWorld().getName().equals(worldName)) return;
+		if (!event.getEntity().getWorld().getName().equals(worldName))
+			return;
+		World world = event.getEntity().getWorld();
+
 		for (ItemStack item : event.getDrops()) {
-			Material cooked = MaterialUtils.rawToCooked(item.getType());
+			ItemStack cooked = MaterialUtils.rawToCooked(world, item.getType());
 			if (cooked == null)
 				continue;
-			item.setType(cooked);
+			item.setType(cooked.getType());
 			return;
 		}
 	}
