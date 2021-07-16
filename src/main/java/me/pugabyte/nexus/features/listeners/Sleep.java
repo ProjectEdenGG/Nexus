@@ -50,7 +50,7 @@ public class Sleep implements Listener {
 
 		if (sleeping != lastCalculatedSleeping || needed != lastCalculatedNeeded)
 			for (Player player : players)
-				ActionBarUtils.sendActionBar(player, "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed);
+				Tasks.wait(2, () -> ActionBarUtils.sendActionBar(player, "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed));
 
 		lastCalculatedSleeping = sleeping;
 		lastCalculatedNeeded = needed;
