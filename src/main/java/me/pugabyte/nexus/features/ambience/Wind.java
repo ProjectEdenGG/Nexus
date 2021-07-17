@@ -16,14 +16,18 @@ public class Wind {
 	private static double Z;
 
 	private static final int blowingUpdateInterval = Time.MINUTE.x(5);
-	private static final Runnable blowingUpdate = () ->
+	private static final Runnable blowingUpdate = () -> {
 		blowing = RandomUtils.chanceOf(25);
+		Ambience.sendDebug("Blowing: " + blowing);
+	};
+
 
 	private static final int directionUpdateInterval = Time.MINUTE.get();
 	private static final Runnable directionUpdate = () -> {
 		direction = Math.random() * 2 * Math.PI;
 		X = Math.sin(direction);
 		Z = Math.cos(direction);
+		Ambience.sendDebug("Wind dir: " + direction);
 	};
 
 	static {

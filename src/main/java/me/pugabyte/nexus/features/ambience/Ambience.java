@@ -30,6 +30,12 @@ public class Ambience extends Feature implements Listener {
 		AmbienceManagers.stop();
 	}
 
+	public static void sendDebug(String message) {
+		for (AmbienceUser user : getUsers()) {
+			user.debug(message);
+		}
+	}
+
 	private void ambienceTask() {
 		Tasks.repeat(0, Time.TICK.x(2), () -> {
 			for (AmbienceUser user : getUsers()) {
@@ -45,7 +51,7 @@ public class Ambience extends Feature implements Listener {
 		});
 	}
 
-	public List<AmbienceUser> getUsers() {
+	public static List<AmbienceUser> getUsers() {
 		return PlayerUtils.getOnlinePlayers().stream().map(userService::get).toList();
 	}
 
