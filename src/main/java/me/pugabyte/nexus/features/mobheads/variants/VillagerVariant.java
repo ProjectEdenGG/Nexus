@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum VillagerProfession implements MobHeadVariant {
+public enum VillagerVariant implements MobHeadVariant {
 	ARMORER(Profession.ARMORER),
 	BUTCHER(Profession.BUTCHER),
 	CARTOGRAPHER(Profession.CARTOGRAPHER),
@@ -39,7 +39,7 @@ public enum VillagerProfession implements MobHeadVariant {
 		return EntityType.VILLAGER;
 	}
 
-	public static VillagerProfession of(Villager villager) {
+	public static VillagerVariant of(Villager villager) {
 		return Arrays.stream(values()).filter(entry -> villager.getProfession() == entry.getType()).findFirst().orElse(null);
 	}
 }

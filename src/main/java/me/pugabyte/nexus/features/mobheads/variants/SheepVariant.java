@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum SheepColor implements MobHeadVariant {
+public enum SheepVariant implements MobHeadVariant {
 	RED(ColorType.RED),
 	ORANGE(ColorType.ORANGE),
 	YELLOW(ColorType.YELLOW),
@@ -41,7 +41,7 @@ public enum SheepColor implements MobHeadVariant {
 		return EntityType.SHEEP;
 	}
 
-	public static SheepColor of(Sheep sheep) {
+	public static SheepVariant of(Sheep sheep) {
 		return Arrays.stream(values()).filter(entry -> ColorType.of(sheep.getColor()) == entry.getType()).findFirst().orElse(null);
 	}
 }

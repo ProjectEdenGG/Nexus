@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 @Getter
 @RequiredArgsConstructor
-public enum SnowmanType implements MobHeadVariant {
+public enum SnowmanVariant implements MobHeadVariant {
 	DERP,
 	;
 
@@ -22,7 +22,7 @@ public enum SnowmanType implements MobHeadVariant {
 		return EntityType.SNOWMAN;
 	}
 
-	public static SnowmanType of(Snowman snowman) {
+	public static SnowmanVariant of(Snowman snowman) {
 		return snowman.isDerp() ? DERP : null;
 	}
 }

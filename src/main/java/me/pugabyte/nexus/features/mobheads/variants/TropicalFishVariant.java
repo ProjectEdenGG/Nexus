@@ -15,7 +15,7 @@ import static eden.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
-public enum TropicalFishType implements MobHeadVariant {
+public enum TropicalFishVariant implements MobHeadVariant {
 	RANDOM,
 	;
 

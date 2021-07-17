@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum TraderLlamaColor implements MobHeadVariant {
+public enum TraderLlamaVariant implements MobHeadVariant {
 	GRAY(Color.GRAY),
 	WHITE(Color.WHITE),
 	BROWN(Color.BROWN),
@@ -29,7 +29,7 @@ public enum TraderLlamaColor implements MobHeadVariant {
 		return EntityType.TRADER_LLAMA;
 	}
 
-	public static TraderLlamaColor of(TraderLlama traderLlama) {
+	public static TraderLlamaVariant of(TraderLlama traderLlama) {
 		return Arrays.stream(values()).filter(entry -> traderLlama.getColor() == entry.getType()).findFirst().orElse(null);
 	}
 

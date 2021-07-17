@@ -8,21 +8,21 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.mobheads.common.MobHead;
 import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import me.pugabyte.nexus.features.mobheads.variants.AxolotlVariant;
-import me.pugabyte.nexus.features.mobheads.variants.CatType;
-import me.pugabyte.nexus.features.mobheads.variants.CreeperType;
-import me.pugabyte.nexus.features.mobheads.variants.FoxType;
-import me.pugabyte.nexus.features.mobheads.variants.HorseColor;
-import me.pugabyte.nexus.features.mobheads.variants.LlamaColor;
-import me.pugabyte.nexus.features.mobheads.variants.MooshroomType;
-import me.pugabyte.nexus.features.mobheads.variants.PandaGene;
+import me.pugabyte.nexus.features.mobheads.variants.CatVariant;
+import me.pugabyte.nexus.features.mobheads.variants.CreeperVariant;
+import me.pugabyte.nexus.features.mobheads.variants.FoxVariant;
+import me.pugabyte.nexus.features.mobheads.variants.HorseVariant;
+import me.pugabyte.nexus.features.mobheads.variants.LlamaVariant;
+import me.pugabyte.nexus.features.mobheads.variants.MooshroomVariant;
+import me.pugabyte.nexus.features.mobheads.variants.PandaVariant;
 import me.pugabyte.nexus.features.mobheads.variants.ParrotVariant;
-import me.pugabyte.nexus.features.mobheads.variants.RabbitType;
-import me.pugabyte.nexus.features.mobheads.variants.SheepColor;
-import me.pugabyte.nexus.features.mobheads.variants.SnowmanType;
-import me.pugabyte.nexus.features.mobheads.variants.TraderLlamaColor;
-import me.pugabyte.nexus.features.mobheads.variants.TropicalFishType;
-import me.pugabyte.nexus.features.mobheads.variants.VillagerProfession;
-import me.pugabyte.nexus.features.mobheads.variants.ZombieVillagerProfession;
+import me.pugabyte.nexus.features.mobheads.variants.RabbitVariant;
+import me.pugabyte.nexus.features.mobheads.variants.SheepVariant;
+import me.pugabyte.nexus.features.mobheads.variants.SnowmanVariant;
+import me.pugabyte.nexus.features.mobheads.variants.TraderLlamaVariant;
+import me.pugabyte.nexus.features.mobheads.variants.TropicalFishVariant;
+import me.pugabyte.nexus.features.mobheads.variants.VillagerVariant;
+import me.pugabyte.nexus.features.mobheads.variants.ZombieVillagerVariant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.WorldEditUtils;
@@ -68,12 +68,12 @@ public enum MobHeadType implements MobHead {
 	BAT(EntityType.BAT),
 	BEE(EntityType.BEE),
 	BLAZE(EntityType.BLAZE),
-	CAT(EntityType.CAT, CatType.class, entity -> CatType.of((Cat) entity)),
+	CAT(EntityType.CAT, CatVariant.class, entity -> CatVariant.of((Cat) entity)),
 	CAVE_SPIDER(EntityType.CAVE_SPIDER),
 	CHICKEN(EntityType.CHICKEN),
 	COD(EntityType.COD),
 	COW(EntityType.COW),
-	CREEPER(EntityType.CREEPER, CreeperType.class, entity -> CreeperType.of((Creeper) entity)),
+	CREEPER(EntityType.CREEPER, CreeperVariant.class, entity -> CreeperVariant.of((Creeper) entity)),
 	DOLPHIN(EntityType.DOLPHIN),
 	DONKEY(EntityType.DONKEY),
 	DROWNED(EntityType.DROWNED),
@@ -82,22 +82,22 @@ public enum MobHeadType implements MobHead {
 	ENDERMAN(EntityType.ENDERMAN),
 	ENDERMITE(EntityType.ENDERMITE),
 	EVOKER(EntityType.EVOKER),
-	FOX(EntityType.FOX, FoxType.class, entity -> FoxType.of((Fox) entity)),
+	FOX(EntityType.FOX, FoxVariant.class, entity -> FoxVariant.of((Fox) entity)),
 	GHAST(EntityType.GHAST),
 	GLOW_SQUID(EntityType.GLOW_SQUID),
 	GOAT(EntityType.GOAT),
 	GUARDIAN(EntityType.GUARDIAN),
 	HOGLIN(EntityType.HOGLIN),
-	HORSE(EntityType.HORSE, HorseColor.class, entity -> HorseColor.of((Horse) entity)),
+	HORSE(EntityType.HORSE, HorseVariant.class, entity -> HorseVariant.of((Horse) entity)),
 	HUSK(EntityType.HUSK),
 	ILLUSIONER(EntityType.ILLUSIONER),
 	IRON_GOLEM(EntityType.IRON_GOLEM),
-	LLAMA(EntityType.LLAMA, LlamaColor.class, entity -> LlamaColor.of((Llama) entity)),
+	LLAMA(EntityType.LLAMA, LlamaVariant.class, entity -> LlamaVariant.of((Llama) entity)),
 	MAGMA_CUBE(EntityType.MAGMA_CUBE),
-	MUSHROOM_COW(EntityType.MUSHROOM_COW, MooshroomType.class, entity -> MooshroomType.of((MushroomCow) entity)),
+	MUSHROOM_COW(EntityType.MUSHROOM_COW, MooshroomVariant.class, entity -> MooshroomVariant.of((MushroomCow) entity)),
 	MULE(EntityType.MULE),
 	OCELOT(EntityType.OCELOT),
-	PANDA(EntityType.PANDA, PandaGene.class, entity -> PandaGene.of((Panda) entity)),
+	PANDA(EntityType.PANDA, PandaVariant.class, entity -> PandaVariant.of((Panda) entity)),
 	PARROT(EntityType.PARROT, ParrotVariant.class, entity -> ParrotVariant.of((Parrot) entity)),
 	PHANTOM(EntityType.PHANTOM),
 	PIG(EntityType.PIG),
@@ -107,25 +107,25 @@ public enum MobHeadType implements MobHead {
 	PLAYER(EntityType.PLAYER),
 	POLAR_BEAR(EntityType.POLAR_BEAR),
 	PUFFERFISH(EntityType.PUFFERFISH),
-	RABBIT(EntityType.RABBIT, RabbitType.class, entity -> RabbitType.of((Rabbit) entity)),
+	RABBIT(EntityType.RABBIT, RabbitVariant.class, entity -> RabbitVariant.of((Rabbit) entity)),
 	RAVAGER(EntityType.RAVAGER),
 	SALMON(EntityType.SALMON),
-	SHEEP(EntityType.SHEEP, SheepColor.class, entity -> SheepColor.of((Sheep) entity)),
+	SHEEP(EntityType.SHEEP, SheepVariant.class, entity -> SheepVariant.of((Sheep) entity)),
 	SHULKER(EntityType.SHULKER),
 	SILVERFISH(EntityType.SILVERFISH),
 	SKELETON(EntityType.SKELETON),
 	SKELETON_HORSE(EntityType.SKELETON_HORSE),
 	SLIME(EntityType.SLIME),
-	SNOWMAN(EntityType.SNOWMAN, SnowmanType.class, entity -> SnowmanType.of((Snowman) entity)),
+	SNOWMAN(EntityType.SNOWMAN, SnowmanVariant.class, entity -> SnowmanVariant.of((Snowman) entity)),
 	SPIDER(EntityType.SPIDER),
 	SQUID(EntityType.SQUID),
 	STRAY(EntityType.STRAY),
 	STRIDER(EntityType.STRIDER),
-	TRADER_LLAMA(EntityType.TRADER_LLAMA, TraderLlamaColor.class, entity -> TraderLlamaColor.of((TraderLlama) entity)),
-	TROPICAL_FISH(EntityType.TROPICAL_FISH, TropicalFishType.class, entity -> TropicalFishType.RANDOM),
+	TRADER_LLAMA(EntityType.TRADER_LLAMA, TraderLlamaVariant.class, entity -> TraderLlamaVariant.of((TraderLlama) entity)),
+	TROPICAL_FISH(EntityType.TROPICAL_FISH, TropicalFishVariant.class, entity -> TropicalFishVariant.RANDOM),
 	TURTLE(EntityType.TURTLE),
 	VEX(EntityType.VEX),
-	VILLAGER(EntityType.VILLAGER, VillagerProfession.class, entity -> VillagerProfession.of((Villager) entity)),
+	VILLAGER(EntityType.VILLAGER, VillagerVariant.class, entity -> VillagerVariant.of((Villager) entity)),
 	VINDICATOR(EntityType.VINDICATOR),
 	WANDERING_TRADER(EntityType.WANDERING_TRADER),
 	WITCH(EntityType.WITCH),
@@ -135,7 +135,7 @@ public enum MobHeadType implements MobHead {
 	ZOGLIN(EntityType.ZOGLIN),
 	ZOMBIE(EntityType.ZOMBIE),
 	ZOMBIE_HORSE(EntityType.ZOMBIE_HORSE),
-	ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, ZombieVillagerProfession.class, entity -> ZombieVillagerProfession.of((ZombieVillager) entity)),
+	ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, ZombieVillagerVariant.class, entity -> ZombieVillagerVariant.of((ZombieVillager) entity)),
 	ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN),
 	;
 

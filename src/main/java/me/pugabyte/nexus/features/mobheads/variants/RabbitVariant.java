@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum RabbitType implements MobHeadVariant {
+public enum RabbitVariant implements MobHeadVariant {
 	BLACK(Rabbit.Type.BLACK),
 	WHITE(Rabbit.Type.WHITE),
 	BROWN(Rabbit.Type.BROWN),
@@ -30,7 +30,7 @@ public enum RabbitType implements MobHeadVariant {
 		return EntityType.RABBIT;
 	}
 
-	public static RabbitType of(Rabbit rabbit) {
+	public static RabbitVariant of(Rabbit rabbit) {
 		return Arrays.stream(values()).filter(entry -> rabbit.getRabbitType() == entry.getType()).findFirst().orElse(null);
 	}
 }

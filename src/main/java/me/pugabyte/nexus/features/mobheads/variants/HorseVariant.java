@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum HorseColor implements MobHeadVariant {
+public enum HorseVariant implements MobHeadVariant {
 	WHITE(Horse.Color.WHITE),
 	CREAMY(Horse.Color.CREAMY),
 	CHESTNUT(Horse.Color.CHESTNUT),
@@ -31,7 +31,7 @@ public enum HorseColor implements MobHeadVariant {
 		return EntityType.HORSE;
 	}
 
-	public static HorseColor of(Horse horse) {
+	public static HorseVariant of(Horse horse) {
 		return Arrays.stream(values()).filter(entry -> horse.getColor() == entry.getType()).findFirst().orElse(null);
 	}
 }

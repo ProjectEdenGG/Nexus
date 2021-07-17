@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 @Getter
 @RequiredArgsConstructor
-public enum CreeperType implements MobHeadVariant {
+public enum CreeperVariant implements MobHeadVariant {
 	POWERED,
 	;
 
@@ -22,7 +22,7 @@ public enum CreeperType implements MobHeadVariant {
 		return EntityType.CREEPER;
 	}
 
-	public static CreeperType of(Creeper creeper) {
+	public static CreeperVariant of(Creeper creeper) {
 		return creeper.isPowered() ? POWERED : null;
 	}
 }

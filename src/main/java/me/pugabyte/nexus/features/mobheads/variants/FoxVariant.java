@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum FoxType implements MobHeadVariant {
+public enum FoxVariant implements MobHeadVariant {
 	RED(Fox.Type.RED),
 	SNOW(Fox.Type.SNOW),
 	;
@@ -26,7 +26,7 @@ public enum FoxType implements MobHeadVariant {
 		return EntityType.FOX;
 	}
 
-	public static FoxType of(Fox fox) {
+	public static FoxVariant of(Fox fox) {
 		return Arrays.stream(values()).filter(entry -> fox.getFoxType() == entry.getType()).findFirst().orElse(null);
 	}
 }

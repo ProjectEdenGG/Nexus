@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum PandaGene implements MobHeadVariant {
+public enum PandaVariant implements MobHeadVariant {
 	BROWN(Gene.BROWN),
 	AGGRESSIVE(Gene.AGGRESSIVE),
 	LAZY(Gene.LAZY),
@@ -32,7 +32,7 @@ public enum PandaGene implements MobHeadVariant {
 		return EntityType.PANDA;
 	}
 
-	public static PandaGene of(Panda panda) {
+	public static PandaVariant of(Panda panda) {
 		return Arrays.stream(values()).filter(entry -> panda.getMainGene() == entry.getType()).findFirst().orElse(null);
 	}
 }

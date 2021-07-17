@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum CatType implements MobHeadVariant {
+public enum CatVariant implements MobHeadVariant {
 	BLACK(Cat.Type.BLACK),
 	WHITE(Cat.Type.WHITE),
 	ALL_BLACK(Cat.Type.ALL_BLACK),
@@ -35,7 +35,7 @@ public enum CatType implements MobHeadVariant {
 	@Setter
 	private ItemStack itemStack;
 
-	public static CatType of(Cat cat) {
+	public static CatVariant of(Cat cat) {
 		return Arrays.stream(values()).filter(entry -> cat.getCatType() == entry.getType()).findFirst().orElse(null);
 	}
 }
