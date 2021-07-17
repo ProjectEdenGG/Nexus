@@ -8,6 +8,7 @@ import me.pugabyte.nexus.utils.ColorType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -37,7 +38,7 @@ public enum SheepVariant implements MobHeadVariant {
 	private ItemStack itemStack;
 
 	@Override
-	public EntityType getEntityType() {
+	public @NotNull EntityType getEntityType() {
 		return EntityType.SHEEP;
 	}
 

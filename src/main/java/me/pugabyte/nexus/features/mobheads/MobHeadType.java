@@ -51,6 +51,7 @@ import org.bukkit.entity.TraderLlama;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.ZombieVillager;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 
@@ -161,16 +162,17 @@ public enum MobHeadType implements MobHead {
 		this.variantConverter = variantConverter;
 	}
 
+	@Nullable
 	public static MobHeadType of(EntityType from) {
 		return Arrays.stream(values()).filter(entry -> from.equals(entry.getEntityType())).findFirst().orElse(null);
 	}
 
 	@Override
-	public MobHeadType getType() {
+	public @NotNull MobHeadType getType() {
 		return this;
 	}
 
-	public ItemStack getSkull() {
+	public @Nullable ItemStack getSkull() {
 		if (genericSkull == null)
 			return null;
 		return genericSkull.clone();

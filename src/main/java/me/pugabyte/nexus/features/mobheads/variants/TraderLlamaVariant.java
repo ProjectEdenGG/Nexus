@@ -8,6 +8,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Llama.Color;
 import org.bukkit.entity.TraderLlama;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -25,7 +26,7 @@ public enum TraderLlamaVariant implements MobHeadVariant {
 	private ItemStack itemStack;
 
 	@Override
-	public EntityType getEntityType() {
+	public @NotNull EntityType getEntityType() {
 		return EntityType.TRADER_LLAMA;
 	}
 

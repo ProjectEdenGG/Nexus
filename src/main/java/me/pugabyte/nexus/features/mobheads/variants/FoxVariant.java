@@ -6,23 +6,25 @@ import lombok.Setter;
 import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
+import org.bukkit.entity.Fox.Type;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
 public enum FoxVariant implements MobHeadVariant {
-	RED(Fox.Type.RED),
-	SNOW(Fox.Type.SNOW),
+	RED(Type.RED),
+	SNOW(Type.SNOW),
 	;
 
-	private final Fox.Type bukkitType;
+	private final Type bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
 	@Override
-	public EntityType getEntityType() {
+	public @NotNull EntityType getEntityType() {
 		return EntityType.FOX;
 	}
 

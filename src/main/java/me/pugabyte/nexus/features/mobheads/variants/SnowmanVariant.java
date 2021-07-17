@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Snowman;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public enum SnowmanVariant implements MobHeadVariant {
 	private ItemStack itemStack;
 
 	@Override
-	public EntityType getEntityType() {
+	public @NotNull EntityType getEntityType() {
 		return EntityType.SNOWMAN;
 	}
 

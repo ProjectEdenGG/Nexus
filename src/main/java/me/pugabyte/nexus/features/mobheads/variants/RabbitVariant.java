@@ -6,27 +6,29 @@ import lombok.Setter;
 import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Rabbit.Type;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
 public enum RabbitVariant implements MobHeadVariant {
-	BLACK(Rabbit.Type.BLACK),
-	WHITE(Rabbit.Type.WHITE),
-	BROWN(Rabbit.Type.BROWN),
-	BLACK_AND_WHITE(Rabbit.Type.BLACK_AND_WHITE),
-	GOLD(Rabbit.Type.GOLD),
-	SALT_AND_PEPPER(Rabbit.Type.SALT_AND_PEPPER),
+	BLACK(Type.BLACK),
+	WHITE(Type.WHITE),
+	BROWN(Type.BROWN),
+	BLACK_AND_WHITE(Type.BLACK_AND_WHITE),
+	GOLD(Type.GOLD),
+	SALT_AND_PEPPER(Type.SALT_AND_PEPPER),
 	;
 
-	private final Rabbit.Type bukkitType;
+	private final Type bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
 	@Override
-	public EntityType getEntityType() {
+	public @NotNull EntityType getEntityType() {
 		return EntityType.RABBIT;
 	}
 

@@ -26,10 +26,10 @@ public class MobHeadConverter extends TypeConverter implements SimpleValueConver
 
 		MobHead mobHead = (MobHead) value;
 
-		String key = mobHead.name();
+		String key = mobHead.getType().name();
 
 		if (mobHead.getVariant() != null)
-			key = mobHead.getType().name() + "." + mobHead.getVariant().name();
+			key += "." + mobHead.getVariant().name();
 
 		return key;
 	}

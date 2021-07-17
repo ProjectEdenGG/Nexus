@@ -7,6 +7,7 @@ import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import me.pugabyte.nexus.utils.RandomUtils;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public enum TropicalFishVariant implements MobHeadVariant {
 	}
 
 	@Override
-	public EntityType getEntityType() {
+	public @NotNull EntityType getEntityType() {
 		return EntityType.TROPICAL_FISH;
 	}
 

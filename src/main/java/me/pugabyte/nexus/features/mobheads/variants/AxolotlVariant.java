@@ -5,27 +5,29 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Axolotl.Variant;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
 public enum AxolotlVariant implements MobHeadVariant {
-	LUCY(Axolotl.Variant.LUCY),
-	WILD(Axolotl.Variant.WILD),
-	GOLD(Axolotl.Variant.GOLD),
-	CYAN(Axolotl.Variant.CYAN),
-	BLUE(Axolotl.Variant.BLUE),
+	LUCY(Variant.LUCY),
+	WILD(Variant.WILD),
+	GOLD(Variant.GOLD),
+	CYAN(Variant.CYAN),
+	BLUE(Variant.BLUE),
 	;
 
-	private final Axolotl.Variant bukkitType;
+	private final Variant bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
 	@Override
-	public EntityType getEntityType() {
+	public @NotNull EntityType getEntityType() {
 		return EntityType.AXOLOTL;
 	}
 
