@@ -4,7 +4,6 @@ import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.mobheads.common.MobHead;
 import me.pugabyte.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import me.pugabyte.nexus.models.mobheads.MobHeadUserService;
-import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -57,10 +56,6 @@ public class MobHeadListener implements Listener {
 		if (shouldIgnore(player, victim))
 			return;
 
-		// TODO: Remove when done
-		if (!Rank.of(player).isStaff())
-			return;
-		//
 		handledEntities.add(victim.getUniqueId());
 
 		if (victim.getType() == EntityType.WITHER_SKELETON)
@@ -99,17 +94,12 @@ public class MobHeadListener implements Listener {
 			if (drop)
 				data.head();
 		});
-
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPickupPlayerSkull(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
-
-		// TODO: Remove when done
-		if (!Rank.of(player).isStaff()) return;
-		//
 
 		Item item = event.getItem();
 		ItemStack itemStack = item.getItemStack();
