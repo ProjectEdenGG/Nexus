@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -109,6 +110,7 @@ public class ArenaManager {
 	}
 
 	public static Arena get(String name) {
+		arenas.removeIf(Objects::isNull);
 		for (Arena arena : arenas)
 			if (arena.getName().equalsIgnoreCase(name))
 				return arena;
@@ -116,6 +118,7 @@ public class ArenaManager {
 	}
 
 	public static Arena get(int id) {
+		arenas.removeIf(Objects::isNull);
 		for (Arena arena : arenas)
 			if (arena.getId() == id)
 				return arena;

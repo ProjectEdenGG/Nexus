@@ -19,6 +19,7 @@ import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.RandomUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.Tasks.Countdown;
 import me.pugabyte.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import org.apache.commons.lang.Validate;
@@ -137,7 +138,8 @@ public class PixelPainters extends TeamlessMechanic {
 				copyMaxV = designMax.subtract(0, 0, i);
 				pasteMinV = pasteMin.add(0, i, 0);
 				Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
-				match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).pasteAsync();
+				BlockVector3 finalPasteMinV = pasteMinV;
+				Tasks.sync(() -> match.getWEUtils().paster().clipboard(copyRg).at(finalPasteMinV).pasteAsync());
 			}
 
 			// Paste Design
