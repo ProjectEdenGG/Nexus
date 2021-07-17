@@ -21,7 +21,7 @@ public enum RabbitVariant implements MobHeadVariant {
 	SALT_AND_PEPPER(Rabbit.Type.SALT_AND_PEPPER),
 	;
 
-	private final Rabbit.Type type;
+	private final Rabbit.Type bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -31,6 +31,6 @@ public enum RabbitVariant implements MobHeadVariant {
 	}
 
 	public static RabbitVariant of(Rabbit rabbit) {
-		return Arrays.stream(values()).filter(entry -> rabbit.getRabbitType() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> rabbit.getRabbitType() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

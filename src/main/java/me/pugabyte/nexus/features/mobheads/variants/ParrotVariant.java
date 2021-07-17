@@ -20,7 +20,7 @@ public enum ParrotVariant implements MobHeadVariant {
 	GREEN(Parrot.Variant.GREEN),
 	;
 
-	private final Parrot.Variant type;
+	private final Parrot.Variant bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -30,6 +30,6 @@ public enum ParrotVariant implements MobHeadVariant {
 	}
 
 	public static ParrotVariant of(Parrot parrot) {
-		return Arrays.stream(values()).filter(entry -> parrot.getVariant() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> parrot.getVariant() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

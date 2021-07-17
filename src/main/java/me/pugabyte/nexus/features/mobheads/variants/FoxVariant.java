@@ -17,7 +17,7 @@ public enum FoxVariant implements MobHeadVariant {
 	SNOW(Fox.Type.SNOW),
 	;
 
-	private final Fox.Type type;
+	private final Fox.Type bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -27,6 +27,6 @@ public enum FoxVariant implements MobHeadVariant {
 	}
 
 	public static FoxVariant of(Fox fox) {
-		return Arrays.stream(values()).filter(entry -> fox.getFoxType() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> fox.getFoxType() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

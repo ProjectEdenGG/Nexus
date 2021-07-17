@@ -23,7 +23,7 @@ public enum PandaVariant implements MobHeadVariant {
 	WORRIED(Gene.WORRIED),
 	;
 
-	private final Gene type;
+	private final Gene bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -33,6 +33,6 @@ public enum PandaVariant implements MobHeadVariant {
 	}
 
 	public static PandaVariant of(Panda panda) {
-		return Arrays.stream(values()).filter(entry -> panda.getMainGene() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> panda.getMainGene() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

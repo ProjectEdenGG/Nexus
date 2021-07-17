@@ -148,12 +148,6 @@ public enum MobHeadType implements MobHead {
 	@Setter
 	private double chance;
 
-	public ItemStack getGenericSkull() {
-		if (genericSkull == null)
-			return null;
-		return genericSkull.clone();
-	}
-
 	@Getter
 	private static final Set<ItemStack> allSkulls = new HashSet<>();
 
@@ -171,13 +165,15 @@ public enum MobHeadType implements MobHead {
 		return Arrays.stream(values()).filter(entry -> from.equals(entry.getEntityType())).findFirst().orElse(null);
 	}
 
-	@Nullable
-	public static ItemStack getSkull(Entity entity) {
-		MobHeadType mobHeadType = MobHeadType.of(entity.getType());
-		if (mobHeadType == null)
-			return null;
+	@Override
+	public MobHeadType getType() {
+		return this;
+	}
 
-		return mobHeadType.getSkull(mobHeadType.getVariant(entity));
+	public ItemStack getSkull() {
+		if (genericSkull == null)
+			return null;
+		return genericSkull.clone();
 	}
 
 	public ItemStack getSkull(MobHeadVariant variant) {
@@ -243,7 +239,7 @@ public enum MobHeadType implements MobHead {
 
 		Reflections reflections = new Reflections(MobHeadType.class.getPackage().getName());
 		for (Class<? extends MobHeadVariant> variant : reflections.getSubTypesOf(MobHeadVariant.class)) {
-			for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads_variant_" + variant.getSimpleName().toLowerCase()))) {
+			for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads_variant_" + variant.getSimpleName().replace("Variant", "").toLowerCase()))) {
 				try {
 					if (!MaterialTag.SIGNS.isTagged(block.getType()))
 						continue;

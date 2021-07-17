@@ -27,7 +27,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, MobHeadConverter.class})
+@Converters(UUIDConverter.class)
 public class MobHeadUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -46,7 +46,6 @@ public class MobHeadUser implements PlayerOwnedObject {
 		return map.computeIfAbsent(mobHead, $ -> {
 			MobHeadData mobHeadData = new MobHeadData(mobHead);
 			data.add(mobHeadData);
-			map.put(mobHeadData.getMobHead(), mobHeadData);
 			return mobHeadData;
 		});
 	}
@@ -54,11 +53,21 @@ public class MobHeadUser implements PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@RequiredArgsConstructor
+	@Converters(MobHeadConverter.class)
 	public static class MobHeadData {
 		@NonNull
 		private MobHead mobHead;
 		private int kills;
 		private int heads;
+
+		public void kill() {
+			++kills;
+		}
+
+		public void head() {
+			++heads;
+		}
+
 	}
 
 }

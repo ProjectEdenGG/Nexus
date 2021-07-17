@@ -30,7 +30,7 @@ public enum VillagerVariant implements MobHeadVariant {
 	WEAPONSMITH(Profession.WEAPONSMITH),
 	;
 
-	private final Profession type;
+	private final Profession bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -40,6 +40,6 @@ public enum VillagerVariant implements MobHeadVariant {
 	}
 
 	public static VillagerVariant of(Villager villager) {
-		return Arrays.stream(values()).filter(entry -> villager.getProfession() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> villager.getProfession() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

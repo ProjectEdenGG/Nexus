@@ -18,7 +18,7 @@ public enum MooshroomVariant implements MobHeadVariant {
 	BROWN(Variant.BROWN),
 	;
 
-	private final Variant type;
+	private final Variant bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -28,6 +28,6 @@ public enum MooshroomVariant implements MobHeadVariant {
 	}
 
 	public static MooshroomVariant of(MushroomCow mushroomCow) {
-		return Arrays.stream(values()).filter(entry -> mushroomCow.getVariant() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> mushroomCow.getVariant() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

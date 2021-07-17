@@ -4,6 +4,7 @@ import eden.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.mobheads.common.MobHead;
 import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
@@ -14,15 +15,15 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.models.mobheads.MobHeadUser.MobHeadData;
+import me.pugabyte.nexus.models.mobheads.MobHeadUserService;
 import me.pugabyte.nexus.models.nerd.Rank;
 import me.pugabyte.nexus.utils.Enchant;
-import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -72,6 +73,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	MobHeadVariant convertToMobHeadVariant(String value, MobHeadType context) {
 		if (context.getVariantClass() == null)
 			return null;
+
 		try {
 			return EnumUtils.valueOf(context.getVariantClass(), value);
 		} catch (IllegalArgumentException ex) {
@@ -81,7 +83,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 	@TabCompleterFor(MobHeadVariant.class)
 	List<String> tabCompleteMobHeadVariant(String filter, MobHeadType context) {
-		if (context == null)
+		if (context == null || !context.hasVariants())
 			return new ArrayList<>();
 
 		return tabCompleteEnum(filter, (Class<? extends Enum<?>>) context.getVariantClass());
@@ -158,28 +160,32 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		if (victim.getType() == EntityType.WITHER_SKELETON)
 			event.getDrops().removeIf(item -> item.getType() == Material.WITHER_SKELETON_SKULL);
 
-		EntityType type = victim.getType();
-		MobHeadType mobHeadType = MobHeadType.of(type);
-		MobHeadVariant variant = mobHeadType.getVariant(victim);
-		ItemStack skull = mobHeadType.getSkull(variant);
+		final MobHead mobHead = MobHead.of(victim);
+		ItemStack skull = mobHead.getSkull();
 
 		if (isNullOrAir(skull))
 			return;
 
-		if (victim instanceof Player)
-			skull = new ItemBuilder(skull).name("&e" + ((Player) victim).getDisplayName() + "'s Head").skullOwner((OfflinePlayer) victim).build();
-
-		double chance = mobHeadType.getChance();
+		double chance = mobHead.getType().getChance();
 
 		if (chance == 0) {
-			Nexus.warn("[MobHeads] Chance for " + camelCase(type) + " head is 0");
+			Nexus.warn("[MobHeads] Chance for " + camelCase(mobHead.getType()) + " head is 0");
 			return;
 		}
 
-		chance += getLooting(player);
+		final boolean drop = chanceOf(chance + getLooting(player));
 
-		if (chanceOf(chance))
+		if (drop)
 			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
+
+		new MobHeadUserService().edit(player, user -> {
+			MobHeadData data = user.get(mobHead);
+
+			data.kill();
+			if (drop)
+				data.head();
+		});
+
 	}
 
 	private double getLooting(Player killer) {

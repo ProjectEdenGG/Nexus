@@ -31,11 +31,11 @@ public enum CatVariant implements MobHeadVariant {
 		return EntityType.CAT;
 	}
 
-	private final Cat.Type type;
+	private final Cat.Type bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
 	public static CatVariant of(Cat cat) {
-		return Arrays.stream(values()).filter(entry -> cat.getCatType() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> cat.getCatType() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

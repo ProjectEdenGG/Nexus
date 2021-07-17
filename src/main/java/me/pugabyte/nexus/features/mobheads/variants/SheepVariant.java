@@ -32,7 +32,7 @@ public enum SheepVariant implements MobHeadVariant {
 	WHITE(ColorType.WHITE),
 	;
 
-	private final ColorType type;
+	private final ColorType bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -42,6 +42,6 @@ public enum SheepVariant implements MobHeadVariant {
 	}
 
 	public static SheepVariant of(Sheep sheep) {
-		return Arrays.stream(values()).filter(entry -> ColorType.of(sheep.getColor()) == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> ColorType.of(sheep.getColor()) == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

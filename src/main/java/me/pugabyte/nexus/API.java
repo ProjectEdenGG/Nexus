@@ -10,6 +10,7 @@ import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ChatColorConve
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ColorConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.PrivateChannelConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.PublicChannelConverter;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.QuestConverter;
@@ -52,6 +53,7 @@ public class API extends EdenAPI {
 				ColorConverter.class,
 				ItemStackConverter.class,
 				LocationConverter.class,
+				MobHeadConverter.class,
 				QuestConverter.class,
 				PrivateChannelConverter.class,
 				PublicChannelConverter.class

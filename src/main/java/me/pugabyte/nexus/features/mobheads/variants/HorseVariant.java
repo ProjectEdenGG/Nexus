@@ -22,7 +22,7 @@ public enum HorseVariant implements MobHeadVariant {
 	DARK_BROWN(Horse.Color.DARK_BROWN),
 	;
 
-	private final Horse.Color type;
+	private final Horse.Color bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -32,6 +32,6 @@ public enum HorseVariant implements MobHeadVariant {
 	}
 
 	public static HorseVariant of(Horse horse) {
-		return Arrays.stream(values()).filter(entry -> horse.getColor() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> horse.getColor() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

@@ -8,12 +8,22 @@ import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 public interface MobHeadVariant extends MobHead {
 
+	@Override
+	default MobHeadType getType() {
+		return MobHeadType.of(getEntityType());
+	}
+
+	@Override
+	default MobHeadVariant getVariant() {
+		return this;
+	}
+
 	ItemStack getItemStack();
 
 	default ItemStack getSkull() {
 		ItemStack skull = getItemStack();
 		if (isNullOrAir(skull))
-			return MobHeadType.of(getEntityType()).getGenericSkull();
+			return MobHeadType.of(getEntityType()).getSkull();
 		return skull;
 	}
 
@@ -21,11 +31,6 @@ public interface MobHeadVariant extends MobHead {
 
 	default String getDisplayName() {
 		return "&e" + camelCase((Enum<?>) this) + " " + camelCase(getEntityType()) + " Head";
-	}
-
-	@Override
-	default MobHeadVariant getVariant() {
-		return this;
 	}
 
 }

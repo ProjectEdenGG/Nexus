@@ -5,16 +5,19 @@ import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import eden.utils.EnumUtils;
+import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.mobheads.MobHeadType;
 import me.pugabyte.nexus.features.mobheads.common.MobHead;
+import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import org.bukkit.entity.EntityType;
 
 import static eden.utils.StringUtils.isNullOrEmpty;
 
+@NoArgsConstructor
 public class MobHeadConverter extends TypeConverter implements SimpleValueConverter {
 
 	public MobHeadConverter(Mapper mapper) {
-		super(MobHead.class);
+		super(MobHead.class, MobHeadType.class, MobHeadVariant.class);
 	}
 
 	@Override
@@ -26,7 +29,7 @@ public class MobHeadConverter extends TypeConverter implements SimpleValueConver
 		String key = mobHead.name();
 
 		if (mobHead.getVariant() != null)
-			key += "." + mobHead.getVariant().name();
+			key = mobHead.getType().name() + "." + mobHead.getVariant().name();
 
 		return key;
 	}
@@ -39,15 +42,17 @@ public class MobHeadConverter extends TypeConverter implements SimpleValueConver
 
 		String[] split = key.split("\\.");
 		String entityTypeName = split[0];
-		String variantName = split[1];
-
 		EntityType entityType = EntityType.valueOf(entityTypeName);
 		MobHeadType mobHeadType = MobHeadType.of(entityType);
 
-		if (isNullOrEmpty(variantName))
-			return mobHeadType;
+		if (split.length > 1) {
+			String variantName = split[1];
 
-		return EnumUtils.valueOf(mobHeadType.getVariantClass(), variantName);
+			if (!isNullOrEmpty(variantName))
+				return EnumUtils.valueOf(mobHeadType.getVariantClass(), variantName);
+		}
+
+		return mobHeadType;
 	}
 
 }

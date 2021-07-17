@@ -20,7 +20,7 @@ public enum AxolotlVariant implements MobHeadVariant {
 	BLUE(Axolotl.Variant.BLUE),
 	;
 
-	private final Axolotl.Variant type;
+	private final Axolotl.Variant bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -30,6 +30,6 @@ public enum AxolotlVariant implements MobHeadVariant {
 	}
 
 	public static AxolotlVariant of(Axolotl axolotl) {
-		return Arrays.stream(values()).filter(entry -> axolotl.getVariant() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> axolotl.getVariant() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

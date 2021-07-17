@@ -30,7 +30,7 @@ public enum ZombieVillagerVariant implements MobHeadVariant {
 	WEAPONSMITH(Profession.WEAPONSMITH),
 	;
 
-	private final Profession type;
+	private final Profession bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -40,6 +40,6 @@ public enum ZombieVillagerVariant implements MobHeadVariant {
 	}
 
 	public static ZombieVillagerVariant of(ZombieVillager zombieVillager) {
-		return Arrays.stream(values()).filter(entry -> zombieVillager.getVillagerProfession() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> zombieVillager.getVillagerProfession() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }

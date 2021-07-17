@@ -20,7 +20,7 @@ public enum LlamaVariant implements MobHeadVariant {
 	CREAMY(Color.CREAMY),
 	;
 
-	private final Color type;
+	private final Color bukkitType;
 	@Setter
 	private ItemStack itemStack;
 
@@ -30,6 +30,6 @@ public enum LlamaVariant implements MobHeadVariant {
 	}
 
 	public static LlamaVariant of(Llama llama) {
-		return Arrays.stream(values()).filter(entry -> llama.getColor() == entry.getType()).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> llama.getColor() == entry.getBukkitType()).findFirst().orElse(null);
 	}
 }
