@@ -299,7 +299,7 @@ public class Match implements ForwardingAudience {
 
 				initializeMatchData();
 				tasks = new MatchTasks();
-				//scoreboard = MinigameScoreboard.Factory.create(this); // TODO: fix scoreboards
+				scoreboard = MinigameScoreboard.Factory.create(this);
 				//scoreboardTeams = MinigameScoreboard.ITeams.Factory.create(this); // TODO: fix scoreboards
 				arena.getMechanic().onInitialize(event);
 				initialized = true;
