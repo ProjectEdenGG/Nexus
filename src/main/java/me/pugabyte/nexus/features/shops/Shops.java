@@ -20,21 +20,21 @@ public class Shops extends Feature {
 	@Override
 	public void onStart() {
 		new ShopDisabler();
-		Tasks.waitAsync(5, Market::new);
+		Tasks.waitAsync(5, Market::load);
 	}
 
 	public static class Market {
-		ShopService service = new ShopService();
-		Shop market = service.getMarket();
+		private static final ShopService service = new ShopService();
+		private static final Shop market = service.getMarket();
 
-		public Market() {
+		public static void load() {
 			market.getProducts().clear();
 			addItems();
 
 			service.save(market);
 		}
 
-		private void addItems() {
+		private static void addItems() {
 			addSellItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 32, 50);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 32, 120);
 			addSellItem(ShopGroup.SURVIVAL, false, Material.MOSSY_STONE_BRICKS, 32, 150);
@@ -211,23 +211,23 @@ public class Shops extends Feature {
 			addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 8, 110);
 		}
 
-		private void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
+		private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
 			addSellItem(shopGroup, isResourceWorld, new ItemStack(material, quantity), price);
 		}
 
-		private void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
+		private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
 			add(new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
 		}
 
-		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
+		private static void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
 			addBuyItem(shopGroup, isResourceWorld, new ItemStack(material, quantity), price);
 		}
 
-		private void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
+		private static void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
 			add(new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES)));
 		}
 
-		private void add(Product product) {
+		private static void add(Product product) {
 			market.getProducts().add(product);
 		}
 

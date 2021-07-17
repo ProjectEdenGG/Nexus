@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.features.shops.Shops.Market;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,17 @@ import static eden.utils.StringUtils.camelCase;
 public enum Boostable {
 	EXPERIENCE(Material.EXPERIENCE_BOTTLE),
 	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),
-	MARKET_SELL_PRICES(Material.OAK_SIGN),
+	MARKET_SELL_PRICES(Material.OAK_SIGN) {
+		@Override
+		public void onActivate() {
+			Market.load();
+		}
+
+		@Override
+		public void onExpire() {
+			Market.load();
+		}
+	},
 	VOTE_POINTS(Material.DIAMOND),
 	MINIGAME_DAILY_TOKENS(Material.DIAMOND_SWORD),
 	KILLER_MONEY(Material.GOLD_INGOT),
@@ -31,5 +42,9 @@ public enum Boostable {
 	public ItemBuilder getDisplayItem() {
 		return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name()));
 	}
+
+	public void onActivate() {}
+
+	public void onExpire() {}
 
 }

@@ -111,6 +111,7 @@ public class Booster implements PlayerOwnedObject {
 
 			config().addBoost(this);
 			activated = LocalDateTime.now();
+			type.onActivate();
 			DiscordHandler.deleteHistoryAndSendMessage();
 			broadcast(getNickname() + " has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
 			save();
@@ -118,6 +119,7 @@ public class Booster implements PlayerOwnedObject {
 
 		public void expire() {
 			config().removeBoost(this);
+			type.onExpire();
 			broadcast(getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has &cexpired");
 			DiscordHandler.editMessage();
 			// TODO Auto start next in queue?
