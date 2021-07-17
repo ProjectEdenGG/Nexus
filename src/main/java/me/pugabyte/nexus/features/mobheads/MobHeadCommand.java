@@ -4,7 +4,7 @@ import eden.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.mobheads.MobHeadType.MobHeadVariant;
+import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -70,10 +70,10 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 	@ConverterFor(MobHeadVariant.class)
 	MobHeadVariant convertToMobHeadVariant(String value, MobHeadType context) {
-		if (context.getVariant() == null)
+		if (context.getVariantClass() == null)
 			return null;
 		try {
-			return EnumUtils.valueOf(context.getVariant(), value);
+			return EnumUtils.valueOf(context.getVariantClass(), value);
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException(camelCase(context) + " variant from &e" + value + " &cnot found");
 		}
@@ -84,7 +84,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		if (context == null)
 			return new ArrayList<>();
 
-		return tabCompleteEnum(filter, (Class<? extends Enum<?>>) context.getVariant());
+		return tabCompleteEnum(filter, (Class<? extends Enum<?>>) context.getVariantClass());
 	}
 
 	private static final List<EntityType> exclude = List.of(EntityType.ARMOR_STAND, EntityType.GIANT);
@@ -104,7 +104,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		});
 
 		for (MobHeadType mobHeadType : MobHeadType.values())
-			allEntityTypes.remove(mobHeadType.getType());
+			allEntityTypes.remove(mobHeadType.getEntityType());
 
 		if (allEntityTypes.isEmpty()) {
 			send(PREFIX + "All entity types have defined mob heads");
@@ -160,7 +160,8 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 		EntityType type = victim.getType();
 		MobHeadType mobHeadType = MobHeadType.of(type);
-		ItemStack skull = MobHeadType.getSkull(victim);
+		MobHeadVariant variant = mobHeadType.getVariant(victim);
+		ItemStack skull = mobHeadType.getSkull(variant);
 
 		if (isNullOrAir(skull))
 			return;

@@ -77,7 +77,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				if (mobHeadType == null)
 					skull = new ItemStack(Material.BARRIER);
 				else {
-					skull = mobHeadType.getGeneric();
+					skull = mobHeadType.getGenericSkull();
 					if (isNullOrAir(skull))
 						skull = new ItemStack(Material.BARRIER);
 				}
@@ -124,7 +124,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				final MobHeadType mobHeadType = MobHeadType.of(type);
 				if (mobHeadType == null)
 					continue;
-				final ItemStack skull = mobHeadType.getGeneric();
+				final ItemStack skull = mobHeadType.getGenericSkull();
 				if (isNullOrAir(skull))
 					continue;
 

@@ -175,7 +175,7 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 						try {
 							material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
 						} catch (IllegalArgumentException e) {
-							material = MobHeadType.of(entity).getGeneric();
+							material = MobHeadType.of(entity).getGenericSkull();
 						}
 				}
 				ItemStack item = new ItemBuilder(material)

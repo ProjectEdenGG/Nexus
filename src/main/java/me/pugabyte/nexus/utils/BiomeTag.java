@@ -2,7 +2,7 @@ package me.pugabyte.nexus.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.pugabyte.nexus.utils.BiomeTag.BiomeTagBuilder.MatchMode;
+import me.pugabyte.nexus.utils.BiomeTag.Tag.MatchMode;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -17,115 +17,116 @@ import java.util.function.Predicate;
 @Getter
 @AllArgsConstructor
 public enum BiomeTag {
-	OCEAN(Material.WATER_BUCKET, new BiomeTagBuilder("OCEAN", MatchMode.CONTAINS)),
-	FORESTS(Material.OAK_LEAVES, new BiomeTagBuilder("FOREST", MatchMode.CONTAINS)
+	OCEAN(Material.WATER_BUCKET, new Tag("OCEAN", MatchMode.CONTAINS)),
+	FORESTS(Material.OAK_LEAVES, new Tag("FOREST", MatchMode.CONTAINS)
 		.exclude(Biome.CRIMSON_FOREST, Biome.WARPED_FOREST)),
-	SWAMP(Material.VINE, new BiomeTagBuilder("SWAMP", MatchMode.CONTAINS)),
-	TAIGA(Material.SPRUCE_LOG, new BiomeTagBuilder("TAIGA", MatchMode.CONTAINS)),
-	JUNGLE(Material.JUNGLE_LOG, new BiomeTagBuilder("JUNGLE", MatchMode.CONTAINS)),
-	MESA(Material.TERRACOTTA, new BiomeTagBuilder("BADLANDS", MatchMode.CONTAINS)),
-	ICE_SPIKES(Material.PACKED_ICE, new BiomeTagBuilder(Biome.ICE_SPIKES)),
-	PLAINS(Material.GRASS_BLOCK, new BiomeTagBuilder("PLAINS", MatchMode.CONTAINS)),
-	ALL_FORESTS(Material.BIRCH_LEAVES, new BiomeTagBuilder(FORESTS)
+	SWAMP(Material.VINE, new Tag("SWAMP", MatchMode.CONTAINS)),
+	TAIGA(Material.SPRUCE_LOG, new Tag("TAIGA", MatchMode.CONTAINS)),
+	JUNGLE(Material.JUNGLE_LOG, new Tag("JUNGLE", MatchMode.CONTAINS)),
+	MESA(Material.TERRACOTTA, new Tag("BADLANDS", MatchMode.CONTAINS)),
+	ICE_SPIKES(Material.PACKED_ICE, new Tag(Biome.ICE_SPIKES)),
+	PLAINS(Material.GRASS_BLOCK, new Tag("PLAINS", MatchMode.CONTAINS)),
+	ALL_FORESTS(Material.BIRCH_LEAVES, new Tag(FORESTS)
 		.append("GIANT_SPRUCE_TAIGA", MatchMode.CONTAINS)),
-	ALL_NETHER(Material.NETHERRACK, new BiomeTagBuilder(Biome.NETHER_WASTES, Biome.BASALT_DELTAS, Biome.CRIMSON_FOREST, Biome.WARPED_FOREST, Biome.SOUL_SAND_VALLEY)),
-	ALL_DESERT(Material.SAND, new BiomeTagBuilder("DESERT", MatchMode.CONTAINS)),
+	ALL_NETHER(Material.NETHERRACK, new Tag(Biome.NETHER_WASTES, Biome.BASALT_DELTAS, Biome.CRIMSON_FOREST,
+		Biome.WARPED_FOREST, Biome.SOUL_SAND_VALLEY)),
+	ALL_DESERT(Material.SAND, new Tag("DESERT", MatchMode.CONTAINS)),
 	;
 
 	private final Material material;
-	private final BiomeTagBuilder tag;
+	private final Tag tag;
 
 	public Set<Biome> getValues() {
-		return tag.getValues();
+		return tag.biomes;
 	}
 
 	public Biome[] toArray() {
-		return tag.toArray();
+		return new ArrayList<>(tag.biomes).toArray(Biome[]::new);
 	}
 
 	public boolean isTagged(@NotNull Biome biome) {
-		return tag.isTagged(biome);
+		return tag.biomes.contains(biome);
 	}
 
 	public boolean isTagged(@NotNull Block block) {
-		return tag.isTagged(block);
+		return isTagged(block.getBiome());
 	}
 
 	@Override
 	public String toString() {
-		return tag.toString();
+		return tag.biomes.toString();
 	}
 
-	protected static class BiomeTagBuilder {
+	protected static class Tag {
 
-		public BiomeTagBuilder() {
+		private final EnumSet<Biome> biomes;
+
+		public Tag() {
 			this.biomes = EnumSet.noneOf(Biome.class);
 		}
 
-		public BiomeTagBuilder(Biome... biomes) {
+		public Tag(Biome... biomes) {
 			this.biomes = EnumSet.noneOf(Biome.class);
 			append(biomes);
 		}
 
-		public BiomeTagBuilder(BiomeTag... biomeTags) {
+		public Tag(BiomeTag... biomeTags) {
 			this.biomes = EnumSet.noneOf(Biome.class);
 			append(biomeTags);
 		}
 
-		public BiomeTagBuilder(BiomeTagBuilder... biomeTags) {
+		public Tag(Tag... biomeTags) {
 			this.biomes = EnumSet.noneOf(Biome.class);
 			append(biomeTags);
 		}
 
-		public BiomeTagBuilder(Predicate<Biome> predicate) {
+		public Tag(Predicate<Biome> predicate) {
 			this.biomes = EnumSet.noneOf(Biome.class);
 			append(predicate);
 		}
 
-		public BiomeTagBuilder(String segment, MatchMode mode) {
+		public Tag(String segment, MatchMode mode) {
 			this.biomes = EnumSet.noneOf(Biome.class);
 			append(segment, mode);
 		}
 
-		public BiomeTagBuilder(String segment, MatchMode mode, Biome... biomes) {
+		public Tag(String segment, MatchMode mode, Biome... biomes) {
 			this.biomes = EnumSet.noneOf(Biome.class);
 			append(segment, mode, biomes);
 		}
 
-		private final EnumSet<Biome> biomes;
-
-		public BiomeTagBuilder append(Biome... biomes) {
+		public Tag append(Biome... biomes) {
 			this.biomes.addAll(Arrays.asList(biomes));
 			return this;
 		}
 
-		public final BiomeTagBuilder append(BiomeTag... biomeTags) {
+		public final Tag append(BiomeTag... biomeTags) {
 			for (BiomeTag biomeTag : biomeTags)
 				this.biomes.addAll(biomeTag.getValues());
 
 			return this;
 		}
 
-		public final BiomeTagBuilder append(BiomeTagBuilder... biomeTags) {
-			for (BiomeTagBuilder biomeTag : biomeTags)
-				this.biomes.addAll(biomeTag.getValues());
+		public final Tag append(Tag... biomeTags) {
+			for (Tag biomeTag : biomeTags)
+				this.biomes.addAll(biomeTag.biomes);
 
 			return this;
 		}
 
-		public BiomeTagBuilder append(Predicate<Biome> predicate) {
+		public Tag append(Predicate<Biome> predicate) {
 			for (Biome m : Biome.values())
 				if (predicate.test(m))
 					this.biomes.add(m);
 			return this;
 		}
 
-		public BiomeTagBuilder append(String segment, MatchMode mode) {
+		public Tag append(String segment, MatchMode mode) {
 			append(segment, mode, Biome.values());
 			return this;
 		}
 
-		public BiomeTagBuilder append(String segment, MatchMode mode, Biome... biomes) {
+		public Tag append(String segment, MatchMode mode, Biome... biomes) {
 			segment = segment.toUpperCase();
 
 			switch (mode) {
@@ -151,31 +152,31 @@ public enum BiomeTag {
 			return this;
 		}
 
-		public BiomeTagBuilder exclude(Biome... biomes) {
+		public Tag exclude(Biome... biomes) {
 			for (Biome m : biomes)
 				this.biomes.remove(m);
 
 			return this;
 		}
 
-		public final BiomeTagBuilder exclude(BiomeTagBuilder... biomeTags) {
-			for (BiomeTagBuilder biomeTag : biomeTags)
-				this.biomes.removeAll(biomeTag.getValues());
+		public final Tag exclude(Tag... biomeTags) {
+			for (Tag biomeTag : biomeTags)
+				this.biomes.removeAll(biomeTag.biomes);
 
 			return this;
 		}
 
-		public BiomeTagBuilder exclude(Predicate<Biome> predicate) {
+		public Tag exclude(Predicate<Biome> predicate) {
 			biomes.removeIf(predicate);
 			return this;
 		}
 
-		public BiomeTagBuilder exclude(String segment, MatchMode mode) {
+		public Tag exclude(String segment, MatchMode mode) {
 			exclude(segment, mode, Biome.values());
 			return this;
 		}
 
-		public BiomeTagBuilder exclude(String segment, MatchMode mode, Biome... biomes) {
+		public Tag exclude(String segment, MatchMode mode, Biome... biomes) {
 			segment = segment.toUpperCase();
 
 			switch (mode) {
@@ -199,27 +200,6 @@ public enum BiomeTag {
 			}
 
 			return this;
-		}
-
-		public Set<Biome> getValues() {
-			return biomes;
-		}
-
-		public Biome[] toArray() {
-			return new ArrayList<>(biomes).toArray(Biome[]::new);
-		}
-
-		public boolean isTagged(@NotNull Biome biome) {
-			return biomes.contains(biome);
-		}
-
-		public boolean isTagged(@NotNull Block block) {
-			return isTagged(block.getBiome());
-		}
-
-		@Override
-		public String toString() {
-			return biomes.toString();
 		}
 
 		public enum MatchMode {
