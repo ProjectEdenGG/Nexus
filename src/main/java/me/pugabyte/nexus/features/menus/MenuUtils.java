@@ -125,6 +125,11 @@ public abstract class MenuUtils {
 	}
 
 	protected ItemStack nameItem(ItemStack item, String name, List<String> lore) {
+		if (item == null)
+			item = new ItemStack(Material.BARRIER);
+		else
+			item = item.clone();
+
 		ItemMeta meta = item.getItemMeta();
 		if (name != null)
 			meta.setDisplayName(colorize("&f" + name));

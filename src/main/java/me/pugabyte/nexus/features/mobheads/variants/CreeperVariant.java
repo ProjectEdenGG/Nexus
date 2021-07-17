@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @RequiredArgsConstructor
 public enum CreeperVariant implements MobHeadVariant {
+	NONE,
 	POWERED,
 	;
 
@@ -24,6 +25,6 @@ public enum CreeperVariant implements MobHeadVariant {
 	}
 
 	public static CreeperVariant of(Creeper creeper) {
-		return creeper.isPowered() ? POWERED : null;
+		return creeper.isPowered() ? POWERED : NONE;
 	}
 }

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @RequiredArgsConstructor
 public enum SnowmanVariant implements MobHeadVariant {
+	NONE,
 	DERP,
 	;
 
@@ -24,6 +25,6 @@ public enum SnowmanVariant implements MobHeadVariant {
 	}
 
 	public static SnowmanVariant of(Snowman snowman) {
-		return snowman.isDerp() ? DERP : null;
+		return snowman.isDerp() ? DERP : NONE;
 	}
 }

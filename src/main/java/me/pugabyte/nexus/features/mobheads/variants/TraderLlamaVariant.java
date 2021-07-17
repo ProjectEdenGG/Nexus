@@ -33,5 +33,4 @@ public enum TraderLlamaVariant implements MobHeadVariant {
 	public static TraderLlamaVariant of(TraderLlama traderLlama) {
 		return Arrays.stream(values()).filter(entry -> traderLlama.getColor() == entry.getBukkitType()).findFirst().orElse(null);
 	}
-
 }

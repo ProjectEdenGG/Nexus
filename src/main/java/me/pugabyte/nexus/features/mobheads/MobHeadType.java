@@ -125,7 +125,7 @@ public enum MobHeadType implements MobHead {
 	STRAY(EntityType.STRAY),
 	STRIDER(EntityType.STRIDER),
 	TRADER_LLAMA(EntityType.TRADER_LLAMA, TraderLlamaVariant.class, entity -> TraderLlamaVariant.of((TraderLlama) entity)),
-	TROPICAL_FISH(EntityType.TROPICAL_FISH, TropicalFishVariant.class, entity -> TropicalFishVariant.RANDOM),
+	TROPICAL_FISH(EntityType.TROPICAL_FISH, TropicalFishVariant.class, entity -> TropicalFishVariant.random()),
 	TURTLE(EntityType.TURTLE),
 	VEX(EntityType.VEX),
 	VILLAGER(EntityType.VILLAGER, VillagerVariant.class, entity -> VillagerVariant.of((Villager) entity)),
@@ -233,6 +233,9 @@ public enum MobHeadType implements MobHead {
 
 	static void load() {
 		World world = Bukkit.getWorld(Nexus.getEnv() == Env.PROD ? "survival" : "world");
+		if (world == null)
+			return;
+
 		WorldGuardUtils WGUtils = new WorldGuardUtils(world);
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
 
@@ -253,15 +256,22 @@ public enum MobHeadType implements MobHead {
 				try {
 					type = EntityType.valueOf(entity);
 				} catch (Exception ignored) {
-					Nexus.log("Cannot parse entity type: " + entity);
+					Nexus.warn("[MobHeads] Cannot parse entity type: " + entity);
 					continue;
 				}
 
 				double chance = Double.parseDouble(sign.getLine(3));
 
 				skull = new ItemBuilder(skull).name("&e" + camelCase(type) + " Head").build();
-				MobHeadType.of(type).setGenericSkull(skull);
-				MobHeadType.of(type).setChance(chance);
+
+				final MobHeadType mobHeadType = MobHeadType.of(type);
+				if (mobHeadType == null) {
+					Nexus.warn("[MobHeads] Found EntityType with no MobHeadType: " + type);
+					return;
+				}
+
+				mobHeadType.setGenericSkull(skull);
+				mobHeadType.setChance(chance);
 				allSkulls.add(skull);
 			} catch (Exception ex) {
 				ex.printStackTrace();

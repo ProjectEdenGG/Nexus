@@ -9,7 +9,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static eden.utils.StringUtils.camelCase;
@@ -17,27 +16,36 @@ import static eden.utils.StringUtils.camelCase;
 @Getter
 @RequiredArgsConstructor
 public enum TropicalFishVariant implements MobHeadVariant {
-	RANDOM,
+	ONE,
+	TWO,
+	THREE,
+	FOUR,
+	FIVE,
+	SIX,
+	SEVEN,
+	EIGHT,
+	NINE,
+	TEN,
+	ELEVEN,
+	TWELVE,
+	THIRTEEN,
+	FOURTEEN,
 	;
 
 	@Setter
-	private List<ItemStack> itemStacks = new ArrayList<>();
-
-	public ItemStack getItemStack() {
-		return RandomUtils.randomElement(itemStacks);
-	}
+	private ItemStack itemStack;
 
 	@Override
 	public @NotNull EntityType getEntityType() {
 		return EntityType.TROPICAL_FISH;
 	}
 
-	public void setItemStack(ItemStack itemStack) {
-		itemStacks.add(itemStack);
-	}
-
 	@Override
 	public String getDisplayName() {
 		return "&e" + camelCase(getEntityType()) + " Head";
+	}
+
+	public static TropicalFishVariant random() {
+		return RandomUtils.randomElement(List.of(values()));
 	}
 }

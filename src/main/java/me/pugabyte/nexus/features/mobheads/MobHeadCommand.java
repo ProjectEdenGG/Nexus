@@ -31,9 +31,14 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		new MobHeadListener();
 	}
 
+	@Path
+	void menu() {
+		new MobHeadUserMenu().open(player());
+	}
+
 	@Permission("group.admin")
 	@Path("get <entityType> [variant]")
-	void mobHead(MobHeadType mobHeadType, @Arg(value = "NONE", context = 1) MobHeadVariant variant) {
+	void mobHead(MobHeadType mobHeadType, @Arg(context = 1) MobHeadVariant variant) {
 		giveItem(mobHeadType.getSkull(variant));
 	}
 

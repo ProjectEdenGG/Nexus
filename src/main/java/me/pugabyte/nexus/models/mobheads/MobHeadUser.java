@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.features.mobheads.common.MobHead;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class MobHeadUser implements PlayerOwnedObject {
 			map.put(data.getMobHead(), data);
 	}
 
-	public MobHeadData get(MobHead mobHead) {
+	public @NotNull MobHeadData get(MobHead mobHead) {
 		return map.computeIfAbsent(mobHead, $ -> {
 			MobHeadData mobHeadData = new MobHeadData(mobHead);
 			data.add(mobHeadData);
