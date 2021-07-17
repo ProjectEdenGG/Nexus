@@ -40,6 +40,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Panda;
@@ -55,6 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -196,6 +198,33 @@ public enum MobHeadType implements MobHead {
 			return null;
 
 		return variantConverter.apply(entity);
+	}
+
+	private static final List<EntityType> EXCLUDED_TYPES = List.of(EntityType.ARMOR_STAND, EntityType.GIANT);
+
+	public static List<EntityType> getExpectedTypes() {
+		List<EntityType> expectedTypes = new ArrayList<>(Arrays.asList(EntityType.values()));
+		expectedTypes.removeIf(entityType -> {
+			if (entityType.getEntityClass() == null)
+				return true;
+			if (!LivingEntity.class.isAssignableFrom(entityType.getEntityClass()))
+				return true;
+			if (EXCLUDED_TYPES.contains(entityType))
+				return true;
+
+			return false;
+		});
+
+		return expectedTypes;
+	}
+
+	public static List<EntityType> getMissingTypes() {
+		final List<EntityType> expectedTypes = getExpectedTypes();
+
+		for (MobHeadType mobHeadType : MobHeadType.values())
+			expectedTypes.remove(mobHeadType.getEntityType());
+
+		return expectedTypes;
 	}
 
 	static {

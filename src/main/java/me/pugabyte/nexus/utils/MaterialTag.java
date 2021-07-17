@@ -240,6 +240,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
+	public static final MaterialTag MOB_SKULLS = new MaterialTag(SKULLS).exclude(PLAYER_SKULLS);
 	public static final MaterialTag BOATS = new MaterialTag(Tag.ITEMS_BOATS);
 	public static final MaterialTag SAPLINGS = new MaterialTag(Tag.SAPLINGS);
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);
