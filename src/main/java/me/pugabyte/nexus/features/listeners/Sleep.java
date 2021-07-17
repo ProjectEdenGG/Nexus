@@ -73,8 +73,10 @@ public class Sleep implements Listener {
 
 			Tasks.wait(wait, () -> {
 				world.setTime(0);
-				world.setStorm(false);
-				world.setThundering(false);
+				if (world.hasStorm())
+					world.setStorm(false);
+				if (world.isThundering())
+					world.setThundering(false);
 
 				handling = false;
 				lastCalculatedSleeping = 0;
