@@ -293,12 +293,14 @@ public class Sabotage extends TeamMechanic {
 		});
 	}
 
+	public static final Component COMPLETED_TASK_TEXT = new JsonBuilder("Task Complete!", NamedTextColor.GREEN).build();
+
 	@EventHandler
 	public void onTaskCompletion(MinigamerCompleteTaskPartEvent event) {
 		Match match = event.getMatch();
 		if (!match.isMechanic(this)) return;
 		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMinigamer());
-		event.getMinigamer().sendActionBar(new JsonBuilder("Task Complete!", NamedTextColor.GREEN));
+		event.getMinigamer().sendActionBar(COMPLETED_TASK_TEXT);
 		SabotageMatchData matchData = match.getMatchData();
 		match.getTasks().wait(1, () -> matchData.initGlow(event.getMinigamer()));
 		if (matchData.getProgress() == 1)

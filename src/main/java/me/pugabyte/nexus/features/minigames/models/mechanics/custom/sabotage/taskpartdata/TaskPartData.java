@@ -9,7 +9,9 @@ import me.pugabyte.nexus.features.minigames.models.mechanics.custom.sabotage.Tas
  */
 @RequiredArgsConstructor
 public class TaskPartData {
-    private final TaskPart task;
+    protected final TaskPart task;
+
+    // TODO: javadocs
 
     public boolean hasRunnable() {
         return false;
