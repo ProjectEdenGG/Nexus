@@ -9,12 +9,14 @@ import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.models.cooldown.CooldownService;
 import me.pugabyte.nexus.models.nerd.Rank;
+import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
@@ -28,6 +30,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,11 +48,11 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	private boolean shouldFilterItems(HumanEntity player) {
+	private static boolean shouldFilterItems(HumanEntity player) {
 		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of((Player) player) == Rank.GUEST;
 	}
 
-	private void filter(Supplier<HumanEntity> player, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
+	private static void filter(Supplier<HumanEntity> player, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
 		boolean isWhiteWolfKnight = player.get().getUniqueId().toString().equals("f325c439-02c2-4043-995e-668113c7eb9f");
 		boolean isDyeBomb = DyeBombCommand.isDyeBomb(getter.get());
 
@@ -58,8 +61,10 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 				return;
 
 		ItemStack item = getter.get();
-		if (item != null)
-			setter.accept(new ItemStack(item.getType(), item.getAmount()));
+		if (item != null) {
+			final Material type = item.getType() == Material.COMMAND_BLOCK_MINECART ? Material.MINECART : item.getType();
+			setter.accept(new ItemStack(type, item.getAmount()));
+		}
 	}
 
 	@EventHandler
@@ -82,6 +87,22 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		filter(event::getPlayer, event::getItem, item -> item.setItemMeta(Bukkit.getItemFactory().getItemMeta(item.getType())));
+	}
+
+	static {
+		Tasks.repeat(Time.TICK, Time.TICK.x(2), () -> {
+			for (World world : WorldGroup.CREATIVE.getWorlds()) {
+				for (Player player : PlayerUtils.getOnlinePlayers(world)) {
+					final PlayerInventory inventory = player.getInventory();
+
+					for (int i = 0; i < inventory.getSize(); i++) {
+						int slot = i;
+						final ItemStack item = inventory.getItem(slot);
+						filter(() -> player, () -> item, filteredItem -> inventory.setItem(slot, filteredItem));
+					}
+				}
+			}
+		});
 	}
 
 	private static final int RADIUS = 128;

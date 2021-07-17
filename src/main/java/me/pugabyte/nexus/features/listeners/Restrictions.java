@@ -10,6 +10,7 @@ import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import me.pugabyte.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
@@ -71,8 +72,19 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onCommandMinecartSpawn(EntitySpawnEvent event) {
-		if (event.getEntity() instanceof CommandMinecart minecart)
-			minecart.setCommand(null);
+		if (event.getEntity() instanceof CommandMinecart) {
+			event.setCancelled(true);
+			Tasks.wait(1, () -> event.getEntity().remove());
+		}
+	}
+
+	@EventHandler
+	public void onCommandMinecartInteract(PlayerInteractEvent event) {
+		if (ItemUtils.isNullOrAir(event.getItem()))
+			return;
+
+		if (event.getItem().getType() == Material.COMMAND_BLOCK_MINECART)
+			event.setCancelled(true);
 	}
 
 	@EventHandler
