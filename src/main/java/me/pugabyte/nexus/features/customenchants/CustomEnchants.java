@@ -127,20 +127,18 @@ public class CustomEnchants extends Feature implements Listener {
 		final ItemStack firstItem = event.getInventory().getFirstItem();
 		final ItemStack secondItem = event.getInventory().getSecondItem();
 
+		// TODO Make books work
 		if (isNullOrAir(result) || isNullOrAir(firstItem) || isNullOrAir(secondItem))
 			return;
 
 		for (CustomEnchant enchant : CustomEnchants.getEnchants()) {
-			int firstLevel = 0;
-			int secondLevel = 0;
-
-			if (firstItem.getItemMeta().hasEnchant(enchant))
-				firstLevel = firstItem.getEnchantmentLevel(enchant);
-
-			if (secondItem.getItemMeta().hasEnchant(enchant))
-				secondLevel = secondItem.getEnchantmentLevel(enchant);
+			int firstLevel = enchant.getLevel(firstItem);
+			int secondLevel = enchant.getLevel(secondItem);
 
 			int finalLevel = Math.max(firstLevel, secondLevel);
+			if (finalLevel == 0)
+				continue;
+
 			if (firstLevel == secondLevel)
 				++finalLevel;
 
@@ -148,20 +146,21 @@ public class CustomEnchants extends Feature implements Listener {
 		}
 	}
 
-	public static ItemStack update(ItemStack itemStack) {
-		ItemMeta meta = itemStack.getItemMeta();
+	public static ItemStack update(ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
 
 		List<String> lore = new ArrayList<>();
-		lore.addAll(getExistingLore(meta));
-		lore.addAll(0, getEnchantLore(meta));
+		lore.addAll(getExistingLore(item));
+		lore.addAll(0, getEnchantLore(item));
 
 		meta.setLore(lore);
-		itemStack.setItemMeta(meta);
-		return itemStack;
+		item.setItemMeta(meta);
+		return item;
 	}
 
-	private static List<String> getExistingLore(ItemMeta meta) {
-		List<String> lore = new ArrayList<>();
+	private static List<String> getExistingLore(ItemStack item) {
+		final ItemMeta meta = item.getItemMeta();
+		final List<String> lore = new ArrayList<>();
 
 		if (!Utils.isNullOrEmpty(meta.getLore()))
 			lines: for (String line : meta.getLore()) {
@@ -176,11 +175,13 @@ public class CustomEnchants extends Feature implements Listener {
 		return lore;
 	}
 
-	private static List<String> getEnchantLore(ItemMeta meta) {
+	private static List<String> getEnchantLore(ItemStack item) {
 		return new ArrayList<>() {{
-			for (CustomEnchant enchant : CustomEnchants.getEnchants())
-				if (meta.hasEnchant(enchant))
-					add(0, colorize("&7" + enchant.getDisplayName(meta.getEnchantLevel(enchant))));
+			for (CustomEnchant enchant : CustomEnchants.getEnchants()) {
+				final int level = enchant.getLevel(item);
+				if (level > 0)
+					add(0, colorize("&7" + enchant.getDisplayName(level)));
+			}
 		}};
 	}
 

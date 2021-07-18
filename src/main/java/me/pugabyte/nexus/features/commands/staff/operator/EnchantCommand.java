@@ -12,6 +12,8 @@ import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 @Aliases("ench")
 @Permission("group.seniorstaff")
@@ -23,21 +25,25 @@ public class EnchantCommand extends CustomCommand {
 
 	@Path("<enchant> [level]")
 	void run(Enchantment enchantment, @Arg("1") int level, @Switch @Arg("true") boolean unsafe) {
-		if (level < 1)
+		if (level < 1) {
 			remove(enchantment);
-		else {
-			final ItemStack tool = getToolRequired();
-			if (unsafe)
-				tool.addUnsafeEnchantment(enchantment, level);
-			else
-				try {
-					tool.addEnchantment(enchantment, level);
-				} catch (IllegalArgumentException ex) {
-					throw new InvalidInputException(ex.getMessage());
-				}
+			return;
+		}
 
+		try {
+			final ItemStack tool = getToolRequired();
+			final ItemMeta meta = tool.getItemMeta();
+
+			if (meta instanceof EnchantmentStorageMeta storageMeta)
+				storageMeta.addStoredEnchant(enchantment, level, unsafe);
+			else
+				meta.addEnchant(enchantment, level, unsafe);
+
+			tool.setItemMeta(meta);
 			CustomEnchants.update(tool);
 			send(PREFIX + "Added enchant " + camelCase(enchantment.getKey().getKey()) + " " + level);
+		} catch (IllegalArgumentException ex) {
+			throw new InvalidInputException(ex.getMessage());
 		}
 	}
 

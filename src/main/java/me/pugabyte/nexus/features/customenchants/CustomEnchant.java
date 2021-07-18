@@ -8,6 +8,7 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.EntityCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -34,6 +35,20 @@ public abstract class CustomEnchant extends Enchantment {
 	@NotNull
 	public String getDisplayName(int level) {
 		return camelCase(getName()) + " " + (level > 1 ? toRoman(level) : "");
+	}
+
+	public int getLevel(ItemStack item) {
+		int level = 0;
+
+		if (item.getItemMeta() instanceof EnchantmentStorageMeta meta) {
+			if (meta.hasStoredEnchant(this))
+				level = meta.getStoredEnchantLevel(this);
+		} else {
+			if (item.getItemMeta().hasEnchant(this))
+				level = item.getEnchantmentLevel(this);
+		}
+
+		return level;
 	}
 
 	@Override

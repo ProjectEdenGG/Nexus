@@ -547,6 +547,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	// Use this when you don't want the glowing, infinite deaths, & no combining
+	// TODO ProtocolLib instead?
 	public ItemBuilder soulbound() {
 		nbt(nbtItem -> nbtItem.setBoolean(SoulboundEnchant.NBT_KEY, true));
 		lore("&7" + Enchant.SOULBOUND.getDisplayName(Enchant.SOULBOUND.getMaxLevel()));
