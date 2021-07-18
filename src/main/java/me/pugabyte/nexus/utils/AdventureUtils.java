@@ -1,7 +1,6 @@
 package me.pugabyte.nexus.utils;
 
 import eden.utils.TimeUtils;
-import io.papermc.paper.text.PaperComponents;
 import lombok.experimental.UtilityClass;
 import me.lexikiq.HasUniqueId;
 import me.pugabyte.nexus.framework.interfaces.IsColoredAndNamed;
@@ -17,6 +16,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class AdventureUtils {
+	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	public static final Title.Times BASIC_TIMES = Title.Times.of(TimeUtils.Time.SECOND.duration(1, 2), TimeUtils.Time.SECOND.duration(5), TimeUtils.Time.SECOND.duration(1, 2));
@@ -50,11 +51,11 @@ public class AdventureUtils {
 	}
 
 	public static String asPlainText(ComponentLike component) {
-		return PaperComponents.plainSerializer().serialize(component.asComponent());
+		return PLAIN_SERIALIZER.serialize(component.asComponent());
 	}
 
 	public static String asLegacyText(ComponentLike component) {
-		return PaperComponents.legacySectionSerializer().serialize(component.asComponent());
+		return LEGACY_SERIALIZER.serialize(component.asComponent());
 	}
 
 	public static Component fromLegacyText(String string) {

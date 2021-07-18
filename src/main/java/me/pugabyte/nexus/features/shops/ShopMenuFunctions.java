@@ -7,6 +7,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.features.shops.providers.SearchProductsProvider;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
+import me.pugabyte.nexus.utils.LanguageUtils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -63,6 +64,9 @@ public class ShopMenuFunctions {
 				Material type = item.getType();
 
 				if (contains(type.name(), input))
+					return true;
+
+				if (contains(LanguageUtils.translate(type), input))
 					return true;
 
 				if (item.getItemMeta().hasDisplayName())

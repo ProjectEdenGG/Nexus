@@ -18,7 +18,8 @@ public class LanguageUtils {
 	 * @return English translation
 	 */
 	public String translate(@NotNull TranslatableComponent component) {
-		return Bukkit.getUnsafe().plainComponentSerializer().serialize(component);
+		// uses Adventure's ComponentFlattener to convert translation keys to their translations w/ proper variable parsing
+		return AdventureUtils.asPlainText(component);
 	}
 
 	/**
