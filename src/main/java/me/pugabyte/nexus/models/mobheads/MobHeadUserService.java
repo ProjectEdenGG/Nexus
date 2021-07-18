@@ -20,4 +20,9 @@ public class MobHeadUserService extends MongoService<MobHeadUser> {
 		return saveQueue;
 	}
 
+	@Override
+	protected void beforeSave(MobHeadUser user) {
+		user.getData().removeIf(data -> data.getKills() == 0 && data.getHeads() == 0);
+	}
+
 }

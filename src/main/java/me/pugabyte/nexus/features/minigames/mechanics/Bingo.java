@@ -408,7 +408,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 				final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
 
 				if (matchData.getAllChallenges().contains(Challenge.CLIMB_TO_BUILD_HEIGHT)) {
-					if (y >= 256)
+					if (y >= match.getWorld().getMaxHeight())
 						progress.complete(Challenge.CLIMB_TO_BUILD_HEIGHT, CustomTask.CLIMB_TO_BUILD_HEIGHT);
 				}
 

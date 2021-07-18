@@ -13,6 +13,8 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.function.Predicate;
 
+import static me.pugabyte.nexus.utils.StringUtils.stripColor;
+
 public class ShopMenuFunctions {
 
 	@Data
@@ -62,6 +64,10 @@ public class ShopMenuFunctions {
 
 				if (contains(type.name(), input))
 					return true;
+
+				if (item.getItemMeta().hasDisplayName())
+					if (contains(stripColor(item.getItemMeta().getDisplayName()), input))
+						return true;
 
 				for (Enchantment enchantment : item.getEnchantments().keySet())
 					if (contains(enchantment.getKey().getKey(), input)) return true;

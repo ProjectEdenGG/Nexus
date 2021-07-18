@@ -34,7 +34,7 @@ public class SnowLayersCommand extends CustomCommand {
 
 			if (topBlockOnly) {
 				Location up = block.getLocation();
-				for (int y = block.getY() + 1; y < 256; y++) {
+				for (int y = block.getY() + 1; y < world().getMaxHeight(); y++) {
 					up.setY(y);
 					if (up.getBlock().getType() != Material.AIR)
 						continue main;
