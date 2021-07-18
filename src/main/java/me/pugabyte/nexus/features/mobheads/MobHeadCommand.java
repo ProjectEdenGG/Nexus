@@ -48,9 +48,9 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Reloaded");
 	}
 
-	@Path("checkTypes")
+	@Path("validate types")
 	@Permission("group.admin")
-	void checkTypes() {
+	void validateTypes() {
 		final List<EntityType> missingTypes = MobHeadType.getMissingTypes();
 
 		if (missingTypes.isEmpty()) {
@@ -63,9 +63,9 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			send(" &e" + camelCase(entityType));
 	}
 
-	@Path("checkChances")
+	@Path("validate chances")
 	@Permission("group.admin")
-	void checkChances() {
+	void validateChances() {
 		List<MobHeadType> zeroChance = new ArrayList<>();
 		for (MobHeadType type : MobHeadType.values())
 			if (type.getChance() == 0)

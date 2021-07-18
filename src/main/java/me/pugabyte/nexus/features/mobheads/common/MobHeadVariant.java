@@ -26,7 +26,7 @@ public interface MobHeadVariant extends MobHead {
 
 	default @Nullable ItemStack getSkull() {
 		ItemStack skull = getItemStack();
-		return isNullOrAir(skull) ? getType().getSkull() : skull;
+		return isNullOrAir(skull) ? getType().getSkull() : skull.clone();
 	}
 
 	void setItemStack(ItemStack itemStack);

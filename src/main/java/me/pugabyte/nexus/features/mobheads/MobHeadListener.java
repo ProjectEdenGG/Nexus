@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static eden.utils.RandomUtils.chanceOf;
+import static eden.utils.RandomUtils.randomDouble;
 import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
@@ -82,7 +82,11 @@ public class MobHeadListener implements Listener {
 		if (victim instanceof Player player2)
 			skull = new ItemBuilder(skull).name("&e" + Nickname.of(player2) + "'s Head").skullOwner(player2).build();
 
-		final boolean drop = chanceOf(chance + getLooting(player));
+		final double looting = getLooting(player);
+		final double finalChance = chance + looting;
+		final double random = randomDouble(0, 100);
+		final boolean drop = random <= finalChance;
+		Nexus.debug("Player: " + player.getName() + "\n  Type: " + mobHead.name() + "\n  Chance: " + chance + "\n  Looting bonus: " + looting + "\n  Final chance: " + finalChance + "\n  Random: " + random + "\n  Drop: " + drop);
 
 		if (drop)
 			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
