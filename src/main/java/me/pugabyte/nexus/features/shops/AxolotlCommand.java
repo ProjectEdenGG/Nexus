@@ -31,8 +31,8 @@ public class AxolotlCommand extends CustomCommand implements Listener {
 
 	@Path("hat <variant>")
 	void hat(Axolotl.Variant variant) {
-		giveItem(new ItemBuilder(Material.WHITE_BANNER)
-			.customModelData(600 + variant.ordinal())
+		giveItem(new ItemBuilder(Material.STONE_BUTTON)
+			.customModelData(100 + variant.ordinal())
 			.soulbound()
 			.untrashable()
 			.untradeable()
