@@ -69,7 +69,6 @@ public class CustomEnchants extends Feature implements Listener {
 		ItemStack result = event.getItem();
 		if (isNullOrAir(result))
 			return;
-		System.out.println("  Result: " + result.getType());
 
 		ItemStack updated = update(result);
 
@@ -79,14 +78,12 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@EventHandler
 	public void onItemCraft(PrepareItemCraftEvent event) {
-		System.out.println("PrepareItemCraftEvent");
 		if (!(event.getView().getPlayer() instanceof Player))
 			return;
 
 		ItemStack result = event.getInventory().getResult();
 		if (isNullOrAir(result))
 			return;
-		System.out.println("  Result: " + result.getType());
 
 		ItemStack updated = update(result);
 
@@ -99,7 +96,6 @@ public class CustomEnchants extends Feature implements Listener {
 		ItemStack result = event.getItem();
 		if (isNullOrAir(result))
 			return;
-		System.out.println("  Result: " + result.getType());
 
 		ItemStack updated = update(result);
 
@@ -109,14 +105,12 @@ public class CustomEnchants extends Feature implements Listener {
 	// Includes Anvil, Grindstone, and Smithing Table
 	@EventHandler
 	public void onPrepareResult(PrepareResultEvent event) {
-		System.out.println("PrepareResultEvent");
 		if (!(event.getView().getPlayer() instanceof Player))
 			return;
 
 		ItemStack result = event.getResult();
 		if (isNullOrAir(result))
 			return;
-		System.out.println("  Result: " + result.getType());
 
 		ItemStack updated = update(result);
 
@@ -157,13 +151,11 @@ public class CustomEnchants extends Feature implements Listener {
 	public static ItemStack update(ItemStack itemStack) {
 		ItemMeta meta = itemStack.getItemMeta();
 
-		System.out.println("    Lore lines before: " + (meta.getLore() == null ? 0 : meta.getLore().size()));
 		List<String> lore = new ArrayList<>();
 		lore.addAll(getExistingLore(meta));
 		lore.addAll(0, getEnchantLore(meta));
 
 		meta.setLore(lore);
-		System.out.println("    Lore lines after: " + (meta.getLore() == null ? 0 : meta.getLore().size()));
 		itemStack.setItemMeta(meta);
 		return itemStack;
 	}
@@ -186,11 +178,9 @@ public class CustomEnchants extends Feature implements Listener {
 
 	private static List<String> getEnchantLore(ItemMeta meta) {
 		return new ArrayList<>() {{
-			for (CustomEnchant enchant : CustomEnchants.getEnchants()) {
-				System.out.println("    Has " + enchant.getName() + ": " + meta.hasEnchant(enchant));
+			for (CustomEnchant enchant : CustomEnchants.getEnchants())
 				if (meta.hasEnchant(enchant))
 					add(0, colorize("&7" + enchant.getDisplayName(meta.getEnchantLevel(enchant))));
-			}
 		}};
 	}
 

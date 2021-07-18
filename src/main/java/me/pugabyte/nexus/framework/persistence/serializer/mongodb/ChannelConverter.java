@@ -6,6 +6,7 @@ import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import lombok.NoArgsConstructor;
+import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.ChatManager;
 import me.pugabyte.nexus.models.chat.Channel;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
@@ -27,7 +28,7 @@ public class ChannelConverter extends TypeConverter implements SimpleValueConver
 		if (value instanceof PrivateChannel privateChannel)
 			return new PrivateChannelConverter().encode(privateChannel, optionalExtraInfo);
 
-		System.out.println("Unknown class for channel in encoding: " + value.getClass() + " (" + value + ")");
+		Nexus.warn("Unknown class for channel in encoding: " + value.getClass() + " (" + value + ")");
 		return null;
 	}
 
@@ -42,7 +43,7 @@ public class ChannelConverter extends TypeConverter implements SimpleValueConver
 			return new PrivateChannel(list.stream().map(Object::toString).toList());
 		}
 
-		System.out.println("Unknown class for channel in decoding: " + value.getClass() + " (" + value + ")");
+		Nexus.warn("Unknown class for channel in decoding: " + value.getClass() + " (" + value + ")");
 		return null;
 	}
 
