@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
@@ -474,11 +475,24 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	@AllArgsConstructor
 	public enum ItemSetting {
-		DROPPABLE,
-		PLACEABLE,
-		TRASHABLE,
-		TRADEABLE {
+		/**
+		 * Whether an item can be dropped
+		 */
+		DROPPABLE(true),
+		/**
+		 * Whether an item can be placed
+		 */
+		PLACEABLE(true),
+		/**
+		 * Whether an item can be put in the {@code /trash}
+		 */
+		TRASHABLE(true),
+		/**
+		 * Whether an item
+		 */
+		TRADEABLE(true) {
 			@Override
 			public boolean of(ItemBuilder builder, boolean orDefault) {
 				if (Backpacks.isBackpack(builder.build()))
@@ -488,6 +502,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			}
 		},
 		;
+
+		private final boolean orDefault;
 
 		public String getKey() {
 			return name().toLowerCase();
@@ -500,14 +516,22 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 			return item.getBoolean(getKey());
 		}
+
+		public final boolean of(ItemBuilder builder) {
+			return of(builder, orDefault);
+		}
 	}
 
 	public ItemBuilder setting(ItemSetting setting, boolean value) {
 		return nbt(nbt -> nbt.setBoolean(setting.getKey(), value));
 	}
 
+	public ItemBuilder unset(ItemSetting setting) {
+		return nbt(nbt -> nbt.removeKey(setting.getKey()));
+	}
+
 	public boolean is(ItemSetting setting) {
-		return setting.of(this, true);
+		return setting.of(this);
 	}
 
 	public boolean isNot(ItemSetting setting) {
