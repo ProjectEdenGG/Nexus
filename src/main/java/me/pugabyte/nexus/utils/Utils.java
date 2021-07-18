@@ -36,6 +36,10 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Utils extends eden.utils.Utils {
 
+	public static void registerListeners(Package packageObject) {
+		registerListeners(packageObject.getName());
+	}
+
 	public static void registerListeners(String packageName) {
 		new Reflections(packageName).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);
 	}

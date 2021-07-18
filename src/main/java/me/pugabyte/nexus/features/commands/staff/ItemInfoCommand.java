@@ -1,20 +1,30 @@
 package me.pugabyte.nexus.features.commands.staff;
 
 import de.tr7zw.nbtapi.NBTItem;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import me.pugabyte.nexus.features.menus.MenuUtils;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.Enchant;
+import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.SerializationUtils.JSON;
 import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.SerializationUtils.JSON.serialize;
@@ -140,10 +150,38 @@ public class ItemInfoCommand extends CustomCommand {
 	@Path("notItems")
 	@Permission("group.staff")
 	void notItems() {
-		for (Material material : Material.values()) {
+		for (Material material : Material.values())
 			if (!material.isLegacy() && !material.isItem())
 				send(material.name());
+	}
+
+	@Path("enchanted")
+	void enchanted() {
+		new EnchantedItemsMenu().open(player());
+	}
+
+	private static class EnchantedItemsMenu extends MenuUtils implements InventoryProvider {
+
+		@Override
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.size(6, 9)
+				.title("Enchanted Items")
+				.build()
+				.open(viewer, page);
 		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			addPagination(player, contents, new ArrayList<>() {{
+				for (Material material : Material.values())
+					if (!material.isLegacy() && material.isItem())
+						if (new ItemStack(material).getItemMeta() != null)
+							add(ClickableItem.empty(new ItemBuilder(material).enchant(Enchant.INFINITY).build()));
+			}});
+		}
+
 	}
 
 }

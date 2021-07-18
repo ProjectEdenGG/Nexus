@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.features.quests.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
+import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -203,30 +204,20 @@ public class ItemTagsUtils {
 	}
 
 	public static boolean isArmor(ItemStack itemStack) {
-		String name = itemStack.getType().name().toLowerCase();
 		if (itemStack.getType().equals(Material.ELYTRA))
 			return true;
 
-		return name.endsWith("_helmet")
-				|| name.endsWith("_chestplate")
-				|| name.endsWith("_leggings")
-				|| name.endsWith("_boots");
+		return MaterialTag.ARMOR.isTagged(itemStack);
 	}
 
 	public static boolean isTool(ItemStack itemStack) {
 		Material type = itemStack.getType();
-		List<Material> uniqueTools = Arrays.asList(Material.BOW, Material.CROSSBOW,
-				Material.TRIDENT, Material.SHIELD, Material.FISHING_ROD);
+		List<Material> uniqueTools = Arrays.asList(Material.SHIELD);
 
 		if (uniqueTools.contains(type))
 			return true;
 
-		String name = type.name().toLowerCase();
-		return name.endsWith("_sword")
-				|| name.endsWith("_shovel")
-				|| name.endsWith("_pickaxe")
-				|| name.endsWith("_axe")
-				|| name.endsWith("_hoe");
+		return MaterialTag.WEAPONS.isTagged(itemStack) || MaterialTag.TOOLS.isTagged(itemStack);
 	}
 
 	public static boolean isMythicMobsItem(ItemStack itemStack) {

@@ -1,6 +1,9 @@
 package me.pugabyte.nexus.utils;
 
 import lombok.experimental.UtilityClass;
+import me.pugabyte.nexus.features.customenchants.CustomEnchant;
+import me.pugabyte.nexus.features.customenchants.CustomEnchants;
+import me.pugabyte.nexus.features.customenchants.enchants.SoulboundEnchant;
 import org.bukkit.enchantments.EnchantmentWrapper;
 
 /**
@@ -199,4 +202,9 @@ public class Enchant {
 	 * Walk quicker on soul blocks
 	 */
 	public static final EnchantmentWrapper SOUL_SPEED = new EnchantmentWrapper("soul_speed");
+
+	/**
+	 * Keep item on death
+	 */
+	public static final CustomEnchant SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);
 }

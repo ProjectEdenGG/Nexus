@@ -868,8 +868,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(Enchantment.class)
 	Enchantment convertToEnchantment(String value) {
 		Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(value));
-		if (enchantment == null)
-			throw new InvalidInputException("Enchantment from &e" + value + "&c not found");
+		if (enchantment == null) {
+			enchantment = Enchantment.getByName(value);
+			if (enchantment == null)
+				throw new InvalidInputException("Enchantment from &e" + value + "&c not found");
+		}
 		return enchantment;
 	}
 

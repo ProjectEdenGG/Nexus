@@ -4,6 +4,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.customenchants.CustomEnchants;
+import me.pugabyte.nexus.features.customenchants.enchants.SoulboundEnchant;
 import me.pugabyte.nexus.features.recipes.functionals.Backpacks;
 import me.pugabyte.nexus.features.resourcepack.CustomModel;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -544,6 +546,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return customModelData == null ? 0 : customModelData;
 	}
 
+	// Use this when you don't want the glowing, infinite deaths, & no combining
+	public ItemBuilder soulbound() {
+		nbt(nbtItem -> nbtItem.setBoolean(SoulboundEnchant.NBT_KEY, true));
+		lore("&7" + Enchant.SOULBOUND.getDisplayName(Enchant.SOULBOUND.getMaxLevel()));
+		return this;
+	}
+
 	// Building //
 
 	@Override
@@ -569,6 +578,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			else
 				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
 		itemMeta.setLore(colorized);
+
+		itemStack.setItemMeta(itemMeta);
+		CustomEnchants.update(itemStack);
+		itemMeta = itemStack.getItemMeta();
 	}
 
 	public ItemBuilder clone() {

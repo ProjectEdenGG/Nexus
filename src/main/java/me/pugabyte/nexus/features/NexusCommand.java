@@ -18,6 +18,7 @@ import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.crates.models.CrateType;
+import me.pugabyte.nexus.features.customenchants.CustomEnchants;
 import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.listeners.ResourceWorld;
 import me.pugabyte.nexus.features.listeners.TemporaryListener;
@@ -394,6 +395,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());
+		send("Custom Enchants: " + CustomEnchants.getEnchants().size());
 	}
 
 	@Path("stats commands [page]")

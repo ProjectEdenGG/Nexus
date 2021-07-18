@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -524,6 +525,31 @@ public class StringUtils extends eden.utils.StringUtils {
 					return dFI;
 			return DefaultFontInfo.DEFAULT;
 		}
+	}
+
+	private final static TreeMap<Integer, String> romanNumerals = new TreeMap<>();
+
+	static {
+		romanNumerals.put(1000, "M");
+		romanNumerals.put(900, "CM");
+		romanNumerals.put(500, "D");
+		romanNumerals.put(400, "CD");
+		romanNumerals.put(100, "C");
+		romanNumerals.put(90, "XC");
+		romanNumerals.put(50, "L");
+		romanNumerals.put(40, "XL");
+		romanNumerals.put(10, "X");
+		romanNumerals.put(9, "IX");
+		romanNumerals.put(5, "V");
+		romanNumerals.put(4, "IV");
+		romanNumerals.put(1, "I");
+	}
+
+	public static String toRoman(int number) {
+		int l = romanNumerals.floorKey(number);
+		if (number == l)
+			return romanNumerals.get(number);
+		return romanNumerals.get(l) + toRoman(number - l);
 	}
 
 }
