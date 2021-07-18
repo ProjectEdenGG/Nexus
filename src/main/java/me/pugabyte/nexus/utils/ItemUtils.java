@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -72,22 +72,26 @@ public class ItemUtils {
 			if (isNullOrAir(newItemStack))
 				continue;
 
-			Optional<ItemStack> matching = itemStacks.stream()
-					.filter(existing -> existing.isSimilar(newItemStack) && existing.getAmount() < existing.getType().getMaxStackSize())
-					.findFirst();
+			final Iterator<ItemStack> iterator = itemStacks.iterator();
+			while (iterator.hasNext()) {
+				final ItemStack next = iterator.next();
+				if (isNullOrAir(next))
+					continue;
+				if (next.getAmount() >= next.getType().getMaxStackSize())
+					continue;
+				if (!next.isSimilar(newItemStack))
+					continue;
 
-			if (matching.isPresent()) {
-				ItemStack match = matching.get();
-				itemStacks.remove(match);
-				int amountICanAdd = Math.min(newItemStack.getAmount(), match.getType().getMaxStackSize() - match.getAmount());
-				match.setAmount(match.getAmount() + amountICanAdd);
-				itemStacks.add(new ItemStack(match));
-
+				iterator.remove();
+				int amountICanAdd = Math.min(newItemStack.getAmount(), next.getType().getMaxStackSize() - next.getAmount());
+				next.setAmount(next.getAmount() + amountICanAdd);
 				newItemStack.setAmount(newItemStack.getAmount() - amountICanAdd);
+				itemStacks.add(next.clone());
+				break;
 			}
 
 			if (newItemStack.getAmount() > 0)
-				itemStacks.add(new ItemStack(newItemStack));
+				itemStacks.add(newItemStack.clone());
 		}
 	}
 

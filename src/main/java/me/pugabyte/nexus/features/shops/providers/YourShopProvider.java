@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
@@ -127,8 +128,13 @@ public class YourShopProvider extends _ShopProvider {
 			if (shop.getHolding().isEmpty())
 				throw new InvalidInputException("No items available for collection");
 
-			List<ItemStack> items = new ArrayList<>(shop.getHolding().subList(0, Math.min(size, shop.getHolding().size())));
-			shop.getHolding().removeAll(items);
+			List<ItemStack> items = new ArrayList<>();
+			final int max = Math.min(size, shop.getHolding().size());
+			final Iterator<ItemStack> iterator = shop.getHolding().iterator();
+			while (items.size() < max && iterator.hasNext()) {
+				items.add(iterator.next());
+				iterator.remove();
+			}
 			service.save(shop);
 
 			inv.setContents(items.toArray(ItemStack[]::new));
