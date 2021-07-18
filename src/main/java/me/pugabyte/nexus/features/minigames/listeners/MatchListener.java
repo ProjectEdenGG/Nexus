@@ -54,7 +54,6 @@ import org.bukkit.inventory.PlayerInventory;
 import java.text.DecimalFormat;
 
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommand;
-import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsOp;
 import static me.pugabyte.nexus.utils.StringUtils.getShortLocationString;
 
 public class MatchListener implements Listener {
@@ -85,7 +84,6 @@ public class MatchListener implements Listener {
 			runCommand(player, "wgedit off");
 		if (PlayerUtils.isVanished(player))
 			runCommand(player, "vanish off");
-		runCommandAsOp(player, "pweather clear");
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

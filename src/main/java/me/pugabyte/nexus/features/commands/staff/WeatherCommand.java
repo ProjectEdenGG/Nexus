@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.World;
 
 @Permission("group.seniorstaff")
@@ -32,6 +34,15 @@ public class WeatherCommand extends CustomCommand {
 			world.setWeatherDuration(duration);
 
 		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + Timespan.of(duration).format() : ""));
+	}
+
+	@Permission("group.admin")
+	@Path("getWeatherDuration [world]")
+	void getWeatherDuration(@Arg("current") World world) {
+		send(PREFIX + "Durations for " + StringUtils.getWorldDisplayName(world));
+		send(" &3Clear Weather: &e" + Timespan.of(world.getClearWeatherDuration() / 20).format());
+		send(" &3Weather: &e" + Timespan.of(world.getWeatherDuration() / 20).format());
+		send(" &3Thunder: &e" + Timespan.of(world.getThunderDuration() / 20).format());
 	}
 
 	@Getter
