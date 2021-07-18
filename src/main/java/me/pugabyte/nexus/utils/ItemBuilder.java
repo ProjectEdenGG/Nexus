@@ -475,6 +475,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public enum ItemSetting {
 		DROPPABLE,
 		PLACEABLE,
+		TRASHABLE,
 		TRADEABLE {
 			@Override
 			public boolean of(ItemBuilder builder, boolean orDefault) {
@@ -515,16 +516,20 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return setting.of(this, orDefault);
 	}
 
-	public ItemBuilder untradeable() {
-		return setting(ItemSetting.TRADEABLE, false);
-	}
-
 	public ItemBuilder undroppable() {
 		return setting(ItemSetting.DROPPABLE, false);
 	}
 
 	public ItemBuilder unplaceable() {
 		return setting(ItemSetting.PLACEABLE, false);
+	}
+
+	public ItemBuilder untrashable() {
+		return setting(ItemSetting.TRASHABLE, false);
+	}
+
+	public ItemBuilder untradeable() {
+		return setting(ItemSetting.TRADEABLE, false);
 	}
 
 	public ItemBuilder customModelData(int id) {

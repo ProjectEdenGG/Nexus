@@ -6,6 +6,8 @@ import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
 import me.pugabyte.nexus.framework.commands.models.annotations.Description;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
+import me.pugabyte.nexus.utils.ItemBuilder;
+import me.pugabyte.nexus.utils.ItemBuilder.ItemSetting;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
@@ -40,8 +42,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 
 	@Path
 	void clear() {
-		ciPlayer.addCache();
-		inventory().setContents(new ItemStack[0]);
+		inventory().setContents(ciPlayer.addCache());
 		send(PREFIX + "Inventory cleared. Undo with &c/ci undo");
 	}
 
@@ -57,8 +58,8 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	public static class ClearInventoryPlayer {
-		private Player player;
-		private Map<String, ItemStack[]> cache = new HashMap<>();
+		private final Player player;
+		private final Map<String, ItemStack[]> cache = new HashMap<>();
 
 		public ClearInventoryPlayer(Player player) {
 			this.player = player;
@@ -68,8 +69,24 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 			return player.getWorld().getName().toLowerCase() + "-" + player.getGameMode().name().toLowerCase();
 		}
 
-		public void addCache() {
-			cache.put(getKey(), player.getInventory().getContents());
+		public ItemStack[] addCache() {
+			ItemStack[] contents = player.getInventory().getContents();
+			ItemStack[] untrashable = new ItemStack[contents.length];
+
+			for (int i = 0; i < contents.length; i++) {
+				ItemStack content = contents[i];
+				if (isNullOrAir(content))
+					continue;
+
+				if (new ItemBuilder(content).is(ItemSetting.TRASHABLE))
+					continue;
+
+				untrashable[i] = content;
+				contents[i] = null;
+			}
+
+			cache.put(getKey(), contents);
+			return untrashable;
 		}
 
 		public void removeCache() {
