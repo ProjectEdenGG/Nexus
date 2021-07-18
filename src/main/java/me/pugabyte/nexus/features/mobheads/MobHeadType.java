@@ -58,6 +58,7 @@ import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -189,6 +190,9 @@ public enum MobHeadType implements MobHead {
 	}
 
 	public List<MobHeadVariant> getVariants() {
+		if (!hasVariants())
+			return Collections.emptyList();
+
 		return List.of(getVariantClass().getEnumConstants());
 	}
 

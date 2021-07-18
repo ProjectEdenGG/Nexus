@@ -1,18 +1,17 @@
 package me.pugabyte.nexus.features.mobheads;
 
-import eden.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.mobheads.common.MobHead;
 import me.pugabyte.nexus.features.mobheads.common.MobHeadVariant;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Aliases;
-import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.ConverterFor;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.annotations.TabCompleterFor;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
-import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import me.pugabyte.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Listener;
 
@@ -37,9 +36,9 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
-	@Path("get <entityType> [variant]")
-	void mobHead(MobHeadType mobHeadType, @Arg(context = 1) MobHeadVariant variant) {
-		giveItem(mobHeadType.getSkull(variant));
+	@Path("get <type>")
+	void mobHead(MobHead mobHead) {
+		giveItem(mobHead.getSkull());
 	}
 
 	@Path("reload")
@@ -82,24 +81,21 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			send(" &e" + camelCase(type));
 	}
 
-	@ConverterFor(MobHeadVariant.class)
-	MobHeadVariant convertToMobHeadVariant(String value, MobHeadType context) {
-		if (context.getVariantClass() == null)
-			return null;
-
-		try {
-			return EnumUtils.valueOf(context.getVariantClass(), value);
-		} catch (IllegalArgumentException ex) {
-			throw new InvalidInputException(camelCase(context) + " variant from &e" + value + " &cnot found");
-		}
+	@ConverterFor(MobHead.class)
+	MobHead convertToMobHead(String value) {
+		return MobHeadConverter.decode(value);
 	}
 
-	@TabCompleterFor(MobHeadVariant.class)
-	List<String> tabCompleteMobHeadVariant(String filter, MobHeadType context) {
-		if (context == null || !context.hasVariants())
-			return new ArrayList<>();
-
-		return tabCompleteEnum(filter, (Class<? extends Enum<?>>) context.getVariantClass());
+	@TabCompleterFor(MobHead.class)
+	List<String> tabCompleteMobHead(String filter) {
+		return new ArrayList<>() {{
+			for (MobHeadType mobHeadType : MobHeadType.values())
+				if (mobHeadType.hasVariants()) {
+					for (MobHeadVariant variant : mobHeadType.getVariants())
+						add((mobHeadType.name() + "." + variant.name()).toLowerCase());
+				} else
+					add(mobHeadType.name().toLowerCase());
+		}};
 	}
 
 }
