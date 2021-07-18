@@ -182,10 +182,6 @@ public class MobHeadListener implements Listener {
 		if (SPAWNER_BYPASS.contains(type) && SPAWNER_REASONS.contains(reason))
 			return false;
 
-		if (entity instanceof Slime slime)
-			if (slime.getSize() == 0)
-				return true;
-
 		return UNNATURAL_REASONS.contains(reason);
 	}
 
@@ -200,6 +196,11 @@ public class MobHeadListener implements Listener {
 	private static boolean isBaby(LivingEntity entity) {
 		if (entity instanceof Ageable ageable)
 			return !ageable.isAdult();
+
+		if (entity instanceof Slime slime)
+			if (slime.getSize() == 1)
+				return true;
+
 		return false;
 	}
 
