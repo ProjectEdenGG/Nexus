@@ -14,8 +14,10 @@ import me.pugabyte.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -52,6 +54,20 @@ public class AxolotlCommand extends CustomCommand implements Listener {
 
 		final ItemStack bucket = event.getEntityBucket();
 		new NBTItem(bucket, true).setInteger(CustomModel.NBT_KEY, axolotl.getVariant().ordinal());
+	}
+
+	@EventHandler
+	public void onEntityTarget(EntityTargetEvent event) {
+		if (event.getTarget() == null)
+			return;
+
+		if (event.getEntity().getType() != EntityType.AXOLOTL)
+			return;
+
+		if (event.getTarget().getType() != EntityType.TROPICAL_FISH)
+			return;
+
+		event.setCancelled(true);
 	}
 
 }
