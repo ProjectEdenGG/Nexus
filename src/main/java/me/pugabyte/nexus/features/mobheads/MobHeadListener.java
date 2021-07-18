@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.mobheads;
 
+import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.mobheads.common.MobHead;
 import me.pugabyte.nexus.models.mobheads.MobHeadUser.MobHeadData;
@@ -9,6 +10,7 @@ import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
+import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -56,7 +58,9 @@ public class MobHeadListener implements Listener {
 		if (shouldIgnore(player, victim))
 			return;
 
-		handledEntities.add(victim.getUniqueId());
+		final UUID uuid = victim.getUniqueId();
+		handledEntities.add(uuid);
+		Tasks.wait(Time.TICK.x(3), () -> handledEntities.remove(uuid));
 
 		if (victim.getType() == EntityType.WITHER_SKELETON)
 			event.getDrops().removeIf(item -> item.getType() == Material.WITHER_SKELETON_SKULL);
@@ -164,6 +168,10 @@ public class MobHeadListener implements Listener {
 
 	private boolean shouldIgnore(Player player, LivingEntity victim) {
 		if (player == null || victim == null)
+			return true;
+
+		// Temporary
+		if (victim instanceof Player)
 			return true;
 
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
