@@ -1089,6 +1089,16 @@ public class NexusCommand extends CustomCommand implements Listener {
 		Tasks.wait(2, () -> send(String.valueOf(new ItemBuilder(inventory().getItemInMainHand()).is(ItemSetting.TRADEABLE))));
 	}
 
+	@Path("setItemSetting <setting> [value]")
+	void setItemSetting(ItemSetting setting, Boolean value) {
+		ItemBuilder builder = new ItemBuilder(inventory().getItemInMainHand());
+		if (value == null)
+			builder.unset(setting);
+		else
+			builder.setting(setting, value);
+		inventory().setItemInMainHand(builder.build());
+	}
+
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return Nerd.of(convertToOfflinePlayer(value));

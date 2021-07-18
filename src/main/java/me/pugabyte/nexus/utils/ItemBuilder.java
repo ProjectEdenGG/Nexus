@@ -490,7 +490,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		 */
 		TRASHABLE(true),
 		/**
-		 * Whether an item
+		 * Whether an item can be sold in shops
 		 */
 		TRADEABLE(true) {
 			@Override
