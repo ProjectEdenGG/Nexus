@@ -125,7 +125,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 					new SoundBuilder("minecraft:custom.ambient.windchimes.metal_" + randomInt(1, 5))
 						.category(SoundCategory.AMBIENT)
 						.location(location)
-						.volume(3)
+						.volume(1.5)
 						.pitch(RandomUtils.randomDouble(0.1, 2.0))
 						.play();
 				}
