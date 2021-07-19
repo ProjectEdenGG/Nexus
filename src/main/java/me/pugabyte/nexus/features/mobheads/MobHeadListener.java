@@ -202,9 +202,7 @@ public class MobHeadListener implements Listener {
 		if (lastChanged == null)
 			return true;
 
-		if (lastChanged.isAfter(LocalDateTime.now().minusDays(REQUIRED_SKIN_DAYS)))
-			return true;
-		return false;
+		return lastChanged.isAfter(LocalDateTime.now().minusDays(REQUIRED_SKIN_DAYS));
 	}
 
 	private boolean shouldIgnore(LivingEntity entity) {

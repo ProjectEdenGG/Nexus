@@ -23,10 +23,12 @@ public class BirdEffectConfig implements AmbientEffectConfig<BirdEffectType> {
 		this.cooldownMax = cooldownMax;
 		this.cooldownId = effectType.name().toLowerCase();
 
-		if (cooldownMin < 0) throw new IllegalArgumentException("cooldown minimum cannot be negative");
-		if (cooldownMax < 0) throw new IllegalArgumentException("cooldown maximum cannot be negative");
+		if (cooldownMin < 0)
+			throw new IllegalArgumentException("cooldown minimum cannot be negative");
+		if (cooldownMax < 0)
+			throw new IllegalArgumentException("cooldown maximum cannot be negative");
 		if (cooldownMax < cooldownMin)
-			throw new IllegalArgumentException("cooldown min cannot be larger than cooldown max");
+			throw new IllegalArgumentException("cooldown minimum cannot be larger than cooldown maximum");
 	}
 
 	public void init(AmbienceUser user) {
