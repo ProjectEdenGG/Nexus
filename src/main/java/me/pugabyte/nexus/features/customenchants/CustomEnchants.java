@@ -77,7 +77,6 @@ public class CustomEnchants extends Feature implements Listener {
 		ItemStack updated = update(result);
 
 		result.setItemMeta(updated.getItemMeta());
-		Tasks.sync(() -> result.setItemMeta(updated.getItemMeta()));
 	}
 
 	@EventHandler
@@ -92,7 +91,6 @@ public class CustomEnchants extends Feature implements Listener {
 		ItemStack updated = update(result);
 
 		event.getInventory().setResult(updated);
-		Tasks.sync(() -> event.getInventory().setResult(updated));
 	}
 
 	@EventHandler
@@ -119,7 +117,6 @@ public class CustomEnchants extends Feature implements Listener {
 		ItemStack updated = update(result);
 
 		event.setResult(updated);
-		Tasks.sync(() -> event.setResult(updated));
 	}
 
 	@EventHandler

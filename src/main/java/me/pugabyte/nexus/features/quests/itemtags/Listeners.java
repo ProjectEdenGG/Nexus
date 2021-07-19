@@ -3,7 +3,6 @@ package me.pugabyte.nexus.features.quests.itemtags;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.utils.Tasks;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -39,7 +38,6 @@ public class Listeners implements Listener {
 		ItemStack updated = updateItem(result);
 
 		result.setItemMeta(updated.getItemMeta());
-		Tasks.sync(() -> result.setItemMeta(updated.getItemMeta()));
 	}
 
 	@EventHandler
@@ -54,7 +52,6 @@ public class Listeners implements Listener {
 		ItemStack updated = updateItem(result);
 
 		event.getInventory().setResult(updated);
-		Tasks.sync(() -> event.getInventory().setResult(updated));
 	}
 
 	@EventHandler
@@ -80,7 +77,6 @@ public class Listeners implements Listener {
 		ItemStack updated = updateItem(result);
 
 		event.setResult(updated);
-		Tasks.sync(() -> event.setResult(updated));
 	}
 
 	// TODO ItemTags: Uncomment
