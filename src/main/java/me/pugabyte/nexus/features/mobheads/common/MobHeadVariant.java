@@ -33,7 +33,13 @@ public interface MobHeadVariant extends MobHead {
 
 	@Override
 	default String getDisplayName() {
-		return camelCase((Enum<?>) this) + " " + camelCase(getEntityType());
+		final String type = camelCase(getEntityType());
+		final String variant = camelCase((Enum<?>) this);
+
+		if (variant.equalsIgnoreCase("none"))
+			return type;
+		else
+			return variant + " " + type;
 	}
 
 }
