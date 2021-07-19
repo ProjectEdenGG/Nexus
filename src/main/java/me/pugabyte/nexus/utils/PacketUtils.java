@@ -149,7 +149,7 @@ public class PacketUtils {
 		int slotInt = getSlotInt(slot);
 		if (slotInt == -1 && owner instanceof HumanEntity player)
 			slotInt = player.getInventory().getHeldItemSlot() + 36;
-		selfPacket.getIntegers().write(1, slotInt);
+		selfPacket.getIntegers().write(2, slotInt);
 		selfPacket.getItemModifier().write(0, item);
 
 		// other packet is sent to all other players to show the armor piece
