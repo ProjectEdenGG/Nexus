@@ -99,7 +99,7 @@ public class MobHeadListener implements Listener {
 			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
 
 			if (victim instanceof Player)
-				Discord.staffLog("**[MobHeads]** Dropped " + Nickname.of(victim) + "'s head with texture " + SkinCache.of(victim).getTextureUrl());
+				Discord.staffLog("**[MobHeads]** Dropped " + Nickname.of(victim) + "'s head for " + Nickname.of(player) + " with texture " + SkinCache.of(victim).getTextureUrl());
 		}
 
 		new MobHeadUserService().edit(player, user -> {
