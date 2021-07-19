@@ -43,7 +43,7 @@ import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 public class MobHeadListener implements Listener {
-	private static final int REQUIRED_SKIN_DAYS = 7;
+	private static final int REQUIRED_SKIN_DAYS = 3;
 	private static final List<UUID> handledEntities = new ArrayList<>();
 
 	public MobHeadListener() {
