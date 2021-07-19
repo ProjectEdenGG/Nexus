@@ -187,10 +187,12 @@ public class Koda {
 					Player player = event.getChatter().getOnlinePlayer();
 					double health = player.getHealth();
 					player.setHealth(20);
-					player.getWorld().strikeLightning(player.getLocation());
+					player.getWorld().strikeLightningEffect(player.getLocation());
+					player.damage(8);
 					Tasks.wait(10, () -> {
 						player.setHealth(20);
-						player.getWorld().strikeLightning(player.getLocation());
+						player.getWorld().strikeLightningEffect(player.getLocation());
+						player.damage(8);
 						Tasks.wait(10, () -> {
 							respond(event, "Does that answer your question?");
 							player.setHealth(health);
