@@ -667,7 +667,7 @@ public enum Package {
 		public void handleApply(HasUniqueId uuid) {
 			BoosterService service = new BoosterService();
 			Booster booster = service.get(uuid);
-			booster.add(getType(), 10, Time.DAY);
+			booster.add(getType(), 2.5, Time.DAY);
 			service.save(booster);
 		}
 
