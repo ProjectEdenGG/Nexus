@@ -63,6 +63,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static eden.utils.StringUtils.isUuid;
+import static me.pugabyte.nexus.utils.ItemUtils.fixMaxStackSize;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 import static me.pugabyte.nexus.utils.Utils.getMin;
 
@@ -588,7 +589,7 @@ public class PlayerUtils {
 			return items;
 
 		List<ItemStack> excess = new ArrayList<>();
-		for (ItemStack item : items)
+		for (ItemStack item : fixMaxStackSize(items))
 			if (!isNullOrAir(item))
 				excess.addAll(player.getOfflinePlayer().getPlayer().getInventory().addItem(item.clone()).values());
 
@@ -618,7 +619,7 @@ public class PlayerUtils {
 
 		MailerService service = new MailerService();
 		Mailer mailer = service.get(offlinePlayer);
-		Mail.fromServer(mailer.getUuid(), worldGroup, message, excess).send();
+		Mail.fromServer(mailer.getUuid(), worldGroup, message, fixMaxStackSize(excess)).send();
 		service.save(mailer);
 
 		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";

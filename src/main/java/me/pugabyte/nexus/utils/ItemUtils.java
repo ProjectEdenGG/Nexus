@@ -312,6 +312,25 @@ public class ItemUtils {
 		return null;
 	}
 
+	public static List<ItemStack> fixMaxStackSize(List<ItemStack> items) {
+		List<ItemStack> fixed = new ArrayList<>();
+		for (ItemStack item : items) {
+			final Material material = item.getType();
+
+			while (item.getAmount() > material.getMaxStackSize()) {
+				final ItemStack replacement = item.clone();
+				final int moving = Math.min(material.getMaxStackSize(), item.getAmount() - material.getMaxStackSize());
+				replacement.setAmount(moving);
+				item.setAmount(item.getAmount() - moving);
+
+				fixed.add(replacement);
+			}
+			fixed.add(item);
+		}
+
+		return fixed;
+	}
+
 	public static class ItemStackComparator implements Comparator<ItemStack> {
 		@Override
 		public int compare(ItemStack a, ItemStack b) {

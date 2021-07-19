@@ -21,8 +21,8 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("<type> [amount] [nbt...]")
-	void run(Material material, @Arg(value = "64", min = 1, max = 2304, minMaxBypass = "group.staff") int amount, @Arg(permission = "group.staff") String nbt) {
-		PlayerUtils.giveItem(player(), material, amount, nbt);
+	void run(Material material, @Arg(min = 1, max = 2304, minMaxBypass = "group.staff") Integer amount, @Arg(permission = "group.staff") String nbt) {
+		PlayerUtils.giveItem(player(), material, amount == null ? material.getMaxStackSize() : amount, nbt);
 	}
 
 	@Path("rp <material> <id>")
