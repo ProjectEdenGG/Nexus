@@ -128,6 +128,7 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeChoice.MaterialChoice stainedGlassPane = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS_PANES.toArray());
 		RecipeChoice.MaterialChoice terracotta = new RecipeChoice.MaterialChoice(MaterialTag.COLORED_TERRACOTTAS.toArray());
 		RecipeChoice.MaterialChoice beds = new RecipeChoice.MaterialChoice(MaterialTag.BEDS.toArray());
+		RecipeChoice.MaterialChoice banners = new RecipeChoice.MaterialChoice(MaterialTag.ITEMS_BANNERS.getValues().toArray(new Material[0]));
 		for (String color : colors) {
 			NexusRecipe.surround(new ItemStack(Material.valueOf(color + "_CONCRETE_POWDER"), 8), Material.valueOf(color + "_DYE"), concretePowder)
 					.type(RecipeType.DYES).register();
@@ -138,23 +139,26 @@ public class CustomRecipes extends Feature implements Listener {
 			NexusRecipe.surround(new ItemStack(Material.valueOf(color + "_TERRACOTTA"), 8), Material.valueOf(color + "_DYE"), terracotta)
 					.type(RecipeType.DYES).register();
 			NexusRecipe.shapeless(new ItemStack(Material.valueOf(color + "_BED")), Material.valueOf(color + "_DYE"), beds).type(RecipeType.BEDS).register();
+			NexusRecipe.shapeless(new ItemStack(Material.valueOf(color + "_BANNER")), Material.valueOf(color + "_DYE"), banners).type(RecipeType.DYES).register();
 		}
 	}
 
 	public void registerSlabs() {
-		Material[] blocks = {Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS, Material.JUNGLE_PLANKS, Material.ACACIA_PLANKS, Material.DARK_OAK_PLANKS,
-				Material.STONE, Material.SANDSTONE, Material.COBBLESTONE, Material.BRICKS, Material.STONE_BRICKS, Material.NETHER_BRICKS, Material.QUARTZ_BLOCK,
-				Material.RED_SANDSTONE, Material.PURPUR_BLOCK, Material.PRISMARINE, Material.PRISMARINE_BRICKS, Material.DARK_PRISMARINE};
+		Material[] slabs = MaterialTag.SLABS.getValues().toArray(new Material[0]);
 
-		for (Material block : blocks) {
-			Material slab = Material.valueOf(block.name()
-					.replace("BRICKS", "BRICK")
-					.replace("_PLANKS", "")
-					.replace("_BLOCK", "") + "_SLAB");
-			List<Material> slabs = new ArrayList<>();
+		String[] blockNames = { "BRICKS", "_PLANKS", "_BLOCK", "" };
+		for (Material slab : slabs) {
+			Material blockMaterial = null;
+			for (String blockName : blockNames) {
+				try {
+					blockMaterial = Material.valueOf(slab.name().replace("BRICK_SLAB", blockName).replace("_SLAB", blockName));
+				} catch (IllegalArgumentException ignore) { }
+			}
+			if (blockMaterial == null) continue;
+			List<Material> slabsGroup = new ArrayList<>();
 			for (int i = 0; i < 4; i++)
-				slabs.add(slab);
-			NexusRecipe.shapeless(new ItemStack(block, 2), "slabs", slabs.toArray(Material[]::new)).type(RecipeType.SLABS).register();
+				slabsGroup.add(slab);
+			NexusRecipe.shapeless(new ItemStack(blockMaterial, 2), "slabs", slabsGroup.toArray(Material[]::new)).type(RecipeType.SLABS).register();
 		}
 	}
 
@@ -169,6 +173,10 @@ public class CustomRecipes extends Feature implements Listener {
 		NexusRecipe.shapeless(new ItemStack(Material.STONE, 1), "stonebrick_uncrafting", Material.STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
 		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICK_SLAB, 2), "stonebrick_uncrafting", Material.CHISELED_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
 		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICKS), "stonebrick_uncrafting", Material.MOSSY_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.COBBLED_DEEPSLATE_SLAB, 2), "stonebrick-uncrafting", Material.CHISELED_DEEPSLATE).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.DEEPSLATE_BRICKS), "stonebrick-uncrafting", Material.DEEPSLATE_TILES).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.POLISHED_DEEPSLATE), "stonebrick-uncrafting", Material.DEEPSLATE_BRICKS).type(RecipeType.STONE_BRICK).register();
+		NexusRecipe.shapeless(new ItemStack(Material.COBBLED_DEEPSLATE), "stonebrick-uncrafting", Material.POLISHED_DEEPSLATE).type(RecipeType.STONE_BRICK).register();
 	}
 
 	public void misc() {

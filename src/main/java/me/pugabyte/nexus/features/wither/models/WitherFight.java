@@ -12,6 +12,7 @@ import me.pugabyte.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.Mute
 import me.pugabyte.nexus.features.warps.Warps;
 import me.pugabyte.nexus.features.wither.BeginningCutscene;
 import me.pugabyte.nexus.features.wither.WitherChallenge;
+import me.pugabyte.nexus.features.wither.WitherCommand;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.BlockUtils;
 import me.pugabyte.nexus.utils.JsonBuilder;
@@ -51,13 +52,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -105,8 +100,14 @@ public abstract class WitherFight implements Listener {
 	public void start() {
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(location -> {
-			Broadcast.ingame().message(new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
-						.command("/wither spectate").hover("&eYou will be teleported to the wither arena")).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			JsonBuilder message = new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
+				                      .command("/wither spectate").hover("&eYou will be teleported to the wither arena");
+			if (WitherCommand.betaMode) {
+				Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			}
+			else {
+				Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			}
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
 			new WorldEditUtils("events").set("witherarena-lobby", BlockTypes.NETHERRACK);
@@ -329,7 +330,11 @@ public abstract class WitherFight implements Listener {
 					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
 
-			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			if (WitherCommand.betaMode) {
+				Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			} else {
+				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			}
 
 			WitherChallenge.reset();
 		} else {
@@ -374,7 +379,12 @@ public abstract class WitherFight implements Listener {
 			" successfully beaten the Wither in " +
 			getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");
 
-		Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+		if (WitherCommand.betaMode) {
+			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+		}
+		else {
+			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+		}
 
 		new WorldGuardUtils("events").getEntitiesInRegion("witherarena").forEach(e -> {
 			if (e.getType() != EntityType.PLAYER)
@@ -502,6 +512,13 @@ public abstract class WitherFight implements Listener {
 		event.getPlayer().updateInventory();
 	}
 
+	@EventHandler
+	public void onItemSpawn(ItemSpawnEvent event) {
+		if (event.getEntity().getItemStack().getType() != Material.WITHER_ROSE) return;
+		if (!isInRegion(event.getLocation())) return;
+		event.setCancelled(true);
+	}
+
 	public enum CounterAttack {
 		KNOCKBACK {
 			@Override
@@ -541,7 +558,7 @@ public abstract class WitherFight implements Listener {
 					OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 					if (player.getPlayer() == null) continue;
 					for (PotionEffect effect : player.getPlayer().getActivePotionEffects()) {
-						if (effect.getType() == PotionEffectType.WITHER) continue;
+						if (effect.getType().equals(PotionEffectType.WITHER)) continue;
 						player.getPlayer().removePotionEffect(effect.getType());
 						player.getPlayer().sendTitle(new Title("", colorize("&8&kbbb &4&lStipped Potion Effects &8&kbbb"), 10, 40, 10));
 					}

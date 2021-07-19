@@ -36,7 +36,7 @@ public class WitherCommand extends CustomCommand {
 		super(event);
 	}
 
-	public boolean betaMode = true;
+	public static boolean betaMode = true;
 
 	@SneakyThrows
 	@Path("challenge")
@@ -47,21 +47,21 @@ public class WitherCommand extends CustomCommand {
 			error("Server reboot is queued, cannot start a new fight");
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
-		if (currentFight != null)
-			error("The wither is currently being fought. Please wait!");
 		if (maintenance && !Rank.of(player()).isStaff())
 			error("The wither arena is currently under maintenance, please wait");
 
 		if (!checkHasItems())
 			return;
 
-		final int index = queue.indexOf(uuid());
+		int index = queue.indexOf(uuid());
 
 		if (index > 0)
 			error("You are already in the queue. You are spot #" + (index + 1));
 
-		if (index == -1)
+		if (index == -1) {
 			queue.add(uuid());
+			index = queue.indexOf(uuid());
+		}
 
 		if (index == 0)
 			new DifficultySelectionMenu().open(player());
@@ -181,11 +181,16 @@ public class WitherCommand extends CustomCommand {
 		Tasks.Countdown.builder()
 				.duration(Time.SECOND.x(10))
 				.onSecond(i -> {
-					if (i == 10)
-						currentFight.broadcastToParty("The fight will begin in...");
-					currentFight.broadcastToParty("&e" + i + "s...");
+					if (currentFight != null) {
+						if (i == 10)
+							currentFight.broadcastToParty("The fight will begin in...");
+						currentFight.broadcastToParty("&e" + i + "s...");
+					}
 				}).doZero(false)
-				.onComplete(() -> currentFight.start())
+				.onComplete(() -> {
+					if (currentFight != null)
+						currentFight.start();
+				})
 				.start();
 	}
 
