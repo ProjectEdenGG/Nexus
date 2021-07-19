@@ -3,6 +3,7 @@ package me.pugabyte.nexus.features.customenchants.enchants;
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.NoArgsConstructor;
 import me.pugabyte.nexus.features.customenchants.CustomEnchant;
+import me.pugabyte.nexus.features.customenchants.CustomEnchants;
 import me.pugabyte.nexus.utils.Enchant;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -50,6 +51,8 @@ public class SoulboundEnchant extends CustomEnchant {
 					drop.removeEnchantment(enchant);
 				else
 					drop.addUnsafeEnchantment(enchant, level);
+
+				CustomEnchants.update(drop);
 
 				drops.remove();
 				event.getItemsToKeep().add(drop);
