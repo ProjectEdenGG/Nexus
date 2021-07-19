@@ -2,10 +2,12 @@ package me.pugabyte.nexus.features.mobheads;
 
 import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
+import me.pugabyte.nexus.features.discord.Discord;
 import me.pugabyte.nexus.features.mobheads.common.MobHead;
 import me.pugabyte.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import me.pugabyte.nexus.models.mobheads.MobHeadUserService;
 import me.pugabyte.nexus.models.nickname.Nickname;
+import me.pugabyte.nexus.models.skincache.SkinCache;
 import me.pugabyte.nexus.utils.Enchant;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.ItemUtils;
@@ -29,6 +31,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,12 +43,12 @@ import static eden.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
 
 public class MobHeadListener implements Listener {
+	private static final int REQUIRED_SKIN_DAYS = 7;
+	private static final List<UUID> handledEntities = new ArrayList<>();
 
 	public MobHeadListener() {
 		Nexus.registerListener(this);
 	}
-
-	private static final List<UUID> handledEntities = new ArrayList<>();
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onKillEntity(EntityDeathEvent event) {
@@ -92,8 +95,12 @@ public class MobHeadListener implements Listener {
 		final boolean drop = random <= finalChance;
 		Nexus.debug("Player: " + player.getName() + "\n  Type: " + mobHead.name() + "\n  Chance: " + chance + "\n  Looting bonus: " + looting + "\n  Final chance: " + finalChance + "\n  Random: " + random + "\n  Drop: " + drop);
 
-		if (drop)
+		if (drop) {
 			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
+
+			if (victim instanceof Player)
+				Discord.staffLog("**[MobHeads]** Dropped " + Nickname.of(victim) + "'s head with texture " + SkinCache.of(victim).getTextureUrl());
+		}
 
 		new MobHeadUserService().edit(player, user -> {
 			MobHeadData data = user.get(mobHead);
@@ -106,7 +113,7 @@ public class MobHeadListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPickupPlayerSkull(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player player))
+		if (!(event.getEntity() instanceof Player))
 			return;
 
 		Item item = event.getItem();
@@ -170,10 +177,6 @@ public class MobHeadListener implements Listener {
 		if (player == null || victim == null)
 			return true;
 
-		// Temporary
-		if (victim instanceof Player)
-			return true;
-
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 			return true;
 		if (player.getGameMode() != GameMode.SURVIVAL)
@@ -184,7 +187,24 @@ public class MobHeadListener implements Listener {
 		if (handledEntities.contains(victim.getUniqueId()))
 			return true;
 
+		if (victim instanceof Player)
+			if (isNewSkin(victim))
+				return true;
+
 		return shouldIgnore(victim);
+	}
+
+	private boolean isNewSkin(LivingEntity player) {
+		final SkinCache skinCache = SkinCache.of(player);
+		skinCache.update();
+
+		final LocalDateTime lastChanged = skinCache.getLastChanged();
+		if (lastChanged == null)
+			return true;
+
+		if (lastChanged.isAfter(LocalDateTime.now().minusDays(REQUIRED_SKIN_DAYS)))
+			return true;
+		return false;
 	}
 
 	private boolean shouldIgnore(LivingEntity entity) {

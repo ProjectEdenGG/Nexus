@@ -30,8 +30,11 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static eden.utils.StringUtils.isNullOrEmpty;
 import static eden.utils.StringUtils.uuidUnformat;
@@ -50,6 +53,7 @@ public class SkinCache implements PlayerOwnedObject {
 	private String value;
 	private String signature;
 	private LocalDateTime timestamp;
+	private LocalDateTime lastChanged;
 
 	public static SkinCache of(String name) {
 		return of(PlayerUtils.getPlayer(name));
@@ -81,6 +85,17 @@ public class SkinCache implements PlayerOwnedObject {
 		return (SkullMeta) getHead().getItemMeta();
 	}
 
+	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f0-9]{64}");
+
+	public String getTextureUrl() {
+		final String decoded = new String(Base64.getDecoder().decode(this.value));
+		final Matcher matcher = TEXTURE_URL_REGEX.matcher(decoded);
+		if (matcher.find())
+			return matcher.group();
+
+		return "Could not find url: " + this.value;
+	}
+
 	public boolean update() {
 		String previous = this.value;
 		ProfileProperty property;
@@ -96,7 +111,12 @@ public class SkinCache implements PlayerOwnedObject {
 		this.signature = property.getSignature();
 		new SkinCacheService().save(this);
 
-		return this.value.equals(previous);
+		final boolean changed = !this.value.equals(previous);
+
+		if (changed)
+			this.lastChanged = LocalDateTime.now();
+
+		return changed;
 	}
 
 	@Data
