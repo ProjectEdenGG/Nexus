@@ -7,6 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static eden.utils.StringUtils.camelCase;
+
 public interface MobHead {
 
 	@NotNull
@@ -24,6 +26,10 @@ public interface MobHead {
 
 	@Nullable
 	ItemStack getSkull();
+
+	default String getDisplayName() {
+		return camelCase(getType());
+	}
 
 	static @Nullable MobHead of(Entity entity) {
 		MobHeadType type = MobHeadType.of(entity.getType());

@@ -31,8 +31,9 @@ public interface MobHeadVariant extends MobHead {
 
 	void setItemStack(ItemStack itemStack);
 
+	@Override
 	default String getDisplayName() {
-		return "&e" + camelCase((Enum<?>) this) + " " + camelCase(getEntityType()) + " Head";
+		return camelCase((Enum<?>) this) + " " + camelCase(getEntityType());
 	}
 
 }

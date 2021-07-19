@@ -64,8 +64,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import static me.pugabyte.nexus.utils.StringUtils.camelCase;
-
 @Getter
 public enum MobHeadType implements MobHead {
 	AXOLOTL(EntityType.AXOLOTL, AxolotlVariant.class, entity -> AxolotlVariant.of((Axolotl) entity)),
@@ -264,16 +262,15 @@ public enum MobHeadType implements MobHead {
 					continue;
 				}
 
+				final MobHeadType mobHeadType = MobHeadType.of(type);
 				double chance = Double.parseDouble(sign.getLine(3));
 
-				skull = new ItemBuilder(skull).name("&e" + camelCase(type) + " Head").build();
-
-				final MobHeadType mobHeadType = MobHeadType.of(type);
 				if (mobHeadType == null) {
 					Nexus.warn("[MobHeads] Found EntityType with no MobHeadType: " + type);
 					return;
 				}
 
+				skull = new ItemBuilder(skull).name("&e" + mobHeadType.getDisplayName() + " Head").build();
 				mobHeadType.setGenericSkull(skull);
 				mobHeadType.setChance(chance);
 				allSkulls.add(skull);
@@ -308,7 +305,7 @@ public enum MobHeadType implements MobHead {
 						continue;
 					}
 
-					skull = new ItemBuilder(skull).name(mobHeadVariant.getDisplayName()).build();
+					skull = new ItemBuilder(skull).name("&e" + mobHeadVariant.getDisplayName() + " Head").build();
 					mobHeadVariant.setItemStack(skull);
 					allSkulls.add(skull);
 				} catch (Exception ex) {
