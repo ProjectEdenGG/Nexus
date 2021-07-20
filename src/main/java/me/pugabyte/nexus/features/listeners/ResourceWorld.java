@@ -4,9 +4,6 @@ import eden.utils.TimeUtils.Time;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.homes.HomesFeature;
 import me.pugabyte.nexus.models.nerd.Rank;
-import me.pugabyte.nexus.models.shop.Shop;
-import me.pugabyte.nexus.models.shop.Shop.ShopGroup;
-import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.models.tip.Tip;
 import me.pugabyte.nexus.models.tip.Tip.TipType;
 import me.pugabyte.nexus.models.tip.TipService;
@@ -17,7 +14,6 @@ import me.pugabyte.nexus.utils.MaterialTag;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
-import me.pugabyte.nexus.utils.WorldGroup;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -30,11 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -42,11 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
 import static me.pugabyte.nexus.utils.PlayerUtils.runCommandAsConsole;
-import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
 public class ResourceWorld implements Listener {
 
@@ -61,77 +50,25 @@ public class ResourceWorld implements Listener {
 	public void onEnterResourceWorld(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
-		if (event.getFrom().getWorld().getName().startsWith("resource")) return;
+		if (!event.getTo().getWorld().getName().startsWith("resource"))
+			return;
 
-		if (Rank.of(player).isStaff()) return;
+		if (event.getFrom().getWorld().getName().startsWith("resource"))
+			return;
 
-		if (event.getTo().getWorld().getName().startsWith("resource")) {
-			if (!WorldGroup.of(event.getFrom()).equals(WorldGroup.SURVIVAL) || event.getFrom().getWorld().getName().startsWith("staff")) {
-				if (!Rank.of(player).isAdmin()) {
-					PlayerUtils.send(player, "&eYou can only enter the resource world from the Survival world");
-					event.setCancelled(true);
-					return;
-				}
-			}
-			List<Material> materials = new ShopService().getMarket().getProducts(ShopGroup.SURVIVAL).stream()
-					.filter(product -> product.isResourceWorld() && product.getExchangeType() == Shop.ExchangeType.BUY)
-					.map(product -> product.getItem().getType())
-					.collect(Collectors.toList());
+		if (Rank.of(player).isStaff())
+			return;
 
-			// Crafting materials
-			materials.add(Material.CLAY_BALL);
-			materials.add(Material.GRAVEL);
-			materials.add(Material.GLOWSTONE_DUST);
-			materials.add(Material.ICE);
-			materials.add(Material.PACKED_ICE);
+		if (event.isCancelled())
+			return;
 
-			ArrayList<Material> rejectedMaterials = new ArrayList<>();
-			boolean appendMessage = false;
-
-			for (Material material : materials)
-				if (player.getInventory().contains(material)) {
-					rejectedMaterials.add(material);
-					event.setCancelled(true);
-					appendMessage = true;
-				}
-
-			if (rejectedMaterials.size() != 0) {
-				PlayerUtils.send(player, "&cYou can not go to the resource world with the below items, " +
-						"please remove them from your inventory before continuing:");
-				for (Material material : rejectedMaterials)
-					PlayerUtils.send(player, "&e- " + camelCase(material.name()));
-			}
-
-			rejectedMaterials.clear();
-
-			for (ItemStack item : player.getInventory().getContents())
-				for (ItemStack content : getShulkerContents(item))
-					if (materials.contains(content.getType())) {
-						rejectedMaterials.add(content.getType());
-						event.setCancelled(true);
-					}
-
-			if (rejectedMaterials.size() != 0)
-				if (appendMessage) {
-					for (Material material : rejectedMaterials)
-						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
-				} else {
-					PlayerUtils.send(player, "&cYou can not go to the resource world with the below items, " +
-							"please remove them from your shulkerbox before continuing:");
-					for (Material material : rejectedMaterials)
-						PlayerUtils.send(player, "&e- " + camelCase(material.name()) + " (in shulkerbox)");
-				}
-
-			if (!event.isCancelled()) {
-				PlayerUtils.send(player, " &4Warning |");
-				PlayerUtils.send(player, " &4Warning | &cYou are entering the resource world!");
-				PlayerUtils.send(player, " &4Warning | &cThis world is regenerated on the &c&lfirst of every month&c,");
-				PlayerUtils.send(player, " &4Warning | &cso don't leave your stuff here or you will lose it!");
-				PlayerUtils.send(player, " &4Warning |");
-				PlayerUtils.send(player, " &4Warning | &cThe darkness is dangerous in this world");
-				PlayerUtils.send(player, " &4Warning |");
-			}
-		}
+		PlayerUtils.send(player, " &4Warning |");
+		PlayerUtils.send(player, " &4Warning | &cYou are entering the resource world!");
+		PlayerUtils.send(player, " &4Warning | &cThis world is regenerated on the &c&lfirst of every month&c,");
+		PlayerUtils.send(player, " &4Warning | &cso don't leave your stuff here or you will lose it!");
+		PlayerUtils.send(player, " &4Warning |");
+		PlayerUtils.send(player, " &4Warning | &cThe darkness is dangerous in this world");
+		PlayerUtils.send(player, " &4Warning |");
 	}
 
 	@EventHandler
@@ -147,29 +84,6 @@ public class ResourceWorld implements Listener {
 		if (tip.show(TipType.RESOURCE_WORLD_STORAGE))
 			PlayerUtils.send(event.getPlayer(), " &4Warning: &cYou are currently building in the resource world! " +
 					"This world is regenerated on the &c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
-	}
-
-	@EventHandler
-	public void onOpenEnderChest(InventoryOpenEvent event) {
-		if (!(event.getPlayer() instanceof Player player)) return;
-		if (event.getInventory().getType() != InventoryType.ENDER_CHEST) return;
-
-		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
-			event.setCancelled(true);
-			PlayerUtils.send(player, "&cYou can't open your enderchest while in the resource world, due to restrictions in place to keep the /market balanced");
-		}
-	}
-
-	@EventHandler
-	public void onCommand(PlayerCommandPreprocessEvent event) {
-		if (event.getPlayer().getWorld().getName().startsWith("resource")) {
-			switch (event.getMessage().split(" ")[0].replace("playervaults:", "")) {
-				case "/pv", "/vc", "/chest", "/vault", "/playervaults" -> {
-					event.setCancelled(true);
-					PlayerUtils.send(event.getPlayer(), "&cYou cannot use vaults while in the resource world");
-				}
-			}
-		}
 	}
 
 	/* Find protections from people being dumb

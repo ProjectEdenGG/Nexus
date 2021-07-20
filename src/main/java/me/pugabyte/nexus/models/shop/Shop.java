@@ -83,6 +83,9 @@ public class Shop implements PlayerOwnedObject {
 	private List<Product> products = new ArrayList<>();
 	@Embedded
 	private List<ItemStack> holding = new ArrayList<>();
+	@Embedded
+	private List<Material> disabledMarketItems = new ArrayList<>();
+
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
 

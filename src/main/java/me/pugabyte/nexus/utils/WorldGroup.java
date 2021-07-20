@@ -78,4 +78,20 @@ public enum WorldGroup {
 
 		return UNKNOWN;
 	}
+
+	public static boolean isResourceWorld(Entity entity) {
+		return isResourceWorld(entity.getWorld());
+	}
+
+	public static boolean isResourceWorld(Location location) {
+		return isResourceWorld(location.getWorld());
+	}
+
+	public static boolean isResourceWorld(World world) {
+		return isResourceWorld(world.getName());
+	}
+
+	public static boolean isResourceWorld(String world) {
+		return world.toLowerCase().startsWith("resource");
+	}
 }

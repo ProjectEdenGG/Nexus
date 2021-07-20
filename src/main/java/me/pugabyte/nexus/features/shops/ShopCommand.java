@@ -100,9 +100,6 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Path("collect")
 	void collect() {
-		if (world().getName().startsWith("resource"))
-			error("You cannot use player shops while in the resource world");
-
 		new CollectItemsProvider(null).open(player());
 	}
 
