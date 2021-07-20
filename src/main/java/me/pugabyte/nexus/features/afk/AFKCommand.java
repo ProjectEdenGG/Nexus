@@ -164,6 +164,9 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onEntitySpawn(final CreatureSpawnEvent event) {
+		if (true)
+			return;
+
 		if (event.getSpawnReason() != SpawnReason.NATURAL)
 			return;
 
