@@ -18,13 +18,13 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title("Wings Style")
 				.size(5, 9)
 				.provider(this)
 				.build()
-				.open(viewer);
+				.open(player);
 	}
 
 	@Override

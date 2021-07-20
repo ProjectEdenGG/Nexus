@@ -26,8 +26,8 @@ public class ItemSearchProvider extends _ShopProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
-		open(viewer, page, this, "&0Search for item");
+	public void open(Player player, int page) {
+		open(player, page, this, "&0Search for item");
 	}
 
 	@Override

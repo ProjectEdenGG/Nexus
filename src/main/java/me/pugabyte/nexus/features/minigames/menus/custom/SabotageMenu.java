@@ -26,8 +26,8 @@ public class SabotageMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
-		Minigames.getMenus().openCustomSettingsMenu(viewer, arena);
+	public void open(Player player, int page) {
+		Minigames.getMenus().openCustomSettingsMenu(player, arena);
 	}
 
 	@Override

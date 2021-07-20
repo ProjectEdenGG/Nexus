@@ -13,11 +13,11 @@ public class BrowseMarketProvider extends PlayerShopProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		if (shop.getProducts().isEmpty())
 			new Market();
 
-		open(viewer, page, this, "&0Browse Market");
+		open(player, page, this, "&0Browse Market");
 	}
 
 	@Override

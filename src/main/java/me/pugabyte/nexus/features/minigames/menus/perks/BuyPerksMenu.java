@@ -32,13 +32,13 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.provider(this)
 				.title("Purchase Collectibles")
 				.size(Math.max(3, getRows(PerkType.getByCategory(category).size(), 1)), 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 	}
 
 	@Override

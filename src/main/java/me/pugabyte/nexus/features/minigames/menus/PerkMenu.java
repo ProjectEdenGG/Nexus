@@ -15,13 +15,13 @@ import org.bukkit.entity.Player;
 
 public class PerkMenu extends MenuUtils implements InventoryProvider {
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.provider(this)
 				.title("Minigame Collectibles")
 				.size(3, 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 	}
 
 	@Override

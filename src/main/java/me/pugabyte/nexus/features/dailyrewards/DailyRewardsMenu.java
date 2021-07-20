@@ -45,13 +45,13 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.provider(this)
 				.size(6, 9)
 				.title(ChatColor.DARK_AQUA + "Daily Rewards")
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 	}
 
 	@Override
@@ -120,13 +120,13 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
 					.size(3, 9)
 					.title(ChatColor.DARK_AQUA + "Daily Rewards")
 					.build()
-					.open(viewer);
+					.open(player);
 		}
 
 		@Override

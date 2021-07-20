@@ -344,13 +344,13 @@ public class HideAndSeek extends Infection {
 		}
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
 					.title(colorize("&3&lSelect your Block"))
 					.size(getRows(match.getArena().getBlockList().size(), 1), 9)
 					.build()
-					.open(viewer, page);
+					.open(player, page);
 		}
 
 		@Override

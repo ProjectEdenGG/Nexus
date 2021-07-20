@@ -11,8 +11,8 @@ public class PlayerShopProvider extends BrowseProductsProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
-		open(viewer, page, this, "&0" + shop.getNickname() + "'s shop");
+	public void open(Player player, int page) {
+		open(player, page, this, "&0" + shop.getNickname() + "'s shop");
 	}
 
 	@Override

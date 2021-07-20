@@ -22,14 +22,14 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
-		PerkOwner perkOwner = service.get(viewer);
+	public void open(Player player, int page) {
+		PerkOwner perkOwner = service.get(player);
 		SmartInventory.builder()
 				.provider(this)
 				.title("Your Collectibles")
 				.size(Math.max(3, getRows(perkOwner.getPurchasedPerkTypesByCategory(category).size(), 1)), 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 	}
 
 	@Override

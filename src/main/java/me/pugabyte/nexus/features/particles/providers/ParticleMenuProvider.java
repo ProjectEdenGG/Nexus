@@ -16,13 +16,13 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 	private final ParticleService particleService = new ParticleService();
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title("Particles")
 				.size(6, 9)
 				.provider(this)
 				.build()
-				.open(viewer);
+				.open(player);
 	}
 
 	@Override

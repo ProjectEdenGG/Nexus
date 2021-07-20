@@ -24,13 +24,13 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title("Particle Settings")
 				.size(5, 9)
 				.provider(this)
 				.build()
-				.open(viewer);
+				.open(player);
 	}
 
 	@Override

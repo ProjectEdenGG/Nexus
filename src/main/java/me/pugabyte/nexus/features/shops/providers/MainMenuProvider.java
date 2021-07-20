@@ -22,8 +22,8 @@ public class MainMenuProvider extends _ShopProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
-		open(viewer, page, this, "&0Shops");
+	public void open(Player player, int page) {
+		open(player, page, this, "&0Shops");
 	}
 
 	@Override

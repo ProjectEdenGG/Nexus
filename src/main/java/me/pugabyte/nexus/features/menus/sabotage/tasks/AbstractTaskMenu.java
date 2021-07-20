@@ -30,8 +30,8 @@ public abstract class AbstractTaskMenu extends MenuUtils implements InventoryPro
     public abstract SmartInventory getInventory();
 
     @Override
-    public void open(Player viewer, int page) {
-        getInventory().open(viewer, page);
+    public void open(Player player, int page) {
+        getInventory().open(player, page);
     }
 
 	@Override

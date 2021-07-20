@@ -163,13 +163,13 @@ public class ItemInfoCommand extends CustomCommand {
 	private static class EnchantedItemsMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
 				.size(6, 9)
 				.title("Enchanted Items")
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 		}
 
 		@Override

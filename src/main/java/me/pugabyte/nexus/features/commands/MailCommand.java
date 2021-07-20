@@ -182,9 +182,9 @@ public class MailCommand extends CustomCommand implements Listener {
 				.build();
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			if (Utils.isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
-				viewer.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
+				player.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
 			else
 				inventory.open(mailer.getOnlinePlayer(), page);
 		}

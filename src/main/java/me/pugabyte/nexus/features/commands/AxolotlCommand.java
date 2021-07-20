@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.shops;
+package me.pugabyte.nexus.features.commands;
 
 import de.tr7zw.nbtapi.NBTItem;
 import lombok.NoArgsConstructor;

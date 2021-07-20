@@ -65,13 +65,13 @@ public class MaterialTagCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
 					.title(colorize("&3" + StringUtils.camelCase(materialTag.getKey().getKey())))
 					.size(6, 9)
 					.build()
-					.open(viewer, page);
+					.open(player, page);
 		}
 
 		@Override

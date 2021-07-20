@@ -37,13 +37,13 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.size(5, 9)
 				.title(colorize("&3Animal Teleport Pens"))
 				.provider(this)
 				.build()
-				.open(viewer);
+				.open(player);
 	}
 
 	@Override

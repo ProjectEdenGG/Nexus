@@ -102,8 +102,8 @@ public class MuteMenuCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player viewer, int page) {
-			open(viewer, PageType.MESSAGES);
+		public void open(Player player, int page) {
+			open(player, PageType.MESSAGES);
 		}
 
 		public void open(Player viewer, PageType pageType) {

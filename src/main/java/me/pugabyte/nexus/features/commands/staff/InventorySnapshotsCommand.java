@@ -149,13 +149,13 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		}
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
 					.title(colorize("&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName()))
 					.size(6, 9)
 					.build()
-					.open(viewer, page);
+					.open(player, page);
 		}
 
 		@Override

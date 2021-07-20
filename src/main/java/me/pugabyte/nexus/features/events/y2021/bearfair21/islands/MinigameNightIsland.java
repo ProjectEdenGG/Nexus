@@ -773,13 +773,13 @@ public class MinigameNightIsland implements BearFair21Island {
 	private static class TrunkMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Car Trunk")
 				.size(3, 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 		}
 
 		@Override
@@ -897,13 +897,13 @@ public class MinigameNightIsland implements BearFair21Island {
 	public static class XboxMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Xbox Parts")
 				.size(3, 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 		}
 
 		@Override
@@ -921,13 +921,13 @@ public class MinigameNightIsland implements BearFair21Island {
 	public static class LaptopMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Laptop Parts")
 				.size(3, 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 		}
 
 		@Override
@@ -947,13 +947,13 @@ public class MinigameNightIsland implements BearFair21Island {
 	public static class ScrambledCablesMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Scrambled Cables")
 				.size(3, 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 		}
 
 		@Getter
@@ -1056,13 +1056,13 @@ public class MinigameNightIsland implements BearFair21Island {
 	public static class RouterMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
-		public void open(Player viewer, int page) {
+		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Router Parts")
 				.size(3, 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 		}
 
 		@Getter

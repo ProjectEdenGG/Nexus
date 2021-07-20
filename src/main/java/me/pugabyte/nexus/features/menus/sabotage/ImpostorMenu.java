@@ -44,8 +44,8 @@ public class ImpostorMenu extends MenuUtils implements InventoryProvider {
     }
 
     @Override
-    public void open(Player viewer, int page) {
-        getInventory().open(viewer, page);
+    public void open(Player player, int page) {
+        getInventory().open(player, page);
     }
 
     @Override

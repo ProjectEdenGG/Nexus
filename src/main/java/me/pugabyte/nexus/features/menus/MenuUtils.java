@@ -69,7 +69,7 @@ public abstract class MenuUtils {
 		open(player, 0);
 	}
 
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 	}
 
 	public final void open(HasPlayer player) {

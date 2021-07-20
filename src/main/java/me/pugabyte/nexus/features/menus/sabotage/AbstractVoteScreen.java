@@ -22,8 +22,8 @@ public abstract class AbstractVoteScreen extends MenuUtils implements InventoryP
 	public abstract SmartInventory getInventory();
 
 	@Override
-	public void open(Player viewer, int page) {
-		getInventory().open(viewer, page);
+	public void open(Player player, int page) {
+		getInventory().open(player, page);
 	}
 
 	protected static TextComponent getColoredName(Minigamer minigamer) {

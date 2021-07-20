@@ -30,13 +30,13 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 	private HeadsFilterType headsFilter = HeadsFilterType.OFF;
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 			.provider(this)
 			.size(6, 9)
 			.title("Mob Heads")
 			.build()
-			.open(viewer, page);
+			.open(player, page);
 	}
 
 	@Override

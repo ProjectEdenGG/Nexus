@@ -22,8 +22,8 @@ public class MarketCommand extends CustomCommand {
 	@Path("reload")
 	@Permission("group.staff")
 	void reload() {
-		new Market();
-		send(PREFIX + "Market reload");
+		Market.load();
+		send(PREFIX + "Market reloaded");
 	}
 
 }

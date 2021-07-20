@@ -34,13 +34,13 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title("Set RGB Color")
 				.size(5, 9)
 				.provider(this)
 				.build()
-				.open(viewer);
+				.open(player);
 	}
 
 	@Getter

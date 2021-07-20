@@ -31,13 +31,13 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 	abstract protected List<ClickableItem> getItems(Player player);
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title(getTitle())
 				.size(getRows(), 9)
 				.provider(this)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 	}
 
 	@Override

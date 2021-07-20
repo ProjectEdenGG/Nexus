@@ -36,7 +36,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		String title = "Custom Models";
 		if (!folder.getPath().equals("/"))
 			title = folder.getDisplayPath();
@@ -46,7 +46,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 				.title(colorize("&0" + title))
 				.size(6, 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 	}
 
 	@Override

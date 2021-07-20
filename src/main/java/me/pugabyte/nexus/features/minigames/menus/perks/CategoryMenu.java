@@ -22,8 +22,8 @@ public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implement
 			.build();
 
 	@Override
-	public void open(Player viewer, int page) {
-		inventory.open(viewer, page);
+	public void open(Player player, int page) {
+		inventory.open(player, page);
 	}
 
 	@Override

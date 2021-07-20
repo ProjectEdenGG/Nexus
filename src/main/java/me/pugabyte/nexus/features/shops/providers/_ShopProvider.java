@@ -47,7 +47,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 		open(viewer, pagination.getPage());
 	}
 
-	abstract public void open(Player viewer, int page);
+	abstract public void open(Player player, int page);
 
 	public void open(Player viewer, int page, _ShopProvider provider, String title) {
 		this.page = page;

@@ -43,8 +43,8 @@ public class ResultsScreen extends AbstractVoteScreen {
 			.build();
 
 	@Override
-	public void open(Player viewer, int page) {
-		getInventory().open(viewer.getPlayer(), page);
+	public void open(Player player, int page) {
+		getInventory().open(player.getPlayer(), page);
 	}
 
 	private ClickableItem getResultHead(ItemBuilder item, VoteWrapper wrapper) {

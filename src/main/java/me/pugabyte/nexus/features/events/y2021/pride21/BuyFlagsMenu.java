@@ -34,13 +34,13 @@ public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 	private static final int COST = 10;
 
 	@Override
-	public void open(Player viewer, int page) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.provider(this)
 				.title("Pride Shop")
 				.size(getRows(Flags.values().length*2, 0), 9)
 				.build()
-				.open(viewer, page);
+				.open(player, page);
 	}
 
 	@Override
