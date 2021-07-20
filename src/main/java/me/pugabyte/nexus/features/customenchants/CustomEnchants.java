@@ -223,7 +223,7 @@ public class CustomEnchants extends Feature implements Listener {
 			lines: for (String line : meta.getLore()) {
 				if (!isNullOrEmpty(line))
 					for (CustomEnchant enchant : CustomEnchants.getEnchants())
-						if (stripColor(line).matches("(?i)^" + enchant.getName() + " .*"))
+						if (stripColor(line).matches("(?i)^" + enchant.getName() + ".*"))
 							continue lines;
 
 				lore.add(line);

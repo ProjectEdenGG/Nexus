@@ -21,7 +21,7 @@ public class MoreCommand extends CustomCommand {
 		if (amount == null)
 			tool.setAmount(tool.getMaxStackSize());
 		else
-			tool.setAmount(tool.getAmount() == 1 ? 0 : tool.getAmount() + amount);
+			tool.setAmount((tool.getAmount() == 1 ? 0 : tool.getAmount()) + amount);
 	}
 
 }
