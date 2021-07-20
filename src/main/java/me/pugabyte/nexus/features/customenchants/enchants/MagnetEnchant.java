@@ -7,9 +7,10 @@ import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.PlayerUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldGroup;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -19,7 +20,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class MagnetEnchant extends CustomEnchant {
 
@@ -41,12 +45,12 @@ public class MagnetEnchant extends CustomEnchant {
 
 				int radius = maxLevel * RADIUS_MULTIPLIER;
 
-				for (Entity entity : getDroppedItems(player, radius)) {
-					final Vector vector = getVector(player, entity);
+				for (Item item : getDroppedItems(player, radius)) {
+					final Vector vector = getVector(player, item);
 					if (vector == null)
 						continue;
 
-					entity.setVelocity(vector);
+					item.setVelocity(vector);
 				}
 			}
 		});
@@ -64,25 +68,45 @@ public class MagnetEnchant extends CustomEnchant {
 		return normalized.multiply(Math.max(.1, multiplier));
 	}
 
-	private static List<Entity> getDroppedItems(Player player, int radius) {
+	private static List<Item> getDroppedItems(Player player, int radius) {
 		return new ArrayList<>() {{
 			for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-				if (entity.getType() != EntityType.DROPPED_ITEM)
+				if (!(entity instanceof Item item))
 					continue;
 
 				// TODO Metadata check
 
-				add(entity);
+				if (!hasRoomFor(player, item.getItemStack()))
+					continue;
+
+				add(item);
 			}
 		}};
 	}
 
-	private static int getMaxLevel(Player player) {
-		int maxLevel = 0;
-		for (ItemStack item : getItems(player.getInventory()))
-			maxLevel = Math.max(maxLevel, item.getItemMeta().getEnchantLevel(Enchant.MAGNET));
+	private static final Map<UUID, Map<Material, Boolean>> hasRoomFor = new HashMap<>();
+	private static final Map<UUID, Integer> maxLevel = new HashMap<>();
 
-		return Math.min(Enchant.MAGNET.getMaxLevel(), maxLevel);
+	static {
+		Tasks.repeat(Time.SECOND, Time.SECOND.x(2), () -> {
+			hasRoomFor.clear();
+			maxLevel.clear();
+		});
+	}
+
+	private static boolean hasRoomFor(Player player, ItemStack item) {
+		return hasRoomFor.computeIfAbsent(player.getUniqueId(), $ -> new HashMap<>())
+			.computeIfAbsent(item.getType(), $ -> PlayerUtils.hasRoomFor(player, item));
+	}
+
+	private static int getMaxLevel(Player player) {
+		return maxLevel.computeIfAbsent(player.getUniqueId(), $ -> {
+			int maxLevel = 0;
+			for (ItemStack item : getItems(player.getInventory()))
+				maxLevel = Math.max(maxLevel, item.getItemMeta().getEnchantLevel(Enchant.MAGNET));
+
+			return Math.min(Enchant.MAGNET.getMaxLevel(), maxLevel);
+		});
 	}
 
 	@NotNull
