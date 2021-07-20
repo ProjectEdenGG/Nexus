@@ -18,27 +18,15 @@ import me.pugabyte.nexus.models.chat.Chatter;
 import me.pugabyte.nexus.models.chat.PrivateChannel;
 import me.pugabyte.nexus.models.nickname.Nickname;
 import me.pugabyte.nexus.utils.PlayerUtils;
-import me.pugabyte.nexus.utils.StringUtils;
 import me.pugabyte.nexus.utils.Tasks;
-import me.pugabyte.nexus.utils.WorldGroup;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.Collection;
-
-import static me.pugabyte.nexus.utils.EntityUtils.isHostile;
-import static me.pugabyte.nexus.utils.WorldUtils.getMobSpawnRange;
 
 @Aliases("away")
 @NoArgsConstructor
@@ -83,6 +71,8 @@ public class AFKCommand extends CustomCommand implements Listener {
 	@Description("Disable mobs spawning near you while you are AFK. Helps with server lag and spawn rates for active players")
 	@DescriptionExtra("Must be AFK for longer than 4 minutes")
 	void mobSpawning(Boolean enable) {
+		error("Temporarily disabled");
+
 		AFKSettings afkSettings = service.get(player());
 		if (enable == null)
 			enable = !afkSettings.isMobSpawning();
@@ -162,11 +152,10 @@ public class AFKCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	/*
+
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onEntitySpawn(final CreatureSpawnEvent event) {
-		if (true)
-			return;
-
 		if (event.getSpawnReason() != SpawnReason.NATURAL)
 			return;
 
@@ -220,5 +209,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 		return false;
 	}
+
+	*/
 
 }
