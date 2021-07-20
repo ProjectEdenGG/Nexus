@@ -123,7 +123,8 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onEntitySpawn(EntitySpawnEvent event) {
-		updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
+		if (event.getLocation().getWorld().getName().equals("bearfair21"))
+			updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 
 	private void clearRegions(Entity entity, MovementType movementType, Location newLocation, Event event) {
