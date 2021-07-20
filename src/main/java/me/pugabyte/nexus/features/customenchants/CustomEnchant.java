@@ -34,7 +34,7 @@ public abstract class CustomEnchant extends Enchantment {
 
 	@NotNull
 	public String getDisplayName(int level) {
-		return camelCase(getName()) + " " + (level > 1 ? toRoman(level) : "");
+		return camelCase(getName()) + (level > 1 ? " " + toRoman(level) : "");
 	}
 
 	public int getLevel(ItemStack item) {

@@ -3,6 +3,7 @@ package me.pugabyte.nexus.utils;
 import lombok.experimental.UtilityClass;
 import me.pugabyte.nexus.features.customenchants.CustomEnchant;
 import me.pugabyte.nexus.features.customenchants.CustomEnchants;
+import me.pugabyte.nexus.features.customenchants.enchants.MagnetEnchant;
 import me.pugabyte.nexus.features.customenchants.enchants.SoulboundEnchant;
 import org.bukkit.enchantments.EnchantmentWrapper;
 
@@ -207,4 +208,9 @@ public class Enchant {
 	 * Keep item on death
 	 */
 	public static final CustomEnchant SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);
+
+	/**
+	 * Attract dropped items
+	 */
+	public static final CustomEnchant MAGNET = CustomEnchants.get(MagnetEnchant.class);
 }
