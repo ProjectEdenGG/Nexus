@@ -37,7 +37,7 @@ public class MagnetEnchant extends CustomEnchant {
 
 				int maxLevel = getMaxLevel(player);
 				if (maxLevel == 0)
-					return;
+					continue;
 
 				int radius = maxLevel * RADIUS_MULTIPLIER;
 
