@@ -560,7 +560,7 @@ public abstract class WitherFight implements Listener {
 					for (PotionEffect effect : player.getPlayer().getActivePotionEffects()) {
 						if (effect.getType().equals(PotionEffectType.WITHER)) continue;
 						player.getPlayer().removePotionEffect(effect.getType());
-						player.getPlayer().sendTitle(new Title("", colorize("&8&kbbb &4&lStipped Potion Effects &8&kbbb"), 10, 40, 10));
+						player.getPlayer().sendTitle(new Title("", colorize("&8&kbbb &4&lStripped Potion Effects &8&kbbb"), 10, 40, 10));
 					}
 
 				}
