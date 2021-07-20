@@ -13,7 +13,6 @@ softdepend:
   - BentoBox
   - BlueMap
   - BuycraftX
-  - Citizens
   - GlowAPI
   - HeadDatabase
   - HolographicDisplays
