@@ -3,7 +3,6 @@ package me.pugabyte.nexus.models.shop;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PostLoad;
 import eden.mongodb.serializers.UUIDConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,6 @@ import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,32 +31,18 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, List<Coordinate>> coordinates = new HashMap<>();
-
-	private transient Map<String, Map<Integer, Map<Integer, Map<Integer, Coordinate>>>> coordinateMap = new LinkedHashMap<>();
-
-	@PostLoad
-	void postLoad() {
-		coordinates.forEach((world, coordinates) ->
-			coordinates.forEach(coordinate ->
-				put(world, coordinate)));
-	}
+	private Map<String, Map<Integer, Map<Integer, List<Integer>>>> coordinates = new LinkedHashMap<>();
 
 	public void add(Location location) {
 		add(location.getWorld().getName(), new Coordinate(location));
 	}
 
 	private void add(String world, Coordinate coordinate) {
-		coordinates.computeIfAbsent(world, $ -> new ArrayList<>()).add(coordinate);
-		put(world, coordinate);
-	}
-
-	private void put(String world, Coordinate coordinate) {
-		coordinateMap
+		coordinates
 			.computeIfAbsent(world, $ -> new LinkedHashMap<>())
 			.computeIfAbsent(coordinate.getX(), $ -> new LinkedHashMap<>())
-			.computeIfAbsent(coordinate.getZ(), $ -> new LinkedHashMap<>())
-			.put(coordinate.getY(), coordinate);
+			.computeIfAbsent(coordinate.getZ(), $ -> new ArrayList<>())
+			.add(coordinate.getY());
 	}
 
 	public boolean contains(Location location) {
@@ -67,16 +51,16 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 		final int z = location.getBlockZ();
 		final int y = location.getBlockY();
 
-		if (!coordinateMap.containsKey(world))
+		if (!coordinates.containsKey(world))
 			return false;
 
-		if (!coordinateMap.get(world).containsKey(x))
+		if (!coordinates.get(world).containsKey(x))
 			return false;
 
-		if (!coordinateMap.get(world).get(x).containsKey(z))
+		if (!coordinates.get(world).get(x).containsKey(z))
 			return false;
 
-		if (!coordinateMap.get(world).get(x).get(z).containsKey(y))
+		if (!coordinates.get(world).get(x).get(z).contains(y))
 			return false;
 
 		return true;

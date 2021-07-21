@@ -1,10 +1,13 @@
 package me.pugabyte.nexus.features.shops;
 
+import com.sk89q.worldedit.regions.Region;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.shops.providers.BrowseMarketProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Async;
+import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
 import me.pugabyte.nexus.framework.commands.models.events.CommandEvent;
@@ -18,10 +21,13 @@ import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
 import me.pugabyte.nexus.utils.Tasks;
+import me.pugabyte.nexus.utils.WorldEditUtils;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
@@ -70,6 +76,22 @@ public class MarketCommand extends CustomCommand implements Listener {
 		getLoggerService().queueSave(Time.SECOND.get(), getLogger());
 	}
 
+	@Async
+	@Confirm
+	@Path("logger add")
+	@Permission("group.staff")
+	void breakNaturally() {
+		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+		Region selection = worldEditUtils.getPlayerSelection(player());
+		if (selection.getArea() > 100000)
+			error("Max selection size is 100000");
+
+		for (Block block : worldEditUtils.getBlocks(selection))
+			getLogger().add(block.getLocation());
+
+		save();
+	}
+
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (!isResourceWorld(event.getBlock()))
@@ -77,6 +99,16 @@ public class MarketCommand extends CustomCommand implements Listener {
 
 		getLogger().add(event.getBlock().getLocation());
 		save();
+	}
+
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (!isResourceWorld(event.getBlock()))
+			return;
+
+		Tasks.wait(1, () -> {
+			getLogger().add(event.getBlock().getLocation());
+			save();
+		});
 	}
 
 	@EventHandler
@@ -117,14 +149,13 @@ public class MarketCommand extends CustomCommand implements Listener {
 		if (getLogger().contains(block.getLocation()))
 			return false;
 
+		getLogger().add(block.getLocation());
+		save();
+
 		final boolean sold = trySell(player, drop);
 
-		if (sold) {
-			getLogger().add(block.getLocation());
-			save();
-
+		if (sold)
 			actionBar(player);
-		}
 
 		return sold;
 	}
@@ -170,8 +201,7 @@ public class MarketCommand extends CustomCommand implements Listener {
 
 	private List<Product> getResourceWorldProducts() {
 		return new ShopService().getMarket().getProducts().stream()
-			.filter(Product::isResourceWorld)
-			.filter(product -> product.getExchangeType() == ExchangeType.BUY)
+			.filter(product -> product.isResourceWorld() && product.getExchangeType() == ExchangeType.BUY)
 			.toList();
 	}
 
