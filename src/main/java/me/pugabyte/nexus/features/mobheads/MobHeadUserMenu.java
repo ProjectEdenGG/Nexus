@@ -80,6 +80,9 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	private boolean filter(MobHeadUser user, MobHead mobHead) {
+		if (mobHead.getType().getChance() == 0)
+			return true;
+
 		if (killsFilter.getFilter() != null)
 			if (!killsFilter.getFilter().test(user, mobHead))
 				return true;

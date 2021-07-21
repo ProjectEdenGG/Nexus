@@ -124,7 +124,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("getHash")
 	@Permission("group.admin")
 	void getHash() {
-		send(json(PREFIX + "Resource pack hash: " + hash).hover("&eClick to copy").copy(hash));
+		send(json(PREFIX + "Resource pack hash: &e" + hash).hover("&eClick to copy").copy(hash));
 	}
 
 	@Async
