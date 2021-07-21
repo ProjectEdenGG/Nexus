@@ -84,7 +84,7 @@ public class Shop implements PlayerOwnedObject {
 	@Embedded
 	private List<ItemStack> holding = new ArrayList<>();
 	@Embedded
-	private List<Material> disabledMarketItems = new ArrayList<>();
+	private List<Material> disabledResourceMarketItems = new ArrayList<>();
 
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
@@ -706,6 +706,19 @@ public class Shop implements PlayerOwnedObject {
 			transaction(customer);
 			customer.getInventory().removeItem(product.getItem());
 			product.getShop().addHolding(product.getItem());
+		}
+
+		public BigDecimal processResourceMarket(Player customer, ItemStack item) {
+			if (product.getItem().getAmount() != 1)
+				throw new InvalidInputException("Resource market product amount must be 1 (" + pretty(product.getItem()) + ")");
+
+			BigDecimal earned = new BigDecimal(0);
+			for (int i = 0; i < item.getAmount(); i++) {
+				transaction(customer);
+				earned = earned.add(BigDecimal.valueOf(price));
+			}
+
+			return earned;
 		}
 
 		@Override
