@@ -27,7 +27,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static eden.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -79,8 +79,8 @@ public class MarketCommand extends CustomCommand implements Listener {
 	@Async
 	@Confirm
 	@Path("logger add")
-	@Permission("group.staff")
-	void breakNaturally() {
+	@Permission("group.admin")
+	void logger_add() {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		Region selection = worldEditUtils.getPlayerSelection(player());
 		if (selection.getArea() > 100000)
@@ -92,6 +92,16 @@ public class MarketCommand extends CustomCommand implements Listener {
 		save();
 	}
 
+	@Async
+	@Path("logger count")
+	@Permission("group.admin")
+	void logger_count() {
+		final var coordinates = new ResourceMarketLoggerService().get0().getCoordinates().get(world().getName());
+		AtomicInteger count = new AtomicInteger();
+		coordinates.forEach((x, zys) -> zys.forEach((z, ys) -> ys.forEach(y -> count.incrementAndGet())));
+		send(PREFIX + count + " coordinates logged");
+	}
+
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (!isResourceWorld(event.getBlock()))
@@ -99,16 +109,6 @@ public class MarketCommand extends CustomCommand implements Listener {
 
 		getLogger().add(event.getBlock().getLocation());
 		save();
-	}
-
-	public void onBlockBreak(BlockBreakEvent event) {
-		if (!isResourceWorld(event.getBlock()))
-			return;
-
-		Tasks.wait(1, () -> {
-			getLogger().add(event.getBlock().getLocation());
-			save();
-		});
 	}
 
 	@EventHandler
@@ -148,9 +148,6 @@ public class MarketCommand extends CustomCommand implements Listener {
 
 		if (getLogger().contains(block.getLocation()))
 			return false;
-
-		getLogger().add(block.getLocation());
-		save();
 
 		final boolean sold = trySell(player, drop);
 
