@@ -172,6 +172,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.IRON_ORE, 1, 28.13);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GOLD_ORE, 1, 42.19);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.LAPIS_ORE, 1, 62.50);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.COPPER_ORE, 1, 6.25);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.REDSTONE_ORE, 1, 6.25);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DIAMOND_ORE, 1, 112.50);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.EMERALD_ORE, 1, 125.00);
@@ -180,6 +181,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_GOLD_ORE, 1, 42.19);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_LAPIS_ORE, 1, 62.50);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_REDSTONE_ORE, 1, 6.25);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_COPPER_ORE, 1, 6.25);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_DIAMOND_ORE, 1, 112.50);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_EMERALD_ORE, 1, 125.00);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.NETHER_QUARTZ_ORE, 1, 7.81);
@@ -188,7 +190,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.RED_SAND, 1, 0.70);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.COARSE_DIRT, 1, 0.55);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BLUE_ICE, 1, 4.69);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.LILY_PAD, 1, 10.94);
+//		addBuyItem(ShopGroup.SURVIVAL, true, Material.LILY_PAD, 1, 10.94);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRAVEL, 1, 0.63);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRASS_BLOCK, 1, 1.17);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.TUBE_CORAL_BLOCK, 1, 13.75);
