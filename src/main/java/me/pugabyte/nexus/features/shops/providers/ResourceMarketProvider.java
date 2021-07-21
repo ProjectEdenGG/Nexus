@@ -41,14 +41,14 @@ public class ResourceMarketProvider extends _ShopProvider {
 
 		products.forEach(product -> {
 			final Material type = product.getItem().getType();
-			final ItemBuilder builder = product.getItemWithLore();
+			final ItemBuilder builder = product.getItemWithLore().lore(product.getExchange().getLore()).lore("");
 			final Runnable toggle;
 
 			if (shop.getDisabledResourceMarketItems().contains(type)) {
-				builder.lore("&c&lDisabled").lore("&aClick to enable");
+				builder.lore("&c&lDisabled").lore("&aClick to enable").glow();
 				toggle = () -> shop.getDisabledResourceMarketItems().remove(type);
 			} else {
-				builder.lore("&a&lEnabled").lore("&cClick to disable").glow();
+				builder.lore("&a&lEnabled").lore("&cClick to disable");
 				toggle = () -> shop.getDisabledResourceMarketItems().add(type);
 			}
 

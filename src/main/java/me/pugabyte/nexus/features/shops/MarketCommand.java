@@ -4,7 +4,6 @@ import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.shops.providers.BrowseMarketProvider;
-import me.pugabyte.nexus.features.shops.providers.ResourceMarketProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
 import me.pugabyte.nexus.framework.commands.models.annotations.Permission;
@@ -37,7 +36,6 @@ import java.util.UUID;
 
 import static eden.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
-import static me.pugabyte.nexus.utils.WorldGroup.isResourceWorld;
 
 @NoArgsConstructor
 public class MarketCommand extends CustomCommand implements Listener {
@@ -48,10 +46,7 @@ public class MarketCommand extends CustomCommand implements Listener {
 
 	@Path
 	void run() {
-		if (isResourceWorld(world()))
-			new ResourceMarketProvider(null).open(player());
-		else
-			new BrowseMarketProvider(null).open(player());
+		new BrowseMarketProvider(null).open(player());
 	}
 
 	@Path("reload")
