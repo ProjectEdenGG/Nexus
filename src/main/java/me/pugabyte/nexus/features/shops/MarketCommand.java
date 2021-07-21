@@ -36,6 +36,7 @@ import java.util.UUID;
 
 import static eden.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
+import static me.pugabyte.nexus.utils.WorldGroup.isResourceWorld;
 
 @NoArgsConstructor
 public class MarketCommand extends CustomCommand implements Listener {
@@ -71,12 +72,18 @@ public class MarketCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
+		if (!isResourceWorld(event.getBlock()))
+			return;
+
 		getLogger().add(event.getBlock().getLocation());
 		save();
 	}
 
 	@EventHandler
 	public void onBlockDropItem(BlockDropItemEvent event) {
+		if (!isResourceWorld(event.getBlock()))
+			return;
+
 		event.getItems().removeIf(item ->
 			trySell(event.getPlayer(), event.getBlockState(), item.getItemStack()));
 	}
@@ -84,6 +91,9 @@ public class MarketCommand extends CustomCommand implements Listener {
 	/*
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event) {
+		if (!isResourceWorld(event.getLocation()))
+			return;
+
 		if (!(event.getEntity() instanceof TNTPrimed tnt))
 			return;
 
