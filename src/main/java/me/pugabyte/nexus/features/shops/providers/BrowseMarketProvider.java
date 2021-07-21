@@ -15,7 +15,7 @@ public class BrowseMarketProvider extends PlayerShopProvider {
 	@Override
 	public void open(Player player, int page) {
 		if (shop.getProducts().isEmpty())
-			new Market();
+			Market.load();
 
 		open(player, page, this, "&0Browse Market");
 	}
