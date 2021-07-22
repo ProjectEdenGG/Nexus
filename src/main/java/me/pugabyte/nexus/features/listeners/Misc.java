@@ -297,7 +297,7 @@ public class Misc implements Listener {
 		World world = nerd.getDimension();
 		if (world == null) return;
 
-		if (world.getName().startsWith("resource")) {
+		if (WorldGroup.isResourceWorld(world)) {
 			nerd = Nerd.of(event.getUniqueId());
 			if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
 				toSpawn.add(event.getUniqueId());

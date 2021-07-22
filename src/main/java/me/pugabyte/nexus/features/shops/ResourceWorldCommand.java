@@ -185,10 +185,10 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public void onEnterResourceWorld(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
-		if (!event.getTo().getWorld().getName().startsWith("resource"))
+		if (!isResourceWorld(event.getTo()))
 			return;
 
-		if (event.getFrom().getWorld().getName().startsWith("resource"))
+		if (isResourceWorld(event.getFrom()))
 			return;
 
 		if (Rank.of(player).isStaff())
@@ -208,7 +208,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onHomeBlockPlace(BlockPlaceEvent event) {
-		if (!event.getPlayer().getWorld().getName().startsWith("resource")) return;
+		if (!isResourceWorld(event.getPlayer())) return;
 
 		List<Material> materials = new ArrayList<>(Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.BARREL));
 		materials.addAll(MaterialTag.WOODEN_DOORS.getValues());
