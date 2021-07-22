@@ -1,6 +1,7 @@
 package me.pugabyte.nexus.framework.commands.models;
 
 import eden.annotations.Disabled;
+import eden.annotations.Environments;
 import eden.interfaces.PlayerOwnedObject;
 import lombok.SneakyThrows;
 import me.pugabyte.nexus.Nexus;
@@ -468,6 +469,10 @@ public abstract class ICustomCommand {
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
+			.filter(method -> {
+				final Environments envs = method.getAnnotation(Environments.class);
+				return envs == null || Arrays.asList(envs.value()).contains(Nexus.getEnv());
+			})
 			.filter(method -> hasPermission(event.getSender(), method))
 			.collect(Collectors.toList());
 
