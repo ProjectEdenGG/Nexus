@@ -189,9 +189,6 @@ public abstract class ICustomCommand {
 
 		List<String> args = new ArrayList<>(event.getArgs());
 
-		if (args.isEmpty())
-			return objects;
-
 		int i = 0;
 		for (Parameter parameter : switches) {
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);

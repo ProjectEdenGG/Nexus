@@ -43,13 +43,18 @@ public class BalanceTopCommand extends CustomCommand {
 		else
 			processing.add(uuid());
 
+		if (world == null)
+			error("World cannot be null");
+
 		List<Banker> bankers = service.getAll().stream()
 				.filter(banker -> !banker.isMarket() && banker.getBalance(world).compareTo(BigDecimal.valueOf(500)) != 0)
 				.sorted(Comparator.comparing(banker -> banker.getBalance(world), Comparator.reverseOrder()))
 				.collect(Collectors.toList());
 
-		if (bankers.isEmpty())
+		if (bankers.isEmpty()) {
 			error("No balances found");
+			processing.remove(uuid());
+		}
 
 		double sum = bankers.stream().mapToDouble(banker -> banker.getBalance(world).doubleValue()).sum();
 
