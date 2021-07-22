@@ -68,7 +68,7 @@ public class SkinCacheCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("getLastChange [player]")
 	void getLastChange(@Arg("self") SkinCache cache) {
-		send(PREFIX + "Skin last changed " + Timespan.of(cache.getLastChanged()) + " ago");
+		send(PREFIX + "Skin last changed " + Timespan.of(cache.getLastChanged()).format() + " ago");
 	}
 
 	@NotNull
