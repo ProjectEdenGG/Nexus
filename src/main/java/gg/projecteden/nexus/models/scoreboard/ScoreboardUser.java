@@ -1,0 +1,179 @@
+package gg.projecteden.nexus.models.scoreboard;
+
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
+import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.EdenScoreboard;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.apache.commons.collections4.map.ListOrderedMap;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@Data
+@Entity(value = "scoreboard_user", noClassnameStored = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Converters(UUIDConverter.class)
+public class ScoreboardUser implements PlayerOwnedObject {
+	@Id
+	@NonNull
+	private UUID uuid;
+	private Map<ScoreboardLine, Boolean> lines = new HashMap<>();
+	private boolean active = true;
+
+	private transient EdenScoreboard scoreboard;
+	private transient ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
+	private transient int headerTaskId = -1;
+	private transient Map<ScoreboardLine, Integer> taskIds = new HashMap<>();
+
+	public static final int HEADER_UPDATE_INTERVAL = 2;
+	public static final int UPDATE_INTERVAL = 40;
+
+	public ScoreboardUser(UUID uuid) {
+		this.uuid = uuid;
+		if (lines.isEmpty())
+			lines = ScoreboardLine.getDefaultLines(getOnlinePlayer());
+	}
+
+	public void on() {
+		if (UUID.fromString("75d63edb-84cc-4d4a-b761-4f81c91b2b7a").equals(uuid)) {
+			try {
+				throw new NexusException("Turning on keyhole's scoreboard");
+			} catch (NexusException ex) {
+				Nexus.log(ex.getMessage());
+				ex.printStackTrace();
+			}
+		}
+
+		pause();
+		if (scoreboard == null)
+			scoreboard = new EdenScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Project Eden &e<", getOnlinePlayer());
+		else
+			scoreboard.subscribe(getOnlinePlayer());
+		active = true;
+		Tasks.cancel(headerTaskId);
+		headerTaskId = Tasks.repeatAsync(0, (long) (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getOnlinePlayer()));
+		startTasks();
+	}
+
+	public void off() {
+		active = false;
+		pause();
+	}
+
+	public void pause() {
+		if (scoreboard != null) {
+			if (getOfflinePlayer().isOnline())
+				scoreboard.unsubscribe(getOnlinePlayer());
+			scoreboard.delete();
+			scoreboard = null;
+		}
+		rendered = new ListOrderedMap<>();
+		Tasks.cancel(headerTaskId);
+		headerTaskId = -1;
+		cancelTasks();
+	}
+
+	public void cancelTasks() {
+		taskIds.values().forEach(Tasks::cancel);
+		taskIds.clear();
+	}
+
+	private String getRenderedText(ScoreboardLine line) {
+		return rendered.getOrDefault(line, null);
+	}
+
+	private int getScore(ScoreboardLine line) {
+		List<ScoreboardLine> renderedOrder = new ArrayList<>();
+		for (ScoreboardLine toRender : ScoreboardLine.values())
+			if (lines.containsKey(toRender) && lines.get(toRender))
+				renderedOrder.add(toRender);
+		return renderedOrder.size() - renderedOrder.indexOf(line) - 1;
+	}
+
+	public void startTasks() {
+		cancelTasks();
+		Arrays.asList(ScoreboardLine.values()).forEach(line -> {
+			if (lines.containsKey(line) && lines.get(line))
+				taskIds.put(line, Tasks.repeatAsync(5, line.getInterval(), () -> render(line)));
+		});
+	}
+
+	public void remove(ScoreboardLine line) {
+		removeLine(getRenderedText(line));
+		rendered.remove(line);
+		if (taskIds.containsKey(line))
+			Tasks.cancel(taskIds.get(line));
+	}
+
+	public void render(ScoreboardLine line) {
+		if (scoreboard == null)
+			return;
+
+		if (!getOfflinePlayer().isOnline()) {
+			pause();
+			return;
+		}
+
+		String oldText = getRenderedText(line);
+		if (lines.containsKey(line) && lines.get(line)) {
+			String newText = line.render(getOnlinePlayer());
+
+			if (!isNullOrEmpty(newText)) {
+				if (newText.equals(oldText))
+					if (scoreboard.getLines().containsKey(oldText) && scoreboard.getLines().get(oldText) == getScore(line))
+						return;
+
+				removeLine(oldText);
+				rendered.put(line, newText);
+				scoreboard.setLine(newText, getScore(line));
+			} else {
+				removeLine(oldText);
+			}
+		} else {
+			removeLine(oldText);
+		}
+	}
+
+	private void removeLine(String oldText) {
+		try {
+			scoreboard.removeLine(oldText);
+		} catch (NullPointerException ignore) {}
+	}
+
+	public static class Header implements Runnable {
+		private final ScoreboardUser user;
+
+		public Header(Player player) {
+			user = new ScoreboardService().get(player);
+		}
+
+		@Override
+		public void run() {
+			AtomicInteger wait = new AtomicInteger(0);
+			ScoreboardLine.getHeaderFrames().iterator().forEachRemaining(header ->
+					Tasks.waitAsync(wait.getAndAdd(HEADER_UPDATE_INTERVAL), () -> {
+						if (user.isActive() && user.getScoreboard() != null)
+							user.getScoreboard().setTitle(header);
+					}));
+		}
+	}
+}

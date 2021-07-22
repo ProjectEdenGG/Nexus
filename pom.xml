@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>me.pugabyte</groupId>
+    <groupId>gg.projecteden</groupId>
     <artifactId>Nexus</artifactId>
     <version>2.0</version>
 
@@ -97,11 +97,11 @@
                             <relocations>
                                 <relocation>
                                     <pattern>okhttp3</pattern>
-                                    <shadedPattern>me.pugabyte.shaded.okhttp3</shadedPattern>
+                                    <shadedPattern>gg.projecteden.shaded.okhttp3</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>kotlin</pattern>
-                                    <shadedPattern>me.pugabyte.shaded.kotlin</shadedPattern>
+                                    <shadedPattern>gg.projecteden.shaded.kotlin</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -232,9 +232,9 @@
         </dependency>
         <!-- EdenAPI -->
         <dependency>
-            <groupId>me.pugabyte</groupId>
+            <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.2.5</version>
+            <version>1.4.0</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>

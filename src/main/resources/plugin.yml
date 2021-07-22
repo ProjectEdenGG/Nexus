@@ -1,5 +1,5 @@
 name: Nexus
-main: me.pugabyte.nexus.Nexus
+main: gg.projecteden.nexus.Nexus
 version: ${project.version}
 api-version: 1.17
 load: POSTWORLD
