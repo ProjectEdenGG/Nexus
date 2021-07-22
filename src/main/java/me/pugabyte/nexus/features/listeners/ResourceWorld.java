@@ -120,7 +120,7 @@ public class ResourceWorld implements Listener {
 	*/
 
 	private static final int filidId = 2766;
-	private static final int radius = 7500;
+	public static final int RADIUS = 7500;
 
 	public static void reset(boolean test) {
 		getFilidNPC().despawn();
@@ -199,9 +199,9 @@ public class ResourceWorld implements Listener {
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
 		getFilidNPC().spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
 
-		runCommandAsConsole("wb " + worldName + " set " + radius + " 0 0");
+		runCommandAsConsole("wb " + worldName + " set " + RADIUS + " 0 0");
 		runCommandAsConsole("bluemap purge " + worldName);
-		Tasks.wait(Time.MINUTE, () -> runCommandAsConsole("chunkmaster generate " + worldName + " " + (radius + 200) + " circle"));
+		Tasks.wait(Time.MINUTE, () -> runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
 	}
 
 	private static NPC getFilidNPC() {

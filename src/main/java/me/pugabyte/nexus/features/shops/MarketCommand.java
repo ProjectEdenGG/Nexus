@@ -6,6 +6,7 @@ import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.pugabyte.nexus.features.listeners.ResourceWorld;
 import me.pugabyte.nexus.features.shops.providers.BrowseMarketProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
 import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static eden.utils.StringUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.ItemUtils.isNullOrAir;
@@ -96,6 +96,7 @@ public class MarketCommand extends CustomCommand implements Listener {
 			getLogger().add(block.getLocation());
 
 		save();
+		send(PREFIX + "Added &e" + selection.getArea() + " &3locations to logger, new size: &e" + getLogger().size());
 	}
 
 	@Async
@@ -103,13 +104,13 @@ public class MarketCommand extends CustomCommand implements Listener {
 	@Path("logger add random [amount]")
 	@Permission("group.admin")
 	void logger_add_random(@Arg("10000") int amount) {
+		if (isResourceWorld(world()))
+			throw new InvalidInputException("You must be in a resource world");
+
 		final ResourceMarketLogger logger = getLogger();
 		for (int i = 0; i < amount; i++) {
 			while (true) {
-				final int x = RandomUtils.randomInt(-7500, 7500);
-				final int y = RandomUtils.randomInt(-64, 319);
-				final int z = RandomUtils.randomInt(-7500, 7500);
-				final Location location = new Location(world(), x, y, z);
+				final Location location = getRandomLocation();
 				if (logger.contains(location))
 					continue;
 
@@ -119,21 +120,22 @@ public class MarketCommand extends CustomCommand implements Listener {
 		}
 
 		save();
-		send(PREFIX + "Added &e" + amount + " &3locations to logger, new size: &e" + count());
+		send(PREFIX + "Added &e" + amount + " &3locations to logger, new size: &e" + getLogger().size());
+	}
+
+	@NotNull
+	private Location getRandomLocation() {
+		final int x = RandomUtils.randomInt(-ResourceWorld.RADIUS, ResourceWorld.RADIUS);
+		final int y = RandomUtils.randomInt(-64, 319);
+		final int z = RandomUtils.randomInt(-ResourceWorld.RADIUS, ResourceWorld.RADIUS);
+		return new Location(world(), x, y, z);
 	}
 
 	@Async
 	@Path("logger count")
 	@Permission("group.admin")
 	void logger_count() {
-		send(PREFIX + count() + " coordinates logged");
-	}
-
-	private int count() {
-		final var coordinates = new ResourceMarketLoggerService().get0().getCoordinateMap().get(world().getName());
-		AtomicInteger count = new AtomicInteger();
-		coordinates.forEach((x, zys) -> zys.forEach((z, ys) -> ys.forEach(y -> count.incrementAndGet())));
-		return count.get();
+		send(PREFIX + getLogger().size() + " coordinates logged");
 	}
 
 	@EventHandler

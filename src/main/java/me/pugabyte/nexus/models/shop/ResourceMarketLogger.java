@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
 @Builder
@@ -57,6 +58,22 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 			return false;
 
 		return yList.contains(location.getBlockY());
+	}
+
+	public int size() {
+		AtomicInteger count = new AtomicInteger();
+		getCoordinateMap().forEach((world, map) -> count.addAndGet(size(world)));
+		return count.get();
+	}
+
+	public int size(String worldName) {
+		return size(getCoordinateMap().get(worldName));
+	}
+
+	private int size(Map<Integer, Map<Integer, List<Integer>>> coordinates) {
+		AtomicInteger count = new AtomicInteger();
+		coordinates.forEach((x, zys) -> zys.forEach((z, ys) -> count.addAndGet(ys.size())));
+		return count.get();
 	}
 
 	@Nullable

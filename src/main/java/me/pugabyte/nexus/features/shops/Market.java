@@ -16,12 +16,8 @@ public class Market {
 	private static final Shop market = service.getMarket();
 
 	public static void load() {
-		System.out.println("Market products: " + market.getProducts().size());
 		market.getProducts().clear();
-		System.out.println("Market products: " + market.getProducts().size());
 		addItems();
-		System.out.println("Market products: " + market.getProducts().size());
-
 		service.save(market);
 	}
 
