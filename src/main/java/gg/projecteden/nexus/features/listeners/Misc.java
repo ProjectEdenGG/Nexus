@@ -115,6 +115,9 @@ public class Misc implements Listener {
 		if (WorldGroup.MINIGAMES.equals(WorldGroup.of(player)))
 			return;
 
+		if (event.getItem().getType() != Material.GLOW_BERRIES)
+			return;
+
 		player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Time.MINUTE.x(1.5), 1));
 	}
 
