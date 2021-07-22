@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.ShopService;
@@ -13,11 +14,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResourceMarketProvider extends _ShopProvider {
+public class ResourceMarketProvider extends ShopProvider {
 	private static final ShopService service = new ShopService();
 	private static final Shop market = service.getMarket();
 
-	public ResourceMarketProvider(_ShopProvider previousMenu) {
+	public ResourceMarketProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 

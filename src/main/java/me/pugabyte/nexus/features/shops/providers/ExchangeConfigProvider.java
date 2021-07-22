@@ -5,6 +5,7 @@ import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.shops.Shops;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
@@ -30,7 +31,7 @@ import static me.pugabyte.nexus.features.shops.ShopUtils.prettyMoney;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 import static me.pugabyte.nexus.utils.StringUtils.pretty;
 
-public class ExchangeConfigProvider extends _ShopProvider {
+public class ExchangeConfigProvider extends ShopProvider {
 	private Product product;
 	private final AtomicReference<ItemStack> item = new AtomicReference<>();
 	private final AtomicReference<ItemStack> priceItem = new AtomicReference<>();
@@ -44,11 +45,11 @@ public class ExchangeConfigProvider extends _ShopProvider {
 	private final ItemStack more1 = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name("&aIncrease amount").build();
 	private final ItemStack more8 = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).amount(8).name("&aIncrease amount by 8").build();
 
-	public ExchangeConfigProvider(_ShopProvider previousMenu) {
+	public ExchangeConfigProvider(ShopProvider previousMenu) {
 		this(previousMenu, null);
 	}
 
-	public ExchangeConfigProvider(_ShopProvider previousMenu, Product product) {
+	public ExchangeConfigProvider(ShopProvider previousMenu, Product product) {
 		this.previousMenu = previousMenu;
 		this.product = product;
 		if (product != null) {

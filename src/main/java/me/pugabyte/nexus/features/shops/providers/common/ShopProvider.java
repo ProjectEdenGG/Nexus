@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.shops.providers;
+package me.pugabyte.nexus.features.shops.providers.common;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
@@ -23,11 +23,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import static me.pugabyte.nexus.utils.ItemUtils.getShulkerContents;
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
+public abstract class ShopProvider extends MenuUtils implements InventoryProvider {
 	protected final ShopService service = new ShopService();
 	protected ShopGroup shopGroup;
 	@Getter
-	protected _ShopProvider previousMenu;
+	protected ShopProvider previousMenu;
 	@Getter
 	protected int page = 0;
 
@@ -48,7 +48,7 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 
 	abstract public void open(Player player, int page);
 
-	public void open(Player viewer, int page, _ShopProvider provider, String title) {
+	public void open(Player viewer, int page, ShopProvider provider, String title) {
 		this.page = page;
 		this.shopGroup = ShopGroup.of(viewer);
 		try {

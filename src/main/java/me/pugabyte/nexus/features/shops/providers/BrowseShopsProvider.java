@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.models.nerd.NerdService;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -13,9 +14,9 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.plural;
 
-public class BrowseShopsProvider extends _ShopProvider {
+public class BrowseShopsProvider extends ShopProvider {
 
-	public BrowseShopsProvider(_ShopProvider previousMenu) {
+	public BrowseShopsProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 

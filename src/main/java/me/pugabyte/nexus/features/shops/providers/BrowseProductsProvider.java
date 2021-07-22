@@ -5,13 +5,14 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.Filter;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterEmptyStock;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterExchangeType;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterMarketItems;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterRequiredType;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterType;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.FilterEmptyStock;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.FilterExchangeType;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.FilterMarketItems;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.FilterRequiredType;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.utils.ItemBuilder;
@@ -29,28 +30,28 @@ import static me.pugabyte.nexus.features.shops.Shops.PREFIX;
 import static me.pugabyte.nexus.utils.ItemUtils.getRawShulkerContents;
 import static me.pugabyte.nexus.utils.StringUtils.camelCase;
 
-public class BrowseProductsProvider extends _ShopProvider {
+public class BrowseProductsProvider extends ShopProvider {
 	@Getter
 	protected List<Filter> filters;
 	protected Shop shop;
 
-	public BrowseProductsProvider(_ShopProvider previousMenu) {
+	public BrowseProductsProvider(ShopProvider previousMenu) {
 		this(previousMenu, null, new ArrayList<>());
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Shop shop) {
 		this(previousMenu, shop, new ArrayList<>());
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Filter filter) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Filter filter) {
 		this(previousMenu, null, Collections.singletonList(filter));
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop, Filter filter) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Shop shop, Filter filter) {
 		this(previousMenu, shop, Collections.singletonList(filter));
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop, List<Filter> filters) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Shop shop, List<Filter> filters) {
 		this.previousMenu = previousMenu;
 		if (previousMenu != null && previousMenu.getPreviousMenu() != null && previousMenu.getPreviousMenu().getPreviousMenu() != null
 				&& previousMenu.getPreviousMenu().getClass() == this.getClass())
@@ -247,10 +248,10 @@ public class BrowseProductsProvider extends _ShopProvider {
 		return null;
 	}
 
-	public static class ShulkerContentsProvider extends  _ShopProvider {
+	public static class ShulkerContentsProvider extends ShopProvider {
 		private final Product product;
 
-		public ShulkerContentsProvider(_ShopProvider previousMenu, Product product) {
+		public ShulkerContentsProvider(ShopProvider previousMenu, Product product) {
 			this.previousMenu = previousMenu;
 			this.product = product;
 			this.rows = 4;

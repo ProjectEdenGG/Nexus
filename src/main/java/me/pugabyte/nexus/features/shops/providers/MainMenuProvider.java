@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
 import fr.minuskube.inv.content.InventoryContents;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.utils.ItemBuilder;
 import me.pugabyte.nexus.utils.Tasks;
@@ -15,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MainMenuProvider extends _ShopProvider {
+public class MainMenuProvider extends ShopProvider {
 
-	public MainMenuProvider(_ShopProvider previousMenu) {
+	public MainMenuProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 

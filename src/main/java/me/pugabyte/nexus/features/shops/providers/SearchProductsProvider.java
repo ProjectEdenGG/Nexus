@@ -3,8 +3,9 @@ package me.pugabyte.nexus.features.shops.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.Nexus;
-import me.pugabyte.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import me.pugabyte.nexus.features.shops.Shops;
+import me.pugabyte.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.utils.ItemUtils;
 import me.pugabyte.nexus.utils.MaterialTag;
 import org.bukkit.Material;
@@ -17,9 +18,9 @@ import java.util.function.Predicate;
 import static me.pugabyte.nexus.features.menus.SignMenuFactory.ARROWS;
 import static me.pugabyte.nexus.utils.StringUtils.stripColor;
 
-public class SearchProductsProvider extends _ShopProvider {
+public class SearchProductsProvider extends ShopProvider {
 
-	public SearchProductsProvider(_ShopProvider previousMenu) {
+	public SearchProductsProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 

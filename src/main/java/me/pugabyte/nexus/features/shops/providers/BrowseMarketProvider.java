@@ -2,6 +2,7 @@ package me.pugabyte.nexus.features.shops.providers;
 
 import fr.minuskube.inv.content.InventoryContents;
 import me.pugabyte.nexus.features.shops.Market;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.models.shop.ShopService;
 import org.bukkit.entity.Player;
 
@@ -9,7 +10,7 @@ import static me.pugabyte.nexus.utils.WorldGroup.isResourceWorld;
 
 public class BrowseMarketProvider extends PlayerShopProvider {
 
-	public BrowseMarketProvider(_ShopProvider previousMenu) {
+	public BrowseMarketProvider(ShopProvider previousMenu) {
 		super(previousMenu, new ShopService().getMarket());
 	}
 

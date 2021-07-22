@@ -1,4 +1,4 @@
-package me.pugabyte.nexus.features.shops;
+package me.pugabyte.nexus.features.shops.providers.common;
 
 import eden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;

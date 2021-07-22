@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.pugabyte.nexus.Nexus;
 import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.shops.Shops;
+import me.pugabyte.nexus.features.shops.providers.common.ShopProvider;
 import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.models.shop.Shop;
 import me.pugabyte.nexus.models.shop.ShopService;
@@ -29,9 +30,9 @@ import java.util.List;
 
 import static me.pugabyte.nexus.utils.StringUtils.colorize;
 
-public class YourShopProvider extends _ShopProvider {
+public class YourShopProvider extends ShopProvider {
 
-	public YourShopProvider(_ShopProvider previousMenu) {
+	public YourShopProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 
@@ -106,13 +107,13 @@ public class YourShopProvider extends _ShopProvider {
 		addPagination(player, contents, items);
 	}
 
-	public static class CollectItemsProvider extends _ShopProvider implements TemporaryListener {
+	public static class CollectItemsProvider extends ShopProvider implements TemporaryListener {
 		private final static String TITLE = colorize("&0Collect Items");
 		@Getter
 		private Player player;
-		private final _ShopProvider previousMenu;
+		private final ShopProvider previousMenu;
 
-		public CollectItemsProvider(_ShopProvider previousMenu) {
+		public CollectItemsProvider(ShopProvider previousMenu) {
 			this.previousMenu = previousMenu;
 		}
 
