@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.pugabyte.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Location;
@@ -34,17 +35,25 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, Map<Integer, Map<Integer, List<Integer>>>> coordinateMap = new LinkedHashMap<>();
+	private Map<Integer, Map<Integer, List<Integer>>> coordinateMap = new LinkedHashMap<>();
+
+	private void validate(Location location) {
+		if (!location.getWorld().getUID().equals(uuid))
+			throw new InvalidInputException("Using wrong world");
+	}
 
 	public void add(Location location) {
+		validate(location);
+
 		coordinateMap
-			.computeIfAbsent(location.getWorld().getName(), $ -> new LinkedHashMap<>())
 			.computeIfAbsent(location.getBlockX(), $ -> new LinkedHashMap<>())
 			.computeIfAbsent(location.getBlockZ(), $ -> new ArrayList<>())
 			.add(location.getBlockY());
 	}
 
 	public void remove(Location location) {
+		validate(location);
+
 		final var yList = getYs(location);
 		if (Utils.isNullOrEmpty(yList))
 			return;
@@ -53,6 +62,8 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 	}
 
 	public boolean contains(Location location) {
+		validate(location);
+
 		final var yList = getYs(location);
 		if (Utils.isNullOrEmpty(yList))
 			return false;
@@ -62,27 +73,13 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 
 	public int size() {
 		AtomicInteger count = new AtomicInteger();
-		getCoordinateMap().forEach((world, map) -> count.addAndGet(size(world)));
-		return count.get();
-	}
-
-	public int size(String worldName) {
-		return size(getCoordinateMap().get(worldName));
-	}
-
-	private int size(Map<Integer, Map<Integer, List<Integer>>> coordinates) {
-		AtomicInteger count = new AtomicInteger();
-		coordinates.forEach((x, zys) -> zys.forEach((z, ys) -> count.addAndGet(ys.size())));
+		coordinateMap.forEach((x, zys) -> zys.forEach((z, ys) -> count.addAndGet(ys.size())));
 		return count.get();
 	}
 
 	@Nullable
 	private List<Integer> getYs(Location location) {
-		final var world = coordinateMap.get(location.getWorld().getName());
-		if (Utils.isNullOrEmpty(world))
-			return null;
-
-		final var x = world.get(location.getBlockX());
+		final var x = coordinateMap.get(location.getBlockX());
 		if (Utils.isNullOrEmpty(x))
 			return null;
 
