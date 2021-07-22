@@ -88,12 +88,16 @@ public class SkinCache implements PlayerOwnedObject {
 	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f0-9]{64}");
 
 	public String getTextureUrl() {
-		final String decoded = new String(Base64.getDecoder().decode(this.value));
+		return getTextureUrl(this.value);
+	}
+
+	public String getTextureUrl(String value) {
+		final String decoded = new String(Base64.getDecoder().decode(value));
 		final Matcher matcher = TEXTURE_URL_REGEX.matcher(decoded);
 		if (matcher.find())
 			return matcher.group();
 
-		return "Could not find url: " + this.value;
+		return "Could not find url: " + value;
 	}
 
 	public boolean update() {
@@ -111,7 +115,7 @@ public class SkinCache implements PlayerOwnedObject {
 		this.signature = property.getSignature();
 		new SkinCacheService().save(this);
 
-		final boolean changed = !this.value.equals(previous);
+		final boolean changed = !getTextureUrl().equals(getTextureUrl(previous));
 
 		if (changed)
 			this.lastChanged = LocalDateTime.now();
