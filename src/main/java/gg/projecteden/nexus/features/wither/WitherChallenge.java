@@ -40,6 +40,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
+
 @NoArgsConstructor
 public class WitherChallenge extends Feature implements Listener {
 
@@ -168,7 +170,7 @@ public class WitherChallenge extends Feature implements Listener {
 	public void onSpawn(CreatureSpawnEvent event) {
 		if (!event.getEntity().getType().equals(EntityType.WITHER)) return;
 		World world = event.getLocation().getWorld();
-		if (world.getName().equalsIgnoreCase("events") || world.getName().contains("resource")) return;
+		if (world.getName().equalsIgnoreCase("events") || isResourceWorld(world)) return;
 		if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) return;
 		event.setCancelled(true);
 	}

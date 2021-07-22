@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.shops.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
@@ -15,11 +16,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ItemSearchProvider extends _ShopProvider {
+public class ItemSearchProvider extends ShopProvider {
 	private final Function<Material, Boolean> filter;
 	private final Consumer<ItemClickData> onChoose;
 
-	public ItemSearchProvider(_ShopProvider previousMenu, Function<Material, Boolean> filter, Consumer<ItemClickData> onChoose) {
+	public ItemSearchProvider(ShopProvider previousMenu, Function<Material, Boolean> filter, Consumer<ItemClickData> onChoose) {
 		this.previousMenu = previousMenu;
 		this.filter = filter;
 		this.onChoose = onChoose;

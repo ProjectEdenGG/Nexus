@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.shops.providers;
+package gg.projecteden.nexus.features.shops.providers.common;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
@@ -9,7 +9,6 @@ import fr.minuskube.inv.content.Pagination;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider.ShulkerContentsProvider;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -24,11 +23,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-public abstract class _ShopProvider extends MenuUtils implements InventoryProvider {
+public abstract class ShopProvider extends MenuUtils implements InventoryProvider {
 	protected final ShopService service = new ShopService();
 	protected ShopGroup shopGroup;
 	@Getter
-	protected _ShopProvider previousMenu;
+	protected ShopProvider previousMenu;
 	@Getter
 	protected int page = 0;
 
@@ -49,15 +48,10 @@ public abstract class _ShopProvider extends MenuUtils implements InventoryProvid
 
 	abstract public void open(Player player, int page);
 
-	public void open(Player viewer, int page, _ShopProvider provider, String title) {
+	public void open(Player viewer, int page, ShopProvider provider, String title) {
 		this.page = page;
 		this.shopGroup = ShopGroup.of(viewer);
 		try {
-			if (!(this instanceof BrowseMarketProvider || this instanceof SearchProductsProvider) && viewer.getWorld().getName().startsWith("resource"))
-				throw new InvalidInputException("You cannot use player shops while in the resource world");
-			if ((this instanceof YourShopProvider) && !viewer.hasPermission("shops.edit"))
-				throw new InvalidInputException("Shops is currently in beta testing, only Trusted and above can create shops");
-
 			SmartInventory.builder()
 					.provider(provider)
 					.title(colorize(title))

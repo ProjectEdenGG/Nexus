@@ -22,7 +22,7 @@ public class ShopUtils {
 
 	public static void giveItems(OfflinePlayer player, List<ItemStack> items) {
 		Shop shop = new ShopService().get(player);
-		if (player.isOnline()) {
+		if (player.isOnline() && player.getPlayer() != null) {
 			List<ItemStack> excess = PlayerUtils.giveItemsAndGetExcess(player.getPlayer(), items);
 			shop.addHolding(excess);
 			if (!excess.isEmpty())

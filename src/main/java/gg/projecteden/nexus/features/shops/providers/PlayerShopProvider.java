@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.Shop;
 import org.bukkit.entity.Player;
 
 public class PlayerShopProvider extends BrowseProductsProvider {
 
-	public PlayerShopProvider(_ShopProvider previousMenu, Shop shop) {
+	public PlayerShopProvider(ShopProvider previousMenu, Shop shop) {
 		super(previousMenu, shop);
 	}
 

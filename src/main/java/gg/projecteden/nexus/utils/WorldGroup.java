@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 
 import java.util.Arrays;
@@ -59,6 +60,10 @@ public enum WorldGroup {
 		return of(entity.getWorld());
 	}
 
+	public static WorldGroup of(Block block) {
+		return of(block.getWorld());
+	}
+
 	public static WorldGroup of(Location location) {
 		return of(location.getWorld());
 	}
@@ -78,4 +83,25 @@ public enum WorldGroup {
 
 		return UNKNOWN;
 	}
+
+	public static boolean isResourceWorld(Entity entity) {
+		return isResourceWorld(entity.getWorld());
+	}
+
+	public static boolean isResourceWorld(Block block) {
+		return isResourceWorld(block.getWorld());
+	}
+
+	public static boolean isResourceWorld(Location location) {
+		return isResourceWorld(location.getWorld());
+	}
+
+	public static boolean isResourceWorld(World world) {
+		return isResourceWorld(world.getName());
+	}
+
+	public static boolean isResourceWorld(String world) {
+		return world.toLowerCase().startsWith("resource");
+	}
+
 }

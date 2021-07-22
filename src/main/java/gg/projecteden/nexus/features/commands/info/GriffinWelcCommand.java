@@ -4,9 +4,9 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-public class PugaWelcCommand extends CustomCommand {
+public class GriffinWelcCommand extends CustomCommand {
 
-	public PugaWelcCommand(CommandEvent event) {
+	public GriffinWelcCommand(CommandEvent event) {
 		super(event);
 	}
 

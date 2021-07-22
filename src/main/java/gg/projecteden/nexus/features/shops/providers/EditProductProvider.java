@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.shops.ShopCommand;
 import gg.projecteden.nexus.features.shops.Shops;
+import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
@@ -35,10 +36,10 @@ import static gg.projecteden.nexus.utils.ItemUtils.isSimilar;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
-public class EditProductProvider extends _ShopProvider {
+public class EditProductProvider extends ShopProvider {
 	private final Product product;
 
-	public EditProductProvider(_ShopProvider previousMenu, Product product) {
+	public EditProductProvider(ShopProvider previousMenu, Product product) {
 		this.previousMenu = previousMenu;
 		this.product = product;
 		this.rows = 4;
@@ -136,14 +137,14 @@ public class EditProductProvider extends _ShopProvider {
 
 	}
 
-	public static class AddStockProvider extends _ShopProvider implements TemporaryListener {
+	public static class AddStockProvider extends ShopProvider implements TemporaryListener {
 		private final static String TITLE = colorize("&0Add Stock");
 		@Getter
 		private Player player;
-		private final _ShopProvider previousMenu;
+		private final ShopProvider previousMenu;
 		private final Product product;
 
-		public AddStockProvider(_ShopProvider previousMenu, Product product) {
+		public AddStockProvider(ShopProvider previousMenu, Product product) {
 			this.previousMenu = previousMenu;
 			this.product = product;
 		}
@@ -183,15 +184,15 @@ public class EditProductProvider extends _ShopProvider {
 		}
 	}
 
-	public static class RemoveStockProvider extends _ShopProvider implements TemporaryListener {
+	public static class RemoveStockProvider extends ShopProvider implements TemporaryListener {
 		private final static String TITLE = colorize("&0Remove Stock");
 		@Getter
 		private Player player;
-		private final _ShopProvider previousMenu;
+		private final ShopProvider previousMenu;
 		private final Product product;
 		private int itemsAdded;
 
-		public RemoveStockProvider(_ShopProvider previousMenu, Product product) {
+		public RemoveStockProvider(ShopProvider previousMenu, Product product) {
 			this.previousMenu = previousMenu;
 			this.product = product;
 		}

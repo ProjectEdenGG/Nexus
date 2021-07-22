@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.framework.commands.models;
 
 import gg.projecteden.annotations.Disabled;
+import gg.projecteden.annotations.Environments;
 import gg.projecteden.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -468,6 +469,10 @@ public abstract class ICustomCommand {
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
+			.filter(method -> {
+				final Environments envs = method.getAnnotation(Environments.class);
+				return envs == null || Arrays.asList(envs.value()).contains(Nexus.getEnv());
+			})
 			.filter(method -> hasPermission(event.getSender(), method))
 			.collect(Collectors.toList());
 

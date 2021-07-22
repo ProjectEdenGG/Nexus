@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.shops;
+package gg.projecteden.nexus.features.shops.providers.common;
 
 import gg.projecteden.nexus.features.shops.providers.SearchProductsProvider;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;

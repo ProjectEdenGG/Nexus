@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.boost;
 
-import gg.projecteden.nexus.features.shops.Shops.Market;
+import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
