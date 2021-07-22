@@ -43,7 +43,7 @@ public class NPCUtilsCommand extends CustomCommand {
 				if (plugin == null)
 					return;
 
-				final Field saveOnDisable = plugin.getClass().getField("saveOnDisable");
+				final Field saveOnDisable = plugin.getClass().getDeclaredField("saveOnDisable");
 				saveOnDisable.setAccessible(true);
 				saveOnDisable.set(plugin, true);
 			} catch (Exception e) {
