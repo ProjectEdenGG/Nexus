@@ -20,7 +20,6 @@ import me.pugabyte.nexus.features.chat.Koda;
 import me.pugabyte.nexus.features.crates.models.CrateType;
 import me.pugabyte.nexus.features.customenchants.CustomEnchants;
 import me.pugabyte.nexus.features.discord.Discord;
-import me.pugabyte.nexus.features.listeners.ResourceWorld;
 import me.pugabyte.nexus.features.listeners.TemporaryListener;
 import me.pugabyte.nexus.features.minigames.managers.ArenaManager;
 import me.pugabyte.nexus.features.minigames.managers.MatchManager;
@@ -443,18 +442,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		BiFunction<Class<? extends Event>, String, JsonBuilder> formatter = (clazz, index) ->
 				json("&3" + index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
 		paginate(sorted.keySet(), formatter, "/nexus stats eventHandlers", page);
-	}
-
-	@Confirm
-	@Path("resourceWorld reset <test>")
-	void resourceWorldReset(boolean test) {
-		ResourceWorld.reset(test);
-	}
-
-	@Confirm
-	@Path("resourceWorld setup <test>")
-	void resourceWorldSetup(boolean test) {
-		ResourceWorld.setup(test);
 	}
 
 	@Path("listTest <player...>")
