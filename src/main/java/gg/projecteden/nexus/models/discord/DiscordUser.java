@@ -125,9 +125,9 @@ public class DiscordUser implements PlayerOwnedObject {
 
 			if (pronouns.contains(pronoun)) {
 				if (!member.getRoles().contains(role))
-					member.getRoles().add(role);
+					guild.addRoleToMember(member, role).queue();
 			} else
-				member.getRoles().remove(role);
+				guild.removeRoleFromMember(member, role).queue();
 		}
 	}
 
