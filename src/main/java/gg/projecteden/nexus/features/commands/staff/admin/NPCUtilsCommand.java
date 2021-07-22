@@ -12,12 +12,16 @@ import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NonNull;
+import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +34,22 @@ public class NPCUtilsCommand extends CustomCommand {
 
 	public NPCUtilsCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		Tasks.wait(Time.SECOND, () -> {
+			try {
+				Citizens plugin = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
+				if (plugin == null)
+					return;
+
+				final Field saveOnDisable = plugin.getClass().getField("saveOnDisable");
+				saveOnDisable.setAccessible(true);
+				saveOnDisable.set(plugin, true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Async
