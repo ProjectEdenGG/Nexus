@@ -229,12 +229,7 @@ public class MarketCommand extends CustomCommand implements Listener {
 		if (getLogger().contains(block.getLocation()))
 			return false;
 
-		final boolean sold = trySell(player, drop);
-
-		if (sold)
-			actionBar(player);
-
-		return sold;
+		return trySell(player, drop);
 	}
 
 	private static final Map<UUID, BigDecimal> earned = new HashMap<>();
@@ -261,6 +256,7 @@ public class MarketCommand extends CustomCommand implements Listener {
 			throw new InvalidInputException("Cannot process resource market exchange: " + camelCase(product.get().getExchangeType()));
 
 		process(player, item, exchange);
+		actionBar(player);
 
 		return true;
 	}
