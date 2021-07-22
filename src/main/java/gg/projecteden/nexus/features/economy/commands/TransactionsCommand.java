@@ -69,7 +69,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/transaction history " + banker.getName(), page);
+		paginate(combine(transactions), formatter, "/transaction history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 	@Async

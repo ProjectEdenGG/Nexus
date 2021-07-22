@@ -61,7 +61,7 @@ public class BalanceTopCommand extends CustomCommand {
 		send(PREFIX + "Top " + camelCase(world) + " balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
 		BiFunction<Banker, String, JsonBuilder> formatter = (banker, index) ->
 				json("&3" + index + " &e" + Nickname.of(banker) + " &7- " + banker.getBalanceFormatted(world));
-		paginate(bankers, formatter, "/baltop " + world.name().toLowerCase(), page);
+		paginate(bankers, formatter, "/baltop --world=" + world.name().toLowerCase(), page);
 
 		processing.remove(uuid());
 	}

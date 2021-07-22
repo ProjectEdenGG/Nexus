@@ -73,7 +73,7 @@ public class PayCommand extends CustomCommand {
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/pay history " + banker.getName() + " " + world.name().toLowerCase(), page);
+		paginate(combine(transactions), formatter, "/pay history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 }

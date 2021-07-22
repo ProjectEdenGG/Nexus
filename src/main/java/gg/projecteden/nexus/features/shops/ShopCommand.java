@@ -126,7 +126,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/shop history " + banker.getName(), page);
+		paginate(combine(transactions), formatter, "/shop history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 	@Path("cleanup")
