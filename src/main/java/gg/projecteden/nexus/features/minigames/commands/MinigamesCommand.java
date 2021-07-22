@@ -597,15 +597,15 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Path("modifier <type>")
 	@Permission(value = "group.staff", absolute = true)
-	void modifier(MinigameModifier type) {
+	void modifier(MinigameModifiers type) {
 		Minigames.setModifier(type);
-		send(PREFIX + "Minigame modifier set to &e" + type.getName());
+		send(PREFIX + "Minigame modifier set to &e" + type.getModifier().getName());
 	}
 
 	@Path("modifier random")
 	@Permission(value = "group.staff", absolute = true)
 	void modifierRandom() {
-		modifier(RandomUtils.randomElement(Arrays.stream(MinigameModifiers.values()).map(MinigameModifiers::getModifier).collect(Collectors.toList())));
+		modifier(RandomUtils.randomElement(Arrays.stream(MinigameModifiers.values()).collect(Collectors.toList())));
 	}
 
 	@Path("refreshNameColors")
