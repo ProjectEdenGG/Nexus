@@ -712,13 +712,13 @@ public class Shop implements PlayerOwnedObject {
 			if (product.getItem().getAmount() != 1)
 				throw new InvalidInputException("Resource market product amount must be 1 (" + pretty(product.getItem()) + ")");
 
-			BigDecimal earned = new BigDecimal(0);
+			BigDecimal profit = new BigDecimal(0);
 			for (int i = 0; i < item.getAmount(); i++) {
 				transaction(customer);
-				earned = earned.add(BigDecimal.valueOf(price));
+				profit = profit.add(BigDecimal.valueOf(price));
 			}
 
-			return earned;
+			return profit;
 		}
 
 		@Override
