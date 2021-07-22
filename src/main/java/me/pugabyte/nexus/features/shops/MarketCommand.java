@@ -28,10 +28,12 @@ import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -39,11 +41,13 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -191,7 +195,6 @@ public class MarketCommand extends CustomCommand implements Listener {
 			trySell(event.getPlayer(), event.getBlockState(), item.getItemStack()));
 	}
 
-	/*
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (!isResourceWorld(event.getLocation()))
@@ -203,10 +206,16 @@ public class MarketCommand extends CustomCommand implements Listener {
 		if (!(tnt.getSource() instanceof Player player))
 			return;
 
-		for (Block block : event.blockList())
-			trySell(player, block);
+		final Iterator<Block> iterator = event.blockList().iterator();
+		while (iterator.hasNext()) {
+			final Block next = iterator.next();
+			for (ItemStack drop : next.getDrops())
+				if (trySell(player, next.getState(), drop)) {
+					next.setType(Material.AIR);
+					iterator.remove();
+				}
+		}
 	}
-	*/
 
 	private boolean trySell(Player player, BlockState block, ItemStack drop) {
 		if (isNullOrAir(block.getType()) || isNullOrAir(drop))
