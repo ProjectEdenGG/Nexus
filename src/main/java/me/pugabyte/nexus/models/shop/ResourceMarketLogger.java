@@ -49,7 +49,7 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 		if (Utils.isNullOrEmpty(yList))
 			return;
 
-		yList.remove(location.getBlockY());
+		yList.remove(Integer.valueOf(location.getBlockY()));
 	}
 
 	public boolean contains(Location location) {

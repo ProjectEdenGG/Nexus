@@ -29,12 +29,15 @@ import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -153,6 +156,29 @@ public class MarketCommand extends CustomCommand implements Listener {
 			return;
 
 		getLogger().remove(event.getBlock().getLocation());
+		save();
+	}
+
+	@EventHandler
+	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+		handlePiston(event.getBlock(), event.getBlocks(), event.getDirection());
+	}
+
+	@EventHandler
+	public void onBlockPistonExtend(BlockPistonRetractEvent event) {
+		handlePiston(event.getBlock(), event.getBlocks(), event.getDirection());
+	}
+
+	private void handlePiston(Block eventBlock, List<Block> blocks, BlockFace direction) {
+		if (!isResourceWorld(eventBlock))
+			return;
+
+		getLogger().add(eventBlock.getLocation());
+		for (Block block : blocks) {
+			getLogger().add(block.getLocation());
+			getLogger().add(block.getRelative(direction).getLocation());
+		}
+
 		save();
 	}
 
