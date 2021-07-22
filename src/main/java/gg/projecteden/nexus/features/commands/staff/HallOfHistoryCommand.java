@@ -70,7 +70,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		if (!nerd.getNickname().equals(nerd.getName()))
 			send("  &eIGN: &3" + nerd.getName());
 		if (!nerd.getPronouns().isEmpty())
-			send("  &ePronouns: &3" + String.join(", ", nerd.getPronouns()));
+			send("  &ePronouns: &3" + String.join(", ", nerd.getPronouns().stream().map(Enum::toString).toList()));
 		line();
 		HallOfHistory hallOfHistory = service.get(target.getUniqueId());
 		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {

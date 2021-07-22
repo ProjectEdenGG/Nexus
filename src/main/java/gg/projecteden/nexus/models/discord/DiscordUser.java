@@ -3,11 +3,12 @@ package gg.projecteden.nexus.models.discord;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.models.nerd.Nerd.Pronoun;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.PronounsCommand;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.discord.DiscordId;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -26,10 +27,8 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.features.discord.Discord.getGuild;
@@ -112,20 +111,24 @@ public class DiscordUser implements PlayerOwnedObject {
 		}
 	}
 
-	public void updatePronouns(Set<String> pronouns) {
+	public void updatePronouns(Set<Pronoun> pronouns) {
 		Member member = getMember();
-		if (member == null) return;
+		if (member == null)
+			return;
+
 		Guild guild = getGuild();
-		if (guild == null) return;
-		List<Role> currentRoles = member.getRoles().stream().filter(role -> PronounsCommand.PRONOUN_WHITELIST.contains(role.getName())).collect(Collectors.toList());
-		List<Role> expectedRoles = guild.getRoles().stream().filter(role -> PronounsCommand.PRONOUN_WHITELIST.contains(role.getName()) && pronouns.contains(role.getName())).collect(Collectors.toList());
-		pronouns.forEach(pronoun -> {
-			if (PronounsCommand.PRONOUN_WHITELIST.contains(pronoun) && expectedRoles.stream().noneMatch(role -> role.getName().equals(pronoun)))
-				expectedRoles.add(guild.createRole().setName(pronoun).setPermissions(0L).complete());
-		});
-		List<Role> addRoles = expectedRoles.stream().filter(role -> !currentRoles.contains(role)).collect(Collectors.toList());
-		List<Role> removeRoles = currentRoles.stream().filter(role -> !expectedRoles.contains(role)).collect(Collectors.toList());
-		guild.modifyMemberRoles(member, addRoles, removeRoles).complete();
+		if (guild == null)
+			return;
+
+		for (Pronoun pronoun : Pronoun.values()) {
+			final Role role = DiscordId.Role.valueOf("PRONOUN_" + pronoun.name()).get();
+
+			if (pronouns.contains(pronoun)) {
+				if (!member.getRoles().contains(role))
+					member.getRoles().add(role);
+			} else
+				member.getRoles().remove(role);
+		}
 	}
 
 }
