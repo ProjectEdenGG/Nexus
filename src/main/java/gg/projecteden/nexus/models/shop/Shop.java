@@ -142,7 +142,6 @@ public class Shop implements PlayerOwnedObject {
 
 	public enum ShopGroup {
 		SURVIVAL,
-		RESOURCE,
 		SKYBLOCK,
 		ONEBLOCK;
 
@@ -155,14 +154,11 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public static ShopGroup of(String world) {
-			if (WorldGroup.of(world) == WorldGroup.SURVIVAL)
-				return SURVIVAL;
-			if (WorldGroup.of(world) == WorldGroup.SKYBLOCK)
-				return SKYBLOCK;
-			if (WorldGroup.of(world) == WorldGroup.ONEBLOCK)
-				return ONEBLOCK;
-
-			return null;
+			try {
+				return valueOf(WorldGroup.of(world).name());
+			} catch (IllegalArgumentException ex) {
+				return null;
+			}
 		}
 	}
 
