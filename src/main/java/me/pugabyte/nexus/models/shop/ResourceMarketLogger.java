@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import eden.mongodb.serializers.UUIDConverter;
+import eden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import me.pugabyte.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import me.pugabyte.nexus.models.PlayerOwnedObject;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,52 +33,47 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, Map<Integer, Map<Integer, List<Integer>>>> coordinates = new LinkedHashMap<>();
+	private Map<String, Map<Integer, Map<Integer, List<Integer>>>> coordinateMap = new LinkedHashMap<>();
 
 	public void add(Location location) {
-		add(location.getWorld().getName(), new Coordinate(location));
+		coordinateMap
+			.computeIfAbsent(location.getWorld().getName(), $ -> new LinkedHashMap<>())
+			.computeIfAbsent(location.getBlockX(), $ -> new LinkedHashMap<>())
+			.computeIfAbsent(location.getBlockZ(), $ -> new ArrayList<>())
+			.add(location.getBlockY());
 	}
 
-	private void add(String world, Coordinate coordinate) {
-		coordinates
-			.computeIfAbsent(world, $ -> new LinkedHashMap<>())
-			.computeIfAbsent(coordinate.getX(), $ -> new LinkedHashMap<>())
-			.computeIfAbsent(coordinate.getZ(), $ -> new ArrayList<>())
-			.add(coordinate.getY());
+	public void remove(Location location) {
+		final var yList = getYs(location);
+		if (Utils.isNullOrEmpty(yList))
+			return;
+
+		yList.remove(location.getBlockY());
 	}
 
 	public boolean contains(Location location) {
-		final String world = location.getWorld().getName();
-		final int x = location.getBlockX();
-		final int z = location.getBlockZ();
-		final int y = location.getBlockY();
-
-		if (!coordinates.containsKey(world))
+		final var yList = getYs(location);
+		if (Utils.isNullOrEmpty(yList))
 			return false;
 
-		if (!coordinates.get(world).containsKey(x))
-			return false;
-
-		if (!coordinates.get(world).get(x).containsKey(z))
-			return false;
-
-		if (!coordinates.get(world).get(x).get(z).contains(y))
-			return false;
-
-		return true;
+		return yList.contains(location.getBlockY());
 	}
 
-	@Data
-	@NoArgsConstructor
-	private static class Coordinate {
-		private int x, y, z;
+	@Nullable
+	private List<Integer> getYs(Location location) {
+		final var world = coordinateMap.get(location.getWorld().getName());
+		if (Utils.isNullOrEmpty(world))
+			return null;
 
-		public Coordinate(Location location) {
-			this.x = location.getBlockX();
-			this.y = location.getBlockY();
-			this.z = location.getBlockZ();
-		}
+		final var x = world.get(location.getBlockX());
+		if (Utils.isNullOrEmpty(x))
+			return null;
 
+		final var z = x.get(location.getBlockZ());
+		if (Utils.isNullOrEmpty(z))
+			return null;
+
+		return z;
 	}
 
 }

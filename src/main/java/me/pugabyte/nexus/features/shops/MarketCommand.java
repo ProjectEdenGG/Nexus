@@ -1,11 +1,14 @@
 package me.pugabyte.nexus.features.shops;
 
 import com.sk89q.worldedit.regions.Region;
+import eden.annotations.Environments;
+import eden.utils.Env;
 import eden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.features.shops.providers.BrowseMarketProvider;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
+import me.pugabyte.nexus.framework.commands.models.annotations.Arg;
 import me.pugabyte.nexus.framework.commands.models.annotations.Async;
 import me.pugabyte.nexus.framework.commands.models.annotations.Confirm;
 import me.pugabyte.nexus.framework.commands.models.annotations.Path;
@@ -20,13 +23,16 @@ import me.pugabyte.nexus.models.shop.Shop.ExchangeType;
 import me.pugabyte.nexus.models.shop.Shop.Product;
 import me.pugabyte.nexus.models.shop.ShopService;
 import me.pugabyte.nexus.utils.ActionBarUtils;
+import me.pugabyte.nexus.utils.RandomUtils;
 import me.pugabyte.nexus.utils.Tasks;
 import me.pugabyte.nexus.utils.WorldEditUtils;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
@@ -83,8 +89,8 @@ public class MarketCommand extends CustomCommand implements Listener {
 	void logger_add() {
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		Region selection = worldEditUtils.getPlayerSelection(player());
-		if (selection.getArea() > 100000)
-			error("Max selection size is 100000");
+		if (selection.getArea() > 1000000)
+			error("Max selection size is 1000000");
 
 		for (Block block : worldEditUtils.getBlocks(selection))
 			getLogger().add(block.getLocation());
@@ -93,13 +99,41 @@ public class MarketCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
+	@Environments(Env.TEST)
+	@Path("logger add random [amount]")
+	@Permission("group.admin")
+	void logger_add_random(@Arg("10000") int amount) {
+		final ResourceMarketLogger logger = getLogger();
+		for (int i = 0; i < amount; i++) {
+			while (true) {
+				final int x = RandomUtils.randomInt(-7500, 7500);
+				final int y = RandomUtils.randomInt(-64, 319);
+				final int z = RandomUtils.randomInt(-7500, 7500);
+				final Location location = new Location(world(), x, y, z);
+				if (logger.contains(location))
+					continue;
+
+				logger.add(location);
+				break;
+			}
+		}
+
+		save();
+		send(PREFIX + "Added &e" + amount + " &3locations to logger, new size: &e" + count());
+	}
+
+	@Async
 	@Path("logger count")
 	@Permission("group.admin")
 	void logger_count() {
-		final var coordinates = new ResourceMarketLoggerService().get0().getCoordinates().get(world().getName());
+		send(PREFIX + count() + " coordinates logged");
+	}
+
+	private int count() {
+		final var coordinates = new ResourceMarketLoggerService().get0().getCoordinateMap().get(world().getName());
 		AtomicInteger count = new AtomicInteger();
 		coordinates.forEach((x, zys) -> zys.forEach((z, ys) -> ys.forEach(y -> count.incrementAndGet())));
-		send(PREFIX + count + " coordinates logged");
+		return count.get();
 	}
 
 	@EventHandler
@@ -108,6 +142,15 @@ public class MarketCommand extends CustomCommand implements Listener {
 			return;
 
 		getLogger().add(event.getBlock().getLocation());
+		save();
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (!isResourceWorld(event.getBlock()))
+			return;
+
+		getLogger().remove(event.getBlock().getLocation());
 		save();
 	}
 
