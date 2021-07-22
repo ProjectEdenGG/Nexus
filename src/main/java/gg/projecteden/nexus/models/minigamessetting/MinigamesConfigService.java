@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(MinigamesSetting.class)
-public class MinigamesSettingService extends MongoService<MinigamesSetting> {
-	private final static Map<UUID, MinigamesSetting> cache = new ConcurrentHashMap<>();
+@PlayerClass(MinigamesConfig.class)
+public class MinigamesConfigService extends MongoService<MinigamesConfig> {
+	private final static Map<UUID, MinigamesConfig> cache = new ConcurrentHashMap<>();
 	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
-	public Map<UUID, MinigamesSetting> getCache() {
+	public Map<UUID, MinigamesConfig> getCache() {
 		return cache;
 	}
 

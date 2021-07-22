@@ -15,12 +15,12 @@ import lombok.RequiredArgsConstructor;
 import java.util.UUID;
 
 @Data
-@Entity(value = "minigames_setting", noClassnameStored = true)
+@Entity(value = "minigames_config", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class})
-public class MinigamesSetting implements PlayerOwnedObject {
+public class MinigamesConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

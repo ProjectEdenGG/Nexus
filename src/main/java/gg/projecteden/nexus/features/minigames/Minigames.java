@@ -17,10 +17,8 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
-import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.minigamessetting.MinigamesSetting;
-import gg.projecteden.nexus.models.minigamessetting.MinigamesSettingService;
+import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -184,14 +182,7 @@ public class Minigames extends Feature {
 	}
 
 	public static @NotNull MinigameModifier getModifier() {
-		return new MinigamesSettingService().get0().getModifier().getModifier();
-	}
-
-	public static void setModifier(@NotNull MinigameModifiers modifier) {
-		MinigamesSettingService service = new MinigamesSettingService();
-		MinigamesSetting setting = service.get0();
-		setting.setModifier(modifier);
-		service.save(setting);
+		return new MinigamesConfigService().get0().getModifier().get();
 	}
 
 }
