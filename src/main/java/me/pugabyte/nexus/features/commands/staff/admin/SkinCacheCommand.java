@@ -1,5 +1,6 @@
 package me.pugabyte.nexus.features.commands.staff.admin;
 
+import eden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.pugabyte.nexus.framework.commands.models.CustomCommand;
@@ -57,11 +58,17 @@ public class SkinCacheCommand extends CustomCommand implements Listener {
 	@Path("cacheShopHeads")
 	void cacheShopHeads() {
 		List<SkinCache> caches = new ShopService().getAll().stream()
-				.filter(shop -> !shop.getProducts().isEmpty())
-				.map(SkinCache::of)
-				.collect(Collectors.toList());
+			.filter(shop -> !shop.getProducts().isEmpty())
+			.map(SkinCache::of)
+			.collect(Collectors.toList());
 
 		send(updateAll(caches));
+	}
+
+	@Async
+	@Path("getLastChange [player]")
+	void getLastChange(@Arg("self") SkinCache cache) {
+		send(PREFIX + "Skin last changed " + Timespan.of(cache.getLastChanged()) + " ago");
 	}
 
 	@NotNull
