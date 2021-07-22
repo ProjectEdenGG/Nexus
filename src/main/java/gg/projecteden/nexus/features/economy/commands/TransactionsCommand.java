@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -46,12 +47,29 @@ import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 @NoArgsConstructor
 @Aliases({"transaction", "txn", "txns"})
 public class TransactionsCommand extends CustomCommand implements Listener {
-	private ShopGroup shopGroup;
 
 	public TransactionsCommand(@NonNull CommandEvent event) {
 		super(event);
-		shopGroup = ShopGroup.of(player());
 		PREFIX = StringUtils.getPrefix("Economy");
+	}
+
+	@Async
+	@Path("history [player] [page] [--world]")
+	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
+		List<Transaction> transactions = banker.getTransactions().stream()
+				.filter(transaction -> transaction.getShopGroup() == world)
+				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+				.collect(Collectors.toList());
+
+		if (transactions.isEmpty())
+			error("&cNo transactions found in this world");
+
+		send("");
+		send(PREFIX + camelCase(world) + " transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+
+		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
+
+		paginate(combine(transactions), formatter, "/transaction history " + banker.getName(), page);
 	}
 
 	@Async
@@ -73,25 +91,6 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			}
 
 		send(PREFIX + "Total volume" + (startTime != null ? " for " + Timespan.of(startTime, endTime).format() : "") + ": &e" + prettyMoney(total));
-	}
-
-	@Async
-	@Path("history [player] [page]")
-	void history(@Arg("self") Transactions banker, @Arg("1") int page) {
-		List<Transaction> transactions = banker.getTransactions().stream()
-				.filter(transaction -> transaction.getShopGroup() == shopGroup)
-				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
-				.collect(Collectors.toList());
-
-		if (transactions.isEmpty())
-			error("&cNo transactions found in this world");
-
-		send("");
-		send(PREFIX + camelCase(shopGroup) + " transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
-
-		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
-
-		paginate(combine(transactions), formatter, "/transaction history " + banker.getName(), page);
 	}
 
 	@Path("count [player]")

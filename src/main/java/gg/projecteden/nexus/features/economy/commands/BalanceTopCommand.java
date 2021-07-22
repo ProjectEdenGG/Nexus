@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -35,27 +36,27 @@ public class BalanceTopCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("[shopGroup] [page]")
-	void baltop(@Arg("current") ShopGroup shopGroup, @Arg(value = "1", min = 1) int page) {
+	@Path("[page] [--world]")
+	void baltop(@Arg(value = "1", min = 1) int page, @Switch @Arg("current") ShopGroup world) {
 		if (processing.contains(uuid()))
 			error("Please wait for your last command to finish");
 		else
 			processing.add(uuid());
 
 		List<Banker> bankers = service.getAll().stream()
-				.filter(banker -> !banker.isMarket() && banker.getBalance(shopGroup).compareTo(BigDecimal.valueOf(500)) != 0)
-				.sorted(Comparator.comparing(banker -> banker.getBalance(shopGroup), Comparator.reverseOrder()))
+				.filter(banker -> !banker.isMarket() && banker.getBalance(world).compareTo(BigDecimal.valueOf(500)) != 0)
+				.sorted(Comparator.comparing(banker -> banker.getBalance(world), Comparator.reverseOrder()))
 				.collect(Collectors.toList());
 
 		if (bankers.isEmpty())
 			error("No balances found");
 
-		double sum = bankers.stream().mapToDouble(banker -> banker.getBalance(shopGroup).doubleValue()).sum();
+		double sum = bankers.stream().mapToDouble(banker -> banker.getBalance(world).doubleValue()).sum();
 
-		send(PREFIX + "Top " + camelCase(shopGroup) + " balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
+		send(PREFIX + "Top " + camelCase(world) + " balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
 		BiFunction<Banker, String, JsonBuilder> formatter = (banker, index) ->
-				json("&3" + index + " &e" + Nickname.of(banker) + " &7- " + banker.getBalanceFormatted(shopGroup));
-		paginate(bankers, formatter, "/baltop " + shopGroup.name().toLowerCase(), page);
+				json("&3" + index + " &e" + Nickname.of(banker) + " &7- " + banker.getBalanceFormatted(world));
+		paginate(bankers, formatter, "/baltop " + world.name().toLowerCase(), page);
 
 		processing.remove(uuid());
 	}

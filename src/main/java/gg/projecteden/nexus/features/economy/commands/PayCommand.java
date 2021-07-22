@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
@@ -39,28 +40,28 @@ public class PayCommand extends CustomCommand {
 		self = service.get(player());
 	}
 
-	@Path("<player> <amount> [shopGroup] [reason...]")
-	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, @Arg("current") ShopGroup shopGroup, String reason) {
+	@Path("<player> <amount> [reason...] [--world]")
+	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, String reason, @Switch @Arg("current") ShopGroup world) {
 		if (isSelf(banker))
 			error("You cannot pay yourself");
 
 		try {
-			service.transfer(self, banker, amount, shopGroup, TransactionCause.PAY.of(player(), banker.getOfflinePlayer(), amount, shopGroup, reason));
+			service.transfer(self, banker, amount, world, TransactionCause.PAY.of(player(), banker.getOfflinePlayer(), amount, world, reason));
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}
 
-		String description = (reason == null ? "" : " &3for &e" + reason) + " &3in &e" + camelCase(shopGroup);
+		String description = (reason == null ? "" : " &3for &e" + reason) + " &3in &e" + camelCase(world);
 		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName() + description);
 		if (banker.isOnline())
 			send(banker.getOnlinePlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + description);
 	}
 
 	@Async
-	@Path("history [player] [shopGroup] [page]")
-	void history(@Arg("self") Transactions banker, @Arg("current") ShopGroup shopGroup, @Arg("1") int page) {
+	@Path("history [player] [page] [--world]")
+	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions()).stream()
-				.filter(transaction -> transaction.getShopGroup() == shopGroup && transaction.getCause() == TransactionCause.PAY)
+				.filter(transaction -> transaction.getShopGroup() == world && transaction.getCause() == TransactionCause.PAY)
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
 				.collect(Collectors.toList());
 
@@ -68,11 +69,11 @@ public class PayCommand extends CustomCommand {
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + camelCase(shopGroup) + " history" + (isSelf(banker) ? "" : " for &e" + Nickname.of(banker)));
+		send(PREFIX + camelCase(world) + " history" + (isSelf(banker) ? "" : " for &e" + Nickname.of(banker)));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/pay history " + banker.getName() + " " + shopGroup.name().toLowerCase(), page);
+		paginate(combine(transactions), formatter, "/pay history " + banker.getName() + " " + world.name().toLowerCase(), page);
 	}
 
 }

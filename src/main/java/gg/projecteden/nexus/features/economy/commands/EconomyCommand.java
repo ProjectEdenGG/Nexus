@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -68,25 +69,25 @@ public class EconomyCommand extends CustomCommand {
 		send(json("&3[+] &eEconomy related commands").command("/economy commands"));
 	}
 
-	@Path("set <player> <balance> [shopGroup] [cause] [reason...]")
+	@Path("set <player> <balance> [cause] [reason...] [--world]")
 	@Permission("group.admin")
-	void set(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
-		service.setBalance(cause.of(banker.getOfflinePlayer(), balance, shopGroup, reason));
-		send(PREFIX + "Set &e" + Nickname.of(banker) + "'s &3balance to &e" + banker.getBalanceFormatted(shopGroup));
+	void set(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch  @Arg("current") ShopGroup world) {
+		service.setBalance(cause.of(banker.getOfflinePlayer(), balance, world, reason));
+		send(PREFIX + "Set &e" + Nickname.of(banker) + "'s &3balance to &e" + banker.getBalanceFormatted(world));
 	}
 
-	@Path("give <player> <balance> [shopGroup] [cause] [reason...]")
+	@Path("give <player> <balance> [cause] [reason...] [--world]")
 	@Permission("group.admin")
-	void give(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
-		service.deposit(cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
-		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
+	void give(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
+		service.deposit(cause.of(null, banker.getOfflinePlayer(), balance, world, reason));
+		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
-	@Path("take <player> <balance> [shopGroup] [cause] [reason...]")
+	@Path("take <player> <balance> [cause] [reason...] [--world]")
 	@Permission("group.admin")
-	void take(Banker banker, BigDecimal balance, @Arg("current") ShopGroup shopGroup, @Arg("server") TransactionCause cause, String reason) {
-		service.withdraw(cause.of(null, banker.getOfflinePlayer(), balance, shopGroup, reason));
-		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(shopGroup));
+	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
+		service.withdraw(cause.of(null, banker.getOfflinePlayer(), balance, world, reason));
+		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@ConverterFor(ShopGroup.class)
