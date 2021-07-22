@@ -550,7 +550,7 @@ public abstract class ICustomCommand {
 
 	@SneakyThrows
 	protected Enum<?> convertToEnum(String filter, Class<? extends Enum<?>> clazz) {
-		if (filter == null) throw new InvocationTargetException(new NexusException("Missing argument"));
+		if (filter == null) throw new InvocationTargetException(new MissingArgumentException());
 		return Arrays.stream(clazz.getEnumConstants())
 				.filter(value -> value.name().equalsIgnoreCase(filter))
 				.findFirst()
