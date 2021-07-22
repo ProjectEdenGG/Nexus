@@ -111,13 +111,12 @@ public class SummerDownUnderIsland implements BearFair21Island {
 
 	public SummerDownUnderIsland() {
 		Nexus.registerListener(this);
-		Tasks.repeat(2, 1, () -> {
+		Tasks.repeat(2, 5, () ->
 			BearFair21.getWGUtils().getEntitiesInRegionByClass("bearfair21_elytra", Player.class).stream()
 				.filter(player -> player.isOnGround()
-								&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_start")
-								&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_finish"))
-				.forEach(this::teleportToElytraCourse);
-		});
+					&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_start")
+					&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_finish"))
+				.forEach(this::teleportToElytraCourse));
 	}
 
 	private void teleportToElytraCourse(Player player) {
