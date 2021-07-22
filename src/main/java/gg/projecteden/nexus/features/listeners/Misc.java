@@ -73,6 +73,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
@@ -82,6 +83,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
@@ -104,6 +107,15 @@ public class Misc implements Listener {
 
 			world.setKeepSpawnInMemory(false);
 		}
+	}
+
+	@EventHandler
+	public void onEatGlowBerry(PlayerItemConsumeEvent event) {
+		Player player = event.getPlayer();
+		if (WorldGroup.MINIGAMES.equals(WorldGroup.of(player)))
+			return;
+
+		player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Time.MINUTE.x(1.5), 1));
 	}
 
 	@EventHandler
