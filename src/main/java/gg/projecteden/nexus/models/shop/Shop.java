@@ -714,6 +714,8 @@ public class Shop implements PlayerOwnedObject {
 				profit = profit.add(BigDecimal.valueOf(price));
 			}
 
+			product.log(customer, item.getAmount());
+
 			return profit;
 		}
 
