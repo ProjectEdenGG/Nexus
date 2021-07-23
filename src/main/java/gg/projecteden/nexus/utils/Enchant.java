@@ -225,7 +225,8 @@ public class Enchant {
 	static {
 		try {
 			for (Field field : Enchant.class.getDeclaredFields())
-				values.add((Enchantment) field.get(null));
+				if (field.get(null) instanceof Enchantment enchantment)
+					values.add(enchantment);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -233,6 +234,13 @@ public class Enchant {
 
 	public static List<Enchantment> values() {
 		return values;
+	}
+
+	public static Enchantment of(String name) {
+		for (Enchantment enchantment : values)
+			if (enchantment.getName().equalsIgnoreCase(name) || enchantment.getKey().getKey().equalsIgnoreCase(name))
+				return enchantment;
+		return null;
 	}
 
 }
