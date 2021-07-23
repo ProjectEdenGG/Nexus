@@ -45,6 +45,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
 	@NonNull
 	private final org.bukkit.World world;
@@ -74,7 +76,8 @@ public class WorldEditUtils {
 	@Getter
 	private static final String schematicsDirectory = "plugins/FastAsyncWorldEdit/schematics/";
 	@Getter
-	private static final WorldEditPlugin plugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+	@NotNull
+	private static final WorldEditPlugin plugin = (WorldEditPlugin) Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin("WorldEdit"));
 
 	public WorldEditUtils(@NonNull org.bukkit.entity.Entity entity) {
 		this(entity.getWorld());
