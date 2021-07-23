@@ -69,7 +69,7 @@ import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
 @Builder
-@Entity("shop")
+@Entity(value = "shop", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
