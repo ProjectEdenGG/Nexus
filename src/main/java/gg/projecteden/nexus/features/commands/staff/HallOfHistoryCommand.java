@@ -42,7 +42,8 @@ import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
 @Aliases("hoh")
 public class HallOfHistoryCommand extends CustomCommand {
-	HallOfHistoryService service = new HallOfHistoryService();
+	private final HallOfHistoryService service = new HallOfHistoryService();
+	private final NerdService nerdService = new NerdService();
 
 	public HallOfHistoryCommand(CommandEvent event) {
 		super(event);
@@ -126,9 +127,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		if (!current && resignation == null)
 			error("Resignation date was not provided");
 
-		HallOfHistory history = service.get(target);
-		history.getRankHistory().add(new RankHistory(rank, current, promotion, resignation));
-		service.save(history);
+		service.edit(target, history -> history.getRankHistory().add(new RankHistory(rank, current, promotion, resignation)));
 		send(PREFIX + "Successfully saved rank data for &e" + target.getName());
 	}
 
@@ -169,9 +168,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Permission("hoh.edit")
 	@Path("clear <player>")
 	void clear(OfflinePlayer player) {
-		HallOfHistory history = service.get(player.getUniqueId());
-		history.getRankHistory().clear();
-		service.save(history);
+		service.edit(player.getUniqueId(), history -> history.getRankHistory().clear());
 		send(PREFIX + "Cleared all data for &e" + player.getName());
 	}
 
@@ -182,59 +179,16 @@ public class HallOfHistoryCommand extends CustomCommand {
 		Tasks.wait(3, () -> runCommand("warps set hallofhistory"));
 	}
 
-//	@Path("expand")
-//	@Permission("hoh.edit")
-//	void expand() {
-//		send(PREFIX + "Expanding HOH. &4&lDon't move!");
-//		int wait = 40;
-//		AtomicReference<Location> newLocation = new AtomicReference<>(location());
-//		Tasks.wait(wait, () -> runCommand("/warp hallofhistory"));
-//		Tasks.wait(wait += 20, () -> newLocation.set(location().add(16, 0, 0).clone()));
-//		Tasks.wait(wait += 3, () -> runCommand("/pos1"));
-//		Tasks.wait(wait += 3, () -> runCommand("/pos2"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expand 7"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expand 15 s"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expand 15 n"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expand 10 e"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expandv 10"));
-//		Tasks.wait(wait += 3, () -> runCommand("/move 16 e"));
-//		Tasks.wait(wait += 20, () -> player().teleport(newLocation.get()));
-//		Tasks.wait(wait += 5, () -> runCommand("/hoh setwarp"));
-//		Tasks.wait(wait += 5, () -> runCommand("/schem load hoh-expansion"));
-//		Tasks.wait(wait += 20, () -> runCommand("/paste"));
-//		Tasks.wait(wait += 20, () -> runCommand("/contract 17"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expand 1"));
-//		Tasks.wait(wait += 3, () -> runCommand("/contract 1"));
-//		Tasks.wait(wait += 3, () -> runCommand("/contract 12 d"));
-//		Tasks.wait(wait += 3, () -> runCommand("/contracth 5"));
-//		Tasks.wait(wait += 3, () -> runCommand("/contract 3 u"));
-//		Tasks.wait(wait += 3, () -> runCommand("/cut"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expand -1"));
-//		Tasks.wait(wait += 3, () -> runCommand("/contract -1"));
-//		Tasks.wait(wait += 3, () -> runCommand("/stack 1"));
-//		Tasks.wait(wait += 3, () -> runCommand("/expand -15"));
-//		Tasks.wait(wait += 3, () -> runCommand("/contract -15"));
-//		Tasks.wait(wait += 3, () -> runCommand("/set stone_slab:8"));
-//		Tasks.wait(wait += 3, () -> runCommand("/desel"));
-//		send(PREFIX + "Expansion complete! Took &e" + (wait / 20) + " &3seconds");
-//	}
-
 	@Path("about <about...>")
 	void about(String about) {
-		NerdService service = new NerdService();
-		Nerd nerd = Nerd.of(player());
-		nerd.setAbout(stripColor(about));
-		service.save(nerd);
-		send(PREFIX + "Set your about to: &e" + nerd.getAbout());
+		nerdService.edit(player(), nerd -> nerd.setAbout(stripColor(about)));
+		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
 	}
 
 	@Path("preferredName <name...>")
 	void preferredName(String name) {
-		NerdService service = new NerdService();
-		Nerd nerd = Nerd.of(player());
-		nerd.setPreferredName(stripColor(name));
-		service.save(nerd);
-		send(PREFIX + "Set your preferred name to: &e" + nerd.getPreferredName());
+		nerdService.edit(player(), nerd -> nerd.setPreferredName(stripColor(name)));
+		send(PREFIX + "Set your preferred name to: &e" + nerd().getPreferredName());
 	}
 
 	@Async
@@ -280,7 +234,6 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Path("promotionTimes [page]")
 	void promotionTimes(@Arg("1") int page) {
-		NerdService nerdService = new NerdService();
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();
 
