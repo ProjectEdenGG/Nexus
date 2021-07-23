@@ -5,13 +5,19 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import lombok.experimental.UtilityClass;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Glorified enum of enchantments but with sane names
  */
 @UtilityClass
 public class Enchant {
+
 	/**
 	 * Provides protection against environmental damage
 	 */
@@ -213,4 +219,20 @@ public class Enchant {
 	 * Attract dropped items
 	 */
 	public static final CustomEnchant MAGNET = CustomEnchants.get(MagnetEnchant.class);
+
+	private static final List<Enchantment> values = new ArrayList<>();
+
+	static {
+		try {
+			for (Field field : Enchant.class.getDeclaredFields())
+				values.add((Enchantment) field.get(null));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static List<Enchantment> values() {
+		return values;
+	}
+
 }
