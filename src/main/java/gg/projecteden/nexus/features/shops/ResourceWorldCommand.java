@@ -239,8 +239,13 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (!isResourceWorld(world))
 			return;
 
-		getLogger(world).remove(block.getLocation());
-		save(world);
+		Tasks.wait(2, () -> {
+			if (block.getType() != Material.AIR)
+				return;
+
+			getLogger(world).remove(block.getLocation());
+			save(world);
+		});
 	}
 
 	@EventHandler

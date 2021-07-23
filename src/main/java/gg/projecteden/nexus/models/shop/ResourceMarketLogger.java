@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 
 @Data
 @Builder
@@ -51,24 +51,12 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 			.add(location.getBlockY());
 	}
 
-	public void remove(Location location) {
-		validate(location);
-
-		final var yList = getYs(location);
-		if (Utils.isNullOrEmpty(yList))
-			return;
-
-		yList.remove(Integer.valueOf(location.getBlockY()));
+	public boolean remove(Location location) {
+		return run(location, List::remove);
 	}
 
 	public boolean contains(Location location) {
-		validate(location);
-
-		final var yList = getYs(location);
-		if (Utils.isNullOrEmpty(yList))
-			return false;
-
-		return yList.contains(location.getBlockY());
+		return run(location, List::contains);
 	}
 
 	public int size() {
@@ -77,17 +65,17 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 		return count.get();
 	}
 
-	@Nullable
-	private List<Integer> getYs(Location location) {
+	private boolean run(Location location, BiFunction<List<Integer>, Integer, Boolean> function) {
+		validate(location);
 		final var x = coordinateMap.get(location.getBlockX());
 		if (Utils.isNullOrEmpty(x))
-			return null;
+			return false;
 
 		final var z = x.get(location.getBlockZ());
 		if (Utils.isNullOrEmpty(z))
-			return null;
+			return false;
 
-		return z;
+		return function.apply(z, location.getBlockY());
 	}
 
 }
