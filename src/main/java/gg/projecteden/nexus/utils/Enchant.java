@@ -237,9 +237,13 @@ public class Enchant {
 	}
 
 	public static Enchantment of(String name) {
+		if (name == null)
+			return null;
+
 		for (Enchantment enchantment : values)
-			if (enchantment.getName().equalsIgnoreCase(name) || enchantment.getKey().getKey().equalsIgnoreCase(name))
+			if (name.equalsIgnoreCase(enchantment.getName()) || name.equalsIgnoreCase(enchantment.getKey().getKey()))
 				return enchantment;
+
 		return null;
 	}
 
