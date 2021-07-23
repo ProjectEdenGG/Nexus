@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.utils;
 
-import com.fastasyncworldedit.core.FaweAPI;
-import com.fastasyncworldedit.core.object.RegionWrapper;
-import com.fastasyncworldedit.core.object.RelightMode;
+import com.fastasyncworldedit.core.extent.processor.lighting.RelightMode;
+import com.fastasyncworldedit.core.regions.RegionWrapper;
 import com.fastasyncworldedit.core.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
@@ -14,6 +13,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
@@ -54,6 +54,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -88,7 +89,7 @@ public class WorldEditUtils {
 	}
 
 	public WorldEditUtils(@NonNull String world) {
-		this(Bukkit.getWorld(world));
+		this(Objects.requireNonNull(Bukkit.getWorld(world)));
 	}
 
 	public WorldEditUtils(@NonNull org.bukkit.World world) {
@@ -119,7 +120,11 @@ public class WorldEditUtils {
 		if (!file.exists())
 			throw new InvalidInputException("Schematic " + fileName + " does not exist");
 
-		return ClipboardFormats.findByFile(file).load(file);
+		final ClipboardFormat format = ClipboardFormats.findByFile(file);
+		if (format == null)
+			throw new InvalidInputException("Could not determine clipboard format for " + fileName);
+
+		return format.load(file);
 	}
 
 	public Vector3 toVector3(Location location) {
@@ -151,7 +156,7 @@ public class WorldEditUtils {
 	}
 
 	public void fixLight(Region region) {
-		Tasks.async(() -> FaweAPI.fixLighting(worldEditWorld, region, null, RelightMode.ALL));
+		Tasks.async(() -> worldEditWorld.fixLighting(region.getChunks()));
 	}
 
 	public enum SelectionChangeDirectionType {

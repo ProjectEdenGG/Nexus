@@ -354,7 +354,7 @@
             <artifactId>FastAsyncWorldEdit</artifactId>
             <version>1.17-10</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.17-10.jar</systemPath>
+            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.17-76.jar</systemPath>
         </dependency>
         <!-- BuycraftX -->
         <dependency>
