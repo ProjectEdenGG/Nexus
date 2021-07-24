@@ -4,6 +4,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Depends(ResourcePack.class)
 public class CustomRecipes extends Feature implements Listener {
 
 	@Getter
@@ -44,9 +47,7 @@ public class CustomRecipes extends Feature implements Listener {
 		registerStoneBricks();
 		misc();
 
-		// Need to wait for ResourcePack feature to register
-		// TODO Create dependency system for features
-		Tasks.wait(1, () -> new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
+		new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
 			.map(clazz -> {
 				try {
 					if (!Utils.canEnable(clazz))
@@ -65,7 +66,7 @@ public class CustomRecipes extends Feature implements Listener {
 				recipe.setType(RecipeType.FUNCTIONAL);
 				recipe.register();
 				recipes.add(recipe);
-			}));
+			});
 	}
 
 	public static void register(Recipe recipe) {
