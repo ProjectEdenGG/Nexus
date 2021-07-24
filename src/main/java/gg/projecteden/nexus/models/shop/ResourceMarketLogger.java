@@ -61,7 +61,7 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 
 	public int size() {
 		AtomicInteger count = new AtomicInteger();
-		coordinateMap.forEach((x, zys) -> zys.forEach((z, ys) -> count.addAndGet(ys.size())));
+		coordinateMap.values().forEach(zys -> zys.values().forEach(ys -> count.addAndGet(ys.size())));
 		return count.get();
 	}
 
