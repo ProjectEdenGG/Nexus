@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import org.bukkit.entity.Player;
@@ -83,5 +84,10 @@ public class RanksCommand extends CustomCommand {
 
 		bookBuilder.addPage(jsonBuilder.get());
 		bookBuilder.open(player());
+	}
+
+	@Path("of <player>")
+	void of(Nerd player) {
+		send(player.getRank().getColoredName());
 	}
 }

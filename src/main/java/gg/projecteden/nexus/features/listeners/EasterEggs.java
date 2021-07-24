@@ -60,8 +60,8 @@ public class EasterEggs implements Listener {
 		Player clicker = event.getPlayer();
 		ItemStack heldItem = clicker.getInventory().getItemInMainHand();
 
-		switch (clicked.getUniqueId().toString()) {
-			case "pugabyte" -> griffin(clicker, heldItem, clicked);
+		switch (clicked.getName().toLowerCase()) {
+			case "griffincodes" -> griffin(clicker, heldItem, clicked);
 			case "wakkaflocka" -> wakka(clicker, heldItem, clicked);
 			case "porkeroni" -> dom(clicker, heldItem, clicked);
 			case "ravenonacloud" -> raven(clicker, heldItem, clicked);

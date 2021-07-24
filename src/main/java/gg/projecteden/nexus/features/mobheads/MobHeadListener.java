@@ -26,6 +26,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -173,6 +175,14 @@ public class MobHeadListener implements Listener {
 		SpawnReason.COMMAND
 	);
 
+	private static final Set<DamageCause> PLAYER_DAMAGE_CAUSES = Set.of(
+		DamageCause.ENTITY_ATTACK,
+		DamageCause.ENTITY_SWEEP_ATTACK,
+		DamageCause.PROJECTILE,
+		DamageCause.THORNS,
+		DamageCause.MAGIC
+	);
+
 	private boolean shouldIgnore(Player player, LivingEntity victim) {
 		if (player == null || victim == null)
 			return true;
@@ -184,6 +194,11 @@ public class MobHeadListener implements Listener {
 
 		if (isBaby(victim))
 			return true;
+
+		EntityDamageEvent damageCause = victim.getLastDamageCause();
+		if (damageCause != null && !PLAYER_DAMAGE_CAUSES.contains(damageCause.getCause()))
+			return true;
+
 		if (handledEntities.contains(victim.getUniqueId()))
 			return true;
 

@@ -7,10 +7,8 @@ import gg.projecteden.nexus.features.minigames.modifiers.MoonGravity;
 import gg.projecteden.nexus.features.minigames.modifiers.NoKnockback;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.features.minigames.modifiers.SuperSpeed;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
 public enum MinigameModifiers {
 	NONE(new NoModifier()),
@@ -21,6 +19,10 @@ public enum MinigameModifiers {
 	BULLET_ARROWS(new BulletArrows()),
 	SUPER_SPEED(new SuperSpeed())
 	;
+
+	public MinigameModifier get() {
+		return modifier;
+	}
 
 	private final MinigameModifier modifier;
 }

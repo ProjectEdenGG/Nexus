@@ -190,9 +190,6 @@ public abstract class ICustomCommand {
 
 		List<String> args = new ArrayList<>(event.getArgs());
 
-		if (args.isEmpty())
-			return objects;
-
 		int i = 0;
 		for (Parameter parameter : switches) {
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
@@ -554,17 +551,17 @@ public abstract class ICustomCommand {
 	protected abstract PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
 
 	@SneakyThrows
-	protected Enum<?> convertToEnum(String filter, Class<? extends Enum<?>> clazz) {
-		if (filter == null) throw new InvocationTargetException(new MissingArgumentException());
+	protected Enum<?> convertToEnum(String value, Class<? extends Enum<?>> clazz) {
+		if (value == null) throw new InvocationTargetException(new MissingArgumentException());
 		return Arrays.stream(clazz.getEnumConstants())
-				.filter(value -> value.name().equalsIgnoreCase(filter))
+				.filter(constant -> constant.name().equalsIgnoreCase(value))
 				.findFirst()
-				.orElseThrow(() -> new InvalidInputException(clazz.getSimpleName() + " from " + filter + " not found"));
+				.orElseThrow(() -> new InvalidInputException(clazz.getSimpleName() + " from &e" + value + " &cnot found"));
 	}
 
 	protected List<String> tabCompleteEnum(String filter, Class<? extends Enum<?>> clazz) {
 		return Arrays.stream(clazz.getEnumConstants())
-				.map(value -> value.name().toLowerCase())
+				.map(value -> value.toString().toLowerCase())
 				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}

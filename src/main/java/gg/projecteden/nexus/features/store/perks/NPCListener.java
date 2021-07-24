@@ -67,9 +67,6 @@ public class NPCListener implements Listener {
 		if (uuid == null)
 			return;
 
-		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
-			return;
-
 		if (event.getTo() == null)
 			return;
 
@@ -78,23 +75,27 @@ public class NPCListener implements Listener {
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
 
-		if (event.getFrom().getWorld().equals(event.getTo().getWorld())) {
-			if (Rank.of(owner).gte(Rank.NOBLE))
-				return;
-
-			if (isPerkAllowedAt(event.getTo()))
-				return;
-
-			event.setCancelled(true);
-			PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
-			Nexus.warn("Preventing NPC teleport: " + event.getNPC().getId() + " from "
-					+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
-		} else {
+		if (!event.getFrom().getWorld().equals(event.getTo().getWorld())) {
 			event.setCancelled(true);
 			PlayerUtils.send(owner, "&cNPCs cannot be teleported across worlds");
 			Nexus.warn("Preventing NPC cross-world teleport: " + event.getNPC().getId() + " from "
 					+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
+			return;
 		}
+
+		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
+			return;
+
+		if (Rank.of(owner).gte(Rank.NOBLE))
+			return;
+
+		if (isPerkAllowedAt(event.getTo()))
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
+		Nexus.warn("Preventing NPC teleport: " + event.getNPC().getId() + " from "
+				+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
 	}
 
 	@EventHandler

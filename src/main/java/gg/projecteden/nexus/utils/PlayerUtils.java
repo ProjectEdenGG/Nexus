@@ -196,14 +196,6 @@ public class PlayerUtils {
 
 	/**
 	 * Searches for a player whose username or nickname fully or partially matches the given partial name.
-	 * <p>
-	 * Examples:
-	 * <ul>
-	 *     <li>"Griffin" -> Pugabyte</li>
-	 *     <li>"Puga" -> Pugabyte</li>
-	 *     <li>"86d7e0e2-c95e-4f22-8f99-a6e83b398307" -> Pugabyte</li>
-	 *     <li>"Pugabytteee" -> throws PlayerNotFoundException</li>
-	 * </ul>
 	 * @param partialName UUID or partial text of a username/nickname
 	 * @return an offline player
 	 * @throws InvalidInputException input was null or empty

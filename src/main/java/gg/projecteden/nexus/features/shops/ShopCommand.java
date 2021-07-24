@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -104,11 +105,11 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("history [player] [page]")
-	void history(@Arg("self") Transactions banker, @Arg("1") int page) {
+	@Path("history [player] [page] [--world]")
+	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
 				.stream().filter(transaction ->
-						transaction.getShopGroup() == shopGroup &&
+						transaction.getShopGroup() == world &&
 						(transaction.getCause() == TransactionCause.SHOP_PURCHASE && banker.getUuid().equals(transaction.getSender())) ||
 						(transaction.getCause() == TransactionCause.SHOP_SALE && banker.getUuid().equals(transaction.getReceiver())))
 				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
@@ -118,11 +119,11 @@ public class ShopCommand extends CustomCommand implements Listener {
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + camelCase(shopGroup) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + camelCase(world) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/shop history " + banker.getName(), page);
+		paginate(combine(transactions), formatter, "/shop history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 	@Path("cleanup")

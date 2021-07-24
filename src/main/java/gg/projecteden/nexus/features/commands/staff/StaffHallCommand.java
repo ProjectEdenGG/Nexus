@@ -83,7 +83,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		if (!isNullOrEmpty(nerd.getPreferredName()))
 			send("&e&lPreferred name: &3" + nerd.getPreferredName());
 		if (!nerd.getPronouns().isEmpty())
-			send("&e&lPronouns: &3" + String.join(",", nerd.getPronouns()));
+			send("&e&lPronouns: &3" + String.join(",", nerd.getPronouns().stream().map(Enum::toString).toList()));
 		if (nerd.getBirthday() != null)
 			send("&e&lBirthday: &3" + shortDateFormat(nerd.getBirthday()) + " (" + nerd.getBirthday().until(LocalDate.now()).getYears() + " years)");
 		if (nerd.getFirstJoin() != null)

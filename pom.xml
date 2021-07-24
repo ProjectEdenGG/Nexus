@@ -234,7 +234,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.4.1</version>
+            <version>1.4.2</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -260,7 +260,7 @@
 <!--            <groupId>com.dieselpoint</groupId>-->
 <!--            <artifactId>norm</artifactId>-->
 <!--            <version>0.9.7</version>-->
-            <groupId>com.github.Pugabyte</groupId>
+            <groupId>com.github.ProjectEdenGG</groupId>
             <artifactId>norm</artifactId>
             <version>0843afb4e5</version>
         </dependency>
@@ -354,7 +354,7 @@
             <artifactId>FastAsyncWorldEdit</artifactId>
             <version>1.17-10</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.17-10.jar</systemPath>
+            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.17-76.jar</systemPath>
         </dependency>
         <!-- BuycraftX -->
         <dependency>
@@ -445,7 +445,7 @@
         </dependency>
         <!-- SmartInvs -->
         <dependency>
-            <groupId>com.github.Pugabyte</groupId>
+            <groupId>fr.minuskube.inv</groupId>
             <artifactId>SmartInvs</artifactId>
             <version>1.3.4</version>
             <systemPath>${project.basedir}/libs/SmartInvs-1.3.4.jar</systemPath>

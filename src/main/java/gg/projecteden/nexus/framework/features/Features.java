@@ -29,7 +29,7 @@ public class Features {
 		this.featureSet = new Reflections(path).getSubTypesOf(Feature.class);
 	}
 
-	public static <T extends Feature> T get(Class<? extends Feature> clazz) {
+	public static <T extends Feature> T get(Class<T> clazz) {
 		return (T) Optional.of(features.get(clazz)).orElseThrow(() -> new NexusException("Feature " + prettyName(clazz) + " not found"));
 	}
 

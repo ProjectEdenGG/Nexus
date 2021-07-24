@@ -92,6 +92,9 @@ public class SkinCache implements PlayerOwnedObject {
 	}
 
 	public String getTextureUrl(String value) {
+		if (value == null)
+			return "Null value";
+
 		final String decoded = new String(Base64.getDecoder().decode(value));
 		final Matcher matcher = TEXTURE_URL_REGEX.matcher(decoded);
 		if (matcher.find())

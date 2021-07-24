@@ -226,7 +226,7 @@ public class Koda {
 				respond(event, "The server is " + days + " days old! That's " + years + " years, or " + dogYears + " dog years!");
 				break;
 			case "useless":
-				if ("Pugabyte".equals(event.getOrigin()) || "Griffin".equals(event.getOrigin()))
+				if ("GriffinCodes".equals(event.getOrigin()) || "Griffin".equals(event.getOrigin()))
 					respond(event, "You're the one who decided to make a potato do important things.");
 				else
 					respond(event, "Griffin is the one who decided to make a potato do important things.");

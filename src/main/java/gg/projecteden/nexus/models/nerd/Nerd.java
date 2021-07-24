@@ -1,16 +1,17 @@
 package gg.projecteden.nexus.models.nerd;
 
+import com.mongodb.DBObject;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.LocalDateConverter;
 import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.commands.PronounsCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
@@ -42,8 +43,10 @@ import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -61,6 +64,24 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	// Set to null after they have moved
 	private Location loginLocation;
 	private Location teleportOnLogin;
+
+	@PreLoad
+	void preLoad(DBObject dbObject) {
+		List<String> pronouns = (List<String>) dbObject.get("pronouns");
+		if (Utils.isNullOrEmpty(pronouns))
+			return;
+
+		List<String> fixed = new ArrayList<>() {{
+			for (String pronoun : pronouns) {
+				final Pronoun of = Pronoun.of(pronoun);
+				if (of != null)
+					add(of.name());
+			}
+		}};
+
+		fixed.removeIf(Objects::isNull);
+		dbObject.put("pronouns", fixed);
+	}
 
 	public Nerd(@NonNull UUID uuid) {
 		super(uuid);
@@ -228,27 +249,25 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		}
 	}
 
-	public void addPronoun(String pronoun) {
+	public void addPronoun(Pronoun pronoun) {
 		addPronoun(pronoun, null);
 	}
 
-	public void addPronoun(String pronoun, @Nullable String executor) {
-		pronoun = PronounsCommand.getPronoun(pronoun);
+	public void addPronoun(Pronoun pronoun, @Nullable String executor) {
 		pronouns.add(pronoun);
 		logPronoun(executor, pronoun, "added");
 	}
 
-	public void removePronoun(String pronoun) {
+	public void removePronoun(Pronoun pronoun) {
 		removePronoun(pronoun, null);
 	}
 
-	public void removePronoun(String pronoun, @Nullable String executor) {
-		pronoun = PronounsCommand.getPronoun(pronoun);
+	public void removePronoun(Pronoun pronoun, @Nullable String executor) {
 		pronouns.remove(pronoun);
 		logPronoun(executor, pronoun, "removed");
 	}
 
-	private void logPronoun(@Nullable String executor, @NotNull String pronoun, @NotNull String verb) {
+	private void logPronoun(@Nullable String executor, @NotNull Pronoun pronoun, @NotNull String verb) {
 		String log;
 		if (executor == null || executor.equals(getNickname()))
 			log = getNickname() + " " + verb + " the";

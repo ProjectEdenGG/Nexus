@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
-import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
@@ -35,6 +34,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
+import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
+import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -76,6 +77,7 @@ public class MinigamesCommand extends CustomCommand {
 	public static final String MINIGAME_SIGN_HEADER = "&0&l< &1Minigames &0&l>";
 	public static final String OLD_MGM_SIGN_HEADER = "&1[Minigame]";
 	private Minigamer minigamer;
+	private final MinigamesConfigService configService = new MinigamesConfigService();
 
 	public MinigamesCommand(CommandEvent event) {
 		super(event);
@@ -595,21 +597,23 @@ public class MinigamesCommand extends CustomCommand {
 		send(Minigames.PREFIX + "Now hiding "+type.toString().toLowerCase()+" particles");
 	}
 
-	@Path("modifier <type>")
-	@Permission(value = "group.staff", absolute = true)
-	void modifier(MinigameModifier type) {
-		Minigames.setModifier(type);
-		send(PREFIX + "Minigame modifier set to &e" + type.getName());
+	@Path("modifier <modifier>")
+	@Permission("manage")
+	void modifier(MinigameModifiers modifier) {
+		MinigamesConfig setting = configService.get0();
+		setting.setModifier(modifier);
+		configService.save(setting);
+		send(PREFIX + "Minigame modifier set to &e" + modifier.get().getName());
 	}
 
 	@Path("modifier random")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission("manage")
 	void modifierRandom() {
-		modifier(RandomUtils.randomElement(Arrays.stream(MinigameModifiers.values()).map(MinigameModifiers::getModifier).collect(Collectors.toList())));
+		modifier(RandomUtils.randomElement(List.of(MinigameModifiers.values())));
 	}
 
 	@Path("refreshNameColors")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission("manage")
 	void refreshNameColors() {
 		MatchManager.getAll().forEach(match -> {
 			MinigameScoreboard sb = match.getScoreboard();
@@ -688,19 +692,6 @@ public class MinigamesCommand extends CustomCommand {
 		return context.getTeams().stream()
 				.map(Team::getName)
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
-	}
-
-	@ConverterFor({MinigameModifier.class})
-	MinigameModifier convertToModifier(String value) {
-		return MinigameModifiers.valueOf(value.toUpperCase()).getModifier();
-	}
-
-	@TabCompleterFor({MinigameModifier.class})
-	List<String> tabCompleteModifier(String filter) {
-		return Arrays.stream(MinigameModifiers.values())
-				.map(modifier -> modifier.name().toLowerCase())
-				.filter(modifier -> modifier.startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 }

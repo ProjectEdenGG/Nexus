@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -19,12 +20,12 @@ public class BalanceCommand extends CustomCommand {
 		PREFIX = StringUtils.getPrefix("Economy");
 	}
 
-	@Path("[player] [shopGroup]")
-	void balance(@Arg("self") Banker banker, @Arg("current") ShopGroup shopGroup) {
+	@Path("[player] [--world]")
+	void balance(@Arg("self") Banker banker, @Switch @Arg("current") ShopGroup world) {
 		if (isSelf(banker))
-			send(PREFIX + "Your " + camelCase(shopGroup) + " balance: &e" + banker.getBalanceFormatted(shopGroup));
+			send(PREFIX + "Your " + camelCase(world) + " balance: &e" + banker.getBalanceFormatted(world));
 		else
-			send(PREFIX + "&e" + Nickname.of(banker) + "'s &3" + camelCase(shopGroup) + " balance: &e" + banker.getBalanceFormatted(shopGroup));
+			send(PREFIX + "&e" + Nickname.of(banker) + "'s &3" + camelCase(world) + " balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 }

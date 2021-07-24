@@ -42,6 +42,9 @@ public class Effects implements Listener {
 		List<Location> shipRobotLocs = Arrays.asList(Lobby.shipRobot, Sialia.shipRobot, SialiaCrashing.shipRobot);
 		Tasks.repeat(0, 2, () -> {
 			for (Location shipRobot : shipRobotLocs) {
+				if (!shipRobot.isChunkLoaded())
+					return;
+
 				Player nearestPlayer = (Player) EntityUtils.getNearestEntityType(shipRobot, EntityType.PLAYER, 7);
 				ArmorStand armorStand = (ArmorStand) EntityUtils.getNearestEntityType(shipRobot, EntityType.ARMOR_STAND, 1);
 				if (nearestPlayer != null && armorStand != null) {
