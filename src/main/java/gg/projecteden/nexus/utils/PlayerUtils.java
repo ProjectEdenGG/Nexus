@@ -572,8 +572,8 @@ public class PlayerUtils {
 			giveItemsAndMailExcess(_player, finalItems, null, WorldGroup.of(Nerd.of(_player).getLocation()));
 	}
 
-	public static List<ItemStack> giveItemsAndGetExcess(HasOfflinePlayer player, ItemStack items) {
-		return giveItemsAndGetExcess(player, Collections.singletonList(items));
+	public static List<ItemStack> giveItemsAndGetExcess(HasOfflinePlayer player, ItemStack item) {
+		return giveItemsAndGetExcess(player, Collections.singletonList(item));
 	}
 
 	public static List<ItemStack> giveItemsAndGetExcess(HasOfflinePlayer player, List<ItemStack> items) {
