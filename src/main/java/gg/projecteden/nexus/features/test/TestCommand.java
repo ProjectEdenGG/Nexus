@@ -1,132 +1,410 @@
 package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.store.perks.NPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Async;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
+import lombok.NonNull;
+import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
+import org.bukkit.block.data.type.RedstoneRail;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
+import org.inventivetalent.glow.GlowAPI;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
+import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Permission("group.admin")
 public class TestCommand extends CustomCommand {
 
-	public TestCommand(CommandEvent event) {
+	public TestCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("removeHdb")
-	void hdbEquals() {
-		ItemStack head = Nexus.getHeadAPI().getItemHead("43417");
-		inventory().addItem(head);
-		inventory().removeItem(head);
+	@Override
+	public void _shutdown() {
+		shutdownBossBars();
 	}
 
-	@Path("start")
-	public void point1() {
-		CurveTest.start = location();
-		send("P1: " + StringUtils.getCoordinateString(CurveTest.start));
-		location().getBlock().setType(Material.RED_STAINED_GLASS);
+	@Path("inventoryContents")
+	void inventoryContents() {
+		Consumer<ItemStack> send = item -> {
+			if (item != null)
+				send(item.getType().name());
+		};
+
+		line();
+		send("getContents()");
+		for (ItemStack content : inventory().getContents())
+			send.accept(content);
+
+		line();
+		send("getStorageContents()");
+		for (ItemStack content : inventory().getStorageContents())
+			send.accept(content);
+
+		line();
+		send("getArmorContents()");
+		for (ItemStack content : inventory().getArmorContents())
+			send.accept(content);
+
+		line();
+		send("getExtraContents()");
+		for (ItemStack content : inventory().getExtraContents())
+			send.accept(content);
 	}
 
-	@Path("control1")
-	public void point3() {
-		CurveTest.startControl = location();
-		send("P3: " + StringUtils.getCoordinateString(CurveTest.startControl));
-		location().getBlock().setType(Material.PINK_STAINED_GLASS);
+	@Description("Generate an sample exp bar countdown")
+	@Path("expBarCountdown <duration>")
+	void expBarCountdown(@Arg("20") int duration) {
+		ExpBarCountdown.builder()
+			.duration(duration)
+			.player(player())
+			.restoreExp(true)
+			.start();
 	}
 
-	@Path("end")
-	public void point2() {
-		CurveTest.end = location();
-		send("P2: " + StringUtils.getCoordinateString(CurveTest.end));
-		location().getBlock().setType(Material.LIGHT_BLUE_STAINED_GLASS);
+	@Path("setExp <number>")
+	void setExp(float exp) {
+		player().setExp(exp);
 	}
 
-	@Path("control2")
-	public void point4() {
-		CurveTest.endControl = location();
-		send("P4: " + StringUtils.getCoordinateString(CurveTest.endControl));
-		location().getBlock().setType(Material.BLUE_STAINED_GLASS);
+	@Path("setTotalExperience <number>")
+	void setTotalExperience(int exp) {
+		player().setTotalExperience(exp);
 	}
 
-	@Path("showPoints")
-	void showPoints() {
-		CurveTest.start.getBlock().setType(Material.RED_STAINED_GLASS);
-		CurveTest.startControl.getBlock().setType(Material.PINK_STAINED_GLASS);
-		CurveTest.end.getBlock().setType(Material.LIGHT_BLUE_STAINED_GLASS);
-		CurveTest.endControl.getBlock().setType(Material.BLUE_STAINED_GLASS);
+	@Path("setLevel <number>")
+	void setLevel(int exp) {
+		player().setLevel(exp);
 	}
 
-	@Path("display <segments>")
-	public void display(int segments) {
-		CurveTest.startControl.getBlock().setType(Material.AIR);
-		CurveTest.endControl.getBlock().setType(Material.AIR);
-		CurveTest.start.getBlock().setType(Material.AIR);
-		CurveTest.end.getBlock().setType(Material.AIR);
+	@Path("giveExpLevels <number>")
+	void giveExpLevels(int exp) {
+		player().giveExpLevels(exp);
+	}
 
-		DotEffect.builder().player(player()).location(CurveTest.start).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.LIGHT_RED.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(CurveTest.startControl).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.PINK.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(CurveTest.end).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.LIGHT_BLUE.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(CurveTest.endControl).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.BLUE.getBukkitColor()).start();
+	@Path("movingSchematic <schematic> <seconds> <velocity>")
+	void movingSchematicTest(String schematic, int seconds, double velocity) {
+		List<FallingBlock> fallingBlocks = new WorldEditUtils(player()).paster()
+			.file(schematic)
+			.at(location().add(-10, 0, 0))
+			.buildEntities();
 
-		List<Location> curve;
-		if (CurveTest.endControl != null)
-			curve = CurveTest.bezierCurve(segments, CurveTest.start, CurveTest.startControl, CurveTest.end, CurveTest.endControl);
+		Tasks.wait(Time.SECOND.x(5), () -> {
+			Tasks.Countdown.builder()
+				.duration(Time.SECOND.x(seconds))
+				.onTick(i -> fallingBlocks.forEach(fallingBlock -> fallingBlock.setVelocity(new Vector(velocity, 0, 0))))
+				.start();
+
+			Tasks.wait(Time.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
+		});
+	}
+
+	public void shutdownBossBars() {
+		bossBars.forEach((player, bossBar) -> {
+			bossBar.setVisible(false);
+			bossBar.removeAll();
+		});
+	}
+
+	private static Map<Player, BossBar> bossBars = new HashMap<>();
+
+	@Path("bossBar add <color> <style> <title...>")
+	void bossBarAdd(BarColor color, BarStyle barStyle, String title) {
+		if (bossBars.containsKey(player()))
+			error("You already have a boss bar");
+
+		BossBar bossBar = Bukkit.createBossBar(title, color, barStyle);
+		bossBar.addPlayer(player());
+		bossBars.put(player(), bossBar);
+	}
+
+	@Path("bossBar remove")
+	void bossBarRemove() {
+		if (!bossBars.containsKey(player()))
+			error("You do not have a boss bar");
+
+		BossBar bossBar = bossBars.remove(player());
+		bossBar.setVisible(false);
+		bossBar.removeAll();
+	}
+
+	@Path("actionBar <duration> <message...>")
+	void actionBar(int duration, String message) {
+		ActionBarUtils.sendActionBar(player(), message, duration);
+	}
+
+	@Path("progressBar <progres> <goal> [style] [length]")
+	void progressBar(int progress, int goal, @Arg("NONE") ProgressBarStyle style, @Arg("25") int length) {
+		send(StringUtils.progressBar(progress, goal, style, length));
+	}
+
+	@Path("getBlockStandingOn")
+	void getBlockStandingOn() {
+		Block block = BlockUtils.getBlockStandingOn(player());
+		if (BlockUtils.isNullOrAir(block))
+			send("Nothing");
 		else
-			curve = CurveTest.bezierCurve(segments, CurveTest.start, CurveTest.startControl, CurveTest.end);
+			send(block.getType().name());
+	}
 
-		for (Location point : curve) {
-			DotEffect.builder()
-					.player(player())
-					.location(point)
-					.speed(0.1)
-					.ticks(Time.SECOND.x(10))
-					.color(ColorType.PURPLE.getBukkitColor())
-					.start();
+	@Path("removeTest")
+	void removeTest() {
+		PlayerInventory inventory = inventory();
+		inventory.remove(new ItemStack(Material.DIRT, 2));
+		inventory.removeItem(new ItemStack(Material.COBBLESTONE, 4));
+		inventory.removeItemAnySlot(new ItemStack(Material.STONE, 6));
+	}
+
+	@Path("signgui")
+	void signgui() {
+		Nexus.getSignMenuFactory()
+			.lines("1", "2", "3", "4")
+			.prefix(PREFIX)
+			.response(lines -> {
+				for (String string : lines)
+					send(string);
+			})
+			.open(player());
+	}
+
+	@Path("loreizeTest")
+	void loreizeTest() {
+		String lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+			"labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris " +
+			"nisi ut aliquip ex ea commodo consequat.";
+
+		send(json("Test 1").hover(lorem));
+		send(json("Test 2").hover(lorem).loreize(false));
+	}
+
+	@Description("A command with a 5.75s cooldown")
+	@Path("cooldown")
+	@Cooldown({
+		@Part(value = Time.SECOND, x = 5),
+		@Part(value = Time.TICK, x = 15)
+	})
+	void cooldown() {
+		send("Hello!");
+	}
+
+	@Async
+	@Path("cooldown janitor")
+	void cooldownJanitor() {
+		send(PREFIX + "Janitored " + new CooldownService().janitor() + " records");
+	}
+
+	@Path("cooldown forceCME <iterations>")
+	void cooldownForceCME(int iterations) {
+		CooldownService service = new CooldownService();
+		for (int i = 0; i < iterations; i++)
+			service.check(uuid(), UUID.randomUUID().toString(), Time.SECOND);
+	}
+
+	@Path("argPerm [one] [two] [three] [four] [five]")
+	void argPermTest(
+		@Arg(tabCompleter = Player.class) String one,
+		@Arg(value = "2", tabCompleter = Player.class) String two,
+		@Arg(permission = "group.staff", tabCompleter = Player.class) String three,
+		@Arg(value = "4", permission = "group.staff", tabCompleter = Player.class) String four,
+		@Arg(value = "5", permission = "group.admin", tabCompleter = Player.class) String five
+	) {
+		send(one + " / " + two + " / " + three + " / " + four + " / " + five);
+	}
+
+	private static final Map<UUID, Location> directionTestMap = new HashMap<>();
+
+	@Path("directionTest <blockNumber>")
+	void directionTest(int blockNumber) {
+		Block targetBlockExact = getTargetBlockRequired();
+
+		if (blockNumber == 1) {
+			directionTestMap.put(uuid(), targetBlockExact.getLocation());
+			send(PREFIX + "Set second position to calcluate direction");
+		} else {
+			if (!directionTestMap.containsKey(uuid()))
+				error("You must set the first position");
+
+			send(PREFIX + camelCase(getDirection(directionTestMap.remove(uuid()), targetBlockExact.getLocation())));
 		}
 	}
 
+	@Path("allowedRegionsTest")
+	void allowedRegionsTest() {
+		new WorldEditUtils(player()).paster().file("allowedRegionsTest").at(location()).regions("allowedRegionsTest").pasteAsync();
+		send("Pasted schematic allowedRegionsTest");
+	}
 
-//		Tasks.repeat(10, 5, () -> {
-//			List<Player> players = new ArrayList<>(controlMinecart);
-//			for (Player player : players) {
-//				if(player.getVehicle() == null || !player.getVehicle().getType().equals(EntityType.MINECART)) {
-//					controlMinecart.remove(player);
-//					send(player, "removed - got out of minecart");
-//				}
-//
-//				Entity minecart = player.getVehicle();
-//				Vector unitVector = player.getLocation().getDirection();
-//				minecart.setVelocity((minecart.getVelocity().add(unitVector.multiply(0.2))).setY(0));
-//			}
-//		});
-//	}
+	@Path("timespanFormatter <seconds> <formatType>")
+	void timespanFormatter(int seconds, FormatType formatType) {
+		send(TimespanBuilder.of(seconds).formatType(formatType).format());
+	}
 
-//	@Path("gravity fix")
-//	public void fixgravity() {
-//		player().setGravity(true);
-//	}
+	@Path("setTabListName <text...>")
+	void setTabListName(String text) {
+		player().setPlayerListName(colorize(text));
+		send("Updated");
+	}
 
-//	@Path("minecart join")
-//	public void minecartJoin(){
-//		if(!controlMinecart.contains(player()))
-//			controlMinecart.add(player());
-//		send("joined");
-//	}
-//
-//	@Path("minecart leave")
-//	public void minecartLeave(){
-//		controlMinecart.remove(player());
-//		send("left");
-//	}
+	// Doesnt work
+	@Path("setPowered [boolean] [doPhysics]")
+	void setPowered(@Arg("true") boolean powered, @Arg("false") boolean doPhysics) {
+		line();
+		Block block = location().getBlock();
+		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
+		send("Before: " + (rail.isPowered() ? "is" : "not") + " powered");
+		rail.setPowered(powered);
+		block.setBlockData(rail, doPhysics);
+		player().sendBlockChange(block.getLocation(), rail);
+		send("After: " + (((RedstoneRail) block.getBlockData()).isPowered() ? "is" : "not") + " powered");
+	}
 
+	@Path("getPowered")
+	void getPowered() {
+		Block block = location().getBlock();
+		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
+		send((rail.isPowered() ? "is" : "not") + " powered");
+	}
+
+	@Path("clientSideBlock <material>")
+	void clientSideBlock(Material material) {
+		player().sendBlockChange(location().add(0, -1, 0), Bukkit.createBlockData(material));
+	}
+
+	@Path("radiusTest")
+	void radiusTest() {
+		Location origin = location();
+		for (Block block : getBlocksInRadius(origin, 3)) {
+			double distance = block.getLocation().distance(origin);
+			if (distance < 1)
+				block.setType(Material.RED_CONCRETE);
+			else if (distance < 2)
+				block.setType(Material.ORANGE_CONCRETE);
+			else if (distance < 3)
+				block.setType(Material.YELLOW_CONCRETE);
+		}
+	}
+
+	@Path("trimItemNames")
+	void trimItemNames() {
+		Block block = getTargetBlock();
+		if (!(block.getState() instanceof Container state))
+			return;
+
+		for (ItemStack content : state.getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			ItemMeta itemMeta = content.getItemMeta();
+			String displayName = itemMeta.getDisplayName();
+
+			if (!displayName.matches(StringUtils.getColorGroupPattern() + " .*"))
+				continue;
+
+			String trimmed = displayName.replaceFirst(" ", "");
+
+			send("\"" + displayName + "&f\" -> \"" + trimmed + "&f\"");
+
+			itemMeta.setDisplayName(trimmed);
+			content.setItemMeta(itemMeta);
+		}
+	}
+
+	@Path("hasPlayedBefore")
+	void hasPlayedBefore(Player player) {
+		send("hasPlayedBefore: " + player.hasPlayedBefore());
+	}
+
+	@Async
+	@Path("sha1 <url>")
+	void sha1(String url) {
+		send(Utils.createSha1(url));
+	}
+
+	@Path("glow getColor <player>")
+	void getGlowColor(Player player) {
+		send(GlowAPI.getGlowColor(player, player()).name());
+	}
+
+	@Path("glow set <player> <color>")
+	void getGlowColor(Player player, GlowAPI.Color color) {
+		GlowAPI.setGlowing(player, color, player());
+	}
+
+	@Path("forceTpNPC")
+	void forceTpNPC() {
+		NPC npc = CitizensUtils.getSelectedNPC(player());
+		NPCListener.allowNPC(npc);
+		runCommand("npc tphere");
+	}
+
+	@Path("setItemSetting <setting> [value]")
+	void setItemSetting(ItemSetting setting, Boolean value) {
+		ItemBuilder builder = new ItemBuilder(inventory().getItemInMainHand());
+		if (value == null)
+			builder.unset(setting);
+		else
+			builder.setting(setting, value);
+		inventory().setItemInMainHand(builder.build());
+	}
+
+	@Path("testTradeable [tradeable]")
+	void testTradeable(Boolean tradeable) {
+		ItemBuilder item = new ItemBuilder(inventory().getItemInMainHand());
+		if (tradeable != null)
+			item.setting(ItemSetting.TRADEABLE, tradeable);
+		Tasks.wait(1, () -> inventory().setItemInMainHand(item.build()));
+		Tasks.wait(2, () -> send(String.valueOf(new ItemBuilder(inventory().getItemInMainHand()).is(ItemSetting.TRADEABLE))));
+	}
+
+	@Path("testNewHasRoomFor")
+	void hasRoomFor() {
+		send("" + PlayerUtils.hasRoomFor(player(), new ItemStack(Material.DIRT, 64), new ItemStack(Material.SNOWBALL, 8)));
+	}
 
 }

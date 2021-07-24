@@ -220,11 +220,18 @@ public class DiscordCommand extends CustomCommand {
 		}
 	}
 
+	@Path("boosts")
+	@Permission("group.admin")
+	void boosts() {
+		for (Member booster : Discord.getGuild().getBoosters())
+			send(" - " + booster.getEffectiveName());
+	}
+
 	@Async
 	@Path("connect")
 	@Permission("group.staff")
 	void connect() {
-		((Discord) Features.get(Discord.class)).connect();
+		Features.get(Discord.class).connect();
 	}
 
 	@Async
