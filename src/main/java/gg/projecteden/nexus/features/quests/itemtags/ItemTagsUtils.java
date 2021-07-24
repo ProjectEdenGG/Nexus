@@ -15,25 +15,25 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class ItemTagsUtils {
 
 	public static void debugItem(ItemStack itemStack, Player debugger) {
-		debugger.sendMessage("====");
-		debugger.sendMessage("Condition Debug:");
-		Condition condition = Condition.debug(itemStack, debugger);
+		debugger.sendMessage("");
+		debugger.sendMessage("Condition debug:");
+		Condition condition = Condition.of(itemStack, debugger);
 		if (condition != null)
-			debugger.sendMessage("Tag: " + condition.getTag());
+			debugger.sendMessage("  Tag: " + condition.getTag());
 
 		debugger.sendMessage("");
 
-		debugger.sendMessage("Rarity Debug:");
-		Rarity rarity = Rarity.debug(itemStack, debugger);
+		debugger.sendMessage("Rarity debug:");
+		Rarity rarity = Rarity.of(itemStack, condition, debugger);
 		if (rarity != null)
-			debugger.sendMessage("Tag: " + rarity.getTag());
+			debugger.sendMessage("  Tag: " + rarity.getTag());
 
-		debugger.sendMessage("====");
+		debugger.sendMessage("");
 	}
 
 	public static ItemStack updateItem(ItemStack itemStack) {
 		Condition condition = Condition.of(itemStack);
-		Rarity rarity = Rarity.of(itemStack);
+		Rarity rarity = Rarity.of(itemStack, condition);
 		if (condition == null && rarity == null)
 			return itemStack;
 

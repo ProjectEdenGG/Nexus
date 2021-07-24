@@ -34,7 +34,7 @@ public class ItemTagsCommand extends CustomCommand {
 		if (condition != null)
 			send(condition.getTag());
 
-		Rarity rarity = Rarity.of(tool);
+		Rarity rarity = Rarity.of(tool, condition);
 		if (rarity != null)
 			send(rarity.getTag());
 		send("");

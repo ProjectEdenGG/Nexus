@@ -1,26 +1,28 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Depends(CustomEnchants.class)
 public class ItemTags extends Feature {
 	private static final Map<Enchantment, List<Level>> enchantsConfigMap = new HashMap<>();
-	//	private static final Map<Enchantment, Integer> customEnchantsConfigMap = new HashMap<>();
 	private static final Map<String, Integer> customEnchantsConfigMap = new HashMap<>();
 	private static final Map<String, Integer> armorConfigMap = new HashMap<>();
 	private static final Map<String, Integer> toolConfigMap = new HashMap<>();
@@ -39,22 +41,12 @@ public class ItemTags extends Feature {
 	@Override
 	public void onStart() {
 		reloadConfig();
-
-		if (!config.isConfigurationSection("ItemTags"))
-			createConfig();
-
-		loadConfigMaps();
-
-		new Listeners();
+		new ItemTagListener();
 	}
 
 	public static void reloadConfig() {
 		config = Nexus.getConfig(fileName);
-	}
-
-	@SneakyThrows
-	public static void saveConfig() {
-		config.save(Nexus.getFile(fileName));
+		loadConfigMaps();
 	}
 
 	public static int getEnchantVal(Enchantment enchant, int lvl) {
@@ -62,13 +54,20 @@ public class ItemTags extends Feature {
 		if (levels == null || levels.size() == 0)
 			return 0;
 
-		if (lvl > enchant.getMaxLevel())
-			return levels.get(levels.size() - 1).getValue();
-
+		int enchantLvl = 0;
 		for (Level level : levels) {
-			if (level.getName().equalsIgnoreCase(lvl + ""))
-				return level.getValue();
+			try {
+				enchantLvl = Integer.parseInt(level.getName());
+				if (enchantLvl == lvl)
+					return level.getValue();
+
+			} catch (Exception ignored) {
+
+			}
 		}
+
+		if (lvl > enchantLvl)
+			return levels.get(levels.size() - 1).getValue();
 
 		return 0;
 	}
@@ -79,13 +78,6 @@ public class ItemTags extends Feature {
 
 		return customEnchantsConfigMap.get(enchant);
 	}
-
-//	public static int getCustomEnchantVal(Enchantment enchant) {
-//		if (!customEnchantsConfigMap.containsKey(enchant))
-//			return 0;
-//
-//		return customEnchantsConfigMap.get(enchant);
-//	}
 
 	public static Integer getArmorMaterialVal(Material material) {
 		String type = parseMaterial(material.name());
@@ -103,13 +95,15 @@ public class ItemTags extends Feature {
 		return toolConfigMap.get(type);
 	}
 
-	private void loadConfigMaps() {
+	private static void loadConfigMaps() {
 		ConfigurationSection enchantments = config.getConfigurationSection("ItemTags.Enchantments");
 		if (enchantments != null) {
 			for (String key : enchantments.getKeys(false)) {
-				List<Level> levels = new ArrayList<>();
 				Enchantment enchant = parseEnchantment(key);
+				if (enchant == null)
+					continue;
 
+				List<Level> levels = new ArrayList<>();
 				ConfigurationSection section = config.getConfigurationSection(enchantments.getCurrentPath() + "." + key);
 				if (section != null) {
 					for (String sectionKey : section.getKeys(false)) {
@@ -140,16 +134,6 @@ public class ItemTags extends Feature {
 			}
 		}
 
-//		ConfigurationSection customEnchants = config.getConfigurationSection("ItemTags.CustomEnchants");
-//		if (customEnchants != null) {
-//			for (String key : customEnchants.getKeys(false)) {
-//				Enchantment enchant = parseEnchantment(key);
-//				int value = customEnchants.getInt(key);
-//
-//				customEnchantsConfigMap.put(enchant, value);
-//			}
-//		}
-
 		ConfigurationSection customEnchants = config.getConfigurationSection("ItemTags.CustomEnchants");
 		if (customEnchants != null) {
 			for (String key : customEnchants.getKeys(false)) {
@@ -160,13 +144,11 @@ public class ItemTags extends Feature {
 		}
 	}
 
-	private Enchantment parseEnchantment(String value) {
-		for (Enchantment enchantment : Enchantment.values()) {
-			String key = StringUtils.camelCaseWithUnderscores(enchantment.getKey().getKey());
-			if (key.equalsIgnoreCase(value))
-				return enchantment;
-		}
-		return null;
+	private static Enchantment parseEnchantment(String value) {
+		return Enchant.values().stream()
+			.filter(enchantment -> enchantment.getKey().getKey().equalsIgnoreCase(value))
+			.findFirst()
+			.orElse(null);
 	}
 
 	public static String parseMaterial(String value) {
@@ -185,65 +167,9 @@ public class ItemTags extends Feature {
 		return StringUtils.camelCase(ingot).replace(" ", "_");
 	}
 
-	@SneakyThrows
-	private void createConfig() {
-		config.createSection("ItemTags");
-		config.createSection("ItemTags.Enchantments");
-		ConfigurationSection section;
-
-		// Enchantments
-		Enchantment[] enchants = Enchantment.values();
-		Arrays.sort(enchants, (enchant1, enchant2) -> {
-			String ench1 = StringUtils.camelCaseWithUnderscores(enchant1.getKey().getKey());
-			String ench2 = StringUtils.camelCaseWithUnderscores(enchant2.getKey().getKey());
-			return ench1.compareTo(ench2);
-		});
-
-		for (Enchantment enchant : enchants) {
-			String enchantName = StringUtils.camelCaseWithUnderscores(enchant.getKey().getKey());
-			section = config.createSection("ItemTags.Enchantments." + enchantName);
-
-			int maxLvl = enchant.getMaxLevel();
-			for (int i = 1; i <= maxLvl; i++) {
-				String level = i + "";
-				section.set(level, 0);
-			}
-			section.set("above", 99);
-
-		}
-
-		// Armor Materials
-		section = config.createSection("ItemTags.Material.Armor");
-		section.set("Gold", 0);
-		section.set("Leather", 0);
-		section.set("Turtle_Shell", 0);
-		section.set("Elytra", 0);
-		section.set("Chainmail", 0);
-		section.set("Iron", 0);
-		section.set("Diamond", 0);
-		section.set("Netherite", 0);
-
-		// Tool Materials
-		section = config.createSection("ItemTags.Material.Tool");
-		section.set("Bow", 0);
-		section.set("Shield", 0);
-		section.set("Fishing_Rod", 0);
-		section.set("Crossbow", 0);
-		section.set("Trident", 0);
-		section.set("Wood", 0);
-		section.set("Stone", 0);
-		section.set("Gold", 0);
-		section.set("Iron", 0);
-		section.set("Diamond", 0);
-		section.set("Netherite", 0);
-
-		section = config.createSection("ItemTags.CustomEncahnts");
-		section.set("Paralyze", 0);
-		section.set("Double_Strike", 0);
-		section.set("Divine_Touch", 0);
-		section.set("Ender_Bow", 0);
-
-		ItemTags.saveConfig();
+	public static void debug(Player player, String message) {
+		if (player != null && player.isOnline())
+			player.sendMessage(message);
 	}
 
 }

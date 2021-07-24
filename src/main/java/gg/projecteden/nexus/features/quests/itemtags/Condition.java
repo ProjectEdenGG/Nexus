@@ -25,30 +25,10 @@ public enum Condition {
 	private final int max;
 
 	public static Condition of(ItemStack itemStack) {
-		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
-			return null;
-
-		if (ItemTagsUtils.isMythicMobsItem(itemStack))
-			return null;
-
-		ItemMeta meta = itemStack.getItemMeta();
-		if (meta instanceof Damageable damageable) {
-			double damage = damageable.getDamage();
-			double maxDurability = itemStack.getType().getMaxDurability();
-
-			for (Condition condition : values()) {
-				double min = (condition.getMin() / 100.0) * maxDurability;
-				double max = (condition.getMax() / 100.0) * maxDurability;
-
-				if (damage >= min && damage <= max)
-					return condition;
-			}
-		}
-
-		return null;
+		return of(itemStack, null);
 	}
 
-	public static Condition debug(ItemStack itemStack, Player debugger) {
+	public static Condition of(ItemStack itemStack, Player debugger) {
 		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
 			return null;
 
@@ -58,9 +38,10 @@ public enum Condition {
 		ItemMeta meta = itemStack.getItemMeta();
 		if (meta instanceof Damageable damageable) {
 			double damage = damageable.getDamage();
-			debugger.sendMessage("Damage: " + damage);
+			ItemTags.debug(debugger, "  Damage: " + damage);
+
 			double maxDurability = itemStack.getType().getMaxDurability();
-			debugger.sendMessage("Max Durability: " + maxDurability);
+			ItemTags.debug(debugger, "  Max durability: " + maxDurability);
 
 			for (Condition condition : values()) {
 				double min = (condition.getMin() / 100.0) * maxDurability;

@@ -34,7 +34,7 @@ public class MagnetEnchant extends CustomEnchant {
 	private static final int RADIUS_MULTIPLIER = 5;
 
 	static {
-		Tasks.repeat(Time.TICK, Time.TICK, () -> {
+		Tasks.repeat(Time.TICK.x(10), Time.TICK, () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 					continue;

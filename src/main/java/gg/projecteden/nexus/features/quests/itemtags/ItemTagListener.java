@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.quests.itemtags;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -17,14 +18,14 @@ import org.bukkit.inventory.ItemStack;
 import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
-public class Listeners implements Listener {
+public class ItemTagListener implements Listener {
 
-	public Listeners() {
+	public ItemTagListener() {
 		Nexus.registerListener(this);
 	}
 
 	public static boolean isNotTesting(Player player) {
-		return true;
+		return !Dev.WAKKA.is(player);
 	}
 
 	@EventHandler
@@ -124,7 +125,7 @@ public class Listeners implements Listener {
 //		}
 //	}
 
-//	// TODO: uncomment if mythic mobs is added
+	// TODO: uncomment if mythic mobs is added
 //	@EventHandler
 //	public void onMythicMMobEntityDeath(MythicMobDeathEvent event) {
 //		int ndx = 0;
