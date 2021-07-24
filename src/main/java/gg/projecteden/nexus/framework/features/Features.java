@@ -68,6 +68,10 @@ public class Features {
 			// Already registered
 			return;
 
+		final Depends depends = feature.getClass().getAnnotation(Depends.class);
+		if (depends != null)
+			register(depends.value());
+
 		new Timer("  Register feature " + feature.getName(), () -> {
 			try {
 				feature.onStart();
