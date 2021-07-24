@@ -14,7 +14,7 @@ public class FilidWelcCommand extends CustomCommand {
 	void run() {
 		line(2);
 		send("&eGreetings &b" + name() + "&e!");
-		send("&3Welcome to Project gg.projecteden. My name is Filid. Glad to meet you :)");
+		send("&3Welcome to Project Eden. My name is Filid. Glad to meet you :)");
 		send("&3Here are some of the most important aspects of our &ecommunity &3and what makes Project Eden unique.");
 		line();
 		send(json("&3[+] &eMinigames").command("/minigames").hover("&3Join us on &eSaturdays&3, &e4&3-&e6 &ePM &eEST " +
