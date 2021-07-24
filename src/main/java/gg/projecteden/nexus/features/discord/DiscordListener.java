@@ -98,11 +98,11 @@ public class DiscordListener extends ListenerAdapter {
 
 			Nexus.fileLog("discord", "[#" + channel + "] " + name + ": " + message.trim());
 
-			if (TextChannel.BOT_COMMANDS.getId().equals(event.getChannel().getId())) {
+			if (TextChannel.BOTS.getId().equals(event.getChannel().getId())) {
 				if (message.toLowerCase().startsWith(".pug")) {
 					try {
 						RandomPugClubResponse result = HttpUtils.mapJson(RandomPugClubResponse.class, "http://randompug.club/loaf");
-						Discord.koda(result.getImage(), TextChannel.BOT_COMMANDS);
+						Discord.koda(result.getImage(), TextChannel.BOTS);
 					} catch (Exception ex) {
 						event.getChannel().sendMessage(stripColor(ex.getMessage())).queue();
 						if (!(ex instanceof EdenException))

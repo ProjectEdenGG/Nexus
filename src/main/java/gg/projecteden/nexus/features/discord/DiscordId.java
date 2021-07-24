@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Member;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class DiscordId {
 
 	@Getter
@@ -15,7 +19,7 @@ public class DiscordId {
 		BOOSTS("846814263754620938"),
 
 		GENERAL("132680070480396288"),
-		BOT_COMMANDS("223897739082203137"),
+		BOTS("223897739082203137"),
 
 		BRIDGE("331277920729432065"),
 		STAFF_BRIDGE("331842528854802443"),
@@ -31,7 +35,8 @@ public class DiscordId {
 		STAFF_NICKNAME_QUEUE("824454559756713994"),
 
 		ARCHIVED_OPS_BRIDGE("331846903266279424"),
-		TEST("241774576822910976");
+		TEST("241774576822910976"),
+		;
 
 		private final String id;
 
@@ -56,17 +61,63 @@ public class DiscordId {
 		}
 	}
 
+	public enum VoiceChannelCategory {
+		THEATRE,
+		GENERAL,
+		MINIGAMES,
+		STAFF,
+		AFK,
+		;
+
+		public Set<VoiceChannel> getAll() {
+			return Arrays.stream(VoiceChannel.values())
+				.filter(voiceChannel -> voiceChannel.getCategory() == this)
+				.collect(Collectors.toSet());
+		}
+
+		public Set<String> getIds() {
+			return getAll().stream().map(VoiceChannel::getId).collect(Collectors.toSet());
+		}
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum VoiceChannel {
-		MINIGAMES("133782271822921728"),
-		RED("133785819432353792"),
-		BLUE("133785864890351616"),
-		GREEN("133785943772495872"),
-		YELLOW("133785902680899585"),
-		WHITE("360496040501051392");
+		MINIGAMES(VoiceChannelCategory.MINIGAMES, "133782271822921728"),
+		RED(VoiceChannelCategory.MINIGAMES, "133785819432353792"),
+		BLUE(VoiceChannelCategory.MINIGAMES, "133785864890351616"),
+		GREEN(VoiceChannelCategory.MINIGAMES, "133785943772495872"),
+		YELLOW(VoiceChannelCategory.MINIGAMES, "133785902680899585"),
+		WHITE(VoiceChannelCategory.MINIGAMES, "360496040501051392"),
+		;
 
+		VoiceChannel(VoiceChannelCategory category, String id) {
+			this(category, id, null);
+		}
+
+		private final VoiceChannelCategory category;
 		private final String id;
+		private final String permission;
+
+		public net.dv8tion.jda.api.entities.VoiceChannel get() {
+			return get(Bot.KODA);
+		}
+
+		public net.dv8tion.jda.api.entities.VoiceChannel get(Bot bot) {
+			return bot.jda().getGuildById(DiscordId.Guild.PROJECT_EDEN.getId()).getVoiceChannelById(id);
+		}
+
+		public static VoiceChannel of(net.dv8tion.jda.api.entities.VoiceChannel voiceChannel) {
+			return of(voiceChannel.getId());
+		}
+
+		public static VoiceChannel of(String id) {
+			for (VoiceChannel voiceChannel : values())
+				if (voiceChannel.getId().equals(id))
+					return voiceChannel;
+
+			return null;
+		}
 	}
 
 	@Getter
@@ -76,7 +127,8 @@ public class DiscordId {
 		POOGATEST("719574999673077912"),
 		RELAY("352231755551473664"),
 		KODA("223794142583455744"),
-		UBER("85614143951892480");
+		UBER("85614143951892480"),
+		;
 
 		private final String id;
 

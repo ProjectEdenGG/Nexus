@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams;
 
-import com.google.common.collect.ImmutableSet;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.DiscordId;
+import gg.projecteden.nexus.features.discord.DiscordId.VoiceChannelCategory;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -35,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,8 +52,8 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		DiscordId.VoiceChannel.YELLOW.getId(),
 		DiscordId.VoiceChannel.WHITE.getId()
 	);
-	public static final @NotNull Set<String> MINIGAME_VOICE_CHANNELS = ImmutableSet.copyOf(Arrays.stream(DiscordId.VoiceChannel.values()).map(DiscordId.VoiceChannel::getId).collect(Collectors.toSet()));
-	private static final @NotNull Component RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("voicechannel "+DiscordId.VoiceChannel.MINIGAMES.getId()).newline().build();
+
+	private static final @NotNull Component RETURN_VC = new JsonBuilder().newline().next("&e&lClick here&f&3 to return to the Minigames voice channel.").command("discord vc " + DiscordId.VoiceChannel.MINIGAMES.name().toLowerCase()).newline().build();
 
 	// TODO: add spectators to all team channels (read-only)?
 	// TODO: spectator chat? (git#26)
@@ -102,26 +101,27 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		}
 
 		ChatColor chatColor = team.getChatColor();
-		DiscordId.VoiceChannel vcEnum;
+		DiscordId.VoiceChannel voiceChannel;
 
 		if (chatColor == ChatColor.RED || chatColor == ChatColor.DARK_RED)
-			vcEnum = DiscordId.VoiceChannel.RED;
+			voiceChannel = DiscordId.VoiceChannel.RED;
 		else if (chatColor == ChatColor.BLUE || chatColor == ChatColor.AQUA || chatColor == ChatColor.DARK_AQUA || chatColor == ChatColor.DARK_BLUE)
-			vcEnum = DiscordId.VoiceChannel.BLUE;
+			voiceChannel = DiscordId.VoiceChannel.BLUE;
 		else if (chatColor == ChatColor.WHITE || chatColor == ChatColor.GRAY)
-			vcEnum = DiscordId.VoiceChannel.WHITE;
+			voiceChannel = DiscordId.VoiceChannel.WHITE;
 		else if (chatColor == ChatColor.GREEN || chatColor == ChatColor.DARK_GREEN)
-			vcEnum = DiscordId.VoiceChannel.GREEN;
+			voiceChannel = DiscordId.VoiceChannel.GREEN;
 		else if (chatColor == ChatColor.YELLOW || chatColor == ChatColor.GOLD)
-			vcEnum = DiscordId.VoiceChannel.YELLOW;
+			voiceChannel = DiscordId.VoiceChannel.YELLOW;
 		else
-			vcEnum = null;
+			voiceChannel = null;
 
 		JsonBuilder voiceMessageBuilder = new JsonBuilder();
-		if (vcEnum != null) {
-			voiceMessageBuilder.newline().next("&e&lClick here&f&3 to join your team's voice channel").command("voicechannel " + vcEnum.getId());
-			voiceMessageBuilder.initialize();
-		} else return;
+		if (voiceChannel == null)
+			return;
+
+		voiceMessageBuilder.newline().next("&e&lClick here&f&3 to join your team's voice channel").command("discord vc " + voiceChannel.name().toLowerCase());
+		voiceMessageBuilder.initialize();
 
 //		if (teamChannel == null && !voiceMessageBuilder.isInitialized()) return;
 
@@ -139,7 +139,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 				assert member.getVoiceState() != null;
 				assert member.getVoiceState().getChannel() != null;
 
-				if (MINIGAME_VOICE_CHANNELS.contains(member.getVoiceState().getChannel().getId()))
+				if (VoiceChannelCategory.MINIGAMES.getIds().contains(member.getVoiceState().getChannel().getId()))
 					minigamer.getPlayer().sendMessage(message);
 			}
 		});

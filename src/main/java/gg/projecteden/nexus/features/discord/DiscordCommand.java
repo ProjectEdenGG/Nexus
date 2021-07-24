@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.nexus.features.discord.DiscordId.VoiceChannel;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -9,6 +10,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha;
 import gg.projecteden.nexus.models.discord.DiscordCaptchaService;
@@ -27,9 +30,11 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic.getVoiceChannelMember;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 public class DiscordCommand extends CustomCommand {
@@ -220,6 +225,20 @@ public class DiscordCommand extends CustomCommand {
 		}
 	}
 
+	@Path("(voicechannel|vc) [channel]")
+	@Async
+	void voicechannel(VoiceChannel channel) {
+		Guild guild = Discord.getGuild();
+		if (guild == null)
+			error("Could not load the Discord server");
+
+		Member member = getVoiceChannelMember(player());
+		if (member == null)
+			error("Could not find you in a voice channel");
+
+		guild.moveVoiceMember(member, channel.get()).complete();
+	}
+
 	@Path("boosts")
 	@Permission("group.admin")
 	void boosts() {
@@ -340,5 +359,26 @@ public class DiscordCommand extends CustomCommand {
 	@TabCompleterFor(DiscordUser.class)
 	List<String> tabCompleteDiscordUser(String value) {
 		return tabCompletePlayer(value);
+	}
+
+	@ConverterFor(VoiceChannel.class)
+	VoiceChannel convertToVoiceChannel(String value) {
+		try {
+			final VoiceChannel voiceChannel = VoiceChannel.valueOf(value.toUpperCase());
+			if (!isNullOrEmpty(voiceChannel.getPermission()))
+				if (!player().hasPermission(voiceChannel.getPermission()))
+					throw new NoPermissionException();
+			return voiceChannel;
+		} catch (IllegalArgumentException ex) {
+			throw new InvalidInputException("Discord voice channel &e" + value + " &cnot found");
+		}
+	}
+
+	@TabCompleterFor(VoiceChannel.class)
+	List<String> tabCompleteVoiceChannel(String value) {
+		return Arrays.stream(VoiceChannel.values())
+			.filter(voiceChannel -> isNullOrEmpty(voiceChannel.getPermission()) || player().hasPermission(voiceChannel.getPermission()))
+			.map(voiceChannel -> voiceChannel.name().toLowerCase())
+			.toList();
 	}
 }
