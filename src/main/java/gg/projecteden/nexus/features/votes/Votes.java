@@ -11,6 +11,8 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -136,9 +138,10 @@ public class Votes extends Feature implements Listener {
 			return;
 
 		Vote vote = new Vote(uuid, site, extraVotePoints(), timestamp);
-		new VoteService().save(vote);
+		final VoteService voteService = new VoteService();
+		voteService.save(vote);
 
-		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
+		int sum = voteService.getTopVoters(LocalDateTime.now().getMonth()).stream()
 			.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		int left = 0;
 		if (GOAL > sum)
@@ -163,6 +166,16 @@ public class Votes extends Feature implements Listener {
 			new Voter(player).givePoints(points);
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
+
+		if (voteService.getTodaysVotes(uuid).size() >= 5) {
+			final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
+			final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
+			if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
+				dailyVoteReward.getCurrentStreak().incrementStreak();
+				dailyVoteRewardService.save(dailyVoteReward);
+			}
+		}
+
 
 		Tasks.async(Votes::write);
 	}

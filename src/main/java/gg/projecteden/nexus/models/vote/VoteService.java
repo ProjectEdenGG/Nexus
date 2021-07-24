@@ -42,6 +42,11 @@ public class VoteService extends MySQLService {
 		return query.results(Vote.class);
 	}
 
+	public List<Vote> getTodaysVotes(String uuid) {
+		Query query = database.where("date(timestamp) = curdate()").and("uuid = ?", uuid);
+		return query.results(Vote.class);
+	}
+
 	public List<Vote> getRecentVotes() {
 		Query query = database.where("expired = 0").orderBy("timestamp desc");
 		return query.results(Vote.class);
