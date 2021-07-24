@@ -16,13 +16,14 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
 @Builder
-@Entity(value = "daily_vote_rewards", noClassnameStored = true)
+@Entity(value = "daily_vote_reward", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -40,6 +41,12 @@ public class DailyVoteReward implements PlayerOwnedObject {
 		return currentStreak;
 	}
 
+	public void endStreak() {
+		currentStreak.end();
+		pastStreaks.add(currentStreak);
+		currentStreak = new DailyVoteStreak();
+	}
+
 	@Data
 	@NoArgsConstructor
 	public static class DailyVoteStreak implements PlayerOwnedObject {
@@ -47,6 +54,8 @@ public class DailyVoteReward implements PlayerOwnedObject {
 		private UUID uuid;
 		private int streak;
 		private boolean earnedToday;
+		private LocalDate start = LocalDate.now();
+		private LocalDate end;
 
 		public void incrementStreak() {
 			++streak;
@@ -55,6 +64,10 @@ public class DailyVoteReward implements PlayerOwnedObject {
 			for (VoteStreakReward reward : VoteStreakReward.values())
 				if (reward.getDay() == streak % 30)
 					Mail.fromServer(uuid, WorldGroup.SURVIVAL, "Vote Streak Reward (Day #" + streak + ")", reward.getKeys());
+		}
+
+		public void end() {
+			end = LocalDate.now();
 		}
 
 	}

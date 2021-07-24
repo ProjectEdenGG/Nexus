@@ -57,12 +57,10 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 		for (DailyVoteReward rewards : service.getAll()) {
 			final DailyVoteStreak streak = rewards.getCurrentStreak();
 
-			if (!streak.isEarnedToday()) {
-				rewards.getPastStreaks().add(streak);
-				rewards.setCurrentStreak(new DailyVoteStreak());
-			} else {
+			if (!streak.isEarnedToday())
+				rewards.endStreak();
+			else
 				streak.setEarnedToday(false);
-			}
 
 			service.save(rewards);
 		}
