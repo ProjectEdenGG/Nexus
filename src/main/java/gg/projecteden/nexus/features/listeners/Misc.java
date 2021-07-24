@@ -64,6 +64,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
@@ -185,6 +186,23 @@ public class Misc implements Listener {
 			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup) || WorldGroup.MINIGAMES.equals(worldGroup))
 				event.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void onEntityTarget(EntityTargetEvent event) {
+		if (event.getTarget() == null)
+			return;
+
+		final EntityType attackerType = event.getEntity().getType();
+		final EntityType targetType = event.getTarget().getType();
+
+		if (attackerType != EntityType.AXOLOTL && attackerType != EntityType.FOX)
+			return;
+
+		if (targetType != EntityType.TROPICAL_FISH)
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
