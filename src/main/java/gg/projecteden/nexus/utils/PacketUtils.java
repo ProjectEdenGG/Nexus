@@ -69,8 +69,8 @@ public class PacketUtils {
 
 	// Common
 
-	public static void entityDestroy(@NonNull HasPlayer player, @NonNull Entity entity) {
-		PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(entity.getId());
+	public static void entityDestroy(@NonNull HasPlayer player, int entityId) {
+		PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(entityId);
 		sendPacket(player, destroyPacket);
 	}
 

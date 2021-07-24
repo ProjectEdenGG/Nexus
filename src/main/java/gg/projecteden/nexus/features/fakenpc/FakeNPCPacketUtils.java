@@ -48,7 +48,7 @@ public class FakeNPCPacketUtils {
 
 	public static void despawnFakeNPC(HasPlayer hasPlayer, FakeNPC fakeNPC) {
 		EntityPlayer entityPlayer = fakeNPC.getEntityPlayer();
-		PacketUtils.entityDestroy(hasPlayer, entityPlayer);
+		PacketUtils.entityDestroy(hasPlayer, entityPlayer.getId());
 	}
 
 	// Holograms
@@ -86,6 +86,6 @@ public class FakeNPCPacketUtils {
 	}
 
 	public static void despawnHologram(@NonNull HasPlayer player, Hologram hologram) {
-		hologram.getArmorStandList().forEach(entityArmorStand -> PacketUtils.entityDestroy(player, entityArmorStand));
+		hologram.getArmorStandList().forEach(entityArmorStand -> PacketUtils.entityDestroy(player, entityArmorStand.getId()));
 	}
 }

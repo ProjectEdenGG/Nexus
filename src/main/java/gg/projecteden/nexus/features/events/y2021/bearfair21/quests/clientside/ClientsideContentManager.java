@@ -66,7 +66,7 @@ public class ClientsideContentManager implements Listener {
 
 			List<Entity> entities = playerEntities.get(uuid);
 			for (Entity entity : entities) {
-				PacketUtils.entityDestroy(player, entity);
+				PacketUtils.entityDestroy(player, entity.getId());
 			}
 		}
 		playerEntities.clear();
@@ -77,7 +77,7 @@ public class ClientsideContentManager implements Listener {
 
 			List<EntityArmorStand> armorStands = nameTag.getArmorStands();
 			for (EntityArmorStand armorStand : armorStands) {
-				PacketUtils.entityDestroy(player, armorStand);
+				PacketUtils.entityDestroy(player, armorStand.getId());
 			}
 		}
 		playerNPCNameTags.clear();
@@ -199,7 +199,7 @@ public class ClientsideContentManager implements Listener {
 			entities.stream()
 					.filter(entity -> LocationUtils.isFuzzyEqual(content.getLocation(), entity.getBukkitEntity().getLocation())).toList()
 					.forEach(entity -> {
-						PacketUtils.entityDestroy(player, entity);
+						PacketUtils.entityDestroy(player, entity.getId());
 						playerEntities.get(player.getUniqueId()).remove(entity);
 					});
 		}
@@ -212,7 +212,7 @@ public class ClientsideContentManager implements Listener {
 				continue;
 
 			if (LocationUtils.isFuzzyEqual(entity.getBukkitEntity().getLocation(), location)) {
-				PacketUtils.entityDestroy(player, entity);
+				PacketUtils.entityDestroy(player, entity.getId());
 				playerEntities.get(player.getUniqueId()).remove(entity);
 			}
 		}
@@ -272,7 +272,7 @@ public class ClientsideContentManager implements Listener {
 		if (nameTag == null) return;
 
 		for (EntityArmorStand armorStand : nameTag.getArmorStands())
-			PacketUtils.entityDestroy(player, armorStand);
+			PacketUtils.entityDestroy(player, armorStand.getId());
 
 		playerNPCNameTags.remove(nameTag);
 	}
