@@ -225,8 +225,8 @@ public class DiscordCommand extends CustomCommand {
 		}
 	}
 
-	@Path("(voicechannel|vc) [channel]")
 	@Async
+	@Path("(voicechannel|vc) [channel]")
 	void voicechannel(VoiceChannel channel) {
 		Guild guild = Discord.getGuild();
 		if (guild == null)
@@ -236,7 +236,7 @@ public class DiscordCommand extends CustomCommand {
 		if (member == null)
 			error("Could not find you in a voice channel");
 
-		guild.moveVoiceMember(member, channel.get()).complete();
+		guild.moveVoiceMember(member, channel.get()).queue();
 	}
 
 	@Path("boosts")

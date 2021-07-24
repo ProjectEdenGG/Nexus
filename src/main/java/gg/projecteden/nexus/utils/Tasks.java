@@ -9,7 +9,10 @@ import me.lexikiq.OptionalPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scheduler.BukkitWorker;
 import org.inventivetalent.glow.GlowAPI;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -115,6 +118,14 @@ public class Tasks {
 
 	public static boolean isQueued(int id) {
 		return scheduler.isQueued(id);
+	}
+
+	public static @NotNull List<BukkitTask> getPending() {
+		return scheduler.getPendingTasks();
+	}
+
+	public static @NotNull List<BukkitWorker> getActive() {
+		return scheduler.getActiveWorkers();
 	}
 
 	public static class Countdown {
