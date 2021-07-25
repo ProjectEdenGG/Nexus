@@ -28,13 +28,13 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	@Getter
 	private static final String colorCharsRegex = "[" + colorChar + altColorChar + "]";
 	@Getter
-	private static final Pattern colorPattern = Pattern.compile(colorCharsRegex + "[0-9a-fA-F]");
+	private static final Pattern colorPattern = Pattern.compile(colorCharsRegex + "[\\da-fA-F]");
 	@Getter
 	private static final Pattern formatPattern = Pattern.compile(colorCharsRegex + "[k-orK-OR]");
 	@Getter
-	private static final Pattern hexPattern = Pattern.compile(colorCharsRegex + "#[a-fA-F0-9]{6}");
+	private static final Pattern hexPattern = Pattern.compile(colorCharsRegex + "#[a-fA-F\\d]{6}");
 	@Getter
-	private static final Pattern hexColorizedPattern = Pattern.compile(colorCharsRegex + "x(" + colorCharsRegex + "[a-fA-F0-9]){6}");
+	private static final Pattern hexColorizedPattern = Pattern.compile(colorCharsRegex + "x(" + colorCharsRegex + "[a-fA-F\\d]){6}");
 	@Getter
 	private static final Pattern colorGroupPattern = Pattern.compile("(" + colorPattern + "|(" + hexPattern + "|" + hexColorizedPattern + "))((" + formatPattern + ")+)?");
 	@Getter
@@ -121,7 +121,7 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 				watchForNewLine = true;
 
 			if (watchForColor) {
-				if (character.matches("[A-Fa-fK-Ok-oRr0-9]"))
+				if (character.matches("[A-Fa-fK-Ok-oRr\\d]"))
 					lineLength -= 2;
 				watchForColor = false;
 			} else if ("&".equalsIgnoreCase(character))

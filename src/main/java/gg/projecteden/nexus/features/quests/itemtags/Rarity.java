@@ -169,7 +169,7 @@ public enum Rarity {
 		if (!Utils.isNullOrEmpty(lore)) {
 			for (String line : lore) {
 				String enchant = StringUtils.stripColor(line)
-					.replaceAll("[0-9]+", "") // Custom Enchants bug
+					.replaceAll("[\\d]+", "") // Custom Enchants bug
 					.replaceAll(" [IVXLC]+", "")
 					.trim();
 				int val = ItemTags.getCustomEnchantVal(enchant);

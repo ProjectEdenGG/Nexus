@@ -107,7 +107,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	@Path("create <honeypot> [schemSize]")
-	void create(@Arg(regex = "[_a-zA-Z0-9]+_[0-9]+") String honeyPot, @Arg("10") int expand) {
+	void create(@Arg(regex = "[\\w\\d]+_[\\d]+") String honeyPot, @Arg("10") int expand) {
 		honeyPot = honeyPot.toLowerCase();
 		if (honeyPot.startsWith("hp_"))
 			honeyPot = honeyPot.substring(2);

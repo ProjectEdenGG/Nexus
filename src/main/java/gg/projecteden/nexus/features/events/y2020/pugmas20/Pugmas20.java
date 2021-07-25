@@ -242,7 +242,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isAtPugmas(Location location, String name) {
-		return isInPugmasWorld(location) && !getWGUtils().getRegionsLikeAt(getRegion() + "_" + name + "(_[0-9]+)?", location).isEmpty();
+		return isInPugmasWorld(location) && !getWGUtils().getRegionsLikeAt(getRegion() + "_" + name + "(_[\\d]+)?", location).isEmpty();
 	}
 
 	@EventHandler

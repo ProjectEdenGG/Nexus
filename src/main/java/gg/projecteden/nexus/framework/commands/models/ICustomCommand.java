@@ -110,7 +110,7 @@ public abstract class ICustomCommand {
 		for (Annotation annotation : this.getClass().getAnnotations()) {
 			if (annotation instanceof Aliases) {
 				for (String alias : ((Aliases) annotation).value()) {
-					if (!Pattern.compile("[a-zA-Z0-9_-]+").matcher(alias).matches()) {
+					if (!Pattern.compile("[a-zA-Z\\d_-]+").matcher(alias).matches()) {
 						Nexus.warn("Alias invalid: " + getName() + "Command.java / " + alias);
 						continue;
 					}

@@ -495,7 +495,7 @@ public enum QuestNPC {
 			npcName.set("Q.A. Elf");
 		else
 			npcName.set(camelCase(name()));
-		npcName.set(npcName.get().replaceAll("[0-9]+", ""));
+		npcName.set(npcName.get().replaceAll("[\\d]+", ""));
 
 		return npcName.get();
 	}

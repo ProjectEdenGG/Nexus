@@ -127,7 +127,7 @@ public class ArcheryMatchData extends MatchData {
 
 	public void removeInactiveRanges(Match match) {
 		ArcheryArena arena = match.getArena();
-		Set<ProtectedRegion> rangeRegions = arena.getRegionsLike("_range_[0-9]+_.*");
+		Set<ProtectedRegion> rangeRegions = arena.getRegionsLike("_range_[\\d]+_.*");
 		Set<ProtectedRegion> activeRegions = new HashSet<>();
 
 		// Get active regions

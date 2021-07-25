@@ -28,7 +28,7 @@ public class RegionRenameCommand extends CustomCommand {
 
 	// Regex: https://github.com/EngineHub/WorldGuard/blob/master/worldguard-core/src/main/java/com/sk89q/worldguard/protection/regions/ProtectedRegion.java#L57
 	@Path("<region> <newName>")
-	void rename(ProtectedRegion region, @Arg(regex = "^[A-Za-z0-9_,'\\\\-\\\\+/]{1,}$") String newName) {
+	void rename(ProtectedRegion region, @Arg(regex = "^[\\w\\d,'\\\\-\\\\+/]{1,}$") String newName) {
 		int wait = 0;
 		Tasks.wait(wait += 3, () -> runCommand("rg save"));
 		Tasks.wait(wait += 3, () -> runRename(region, newName));

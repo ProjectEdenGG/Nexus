@@ -238,7 +238,7 @@ public class Archery extends TeamlessMechanic {
 	public void clearRanges(Match match) {
 		ArcheryArena arena = match.getArena();
 		for (int i = 1; i <= 10; i++) {
-			Set<ProtectedRegion> rangeRegions = arena.getRegionsLike("range_[0-9]+_.*");
+			Set<ProtectedRegion> rangeRegions = arena.getRegionsLike("range_[\\d]+_.*");
 			rangeRegions.forEach(region -> {
 				CuboidRegion expandedRegion = (CuboidRegion) match.getWEUtils().expandAll(match.getWGUtils().convert(region), 2);
 				List<Block> blocks = match.getWEUtils().getBlocks(expandedRegion);

@@ -144,7 +144,7 @@ public class ExchangeConfigProvider extends _ShopProvider {
 				.onError(() -> open(player))
 				.response(lines -> {
 					if (lines[0].length() > 0) {
-						String input = lines[0].replaceAll("[^0-9.]+", "");
+						String input = lines[0].replaceAll("[^\\d.]+", "");
 						if (!Utils.isDouble(input))
 							throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
 						double price = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();

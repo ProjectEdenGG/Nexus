@@ -41,7 +41,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Async
 	@Path("<nickname> [override]")
-	void run(@Arg(min = 2, max = 16, regex = "[A-Za-z0-9_]+") String nickname, String cancel) {
+	void run(@Arg(min = 2, max = 16, regex = "[\\w\\d]+") String nickname, String cancel) {
 		player();
 		checkExisting(nickname);
 
@@ -104,7 +104,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Permission(value = "group.staff", absolute = true)
 	@Path("set <player> <nickname>")
-	void set(Nickname player, @Arg(min = 2, max = 16, regex = "[A-Za-z0-9_]+") String nickname) {
+	void set(Nickname player, @Arg(min = 2, max = 16, regex = "[\\w\\d]+") String nickname) {
 		player.setNickname(nickname);
 		service.save(player);
 		send(PREFIX + player.getName() + "'s nickname set to &e" + player.getNickname());

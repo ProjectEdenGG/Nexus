@@ -211,7 +211,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return (getMechanicName() + "_" + getName()).toLowerCase();
 	}
 
-	private static final @NotNull String NUMBER_MODIFIER = "(_[0-9]+)?";
+	private static final @NotNull String NUMBER_MODIFIER = "(_[\\d]+)?";
 
 	public @NotNull String getRegionTypeRegex(String type) {
 		if (Strings.isNullOrEmpty(type))
