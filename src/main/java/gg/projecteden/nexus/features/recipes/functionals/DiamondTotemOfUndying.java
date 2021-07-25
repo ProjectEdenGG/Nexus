@@ -61,12 +61,13 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@EventHandler
 	public void onEntityResurrect(EntityResurrectEvent event) {
+		if (!event.isCancelled())
+			return;
+
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
 		PlayerInventory inv = player.getInventory();
-		if (inv.getItemInMainHand().getType().equals(Material.TOTEM_OF_UNDYING) || inv.getItemInOffHand().getType().equals(Material.TOTEM_OF_UNDYING))
-			return;
 
 		final ItemStack item = PlayerUtils.searchInventory(player, getCustomModel());
 		if (isNullOrAir(item))
