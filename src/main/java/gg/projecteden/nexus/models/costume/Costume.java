@@ -64,7 +64,6 @@ public class Costume {
 		if (folder == null)
 			return;
 
-		System.out.println("Loading " + type.name() + " folder " + folder.getPath());
 		for (CustomModelFolder subfolder : folder.getFolders())
 			load(type, subfolder);
 

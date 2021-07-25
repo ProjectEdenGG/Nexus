@@ -46,13 +46,8 @@ class CustomModelGroup {
 		public CustomModelMeta getMeta() {
 			String metaUri = ResourcePack.getSubdirectory() + model.replaceFirst("item", "") + ".meta";
 			Path metaPath = ResourcePack.getZipFile().getPath(metaUri);
-			if (metaUri.toLowerCase().contains("gg"))
-				System.out.println("Meta path: " + metaPath);
-			if (Files.exists(metaPath)) {
-				if (metaUri.toLowerCase().contains("gg"))
-					System.out.println("found meta file");
+			if (Files.exists(metaPath))
 				return new Gson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModelMeta.class);
-			}
 			return new CustomModelMeta();
 		}
 	}
