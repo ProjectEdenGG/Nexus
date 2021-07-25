@@ -70,10 +70,10 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 
 		if (!items.isEmpty()) {
 			while (items.size() % 9 != 0)
-				items.add(ClickableItem.empty(new ItemStack(Material.AIR)));
+				items.add(ClickableItem.NONE);
 
 			for (int i = 0; i < 9; i++)
-				items.add(ClickableItem.empty(new ItemStack(Material.AIR)));
+				items.add(ClickableItem.NONE);
 		}
 
 		for (CustomModel model : folder.getModels()) {
