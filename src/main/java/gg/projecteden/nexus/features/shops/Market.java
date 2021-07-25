@@ -11,13 +11,21 @@ import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Market {
 	private static final ShopService service = new ShopService();
 	private static final Shop market = service.getMarket();
 
+	public static final List<Product> RESOURCE_WORLD_PRODUCTS = new ArrayList<>();
+
 	public static void load() {
 		market.getProducts().clear();
+		RESOURCE_WORLD_PRODUCTS.clear();
+
 		addItems();
+
 		service.save(market);
 	}
 
@@ -216,6 +224,9 @@ public class Market {
 	}
 
 	private static void add(Product product) {
+		if (product.isResourceWorld() && product.getExchangeType() == ExchangeType.BUY)
+			RESOURCE_WORLD_PRODUCTS.add(product);
+
 		market.getProducts().add(product);
 	}
 

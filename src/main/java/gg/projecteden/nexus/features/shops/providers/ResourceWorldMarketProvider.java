@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
-import gg.projecteden.nexus.features.shops.ResourceWorldCommand;
+import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
@@ -33,7 +33,7 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 		super.init(player, contents);
 
 		final Shop shop = service.get(player);
-		final List<Product> products = ResourceWorldCommand.RESOURCE_WORLD_PRODUCTS;
+		final List<Product> products = Market.RESOURCE_WORLD_PRODUCTS;
 
 		final ItemBuilder info = new ItemBuilder(Material.BOOK).name("&6&lInfo")
 			.lore("Items are automatically sold when collected");

@@ -17,7 +17,6 @@ import gg.projecteden.nexus.models.shop.ResourceMarketLogger;
 import gg.projecteden.nexus.models.shop.ResourceMarketLoggerService;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.BuyExchange;
-import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.tip.Tip;
@@ -73,6 +72,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.nexus.features.shops.Market.RESOURCE_WORLD_PRODUCTS;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 import static gg.projecteden.utils.StringUtils.prettyMoney;
@@ -361,10 +361,6 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			.filter(product -> product.getItem().isSimilar(item))
 			.findFirst();
 	}
-
-	public static final List<Product> RESOURCE_WORLD_PRODUCTS = new ShopService().getMarket().getProducts().stream()
-			.filter(product -> product.isResourceWorld() && product.getExchangeType() == ExchangeType.BUY)
-			.toList();
 
 	/* Find protections from people being dumb
 
