@@ -34,6 +34,12 @@ public class ItemTagsCommand extends CustomCommand {
 			send("  " + rarity.getTag());
 	}
 
+	@Path("debugItem")
+	void debugItem() {
+		ItemStack tool = getToolRequired();
+		ItemTagsUtils.debugItem(tool, player());
+	}
+
 	@Path("get")
 	@Description("Get item tags on held item")
 	@Permission("group.admin")
@@ -101,13 +107,6 @@ public class ItemTagsCommand extends CustomCommand {
 
 		int heldSlot = inventory().getHeldItemSlot();
 		inventory().setItem(heldSlot, updated);
-	}
-
-	@Path("debugItem")
-	@Permission("group.admin")
-	void debugItem() {
-		ItemStack tool = getToolRequired();
-		ItemTagsUtils.debugItem(tool, player());
 	}
 
 	@Path("reload")

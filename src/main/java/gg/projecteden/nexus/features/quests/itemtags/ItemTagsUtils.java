@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,20 +17,35 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class ItemTagsUtils {
 
 	public static void debugItem(ItemStack itemStack, Player debugger) {
-		debugger.sendMessage("");
-		debugger.sendMessage("Condition debug:");
+		ItemTags.debug(debugger, StringUtils.getPrefix("ItemTags") + " Item debug:");
+		ItemTags.debug(debugger, "&3&lCondition:");
 		Condition condition = Condition.of(itemStack, debugger);
-		if (condition != null)
-			debugger.sendMessage("  Tag: " + condition.getTag());
+		if (condition != null) {
+			JsonBuilder json = new JsonBuilder("&eTag: &f").group().next(condition.getTag());
+			for (Condition value : Condition.values())
+				json.hover(value.getTag() + " &f" + value.getMin() + "% - " + value.getMax() + "%");
 
-		debugger.sendMessage("");
+			ItemTags.debug(debugger, json.loreize(false));
+		}
 
-		debugger.sendMessage("Rarity debug:");
+		ItemTags.debug(debugger, "");
+
+		ItemTags.debug(debugger, "&3&lRarity:");
 		Rarity rarity = Rarity.of(itemStack, condition, debugger);
-		if (rarity != null)
-			debugger.sendMessage("  Tag: " + rarity.getTag());
+		if (rarity != null) {
+			JsonBuilder json = new JsonBuilder("&eTag: &f").group().next(rarity.getTag());
+			for (Rarity value : Rarity.values()) {
+				String minMax = "";
+				if (value.getMin() != null && value.getMax() != null)
+					minMax = value.getMin() + " - " + value.getMax() + " | ";
 
-		debugger.sendMessage("");
+				json.hover(value.getTag() + " &f" + minMax + "Craftable: " + value.isCraftable());
+			}
+
+			ItemTags.debug(debugger, json.loreize(false));
+		}
+
+		ItemTags.debug(debugger, "");
 	}
 
 	public static ItemStack updateItem(ItemStack itemStack) {
@@ -192,6 +209,9 @@ public class ItemTagsUtils {
 	public static boolean isTool(ItemStack itemStack) {
 		Material type = itemStack.getType();
 		List<Material> uniqueTools = List.of(Material.SHIELD);
+
+		if (MaterialTag.ARROWS.isTagged(itemStack))
+			return false;
 
 		if (uniqueTools.contains(type))
 			return true;
