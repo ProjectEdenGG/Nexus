@@ -8,11 +8,8 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -63,15 +60,8 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 	}
 
 	@EventHandler
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (!event.getEntityType().equals(EntityType.PLAYER))
-			return;
-
-		Player player = (Player) event.getEntity();
-		if (player.getHealth() - event.getFinalDamage() > 0.0)
-			return;
-
-		if (event.getCause().equals(DamageCause.VOID))
+	public void onEntityResurrect(EntityResurrectEvent event) {
+		if (!(event.getEntity() instanceof Player player))
 			return;
 
 		PlayerInventory inv = player.getInventory();
@@ -82,23 +72,15 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 		if (isNullOrAir(item))
 			return;
 
+		event.setCancelled(false);
 		// Delete the totem they have
 		inv.removeItemAnySlot(item);
 		// Move item from offhand
-		ItemStack offHand = inv.getItemInOffHand();
-		if (!isNullOrAir(offHand))
-			Tasks.wait(1, () -> inv.setItemInOffHand(offHand));
+		ItemStack offHand = inv.getItemInOffHand().clone();
+		Tasks.wait(1, () -> inv.setItemInOffHand(offHand));
 
 		// Put a totem in their offhand
 		inv.setItemInOffHand(item);
-	}
-
-	@EventHandler
-	public void onEntityResurrect(EntityResurrectEvent event) {
-		if (!event.getEntity().getType().equals(EntityType.PLAYER))
-			return;
-
-		Player player = (Player) event.getEntity();
-		Tasks.wait(1, player::updateInventory);
+		Tasks.wait(2, player::updateInventory);
 	}
 }
