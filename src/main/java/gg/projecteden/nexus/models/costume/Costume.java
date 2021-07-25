@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.costume;
 import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.store.StoreCommand;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -52,6 +53,7 @@ public class Costume {
 	private static final List<Costume> costumes = new ArrayList<>();
 	public static final CustomModelFolder ROOT_FOLDER = ResourcePack.getRootFolder().getFolder("/costumes");
 	public static final String EXCLUSIVE = "exclusive";
+	public static final String STORE_URL = StoreCommand.URL + "/category/costumes";
 
 	static {
 		for (CostumeType type : CostumeType.values())

@@ -5,7 +5,6 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -111,7 +110,7 @@ public class CostumeCommand extends CustomCommand {
 
 			contents.set(0, 8, ClickableItem.from(info.build(), e -> {
 				player.closeInventory();
-				user.sendMessage("&e" + StoreCommand.URL + "/category/costumes");
+				user.sendMessage("&e" + Costume.STORE_URL);
 			}));
 
 			List<ClickableItem> items = new ArrayList<>();
@@ -126,7 +125,12 @@ public class CostumeCommand extends CustomCommand {
 					item = firstModel.getDisplayItem();
 
 				ItemBuilder builder = new ItemBuilder(item).name(subfolder.getDisplayPath()).glow();
-				items.add(ClickableItem.from(formatFolder(builder).build(), e -> newMenu(this, subfolder).open(player)));
+				final int available = getAvailableCostumes(player, subfolder);
+				if (available == 0)
+					continue;
+
+				builder.lore("", "&3Available Costumes: &e" + available);
+				items.add(ClickableItem.from(builder.build(), e -> newMenu(this, subfolder).open(player)));
 			}
 
 			// TODO Use CostumeType order
@@ -148,8 +152,11 @@ public class CostumeCommand extends CustomCommand {
 				if (costume.getModel().getMaterial() != Material.STONE_BUTTON)
 					continue;
 
+				if (!isAvailableCostume(user, costume))
+					continue;
+
 				if (folder.equals(costume.getModel().getFolder()))
-					items.add(formatCostume(user, costume));
+					items.add(formatCostume(user, costume, contents));
 			}
 
 			addPagination(player, contents, items);
@@ -157,9 +164,26 @@ public class CostumeCommand extends CustomCommand {
 
 		protected abstract CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
 
-		abstract protected ItemBuilder formatFolder(ItemBuilder builder);
+		protected int getAvailableCostumes(Player player, CustomModelFolder folder) {
+			final CostumeUserService service = new CostumeUserService();
+			final CostumeUser user = service.get(player);
+			int available = 0;
+			for (Costume costume : Costume.values()) {
+				if (!isAvailableCostume(user, costume))
+					continue;
 
-		abstract protected ClickableItem formatCostume(CostumeUser user, Costume costume);
+				if (!costume.getModel().getFolder().getPath().contains(folder.getPath()))
+					continue;
+
+				++available;
+			}
+
+			return available;
+		}
+
+		abstract protected boolean isAvailableCostume(CostumeUser user, Costume costume);
+
+		abstract protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents);
 	}
 
 	@NoArgsConstructor
@@ -174,19 +198,21 @@ public class CostumeCommand extends CustomCommand {
 			return new CostumeStoreMenu(previousMenu, subfolder);
 		}
 
-		protected ItemBuilder formatFolder(ItemBuilder builder) {
-			return builder; // TODO Show # available costumes
+		@Override
+		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+			return !user.getOwnedCostumes().contains(costume);
 		}
 
-		protected ClickableItem formatCostume(CostumeUser user, Costume costume) {
+		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
-			// TODO show price like VPS
+			builder.lore("", "&3Cost: " + (user.getVouchers() <= 0 ? "&c" : "&e") + "1");
 
 			return ClickableItem.from(builder.build(), e -> {
 				if (user.getVouchers() > 0) {
 					user.setVouchers(user.getVouchers() - 1);
 					user.getOwnedCostumes().add(costume);
 					service.save(user);
+					open(user.getOnlinePlayer(), contents.pagination().getPage());
 				}
 			});
 		}
@@ -204,22 +230,22 @@ public class CostumeCommand extends CustomCommand {
 			return new CostumeInventoryMenu(previousMenu, subfolder);
 		}
 
-		protected ItemBuilder formatFolder(ItemBuilder builder) {
-			return builder; // TODO Show # owned costumes
+		@Override
+		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+			return user.getOwnedCostumes().contains(costume);
 		}
 
-		protected ClickableItem formatCostume(CostumeUser user, Costume costume) {
+		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
 			if (user.getActiveCostume().equals(costume))
-				builder.glow();
+				builder.lore("", "&aActive").glow();
 
 			return ClickableItem.from(builder.build(), e -> {
 				user.setActiveCostume(costume);
 				service.save(user);
+				open(user.getOnlinePlayer(), contents.pagination().getPage());
 			});
 		}
 	}
-
-
 
 }
