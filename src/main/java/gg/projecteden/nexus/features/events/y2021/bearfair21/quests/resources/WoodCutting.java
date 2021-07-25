@@ -76,7 +76,7 @@ public class WoodCutting implements Listener {
 		if (treeType == null)
 			return false;
 
-		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLike(tree_region + "_" + treeType.name() + "_[0-9]+");
+		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLike(tree_region + "_" + treeType.name() + "_[\\d]+");
 
 		MinMaxResult<ProtectedRegion> result = getMin(regions, region ->
 				event.getBlock().getLocation().distance(BearFair21.getWGUtils().toLocation(region.getMinimumPoint())));

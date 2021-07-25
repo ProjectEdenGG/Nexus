@@ -156,6 +156,6 @@ public enum BearFair21NPC {
 	public String getNpcJob() {
 		return camelCase(this.name().toLowerCase()
 			.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
-			.replaceAll("[0-9]+", "")).trim();
+			.replaceAll("[\\d]+", "")).trim();
 	}
 }

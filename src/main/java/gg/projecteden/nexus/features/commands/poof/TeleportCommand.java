@@ -41,7 +41,7 @@ import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 @Aliases({"tp", "tppos"})
 @Redirect(from = "/tpo", to = "/tp override")
 public class TeleportCommand extends CustomCommand implements Listener {
-	private static final String mapLinkRegex = "(http(s)?:\\/\\/)?(blue|staff)?map.projecteden.gg/#[a-zA-Z0-9_]+(:-?[0-9]+(\\.[0-9]+)?){8}.*";
+	private static final String mapLinkRegex = "(http(s)?:\\/\\/)?(blue|staff)?map.projecteden.gg/#[a-zA-Z\\d_]+(:-?[\\d]+(\\.[\\d]+)?){8}.*";
 
 	public TeleportCommand(@NonNull CommandEvent event) {
 		super(event);

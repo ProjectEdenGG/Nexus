@@ -56,7 +56,7 @@ public final class DescParseTickFormat {
 	// ============================================
 	public static long parse(String desc) throws NumberFormatException {
 		// Only look at alphanumeric and lowercase and : for 24:00
-		desc = desc.toLowerCase(Locale.ENGLISH).replaceAll("[^A-Za-z0-9:]", "");
+		desc = desc.toLowerCase(Locale.ENGLISH).replaceAll("[^\\w:]", "");
 
 		// Detect ticks format
 		try {
@@ -87,21 +87,21 @@ public final class DescParseTickFormat {
 	}
 
 	public static long parseTicks(String desc) throws NumberFormatException {
-		if (!desc.matches("^[0-9]+ti?c?k?s?$")) {
+		if (!desc.matches("^[\\d]+ti?c?k?s?$")) {
 			throw new NumberFormatException();
 		}
 
-		desc = desc.replaceAll("[^0-9]", "");
+		desc = desc.replaceAll("[^\\d]", "");
 
 		return Long.parseLong(desc) % 24000;
 	}
 
 	public static long parse24(String desc) throws NumberFormatException {
-		if (!desc.matches("^[0-9]{2}[^0-9]?[0-9]{2}$")) {
+		if (!desc.matches("^[\\d]{2}[^\\d]?[\\d]{2}$")) {
 			throw new NumberFormatException();
 		}
 
-		desc = desc.toLowerCase(Locale.ENGLISH).replaceAll("[^0-9]", "");
+		desc = desc.toLowerCase(Locale.ENGLISH).replaceAll("[^\\d]", "");
 
 		if (desc.length() != 4) {
 			throw new NumberFormatException();
@@ -114,7 +114,7 @@ public final class DescParseTickFormat {
 	}
 
 	public static long parse12(String desc) throws NumberFormatException {
-		if (!desc.matches("^[0-9]{1,2}([^0-9]?[0-9]{2})?(pm|am)$")) {
+		if (!desc.matches("^[\\d]{1,2}([^\\d]?[\\d]{2})?(pm|am)$")) {
 			throw new NumberFormatException();
 		}
 
@@ -122,7 +122,7 @@ public final class DescParseTickFormat {
 		int minutes = 0;
 
 		desc = desc.toLowerCase(Locale.ENGLISH);
-		String parsetime = desc.replaceAll("[^0-9]", "");
+		String parsetime = desc.replaceAll("[^\\d]", "");
 
 		if (parsetime.length() > 4) {
 			throw new NumberFormatException();

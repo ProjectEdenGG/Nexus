@@ -490,7 +490,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 	public void pasteNewDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
+		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
 			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).pasteAsync();
@@ -512,7 +512,7 @@ public class PixelPainters extends TeamlessMechanic {
 	public void pasteLogo(Match match) {
 		PixelPaintersArena arena = match.getArena();
 		// Paste Logo on all island walls
-		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[0-9]+");
+		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
 			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).pasteAsync();
@@ -521,7 +521,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 	public void clearFloors(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		Set<ProtectedRegion> floorRegions = arena.getRegionsLike("floor_[0-9]+");
+		Set<ProtectedRegion> floorRegions = arena.getRegionsLike("floor_[\\d]+");
 		floorRegions.forEach(floorRegion -> {
 			Region region = match.getWGUtils().convert(floorRegion);
 			match.getWEUtils().set(region, BlockTypes.AIR);

@@ -151,8 +151,8 @@ public class ItemTags extends Feature {
 			.orElse(null);
 	}
 
-	public static String parseMaterial(String value) {
-		String[] strings = value.toLowerCase().split("_");
+	public static String parseMaterial(String materialName) {
+		String[] strings = materialName.toLowerCase().split("_");
 		String ingot = strings[0];
 
 		// Special cases

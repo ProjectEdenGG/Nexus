@@ -276,7 +276,7 @@ public abstract class MenuUtils {
 				.onError(() -> open(player, currentPage))
 				.response(lines -> {
 					if (lines[0].length() > 0) {
-						String input = lines[0].replaceAll("[^0-9.-]+", "");
+						String input = lines[0].replaceAll("[^\\d.-]+", "");
 						if (!Utils.isInt(input))
 							throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a page number");
 						int pageNumber = Math.max(0, Integer.parseInt(input) - 1);

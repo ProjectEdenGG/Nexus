@@ -98,7 +98,7 @@ public enum Rarity {
 	}
 
 	private static Rarity getRarity(int sum, boolean isCraftable, Rarity minimum, Condition condition, Player debugger) {
-		if (condition != Condition.PRISTINE) {
+		if (condition != null && condition != Condition.PRISTINE) {
 			sum -= (Condition.values().length - (condition.ordinal() + 1)) * 10;
 			ItemTags.debug(debugger, "  Is not pristine, new sum: " + sum);
 		}
@@ -169,7 +169,7 @@ public enum Rarity {
 		if (!Utils.isNullOrEmpty(lore)) {
 			for (String line : lore) {
 				String enchant = StringUtils.stripColor(line)
-					.replaceAll("[0-9]+", "") // Custom Enchants bug
+					.replaceAll("[\\d]+", "") // Custom Enchants bug
 					.replaceAll(" [IVXLC]+", "")
 					.trim();
 				int val = ItemTags.getCustomEnchantVal(enchant);

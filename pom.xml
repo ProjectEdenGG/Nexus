@@ -234,7 +234,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.4.2</version>
+            <version>1.4.3</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -331,7 +331,7 @@
         <dependency>
             <groupId>com.github.mcMMO-Dev</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>a3612b6ae3</version>
+            <version>dc94fedee1</version>
             <scope>provided</scope>
         </dependency>
         <!-- LuckPerms -->

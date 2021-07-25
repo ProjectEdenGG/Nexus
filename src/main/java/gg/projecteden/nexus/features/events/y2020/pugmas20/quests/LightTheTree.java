@@ -151,7 +151,7 @@ public class LightTheTree implements Listener {
 
 		Block placed = block.getType() == Material.NETHERRACK ? block.getRelative(event.getBlockFace()) : block;
 
-		Set<ProtectedRegion> regions = Pugmas20.getWGUtils().getRegionsLikeAt("pugmas20_torch_[0-9]+", placed.getLocation());
+		Set<ProtectedRegion> regions = Pugmas20.getWGUtils().getRegionsLikeAt("pugmas20_torch_[\\d]+", placed.getLocation());
 		if (regions.isEmpty()) return;
 
 		int torch = Integer.parseInt(regions.iterator().next().getId().split("_")[2]);

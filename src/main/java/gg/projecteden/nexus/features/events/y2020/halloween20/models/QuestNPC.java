@@ -295,7 +295,7 @@ public enum QuestNPC {
 		AtomicInteger wait = new AtomicInteger(0);
 		script.forEach(line -> {
 			npcName.set(camelCase(name().replaceAll("_", " ")));
-			npcName.set(npcName.get().replaceAll("[0-9]+", ""));
+			npcName.set(npcName.get().replaceAll("[\\d]+", ""));
 			if (line.toLowerCase().matches("^wait \\d+$"))
 				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 			else {

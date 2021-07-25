@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.ranks;
 
 import gg.projecteden.nexus.features.menus.BookBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+@Aliases("rank")
 public class RanksCommand extends CustomCommand {
 
 	public RanksCommand(CommandEvent event) {
@@ -56,6 +58,11 @@ public class RanksCommand extends CustomCommand {
 				.send(player);
 	}
 
+	@Path("guide")
+	void guide() {
+		runCommand("faq ranks");
+	}
+
 	// TODO: Maybe use 1.16 colors to make this look better?
 	@Path("book")
 	@Permission("group.staff")
@@ -88,6 +95,6 @@ public class RanksCommand extends CustomCommand {
 
 	@Path("of <player>")
 	void of(Nerd player) {
-		send(player.getRank().getColoredName());
+		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " rank: " + player.getRank().getColoredName());
 	}
 }

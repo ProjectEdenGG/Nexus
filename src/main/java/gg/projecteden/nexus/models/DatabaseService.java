@@ -78,7 +78,7 @@ public abstract class DatabaseService {
 	abstract public void deleteAllSync();
 
 	public String sanitize(String input) {
-		if (Pattern.compile("[\\w\\d\\s]+").matcher(input).matches())
+		if (Pattern.compile("[\\w\\s]+").matcher(input).matches())
 			return input;
 		throw new InvalidInputException("Unsafe argument");
 	}

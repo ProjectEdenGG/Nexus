@@ -85,7 +85,7 @@ public class SkinCache implements PlayerOwnedObject {
 		return (SkullMeta) getHead().getItemMeta();
 	}
 
-	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f0-9]{64}");
+	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f\\d]{64}");
 
 	public String getTextureUrl() {
 		return getTextureUrl(this.value);

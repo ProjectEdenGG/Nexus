@@ -34,7 +34,7 @@ public class MiniGolf extends Feature {
 	private static final Set<MiniGolfUser> users = new HashSet<>();
 	@Getter
 	private static final Set<GolfBall> golfBalls = new HashSet<>();
-	public static final String holeRegionRegex = ".*minigolf_hole_[0-9]+$";
+	public static final String holeRegionRegex = ".*minigolf_hole_[\\d]+$";
 
 
 	@Override

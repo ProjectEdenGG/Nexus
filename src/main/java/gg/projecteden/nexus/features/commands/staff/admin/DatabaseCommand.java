@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import com.mongodb.MongoNamespace;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.utils.StringUtils.isUuid;
 
+@Aliases("db")
 @Permission("group.admin")
 public class DatabaseCommand extends CustomCommand {
 
@@ -95,7 +98,16 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@Path("debug <service> <uuid>")
 	<T extends PlayerOwnedObject> void debug(MongoService<T> service, UUID uuid) {
-		send(service.get(uuid).toPrettyString());
+		send(service.asPrettyJson(uuid));
+	}
+
+	@Async
+	@Path("createQuery <service> <uuid>")
+	<T extends PlayerOwnedObject> void createQuery(MongoService<T> service, UUID uuid) {
+		final MongoNamespace namespace = service.getCollection().getNamespace();
+		String queryString = "db.getSiblingDB(\"%s\").%s.find({\"_id\":\"%s\"}).pretty();";
+		String query = String.format(queryString, namespace.getDatabaseName(), namespace.getCollectionName(), uuid.toString());
+		send(json(query).copy(query).hover("&fClick to copy"));
 	}
 
 	@Async

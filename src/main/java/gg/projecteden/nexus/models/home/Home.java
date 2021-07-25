@@ -58,7 +58,7 @@ public class Home implements PlayerOwnedObject {
 	}
 
 	public void validateName(String name) {
-		if (!name.matches("^[a-zA-Z0-9_]+$"))
+		if (!name.matches("^[\\w]+$"))
 			throw new InvalidInputException("Home names can only contain numbers, letters and underscores");
 	}
 

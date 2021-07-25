@@ -449,7 +449,7 @@ public class SymbolBanner {
 			String input = String.valueOf(character);
 			if (input.matches("[A-Za-z]"))
 				return Symbol.valueOf(input.toUpperCase());
-			if (input.matches("[0-9]"))
+			if (input.matches("[\\d]"))
 				return Symbol.valueOf("_" + input);
 
 			return null;
