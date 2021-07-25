@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.mongodb.MongoNamespace;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.utils.StringUtils.isUuid;
 
+@Aliases("db")
 @Permission("group.admin")
 public class DatabaseCommand extends CustomCommand {
 
