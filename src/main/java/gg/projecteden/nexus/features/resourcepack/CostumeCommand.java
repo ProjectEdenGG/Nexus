@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -124,7 +125,8 @@ public class CostumeCommand extends CustomCommand {
 				if (firstModel != null)
 					item = firstModel.getDisplayItem();
 
-				ItemBuilder builder = new ItemBuilder(item).name(subfolder.getDisplayPath()).glow();
+				final String displayName = StringUtils.camelCase(StringUtils.listLast(subfolder.getDisplayPath(), "/"));
+				ItemBuilder builder = new ItemBuilder(item).name(displayName).glow();
 				final int available = getAvailableCostumes(player, subfolder);
 				if (available == 0)
 					continue;
@@ -210,10 +212,14 @@ public class CostumeCommand extends CustomCommand {
 
 			return ClickableItem.from(builder.build(), e -> {
 				if (user.getVouchers() > 0) {
-					user.setVouchers(user.getVouchers() - 1);
-					user.getOwnedCostumes().add(costume);
-					service.save(user);
-					open(user.getOnlinePlayer(), contents.pagination().getPage());
+					ConfirmationMenu.builder()
+						.onConfirm(e2 -> {
+							user.setVouchers(user.getVouchers() - 1);
+							user.getOwnedCostumes().add(costume);
+							service.save(user);
+						})
+						.onFinally(e2 -> open(user.getOnlinePlayer(), contents.pagination().getPage()))
+						.open(user.getOnlinePlayer());
 				}
 			});
 		}
