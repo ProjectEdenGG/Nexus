@@ -64,7 +64,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -131,6 +130,9 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Path("logger add")
 	@Permission("group.admin")
 	void logger_add() {
+		if (!isResourceWorld(world()))
+			throw new InvalidInputException("You must be in a resource world");
+
 		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
 		Region selection = worldEditUtils.getPlayerSelection(player());
 		if (selection.getArea() > 1000000)
@@ -155,7 +157,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Path("logger add random [amount]")
 	@Permission("group.admin")
 	void logger_add_random(@Arg("10000") int amount) {
-		if (isResourceWorld(world()))
+		if (!isResourceWorld(world()))
 			throw new InvalidInputException("You must be in a resource world");
 
 		for (int i = 0; i < amount; i++) {
@@ -181,7 +183,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		return new Location(world(), x, y, z);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onEnterResourceWorld(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
@@ -206,13 +208,14 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		PlayerUtils.send(player, " &4Warning |");
 	}
 
-	@EventHandler
-	public void onHomeBlockPlace(BlockPlaceEvent event) {
-		if (!isResourceWorld(event.getPlayer())) return;
+	private static final MaterialTag HOME_BLOCKS = new MaterialTag(Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.BARREL).append(MaterialTag.DOORS);
 
-		List<Material> materials = new ArrayList<>(Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.BARREL));
-		materials.addAll(MaterialTag.WOODEN_DOORS.getValues());
-		if (!materials.contains(event.getBlockPlaced().getType()))
+	@EventHandler(ignoreCancelled = true)
+	public void onHomeBlockPlace(BlockPlaceEvent event) {
+		if (!isResourceWorld(event.getPlayer()))
+			return;
+
+		if (!HOME_BLOCKS.isTagged(event.getBlockPlaced()))
 			return;
 
 		Tip tip = new TipService().get(event.getPlayer());
@@ -221,7 +224,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 				"This world is regenerated on the &c&lfirst of every month, &cso don't leave your stuff here or you will lose it!");
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		final Block block = event.getBlock();
 		final World world = block.getWorld();
@@ -232,7 +235,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		save(world);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		final Block block = event.getBlock();
 		final World world = block.getWorld();
@@ -248,13 +251,13 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
 		handlePiston(event.getBlock(), event.getBlocks(), event.getDirection());
 	}
 
-	@EventHandler
-	public void onBlockPistonExtend(BlockPistonRetractEvent event) {
+	@EventHandler(ignoreCancelled = true)
+	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
 		handlePiston(event.getBlock(), event.getBlocks(), event.getDirection());
 	}
 
@@ -273,7 +276,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		save(eventBlock.getWorld());
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockDropItem(BlockDropItemEvent event) {
 		if (!isResourceWorld(event.getBlock()))
 			return;
@@ -282,7 +285,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			trySell(event.getPlayer(), event.getBlockState(), item.getItemStack()));
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (!isResourceWorld(event.getLocation()))
 			return;
@@ -354,16 +357,14 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	private Optional<Product> getMatchingProduct(ItemStack item) {
-		return getResourceWorldProducts().stream()
+		return RESOURCE_WORLD_PRODUCTS.stream()
 			.filter(product -> product.getItem().isSimilar(item))
 			.findFirst();
 	}
 
-	private List<Product> getResourceWorldProducts() {
-		return new ShopService().getMarket().getProducts().stream()
+	public static final List<Product> RESOURCE_WORLD_PRODUCTS = new ShopService().getMarket().getProducts().stream()
 			.filter(product -> product.isResourceWorld() && product.getExchangeType() == ExchangeType.BUY)
 			.toList();
-	}
 
 	/* Find protections from people being dumb
 

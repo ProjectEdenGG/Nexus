@@ -31,6 +31,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.SneakyThrows;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -468,7 +469,7 @@ public abstract class ICustomCommand {
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
 			.filter(method -> {
 				final Environments envs = method.getAnnotation(Environments.class);
-				return envs == null || Arrays.asList(envs.value()).contains(Nexus.getEnv());
+				return envs == null || ArrayUtils.contains(envs.value(), Nexus.getEnv());
 			})
 			.filter(method -> hasPermission(event.getSender(), method))
 			.collect(Collectors.toList());
