@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -15,16 +14,29 @@ import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.addRar
 import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.finalizeItem;
 import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
 
-@Aliases({"itemtag"})
-@Permission("group.admin")
 public class ItemTagsCommand extends CustomCommand {
 
 	public ItemTagsCommand(CommandEvent event) {
 		super(event);
 	}
 
+	@Path()
+	void showTags() {
+		send(PREFIX + "Available tags:");
+		send(" &eCondition: ");
+		for (Condition condition : Condition.values())
+			send("  " + condition.getTag());
+
+		send();
+
+		send(" &eRarity: ");
+		for (Rarity rarity : Rarity.values())
+			send("  " + rarity.getTag());
+	}
+
 	@Path("get")
 	@Description("Get item tags on held item")
+	@Permission("group.admin")
 	void getTags() {
 		ItemStack tool = getToolRequired();
 
@@ -42,6 +54,7 @@ public class ItemTagsCommand extends CustomCommand {
 
 	@Path("update")
 	@Description("Update item tags on held item")
+	@Permission("group.admin")
 	void update() {
 		ItemStack tool = getToolRequired();
 
@@ -52,6 +65,7 @@ public class ItemTagsCommand extends CustomCommand {
 
 	@Path("updateInv")
 	@Description("Update item tags on all items in inventory")
+	@Permission("group.admin")
 	void updateInv() {
 		ItemStack[] contents = inventory().getContents();
 		int count = 0;
@@ -68,6 +82,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("setRarity <rarity>")
+	@Permission("group.admin")
 	void setRarity(Rarity rarity) {
 		ItemStack tool = getToolRequired();
 
@@ -77,6 +92,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("setCondition <condition>")
+	@Permission("group.admin")
 	void setCondition(Condition condition) {
 		ItemStack tool = getToolRequired();
 
@@ -88,13 +104,14 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("debugItem")
+	@Permission("group.admin")
 	void debugItem() {
 		ItemStack tool = getToolRequired();
 		ItemTagsUtils.debugItem(tool, player());
 	}
 
 	@Path("reload")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission("group.admin")
 	void reload() {
 		ItemTags.reloadConfig();
 	}
