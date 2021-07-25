@@ -31,7 +31,7 @@ public class ResourcePack extends Feature implements Listener {
 	static final String URL = "http://cdn.projecteden.gg/ResourcePack.zip";
 	static final String fileName = "ResourcePack.zip";
 	@Getter
-	static final String fileRegex = "[\\w\\d]+";
+	static final String fileRegex = "[\\w]+";
 	@Getter
 	static String hash = Utils.createSha1(URL);
 	@Getter

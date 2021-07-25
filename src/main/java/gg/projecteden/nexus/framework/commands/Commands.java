@@ -39,7 +39,7 @@ public class Commands {
 	@Getter
 	private static final Map<String, String> redirects = new HashMap<>();
 	@Getter
-	private static final String pattern = "(\\/){1,2}[\\w\\d\\-]+";
+	private static final String pattern = "(\\/){1,2}[\\w\\-]+";
 
 	public Commands(Plugin plugin, String path) {
 		this.plugin = plugin;

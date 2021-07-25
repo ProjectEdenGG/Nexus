@@ -40,7 +40,7 @@ public class IngameBridgeListener implements Listener {
 
 	public static String parseMentions(String message) {
 		if (message != null && message.contains("@")) {
-			Matcher matcher = Pattern.compile("@[\\w\\d]+").matcher(message);
+			Matcher matcher = Pattern.compile("@[\\w]+").matcher(message);
 			while (matcher.find()) {
 				String group = matcher.group();
 				String search = group.replace("@", "");

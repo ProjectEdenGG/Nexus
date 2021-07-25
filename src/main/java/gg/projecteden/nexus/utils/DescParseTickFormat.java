@@ -56,7 +56,7 @@ public final class DescParseTickFormat {
 	// ============================================
 	public static long parse(String desc) throws NumberFormatException {
 		// Only look at alphanumeric and lowercase and : for 24:00
-		desc = desc.toLowerCase(Locale.ENGLISH).replaceAll("[^\\w\\d:]", "");
+		desc = desc.toLowerCase(Locale.ENGLISH).replaceAll("[^\\w:]", "");
 
 		// Detect ticks format
 		try {

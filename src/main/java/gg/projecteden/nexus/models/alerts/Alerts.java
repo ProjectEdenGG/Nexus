@@ -113,8 +113,8 @@ public class Alerts implements PlayerOwnedObject {
 			} else {
 				String _message = message;
 				// Allow partial matching to work with special chars (ie quotes)
-				if (highlight.replaceAll("[\\w\\d ]+", "").length() == 0)
-					_message = message.replaceAll("[^\\w\\d ]+", " ");
+				if (highlight.replaceAll("[\\w ]+", "").length() == 0)
+					_message = message.replaceAll("[^\\w ]+", " ");
 
 				return (" " + _message + " ").toLowerCase().contains(" " + highlight.toLowerCase() + " ");
 			}
