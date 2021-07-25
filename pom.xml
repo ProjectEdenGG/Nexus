@@ -331,7 +331,7 @@
         <dependency>
             <groupId>com.github.mcMMO-Dev</groupId>
             <artifactId>mcMMO</artifactId>
-            <version>a3612b6ae3</version>
+            <version>dc94fedee1</version>
             <scope>provided</scope>
         </dependency>
         <!-- LuckPerms -->

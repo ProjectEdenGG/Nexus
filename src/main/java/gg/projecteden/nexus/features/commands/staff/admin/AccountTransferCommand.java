@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.datatypes.player.PlayerProfile;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
-import com.gmail.nossr50.util.player.UserManager;
+import com.gmail.nossr50.mcMMO;
 import com.griefcraft.cache.ProtectionCache;
 import com.griefcraft.model.Protection;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -15,6 +15,9 @@ import gg.projecteden.nexus.models.alerts.Alerts;
 import gg.projecteden.nexus.models.alerts.AlertsService;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.contributor.Contributor;
+import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
+import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.dailyreward.DailyReward;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -27,6 +30,8 @@ import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.TrustService;
@@ -175,9 +180,11 @@ public class AccountTransferCommand extends CustomCommand {
 
 				previous.getLocks().forEach(lock -> current.getLocks().add(lock));
 				previous.getHomes().forEach(home -> current.getHomes().add(home));
+				previous.getTeleports().forEach(teleport -> current.getTeleports().add(teleport));
 
 				previous.getLocks().clear();
 				previous.getHomes().clear();
+				previous.getTeleports().clear();
 
 				service.save(previous);
 				service.save(current);
@@ -186,21 +193,28 @@ public class AccountTransferCommand extends CustomCommand {
 		MCMMO {
 			@Override
 			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				McMMOPlayer previous = UserManager.getPlayer(old.getName());
-				McMMOPlayer current = UserManager.getPlayer(target.getName());
+				PlayerProfile previous = mcMMO.getDatabaseManager().loadPlayerProfile(old.getUniqueId());
+				PlayerProfile current = mcMMO.getDatabaseManager().loadPlayerProfile(target.getUniqueId());
 				for (PrimarySkillType skill : PrimarySkillType.values()) {
 					current.modifySkill(skill, previous.getSkillLevel(skill));
 					previous.modifySkill(skill, 0);
 				}
 
-				previous.getProfile().scheduleAsyncSave();
-				current.getProfile().scheduleAsyncSave();
+				previous.scheduleAsyncSave();
+				current.scheduleAsyncSave();
 			}
 		},
 		HISTORY {
 			@Override
 			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				// Which history?
+				final PunishmentsService service = new PunishmentsService();
+				final Punishments previous = service.get(old);
+				final Punishments current = service.get(target);
+
+				current.getPunishments().addAll(previous.getPunishments());
+				current.getIpHistory().addAll(previous.getIpHistory());
+
+				service.save(current);
 			}
 		},
 		EVENTUSER {
@@ -232,6 +246,33 @@ public class AccountTransferCommand extends CustomCommand {
 						protectionById.save();
 					}
 				}
+			}
+		},
+		CONTRIBUTOR {
+			@Override
+			public void transfer(OfflinePlayer old, OfflinePlayer target) {
+				final ContributorService service = new ContributorService();
+				final Contributor previous = service.get(old);
+				final Contributor current = service.get(target);
+
+				current.getPurchases().addAll(previous.getPurchases());
+				for (Purchase purchase : current.getPurchases()) {
+					if (purchase.getUuid().equals(previous.getUuid())) {
+						purchase.setUuid(current.getUuid());
+						purchase.setName(current.getName());
+					}
+					if (purchase.getPurchaserUuid().equals(previous.getUuid())) {
+						purchase.setPurchaserUuid(current.getUuid());
+						purchase.setPurchaserName(current.getName());
+					}
+				}
+				current.setCredit(current.getCredit() + previous.getCredit());
+
+				previous.getPurchases().clear();
+				previous.setCredit(0);
+
+				service.save(current);
+				service.save(previous);
 			}
 		};
 
