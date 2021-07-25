@@ -149,7 +149,8 @@ public class CostumeCommand extends CustomCommand {
 				if (costume.getModel().getFileName().equals(ICON))
 					continue;
 
-				if (costume.getModel().getMaterial() != Material.STONE_BUTTON)
+				// legacy GG hat
+				if (costume.getModel().getMaterial() == Material.CYAN_STAINED_GLASS_PANE)
 					continue;
 
 				if (!isAvailableCostume(user, costume))
