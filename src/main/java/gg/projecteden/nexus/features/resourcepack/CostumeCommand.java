@@ -50,6 +50,12 @@ public class CostumeCommand extends CustomCommand {
 		new CostumeStoreMenu().open(player());
 	}
 
+	@Path("reload")
+	void reload() {
+		Costume.load();
+		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
+	}
+
 	@Path("vouchers [player]")
 	void vouchers(@Arg("self") CostumeUser user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
@@ -175,7 +181,7 @@ public class CostumeCommand extends CustomCommand {
 				if (!isAvailableCostume(user, costume))
 					continue;
 
-				if (!costume.getModel().getFolder().getPath().contains(folder.getPath()))
+				if (!(costume.getModel().getFolder().getPath() + "/").contains(folder.getPath()))
 					continue;
 
 				++available;

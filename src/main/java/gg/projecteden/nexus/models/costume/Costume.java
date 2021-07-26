@@ -56,6 +56,11 @@ public class Costume {
 	public static final String STORE_URL = StoreCommand.URL + "/category/costumes";
 
 	static {
+		load();
+	}
+
+	public static void load() {
+		costumes.clear();
 		for (CostumeType type : CostumeType.values())
 			load(type, type.getFolder());
 	}
