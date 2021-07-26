@@ -11,6 +11,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Sync;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.models.Service;
 import gg.projecteden.nexus.models.alerts.Alerts;
 import gg.projecteden.nexus.models.alerts.AlertsService;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -44,10 +47,11 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 @Permission("group.admin")
@@ -61,292 +65,283 @@ public class AccountTransferCommand extends CustomCommand {
 	void transfer(OfflinePlayer old, OfflinePlayer target, @Arg(type = Transferable.class) List<Transferable> features) {
 		features.forEach(feature -> {
 			try {
-				Runnable transfer = () -> feature.transfer(old, target);
-				Method method = feature.getClass().getMethod("transfer", OfflinePlayer.class, OfflinePlayer.class);
-				if (method.getAnnotation(Sync.class) != null) {
+				Runnable transfer = () -> feature.getTransferer().transfer(old, target);
+				if (Transferable.class.getField(feature.name()).getAnnotation(Sync.class) != null)
 					Tasks.async(transfer);
-				} else
+				else
 					transfer.run();
 
-				send("Transferred " + camelCase(feature) + " data");
+				send(PREFIX + "Transferred &e" + camelCase(feature) + " &3data");
 			} catch (Exception ex) {
 				rethrow(ex);
 			}
 		});
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public enum Transferable {
-		ALERTS {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final AlertsService service = new AlertsService();
-				final Alerts previous = service.get(old);
-				final Alerts current = service.get(target);
-
-				previous.getHighlights().forEach(highlight -> current.getHighlights().add(highlight));
-				current.setMuted(previous.isMuted());
-
-				previous.getHighlights().clear();
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		BALANCE {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final BankerService service = new BankerService();
-
-				for (ShopGroup shopGroup : ShopGroup.values()) {
-					double balance = service.getBalance(old, shopGroup);
-					service.transfer(old, target, balance, shopGroup, TransactionCause.SERVER);
-				}
-			}
-		},
-		CONTRIBUTOR {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final ContributorService service = new ContributorService();
-				final Contributor previous = service.get(old);
-				final Contributor current = service.get(target);
-
-				current.getPurchases().addAll(previous.getPurchases());
-				for (Purchase purchase : current.getPurchases()) {
-					if (purchase.getUuid().equals(previous.getUuid())) {
-						purchase.setUuid(current.getUuid());
-						purchase.setName(current.getName());
-					}
-					if (purchase.getPurchaserUuid().equals(previous.getUuid())) {
-						purchase.setPurchaserUuid(current.getUuid());
-						purchase.setPurchaserName(current.getName());
-					}
-				}
-				current.setCredit(current.getCredit() + previous.getCredit());
-
-				previous.getPurchases().clear();
-				previous.setCredit(0);
-
-				service.save(current);
-				service.save(previous);
-			}
-		},
-		DAILY_REWARDS {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final DailyRewardService service = new DailyRewardService();
-				final DailyReward previous = service.get(old);
-				final DailyReward current = service.get(target);
-
-				current.setStreak(previous.getStreak());
-				current.setClaimed(previous.getClaimed());
-				if (!current.isEarnedToday())
-					current.setEarnedToday(previous.isEarnedToday());
-
-				previous.setActive(false);
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		DISCORD {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final DiscordUserService service = new DiscordUserService();
-				final DiscordUser previous = service.get(old);
-				final DiscordUser current = service.get(target);
-
-				current.setRoleId(previous.getRoleId());
-				current.setUserId(previous.getUserId());
-
-				previous.setRoleId(null);
-				previous.setUserId(null);
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		EVENT_USER {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final EventUserService service = new EventUserService();
-				final EventUser previous = service.get(old);
-				final EventUser current = service.get(target);
-
-				current.setTokens(previous.getTokens());
-				previous.getTokensReceivedToday().forEach((string, map) -> current.getTokensReceivedToday().put(string, map));
-				previous.getTokensReceivedToday().clear();
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		HISTORY {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final PunishmentsService service = new PunishmentsService();
-				final Punishments previous = service.get(old);
-				final Punishments current = service.get(target);
-
-				current.getPunishments().addAll(previous.getPunishments());
-				current.getIpHistory().addAll(previous.getIpHistory());
-
-				service.save(current);
-			}
-		},
-		HOMES {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final HomeService service = new HomeService();
-				final HomeOwner previous = service.get(old);
-				final HomeOwner current = service.get(target);
-
-				previous.getHomes().forEach(current::add);
-				previous.getHomes().clear();
-
-				current.setAutoLock(previous.isAutoLock());
-				current.setUsedDeathHome(previous.isUsedDeathHome());
-				current.addExtraHomes(previous.getExtraHomes());
-				previous.setExtraHomes(0);
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		HOURS {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final HoursService service = new HoursService();
-				final Hours previous = service.get(old.getUniqueId());
-				final Hours current = service.get(target.getUniqueId());
-
-				previous.getTimes().forEach((date, seconds) -> current.getTimes().put(date, seconds));
-				previous.getTimes().clear();
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		INVENTORY_HISTORY {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final InventoryHistoryService service = new InventoryHistoryService();
-				final InventoryHistory previous = service.get(old);
-				final InventoryHistory current = service.get(target);
-
-				current.getSnapshots().addAll(previous.getSnapshots());
-				previous.getSnapshots().clear();
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		LWC {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final ProtectionCache protectionCache = com.griefcraft.lwc.LWC.getInstance().getProtectionCache();
-				final LWCProtectionService service = new LWCProtectionService();
-				final List<LWCProtection> oldProtections = service.getPlayerProtections(old.getUniqueId());
-
-				for (LWCProtection oldProtection : oldProtections) {
-					Protection protectionById = protectionCache.getProtectionById(oldProtection.getId());
-					if (protectionById != null) {
-						protectionById.setOwner(target.getUniqueId().toString());
-						protectionById.save();
-					}
-				}
-			}
-		},
-		MCMMO {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final PlayerProfile previous = mcMMO.getDatabaseManager().loadPlayerProfile(old.getUniqueId());
-				final PlayerProfile current = mcMMO.getDatabaseManager().loadPlayerProfile(target.getUniqueId());
-
-				for (PrimarySkillType skill : PrimarySkillType.values()) {
-					current.modifySkill(skill, previous.getSkillLevel(skill));
-					previous.modifySkill(skill, 0);
-				}
-
-				previous.scheduleAsyncSave();
-				current.scheduleAsyncSave();
-			}
-		},
-		MOB_HEADS {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final MobHeadUserService service = new MobHeadUserService();
-				final MobHeadUser previous = service.get(old);
-				final MobHeadUser current = service.get(target);
-
-				current.setData(previous.getData());
-				previous.getData().clear();
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		NERD {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final NerdService service = new NerdService();
-				final Nerd previous = Nerd.of(old);
-				final Nerd current = Nerd.of(target);
-
-				current.setPreferredName(previous.getPreferredName());
-				current.setBirthday(previous.getBirthday());
-				current.setFirstJoin(previous.getFirstJoin());
-				current.setLastJoin(previous.getLastJoin());
-				current.setLastQuit(previous.getLastQuit());
-				current.setPromotionDate(previous.getPromotionDate());
-				current.setAbout(previous.getAbout());
-				current.setMeetMeVideo(previous.isMeetMeVideo());
-
-				previous.setPreferredName(null);
-				previous.setBirthday(null);
-				previous.setPromotionDate(null);
-				previous.setAbout(null);
-				previous.setMeetMeVideo(false);
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
-		TRANSACTIONS {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final TransactionsService service = new TransactionsService();
-				final Transactions previous = service.get(old);
-				final Transactions current = service.get(target);
-
-				current.getTransactions().addAll(previous.getTransactions());
-				previous.getTransactions().clear();
-
-				service.save(current);
-				service.save(previous);
-			}
-		},
-		TRUSTS {
-			@Override
-			public void transfer(OfflinePlayer old, OfflinePlayer target) {
-				final TrustService service = new TrustService();
-				final Trust previous = service.get(old);
-				final Trust current = service.get(target);
-
-				previous.getLocks().forEach(lock -> current.getLocks().add(lock));
-				previous.getHomes().forEach(home -> current.getHomes().add(home));
-				previous.getTeleports().forEach(teleport -> current.getTeleports().add(teleport));
-
-				previous.getLocks().clear();
-				previous.getHomes().clear();
-				previous.getTeleports().clear();
-
-				service.save(previous);
-				service.save(current);
-			}
-		},
+		ALERTS(new AlertsTransferer()),
+		BALANCE(new BalanceTransferer()),
+		CONTRIBUTOR(new ContributorTransferer()),
+		DAILY_REWARDS(new DailyRewardsTransferer()),
+		DISCORD(new DiscordUserTransferer()),
+		EVENT(new EventUserTransferer()),
+		HOMES(new HomeTransferer()),
+		HOURS(new HoursTransferer()),
+		INVENTORY_HISTORY(new InventoryHistoryTransferer()),
+		LWC(new LWCTransferer()),
+		MCMMO(new McMMOTransferer()),
+		MOB_HEADS(new MobHeadUserTransferer()),
+		NERD(new NerdTransferer()),
+		PUNISHMENTS(new PunishmentsTransferer()),
+		TRANSACTIONS(new TransactionsTransferer()),
+		TRUSTS(new TrustsTransferer()),
 		;
 
-		public abstract void transfer(OfflinePlayer old, OfflinePlayer target);
+		private final Transferer transferer;
+	}
+
+	public interface Transferer {
+		void transfer(OfflinePlayer old, OfflinePlayer target);
+	}
+
+	abstract static class MongoTransferer<P extends PlayerOwnedObject> implements Transferer {
+		protected MongoService<P> service;
+
+		public MongoTransferer() {
+			try {
+				this.service = (MongoService<P>) getClass().getAnnotation(Service.class).value().newInstance();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		@Override
+		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+			final P previous = service.get(old);
+			final P current = service.get(target);
+			transfer(previous, current);
+			service.save(previous);
+			service.save(current);
+		}
+
+		protected abstract void transfer(P previous, P current);
+	}
+
+	@Service(AlertsService.class)
+	static class AlertsTransferer extends MongoTransferer<Alerts> {
+		@Override
+		protected void transfer(Alerts previous, Alerts current) {
+			previous.getHighlights().forEach(highlight -> current.getHighlights().add(highlight));
+			current.setMuted(previous.isMuted());
+
+			previous.getHighlights().clear();
+		}
+	}
+
+	static class BalanceTransferer implements Transferer {
+		@Override
+		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+			final BankerService service = new BankerService();
+
+			for (ShopGroup shopGroup : ShopGroup.values()) {
+				double balance = service.getBalance(old, shopGroup);
+				service.transfer(old, target, balance, shopGroup, TransactionCause.SERVER);
+			}
+		}
+	}
+
+	@Service(ContributorService.class)
+	static class ContributorTransferer extends MongoTransferer<Contributor> {
+		@Override
+		protected void transfer(Contributor previous, Contributor current) {
+			current.getPurchases().addAll(previous.getPurchases());
+			for (Purchase purchase : current.getPurchases()) {
+				if (purchase.getUuid().equals(previous.getUuid())) {
+					purchase.setUuid(current.getUuid());
+					purchase.setName(current.getName());
+				}
+				if (purchase.getPurchaserUuid().equals(previous.getUuid())) {
+					purchase.setPurchaserUuid(current.getUuid());
+					purchase.setPurchaserName(current.getName());
+				}
+			}
+
+			current.setCredit(current.getCredit() + previous.getCredit());
+			previous.getPurchases().clear();
+			previous.setCredit(0);
+		}
+	}
+
+	static class DailyRewardsTransferer implements Transferer {
+		@Override
+		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+			final DailyRewardService service = new DailyRewardService();
+			final DailyReward previous = service.get(old);
+			final DailyReward current = service.get(target);
+
+			current.setStreak(previous.getStreak());
+			current.setClaimed(previous.getClaimed());
+			if (!current.isEarnedToday())
+				current.setEarnedToday(previous.isEarnedToday());
+
+			previous.setActive(false);
+
+			service.save(previous);
+			service.save(current);
+		}
+	}
+
+	@Service(DiscordUserService.class)
+	static class DiscordUserTransferer extends MongoTransferer<DiscordUser> {
+		@Override
+		protected void transfer(DiscordUser previous, DiscordUser current) {
+			current.setRoleId(previous.getRoleId());
+			current.setUserId(previous.getUserId());
+
+			previous.setRoleId(null);
+			previous.setUserId(null);
+		}
+	}
+
+	@Service(EventUserService.class)
+	static class EventUserTransferer extends MongoTransferer<EventUser> {
+		@Override
+		public void transfer(EventUser previous, EventUser current) {
+			current.setTokens(previous.getTokens());
+			previous.getTokensReceivedToday().forEach((string, map) -> current.getTokensReceivedToday().put(string, map));
+			previous.getTokensReceivedToday().clear();
+		}
+	}
+
+	@Service(HomeService.class)
+	static class HomeTransferer extends MongoTransferer<HomeOwner> {
+		@Override
+		public void transfer(HomeOwner previous, HomeOwner current) {
+			previous.getHomes().forEach(current::add);
+			previous.getHomes().clear();
+
+			current.setAutoLock(previous.isAutoLock());
+			current.setUsedDeathHome(previous.isUsedDeathHome());
+			current.addExtraHomes(previous.getExtraHomes());
+			previous.setExtraHomes(0);
+		}
+	}
+
+	@Service(HoursService.class)
+	static class HoursTransferer extends MongoTransferer<Hours> {
+		@Override
+		public void transfer(Hours previous, Hours current) {
+			previous.getTimes().forEach((date, seconds) -> current.getTimes().put(date, seconds));
+			previous.getTimes().clear();
+		}
+	}
+
+	@Service(InventoryHistoryService.class)
+	static class InventoryHistoryTransferer extends MongoTransferer<InventoryHistory> {
+		@Override
+		public void transfer(InventoryHistory previous, InventoryHistory current) {
+			current.getSnapshots().addAll(previous.getSnapshots());
+			previous.getSnapshots().clear();
+		}
+	}
+
+	static class LWCTransferer implements Transferer {
+		@Override
+		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+			final ProtectionCache protectionCache = com.griefcraft.lwc.LWC.getInstance().getProtectionCache();
+			final LWCProtectionService service = new LWCProtectionService();
+			final List<LWCProtection> oldProtections = service.getPlayerProtections(old.getUniqueId());
+
+			for (LWCProtection oldProtection : oldProtections) {
+				Protection protectionById = protectionCache.getProtectionById(oldProtection.getId());
+				if (protectionById != null) {
+					protectionById.setOwner(target.getUniqueId().toString());
+					protectionById.save();
+				}
+			}
+		}
+	}
+
+	static class McMMOTransferer implements Transferer {
+		@Override
+		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+			final PlayerProfile previous = mcMMO.getDatabaseManager().loadPlayerProfile(old.getUniqueId());
+			final PlayerProfile current = mcMMO.getDatabaseManager().loadPlayerProfile(target.getUniqueId());
+
+			for (PrimarySkillType skill : PrimarySkillType.values()) {
+				current.modifySkill(skill, previous.getSkillLevel(skill));
+				previous.modifySkill(skill, 0);
+			}
+
+			previous.scheduleAsyncSave();
+			current.scheduleAsyncSave();
+		}
+	}
+
+	@Service(MobHeadUserService.class)
+	static class MobHeadUserTransferer extends MongoTransferer<MobHeadUser> {
+		@Override
+		public void transfer(MobHeadUser previous, MobHeadUser current) {
+			current.setData(previous.getData());
+			previous.getData().clear();
+		}
+	}
+
+	@Service(NerdService.class)
+	static class NerdTransferer extends MongoTransferer<Nerd> {
+		@Override
+		protected void transfer(Nerd previous, Nerd current) {
+			current.setPreferredName(previous.getPreferredName());
+			current.setBirthday(previous.getBirthday());
+			current.setFirstJoin(previous.getFirstJoin());
+			current.setLastJoin(previous.getLastJoin());
+			current.setLastQuit(previous.getLastQuit());
+			current.setPromotionDate(previous.getPromotionDate());
+			current.setAbout(previous.getAbout());
+			current.setMeetMeVideo(previous.isMeetMeVideo());
+			current.setPronouns(previous.getPronouns());
+
+			previous.setPreferredName(null);
+			previous.setBirthday(null);
+			previous.setPromotionDate(null);
+			previous.setAbout(null);
+			previous.setMeetMeVideo(false);
+			previous.getPronouns().clear();
+		}
+	}
+
+	@Service(PunishmentsService.class)
+	static class PunishmentsTransferer extends MongoTransferer<Punishments> {
+		@Override
+		public void transfer(Punishments previous, Punishments current) {
+			current.getPunishments().addAll(previous.getPunishments());
+			current.getIpHistory().addAll(previous.getIpHistory());
+		}
+	}
+
+	@Service(TransactionsService.class)
+	static class TransactionsTransferer extends MongoTransferer<Transactions> {
+		@Override
+		public void transfer(Transactions previous, Transactions current) {
+			current.getTransactions().addAll(previous.getTransactions());
+			previous.getTransactions().clear();
+		}
+	}
+
+	@Service(TrustService.class)
+	static class TrustsTransferer extends MongoTransferer<Trust> {
+		@Override
+		public void transfer(Trust previous, Trust current) {
+			previous.getLocks().forEach(lock -> current.getLocks().add(lock));
+			previous.getHomes().forEach(home -> current.getHomes().add(home));
+			previous.getTeleports().forEach(teleport -> current.getTeleports().add(teleport));
+
+			previous.getLocks().clear();
+			previous.getHomes().clear();
+			previous.getTeleports().clear();
+		}
 	}
 
 }
