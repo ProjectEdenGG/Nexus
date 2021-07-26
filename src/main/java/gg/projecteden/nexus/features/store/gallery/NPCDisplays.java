@@ -2,9 +2,9 @@ package gg.projecteden.nexus.features.store.gallery;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -18,8 +18,6 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +30,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NPCDisplays {
 	private static final String regionRegex = "store_gallery_npcdisplays_\\d+";
-	private static List<String> modelNames = new ArrayList<>();
 	@Getter
 	private static final List<DisplaySet> displays = new ArrayList<>();
 
@@ -53,16 +50,17 @@ public class NPCDisplays {
 				if (humanEntity == null)
 					continue;
 
-				// TODO: setup with costumes
-				ItemStack hat = new ItemStack(RandomUtils.randomElement(MaterialTag.BLOCKS.getValues()));
-				humanEntity.getInventory().setItem(EquipmentSlot.HEAD, hat);
+				Costume costume = RandomUtils.randomElement(Costume.values());
+				humanEntity.getInventory().setItem(costume.getType().getSlot(), costume.getModel().getItem());
 				displaySet.setLastUpdatedIndex(displaySet.getDisplays().indexOf(display));
 			}
 		});
 	}
 
 	static void updateSkins() {
-		modelNames = PlayerUtils.getOnlinePlayers().stream().filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName).toList();
+		List<String> modelNames = PlayerUtils.getOnlinePlayers().stream()
+			.filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName)
+			.toList();
 
 		List<String> skinNames = new ArrayList<>(modelNames);
 		List<String> backups = new ArrayList<>();
