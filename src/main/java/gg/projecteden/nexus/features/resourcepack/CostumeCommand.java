@@ -244,7 +244,7 @@ public class CostumeCommand extends CustomCommand {
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
-			if (user.getActiveCostume().equals(costume))
+			if (costume.equals(user.getActiveCostume()))
 				builder.lore("", "&aActive").glow();
 
 			return ClickableItem.from(builder.build(), e -> {
