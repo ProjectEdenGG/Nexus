@@ -167,9 +167,19 @@ public class NPCDisplays {
 
 		private HumanEntity getHumanEntity() {
 			NPC npc = CitizensUtils.getNPC(id);
-			if (npc.getEntity() instanceof HumanEntity humanEntity)
-				return humanEntity;
-			return null;
+			if (npc == null)
+				return null;
+
+			if (!npc.isSpawned())
+				return null;
+
+			if (npc.getStoredLocation() == null)
+				return null;
+
+			if (!(npc.getEntity() instanceof HumanEntity humanEntity))
+				return null;
+
+			return humanEntity;
 		}
 	}
 }
