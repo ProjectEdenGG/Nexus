@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
@@ -524,4 +526,21 @@ public class ItemUtils {
 			default -> null;
 		};
 	}
+
+	public static final Map<PotionEffectType, String> fixedPotionNames = Map.of(
+		PotionEffectType.SLOW, "SLOWNESS",
+		PotionEffectType.FAST_DIGGING, "HASTE",
+		PotionEffectType.SLOW_DIGGING, "MINING_FATIGUE",
+		PotionEffectType.INCREASE_DAMAGE, "STRENGTH",
+		PotionEffectType.HEAL, "INSTANT_HEALTH",
+		PotionEffectType.HARM, "INSTANT_DAMAGE",
+		PotionEffectType.JUMP, "JUMP_BOOST",
+		PotionEffectType.CONFUSION, "NAUSEA",
+		PotionEffectType.DAMAGE_RESISTANCE, "RESISTANCE"
+	);
+
+	public static String getFixedPotionName(PotionEffectType effect) {
+		return fixedPotionNames.getOrDefault(effect, effect.getName());
+	}
+
 }

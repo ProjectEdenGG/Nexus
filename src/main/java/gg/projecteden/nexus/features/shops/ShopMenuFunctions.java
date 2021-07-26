@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.shops;
 import gg.projecteden.nexus.features.shops.providers.SearchProductsProvider;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LanguageUtils;
 import gg.projecteden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,9 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.function.Predicate;
 
@@ -74,11 +78,23 @@ public class ShopMenuFunctions {
 						return true;
 
 				for (Enchantment enchantment : item.getEnchantments().keySet())
-					if (contains(enchantment.getKey().getKey(), input)) return true;
+					if (contains(enchantment.getKey().getKey(), input))
+						return true;
 
-				if (item.getItemMeta() instanceof EnchantmentStorageMeta meta) {
+				if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
 					for (Enchantment enchantment : meta.getStoredEnchants().keySet())
-						if (contains(enchantment.getKey().getKey(), input)) return true;
+						if (contains(enchantment.getKey().getKey(), input))
+							return true;
+
+				if (item.getItemMeta() instanceof PotionMeta meta) {
+					final PotionEffectType effectType = meta.getBasePotionData().getType().getEffectType();
+					if (effectType != null)
+						if (contains(ItemUtils.getFixedPotionName(effectType), input))
+							return true;
+
+					for (PotionEffect effect : meta.getCustomEffects())
+						if (contains(ItemUtils.getFixedPotionName(effect.getType()), input))
+							return true;
 				}
 
 				return false;
