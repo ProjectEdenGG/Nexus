@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,17 +51,17 @@ public class ItemTags extends Feature {
 		loadConfigMaps();
 	}
 
-	public static int getEnchantVal(Enchantment enchant, int lvl) {
+	public static Pair<Integer, Boolean> getEnchantVal(Enchantment enchant, int lvl) {
 		List<Level> levels = enchantsConfigMap.get(enchant);
 		if (levels == null || levels.size() == 0)
-			return 0;
+			return new Pair<>(0, false);
 
 		int enchantLvl = 0;
 		for (Level level : levels) {
 			try {
 				enchantLvl = Integer.parseInt(level.getName());
 				if (enchantLvl == lvl)
-					return level.getValue();
+					return new Pair<>(level.getValue(), false);
 
 			} catch (Exception ignored) {
 
@@ -67,9 +69,9 @@ public class ItemTags extends Feature {
 		}
 
 		if (lvl > enchantLvl)
-			return levels.get(levels.size() - 1).getValue();
+			return new Pair<>(levels.get(levels.size() - 1).getValue(), true);
 
-		return 0;
+		return new Pair<>(0, false);
 	}
 
 	public static int getCustomEnchantVal(String enchant) {
@@ -138,7 +140,6 @@ public class ItemTags extends Feature {
 		if (customEnchants != null) {
 			for (String key : customEnchants.getKeys(false)) {
 				int value = customEnchants.getInt(key);
-
 				customEnchantsConfigMap.put(key, value);
 			}
 		}
@@ -167,9 +168,14 @@ public class ItemTags extends Feature {
 		return StringUtils.camelCase(ingot).replace(" ", "_");
 	}
 
+	public static void debug(Player player, JsonBuilder json) {
+		if (player != null && player.isOnline())
+			json.send(player);
+	}
+
 	public static void debug(Player player, String message) {
 		if (player != null && player.isOnline())
-			player.sendMessage(message);
+			player.sendMessage(StringUtils.colorize(message));
 	}
 
 }

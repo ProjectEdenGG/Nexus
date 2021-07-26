@@ -68,7 +68,7 @@ public class CustomModelFolder {
 		for (CustomModelGroup group : ResourcePack.getModelGroups())
 			for (Override override : group.getOverrides())
 				if (override.getModel().matches("item" + path + "/" + ResourcePack.getFileRegex()))
-					models.add(new CustomModel(override, group.getMaterial()));
+					models.add(new CustomModel(this, override, group.getMaterial()));
 
 		models.sort(CustomModel::compareTo);
 		ResourcePack.getModels().addAll(models);

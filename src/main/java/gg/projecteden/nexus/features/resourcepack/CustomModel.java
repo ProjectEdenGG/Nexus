@@ -13,10 +13,12 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 @Data
 @AllArgsConstructor
 public class CustomModel implements Comparable<CustomModel> {
+	private CustomModelFolder folder;
 	private CustomModelGroup.Override override;
 	private Material material;
 	private int data;
@@ -24,8 +26,10 @@ public class CustomModel implements Comparable<CustomModel> {
 	private String fileName;
 
 	public static final String NBT_KEY = "CustomModelData";
+	public static final String ICON = "icon";
 
-	public CustomModel(@NonNull CustomModelGroup.Override override, @NonNull Material material) {
+	public CustomModel(@NonNull CustomModelFolder folder, @NonNull CustomModelGroup.Override override, @NonNull Material material) {
+		this.folder = folder;
 		this.override = override;
 		this.material = material;
 		this.data = override.getPredicate().getCustomModelData();
@@ -69,7 +73,7 @@ public class CustomModel implements Comparable<CustomModel> {
 
 	public ItemStack getDisplayItem() {
 		return new ItemBuilder(getItem())
-				.name((meta.getName() == null ? camelCase(fileName) : null))
+				.name(isNullOrEmpty(meta.getName()) ? camelCase(fileName) : meta.getName())
 				.build();
 	}
 

@@ -38,10 +38,13 @@ public enum Condition {
 		ItemMeta meta = itemStack.getItemMeta();
 		if (meta instanceof Damageable damageable) {
 			double damage = damageable.getDamage();
-			ItemTags.debug(debugger, "  Damage: " + damage);
+			ItemTags.debug(debugger, "  &3Damage: &e" + damage);
 
 			double maxDurability = itemStack.getType().getMaxDurability();
-			ItemTags.debug(debugger, "  Max durability: " + maxDurability);
+			ItemTags.debug(debugger, "  &3Max durability: &e" + maxDurability);
+
+			double percentage = (damage / maxDurability) * 100.0;
+			ItemTags.debug(debugger, "  &3Broken: &e" + percentage + "%");
 
 			for (Condition condition : values()) {
 				double min = (condition.getMin() / 100.0) * maxDurability;
