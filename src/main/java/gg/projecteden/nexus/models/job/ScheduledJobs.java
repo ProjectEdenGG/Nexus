@@ -1,0 +1,65 @@
+package gg.projecteden.nexus.models.job;
+
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.JobConverter;
+import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.models.job.AbstractJob.JobStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Data
+@Builder
+@Entity(value = "scheduled_job", noClassnameStored = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Converters({UUIDConverter.class, JobConverter.class})
+public class ScheduledJobs implements PlayerOwnedObject {
+	@Id
+	@NonNull
+	private UUID uuid;
+	private Map<JobStatus, Set<AbstractJob>> jobs = new HashMap<>();
+
+	public Set<AbstractJob> get(JobStatus status) {
+		return jobs.computeIfAbsent(status, $ -> new HashSet<>());
+	}
+
+	public Set<AbstractJob> getReady() {
+		final LocalDateTime now = LocalDateTime.now();
+		return get(JobStatus.PENDING).stream()
+			.filter(job -> job.getTimestamp().isBefore(now))
+			.collect(Collectors.toSet());
+	}
+
+	public void add(AbstractJob job) {
+		add(JobStatus.PENDING, job);
+	}
+
+	public void add(JobStatus status, AbstractJob job) {
+		get(status).add(job);
+	}
+
+	public int nextId() {
+		int size = 0;
+		for (JobStatus status : JobStatus.values())
+			size += get(status).size();
+
+		return size + 1;
+	}
+
+}

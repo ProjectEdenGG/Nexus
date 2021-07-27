@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.Utils;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -205,8 +206,15 @@ public class DatabaseCommand extends CustomCommand {
 
 	@ConverterFor(UUID.class)
 	UUID convertToUUID(String value) {
-		if (isNullOrEmpty(value)) return null;
-		if (isUuid(value)) return UUID.fromString(value);
+		if (isNullOrEmpty(value))
+			return null;
+
+		if ("0".equals(value))
+			return StringUtils.getUUID0();
+
+		if (isUuid(value))
+			return UUID.fromString(value);
+
 		return PlayerUtils.getPlayer(value).getUniqueId();
 	}
 
