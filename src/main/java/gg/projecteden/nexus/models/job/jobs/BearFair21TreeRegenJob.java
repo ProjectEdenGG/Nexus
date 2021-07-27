@@ -15,12 +15,12 @@ import java.util.concurrent.CompletableFuture;
 @EqualsAndHashCode(callSuper = true)
 public class BearFair21TreeRegenJob extends AbstractJob {
 	private BearFair21TreeType treeType;
-	private int id;
+	private int treeId;
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
 		var future = completable();
-		treeType.build(id).thenRun(() -> future.complete(JobStatus.COMPLETED));
+		treeType.build(treeId).thenRun(() -> future.complete(JobStatus.COMPLETED));
 		return future;
 	}
 

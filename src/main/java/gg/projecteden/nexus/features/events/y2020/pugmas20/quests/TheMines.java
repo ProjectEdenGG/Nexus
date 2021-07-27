@@ -191,8 +191,6 @@ public class TheMines implements Listener {
 		user.sendMessage(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
 	}
 
-	public static String taskId = "pugmas-ore-regen";
-
 	@Getter
 	private static final ItemStack minersPickaxe = questItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").enchant(Enchantment.DIG_SPEED, 4).build();
 	@Getter

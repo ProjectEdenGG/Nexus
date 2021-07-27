@@ -44,7 +44,6 @@ import static gg.projecteden.utils.Utils.getMin;
 import static java.time.LocalDateTime.now;
 
 public class WoodCutting implements Listener {
-	private static final String taskId = "bearfair21-tree-regen";
 	private static final String tree_region = BearFair21.getRegion() + "_trees";
 	@Getter
 	private static boolean treeAnimating = false;

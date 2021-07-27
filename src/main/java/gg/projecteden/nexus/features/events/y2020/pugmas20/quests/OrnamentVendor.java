@@ -361,8 +361,6 @@ public class OrnamentVendor implements Listener {
 			});
 		}
 
-		public static String taskId = "pugmas-tree-regen";
-
 	}
 
 	// TODO Create merchant trade event
