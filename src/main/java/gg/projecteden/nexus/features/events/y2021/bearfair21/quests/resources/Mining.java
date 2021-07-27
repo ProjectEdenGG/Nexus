@@ -4,19 +4,14 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.Errors;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.task.Task;
-import gg.projecteden.nexus.models.task.TaskService;
+import gg.projecteden.nexus.models.job.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -28,35 +23,19 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
+import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
+import static java.time.LocalDateTime.now;
 
 public class Mining implements Listener {
-	public static String taskId = "bearfair21-ore-regen";
 
 	public Mining() {
 		Nexus.registerListener(this);
-
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND, () -> {
-			TaskService service = new TaskService();
-			service.process(taskId).forEach(task -> {
-				Map<String, Object> data = task.getJson();
-
-				Location location = JSON.deserializeLocation((String) data.get("location"));
-				Material material = Material.valueOf((String) data.get("material"));
-
-				Tasks.sync(() -> location.getBlock().setType(material));
-
-				service.complete(task);
-			});
-		});
 	}
 
 	public static boolean canBreak(Material type) {
@@ -88,16 +67,9 @@ public class Mining implements Listener {
 		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack(tool));
 
-		scheduleRegen(block);
+		new BlockRegenJob(block.getLocation(), block.getType()).schedule(now().plusSeconds(randomInt(3 * 60, 5 * 60)));
 		block.setType(Material.STONE);
 		return true;
-	}
-
-	public static void scheduleRegen(Block block) {
-		new TaskService().save(new Task(taskId, new HashMap<>() {{
-			put("location", JSON.serializeLocation(block.getLocation()));
-			put("material", block.getType());
-		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
 	}
 
 	@AllArgsConstructor
@@ -133,7 +105,7 @@ public class Mining implements Listener {
 				}
 			}
 
-			int amount = RandomUtils.randomInt(min, max) * RandomUtils.randomInt(1, level);
+			int amount = randomInt(min, max) * randomInt(1, level);
 			return new ItemBuilder(ingot).amount(amount).build();
 		}
 

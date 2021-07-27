@@ -5,8 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.task.Task;
-import gg.projecteden.nexus.models.task.TaskService;
+import gg.projecteden.nexus.models.job.jobs.BearFair21TreeRegenJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -27,15 +26,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -43,6 +41,7 @@ import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.Utils.getMin;
+import static java.time.LocalDateTime.now;
 
 public class WoodCutting implements Listener {
 	private static final String taskId = "bearfair21-tree-regen";
@@ -52,20 +51,6 @@ public class WoodCutting implements Listener {
 
 	public WoodCutting() {
 		Nexus.registerListener(this);
-
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(1), () -> {
-			TaskService service = new TaskService();
-			service.process(taskId).forEach(task -> {
-				Map<String, Object> data = task.getJson();
-
-				BearFair21TreeType treeType = BearFair21TreeType.valueOf((String) data.get("tree"));
-				int id = Double.valueOf((double) data.get("id")).intValue();
-
-				treeType.build(id);
-
-				service.complete(task);
-			});
-		});
 	}
 
 	public static boolean breakBlock(BlockBreakEvent event) {
@@ -164,9 +149,11 @@ public class WoodCutting implements Listener {
 			return null;
 		}
 
-		public void build(int id) {
+		public CompletableFuture<Void> build(int id) {
 			treeAnimating = true;
-			getPaster(id).buildQueue().thenAccept($ -> treeAnimating = false);
+			final CompletableFuture<Void> future = getPaster(id).buildQueue();
+			future.thenRun(() -> treeAnimating = false);
+			return future;
 		}
 
 		private Queue<Location> getQueue(int id) {
@@ -253,16 +240,10 @@ public class WoodCutting implements Listener {
 
 				Jingle.TREE_FELLER.play(player);
 
-				onBreak(id);
+				new BearFair21TreeRegenJob(this, id).schedule(now().plusSeconds(randomInt(3 * 60, 5 * 60)));
 			});
 		}
 
-		public void onBreak(int id) {
-			new TaskService().save(new Task(taskId, new HashMap<>() {{
-				put("tree", name());
-				put("id", id);
-			}}, LocalDateTime.now().plusSeconds(randomInt(3 * 60, 5 * 60))));
-		}
 	}
 
 	@AllArgsConstructor

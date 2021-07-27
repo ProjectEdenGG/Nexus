@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store;
 
-import com.google.gson.Gson;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -14,22 +13,14 @@ import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.task.Task;
-import gg.projecteden.nexus.models.task.TaskService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.StringUtils.uuidFormat;
@@ -39,33 +30,6 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 	public HandlePurchaseCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		Tasks.repeatAsync(Time.SECOND, Time.MINUTE, () -> {
-			TaskService service = new TaskService();
-			List<Task> tasks = service.process("package-expire");
-			tasks.forEach(task -> {
-				Map<String, String> map = new Gson().fromJson(task.getData(), Map.class);
-				String uuid = map.get("uuid");
-				String packageId = map.get("packageId");
-				Package packageType = Package.getPackage(packageId);
-				if (packageType == null) {
-					Nexus.severe("Tried to expire a package that doesn't exist: UUID: " + uuid + ", PackageId: " + packageId);
-					return;
-				}
-
-				OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-				if (player == null || Name.of(player) == null) {
-					Nexus.severe("Tried to expire a package for a player that doesn't exist: UUID: " + uuid);
-					return;
-				}
-
-				packageType.expire(player);
-
-				service.complete(task);
-			});
-		});
 	}
 
 	@Path("<data...>")

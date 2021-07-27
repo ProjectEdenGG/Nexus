@@ -37,8 +37,7 @@ import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.models.task.Task;
-import gg.projecteden.nexus.models.task.TaskService;
+import gg.projecteden.nexus.models.job.jobs.PackageExpireJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
@@ -58,15 +57,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.utils.StringUtils.camelCase;
+import static java.time.LocalDateTime.now;
 
 public enum Package {
 
@@ -809,10 +807,7 @@ public enum Package {
 		handleApply(player);
 
 		if (getExpirationDays() > 0)
-			new TaskService().save(new Task("package-expire", new HashMap<>() {{
-				put("uuid", player.getUniqueId().toString());
-				put("packageId", getId());
-			}}, LocalDateTime.now().plusDays(getExpirationDays())));
+			new PackageExpireJob(player.getUniqueId(), getId()).schedule(now().plusDays(getExpirationDays()));
 	}
 
 	public void expire(OfflinePlayer player) {
