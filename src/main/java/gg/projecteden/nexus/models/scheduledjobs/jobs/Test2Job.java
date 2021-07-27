@@ -1,6 +1,6 @@
-package gg.projecteden.nexus.models.job.jobs;
+package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.nexus.models.job.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;

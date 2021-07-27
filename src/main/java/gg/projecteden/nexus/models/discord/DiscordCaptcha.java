@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.DiscordId.Role;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
-import gg.projecteden.nexus.models.job.jobs.DiscordCaptchaKickJob;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.DiscordCaptchaKickJob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

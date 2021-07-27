@@ -1,10 +1,6 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.models.job.AbstractJob;
-import gg.projecteden.nexus.models.job.AbstractJob.JobStatus;
-import gg.projecteden.nexus.models.job.ScheduledJobs;
-import gg.projecteden.nexus.models.job.ScheduledJobsService;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +14,6 @@ import org.bukkit.scheduler.BukkitWorker;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -249,32 +244,6 @@ public class Tasks {
 						}
 					})
 					.start());
-		}
-	}
-
-	static {
-		try {
-			final ScheduledJobsService service = new ScheduledJobsService();
-			final ScheduledJobs jobs = service.get0();
-
-			final ArrayList<AbstractJob> interrupted = new ArrayList<>(jobs.get(JobStatus.RUNNING));
-			if (!interrupted.isEmpty()) {
-				for (AbstractJob job : interrupted) {
-					Nexus.severe("[Jobs] Found interrupted job: " + job);
-					job.setStatus(JobStatus.INTERRUPTED);
-				}
-
-				service.save(jobs);
-			}
-
-			Tasks.repeat(0, Time.SECOND, () -> {
-				for (AbstractJob job : jobs.getReady())
-					job.process();
-
-				service.save(jobs);
-			});
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
 	}
 

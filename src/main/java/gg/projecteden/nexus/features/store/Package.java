@@ -37,7 +37,7 @@ import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.models.job.jobs.PackageExpireJob;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;

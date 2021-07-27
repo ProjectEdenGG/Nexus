@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.job;
+package gg.projecteden.nexus.models.scheduledjobs;
 
 import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.models.MongoService;

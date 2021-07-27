@@ -1,7 +1,7 @@
-package gg.projecteden.nexus.models.job.jobs;
+package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.PugmasTreeType;
-import gg.projecteden.nexus.models.job.AbstractJob;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,8 +13,8 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Pugmas20TreeRegenJob extends AbstractJob {
-	private PugmasTreeType treeType;
+public class BearFair21TreeRegenJob extends AbstractJob {
+	private BearFair21TreeType treeType;
 	private int treeId;
 
 	@Override

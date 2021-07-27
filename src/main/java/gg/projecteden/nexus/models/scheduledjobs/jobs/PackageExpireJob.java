@@ -1,8 +1,8 @@
-package gg.projecteden.nexus.models.job.jobs;
+package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.job.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;

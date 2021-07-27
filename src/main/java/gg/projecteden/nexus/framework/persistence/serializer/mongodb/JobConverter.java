@@ -7,7 +7,7 @@ import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import gg.projecteden.nexus.models.MongoService;
-import gg.projecteden.nexus.models.job.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import lombok.SneakyThrows;
 
 public class JobConverter extends TypeConverter implements SimpleValueConverter {

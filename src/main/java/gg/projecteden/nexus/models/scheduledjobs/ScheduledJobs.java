@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.job;
+package gg.projecteden.nexus.models.scheduledjobs;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -6,7 +6,8 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.JobConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
-import gg.projecteden.nexus.models.job.AbstractJob.JobStatus;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.JobStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,6 +44,13 @@ public class ScheduledJobs implements PlayerOwnedObject {
 		final LocalDateTime now = LocalDateTime.now();
 		return get(JobStatus.PENDING).stream()
 			.filter(job -> job.getTimestamp().isBefore(now))
+			.collect(Collectors.toSet());
+	}
+
+	public <T extends AbstractJob> Set<T> get(JobStatus status, Class<T> clazz) {
+		return get(status).stream()
+			.filter(job -> clazz.equals(job.getClass()))
+			.map(job -> (T) job)
 			.collect(Collectors.toSet());
 	}
 

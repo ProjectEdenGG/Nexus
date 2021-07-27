@@ -1,11 +1,11 @@
-package gg.projecteden.nexus.models.job.jobs;
+package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha.CaptchaResult;
 import gg.projecteden.nexus.models.discord.DiscordCaptchaService;
-import gg.projecteden.nexus.models.job.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

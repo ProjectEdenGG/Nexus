@@ -1,6 +1,6 @@
-package gg.projecteden.nexus.models.job.jobs;
+package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.nexus.models.job.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
