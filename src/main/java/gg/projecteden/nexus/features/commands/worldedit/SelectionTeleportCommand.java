@@ -24,8 +24,8 @@ public class SelectionTeleportCommand extends CustomCommand {
 		worldEditUtils = new WorldEditUtils(player());
 	}
 
-	@Path("tp")
-	void teleport(String string) {
+	@Path
+	void teleport() {
 		Region playerSelection = worldEditUtils.getPlayerSelection(player());
 		if (playerSelection == null)
 			error("No selection to teleport to");
