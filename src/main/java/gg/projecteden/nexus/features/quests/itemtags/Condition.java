@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
+
 @AllArgsConstructor
 public enum Condition {
 	BROKEN(ColorType.RED.getChatColor(), 76, 100),
@@ -23,6 +25,7 @@ public enum Condition {
 	private final int min;
 	@Getter
 	private final int max;
+	private static final DecimalFormat pf = new DecimalFormat("0.00");
 
 	public static Condition of(ItemStack itemStack) {
 		return of(itemStack, null);
@@ -44,7 +47,8 @@ public enum Condition {
 			ItemTags.debug(debugger, "  &3Max durability: &e" + maxDurability);
 
 			double percentage = (damage / maxDurability) * 100.0;
-			ItemTags.debug(debugger, "  &3Broken: &e" + percentage + "%");
+			String percent = pf.format(percentage);
+			ItemTags.debug(debugger, "  &3Broken: &e" + percent + "%");
 
 			for (Condition condition : values()) {
 				double min = (condition.getMin() / 100.0) * maxDurability;
