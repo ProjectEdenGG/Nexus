@@ -70,7 +70,6 @@ public class CostumeUser implements PlayerOwnedObject {
 		}
 	}
 
-	@Deprecated
 	private void sendPacket(ItemStack item, EquipmentSlot slot) {
 		final Player player = getOnlinePlayer();
 		final List<Player> players = player.getWorld().getPlayers();
