@@ -220,7 +220,7 @@ public class WitherCommand extends CustomCommand {
 			error("You are already spectating the current fight");
 		if (currentFight.getAlivePlayers().contains(uuid()))
 			error("You cannot spectate the match as a party member");
-		player().teleport(WitherChallenge.cageLoc);
+		player().teleportAsync(WitherChallenge.cageLoc);
 		player().setGameMode(GameMode.SPECTATOR);
 	}
 

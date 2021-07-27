@@ -103,7 +103,7 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 							holeInTheWallMenu.openDesignStartLocationsMenu(arena).open(player, page.getPage());
 						});
 					} else {
-						player.teleport(designStartLocation.clone().add(0, 2, 0));
+						player.teleportAsync(designStartLocation.clone().add(0, 2, 0));
 					}
 				});
 			}

@@ -36,12 +36,12 @@ public class HomeCommand extends CustomCommand {
 		if (!home.isPresent())
 			error("You do not have a home named &e" + name);
 
-		home.get().teleport(player());
+		home.get().teleportAsync(player());
 	}
 
 	@Path("<player> <home>")
 	void teleport(OfflinePlayer player, @Arg(context = 1) Home home) {
-		home.teleport(player());
+		home.teleportAsync(player());
 	}
 
 	@ConverterFor(Home.class)

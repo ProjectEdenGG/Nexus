@@ -80,7 +80,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		if (rainbowBeacon.getLocation() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have an active rainbow beacon");
 
-		player().teleport(rainbowBeacon.getLocation(), TeleportCause.COMMAND);
+		player().teleportAsync(rainbowBeacon.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("list")

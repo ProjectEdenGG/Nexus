@@ -25,7 +25,7 @@ public class UncivilEngineersMatchData extends CheckpointData {
 
 	public void assignSlice(Minigamer minigamer, int id) {
 		slices.put(minigamer.getUniqueId(), id);
-		minigamer.teleport(offset(getStart(), id));
+		minigamer.teleportAsync(offset(getStart(), id));
 	}
 
 	public int getSlice(Minigamer minigamer) {

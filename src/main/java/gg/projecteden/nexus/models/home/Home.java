@@ -76,7 +76,7 @@ public class Home implements PlayerOwnedObject {
 		this.respawn = respawn;
 	}
 
-	public void teleport(Player player) {
+	public void teleportAsync(Player player) {
 		if (hasAccess(player)) {
 			Location location = this.location.clone();
 			if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))

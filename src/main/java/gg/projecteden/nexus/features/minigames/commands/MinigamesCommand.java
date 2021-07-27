@@ -305,9 +305,9 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission("manage")
 	void teleport(Minigamer minigamer1, Minigamer minigamer2) {
 		if (minigamer2 == null)
-			minigamer.teleport(minigamer1.getPlayer().getLocation());
+			minigamer.teleportAsync(minigamer1.getPlayer().getLocation());
 		else
-			minigamer1.teleport(minigamer2.getPlayer().getLocation());
+			minigamer1.teleportAsync(minigamer2.getPlayer().getLocation());
 	}
 
 	@Path("tppos <player> <x> <y> <z> [yaw] [pitch]")
@@ -315,7 +315,7 @@ public class MinigamesCommand extends CustomCommand {
 	void teleport(Minigamer minigamer, String x, String y, String z, String yaw, String pitch) {
 		Location location = minigamer.getPlayer().getLocation();
 		RelativeLocation.modify(location).x(x).y(y).z(z).yaw(yaw).pitch(pitch).update();
-		minigamer.teleport(location);
+		minigamer.teleportAsync(location);
 	}
 
 	@Path("(delete|remove) <arena>")
@@ -397,10 +397,10 @@ public class MinigamesCommand extends CustomCommand {
 		Location originalLocation = location().clone();
 		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
 		player().setGameMode(GameMode.SPECTATOR);
-		player().teleport(location);
+		player().teleportAsync(location);
 		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + (arena.getSchematicBaseName() + name) + " -f");
 		Tasks.wait(20, () -> {
-			player().teleport(originalLocation);
+			player().teleportAsync(originalLocation);
 			player().setGameMode(originalGameMode);
 		});
 
@@ -512,7 +512,7 @@ public class MinigamesCommand extends CustomCommand {
 			error("There is no pending game invite");
 
 		if (world() != Minigames.getWorld()) {
-			new WarpService().get("minigames", WarpType.NORMAL).teleport(player());
+			new WarpService().get("minigames", WarpType.NORMAL).teleportAsync(player());
 			Tasks.wait(5, this::acceptInvite);
 		} else
 			runCommand(inviteCommand);

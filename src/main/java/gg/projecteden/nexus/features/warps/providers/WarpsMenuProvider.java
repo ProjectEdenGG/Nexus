@@ -63,14 +63,14 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 				for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
 						Warp warp1 = warpService.getNormalWarp(warp.name().replace("_", ""));
-						warp1.teleport(player);
+						warp1.teleportAsync(player);
 					}));
 				}
 				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
 				ItemStack resource = nameItem(Material.DIAMOND_PICKAXE, "&3Resource", "&eClick to teleport to the resource world");
 				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy", "&eClick to view legacy world warps");
 				contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
-				contents.set(2, 7, ClickableItem.from(resource, e -> warpService.get("resource", WarpType.NORMAL).teleport(player)));
+				contents.set(2, 7, ClickableItem.from(resource, e -> warpService.get("resource", WarpType.NORMAL).teleportAsync(player)));
 				contents.set(3, 7, ClickableItem.from(legacy, e -> WarpsMenu.open(player, WarpMenu.LEGACY)));
 				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
 						"survival world warps.").lore("&eThey are spread out across the entire world.").loreize(false).build()));
@@ -83,7 +83,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 							PlayerUtils.send(player, StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp");
 							return;
 						}
-						warp1.teleport(player);
+						warp1.teleportAsync(player);
 					}));
 				}
 				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");

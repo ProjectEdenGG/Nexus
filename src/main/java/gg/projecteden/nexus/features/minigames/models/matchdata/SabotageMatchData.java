@@ -380,7 +380,7 @@ public class SabotageMatchData extends MatchData {
 				if (openInv.getType() == InventoryType.CRAFTING) return;
 				if (openInv.getTitle().equals(votingScreen.getInventory().getTitle())) return;
 			} else
-				minigamer.teleport(getArena().getRespawnLocation());
+				minigamer.teleportAsync(getArena().getRespawnLocation());
 			openInv.close();
 			votingScreen.open(minigamer);
 		}));
@@ -389,7 +389,7 @@ public class SabotageMatchData extends MatchData {
 			if (venters.containsKey(minigamer.getUniqueId()))
 				exitVent(minigamer);
 			PlayerUtils.hidePlayers(minigamer, match.getMinigamers());
-			minigamer.teleport(getArena().getRespawnLocation());
+			minigamer.teleportAsync(getArena().getRespawnLocation());
 			minigamer.getPlayer().getInventory().clear();
 			PlayerUtils.giveItem(minigamer, Sabotage.VOTING_ITEM.get());
 			match.getTasks().wait(1, () -> {

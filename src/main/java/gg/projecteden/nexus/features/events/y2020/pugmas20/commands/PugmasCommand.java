@@ -329,7 +329,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		if (pugmasUser.getToyTestingStage() == QuestStage.NOT_STARTED)
 			error("You cannot use this");
 
-		player().teleport(ToyTesting.getBackLocation(), TeleportCause.COMMAND);
+		player().teleportAsync(ToyTesting.getBackLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("train")
@@ -543,7 +543,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		if (pugmasUser.isLightingTorches())
 			error("You cannot teleport during the lighting ceremony");
 
-		player().teleport(LightTheTree.getResetLocation(), TeleportCause.COMMAND);
+		player().teleportAsync(LightTheTree.getResetLocation(), TeleportCause.COMMAND);
 		send(PREFIX + "Teleported to ceremony start");
 	}
 

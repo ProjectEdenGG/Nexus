@@ -35,7 +35,7 @@ public class DeathSwapMatchData extends MatchData {
 		public void with(Minigamer minigamer) {
 			DeathSwapMatchData matchData = minigamer.getMatch().getMatchData();
 			matchData.getSwaps().put(minigamer, this);
-			minigamer.teleport(location);
+			minigamer.teleportAsync(location);
 			minigamer.tell("You swapped with &e" + swapped.getNickname());
 		}
 

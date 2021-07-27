@@ -160,7 +160,7 @@ public class AntiCampingTask {
 		to = LocationUtils.getCenteredLocation(to);
 		to.setYaw(minigamer.getPlayer().getLocation().getYaw());
 		to.setPitch(minigamer.getPlayer().getLocation().getPitch());
-		minigamer.teleport(to.add(0, 1, 0));
+		minigamer.teleportAsync(to.add(0, 1, 0));
 	}
 
 	private @Nullable ProtectedRegion getFloorAt(@NotNull Minigamer minigamer) {

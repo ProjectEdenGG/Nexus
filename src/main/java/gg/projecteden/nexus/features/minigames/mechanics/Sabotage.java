@@ -269,7 +269,7 @@ public class Sabotage extends TeamMechanic {
 					if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
 						Location dest = matchData.getVenters().get(minigamer.getUniqueId());
 						if (!LocationUtils.locationsEqual(location, dest))
-							match.getTasks().sync(() -> minigamer.teleport(dest));
+							match.getTasks().sync(() -> minigamer.teleportAsync(dest));
 						minigamer.sendActionBar(new JsonBuilder("Crouch (", NamedTextColor.RED).next(Component.keybind("key.sneak")).next(") to exit vent"));
 					}
 				}

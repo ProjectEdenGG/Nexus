@@ -34,7 +34,7 @@ public class TeleportBlock extends ModifierBlock {
 				Location newLoc = new Location(golfBall.getLocation().getWorld(), x, y, z);
 
 				golfBall.setVelocity(new Vector(0, 0, 0));
-				golfBall.teleport(LocationUtils.getCenteredLocation(newLoc));
+				golfBall.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
 				golfBall.setGravity(true);
 			} catch (Exception ignored) {
 

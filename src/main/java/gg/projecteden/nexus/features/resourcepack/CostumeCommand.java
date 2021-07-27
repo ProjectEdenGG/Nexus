@@ -120,6 +120,8 @@ public class CostumeCommand extends CustomCommand {
 				user.sendMessage("&e" + Costume.STORE_URL);
 			}));
 
+			init(user, contents);
+
 			List<ClickableItem> items = new ArrayList<>();
 
 			for (CustomModelFolder subfolder : folder.getFolders()) {
@@ -172,6 +174,8 @@ public class CostumeCommand extends CustomCommand {
 		}
 
 		protected abstract CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
+
+		protected void init(CostumeUser user, InventoryContents contents) {}
 
 		protected int getAvailableCostumes(Player player, CustomModelFolder folder) {
 			final CostumeUserService service = new CostumeUserService();
@@ -244,6 +248,18 @@ public class CostumeCommand extends CustomCommand {
 		}
 
 		@Override
+		protected void init(CostumeUser user, InventoryContents contents) {
+			final Costume costume = user.getActiveCostume();
+			if (costume != null) {
+				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem()).lore("", "&aActive").glow();
+
+				contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
+
+				}));
+			}
+		}
+
+		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
 			return user.getOwnedCostumes().contains(costume);
 		}
@@ -254,7 +270,7 @@ public class CostumeCommand extends CustomCommand {
 				builder.lore("", "&aActive").glow();
 
 			return ClickableItem.from(builder.build(), e -> {
-				user.setActiveCostume(costume);
+				user.setActiveCostume(costume.equals(user.getActiveCostume()) ? null : costume);
 				service.save(user);
 				open(user.getOnlinePlayer(), contents.pagination().getPage());
 			});

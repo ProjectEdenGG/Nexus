@@ -64,7 +64,7 @@ public class Beehive implements Listener {
 			}
 
 		} else if (id.equalsIgnoreCase(exitRg)) {
-			player.teleport(exitLoc);
+			player.teleportAsync(exitLoc);
 
 		} else if (id.equalsIgnoreCase(queenRg)) {
 			String queen = "&3Queen Bee &7> &f";
@@ -135,14 +135,14 @@ public class Beehive implements Listener {
 	}
 
 	private void allowed(Player player) {
-		player.teleport(enterLoc);
+		player.teleportAsync(enterLoc);
 		send(allowedMsg, player);
 	}
 
 	private void denied(Player player) {
 		player.addPotionEffects(Collections.singletonList
 				(new PotionEffect(PotionEffectType.BLINDNESS, 40, 250, false, false, false)));
-		player.teleport(exitLoc);
+		player.teleportAsync(exitLoc);
 		player.playSound(enterLoc, Sound.ENTITY_BEE_LOOP_AGGRESSIVE, 0.5F, 1F);
 		Tasks.wait(5, () -> send(deniedMsg, player));
 	}

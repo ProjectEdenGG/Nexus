@@ -61,13 +61,13 @@ public class PodiumsCommand extends CustomCommand {
 
 	@Path("tp <position>")
 	void tp(Position position) {
-		player().teleport(getNpc(position).getEntity(), TeleportCause.COMMAND);
+		player().teleportAsync(getNpc(position).getEntity().getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("(s|summon) <position>")
 	void tphere(Position position) {
 		runCommand("blockcenter");
-		getNpc(position).getEntity().teleport(location());
+		getNpc(position).getEntity().teleportAsync(location());
 	}
 
 	private static NPC getNpc(int podiumId) {

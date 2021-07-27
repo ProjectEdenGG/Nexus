@@ -33,7 +33,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 	@Path("[world]")
 	void run(@Arg("survival") SpawnType spawnType) {
 		Warp warp = service.get(spawnType.name(), WarpType.NORMAL);
-		warp.teleport(player());
+		warp.teleportAsync(player());
 	}
 
 	@Path("force [player]")
@@ -48,7 +48,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 		if (event.getPlayer().hasPlayedBefore())
 			return;
 
-		Tasks.wait(1, () -> new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer()));
+		Tasks.wait(1, () -> new WarpService().get("spawn", WarpType.NORMAL).teleportAsync(event.getPlayer()));
 	}
 
 }

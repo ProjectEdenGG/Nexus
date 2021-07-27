@@ -88,7 +88,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@Path("tp <number>")
 	void tp(int number) {
-		player().teleport(arena.getCheckpoint(number), TeleportCause.COMMAND);
+		player().teleportAsync(arena.getCheckpoint(number), TeleportCause.COMMAND);
 	}
 
 }

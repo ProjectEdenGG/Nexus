@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -72,17 +73,20 @@ public class LeashCommand extends CustomCommand {
 				return;
 			}
 
-			if (staff.getLocation().distance(target.getLocation()) <= 7) {
+			final Location staffLocation = staff.getLocation();
+			final Location targetLocation = target.getLocation();
+
+			if (staffLocation.distance(targetLocation) <= 7) {
 				return;
 			}
 
-			if (staff.getLocation().distance(target.getLocation()) >= 100) {
-				staff.teleport(target);
+			if (staffLocation.distance(targetLocation) >= 100) {
+				staff.teleportAsync(targetLocation);
 				return;
 			}
 
-			Vector vector = target.getLocation().toVector().subtract(staff.getLocation().toVector()).normalize();
-			double multiplier = staff.getLocation().distance(target.getLocation()) / 100 + velocity;
+			Vector vector = targetLocation.toVector().subtract(staffLocation.toVector()).normalize();
+			double multiplier = staffLocation.distance(targetLocation) / 100 + velocity;
 			staff.setVelocity(vector.multiply(multiplier));
 		});
 

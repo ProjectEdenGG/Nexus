@@ -150,13 +150,13 @@ public class BattleshipCommand extends CustomCommand {
 	@Permission("minigames.manage")
 	@Path("toKitLocation <coordinate>")
 	void toKitLocation(Coordinate coordinate) {
-		minigamer.teleport(getCenteredLocation(coordinate.getKitLocation()));
+		minigamer.teleportAsync(getCenteredLocation(coordinate.getKitLocation()));
 	}
 
 	@Permission("minigames.manage")
 	@Path("toPegLocation <coordinate>")
 	void toPegLocation(Coordinate coordinate) {
-		minigamer.teleport(getCenteredLocation(coordinate.getPegLocation()));
+		minigamer.teleportAsync(getCenteredLocation(coordinate.getPegLocation()));
 	}
 
 	@ConverterFor(Coordinate.class)

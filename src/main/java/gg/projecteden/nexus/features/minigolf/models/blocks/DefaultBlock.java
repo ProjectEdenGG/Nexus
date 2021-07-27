@@ -27,7 +27,7 @@ public class DefaultBlock extends ModifierBlock {
 		// Check if floating below slab
 //		if(MiniGolfUtils.isTopSlab(location.getBlock()) && location.getY() >= location.getBlock().getY() + 0.5) {
 //			golfBall.getUser().debug("ball is inside of top slab");
-//			golfBall.teleport(golfBall.getLocation().subtract(0, 0.05, 0));
+//			golfBall.teleportAsync(golfBall.getLocation().subtract(0, 0.05, 0));
 //			golfBall.setGravity(true);
 //		}
 
@@ -43,7 +43,7 @@ public class DefaultBlock extends ModifierBlock {
 			golfBall.getUser().debug(velocity.length() != 0.0, "ball is too slow, stopping...");
 			golfBall.setVelocity(new Vector(0, 0, 0));
 			golfBall.setGravity(false);
-			golfBall.teleport(golfBall.getLocation());
+			golfBall.teleportAsync(golfBall.getLocation());
 
 			if (!golfBall.isInBounds()) {
 				golfBall.getUser().debug("ball is out of bounds, respawning...");

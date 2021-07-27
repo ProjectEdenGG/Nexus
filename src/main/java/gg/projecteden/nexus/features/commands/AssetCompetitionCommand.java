@@ -62,7 +62,7 @@ public class AssetCompetitionCommand extends CustomCommand {
 		if (assetCompetition.getLocation() == null)
 			error("That player has not submitted an asset");
 
-		player().teleport(assetCompetition.getLocation(), TeleportCause.COMMAND);
+		player().teleportAsync(assetCompetition.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Async

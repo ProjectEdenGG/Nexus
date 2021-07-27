@@ -36,7 +36,7 @@ public abstract class ModifierBlock {
 				if (velocity.getY() < 0.1) {
 					golfBall.debug("velocity < 0.1");
 					velocity.setY(0);
-					snowball.teleport(snowball.getLocation().add(0, MiniGolf.getFloorOffset(), 0));
+					snowball.teleportAsync(snowball.getLocation().add(0, MiniGolf.getFloorOffset(), 0));
 					snowball.setGravity(false);
 				}
 			}

@@ -297,7 +297,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		if (user.isQuest_MGN_Start() && player.getInventory().contains(solderingIron)) return;
 
 		BearFair20.send("&cYou need a soldering iron to enter", player);
-		player.teleport(basementExit);
+		player.teleportAsync(basementExit);
 	}
 
 	@EventHandler

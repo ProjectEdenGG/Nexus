@@ -340,14 +340,14 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-			new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer());
+			new WarpService().get("spawn", WarpType.NORMAL).teleportAsync(event.getPlayer());
 			Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn");
 			toSpawn.remove(event.getPlayer().getUniqueId());
 		}
 
 		Tasks.wait(5, () -> {
 			if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-				new WarpService().get("spawn", WarpType.NORMAL).teleport(event.getPlayer());
+				new WarpService().get("spawn", WarpType.NORMAL).teleportAsync(event.getPlayer());
 				Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn [2]");
 				toSpawn.remove(event.getPlayer().getUniqueId());
 			}

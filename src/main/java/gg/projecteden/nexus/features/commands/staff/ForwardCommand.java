@@ -16,6 +16,6 @@ public class ForwardCommand extends CustomCommand {
 	@Path("<blocks>")
 	void forward(int blocks) {
 		Vector forward = player().getEyeLocation().getDirection().multiply(blocks);
-		player().teleport(location().add(forward));
+		player().teleportAsync(location().add(forward));
 	}
 }

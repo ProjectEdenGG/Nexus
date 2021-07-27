@@ -72,7 +72,7 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 
 	@Override
 	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Team team, @NotNull Location location) {
-		CompletableFuture<?>[] results = team.getMinigamers(match).stream().map(minigamer -> minigamer.teleport(location)).toArray(CompletableFuture[]::new);
+		CompletableFuture<?>[] results = team.getMinigamers(match).stream().map(minigamer -> minigamer.teleportAsync(location)).toArray(CompletableFuture[]::new);
 		return CompletableFuture.allOf(results);
 	}
 }

@@ -86,7 +86,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			error("You cannot teleport that animal to this location");
 
 		Entity entity = moveQueue.remove(uuid());
-		entity.teleport(player());
+		entity.teleportAsync(location());
 		send(PREFIX + "Summoned your " + camelCase(entity.getType()));
 	}
 

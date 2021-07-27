@@ -91,7 +91,7 @@ public class GolfBall {
 		return player;
 	}
 
-	public void teleport(Location location) {
+	public void teleportAsync(Location location) {
 		if (!isAlive())
 			return;
 
@@ -106,7 +106,7 @@ public class GolfBall {
 //					location.subtract(0, 0.5, 0);
 //		}
 
-		snowball.teleport(location);
+		snowball.teleportAsync(location);
 	}
 
 	public boolean isAlive() {
@@ -152,7 +152,7 @@ public class GolfBall {
 
 		snowball.setVelocity(new Vector(0, 0, 0));
 		snowball.setGravity(false);
-		snowball.teleport(lastLocation.add(0, MiniGolf.getFloorOffset(), 0));
+		snowball.teleportAsync(lastLocation.add(0, MiniGolf.getFloorOffset(), 0));
 		snowball.setFireTicks(0);
 		snowball.setTicksLived(1);
 

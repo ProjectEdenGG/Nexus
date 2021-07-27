@@ -167,7 +167,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		else
 			location = arena.getCheckpoint(matchData.getCheckpointId(minigamer));
 
-		minigamer.teleport(offset(location, minigamer));
+		minigamer.teleportAsync(offset(location, minigamer));
 	}
 
 	@Override

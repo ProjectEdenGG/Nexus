@@ -143,7 +143,7 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 		if (spawnpoints.size() == 1) {
 			Location spawnpoint = spawnpoints.get(0);
 			for (Minigamer minigamer : members)
-				minigamer.teleport(spawnpoint);
+				minigamer.teleportAsync(spawnpoint);
 			return;
 		}
 
@@ -168,7 +168,7 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 					Collections.shuffle(locations);
 			}
 			Location spawnpoint = locations.remove(0);
-			members.remove(0).teleport(spawnpoint);
+			members.remove(0).teleportAsync(spawnpoint);
 			usedSpawnpoints.add(spawnpoint);
 		}
 	}

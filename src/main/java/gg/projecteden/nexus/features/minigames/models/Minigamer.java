@@ -257,11 +257,11 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		getPlayer().setAllowFlight(staff);
 		getPlayer().setFlying(staff);
 
-		teleport(Minigames.getLobby());
+		teleportAsync(Minigames.getLobby());
 	}
 
 	public void toSpectate() {
-		teleport(match.getArena().getSpectateLocation());
+		teleportAsync(match.getArena().getSpectateLocation());
 		match.getMinigamers().forEach(minigamer -> {
 			if (minigamer.isAlive)
 				minigamer.getPlayer().hidePlayer(Nexus.getInstance(), getPlayer());
@@ -270,11 +270,11 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		});
 	}
 
-	public CompletableFuture<Void> teleport(@NotNull Location location) {
-		return teleport(location, false);
+	public CompletableFuture<Void> teleportAsync(@NotNull Location location) {
+		return teleportAsync(location, false);
 	}
 
-	public CompletableFuture<Void> teleport(@NotNull Location location, boolean withSlowness) {
+	public CompletableFuture<Void> teleportAsync(@NotNull Location location, boolean withSlowness) {
 		Utils.notNull(location, "Tried to teleport " + getName() + " to a null location");
 
 		final Location up = location.clone().add(0, .5, 0);
@@ -284,7 +284,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			getPlayer().setVelocity(still);
 			canTeleport = true;
 
-			getPlayer().teleport(up, match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN);
+			getPlayer().teleportAsync(up, match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN);
 
 			canTeleport = false;
 			getPlayer().setVelocity(still);
@@ -357,7 +357,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			spawn();
 		else {
 			respawning = true;
-			teleport(match.getArena().getRespawnLocation(), true);
+			teleportAsync(match.getArena().getRespawnLocation(), true);
 			clearState();
 			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
 			hideAll();

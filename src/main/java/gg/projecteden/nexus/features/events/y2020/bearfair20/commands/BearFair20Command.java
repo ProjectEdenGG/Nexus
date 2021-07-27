@@ -277,7 +277,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 	@Path("warps tp nearest")
 	public void teleportNearest() {
 		player();
-		getNearestWarp(location()).ifPresent(warp -> warp.teleport(player()));
+		getNearestWarp(location()).ifPresent(warp -> warp.teleportAsync(player()));
 	}
 
 	@Override
