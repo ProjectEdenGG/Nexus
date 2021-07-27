@@ -15,11 +15,14 @@ import gg.projecteden.nexus.models.scheduledjobs.jobs.TestJob;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NonNull;
+import org.reflections.Reflections;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import static gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.getNextExecutionTime;
 
 @Aliases("job")
 @Permission("group.admin")
@@ -34,6 +37,7 @@ public class JobsCommand extends CustomCommand {
 	static {
 		checkInterrupted();
 		processor();
+		rescheduler();
 	}
 
 	private static void checkInterrupted() {
@@ -63,6 +67,26 @@ public class JobsCommand extends CustomCommand {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private static void rescheduler() {
+		final Reflections reflections = new Reflections(service.getClass().getPackage().getName());
+		Tasks.repeatAsync(0, Time.MINUTE, () -> reflections.getSubTypesOf(AbstractJob.class).forEach(clazz -> {
+			final LocalDateTime timestamp = getNextExecutionTime(clazz);
+			if (timestamp == null)
+				return;
+
+			for (AbstractJob job : jobs.get(JobStatus.PENDING, clazz))
+				if (job.getTimestamp().equals(timestamp))
+					return;
+
+			try {
+				clazz.getConstructor().newInstance().schedule(timestamp);
+			} catch (Exception ex) {
+				Nexus.severe("Error rescheduling " + clazz.getSimpleName());
+				ex.printStackTrace();
+			}
+		}));
 	}
 
 	@Path("stats")

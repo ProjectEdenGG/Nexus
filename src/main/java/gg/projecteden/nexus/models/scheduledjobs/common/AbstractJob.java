@@ -1,13 +1,22 @@
-package gg.projecteden.nexus.models.job;
+package gg.projecteden.nexus.models.scheduledjobs.common;
 
+import com.cronutils.model.CronType;
+import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.model.time.ExecutionTime;
+import com.cronutils.parser.CronParser;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.scheduledjobs.ScheduledJobs;
+import gg.projecteden.nexus.models.scheduledjobs.ScheduledJobsService;
 import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -89,6 +98,22 @@ public abstract class AbstractJob {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
+	}
+
+	private static final CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+
+	@Nullable
+	public static LocalDateTime getNextExecutionTime(Class<? extends AbstractJob> clazz) {
+		final Schedule schedule = clazz.getAnnotation(Schedule.class);
+		if (schedule == null)
+			return null;
+
+		final ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(schedule.value()));
+		final Optional<ZonedDateTime> next = executionTime.nextExecution(ZonedDateTime.now());
+		if (next.isEmpty())
+			return null;
+
+		return next.get().toLocalDateTime();
 	}
 
 }
