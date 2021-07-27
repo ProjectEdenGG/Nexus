@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.models.costume;
 
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -19,10 +18,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -54,18 +56,22 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (!shouldSendPacket())
 			return;
 
-		sendPacket(activeCostume.getItem(), activeCostume.getType().getPacketSlot());
+		sendPacket(activeCostume.getItem(), activeCostume.getType().getSlot());
 	}
 
-	// TODO Not working
 	public void sendResetPackets() {
+		Set<EquipmentSlot> slotsReset = EnumSet.noneOf(EquipmentSlot.class);
 		for (CostumeType type : CostumeType.values()) {
-			ItemStack item = getOnlinePlayer().getInventory().getItem(type.getSlot());
-			Tasks.wait(1, () -> sendPacket(item, type.getPacketSlot()));
+			EquipmentSlot slot = type.getSlot();
+			if (slotsReset.contains(slot)) continue;
+			slotsReset.add(slot);
+			ItemStack item = getOnlinePlayer().getInventory().getItem(slot);
+			Tasks.wait(1, () -> sendPacket(item, slot));
 		}
 	}
 
-	private void sendPacket(ItemStack item, ItemSlot slot) {
+	@Deprecated
+	private void sendPacket(ItemStack item, EquipmentSlot slot) {
 		final Player player = getOnlinePlayer();
 		final List<Player> players = player.getWorld().getPlayers();
 		PacketUtils.sendFakeItem(player, players, item, slot);
