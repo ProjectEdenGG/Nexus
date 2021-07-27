@@ -42,18 +42,18 @@ public class CostumeUser implements PlayerOwnedObject {
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 
 	public void sendPacket() {
-		final Player player = getOnlinePlayer();
-
-		if (!shouldSendPacket(player))
+		if (!shouldSendPacket())
 			return;
 
+		final Player player = getOnlinePlayer();
 		final ItemStack item = activeCostume.getModel().getDisplayItem();
 		final List<Player> players = player.getWorld().getPlayers();
 		final ItemSlot slot = activeCostume.getType().getPacketSlot();
 		PacketUtils.sendFakeItem(player, players, item, slot);
 	}
 
-	private boolean shouldSendPacket(Player player) {
+	private boolean shouldSendPacket() {
+		final Player player = getOnlinePlayer();
 		if (activeCostume == null)
 			return false;
 
