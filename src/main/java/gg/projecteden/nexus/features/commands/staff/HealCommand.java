@@ -18,14 +18,18 @@ public class HealCommand extends CustomCommand {
 
 	@Path("[player]")
 	void run(@Arg("self") Player player) {
+		HealCommand.healPlayer(player);
+		send(player, PREFIX + "You have been healed");
+		if (!isSelf(player))
+			send(PREFIX + player.getName() + " has been healed");
+	}
+
+	public static void healPlayer(Player player) {
 		player.setHealth(20);
 		player.setFoodLevel(20);
 		player.setFireTicks(0);
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
-		send(player, PREFIX + "You have been healed");
-		if (!isSelf(player))
-			send(PREFIX + player.getName() + " has been healed");
 	}
 
 }
