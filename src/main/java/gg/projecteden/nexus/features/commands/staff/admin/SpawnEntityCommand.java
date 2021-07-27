@@ -92,9 +92,9 @@ public class SpawnEntityCommand extends CustomCommand {
 	EntitySpawnData convertToEntitySpawnData(String value) {
 		Location location;
 		if (isPlayer())
-			location = getTargetBlockRequired().getRelative(BlockFace.UP).getLocation();
+			location = getTargetBlockRequired().getRelative(BlockFace.UP).getLocation().toCenterLocation();
 		else if (isCommandBlock())
-			location = commandBlock().getBlock().getRelative(BlockFace.UP).getLocation();
+			location = commandBlock().getBlock().getRelative(BlockFace.UP).getLocation().toCenterLocation();
 		else
 			throw new MustBeIngameException();
 
