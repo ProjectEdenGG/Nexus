@@ -7,7 +7,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,14 +42,27 @@ public class CostumeUser implements PlayerOwnedObject {
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 
-	public void sendPacket() {
+	public void setActiveCostume(Costume activeCostume) {
+		this.activeCostume = activeCostume;
+		if (activeCostume == null)
+			sendResetPackets();
+	}
+
+	public void sendCostumePacket() {
 		if (!shouldSendPacket())
 			return;
 
+		sendPacket(activeCostume.getItem(), activeCostume.getType().getPacketSlot());
+	}
+
+	public void sendResetPackets() {
+		for (CostumeType type : CostumeType.values())
+			sendPacket(getOnlinePlayer().getInventory().getItem(type.getSlot()), type.getPacketSlot());
+	}
+
+	private void sendPacket(ItemStack item, ItemSlot slot) {
 		final Player player = getOnlinePlayer();
-		final ItemStack item = activeCostume.getModel().getDisplayItem();
 		final List<Player> players = player.getWorld().getPlayers();
-		final ItemSlot slot = activeCostume.getType().getPacketSlot();
 		PacketUtils.sendFakeItem(player, players, item, slot);
 	}
 
@@ -57,10 +71,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (activeCostume == null)
 			return false;
 
-		// TODO Fix creative duping
-//		if (player.getGameMode() == GameMode.SPECTATOR)
-//			return;
-		if (!GameModeWrapper.of(player.getGameMode()).isSurvival())
+		if (player.getGameMode() == GameMode.SPECTATOR)
 			return false;
 
 		if (DISABLED_WORLDS.contains(WorldGroup.of(player)))

@@ -60,7 +60,7 @@ public class NPCDisplays {
 				Costume costume = RandomUtils.randomElement(Costume.values());
 				for (CostumeType value : CostumeType.values())
 					humanEntity.getInventory().setItem(value.getSlot(), new ItemStack(Material.AIR));
-				humanEntity.getInventory().setItem(costume.getType().getSlot(), costume.getModel().getItem());
+				humanEntity.getInventory().setItem(costume.getType().getSlot(), costume.getItem());
 				displaySet.setLastUpdatedIndex(displaySet.getDisplays().indexOf(display));
 			}
 		});

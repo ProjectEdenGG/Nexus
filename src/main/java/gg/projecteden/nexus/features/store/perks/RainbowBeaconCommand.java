@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store.perks;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -108,7 +107,6 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			RainbowBeaconService service = new RainbowBeaconService();
 			List<RainbowBeacon> beacons = service.getAll();
 			for (RainbowBeacon rainbowBeacon : beacons) {
-				Nexus.log("[RainbowBeacon] Starting task for " + rainbowBeacon.getName());
 				startTask(rainbowBeacon);
 				service.cache(rainbowBeacon);
 			}

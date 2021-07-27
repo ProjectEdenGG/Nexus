@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -34,9 +35,10 @@ import static gg.projecteden.nexus.features.resourcepack.CustomModel.ICON;
 import static gg.projecteden.nexus.models.costume.Costume.EXCLUSIVE;
 import static gg.projecteden.nexus.models.costume.Costume.ROOT_FOLDER;
 
+@NoArgsConstructor
 @Aliases("costumes")
 @Permission("group.admin") // TODO Remove
-public class CostumeCommand extends CustomCommand {
+public class CostumeCommand extends CustomCommand implements Listener {
 	private final CostumeUserService service = new CostumeUserService();
 
 	public CostumeCommand(@NonNull CommandEvent event) {
@@ -47,7 +49,7 @@ public class CostumeCommand extends CustomCommand {
 		final CostumeUserService service = new CostumeUserService();
 		Tasks.repeat(Time.TICK, Time.TICK, () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers())
-				service.get(player).sendPacket();
+				service.get(player).sendCostumePacket();
 		});
 	}
 

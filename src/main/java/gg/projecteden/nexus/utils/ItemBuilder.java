@@ -486,6 +486,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		 */
 		PLACEABLE(true),
 		/**
+		 * Whether an item can be stored in containers
+		 */
+		STORABLE(true),
+		/**
 		 * Whether an item can be put in the {@code /trash}
 		 */
 		TRASHABLE(true),
@@ -548,6 +552,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder unplaceable() {
 		return setting(ItemSetting.PLACEABLE, false);
+	}
+
+	public ItemBuilder unstorable() {
+		return setting(ItemSetting.STORABLE, false);
 	}
 
 	public ItemBuilder untrashable() {

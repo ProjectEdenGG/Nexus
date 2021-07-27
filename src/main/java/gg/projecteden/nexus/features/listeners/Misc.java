@@ -18,7 +18,6 @@ import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
@@ -71,7 +70,6 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -120,22 +118,6 @@ public class Misc implements Listener {
 			return;
 
 		player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Time.MINUTE.x(1.5), 1));
-	}
-
-	@EventHandler
-	public void nbt_onDropItem(PlayerDropItemEvent event) {
-		final ItemStack item = event.getItemDrop().getItemStack();
-		if (isNullOrAir(item)) return;
-		if (new ItemBuilder(item).isNot(ItemSetting.DROPPABLE))
-			event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void nbt_onPlaceBlock(BlockPlaceEvent event) {
-		final ItemStack item = event.getItemInHand();
-		if (isNullOrAir(item)) return;
-		if (new ItemBuilder(item).isNot(ItemSetting.PLACEABLE))
-			event.setCancelled(true);
 	}
 
 	@EventHandler

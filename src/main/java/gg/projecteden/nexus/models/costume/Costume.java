@@ -5,10 +5,12 @@ import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.store.StoreCommand;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +21,16 @@ public class Costume {
 	private final String id;
 	private final CustomModel model;
 	private final CostumeType type;
+	private final ItemStack item;
 
 	public Costume(CustomModel model, CostumeType type) {
 		this.id = model.getFolder().getDisplayPath().replace("costumes/", "") + "/" + model.getFileName();
 		this.model = model;
 		this.type = type;
+		this.item = new ItemBuilder(model.getItem())
+			.unplaceable()
+			.unstorable()
+			.untradeable().build();
 	}
 
 	@Getter
