@@ -2,9 +2,7 @@ package gg.projecteden.nexus.models.job;
 
 import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.models.MongoService;
-import gg.projecteden.nexus.models.job.AbstractJob.JobStatus;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +22,7 @@ public class ScheduledJobsService extends MongoService<ScheduledJobs> {
 
 	@Override
 	protected void beforeSave(ScheduledJobs scheduledJobs) {
-		scheduledJobs.get(JobStatus.COMPLETED).removeIf(job -> job.getTimestamp().isBefore(LocalDateTime.now().minusDays(3)));
+		scheduledJobs.janitor();
 	}
 
 }

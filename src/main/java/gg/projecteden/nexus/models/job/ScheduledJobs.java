@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
-@Entity(value = "scheduled_job", noClassnameStored = true)
+@Entity(value = "scheduled_jobs", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -54,12 +54,9 @@ public class ScheduledJobs implements PlayerOwnedObject {
 		get(status).add(job);
 	}
 
-	public int nextId() {
-		int size = 0;
-		for (JobStatus status : JobStatus.values())
-			size += get(status).size();
-
-		return size + 1;
+	public void janitor() {
+		final LocalDateTime threshold = LocalDateTime.now().minusDays(3);
+		get(JobStatus.COMPLETED).removeIf(job -> job.getTimestamp().isBefore(threshold));
 	}
 
 }
