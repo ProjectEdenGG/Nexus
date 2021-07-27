@@ -15,7 +15,10 @@ import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -38,6 +41,14 @@ public class CostumeCommand extends CustomCommand {
 
 	public CostumeCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		final CostumeUserService service = new CostumeUserService();
+		Tasks.repeat(Time.TICK, Time.TICK, () -> {
+			for (Player player : PlayerUtils.getOnlinePlayers())
+				service.get(player).sendPacket();
+		});
 	}
 
 	@Path
@@ -111,14 +122,6 @@ public class CostumeCommand extends CustomCommand {
 			else
 				addBackItem(contents, e -> previousMenu.open(player));
 			final CostumeUser user = service.get(player);
-			final ItemBuilder info = new ItemBuilder(Material.BOOK)
-				.name("&6&lVouchers: " + (user.getVouchers() == 0 ? "&c" : "&e") + user.getVouchers())
-				.lore("", "&eBuy vouchers on the &c/store", "&eClick for a link");
-
-			contents.set(0, 8, ClickableItem.from(info.build(), e -> {
-				player.closeInventory();
-				user.sendMessage("&e" + Costume.STORE_URL);
-			}));
 
 			init(user, contents);
 
@@ -212,6 +215,18 @@ public class CostumeCommand extends CustomCommand {
 		}
 
 		@Override
+		protected void init(CostumeUser user, InventoryContents contents) {
+			final ItemBuilder info = new ItemBuilder(Material.BOOK)
+				.name("&6&lVouchers: " + (user.getVouchers() == 0 ? "&c" : "&e") + user.getVouchers())
+				.lore("", "&eBuy vouchers on the &c/store", "&eClick for a link"); // TODO Mention /store gallery
+
+			contents.set(0, 8, ClickableItem.from(info.build(), e -> {
+				user.getOnlinePlayer().closeInventory();
+				user.sendMessage("&e" + Costume.STORE_URL);
+			}));
+		}
+
+		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
 			return !user.getOwnedCostumes().contains(costume);
 		}
@@ -249,12 +264,23 @@ public class CostumeCommand extends CustomCommand {
 
 		@Override
 		protected void init(CostumeUser user, InventoryContents contents) {
+			final ItemBuilder info = new ItemBuilder(Material.BOOK)
+				.name("&6&lVouchers: " + (user.getVouchers() == 0 ? "&c" : "&e") + user.getVouchers())
+				.lore("", "&eClick to view the costume store");
+
+			contents.set(0, 8, ClickableItem.from(info.build(), e ->
+				new CostumeStoreMenu(this, ROOT_FOLDER).open(user.getOnlinePlayer())));
+
 			final Costume costume = user.getActiveCostume();
 			if (costume != null) {
-				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem()).lore("", "&aActive").glow();
+				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem())
+					.lore("", "&a&lActive", "&cClick to deactivate")
+					.glow();
 
 				contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
-
+					user.setActiveCostume(null);
+					service.save(user);
+					open(user.getOnlinePlayer(), contents.pagination().getPage());
 				}));
 			}
 		}
@@ -267,7 +293,7 @@ public class CostumeCommand extends CustomCommand {
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
 			if (costume.equals(user.getActiveCostume()))
-				builder.lore("", "&aActive").glow();
+				builder.lore("", "&a&lActive").glow();
 
 			return ClickableItem.from(builder.build(), e -> {
 				user.setActiveCostume(costume.equals(user.getActiveCostume()) ? null : costume);

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.costume;
 
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
@@ -28,11 +29,12 @@ public class Costume {
 	@Getter
 	@AllArgsConstructor
 	public enum CostumeType {
-		HAT(EquipmentSlot.HEAD),
-		HAND(EquipmentSlot.HAND),
+		HAT(EquipmentSlot.HEAD, ItemSlot.HEAD),
+		HAND(EquipmentSlot.OFF_HAND, ItemSlot.OFFHAND),
 		;
 
 		private final EquipmentSlot slot;
+		private final ItemSlot packetSlot;
 
 		public CustomModelFolder getFolder() {
 			return ROOT_FOLDER.getFolder("/costumes/" + name().toLowerCase());
