@@ -47,6 +47,9 @@ public class ItemSettingsListener implements Listener {
 			return;
 
 		final ItemStack item = event.getWhoClicked().getItemOnCursor();
+		if (isNullOrAir(item))
+			return;
+
 		if (new ItemBuilder(item).is(ItemSetting.STORABLE))
 			return;
 
@@ -55,7 +58,11 @@ public class ItemSettingsListener implements Listener {
 
 	@EventHandler
 	public void on(InventoryPickupItemEvent event) {
-		if (new ItemBuilder(event.getItem().getItemStack()).is(ItemSetting.STORABLE))
+		final ItemStack item = event.getItem().getItemStack();
+		if (isNullOrAir(item))
+			return;
+
+		if (new ItemBuilder(item).is(ItemSetting.STORABLE))
 			return;
 
 		event.setCancelled(true);

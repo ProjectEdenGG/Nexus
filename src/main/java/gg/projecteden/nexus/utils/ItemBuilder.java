@@ -596,7 +596,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemStack build() {
 		ItemStack result = itemStack.clone();
 		buildLore();
-		result.setItemMeta(itemMeta.clone());
+		if (itemMeta != null)
+			result.setItemMeta(itemMeta.clone());
 		return result;
 	}
 

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConv
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	private List<Costume> ownedCostumes = new ArrayList<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
+	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
 
 	public void setActiveCostume(Costume activeCostume) {
 		this.activeCostume = activeCostume;
@@ -55,9 +57,12 @@ public class CostumeUser implements PlayerOwnedObject {
 		sendPacket(activeCostume.getItem(), activeCostume.getType().getPacketSlot());
 	}
 
+	// TODO Not working
 	public void sendResetPackets() {
-		for (CostumeType type : CostumeType.values())
-			sendPacket(getOnlinePlayer().getInventory().getItem(type.getSlot()), type.getPacketSlot());
+		for (CostumeType type : CostumeType.values()) {
+			ItemStack item = getOnlinePlayer().getInventory().getItem(type.getSlot());
+			Tasks.wait(1, () -> sendPacket(item, type.getPacketSlot()));
+		}
 	}
 
 	private void sendPacket(ItemStack item, ItemSlot slot) {
@@ -71,7 +76,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (activeCostume == null)
 			return false;
 
-		if (player.getGameMode() == GameMode.SPECTATOR)
+		if (DISABLED_GAMEMODES.contains(player.getGameMode()))
 			return false;
 
 		if (DISABLED_WORLDS.contains(WorldGroup.of(player)))
