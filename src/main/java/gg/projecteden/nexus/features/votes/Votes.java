@@ -25,7 +25,6 @@ import gg.projecteden.nexus.models.vote.Voter;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -61,8 +60,6 @@ public class Votes extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		scheduler();
-
-		new Timer("    EndOfMonth", () -> Nexus.getCron().schedule("00 00 1 * *", EndOfMonth::run));
 	}
 
 	private void scheduler() {

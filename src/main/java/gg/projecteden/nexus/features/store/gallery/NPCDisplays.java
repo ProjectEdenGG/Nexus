@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.store.gallery;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -43,9 +42,6 @@ public class NPCDisplays {
 	public NPCDisplays() {
 		loadDisplays();
 
-		// Update skins
-		Nexus.getCron().schedule("0 * * * *", NPCDisplays::updateSkins);
-
 		// Update costumes
 		Tasks.repeat(Time.TICK.x(10), Time.SECOND.x(15), () -> {
 			for (DisplaySet displaySet : displays) {
@@ -66,7 +62,7 @@ public class NPCDisplays {
 		});
 	}
 
-	static void updateSkins() {
+	public static void updateSkins() {
 		List<String> modelNames = PlayerUtils.getOnlinePlayers().stream()
 			.filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName)
 			.toList();

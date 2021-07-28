@@ -7,8 +7,7 @@ import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
-import gg.projecteden.nexus.models.task.Task;
-import gg.projecteden.nexus.models.task.TaskService;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -17,15 +16,12 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -46,11 +42,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.addTokenMax;
@@ -58,6 +51,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtP
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -196,8 +190,6 @@ public class TheMines implements Listener {
 		user.sendMessage(Pugmas20.PREFIX + "New event token balance: " + user.getTokens());
 	}
 
-	public static String taskId = "pugmas-ore-regen";
-
 	@Getter
 	private static final ItemStack minersPickaxe = questItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").enchant(Enchantment.DIG_SPEED, 4).build();
 	@Getter
@@ -273,10 +265,7 @@ public class TheMines implements Listener {
 	}
 
 	public void scheduleRegen(Block block) {
-		new TaskService().save(new Task(taskId, new HashMap<>() {{
-			put("location", JSON.serializeLocation(block.getLocation()));
-			put("material", block.getType());
-		}}, LocalDateTime.now().plusSeconds(RandomUtils.randomInt(3 * 60, 5 * 60))));
+		new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
 	}
 
 	@EventHandler
@@ -335,22 +324,6 @@ public class TheMines implements Listener {
 		}
 
 		event.setBurnTime((int) (event.getBurnTime() / ((8 / orePerCoal) * state.getCookSpeedMultiplier())));
-	}
-
-	static {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND, () -> {
-			TaskService service = new TaskService();
-			service.process(taskId).forEach(task -> {
-				Map<String, Object> data = task.getJson();
-
-				Location location = JSON.deserializeLocation((String) data.get("location"));
-				Material material = Material.valueOf((String) data.get("material"));
-
-				Tasks.sync(() -> location.getBlock().setType(material));
-
-				service.complete(task);
-			});
-		});
 	}
 
 	public enum OreType {

@@ -9,8 +9,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
-import gg.projecteden.nexus.models.task.Task;
-import gg.projecteden.nexus.models.task.TaskService;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.Pugmas20TreeRegenJob;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
@@ -38,7 +37,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,6 +45,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
@@ -265,11 +264,11 @@ public class OrnamentVendor implements Listener {
 			return null;
 		}
 
-		public void build(int id) {
+		public CompletableFuture<Void> build(int id) {
 			Pugmas20.setTreeAnimating(true);
-			getPaster(id).buildQueue().thenAccept($ -> {
-				Pugmas20.setTreeAnimating(false);
-			});
+			final CompletableFuture<Void> future = getPaster(id).buildQueue();
+			future.thenRun(() -> Pugmas20.setTreeAnimating(false));
+			return future;
 		}
 
 		private Queue<Location> getQueue(int id) {
@@ -357,34 +356,10 @@ public class OrnamentVendor implements Listener {
 
 				Jingle.TREE_FELLER.play(player);
 
-				onBreak(id);
+				new Pugmas20TreeRegenJob(this, id).schedule(randomInt(3 * 60, 5 * 60));
 			});
 		}
 
-		public static String taskId = "pugmas-tree-regen";
-
-		public void onBreak(int id) {
-			new TaskService().save(new Task(taskId, new HashMap<>() {{
-				put("tree", name());
-				put("id", id);
-			}}, LocalDateTime.now().plusSeconds(randomInt(3 * 60, 5 * 60))));
-		}
-
-		static {
-			Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(1), () -> {
-				TaskService service = new TaskService();
-				service.process(taskId).forEach(task -> {
-					Map<String, Object> data = task.getJson();
-
-					PugmasTreeType treeType = PugmasTreeType.valueOf((String) data.get("tree"));
-					int id = Double.valueOf((double) data.get("id")).intValue();
-
-					treeType.build(id);
-
-					service.complete(task);
-				});
-			});
-		}
 	}
 
 	// TODO Create merchant trade event

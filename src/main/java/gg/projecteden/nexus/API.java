@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ChatColorCo
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ColorConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.JobConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PrivateChannelConverter;
@@ -54,6 +55,7 @@ public class API extends EdenAPI {
 				ColorConverter.class,
 				CostumeConverter.class,
 				ItemStackConverter.class,
+				JobConverter.class,
 				LocationConverter.class,
 				MobHeadConverter.class,
 				QuestConverter.class,
