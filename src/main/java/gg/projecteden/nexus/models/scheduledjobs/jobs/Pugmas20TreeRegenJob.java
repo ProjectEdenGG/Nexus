@@ -2,6 +2,7 @@ package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.PugmasTreeType;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.RetryIfInterrupted;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@RetryIfInterrupted
 public class Pugmas20TreeRegenJob extends AbstractJob {
 	private PugmasTreeType treeType;
 	private int treeId;

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.RetryIfInterrupted;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@RetryIfInterrupted
 public class BearFair21TreeRegenJob extends AbstractJob {
 	private BearFair21TreeType treeType;
 	private int treeId;

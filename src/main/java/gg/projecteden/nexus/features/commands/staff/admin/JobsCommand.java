@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.scheduledjobs.ScheduledJobs;
 import gg.projecteden.nexus.models.scheduledjobs.ScheduledJobsService;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.JobStatus;
+import gg.projecteden.nexus.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.Test2Job;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.TestJob;
 import gg.projecteden.nexus.utils.Tasks;
@@ -45,8 +46,12 @@ public class JobsCommand extends CustomCommand {
 			final List<AbstractJob> interrupted = new ArrayList<>(jobs.get(JobStatus.RUNNING));
 			if (!interrupted.isEmpty()) {
 				for (AbstractJob job : interrupted) {
-					Nexus.severe("[Jobs] Found interrupted job: " + job);
-					job.setStatus(JobStatus.INTERRUPTED);
+					if (job.getClass().getAnnotation(RetryIfInterrupted.class) != null)
+						job.setStatus(JobStatus.PENDING);
+					else {
+						Nexus.severe("[Jobs] Found interrupted job: " + job);
+						job.setStatus(JobStatus.INTERRUPTED);
+					}
 				}
 
 				service.save(jobs);
