@@ -112,7 +112,11 @@ public class PlayerUtils {
 		}
 
 		public boolean is(HasUniqueId player) {
-			return uuid.equals(player.getUniqueId());
+			return player != null && is(player.getUniqueId());
+		}
+
+		public boolean is(UUID uuid) {
+			return this.uuid.equals(uuid);
 		}
 
 		public boolean isNot(HasUniqueId player) {
