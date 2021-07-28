@@ -49,20 +49,19 @@ public class EntityUtils {
 
 		List<Entity> entities = getNearbyEntities(location, radius).keySet().stream()
 			.filter(_entity -> _entity.getType().equals(filter))
-			.filter(_entity -> !(_entity instanceof Player) || (!CitizensUtils.isNPC(_entity) && !PlayerUtils.isVanished((Player) _entity)))
+			.filter(_entity -> {
+				if (_entity instanceof Player) {
+					if (CitizensUtils.isNPC(_entity))
+						return false;
+					if (PlayerUtils.isVanished((Player) _entity))
+						return false;
+				}
+
+				return true;
+			})
 			.collect(Collectors.toList());
 
-		double shortest = radius;
-		Entity result = null;
-		for (Entity entity : entities) {
-			double distance = entity.getLocation().distance(location);
-			if (distance < shortest) {
-				shortest = distance;
-				result = entity;
-			}
-		}
-
-		return result;
+		return Utils.getMin(entities, entity -> entity.getLocation().distance(location)).getObject();
 	}
 
 	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
