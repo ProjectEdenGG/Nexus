@@ -24,6 +24,7 @@ public enum BiomeTag {
 	TAIGA(Material.SPRUCE_LOG, new Tag("TAIGA", MatchMode.CONTAINS)),
 	JUNGLE(Material.JUNGLE_LOG, new Tag("JUNGLE", MatchMode.CONTAINS)),
 	MESA(Material.TERRACOTTA, new Tag("BADLANDS", MatchMode.CONTAINS)),
+	SAVANNA(Material.ACACIA_LOG, new Tag("SAVANNA", MatchMode.CONTAINS)),
 	ICE_SPIKES(Material.PACKED_ICE, new Tag(Biome.ICE_SPIKES)),
 	PLAINS(Material.GRASS_BLOCK, new Tag("PLAINS", MatchMode.CONTAINS)),
 	ALL_FORESTS(Material.BIRCH_LEAVES, new Tag(FORESTS)
