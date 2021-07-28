@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.scheduledjobs;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.JobConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, JobConverter.class})
+@Converters({UUIDConverter.class, JobConverter.class, LocalDateTimeConverter.class})
 public class ScheduledJobs implements PlayerOwnedObject {
 	@Id
 	@NonNull
