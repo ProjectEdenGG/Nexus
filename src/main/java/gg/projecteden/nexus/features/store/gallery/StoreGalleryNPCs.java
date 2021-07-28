@@ -113,7 +113,7 @@ public class StoreGalleryNPCs {
 	}
 
 	private static WorldGuardUtils getWGUtils() {
-		World world = Bukkit.getWorld("buildadmin"); // TODO: fix world
+		World world = Bukkit.getWorld("server");
 		if (world != null)
 			return new WorldGuardUtils(world);
 		return null;
