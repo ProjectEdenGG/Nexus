@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,6 +51,10 @@ public abstract class AbstractJob {
 
 	public void schedule(int seconds) {
 		schedule(LocalDateTime.now().plusSeconds(seconds));
+	}
+
+	public void schedule(TemporalAmount duration) { // mostly for java.time.Duration
+		schedule(LocalDateTime.now().plus(duration));
 	}
 
 	public void schedule(LocalDateTime timestamp) {
