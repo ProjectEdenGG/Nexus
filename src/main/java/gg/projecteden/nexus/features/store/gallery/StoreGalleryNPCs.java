@@ -51,7 +51,7 @@ public class StoreGalleryNPCs {
 		loadDisplays();
 
 		// Update costumes
-		Tasks.repeat(Time.TICK.x(10), Time.SECOND.x(15), () -> {
+		Tasks.repeat(Time.TICK.x(10), Time.SECOND.x(10), () -> {
 			for (DisplaySet displaySet : displays) {
 				Display display = displaySet.getNext();
 				if (display == null)

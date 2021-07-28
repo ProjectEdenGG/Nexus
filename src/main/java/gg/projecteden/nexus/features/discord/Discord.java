@@ -3,18 +3,14 @@ package gg.projecteden.nexus.features.discord;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
-import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.queup.QueUp;
-import gg.projecteden.nexus.models.queup.QueUpService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.Time;
-import joptsimple.internal.Strings;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -226,10 +222,13 @@ public class Discord extends Feature {
 				})
 				.collect(Collectors.joining(", " + System.lineSeparator()));
 
+		/*
+		// TODO QueUp
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get0();
 		if (!Strings.isNullOrEmpty(queup.getLastSong()))
 			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+		*/
 
 		return topic;
 	}
