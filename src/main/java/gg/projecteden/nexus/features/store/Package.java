@@ -278,13 +278,13 @@ public enum Package {
 	},
 
 	@Id("2495900")
-	@Category(StoreCategory.INVENTORY)
+	@Category(StoreCategory.VISUALS)
 	@Permission(RainbowArmorCommand.PERMISSION)
 	@Display(Material.LEATHER_CHESTPLATE)
 	RAINBOW_ARMOR,
 
 	@Id("2886239")
-	@Category(StoreCategory.INVENTORY)
+	@Category(StoreCategory.VISUALS)
 	@Permission(InvisibleArmorCommand.PERMISSION)
 	@Display(Material.CHAINMAIL_CHESTPLATE)
 	INVISIBLE_ARMOR,
