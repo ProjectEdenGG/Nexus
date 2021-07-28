@@ -46,11 +46,12 @@ public class JobsCommand extends CustomCommand {
 			final List<AbstractJob> interrupted = new ArrayList<>(jobs.get(JobStatus.RUNNING));
 			if (!interrupted.isEmpty()) {
 				for (AbstractJob job : interrupted) {
-					if (job.getClass().getAnnotation(RetryIfInterrupted.class) != null)
+					if (job.getClass().getAnnotation(RetryIfInterrupted.class) != null) {
 						job.setStatus(JobStatus.PENDING);
-					else {
-						Nexus.severe("[Jobs] Found interrupted job: " + job);
+						Nexus.warn("[Jobs] Found interrupted job, retrying: " + job);
+					} else {
 						job.setStatus(JobStatus.INTERRUPTED);
+						Nexus.severe("[Jobs] Found interrupted job: " + job);
 					}
 				}
 
