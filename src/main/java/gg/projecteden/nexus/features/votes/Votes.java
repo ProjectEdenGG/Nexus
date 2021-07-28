@@ -11,6 +11,8 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -24,6 +26,8 @@ import gg.projecteden.nexus.models.vote.VoteSite;
 import gg.projecteden.nexus.models.vote.Voter;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
@@ -43,6 +47,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -116,7 +122,7 @@ public class Votes extends Feature implements Listener {
 		OfflinePlayer player = null;
 		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
 		String name = player != null ? Nickname.of(player) : "Unknown";
-		String uuid = player != null ? player.getUniqueId().toString() : "00000000-0000-0000-0000-000000000000";
+		UUID uuid = player != null ? player.getUniqueId() : StringUtils.getUUID0();
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
 		Nexus.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + username + " (" + name + " | " + uuid + ")");
@@ -132,16 +138,17 @@ public class Votes extends Feature implements Listener {
 		if (site == null)
 			return;
 
-		Vote vote = new Vote(uuid, site, extraVotePoints(), timestamp);
-		new VoteService().save(vote);
+		Vote vote = new Vote(uuid.toString(), site, extraVotePoints(), timestamp);
+		final VoteService voteService = new VoteService();
+		voteService.save(vote);
 
-		int sum = new VoteService().getTopVoters(LocalDateTime.now().getMonth()).stream()
+		int sum = voteService.getTopVoters(LocalDateTime.now().getMonth()).stream()
 			.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		int left = 0;
 		if (GOAL > sum)
 			left = GOAL - sum;
 
-		if (new CooldownService().check(UUID.fromString(uuid), "vote-announcement", Time.HOUR)) {
+		if (new CooldownService().check(uuid, "vote-announcement", Time.HOUR)) {
 			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site! ";
 			if (left > 0)
 				message += "&e" + left + " &3more votes needed to hit the goal";
@@ -160,6 +167,16 @@ public class Votes extends Feature implements Listener {
 			new Voter(player).givePoints(points);
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
+
+		if (!YearMonth.of(2021, Month.JULY).equals(YearMonth.now()) || Dev.GRIFFIN.is(uuid)) // TODO Remove
+			if (voteService.getTodaysVotes(uuid.toString()).size() >= 5) {
+				final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
+				final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
+				if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
+					dailyVoteReward.getCurrentStreak().incrementStreak();
+					dailyVoteRewardService.save(dailyVoteReward);
+				}
+			}
 
 		Tasks.async(Votes::write);
 	}

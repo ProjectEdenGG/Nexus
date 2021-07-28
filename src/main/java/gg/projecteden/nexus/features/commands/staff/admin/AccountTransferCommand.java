@@ -27,6 +27,9 @@ import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.dailyreward.DailyReward;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStreak;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -88,6 +91,7 @@ public class AccountTransferCommand extends CustomCommand {
 		CONTRIBUTOR(new ContributorTransferer()),
 		COSTUMES(new CostumeUserTransferer()),
 		DAILY_REWARDS(new DailyRewardsTransferer()),
+		DAILY_VOTE_REWARD(new DailyVoteRewardTransferer()),
 		DISCORD(new DiscordUserTransferer()),
 		EVENT(new EventUserTransferer()),
 		HOMES(new HomeTransferer()),
@@ -208,6 +212,18 @@ public class AccountTransferCommand extends CustomCommand {
 
 			service.save(previous);
 			service.save(current);
+		}
+	}
+
+	@Service(DailyVoteRewardService.class)
+	static class DailyVoteRewardTransferer extends MongoTransferer<DailyVoteReward> {
+		@Override
+		public void transfer(DailyVoteReward previous, DailyVoteReward current) {
+			current.setCurrentStreak(previous.getCurrentStreak());
+			current.getCurrentStreak().setUuid(current.getUuid());
+			current.getPastStreaks().addAll(previous.getPastStreaks());
+			previous.setCurrentStreak(new DailyVoteStreak());
+			previous.getPastStreaks().clear();
 		}
 	}
 
