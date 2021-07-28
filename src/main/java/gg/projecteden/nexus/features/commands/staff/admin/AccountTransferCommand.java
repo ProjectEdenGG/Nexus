@@ -23,6 +23,8 @@ import gg.projecteden.nexus.models.banker.TransactionsService;
 import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 import gg.projecteden.nexus.models.contributor.ContributorService;
+import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.dailyreward.DailyReward;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
@@ -87,6 +89,7 @@ public class AccountTransferCommand extends CustomCommand {
 		ALERTS(new AlertsTransferer()),
 		BALANCE(new BalanceTransferer()),
 		CONTRIBUTOR(new ContributorTransferer()),
+		COSTUMES(new CostumeUserTransferer()),
 		DAILY_REWARDS(new DailyRewardsTransferer()),
 		DAILY_VOTE_REWARD(new DailyVoteRewardTransferer()),
 		DISCORD(new DiscordUserTransferer()),
@@ -175,6 +178,21 @@ public class AccountTransferCommand extends CustomCommand {
 			current.setCredit(current.getCredit() + previous.getCredit());
 			previous.getPurchases().clear();
 			previous.setCredit(0);
+		}
+	}
+
+	@Service(CostumeUserService.class)
+	static class CostumeUserTransferer extends MongoTransferer<CostumeUser> {
+		@Override
+		public void transfer(CostumeUser previous, CostumeUser current) {
+			current.setVouchers(current.getVouchers() + previous.getVouchers());
+			if (current.getActiveCostume() == null)
+				current.setActiveCostume(previous.getActiveCostume());
+			current.getOwnedCostumes().addAll(previous.getOwnedCostumes());
+
+			previous.setVouchers(0);
+			previous.setActiveCostume(null);
+			previous.getOwnedCostumes().clear();
 		}
 	}
 

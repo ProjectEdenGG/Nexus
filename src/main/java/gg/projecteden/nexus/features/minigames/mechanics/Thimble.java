@@ -200,7 +200,7 @@ public final class Thimble extends TeamlessMechanic {
 		// Teleport all players in minigame to spectate location of current map
 		Location specLoc = arena.getCurrentMap().getSpectateLocation();
 		for (Minigamer minigamer : minigamers) {
-			minigamer.teleport(specLoc);
+			minigamer.teleportAsync(specLoc);
 			minigamer.getPlayer().getInventory().setStorageContents(new ItemStack[36]);
 		}
 
@@ -297,7 +297,7 @@ public final class Thimble extends TeamlessMechanic {
 		final Minigamer finalNextMinigamer = matchData.getTurnMinigamer();
 		Player player = finalNextMinigamer.getPlayer();
 
-		finalNextMinigamer.teleport(arena.getCurrentMap().getNextTurnLocation(), true);
+		finalNextMinigamer.teleportAsync(arena.getCurrentMap().getNextTurnLocation(), true);
 
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10.0F, 1.0F);
 		tasks.wait(3, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER, 10.0F, 1.2F));
@@ -398,7 +398,7 @@ public final class Thimble extends TeamlessMechanic {
 					.detonateAfter(1)
 					.launch();
 
-			minigamer.teleport(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
+			minigamer.teleportAsync(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
 
 			score(minigamer, blockLocation);
 		}
@@ -486,7 +486,7 @@ public final class Thimble extends TeamlessMechanic {
 			matchData.setTurnMinigamer(null);
 			minigamer.getMatch().getScoreboard().update();
 			matchData.getTurnMinigamerList().remove(minigamer);
-			minigamer.teleport(arena.getCurrentMap().getSpectateLocation());
+			minigamer.teleportAsync(arena.getCurrentMap().getSpectateLocation());
 		}
 	}
 

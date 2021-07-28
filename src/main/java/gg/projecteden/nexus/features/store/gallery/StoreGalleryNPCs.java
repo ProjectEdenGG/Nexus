@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.store.gallery;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -16,34 +16,42 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class NPCDisplays {
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+
+public class StoreGalleryNPCs {
 	private static final String regionRegex = "store_gallery_npcdisplays_\\d+";
-	private static List<String> modelNames = new ArrayList<>();
 	@Getter
 	private static final List<DisplaySet> displays = new ArrayList<>();
 
-	public NPCDisplays() {
+	private static final List<Integer> pirateHatColors = new ArrayList<>() {{
+		for (Integer base : List.of(21, 25, 33, 45, 49, 61, 69))
+			for (int i = 0; i < 4; i++)
+				add(base + i);
+	}};
+
+	public StoreGalleryNPCs() {
 		loadDisplays();
 
-		// Update skins
-		Nexus.getCron().schedule("0 * * * *", NPCDisplays::updateSkins);
-
 		// Update costumes
-		Tasks.repeat(Time.TICK.x(10), Time.SECOND.x(15), () -> {
+		Tasks.repeat(Time.TICK.x(10), Time.SECOND.x(10), () -> {
 			for (DisplaySet displaySet : displays) {
 				Display display = displaySet.getNext();
 				if (display == null)
@@ -53,16 +61,41 @@ public class NPCDisplays {
 				if (humanEntity == null)
 					continue;
 
-				// TODO: setup with costumes
-				ItemStack hat = new ItemStack(RandomUtils.randomElement(MaterialTag.BLOCKS.getValues()));
-				humanEntity.getInventory().setItem(EquipmentSlot.HEAD, hat);
+				AtomicReference<Costume> costume = new AtomicReference<>();
+
+				Utils.attempt(50, () -> {
+					costume.set(RandomUtils.randomElement(Costume.values()));
+					return canUse(costume.get());
+				});
+
+				for (CostumeType value : CostumeType.values())
+					humanEntity.getInventory().setItem(value.getSlot(), new ItemStack(Material.AIR));
+				display.setItem(costume.get());
 				displaySet.setLastUpdatedIndex(displaySet.getDisplays().indexOf(display));
 			}
 		});
 	}
 
-	static void updateSkins() {
-		modelNames = PlayerUtils.getOnlinePlayers().stream().filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName).toList();
+	private boolean canUse(Costume _costume) {
+		if (_costume.getModel().getMaterial() == Material.STONE_BUTTON)
+			if (_costume.getModel().getData() < 100)
+				if (!pirateHatColors.contains(_costume.getModel().getData()))
+					return false;
+
+		for (DisplaySet _displaySet : displays)
+			for (Display _display : _displaySet.getDisplays())
+				for (ItemStack item : _display.getItems().values())
+					if (!isNullOrAir(item))
+						if (item.isSimilar(_costume.getItem()))
+							return false;
+
+		return true;
+	}
+
+	public static void updateSkins() {
+		List<String> modelNames = PlayerUtils.getOnlinePlayers().stream()
+			.filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName)
+			.toList();
 
 		List<String> skinNames = new ArrayList<>(modelNames);
 		List<String> backups = new ArrayList<>();
@@ -158,20 +191,56 @@ public class NPCDisplays {
 
 	@Data
 	private static class Display {
-		@NonNull Integer id;
-		String skinName = null;
+		@NonNull
+		private final Integer id;
+		private String skinName = null;
 
 		private void setSkin(String skinName) {
 			this.skinName = skinName;
 
+			Map<EquipmentSlot, ItemStack> items = getItems();
+
 			CitizensUtils.updateSkin(id, this.skinName);
+
+			Tasks.wait(Time.SECOND, () -> {
+				final HumanEntity entity = getHumanEntity();
+				if (entity != null)
+					items.forEach((slot, item) -> entity.getInventory().setItem(slot, item));
+			});
+		}
+
+		@NotNull
+		private Map<EquipmentSlot, ItemStack> getItems() {
+			return new HashMap<>() {{
+				final HumanEntity entity = getHumanEntity();
+				if (entity != null)
+					for (CostumeType value : CostumeType.values())
+						put(value.getSlot(), entity.getInventory().getItem(value.getSlot()));
+			}};
 		}
 
 		private HumanEntity getHumanEntity() {
 			NPC npc = CitizensUtils.getNPC(id);
-			if (npc.getEntity() instanceof HumanEntity humanEntity)
-				return humanEntity;
-			return null;
+			if (npc == null)
+				return null;
+
+			if (!npc.isSpawned())
+				return null;
+
+			if (npc.getStoredLocation() == null)
+				return null;
+
+			if (!(npc.getEntity() instanceof HumanEntity humanEntity))
+				return null;
+
+			return humanEntity;
 		}
+
+		public void setItem(Costume costume) {
+			final HumanEntity entity = getHumanEntity();
+			if (entity != null)
+				entity.getInventory().setItem(costume.getType().getSlot(), costume.getItem());
+		}
+
 	}
 }

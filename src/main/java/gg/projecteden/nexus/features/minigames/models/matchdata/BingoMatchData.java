@@ -93,7 +93,7 @@ public class BingoMatchData extends MatchData {
 	public CompletableFuture<Void> spawnpoint(Minigamer minigamer, Location location) {
 		location = getCenteredLocation(location.clone().add(0, 2, 0));
 		getData(minigamer).setSpawnpoint(location);
-		return minigamer.teleport(location, true);
+		return minigamer.teleportAsync(location, true);
 	}
 
 	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Challenge challenge) {

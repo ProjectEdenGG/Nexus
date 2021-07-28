@@ -19,7 +19,7 @@ public class Warp {
 	private Location location;
 	private String type;
 
-	public void teleport(Player player) {
+	public void teleportAsync(Player player) {
 		if (location == null)
 			throw new InvalidInputException("Location is null!");
 		if (location.getWorld() == null)

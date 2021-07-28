@@ -51,11 +51,11 @@ public class Gate {
 	}
 
 	public void teleportOut() {
-		player.teleport(new Location(Halloween20.getWorld(), 305, 58, -1995));
+		player.teleportAsync(new Location(Halloween20.getWorld(), 305, 58, -1995));
 	}
 
 	public void teleportIn() {
-		player.teleport(new Location(Halloween20.getWorld(), 305, 59, -1990));
+		player.teleportAsync(new Location(Halloween20.getWorld(), 305, 59, -1990));
 	}
 
 	public void cancel() {

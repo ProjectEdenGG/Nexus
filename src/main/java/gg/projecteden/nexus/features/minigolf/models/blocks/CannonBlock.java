@@ -41,7 +41,7 @@ public class CannonBlock extends ModifierBlock {
 		try {
 			Location newLoc = LocationUtils.getCenteredLocation(below.getRelative(facing).getLocation());
 			golfBall.setVelocity(new Vector(0, 0, 0));
-			golfBall.teleport(LocationUtils.getCenteredLocation(newLoc));
+			golfBall.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
 			golfBall.setGravity(true);
 
 			double height = Double.parseDouble(heightStr);

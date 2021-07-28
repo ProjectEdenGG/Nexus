@@ -88,7 +88,7 @@ public class MiniGolf extends Feature {
 
 				MiniGolfBallMoveEvent ballMoveEvent = new MiniGolfBallMoveEvent(golfBall, golfBall.getLastLocation(), ball.getLocation());
 				if (!ballMoveEvent.callEvent()) {
-					ball.teleport(golfBall.getLastLocation());
+					ball.teleportAsync(golfBall.getLastLocation());
 					ball.setVelocity(ball.getVelocity());
 				}
 

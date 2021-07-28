@@ -46,7 +46,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		Warp warp = warpService.get("buildcontest" + buildContest.getId(), WarpType.NORMAL);
 		if (warp == null)
 			error("That warp is not set.");
-		warp.teleport(player());
+		warp.teleportAsync(player());
 		send(PREFIX + "Warping to build contest &e" + buildContest.getTheme());
 	}
 
@@ -123,7 +123,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 
 		send("&ePlease wait while I do some automatic configuration...");
 		tasks.add(() -> runCommand("lp group guest parent add buildcontest world=" + worldName));
-		tasks.add(() -> player().teleport(new Location(Bukkit.getWorld(worldName), 0, 255, 0, 0, 0)));
+		tasks.add(() -> player().teleportAsync(new Location(Bukkit.getWorld(worldName), 0, 255, 0, 0, 0)));
 		tasks.add(() -> runCommand("top"));
 		tasks.add(() -> runCommand("blockcenter"));
 		tasks.add(() -> runCommand("mv set spawn"));

@@ -107,14 +107,14 @@ public class AnimalTeleportPens {
 
 	public void teleportAll(List<Entity> entities, Location toLoc, int price) {
 		if (entities.size() > 0) {
-			entities.get(0).teleport(toLoc);
+			entities.get(0).teleportAsync(toLoc);
 			Tasks.wait(1, () -> {
 				entities.remove(0);
 				teleportAll(entities, toLoc, price);
 			});
 		}
 		Tasks.wait(4, () -> {
-			player.teleport(toLoc);
+			player.teleportAsync(toLoc);
 			new BankerService().withdraw(player, price, ShopGroup.SURVIVAL, TransactionCause.ANIMAL_TELEPORT_PEN);
 		});
 	}

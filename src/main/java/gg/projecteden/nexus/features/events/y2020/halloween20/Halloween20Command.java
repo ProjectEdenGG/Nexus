@@ -121,25 +121,25 @@ public class Halloween20Command extends CustomCommand {
 	@Path("tp pumpkin original <number>")
 	@Permission("group.admin")
 	void teleportPumpkinOriginal(Pumpkin pumpkin) {
-		player().teleport(pumpkin.getOriginal(), TeleportCause.COMMAND);
+		player().teleportAsync(pumpkin.getOriginal(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp pumpkin end <number>")
 	@Permission("group.admin")
 	void teleportPumpkinEnd(Pumpkin pumpkin) {
-		player().teleport(pumpkin.getEnd(), TeleportCause.COMMAND);
+		player().teleportAsync(pumpkin.getEnd(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp comboLockNumber <number>")
 	@Permission("group.admin")
 	void teleportComboLockNumber(ComboLockNumber number) {
-		player().teleport(number.getLoc(), TeleportCause.COMMAND);
+		player().teleportAsync(number.getLoc(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp button <number>")
 	@Permission("group.admin")
 	void teleportButton(SoundButton number) {
-		player().teleport(number.getLocation(), TeleportCause.COMMAND);
+		player().teleportAsync(number.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("picture")

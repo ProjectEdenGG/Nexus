@@ -113,7 +113,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 							MurderMenu.openScrapPointsMenu(arena).open(player, page.getPage());
 						});
 					} else {
-						player.teleport(scrapPointsLocation);
+						player.teleportAsync(scrapPointsLocation);
 					}
 				});
 			}

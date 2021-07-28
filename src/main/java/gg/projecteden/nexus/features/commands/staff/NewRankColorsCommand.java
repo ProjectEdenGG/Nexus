@@ -35,10 +35,10 @@ public class NewRankColorsCommand extends CustomCommand {
 		if (!StringUtils.getHexPattern().matcher(hex).matches())
 			error("Hex code must be in format &e&&e#123456");
 
-		String format = (rank.isMod() ? "&o" : "");
+		final String message = "&2[G] &8&l[" + hex + camelCase(rank) + "&8&l] " + hex + name() + " &2&l> &fTesting";
 		EntityUtils.getNearbyEntities(location(), 500).forEach((entity, distance) -> {
 			if (entity.getType() == EntityType.PLAYER)
-				send(entity, "&2[G] &8&l[" + hex + format + camelCase(rank) + "&8&l] " + hex + format + name() + " &2&l> &fTesting");
+				send(entity, message);
 		});
 	}
 
@@ -58,6 +58,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	}
 
 	@Path("print")
+	@Permission("group.admin")
 	void print() {
 		newRankColors.getColors().forEach((rank, color) ->
 				Nexus.log(rank.name() + "(\"" + color.replaceFirst("&", "")));

@@ -7,44 +7,19 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.BeginningCutscene;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.WitherCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Data;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Blaze;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Hoglin;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.PiglinBrute;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkeleton;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -52,14 +27,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.ItemSpawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -71,12 +39,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -111,8 +74,7 @@ public abstract class WitherFight implements Listener {
 				                      .command("/wither spectate").hover("&eYou will be teleported to the wither arena");
 			if (WitherCommand.betaMode) {
 				Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-			}
-			else {
+			} else {
 				Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			}
 			spawnWither(location);
@@ -131,15 +93,17 @@ public abstract class WitherFight implements Listener {
 						if (MaterialTag.NEEDS_SUPPORT.isTagged(face.getType()))
 							face.setType(Material.AIR);
 					new ParticleBuilder(Particle.BLOCK_DUST)
-							.location(loc)
-							.data(block.getBlockData())
-							.count(10)
-							.extra(.1)
-							.spawn();
+						.location(loc)
+						.data(block.getBlockData())
+						.count(10)
+						.extra(.1)
+						.spawn();
 					loc.getWorld().playSound(loc, Sound.BLOCK_NETHER_BRICKS_BREAK, 1f, 1f);
 					block.setType(Material.AIR);
 				}
 			}));
+
+			tasks.add(new AntiCamping(this).start());
 
 			Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 			for (UUID uuid : alivePlayers) {
@@ -263,9 +227,9 @@ public abstract class WitherFight implements Listener {
 		for (Location location : locations) {
 			for (int i = 0; i < 5; i++)
 				new ParticleBuilder(Particle.LAVA)
-						.count(25)
-						.location(location)
-						.spawn();
+					.count(25)
+					.location(location)
+					.spawn();
 		}
 
 		List<Blaze> blazes = new ArrayList<>();
@@ -334,8 +298,8 @@ public abstract class WitherFight implements Listener {
 			int partySize = party.size();
 
 			String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
-					(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-					" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
+				                 (partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
+				                 " lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
 
 			if (WitherCommand.betaMode) {
 				Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -349,7 +313,7 @@ public abstract class WitherFight implements Listener {
 			wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
-		player.removePotionEffect(PotionEffectType.WITHER);
+		HealCommand.healPlayer(player);
 		Tasks.wait(5, () -> Warps.spawn(player));
 	}
 
@@ -382,14 +346,13 @@ public abstract class WitherFight implements Listener {
 		int partySize = party.size();
 
 		String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
-			(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-			" successfully beaten the Wither in " +
-			getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");
+			                 (partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
+			                 " successfully beaten the Wither in " +
+			                 getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");
 
 		if (WitherCommand.betaMode) {
 			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-		}
-		else {
+		} else {
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 		}
 
@@ -397,6 +360,12 @@ public abstract class WitherFight implements Listener {
 			if (e.getType() != EntityType.PLAYER)
 				e.remove();
 		});
+
+		for (UUID uuid : this.alivePlayers) {
+			OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
+			if (offlinePlayer.isOnline())
+				HealCommand.healPlayer(offlinePlayer.getPlayer());
+		}
 
 		Tasks.wait(Time.SECOND.x(10), () -> {
 			started = false;
@@ -623,7 +592,7 @@ public abstract class WitherFight implements Listener {
 			public void execute(List<UUID> uuids) {
 				Location witherLoc = WitherChallenge.currentFight.wither.getLocation();
 				TNTPrimed tnt = witherLoc.getWorld().spawn(witherLoc, TNTPrimed.class);
-				tnt.setFuseTicks(100);
+				tnt.setFuseTicks(50);
 			}
 		};
 

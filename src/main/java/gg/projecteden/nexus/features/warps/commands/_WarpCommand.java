@@ -99,7 +99,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		checkPermission();
 		if (warp == null)
 			error("That warp is not set");
-		warp.teleport(player());
+		warp.teleportAsync(player());
 		send(PREFIX + "&3Warping to &e" + warp.getName());
 	}
 

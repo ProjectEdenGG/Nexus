@@ -278,7 +278,7 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 			if (!BearFair20.enableQuests) return;
 			Player player = event.getPlayer();
 			if (!player.getInventory().contains(atticKey)) {
-				player.teleport(atticDeniedLoc);
+				player.teleportAsync(atticDeniedLoc);
 				BearFair20.send("&cYou need the attic key to enter", player);
 			}
 		}

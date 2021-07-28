@@ -318,7 +318,7 @@ public class Frogger implements Listener {
 		} else if (regionId.equalsIgnoreCase(damageRg)) {
 			String cheatingMsg = BearFair21.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
-				player.teleport(respawnLoc);
+				player.teleportAsync(respawnLoc);
 				send("Don't cheat, turn " + cheatingMsg + " off!", player);
 				Quests.sound_villagerNo(player);
 			}
@@ -326,16 +326,16 @@ public class Frogger implements Listener {
 		} else if (regionId.equalsIgnoreCase(killRg)) {
 			if (canWorldGuardEdit(player)) return;
 			if (checkpointList.contains(player))
-				player.teleport(checkpointLoc);
+				player.teleportAsync(checkpointLoc);
 			else
-				player.teleport(respawnLoc);
+				player.teleportAsync(respawnLoc);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
 			if (canWorldGuardEdit(player)) return;
 
 			checkpointList.remove(player);
-			player.teleport(respawnLoc);
+			player.teleportAsync(respawnLoc);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).pitch(2.0).play();
 
 			BearFair21.giveDailyTokens(player, BF21PointSource.FROGGER, 5);
@@ -364,9 +364,9 @@ public class Frogger implements Listener {
 		event.setDamage(0);
 		event.setCancelled(true);
 		if (checkpointList.contains(player))
-			player.teleport(checkpointLoc);
+			player.teleportAsync(checkpointLoc);
 		else
-			player.teleport(respawnLoc);
+			player.teleportAsync(respawnLoc);
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 	}
 }

@@ -34,7 +34,7 @@ public enum Rank implements IsColoredAndNamed {
 	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED),
 	ELITE(ChatColor.of("#f5a138"), GlowAPI.Color.GOLD),
 	VETERAN(ChatColor.of("#ffff44"), GlowAPI.Color.YELLOW),
-	NOBLE(ChatColor.of("#abd923"), GlowAPI.Color.YELLOW),
+	NOBLE(ChatColor.of("#9de23d"), GlowAPI.Color.YELLOW),
 	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.DARK_GREEN),
 	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.GREEN),
 	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA),

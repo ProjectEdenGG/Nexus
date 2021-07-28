@@ -182,15 +182,15 @@ public class PlayerUtils {
 				.collect(Collectors.toList());
 	}
 
-	public static OfflinePlayer getPlayer(UUID uuid) {
+	public static @NotNull OfflinePlayer getPlayer(UUID uuid) {
 		return Bukkit.getOfflinePlayer(uuid);
 	}
 
-	public static OfflinePlayer getPlayer(HasUniqueId uuid) {
+	public static @NotNull OfflinePlayer getPlayer(HasUniqueId uuid) {
 		return getPlayer(uuid.getUniqueId());
 	}
 
-	public static OfflinePlayer getPlayer(Identity identity) {
+	public static @NotNull OfflinePlayer getPlayer(Identity identity) {
 		return getPlayer(identity.uuid());
 	}
 
@@ -201,7 +201,7 @@ public class PlayerUtils {
 	 * @throws InvalidInputException input was null or empty
 	 * @throws PlayerNotFoundException a player matching that (nick)name could not be found
 	 */
-	public static OfflinePlayer getPlayer(String partialName) throws InvalidInputException, PlayerNotFoundException {
+	public static @NotNull OfflinePlayer getPlayer(String partialName) throws InvalidInputException, PlayerNotFoundException {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
@@ -251,6 +251,21 @@ public class PlayerUtils {
 		}
 
 		throw new PlayerNotFoundException(original);
+	}
+
+	public static @NotNull Player getOnlinePlayer(UUID uuid) {
+		final OfflinePlayer player = getPlayer(uuid);
+		if (!player.isOnline() || player.getPlayer() == null)
+			throw new PlayerNotOnlineException(player);
+		return player.getPlayer();
+	}
+
+	public static @NotNull Player getOnlinePlayer(HasUniqueId uuid) {
+		return getOnlinePlayer(uuid.getUniqueId());
+	}
+
+	public static @NotNull Player getOnlinePlayer(Identity identity) {
+		return getOnlinePlayer(identity.uuid());
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {

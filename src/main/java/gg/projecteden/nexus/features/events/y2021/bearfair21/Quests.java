@@ -362,7 +362,7 @@ public class Quests implements Listener {
 					new Location(BearFair21.getWorld(), -60, 114, -7).toCenterLocation()
 				);
 
-				bee.teleport(RandomUtils.randomElement(beeLocs));
+				bee.teleportAsync(RandomUtils.randomElement(beeLocs));
 			}
 		}
 	}
@@ -444,7 +444,7 @@ public class Quests implements Listener {
 		new TitleBuilder().players(player).subtitle("&cYou died.").stay(40).send();
 
 		player.setFallDistance(0);
-		player.teleport(BearFair21.getShipSpawnLoc());
+		player.teleportAsync(BearFair21.getShipSpawnLoc());
 
 		Tasks.wait(1, () -> {
 			player.setFireTicks(0);

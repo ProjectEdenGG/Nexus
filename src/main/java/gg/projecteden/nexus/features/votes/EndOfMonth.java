@@ -29,15 +29,17 @@ import java.time.Month;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class EndOfMonth {
 
-	static void run() {
-		run(null);
+	public static CompletableFuture<Void> run() {
+		return run(null);
 	}
 
-	static void run(Month month) {
+	public static CompletableFuture<Void> run(Month month) {
+		CompletableFuture<Void> future = new CompletableFuture<>();
 		if (month == null)
 			month = LocalDateTime.now().getMonth().minus(1);
 
@@ -58,11 +60,15 @@ public class EndOfMonth {
 					data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
 					data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
 					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+
+					future.complete(null);
 				});
 			} catch (NexusException ex) {
 				Nexus.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}
 		});
+
+		return future;
 	}
 
 	@Data

@@ -27,6 +27,7 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -41,6 +42,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -59,7 +61,8 @@ import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Permission("group.admin")
-public class TestCommand extends CustomCommand {
+@NoArgsConstructor
+public class TestCommand extends CustomCommand implements Listener {
 
 	public TestCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -406,5 +409,4 @@ public class TestCommand extends CustomCommand {
 	void hasRoomFor() {
 		send("" + PlayerUtils.hasRoomFor(player(), new ItemStack(Material.DIRT, 64), new ItemStack(Material.SNOWBALL, 8)));
 	}
-
 }

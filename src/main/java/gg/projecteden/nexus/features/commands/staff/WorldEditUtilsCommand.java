@@ -79,10 +79,10 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		Location originalLocation = location().clone();
 		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
 		player().setGameMode(GameMode.SPECTATOR);
-		player().teleport(location);
+		player().teleportAsync(location);
 		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + name + " -f");
 		Tasks.wait(20, () -> {
-			player().teleport(originalLocation);
+			player().teleportAsync(originalLocation);
 			player().setGameMode(originalGameMode);
 		});
 

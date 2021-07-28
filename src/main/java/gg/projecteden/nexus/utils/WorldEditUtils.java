@@ -462,16 +462,16 @@ public class WorldEditUtils {
 			});
 		}
 
-		public CompletableFuture<Boolean> buildQueue() {
+		public CompletableFuture<Void> buildQueue() {
 			return buildQueue(location -> () -> location.getBlock().setBlockData(blockDataMap.get(location)));
 		}
 
-		public CompletableFuture<Boolean> buildQueueClientSide(HasPlayer player) {
+		public CompletableFuture<Void> buildQueueClientSide(HasPlayer player) {
 			return buildQueue(location -> () -> player.getPlayer().sendBlockChange(location.getBlock().getLocation(), blockDataMap.get(location)));
 		}
 
-		public CompletableFuture<Boolean> buildQueue(Function<Location, Runnable> action) {
-			CompletableFuture<Boolean> future = new CompletableFuture<>();
+		public CompletableFuture<Void> buildQueue(Function<Location, Runnable> action) {
+			CompletableFuture<Void> future = new CompletableFuture<>();
 			Tasks.async(() -> {
 				if (blockDataMap.isEmpty())
 					findBlocks();
@@ -494,7 +494,7 @@ public class WorldEditUtils {
 					}
 				}
 
-				Tasks.wait(++wait, () -> future.complete(true));
+				Tasks.wait(++wait, () -> future.complete(null));
 			});
 
 			return future;

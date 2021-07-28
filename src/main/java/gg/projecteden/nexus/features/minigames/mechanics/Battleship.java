@@ -260,7 +260,7 @@ public class Battleship extends TeamMechanic {
 
 		match.getMinigamers().forEach(minigamer -> {
 			minigamer.getPlayer().getInventory().clear();
-			minigamer.teleport(minigamer.getTeam().getSpawnpoints().get(1));
+			minigamer.teleportAsync(minigamer.getTeam().getSpawnpoints().get(1));
 			minigamer.getPlayer().setGameMode(GameMode.ADVENTURE);
 		});
 

@@ -358,7 +358,7 @@ public class BearFair21 implements Listener {
 		Tasks.wait(Time.SECOND.x(2), () -> {
 			player.addPotionEffects(Collections.singletonList
 				(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
-			player.teleport(spawnTransition);
+			player.teleportAsync(spawnTransition);
 			send("", player);
 			send("&e&o*You immediately fall asleep in your bed*", player);
 			send("", player);
@@ -367,7 +367,7 @@ public class BearFair21 implements Listener {
 				boolean firstVisit = user.isFirstVisit();
 				user.setFirstVisit(false);
 				userService.save(user);
-				player.teleport(shipSpawnLoc);
+				player.teleportAsync(shipSpawnLoc);
 				send("", player);
 				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
 				send("", player);

@@ -72,7 +72,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	@Path("(teleport|tp|warp) <name>")
 	@Permission("group.staff")
 	public void teleport(Warp warp) {
-		warp.teleport(player());
+		warp.teleportAsync(player());
 		send(PREFIX + "&3Warping to &e" + warp.getName());
 	}
 

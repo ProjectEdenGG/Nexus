@@ -303,7 +303,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		if (location == null)
 			minigamer.tell("No teleport location found");
 		else
-			minigamer.teleport(location);
+			minigamer.teleportAsync(location);
 	}
 
 	public int getCalculatedWinningScore(@NotNull Match match) {

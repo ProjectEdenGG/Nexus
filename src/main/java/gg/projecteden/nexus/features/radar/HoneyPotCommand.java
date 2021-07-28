@@ -164,7 +164,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (region == null)
 			error("That is not a valid Honey Pot");
 
-		player().teleport(WEUtils.toLocation(region.getCenter()));
+		player().teleportAsync(WEUtils.toLocation(region.getCenter()));
 		send(PREFIX + "You have been teleported to Honey Pot:&e " + honeyPot);
 	}
 

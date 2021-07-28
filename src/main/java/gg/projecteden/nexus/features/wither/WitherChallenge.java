@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.wither;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.features.wither.fights.EasyFight;
@@ -44,7 +45,7 @@ import java.util.UUID;
 public class WitherChallenge extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
-	public static final Location cageLoc = new Location(Bukkit.getWorld("events"), -151.00, 76.00, -69.00, 180F, .00F);
+	public static final Location cageLoc = new Location(Bukkit.getWorld("events"), -151.50, 76.00, -69.50, 180F, .00F);
 	public static WitherFight currentFight;
 	public static List<UUID> queue = new ArrayList<>();
 	public static boolean maintenance = true;
@@ -100,17 +101,20 @@ public class WitherChallenge extends Feature implements Listener {
 
 		if (currentFight == null) {
 			Warps.spawn(event.getPlayer());
+			HealCommand.healPlayer(event.getPlayer());
 			return;
 		}
 
 		if (currentFight.party == null) {
 			Warps.spawn(event.getPlayer());
+			HealCommand.healPlayer(event.getPlayer());
 			return;
 		}
 
 		if (currentFight.party.contains(event.getPlayer().getUniqueId()))
 			return;
 		Warps.spawn(event.getPlayer());
+		HealCommand.healPlayer(event.getPlayer());
 	}
 
 	@EventHandler

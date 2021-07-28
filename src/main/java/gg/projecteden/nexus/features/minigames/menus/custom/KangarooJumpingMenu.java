@@ -104,7 +104,7 @@ public class KangarooJumpingMenu extends MenuUtils implements InventoryProvider 
 							kangarooJumpingMenu.openPowerUpLocationsMenu(arena).open(player, page.getPage());
 						});
 					} else {
-						player.teleport(powerUpLocation);
+						player.teleportAsync(powerUpLocation);
 					}
 				});
 			}

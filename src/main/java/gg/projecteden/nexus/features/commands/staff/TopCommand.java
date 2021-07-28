@@ -23,7 +23,7 @@ public class TopCommand extends CustomCommand {
 		top.setY(y);
 		top.setYaw(location().getYaw());
 		top.setPitch(location().getPitch());
-		player().teleport(top, TeleportCause.COMMAND);
+		player().teleportAsync(top, TeleportCause.COMMAND);
 		send(PREFIX + "Teleported to top");
 	}
 

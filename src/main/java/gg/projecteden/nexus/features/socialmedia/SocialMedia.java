@@ -70,7 +70,8 @@ public class SocialMedia extends Feature implements Listener {
 		STEAM("Steam", ChatColor.of("#356d92"), "https://store.steampowered.com", "https://steamcommunity.com/id/{{USERNAME}}"),
 		REDDIT("Reddit", ChatColor.of("#ff5700"), "https://reddit.com", "https://reddit.com/u/{{USERNAME}}"),
 		GITHUB("GitHub", ChatColor.of("#ffffff"), "https://github.com", "https://github.com/{{USERNAME}}"),
-		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/{{USERNAME}}");
+//		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/{{USERNAME}}"), // TODO QueUp
+		;
 
 		@Getter
 		private final String name;
@@ -146,7 +147,8 @@ public class SocialMedia extends Feature implements Listener {
 		INSTAGRAM("https://instagram.com/ProjectEdenGG"),
 		REDDIT("https://reddit.com/u/ProjectEdenGG"),
 		STEAM("https://steamcommunity.com/groups/ProjectEdenGG"),
-		QUEUP("https://queup.net/join/projectedengg");
+//		QUEUP("https://queup.net/join/projectedengg"), // TODO QueUp
+		;
 
 		@Getter
 		private String name = "&3" + camelCase(name());

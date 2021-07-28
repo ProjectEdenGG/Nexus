@@ -117,7 +117,7 @@ public class Quests implements Listener {
 		int waitTicks = Talker.sendScript(player, PARADE_MANAGER);
 		Pride21User user = service.get(player);
 		if (user.isComplete()) {
-			Tasks.wait(waitTicks, () -> player.teleport(player.getLocation()));
+			Tasks.wait(waitTicks, () -> player.teleportAsync(player.getLocation()));
 			Tasks.waitAsync(waitTicks, () -> {
 				player.resetPlayerTime();
 				viewFloat(player, true);

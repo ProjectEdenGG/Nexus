@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.dailyreward.DailyReward;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
@@ -42,7 +41,6 @@ public class DailyRewardsFeature extends Feature {
 	@Override
 	public void onStart() {
 		scheduler();
-		Nexus.getCron().schedule("00 00 * * *", DailyRewardsFeature::dailyReset);
 	}
 
 	@Getter
@@ -89,7 +87,7 @@ public class DailyRewardsFeature extends Feature {
 		});
 	}
 
-	static void dailyReset() {
+	public static void dailyReset() {
 		DailyRewardService service = new DailyRewardService();
 		List<DailyReward> dailyRewards = service.getAll();
 		for (DailyReward dailyReward : dailyRewards) {

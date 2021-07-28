@@ -186,7 +186,7 @@ public class BearFair20 implements Listener {
 //		Tasks.wait(Time.SECOND.x(2), () -> {
 //			player.addPotionEffects(Collections.singletonList
 //					(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
-//			player.teleport(spawnTransition);
+//			player.teleportAsync(spawnTransition);
 //			send("", player);
 //			send("&e&o*You immediately fall asleep in your bed*", player);
 //			send("", player);

@@ -22,7 +22,7 @@ public class JumpCommand extends CustomCommand {
 		Location location = getTargetBlockRequired().getLocation().add(0, 1, 0);
 		location.setYaw(location().getYaw());
 		location.setPitch(location().getPitch());
-		player().teleport(location, TeleportCause.COMMAND);
+		player().teleportAsync(location, TeleportCause.COMMAND);
 	}
 
 }

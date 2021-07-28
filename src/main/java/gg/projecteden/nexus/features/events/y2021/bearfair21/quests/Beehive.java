@@ -51,7 +51,7 @@ public class Beehive implements Listener {
 
 		String id = event.getRegion().getId();
 		if (id.equalsIgnoreCase(exitRg))
-			player.teleport(exitLoc);
+			player.teleportAsync(exitLoc);
 		else if (id.equalsIgnoreCase(enterRg))
 			tryEnterHive(player);
 	}
@@ -75,7 +75,7 @@ public class Beehive implements Listener {
 			userService.save(user);
 		}
 
-		player.teleport(enterLoc);
+		player.teleportAsync(enterLoc);
 	}
 
 	@EventHandler

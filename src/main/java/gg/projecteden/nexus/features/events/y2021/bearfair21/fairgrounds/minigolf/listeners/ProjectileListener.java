@@ -141,7 +141,7 @@ public class ProjectileListener implements Listener {
 
 						if (vel.getY() < 0.1) {
 							vel.setY(0);
-							ball.teleport(loc.add(0, MiniGolf.getFloorOffset(), 0));
+							ball.teleportAsync(loc.add(0, MiniGolf.getFloorOffset(), 0));
 							ball.setGravity(false);
 						}
 						break;

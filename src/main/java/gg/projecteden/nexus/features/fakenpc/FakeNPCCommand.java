@@ -45,7 +45,7 @@ public class FakeNPCCommand extends CustomCommand {
 		if (fakeNPC == null)
 			error("You don't have an FakeNPC selected");
 
-		player().teleport(fakeNPC.getLocation());
+		player().teleportAsync(fakeNPC.getLocation());
 		send("Teleported to FakeNPC");
 
 	}

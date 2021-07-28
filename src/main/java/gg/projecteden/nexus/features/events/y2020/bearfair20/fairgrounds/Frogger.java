@@ -307,7 +307,7 @@ public class Frogger implements Listener {
 		} else if (regionId.equalsIgnoreCase(damageRg)) {
 			String cheatingMsg = BearFair20.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
-				player.teleport(respawnLoc);
+				player.teleportAsync(respawnLoc);
 				send("Don't cheat, turn " + cheatingMsg + " off!", player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
@@ -315,14 +315,14 @@ public class Frogger implements Listener {
 		} else if (regionId.equalsIgnoreCase(killRg)) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
 			if (checkpointList.contains(player))
-				player.teleport(checkpointLoc);
+				player.teleportAsync(checkpointLoc);
 			else
-				player.teleport(respawnLoc);
+				player.teleportAsync(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
 			if (player.hasPermission("worldguard.region.bypass.*")) return;
-			player.teleport(respawnLoc);
+			player.teleportAsync(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 
 			if (giveDailyPoints) {
@@ -357,9 +357,9 @@ public class Frogger implements Listener {
 		event.setDamage(0);
 		event.setCancelled(true);
 		if (checkpointList.contains(player))
-			player.teleport(checkpointLoc);
+			player.teleportAsync(checkpointLoc);
 		else
-			player.teleport(respawnLoc);
+			player.teleportAsync(respawnLoc);
 		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 	}
 

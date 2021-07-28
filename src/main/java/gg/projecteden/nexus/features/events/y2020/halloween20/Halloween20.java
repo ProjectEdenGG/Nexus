@@ -60,7 +60,7 @@ public class Halloween20 implements Listener {
 	}
 
 	public static void start(Player player) {
-		player.teleport(new Location(Bukkit.getWorld("safepvp"), 297.50, 161.00, -2034.50, .00F, .00F));
+		player.teleportAsync(new Location(Bukkit.getWorld("safepvp"), 297.50, 161.00, -2034.50, .00F, .00F));
 		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 1));
 		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, Time.SECOND.x(14), 1));
 		player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1f, 1f);

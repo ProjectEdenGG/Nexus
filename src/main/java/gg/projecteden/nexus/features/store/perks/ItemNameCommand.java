@@ -72,7 +72,7 @@ public class ItemNameCommand extends CustomCommand {
 		final ItemStack tool = getToolRequired();
 		final String name = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
 		ItemBuilder.setName(tool, name);
-		send(PREFIX + "Name of &e" + camelCase(tool.getType()).toLowerCase() + " &3set to " + name);
+		send(PREFIX + "Name of &e" + camelCase(tool.getType()).toLowerCase() + " &3" + (name == null ? "reset" : "set to &e" + name));
 	}
 
 	@Path("gradient <colors> <name...>")

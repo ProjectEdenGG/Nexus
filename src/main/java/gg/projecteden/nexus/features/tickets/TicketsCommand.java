@@ -67,7 +67,7 @@ public class TicketsCommand extends CustomCommand {
 			else
 				error("That ticket does not have a location");
 
-		player().teleport(ticket.getLocation(), TeleportCause.COMMAND);
+		player().teleportAsync(ticket.getLocation(), TeleportCause.COMMAND);
 
 		String message = "&e" + nickname() + " &3teleported to ticket &e#" + ticket.getId();
 		Tickets.broadcast(ticket, player(), message);

@@ -465,7 +465,7 @@ public class MiniGolf {
 									int z = Integer.parseInt(split[2]);
 									Location newLoc = new Location(ball.getWorld(), x, y, z);
 									ball.setVelocity(new Vector(0, 0, 0));
-									ball.teleport(LocationUtils.getCenteredLocation(newLoc));
+									ball.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
 									ball.setGravity(true);
 								} catch (Exception ignored) {
 								}
@@ -486,7 +486,7 @@ public class MiniGolf {
 							try {
 								Location newLoc = LocationUtils.getCenteredLocation(below.getRelative(facing).getLocation());
 								ball.setVelocity(new Vector(0, 0, 0));
-								ball.teleport(LocationUtils.getCenteredLocation(newLoc));
+								ball.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
 								ball.setGravity(true);
 
 								double height = Double.parseDouble(heightStr);
@@ -517,7 +517,7 @@ public class MiniGolf {
 							user.debug(vel.length() != 0.0, "  ball is too slow, stopping...");
 							ball.setVelocity(new Vector(0, 0, 0));
 							ball.setGravity(false);
-							ball.teleport(ball.getLocation());
+							ball.teleportAsync(ball.getLocation());
 
 							if (!MiniGolfUtils.isInBounds(user, ball.getLocation())) {
 								user.debug("    ball is out of bounds, respawning...");

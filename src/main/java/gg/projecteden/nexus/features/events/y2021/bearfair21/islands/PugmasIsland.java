@@ -481,7 +481,7 @@ public class PugmasIsland implements BearFair21Island {
 				usingGrinch.add(user.getUuid());
 			}
 
-			user.getOnlinePlayer().teleport(endLocation);
+			user.getOnlinePlayer().teleportAsync(endLocation);
 			BearFair21Talker.runScript(user, PugmasNPCs.GRINCH.getNpcId()).thenAccept(bool -> {
 				if (isGrinchNotBeingUsed()) {
 					Quests.poof(npc.getStoredLocation());

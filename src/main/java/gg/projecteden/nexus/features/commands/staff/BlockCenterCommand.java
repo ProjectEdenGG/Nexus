@@ -22,21 +22,21 @@ public class BlockCenterCommand extends CustomCommand {
 
 	@Path
 	void center() {
-		player().teleport(centered);
+		player().teleportAsync(centered);
 	}
 
 	@Path("yaw")
 	void yaw() {
 		Location newLocation = location().clone();
 		newLocation.setYaw(centered.getYaw());
-		player().teleport(newLocation);
+		player().teleportAsync(newLocation);
 	}
 
 	@Path("pitch")
 	void pitch() {
 		Location newLocation = location().clone();
 		newLocation.setPitch(centered.getPitch());
-		player().teleport(newLocation);
+		player().teleportAsync(newLocation);
 	}
 
 	@Path("look")
@@ -44,14 +44,14 @@ public class BlockCenterCommand extends CustomCommand {
 		Location newLocation = location().clone();
 		newLocation.setYaw(centered.getYaw());
 		newLocation.setPitch(centered.getPitch());
-		player().teleport(newLocation);
+		player().teleportAsync(newLocation);
 	}
 
 	@Path("corner")
 	void corner() {
 		centered.setX(Math.round(location().getX()));
 		centered.setZ(Math.round(location().getZ()));
-		player().teleport(centered);
+		player().teleportAsync(centered);
 	}
 
 	@Path("java")
