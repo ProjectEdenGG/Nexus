@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.votes;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -48,11 +47,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 		paginate(all, formatter, "/dailyvoterewards top", page);
 	}
 
-	static {
-		Nexus.getCron().schedule("00 00 * * *", DailyVoteRewardsCommand::dailyReset);
-	}
-
-	static void dailyReset() {
+	public static void dailyReset() {
 		final DailyVoteRewardService service = new DailyVoteRewardService();
 		for (DailyVoteReward rewards : service.getAll()) {
 			final DailyVoteStreak streak = rewards.getCurrentStreak();
