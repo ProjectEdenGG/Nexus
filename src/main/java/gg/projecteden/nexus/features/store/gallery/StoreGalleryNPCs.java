@@ -34,12 +34,20 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class NPCDisplays {
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+
+public class StoreGalleryNPCs {
 	private static final String regionRegex = "store_gallery_npcdisplays_\\d+";
 	@Getter
 	private static final List<DisplaySet> displays = new ArrayList<>();
 
-	public NPCDisplays() {
+	private static final List<Integer> pirateHatColors = new ArrayList<>() {{
+		for (Integer base : List.of(21, 25, 33, 45, 49, 61, 69))
+			for (int i = 0; i < 4; i++)
+				add(base + i);
+	}};
+
+	public StoreGalleryNPCs() {
 		loadDisplays();
 
 		// Update costumes
@@ -53,13 +61,35 @@ public class NPCDisplays {
 				if (humanEntity == null)
 					continue;
 
-				Costume costume = RandomUtils.randomElement(Costume.values());
+				AtomicReference<Costume> costume = new AtomicReference<>();
+
+				Utils.attempt(50, () -> {
+					costume.set(RandomUtils.randomElement(Costume.values()));
+					return canUse(costume.get());
+				});
+
 				for (CostumeType value : CostumeType.values())
 					humanEntity.getInventory().setItem(value.getSlot(), new ItemStack(Material.AIR));
-				humanEntity.getInventory().setItem(costume.getType().getSlot(), costume.getItem());
+				display.setItem(costume.get());
 				displaySet.setLastUpdatedIndex(displaySet.getDisplays().indexOf(display));
 			}
 		});
+	}
+
+	private boolean canUse(Costume _costume) {
+		if (_costume.getModel().getMaterial() == Material.STONE_BUTTON)
+			if (_costume.getModel().getData() < 100)
+				if (!pirateHatColors.contains(_costume.getModel().getData()))
+					return false;
+
+		for (DisplaySet _displaySet : displays)
+			for (Display _display : _displaySet.getDisplays())
+				for (ItemStack item : _display.getItems().values())
+					if (!isNullOrAir(item))
+						if (item.isSimilar(_costume.getItem()))
+							return false;
+
+		return true;
 	}
 
 	public static void updateSkins() {
@@ -205,5 +235,12 @@ public class NPCDisplays {
 
 			return humanEntity;
 		}
+
+		public void setItem(Costume costume) {
+			final HumanEntity entity = getHumanEntity();
+			if (entity != null)
+				entity.getInventory().setItem(costume.getType().getSlot(), costume.getItem());
+		}
+
 	}
 }

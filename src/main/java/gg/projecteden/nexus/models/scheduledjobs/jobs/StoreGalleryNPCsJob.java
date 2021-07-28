@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.nexus.features.store.gallery.NPCDisplays;
+import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.models.scheduledjobs.common.Schedule;
 import lombok.Data;
@@ -17,7 +17,7 @@ public class StoreGalleryNPCsJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
-		NPCDisplays.updateSkins();
+		StoreGalleryNPCs.updateSkins();
 		return completed();
 	}
 

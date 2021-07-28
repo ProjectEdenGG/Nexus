@@ -15,7 +15,7 @@ public class StoreGalleryCommand extends CustomCommand {
 
 	@Path("updateSkins")
 	void updateSkins() {
-		NPCDisplays.updateSkins();
+		StoreGalleryNPCs.updateSkins();
 		send(PREFIX + "Updated skins");
 	}
 }
