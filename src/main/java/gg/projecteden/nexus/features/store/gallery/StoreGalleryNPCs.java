@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.gallery;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -127,8 +128,10 @@ public class StoreGalleryNPCs {
 			AtomicInteger ndx = new AtomicInteger(1);
 			Collection<NPC> npcs = WGUtils.getNPCsInRegion(region);
 
-			if (npcs.isEmpty())
+			if (npcs.isEmpty()) {
+				Nexus.warn("Could not find any gallery NPCs in region " + region.getId());
 				continue;
+			}
 
 			DisplaySet displaySet = new DisplaySet();
 			displaySet.setId(displays.size() + 1);
@@ -190,7 +193,7 @@ public class StoreGalleryNPCs {
 	}
 
 	@Data
-	private static class Display {
+	static class Display {
 		@NonNull
 		private final Integer id;
 		private String skinName = null;

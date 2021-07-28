@@ -11,6 +11,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -149,7 +150,7 @@ public class CitizensUtils {
 			if (owner != null && !owner.equals(npc.getTrait(Owner.class).getOwnerId()))
 				return false;
 
-			if (spawned != null && (npc.getStoredLocation() == null || !npc.isSpawned()) && spawned)
+			if (spawned != null && (npc.getStoredLocation() == null || !npc.getTrait(Spawned.class).shouldSpawn()) && spawned)
 				return false;
 
 			if (npc.getStoredLocation() == null)
