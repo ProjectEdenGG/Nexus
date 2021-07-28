@@ -98,15 +98,15 @@ public class EntityUtils {
 		else if (yaw >= 180)
 			yaw -= 360;
 
-		if (maxYaw != null)
-			yaw = Math.min(yaw, maxYaw);
-		if (minYaw != null)
-			yaw = Math.max(yaw, minYaw);
+		if (maxYaw != null && yaw > maxYaw)
+			yaw = maxYaw;
+		if (minYaw != null && yaw < minYaw)
+			yaw = minYaw;
 
-		if (maxPitch != null)
-			pitch = Math.min(pitch, maxPitch);
-		if (minPitch != null)
-			pitch = Math.max(pitch, minPitch);
+		if (maxPitch != null && pitch > maxPitch)
+			pitch = maxPitch;
+		if (minPitch != null && pitch < minPitch)
+			pitch = minPitch;
 
 		double x = Math.toRadians(pitch);
 		double y = Math.toRadians(yaw);
