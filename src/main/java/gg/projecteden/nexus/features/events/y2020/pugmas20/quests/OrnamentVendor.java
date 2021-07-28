@@ -58,7 +58,6 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static java.time.LocalDateTime.now;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
@@ -357,7 +356,7 @@ public class OrnamentVendor implements Listener {
 
 				Jingle.TREE_FELLER.play(player);
 
-				new Pugmas20TreeRegenJob(this, id).schedule(now().plusSeconds(randomInt(3 * 60, 5 * 60)));
+				new Pugmas20TreeRegenJob(this, id).schedule(randomInt(3 * 60, 5 * 60));
 			});
 		}
 

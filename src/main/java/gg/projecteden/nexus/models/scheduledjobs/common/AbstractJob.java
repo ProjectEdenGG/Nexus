@@ -29,6 +29,7 @@ public abstract class AbstractJob {
 	@NonNull
 	protected LocalDateTime created;
 	protected LocalDateTime timestamp;
+	protected LocalDateTime completed;
 	@NonNull
 	protected JobStatus status = JobStatus.PENDING;
 
@@ -47,6 +48,10 @@ public abstract class AbstractJob {
 		jobs().get(this.status).add(this);
 	}
 
+	public void schedule(int seconds) {
+		schedule(LocalDateTime.now().plusSeconds(seconds));
+	}
+
 	public void schedule(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
 		new ScheduledJobsService().edit0(jobs -> jobs.add(this));
@@ -58,16 +63,20 @@ public abstract class AbstractJob {
 
 		try {
 			setStatus(JobStatus.RUNNING);
-			run().thenAccept(this::setStatus);
+			run().thenAccept(status -> {
+				setStatus(status);
+				completed = LocalDateTime.now();
+			});
 		} catch (Exception ex) {
 			Nexus.severe("Error while running " + getClass().getSimpleName() + " # " + id);
 			ex.printStackTrace();
 			setStatus(JobStatus.ERRORED);
+			completed = LocalDateTime.now();
 		}
 	}
 
 	protected CompletableFuture<JobStatus> completed() {
-		final CompletableFuture<JobStatus> future = completable();
+		var future = completable();
 		future.complete(JobStatus.COMPLETED);
 		return future;
 	}

@@ -57,16 +57,12 @@ public class JobsCommand extends CustomCommand {
 	}
 
 	private static void processor() {
-		try {
-			Tasks.repeat(0, Time.SECOND, () -> {
-				for (AbstractJob job : jobs.getReady())
-					job.process();
+		Tasks.repeat(0, Time.SECOND, () -> {
+			for (AbstractJob job : jobs.getReady())
+				job.process();
 
-				service.save(jobs);
-			});
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+			service.save(jobs);
+		});
 	}
 
 	private static void rescheduler() {
@@ -106,13 +102,13 @@ public class JobsCommand extends CustomCommand {
 
 	@Path("test <seconds> <message...>")
 	void test(int seconds, String message) {
-		new TestJob(uuid(), message).schedule(LocalDateTime.now().plusSeconds(seconds));
+		new TestJob(uuid(), message).schedule(seconds);
 		send(PREFIX + "Scheduled test job");
 	}
 
 	@Path("test2 <seconds> <wait> <message...>")
 	void test2(int seconds, int wait, String message) {
-		new Test2Job(uuid(), wait, message).schedule(LocalDateTime.now().plusSeconds(seconds));
+		new Test2Job(uuid(), wait, message).schedule(seconds);
 		send(PREFIX + "Scheduled test job");
 	}
 

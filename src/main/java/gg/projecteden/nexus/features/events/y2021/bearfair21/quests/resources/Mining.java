@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static java.time.LocalDateTime.now;
 
 public class Mining implements Listener {
 
@@ -67,7 +66,7 @@ public class Mining implements Listener {
 		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack(tool));
 
-		new BlockRegenJob(block.getLocation(), block.getType()).schedule(now().plusSeconds(randomInt(3 * 60, 5 * 60)));
+		new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
 		block.setType(Material.STONE);
 		return true;
 	}

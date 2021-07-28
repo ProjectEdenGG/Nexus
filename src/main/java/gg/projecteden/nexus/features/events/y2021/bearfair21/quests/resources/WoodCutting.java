@@ -41,7 +41,6 @@ import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.Utils.getMin;
-import static java.time.LocalDateTime.now;
 
 public class WoodCutting implements Listener {
 	private static final String tree_region = BearFair21.getRegion() + "_trees";
@@ -239,7 +238,7 @@ public class WoodCutting implements Listener {
 
 				Jingle.TREE_FELLER.play(player);
 
-				new BearFair21TreeRegenJob(this, id).schedule(now().plusSeconds(randomInt(3 * 60, 5 * 60)));
+				new BearFair21TreeRegenJob(this, id).schedule(randomInt(3 * 60, 5 * 60));
 			});
 		}
 

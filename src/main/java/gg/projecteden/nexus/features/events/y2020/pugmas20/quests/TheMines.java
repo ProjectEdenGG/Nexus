@@ -55,7 +55,6 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static java.time.LocalDateTime.now;
 
 @NoArgsConstructor
 public class TheMines implements Listener {
@@ -266,7 +265,7 @@ public class TheMines implements Listener {
 	}
 
 	public void scheduleRegen(Block block) {
-		new BlockRegenJob(block.getLocation(), block.getType()).schedule(now().plusSeconds(randomInt(3 * 60, 5 * 60)));
+		new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
 	}
 
 	@EventHandler
