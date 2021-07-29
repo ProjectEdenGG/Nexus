@@ -43,12 +43,12 @@ public class EntityUtils {
 		return Arrays.asList(EntityType.PHANTOM, EntityType.GHAST, EntityType.MAGMA_CUBE, EntityType.SLIME, EntityType.SHULKER, EntityType.ENDER_DRAGON);
 	}
 
-	public static Entity getNearestEntityType(Location location, EntityType filter, double radius) {
+	public static <T extends Entity> T getNearestEntityType(Location location, Class<T> type, double radius) {
 		if (location == null || location.getWorld() == null)
 			return null;
 
-		List<Entity> entities = getNearbyEntities(location, radius).keySet().stream()
-			.filter(_entity -> _entity.getType().equals(filter))
+		List<T> entities = location.getNearbyEntities(radius, radius, radius).stream()
+			.filter(_entity -> type.isAssignableFrom(_entity.getClass()))
 			.filter(_entity -> {
 				if (_entity instanceof Player) {
 					if (CitizensUtils.isNPC(_entity))
@@ -59,6 +59,7 @@ public class EntityUtils {
 
 				return true;
 			})
+			.map(_entity -> (T) _entity)
 			.collect(Collectors.toList());
 
 		return Utils.getMin(entities, entity -> entity.getLocation().distance(location)).getObject();

@@ -40,7 +40,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.EquipmentSlot;
@@ -122,7 +121,7 @@ public class MiniGolf {
 	private void extrasTasks() {
 		// Golf Ball Color
 		Location golfBallLoc = new Location(BearFair21.getWorld(), 111, 138, -27);
-		ArmorStand armorStand = (ArmorStand) EntityUtils.getNearestEntityType(golfBallLoc, EntityType.ARMOR_STAND, 1.5);
+		ArmorStand armorStand = EntityUtils.getNearestEntityType(golfBallLoc, ArmorStand.class, 1.5);
 
 		List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
 				.filter(Objects::nonNull)

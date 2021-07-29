@@ -6,6 +6,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+import java.util.UUID;
+
 @Permission("group.staff")
 public class EntityNBTCommand extends CustomCommand {
 
@@ -18,4 +20,11 @@ public class EntityNBTCommand extends CustomCommand {
 		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
 		send(nbtEntity.asNBTString());
 	}
+
+	@Path("uuid")
+	void getUuid() {
+		final UUID uuid = getTargetEntityRequired().getUniqueId();
+		send(json("&e" + uuid).copy(uuid.toString()));
+	}
+
 }

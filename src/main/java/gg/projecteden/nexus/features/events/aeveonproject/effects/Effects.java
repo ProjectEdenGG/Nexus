@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,8 +44,8 @@ public class Effects implements Listener {
 				if (!shipRobot.isChunkLoaded())
 					return;
 
-				Player nearestPlayer = (Player) EntityUtils.getNearestEntityType(shipRobot, EntityType.PLAYER, 7);
-				ArmorStand armorStand = (ArmorStand) EntityUtils.getNearestEntityType(shipRobot, EntityType.ARMOR_STAND, 1);
+				Player nearestPlayer = EntityUtils.getNearestEntityType(shipRobot, Player.class, 7);
+				ArmorStand armorStand = EntityUtils.getNearestEntityType(shipRobot, ArmorStand.class, 1);
 				if (nearestPlayer != null && armorStand != null) {
 					APUtils.makeArmorStandLookAtPlayer(armorStand, nearestPlayer);
 				}

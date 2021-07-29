@@ -4,7 +4,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,40 +14,43 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ArmorStandStalker {
-	// @formatter:off
+	// TODO Database
 	public static final List<Stalker> stalkers = new ArrayList<>() {{
-		if(Nexus.getEnv() == Env.TEST) {
-			add(Stalker.builder().location("world", -209, 76, 293).radius(25).percentage(1.0).build());            // test server
-		} else if(Nexus.getEnv() == Env.PROD) {
-			add(Stalker.builder().location("survival", 15, 15, -8).build());                         // Spawn - Wakka Crate
-			add(Stalker.builder().location(BearFair21.getWorld(), 72, 131, -351).build());                 // BearFair21 - Halloween Island
-			add(Stalker.builder().location("buildadmin", -2205, 69, -223).radius(25).build());        // New Spawn - Owl on Fletcher Building
+		switch (Nexus.getEnv()) {
+			case TEST ->
+				add(Stalker.builder().uuid("c590d410-2604-48bb-aa3b-dd78419bf672").world("world").radius(25).percentage(1.0).build());
+			case PROD -> {
+				// Spawn - Wakka Crate
+				add(Stalker.builder().uuid("ab374814-dbda-4d83-a796-87c8037ee7d2").world("survival").build());
+				// BearFair21 - Halloween Island
+				add(Stalker.builder().uuid("720fc446-7598-4a99-9493-40bc784667dc").world(BearFair21.getWorld()).build());
+				// New Spawn - Owl on Fletcher Building
+				add(Stalker.builder().uuid("39fa0c4e-76bf-4773-bd32-c61e1cae3fc3").world("buildadmin").radius(25).build());
+			}
 		}
 	}};
-	// @formatter:on;
 
 	public ArmorStandStalker() {
 		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(2), () -> {
 			for (Stalker stalker : stalkers) {
-				Location location = stalker.getLocation();
-
-				ArmorStand armorStand;
-				try {
-					armorStand = (ArmorStand) EntityUtils.getNearestEntityType(location, EntityType.ARMOR_STAND, 1.5);
-				} catch (Exception e) {
-					continue;
-				}
-				if (armorStand == null)
+				final Entity entity = stalker.getWorld().getEntity(stalker.getUuid());
+				if (entity == null || !entity.isValid())
 					continue;
 
-				Player nearestPlayer = (Player) EntityUtils.getNearestEntityType(location, EntityType.PLAYER, stalker.getRadius());
+				if (!(entity instanceof ArmorStand armorStand))
+					return;
+
+				Location location = entity.getLocation();
+
+				Player nearestPlayer = EntityUtils.getNearestEntityType(location, Player.class, stalker.getRadius());
 				if (nearestPlayer != null)
 					lookAt(armorStand, stalker, nearestPlayer);
 			}
@@ -61,28 +63,39 @@ public class ArmorStandStalker {
 	@AllArgsConstructor
 	private static class Stalker {
 		@NonNull
-		private Location location;
+		private UUID uuid;
+		private World world;
+		@Builder.Default
 		private int radius = 10;
+		@Builder.Default
 		private Double minPitch = -30.0;
+		@Builder.Default
 		private Double maxPitch = 30.0;
 		private Double minYaw = null;
 		private Double maxYaw = null;
 		private Double percentage = null;
 
 		private static class StalkerBuilder {
-			public StalkerBuilder location(String world, int x, int y, int z) {
-				return location(Bukkit.getWorld(world), x, y, z);
+			public StalkerBuilder uuid(String uuid) {
+				return uuid(UUID.fromString(uuid));
 			}
 
-			public StalkerBuilder location(World world, int x, int y, int z) {
-				return location(new Location(world, x, y, z));
-			}
-
-			public StalkerBuilder location(Location location) {
-				this.location = location;
+			public StalkerBuilder uuid(UUID uuid) {
+				this.uuid = uuid;
 				return this;
 			}
+
+			public StalkerBuilder world(String world) {
+				return world(Bukkit.getWorld(world));
+			}
+
+			public StalkerBuilder world(World world) {
+				this.world = world;
+				return this;
+			}
+
 		}
+
 	}
 
 	private void lookAt(ArmorStand armorStand, Stalker stalker, Player player) {
@@ -96,4 +109,5 @@ public class ArmorStandStalker {
 			stalker.getPercentage()
 		);
 	}
+
 }
