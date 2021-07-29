@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -263,6 +264,15 @@ public class SerializationUtils {
 			@Override
 			public JsonElement serialize(Location location, Type type, JsonSerializationContext context) {
 				return new JsonPrimitive(StringUtils.getShortishLocationString(location));
+			}
+
+		}
+
+		public static class LocalDateGsonSerializer implements JsonSerializer<LocalDate> {
+
+			@Override
+			public JsonElement serialize(LocalDate timestamp, Type type, JsonSerializationContext context) {
+				return new JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE.format(timestamp));
 			}
 
 		}
