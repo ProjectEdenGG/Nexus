@@ -33,6 +33,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -862,6 +863,11 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(LocalDateTime.class)
 	public LocalDateTime convertToLocalDateTime(String value) {
+		if (value.startsWith("+"))
+			return LocalDateTime.now().plusSeconds(Timespan.of(value.replaceFirst("\\+", "")).getOriginal());
+		if (value.startsWith("-"))
+			return LocalDateTime.now().minusSeconds(Timespan.of(value.replaceFirst("-", "")).getOriginal());
+
 		return parseDateTime(value);
 	}
 

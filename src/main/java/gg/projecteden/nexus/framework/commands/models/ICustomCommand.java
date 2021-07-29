@@ -272,7 +272,7 @@ public abstract class ICustomCommand {
 	);
 
 	@SneakyThrows
-	private Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
+	public Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
 		Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 
 		double argMinDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
@@ -556,7 +556,7 @@ public abstract class ICustomCommand {
 
 	protected List<String> tabCompleteEnum(String filter, Class<? extends Enum<?>> clazz) {
 		return Arrays.stream(clazz.getEnumConstants())
-				.map(value -> value.toString().toLowerCase())
+				.map(value -> value.toString().toLowerCase().replaceAll(" ", "_"))
 				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}

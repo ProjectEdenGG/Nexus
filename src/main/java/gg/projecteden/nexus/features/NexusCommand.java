@@ -36,6 +36,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.SerializationUtils.JSON;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -49,6 +50,7 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.advancement.Advancement;
@@ -434,6 +436,16 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@ConverterFor(Timespan.class)
 	Timespan convertToTimespan(String input) {
 		return Timespan.of(input);
+	}
+
+	@ConverterFor(Location.class)
+	Location convertToLocation(String value) {
+		if ("current".equalsIgnoreCase(value))
+			return location();
+		if ("target".equalsIgnoreCase(value))
+			return getTargetBlockRequired().getLocation();
+
+		return JSON.deserializeLocation(value);
 	}
 
 }

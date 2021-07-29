@@ -12,12 +12,14 @@ import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.reflections.Reflections;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -41,6 +43,11 @@ public abstract class AbstractJob {
 
 	private ScheduledJobs jobs() {
 		return new ScheduledJobsService().get0();
+	}
+
+	public static Set<Class<? extends AbstractJob>> getSubclasses() {
+		final Reflections reflections = new Reflections(ScheduledJobsService.class.getPackage().getName());
+		return reflections.getSubTypesOf(AbstractJob.class);
 	}
 
 	public void setStatus(JobStatus status) {

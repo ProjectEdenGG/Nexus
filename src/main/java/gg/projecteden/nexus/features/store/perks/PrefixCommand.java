@@ -41,12 +41,12 @@ public class PrefixCommand extends CustomCommand {
 		send(PREFIX + "Check mark " + (nerd.isCheckmark() ? "enabled" : "disabled"));
 	}
 
-	@Path("reset")
+	@Path("reset [player]")
 	@Permission("set.my.prefix")
-	void reset() {
+	void reset(Nerd nerd) {
 		nerd.setPrefix(null);
 		service.save(nerd);
-		send(PREFIX + "Reset prefix");
+		send(PREFIX + "Reset " + (isSelf(nerd) ? "your" : nerd.getNickname() + "'s") + " prefix");
 	}
 
 	@Path("expire <player>")
@@ -86,15 +86,15 @@ public class PrefixCommand extends CustomCommand {
 		prefix(Rainbow.apply(input));
 	}
 
-	@Path("copy")
-	void copy() {
+	@Path("copy [player]")
+	void copy(@Arg("self") Nerd nerd) {
 		String prefix = nerd.getPrefix();
 
 		if (isNullOrEmpty(prefix))
 			prefix = Nerd.of(player()).getRank().getPrefix();
 
 		if (isNullOrEmpty(prefix))
-			error("You do not have a prefix");
+			error((isSelf(nerd) ? "You do" : nerd.getNickname() + " does") + " not have a prefix");
 
 		String original = prefix;
 
@@ -106,7 +106,7 @@ public class PrefixCommand extends CustomCommand {
 			prefix = prefix.replace(group, group.replaceAll(StringUtils.getColorChar() + "x", "&#").replaceAll(StringUtils.getColorChar(), ""));
 		}
 
-		send(json(PREFIX + "Click here to copy your current prefix: &f" + original).copy(decolorize(prefix)).hover("&7Click to copy"));
+		send(json(PREFIX + "Click here to copy " + (isSelf(nerd) ? "your" : nerd.getNickname() + "'s") + " current prefix: &f" + original).copy(decolorize(prefix)).hover("&7Click to copy"));
 	}
 
 }
