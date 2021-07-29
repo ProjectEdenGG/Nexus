@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.survival.itemtags;
 
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.StringUtils;

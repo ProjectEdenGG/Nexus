@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.ambienceold;
+package gg.projecteden.nexus.features.survival.ambienceold;
 
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.framework.features.Feature;

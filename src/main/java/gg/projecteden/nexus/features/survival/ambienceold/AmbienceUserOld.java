@@ -1,6 +1,6 @@
-package gg.projecteden.nexus.features.quests.ambienceold;
+package gg.projecteden.nexus.features.survival.ambienceold;
 
-import gg.projecteden.nexus.features.quests.ambienceold.sound.SoundPlayer;
+import gg.projecteden.nexus.features.survival.ambienceold.sound.SoundPlayer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

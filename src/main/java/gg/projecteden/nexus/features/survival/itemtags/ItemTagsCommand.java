@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.survival.itemtags;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -9,10 +9,10 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.addCondition;
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.addRarity;
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.finalizeItem;
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
+import static gg.projecteden.nexus.features.survival.itemtags.ItemTagsUtils.addCondition;
+import static gg.projecteden.nexus.features.survival.itemtags.ItemTagsUtils.addRarity;
+import static gg.projecteden.nexus.features.survival.itemtags.ItemTagsUtils.finalizeItem;
+import static gg.projecteden.nexus.features.survival.itemtags.ItemTagsUtils.updateItem;
 
 public class ItemTagsCommand extends CustomCommand {
 

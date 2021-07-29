@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.survival.itemtags;
 
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
+import static gg.projecteden.nexus.features.survival.itemtags.ItemTagsUtils.updateItem;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 public class ItemTagListener implements Listener {

@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.ambienceold.sound;
+package gg.projecteden.nexus.features.survival.ambienceold.sound;
 
 import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Location;

@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.survival.itemtags;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
