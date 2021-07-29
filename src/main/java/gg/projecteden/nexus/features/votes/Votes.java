@@ -169,15 +169,18 @@ public class Votes extends Feature implements Listener {
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
 
-		if (!YearMonth.of(2021, Month.JULY).equals(YearMonth.now()) || Dev.GRIFFIN.is(uuid)) // TODO Remove
-			if (voteService.getTodaysVotes(uuid.toString()).size() >= 5) {
-				final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
-				final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
-				if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
-					dailyVoteReward.getCurrentStreak().incrementStreak();
-					dailyVoteRewardService.save(dailyVoteReward);
+		if (!YearMonth.of(2021, Month.JULY).equals(YearMonth.now()) || Dev.GRIFFIN.is(uuid)) { // TODO Remove
+			final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
+			final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
+			Tasks.wait(Time.SECOND, () -> {
+				if (voteService.getTodaysVotes(uuid.toString()).size() >= 5) {
+					if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
+						dailyVoteReward.getCurrentStreak().incrementStreak();
+						dailyVoteRewardService.save(dailyVoteReward);
+					}
 				}
-			}
+			});
+		}
 
 		Tasks.async(Votes::write);
 	}
