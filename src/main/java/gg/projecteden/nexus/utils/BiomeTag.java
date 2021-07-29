@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BiomeTag.Tag.MatchMode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.Range;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -13,6 +16,8 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor
@@ -56,6 +61,35 @@ public enum BiomeTag {
 	@Override
 	public String toString() {
 		return tag.biomes.toString();
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum BiomeClimateType {
+		FROZEN(-0.5, 0.05),
+		COLD(0.2, 0.3),
+		TEMPERATE(0.5, 0.95),
+		WARM(1.0, 2.0),
+		AQUATIC(null, null),
+		;
+
+		private final Double minTemperature;
+		private final Double maxTemperature;
+
+		public static @NotNull BiomeClimateType of(Location location) {
+			final Block block = location.getBlock();
+			final Biome biome = block.getBiome();
+			if (BiomeTag.OCEAN.isTagged(biome))
+				return AQUATIC;
+
+			double temperature = location.getWorld().getTemperature(block.getX(), block.getY(), block.getZ());
+			for (BiomeClimateType type : BiomeClimateType.values())
+				if (Range.between(type.getMinTemperature(), type.getMaxTemperature()).contains(temperature))
+					return type;
+
+			throw new InvalidInputException("Biome " + camelCase(biome) + " with temperature "
+				+ StringUtils.getDf().format(temperature) + " does not match any biome climate type");
+		}
 	}
 
 	protected static class Tag {

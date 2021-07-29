@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -27,15 +28,12 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
@@ -415,43 +413,9 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("getBiomeInfo")
 	void getBiomeInfo() {
-		send("Temperature: " + block().getTemperature());
-		send("Humidity: " + block().getHumidity());
-		send("Biome Type: " + BiomeType.from(location()));
+		send("Temperature: " + StringUtils.getDf().format(block().getTemperature()));
+		send("Humidity: " + StringUtils.getDf().format(block().getHumidity()));
+		send("Biome Climate Type: " + BiomeClimateType.of(location()));
 	}
 
-	@Getter
-	@AllArgsConstructor
-	public enum BiomeType {
-		SNOWY(-0.5, 0.05),
-		COLD(0.2, 0.3),
-		TEMPERATE(0.5, 0.95),
-		DRY(1.0, 2.0),
-		;
-
-		Double minTemp;
-		Double maxTemp;
-
-		public static BiomeType from(Location location) {
-			Biome biome = location.getBlock().getBiome();
-			switch (biome) {
-				case WARM_OCEAN:
-					return DRY;
-				case COLD_OCEAN:
-				case DEEP_COLD_OCEAN:
-					return COLD;
-				case DEEP_FROZEN_OCEAN:
-				case FROZEN_OCEAN:
-					return SNOWY;
-			}
-
-			double temperature = location.getWorld().getTemperature(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-			for (BiomeType type : BiomeType.values()) {
-				if (temperature >= type.getMinTemp() && temperature <= type.getMaxTemp()) {
-					return type;
-				}
-			}
-			return null;
-		}
-	}
 }
